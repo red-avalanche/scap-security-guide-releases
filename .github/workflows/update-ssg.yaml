@@ -1,0 +1,89 @@
+name: Update SSG Release
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Daily check
+  workflow_dispatch:      # Manual trigger option
+
+permissions:
+  contents: write
+
+jobs:
+  update-ssg:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Required for tag checking
+
+      - name: Get latest release
+        id: get-release
+        run: |
+          LATEST_RELEASE="$(curl -s 'https://api.github.com/repos/ComplianceAsCode/content/releases/latest' | grep '"tag_name":' | cut -d '"' -f 4)"
+          echo "tag_name=$LATEST_RELEASE" >> "$GITHUB_OUTPUT"
+
+      - name: Check if release already processed
+        id: check-release
+        run: |
+          if git tag -l | grep -q "${{ steps.get-release.outputs.tag_name }}"; then
+            echo "release_processed=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "release_processed=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Delete old artifacts
+        if: steps.check-release.outputs.release_processed == 'false'
+        run: |
+          cp -a README.md /tmp/
+          git rm -rf *
+
+      - name: Process tag name
+        if: steps.check-release.outputs.release_processed == 'false'
+        id: process-tag
+        run: |
+          TAG="${{ steps.get-release.outputs.tag_name }}"
+          TAG="${TAG#v}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+
+      - name: Download release assets
+        if: steps.check-release.outputs.release_processed == 'false'
+        uses: robinraju/release-downloader@v1
+        with:
+          repository: ComplianceAsCode/content
+          tag: ${{ steps.get-release.outputs.tag_name }}
+          fileName: scap-security-guide-${{ steps.process-tag.outputs.tag }}.zip
+
+      - name: Download release assets verification
+        if: steps.check-release.outputs.release_processed == 'false'
+        uses: robinraju/release-downloader@v1
+        with:
+          repository: ComplianceAsCode/content
+          tag: ${{ steps.get-release.outputs.tag_name }}
+          fileName: scap-security-guide-${{ steps.process-tag.outputs.tag }}.zip.sha512
+
+      - name: Verify ZIP integrity
+        if: steps.check-release.outputs.release_processed == 'false'
+        run: sha512sum -c -- *.zip.sha512
+
+      - name: Extract and organize files
+        if: steps.check-release.outputs.release_processed == 'false'
+        run: |
+          unzip -q scap-security-guide-*.zip
+          mv scap-security-guide-*/* .
+          rm -rf scap-security-guide-* Contributors.md README.md
+          cp /tmp/README.md README.md
+          git add .
+
+      - name: Generate repository checksums
+        if: steps.check-release.outputs.release_processed == 'false'
+        run: find * -type f ! \( -name 'SHA512SUMS' -o -name 'README.md' \) -exec sha512sum {} \; > SHA512SUMS
+
+      - name: Commit updated content
+        if: steps.check-release.outputs.release_processed == 'false'
+        uses: stefanzweifel/git-auto-commit-action@v7
+        with:
+          commit_message: "Update to SSG version ${{ steps.get-release.outputs.tag_name }}"
+          branch: master
+          file_pattern: .
+          tag_name: ${{ steps.get-release.outputs.tag_name }}
