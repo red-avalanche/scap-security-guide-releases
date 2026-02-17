@@ -1893,9 +1893,8 @@ localpkg_gpgcheck=1</pre></td>
 Satisfies: SRG-OS-000114-GPOS-00059, SRG-OS-000378-GPOS-00163, SRG-OS-000480-GPOS-00227</pre></td>
 	<td><pre>Verify the operating system disables the ability to load the USB Storage kernel module.
 
-# grep -r usb-storage /etc/modprobe.d/* | grep -i "/bin/true" | grep -v "^#"
-
-install usb-storage /bin/true
+     # grep -r usb-storage /etc/modprobe.d/* | grep -i "/bin/false" | grep -v "^#"
+     install usb-storage /bin/false
 
 If the command does not return any output, or the line is commented out, and use of USB Storage is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.
 
@@ -1903,29 +1902,29 @@ Verify the operating system disables the ability to use USB mass storage devices
 
 Check to see if USB mass storage is disabled with the following command:
 
-# grep usb-storage /etc/modprobe.d/* | grep -i "blacklist" | grep -v "^#"
-blacklist usb-storage
+     # grep usb-storage /etc/modprobe.d/* | grep -i "blacklist" | grep -v "^#"
+     blacklist usb-storage
 
-If the command does not return any output or the output is not "blacklist usb-storage", and use of USB storage devices is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</pre></td>
+If the command does not return any output or the output is not "blacklist usb-storage", and use of USB storage devices is not documented with the ISSO as an operational requirement, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to disable the ability to use the USB Storage kernel module.
 
 Create a file under "/etc/modprobe.d" with the following command:
 
-# touch /etc/modprobe.d/usb-storage.conf
+     # touch /etc/modprobe.d/usb-storage.conf
 
 Add the following line to the created file:
 
-install usb-storage /bin/true
+     install usb-storage /bin/false
 
 Configure the operating system to disable the ability to use USB mass storage devices.
 
-# vi /etc/modprobe.d/blacklist.conf
+     # vi /etc/modprobe.d/blacklist.conf
 
 Add or update the line:
 
-blacklist usb-storage</pre></td>
+     blacklist usb-storage</pre></td>
 	<td>RHEL-07-020100</td>
-	<td>SV-204449r853891_rule</td>
+	<td>SV-204449r942894_rule</td>
 </tr>
 
 <tr>
@@ -1937,9 +1936,8 @@ blacklist usb-storage</pre></td>
 	<td><pre>Disabling DCCP protects the system against exploitation of any flaws in the protocol implementation.</pre></td>
 	<td><pre>Verify the operating system disables the ability to load the DCCP kernel module.
 
-# grep -r dccp /etc/modprobe.d/* | grep -i "/bin/true" | grep -v "^#"
-
-install dccp /bin/true
+     # grep -r dccp /etc/modprobe.d/* | grep -i "/bin/false" | grep -v "^#"
+     install dccp /bin/false
 
 If the command does not return any output, or the line is commented out, and use of DCCP is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.
 
@@ -1947,30 +1945,29 @@ Verify the operating system disables the ability to use the DCCP kernel module.
 
 Check to see if the DCCP kernel module is disabled with the following command:
 
-# grep -i dccp /etc/modprobe.d/* | grep -i "blacklist" | grep -v "^#"
+     # grep -i dccp /etc/modprobe.d/* | grep -i "blacklist" | grep -v "^#"
+     blacklist dccp
 
-blacklist dccp
-
-If the command does not return any output or the output is not "blacklist dccp", and use of the dccp kernel module is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</pre></td>
+If the command does not return any output or the output is not "blacklist dccp", and use of the dccp kernel module is not documented with the ISSO as an operational requirement, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to disable the ability to use the DCCP kernel module.
 
 Create a file under "/etc/modprobe.d" with the following command:
 
-# touch /etc/modprobe.d/dccp.conf
+     # touch /etc/modprobe.d/dccp.conf
 
 Add the following line to the created file:
 
-install dccp /bin/true
+     install dccp /bin/false
 
 Ensure that the DCCP module is blacklisted: 
 
-# vi /etc/modprobe.d/blacklist.conf
+     # vi /etc/modprobe.d/blacklist.conf
 
 Add or update the line:
 
-blacklist dccp</pre></td>
+     blacklist dccp</pre></td>
 	<td>RHEL-07-020101</td>
-	<td>SV-204450r853892_rule</td>
+	<td>SV-204450r942897_rule</td>
 </tr>
 
 <tr>
@@ -2037,25 +2034,23 @@ clean_requirements_on_remove=1</pre></td>
 	<td><pre>Without verification of the security functions, security functions may not operate correctly and the failure may go unnoticed. Security function is defined as the hardware, software, and/or firmware of the information system responsible for enforcing the system security policy and supporting the isolation of code and data on which the protection is based. Security functionality includes, but is not limited to, establishing system accounts, configuring access authorizations (i.e., permissions, privileges), setting events to be audited, and setting intrusion detection parameters.
 
 This requirement applies to operating systems performing security function verification/testing and/or systems and environments that require this functionality.</pre></td>
-	<td><pre>Per OPORD 16-0080, the preferred endpoint security tool is Endpoint Security for Linux (ENSL) in conjunction with SELinux.
-
-Verify the operating system verifies correct operation of all security functions.
+	<td><pre>Verify the operating system verifies correct operation of all security functions.
 
 Check if "SELinux" is active and in "Enforcing" mode with the following command:
 
-# getenforce
-Enforcing
+     # getenforce
+     Enforcing
 
 If "SELinux" is not active and not in "Enforcing" mode, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to verify correct operation of all security functions.
 
 Set the "SELinux" status and the "Enforcing" mode by modifying the "/etc/selinux/config" file to have the following line:
 
-SELINUX=enforcing
+     SELINUX=enforcing
 
 A reboot is required for the changes to take effect.</pre></td>
 	<td>RHEL-07-020210</td>
-	<td>SV-204453r853895_rule</td>
+	<td>SV-204453r942900_rule</td>
 </tr>
 
 <tr>
@@ -2067,50 +2062,38 @@ A reboot is required for the changes to take effect.</pre></td>
 	<td><pre>Without verification of the security functions, security functions may not operate correctly and the failure may go unnoticed. Security function is defined as the hardware, software, and/or firmware of the information system responsible for enforcing the system security policy and supporting the isolation of code and data on which the protection is based. Security functionality includes, but is not limited to, establishing system accounts, configuring access authorizations (i.e., permissions, privileges), setting events to be audited, and setting intrusion detection parameters.
 
 This requirement applies to operating systems performing security function verification/testing and/or systems and environments that require this functionality.</pre></td>
-	<td><pre>Per OPORD 16-0080, the preferred endpoint security tool is Endpoint Security for Linux (ENSL) in conjunction with SELinux.
-
-Verify the operating system verifies correct operation of all security functions.
+	<td><pre>Verify the operating system verifies correct operation of all security functions.
 
 Check if "SELinux" is active and is enforcing the targeted policy with the following command:
 
-# sestatus
-
-SELinux status: enabled
-
-SELinuxfs mount: /selinux
-
-SELinux root directory: /etc/selinux
-
-Loaded policy name: targeted
-
-Current mode: enforcing
-
-Mode from config file: enforcing
-
-Policy MLS status: enabled
-
-Policy deny_unknown status: allowed
-
-Max kernel policy version: 28
+     # sestatus
+     SELinux status: enabled
+     SELinuxfs mount: /selinux
+     SELinux root directory: /etc/selinux
+     Loaded policy name: targeted
+     Current mode: enforcing
+     Mode from config file: enforcing
+     Policy MLS status: enabled
+     Policy deny_unknown status: allowed
+     Max kernel policy version: 28
 
 If the "Loaded policy name" is not set to "targeted", this is a finding.
 
 Verify that the /etc/selinux/config file is configured to the "SELINUXTYPE" to "targeted":
 
-# grep -i "selinuxtype" /etc/selinux/config | grep -v '^#'
-
-SELINUXTYPE = targeted
+     # grep -i "selinuxtype" /etc/selinux/config | grep -v '^#'
+     SELINUXTYPE = targeted
 
 If no results are returned or "SELINUXTYPE" is not set to "targeted", this is a finding.</pre></td>
 	<td><pre>Configure the operating system to verify correct operation of all security functions.
 
 Set the "SELinuxtype" to the "targeted" policy by modifying the "/etc/selinux/config" file to have the following line:
 
-SELINUXTYPE=targeted
+     SELINUXTYPE=targeted
 
 A reboot is required for the changes to take effect.</pre></td>
 	<td>RHEL-07-020220</td>
-	<td>SV-204454r853896_rule</td>
+	<td>SV-204454r942903_rule</td>
 </tr>
 
 <tr>
@@ -5400,34 +5383,33 @@ Verify the operating system implements cryptography to protect the integrity of 
 
 To determine if LDAP is being used for authentication, use the following command:
 
-# systemctl status sssd.service
-sssd.service - System Security Services Daemon
-Loaded: loaded (/usr/lib/systemd/system/sssd.service; enabled; vendor preset: disabled)
-Active: active (running) since Wed 2018-06-27 10:58:11 EST; 1h 50min ago
+     # systemctl status sssd.service
+     sssd.service - System Security Services Daemon
+     Loaded: loaded (/usr/lib/systemd/system/sssd.service; enabled; vendor preset: disabled)
+     Active: active (running) since Wed 2018-06-27 10:58:11 EST; 1h 50min ago
 
 If the "sssd.service" is "active", then LDAP is being used. 
 
 Determine the "id_provider" the LDAP is currently using:
 
-# grep -i "id_provider" /etc/sssd/sssd.conf
-
-id_provider = ad
+     # grep -ir id_provider /etc/sssd/sssd.conf /etc/sssd/conf.d/*.conf
+     id_provider = ad
 
 If "id_provider" is set to "ad", this is Not Applicable.
 
 Ensure that LDAP is configured to use TLS by using the following command:
 
-# grep -i "start_tls" /etc/sssd/sssd.conf
-ldap_id_use_start_tls = true
+     # grep -ir start_tls /etc/sssd/sssd.conf /etc/sssd/conf.d/*.conf
+     ldap_id_use_start_tls = true
 
 If the "ldap_id_use_start_tls" option is not "true", this is a finding.</pre></td>
 	<td><pre>Configure the operating system to implement cryptography to protect the integrity of LDAP authentication sessions.
 
 Add or modify the following line in "/etc/sssd/sssd.conf":
 
-ldap_id_use_start_tls = true</pre></td>
+     ldap_id_use_start_tls = true</pre></td>
 	<td>RHEL-07-040180</td>
-	<td>SV-204581r877394_rule</td>
+	<td>SV-204581r942906_rule</td>
 </tr>
 
 <tr>
@@ -5445,25 +5427,24 @@ Verify the operating system implements cryptography to protect the integrity of 
 
 To determine if LDAP is being used for authentication, use the following command:
 
-# systemctl status sssd.service
-sssd.service - System Security Services Daemon
-Loaded: loaded (/usr/lib/systemd/system/sssd.service; enabled; vendor preset: disabled)
-Active: active (running) since Wed 2018-06-27 10:58:11 EST; 1h 50min ago
+     # systemctl status sssd.service
+     sssd.service - System Security Services Daemon
+     Loaded: loaded (/usr/lib/systemd/system/sssd.service; enabled; vendor preset: disabled)
+     Active: active (running) since Wed 2018-06-27 10:58:11 EST; 1h 50min ago
 
 If the "sssd.service" is "active", then LDAP is being used. 
 
 Determine the "id_provider" the LDAP is currently using:
 
-# grep -i "id_provider" /etc/sssd/sssd.conf
-
-id_provider = ad
+     # grep -ir id_provider /etc/sssd/sssd.conf /etc/sssd/conf.d/*.conf
+     id_provider = ad
 
 If "id_provider" is set to "ad", this is Not Applicable.
 
 Verify the sssd service is configured to require the use of certificates:
 
-# grep -i tls_reqcert /etc/sssd/sssd.conf
-ldap_tls_reqcert = demand
+     # grep -ir tls_reqcert /etc/sssd/sssd.conf /etc/sssd/conf.d/*.conf
+     ldap_tls_reqcert = demand
 
 If the "ldap_tls_reqcert" setting is missing, commented out, or does not exist, this is a finding.
 
@@ -5472,9 +5453,9 @@ If the "ldap_tls_reqcert" setting is not set to "demand" or "hard", this is a fi
 
 Add or modify the following line in "/etc/sssd/sssd.conf":
 
-ldap_tls_reqcert = demand</pre></td>
+     ldap_tls_reqcert = demand</pre></td>
 	<td>RHEL-07-040190</td>
-	<td>SV-204582r877394_rule</td>
+	<td>SV-204582r942909_rule</td>
 </tr>
 
 <tr>
@@ -5492,26 +5473,24 @@ Verify the operating system implements cryptography to protect the integrity of 
 
 To determine if LDAP is being used for authentication, use the following command:
 
-# systemctl status sssd.service
-sssd.service - System Security Services Daemon
-Loaded: loaded (/usr/lib/systemd/system/sssd.service; enabled; vendor preset: disabled)
-Active: active (running) since Wed 2018-06-27 10:58:11 EST; 1h 50min ago
+     # systemctl status sssd.service
+     sssd.service - System Security Services Daemon
+     Loaded: loaded (/usr/lib/systemd/system/sssd.service; enabled; vendor preset: disabled)
+     Active: active (running) since Wed 2018-06-27 10:58:11 EST; 1h 50min ago
 
 If the "sssd.service" is "active", then LDAP is being used.
 
 Determine the "id_provider" that the LDAP is currently using:
 
-# grep -i "id_provider" /etc/sssd/sssd.conf
-
-id_provider = ad
+     # grep -ir id_provider /etc/sssd/sssd.conf /etc/sssd/conf.d/*.conf
+     id_provider = ad
 
 If "id_provider" is set to "ad", this is Not Applicable.
 
 Check the path to the X.509 certificate for peer authentication with the following command:
 
-# grep -i tls_cacert /etc/sssd/sssd.conf
-
-ldap_tls_cacert = /etc/pki/tls/certs/ca-bundle.crt
+     # grep -ir tls_cacert /etc/sssd/sssd.conf /etc/sssd/conf.d/*.conf
+     ldap_tls_cacert = /etc/pki/tls/certs/ca-bundle.crt
 
 Verify the "ldap_tls_cacert" option points to a file that contains the trusted CA certificate.
 
@@ -5520,9 +5499,9 @@ If this file does not exist, or the option is commented out or missing, this is 
 
 Add or modify the following line in "/etc/sssd/sssd.conf":
 
-ldap_tls_cacert = /etc/pki/tls/certs/ca-bundle.crt</pre></td>
+     ldap_tls_cacert = /etc/pki/tls/certs/ca-bundle.crt</pre></td>
 	<td>RHEL-07-040200</td>
-	<td>SV-204583r877394_rule</td>
+	<td>SV-204583r942912_rule</td>
 </tr>
 
 <tr>
@@ -7166,23 +7145,20 @@ Alternatively, the package can be reinstalled from trusted media using the comma
 	<td>The Red Hat Enterprise Linux operating system must implement the Endpoint Security for Linux Threat Prevention tool.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>Adding endpoint security tools can provide the capability to automatically take actions in response to malicious behavior, which can provide additional agility in reacting to network threats. These tools also often include a reporting capability to provide network awareness of the system, which may not otherwise exist in an organization's systems management regime.</pre></td>
-	<td><pre>Per OPORD 16-0080, the preferred endpoint security tool is McAfee Endpoint Security for Linux (ENSL) in conjunction with SELinux. 
+	<td><pre>Check that the following package has been installed:
 
-Procedure:
-Check that the following package has been installed:
-
-# rpm -qa | grep -i mcafeetp
+     # rpm -qa | grep -i mcafeetp
 
 If the "mcafeetp" package is not installed, this is a finding.
 
 Verify that the daemon is running:
 
-# ps -ef | grep -i mfetpd
+     # ps -ef | grep -i mfetpd
 
 If the daemon is not running, this is a finding.</pre></td>
-	<td><pre>Install and enable the latest McAfee ENSLTP package.</pre></td>
+	<td><pre>Install and enable the latest Trellix ENSLTP package.</pre></td>
 	<td>RHEL-07-020019</td>
-	<td>SV-214800r854323_rule</td>
+	<td>SV-214800r942888_rule</td>
 </tr>
 
 <tr>
@@ -7594,27 +7570,25 @@ Use the following command to map the "user_u" SELinux user to the "user_r" role:
 	<td><pre>Preventing non-privileged users from executing privileged functions mitigates the risk that unauthorized individuals or processes may gain unnecessary access to information or privileges.
 
 Privileged functions include, for example, establishing accounts, performing system integrity checks, or administering cryptographic key management activities. Non-privileged users are individuals who do not possess appropriate authorizations. Circumventing intrusion detection and prevention mechanisms or malicious code protection mechanisms are examples of privileged functions that require protection from non-privileged users.</pre></td>
-	<td><pre>Note: Per OPORD 16-0080, the preferred endpoint security tool is Endpoint Security for Linux (ENSL) in conjunction with SELinux.
-
-Verify the operating system prevents privileged accounts from utilizing SSH.
+	<td><pre>Verify the operating system prevents privileged accounts from utilizing SSH.
 Check the SELinux ssh_sysadm_login boolean with the following command:
 
-$ sudo getsebool ssh_sysadm_login
-ssh_sysadm_login --> off
+     $ sudo getsebool ssh_sysadm_login
+     ssh_sysadm_login --> off
 
 If the "ssh_sysadm_login" boolean is not "off" and is not documented with the ISSO as an operational requirement, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to prevent privileged accounts from utilizing SSH.
 Use the following command to set the "ssh_sysadm_login" boolean to "off":
 
-$ sudo setsebool -P ssh_sysadm_login off
+     $ sudo setsebool -P ssh_sysadm_login off
 
 Note: SELinux confined users mapped to sysadm_u are not allowed to login to the system over SSH, by default. If this is a required function, it can be configured by setting the ssh_sysadm_login SELinux boolean to "on" with the following command:
 
-$ sudo setsebool -P ssh_sysadm_login on
+     $ sudo setsebool -P ssh_sysadm_login on
 
 This must be documented with the ISSO as an operational requirement.</pre></td>
 	<td>RHEL-07-020022</td>
-	<td>SV-250313r877392_rule</td>
+	<td>SV-250313r942891_rule</td>
 </tr>
 
 <tr>

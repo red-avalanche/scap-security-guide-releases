@@ -48,24 +48,23 @@
 <tr>
 <td>CCE-80857-6</td>
 <td>Verify File Hashes with RPM</td>
-<td>Without cryptographic integrity protections, system
-executables and files can be altered by unauthorized users without
-detection.
-The RPM package management system can check the hashes of
-installed software packages, including many that are important to system
-security.
-To verify that the cryptographic hash of system files and commands matches vendor
-values, run the following command to list which files on the system
-have hashes that differ from what is expected by the RPM database:
+<td>Without cryptographic integrity protections, system executables and files can be altered by
+unauthorized users without detection. The RPM package management system can check the hashes
+of installed software packages, including many that are important to system security.
+
+To verify that the cryptographic hash of system files and commands matches vendor values, run
+the following command to list which files on the system have hashes that differ from what is
+expected by the RPM database:
 <pre>$ rpm -Va --noconfig | grep '^..5'</pre>
-A "c" in the second column indicates that a file is a configuration file, which
-may appropriately be expected to change. If the file was not expected to
-change, investigate the cause of the change using audit logs or other means.
-The package can then be reinstalled to restore the file.
-Run the following command to determine which package owns the file:
+
+If the file was not expected to change, investigate the cause of the change using audit logs
+or other means. The package can then be reinstalled to restore the file. Run the following
+command to determine which package owns the file:
 <pre>$ rpm -qf <i>FILENAME</i></pre>
+
 The package can be reinstalled from a yum repository using the command:
 <pre>$ sudo yum reinstall <i>PACKAGENAME</i></pre>
+
 Alternatively, the package can be reinstalled from trusted media using the command:
 <pre>$ sudo rpm -Uvh <i>PACKAGENAME</i></pre>
 </td>
@@ -73,35 +72,31 @@ Alternatively, the package can be reinstalled from trusted media using the comma
 <tr>
 <td>CCE-82196-7</td>
 <td>Verify and Correct Ownership with RPM</td>
-<td>The RPM package management system can check file ownership
-permissions of installed software packages, including many that are
-important to system security. After locating a file with incorrect
-permissions, which can be found with
+<td>The RPM package management system can check file ownership permissions of installed software
+packages, including many that are important to system security. After locating a file with
+incorrect permissions, which can be found with:
 <pre>rpm -Va | awk '{ if (substr($0,6,1)=="U" || substr($0,7,1)=="G") print $NF }'</pre>
 run the following command to determine which package owns it:
 <pre>$ rpm -qf <i>FILENAME</i></pre>
-Next, run the following command to reset its permissions to
-the correct values:
+Next, run the following command to reset its permissions to the correct values:
 <pre>$ sudo rpm --setugids <i>PACKAGENAME</i></pre>
 </td>
 </tr>
 <tr>
 <td>CCE-80858-4</td>
 <td>Verify and Correct File Permissions with RPM</td>
-<td>The RPM package management system can check file access permissions
-of installed software packages, including many that are important
-to system security.
-Verify that the file permissions of system files
-and commands match vendor values. Check the file permissions
-with the following command:
+<td>The RPM package management system can check file access permissions of installed software
+packages, including many that are important to system security. Verify that the file
+permissions of system files and commands match vendor values. Check the file permissions with
+the following command:
 <pre>$ sudo rpm -Va | awk '{ if (substr($0,2,1)=="M") print $NF }'</pre>
 Output indicates files that do not match vendor defaults.
-After locating a file with incorrect permissions,
-run the following command to determine which package owns it:
+
+After locating a file with incorrect permissions, run the following command to determine which
+package owns it:
 <pre>$ rpm -qf <i>FILENAME</i></pre>
 <br>
-Next, run the following command to reset its permissions to
-the correct values:
+Next, run the following command to reset its permissions to the correct values:
 <pre>$ sudo rpm --setperms <i>PACKAGENAME</i></pre>
 </td>
 </tr>
@@ -164,7 +159,7 @@ Otherwise, add the following line to <code>/etc/crontab</code>:
 AIDE can be executed periodically through other means; this is merely one example.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86404-1</td>
 <td>Configure AIDE to Use FIPS 140-2 for Validating Hashes</td>
 <td>By default, the <code>sha512</code> option is added to the <code>NORMAL</code> ruleset in AIDE.
 If using a custom ruleset or the <code>sha512</code> option is missing, add <code>sha512</code>
@@ -676,9 +671,9 @@ option.</td>
 <tr>
 <td>CCE-86282-1</td>
 <td>Ensure /dev/shm is configured</td>
-<td>The <code>/dev/shm</code> is a traditional shared memory concept. 
-One program will create a memory portion, which other processes 
-(if permitted) can access. If <code>/dev/shm</code> is not configured, 
+<td>The <code>/dev/shm</code> is a traditional shared memory concept.
+One program will create a memory portion, which other processes
+(if permitted) can access. If <code>/dev/shm</code> is not configured,
 tmpfs will be mounted to /dev/shm by systemd.</td>
 </tr>
 <tr>
@@ -2028,7 +2023,7 @@ When entering a warning banner that spans several lines, remember
 to begin and end the string with <code>'</code> and use <code>\n</code> for new lines.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86225-0</td>
 <td>Install pam_pwquality Package</td>
 <td>
 The <code>libpwquality</code> package can be installed with the following command:
@@ -2149,7 +2144,7 @@ defined to work as expected.
 
 Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
 <code>deny = &lt;count&gt;</code>
-Where count should be less than or equal to 
+Where count should be less than or equal to
 <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_deny" use="legacy"></xccdf-1.2:sub> and greater than 0.
 
 
@@ -2991,6 +2986,12 @@ assigned.</td>
 altered privileges through the <code>su</code> command.</td>
 </tr>
 <tr>
+<td>CCE-86517-0</td>
+<td>Ensure Authentication Required for Single User Mode</td>
+<td>Single user mode is used for recovery when the system detects an
+issue during boot or by manual selection from the bootloader.</td>
+</tr>
+<tr>
 <td>CCE-80840-2</td>
 <td>Direct root Logins Not Allowed</td>
 <td>To further limit access to the <code>root</code> account, administrators
@@ -3148,11 +3149,13 @@ The <code>TMOUT</code>
 
 setting in a file loaded by <code>/etc/profile</code>, e.g.
 <code>/etc/profile.d/tmout.sh</code> should read as follows:
+<pre>typeset -xr TMOUT=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_tmout" use="legacy"></xccdf-1.2:sub></pre>
+or
 <pre>declare -xr TMOUT=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_tmout" use="legacy"></xccdf-1.2:sub></pre>
-</td>
+Using the <code>typeset</code> keyword is preferred for wider compatibility with ksh and other shells.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86314-2</td>
 <td>User Initialization Files Must Be Group-Owned By The Primary Group</td>
 <td>Change the group owner of interactive users files to the group found
 in <pre>/etc/passwd</pre> for the user. To change the group owner of a local
@@ -3171,7 +3174,7 @@ following command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86316-7</td>
 <td>User Initialization Files Must Be Owned By the Primary User</td>
 <td>Set the owner of the user initialization files for interactive users to
 the primary owner with the following command:
@@ -4047,14 +4050,14 @@ than the <code>root</code> group account, change the group ownership of the audi
 to this specific group.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86405-8</td>
 <td>Audit Configuration Files Must Be Owned By Group root</td>
 <td>All audit configuration files must be owned by group root.
 <pre>chown :root /etc/audit/audit*.{rules,conf} /etc/audit/rules.d/*</pre>
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86406-6</td>
 <td>Audit Configuration Files Must Be Owned By Root</td>
 <td>All audit configuration files must be owned by root user.
 
@@ -4089,7 +4092,7 @@ To properly set the owner of <code>/var/log/audit/*</code>, run the command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86407-4</td>
 <td>Audit Configuration Files Permissions are 640 or More Restrictive</td>
 <td>All audit configuration files permissions must be 640 or more restrictive.
 <pre>chmod 0640 /etc/audit/audit*.{rules,conf} /etc/audit/rules.d/*</pre>
@@ -6165,7 +6168,7 @@ If the system is 64 bit then also add the following lines:
 <td>To capture kernel module loading and unloading events, use following lines, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 <pre>
--a always,exit -F arch=<i>ARCH</i> -S init_module,finit_module,delete_module -F key=modules
+-a always,exit -F arch=<i>ARCH</i> -S init_module,finit_module,delete_module -F auid&gt;=1000 -F auid!=unset -F key=modules
 </pre>
 
 The place to add the lines depends on a way <code>auditd</code> daemon is configured. If it is configured
@@ -7530,8 +7533,14 @@ The following rules configure audit as described above:
 -a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
 -a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
 -a always,exit -F path=/usr/bin/at -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F path=/usr/sbin/grub2-set-bootflag -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
 
 ## Privilege escalation via su or sudo. This is entirely handled by pam.
+## Special case for systemd-run. It is not audit aware, specifically watch it
+-a always,exit -F path=/usr/bin/systemd-run -F perm=x -F auid!=unset -F key=maybe-escalation
+## Special case for pkexec. It is not audit aware, specifically watch it
+-a always,exit -F path=/usr/bin/pkexec -F perm=x -F key=maybe-escalation
+
 
 ## Watch for configuration changes to privilege escalation.
 -a always,exit -F path=/etc/sudoers -F perm=wa -F key=special-config-changes
@@ -9320,7 +9329,7 @@ not, use the following as an example configuration:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86467-8</td>
 <td>Install systemd-journal-remote Package</td>
 <td>Journald (via systemd-journal-remote ) supports the ability to send
 log events it gathers to a remote log host or to receive messages
@@ -9627,6 +9636,38 @@ command:
 <td>Red Hat Enterprise Linux 8 incorporates the "firewalld" daemon, which allows for many different configurations. One of these configurations is zones.
 Zones can be utilized to a deny-all, allow-by-exception approach.
 The default "drop" zone will drop all incoming network packets unless it is explicitly allowed by the configuration file or is related to an outgoing network connection.</td>
+</tr>
+<tr>
+<td>CCE-87272-1</td>
+<td>Configure Firewalld to Restrict Loopback Traffic</td>
+<td>Configure <code>firewalld</code> to restrict loopback traffic to the <code>lo</code> interface.
+
+The loopback traffic must be trusted by assigning the <code>lo</code> interface to the
+<code>firewalld</code> <code>trusted</code> zone. However, the loopback traffic must be restricted
+to the loopback interface as an anti-spoofing measure.
+
+To configure <code>firewalld</code> to restrict loopback traffic to the <code>lo</code> interface,
+run the following commands:
+<pre>
+sudo firewall-cmd --permanent --zone=trusted --add-rich-rule='rule family=ipv4 source address="127.0.0.1" destination not address="127.0.0.1" drop'
+sudo firewall-cmd --permanent --zone=trusted --add-rich-rule='rule family=ipv6 source address="::1" destination not address="::1" drop'
+</pre>
+
+To ensure <code>firewalld</code> settings are applied in runtime, run the following command:
+<pre>firewall-cmd --reload</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-87278-8</td>
+<td>Configure Firewalld to Trust Loopback Traffic</td>
+<td>Assign loopback interface to the <code>firewalld</code> <code>trusted</code> zone in order to
+explicitly allow the loopback traffic in the system.
+
+To configure <code>firewalld</code> to trust loopback traffic, run the following command:
+<pre>sudo firewall-cmd --permanent --zone=trusted --add-interface=lo</pre>
+To ensure <code>firewalld</code> settings are applied in runtime, run the following command:
+<pre>firewall-cmd --reload</pre>
+</td>
 </tr>
 <tr>
 <td>CCE-80890-7</td>
@@ -10345,7 +10386,7 @@ add the following line to file <code>/etc/modprobe.d/tipc.conf</code>:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-87231-7</td>
 <td>Disable Bluetooth Service</td>
 <td>
 The <code>bluetooth</code> service can be disabled with the following command:
@@ -10444,30 +10485,24 @@ Following this, the files should be deleted or assigned to root user.</td>
 <tr>
 <td>CCE-80783-4</td>
 <td>Verify that All World-Writable Directories Have Sticky Bits Set</td>
-<td>When the so-called 'sticky bit' is set on a directory,
-only the owner of a given file may remove that file from the
-directory. Without the sticky bit, any user with write access to a
-directory may remove any file in the directory. Setting the sticky
-bit prevents users from removing each other's files. In cases where
-there is no reason for a directory to be world-writable, a better
-solution is to remove that permission rather than to set the sticky
-bit. However, if a directory is used by a particular application,
-consult that application's documentation instead of blindly
-changing modes.
+<td>When the so-called 'sticky bit' is set on a directory, only the owner of a given file may
+remove that file from the directory. Without the sticky bit, any user with write access to a
+directory may remove any file in the directory. Setting the sticky bit prevents users from
+removing each other's files. In cases where there is no reason for a directory to be
+world-writable, a better solution is to remove that permission rather than to set the sticky
+bit. However, if a directory is used by a particular application, consult that application's
+documentation instead of blindly changing modes.
 <br>
-To set the sticky bit on a world-writable directory <i>DIR</i>, run the
-following command:
+To set the sticky bit on a world-writable directory <i>DIR</i>, run the following command:
 <pre>$ sudo chmod +t <i>DIR</i></pre>
 </td>
 </tr>
 <tr>
 <td></td>
 <td>Ensure All World-Writable Directories Are Owned by a System Account</td>
-<td>All directories in local partitions which are
-world-writable should be owned by root or another
-system account. If any world-writable directories are not
-owned by a system account, this should be investigated.
-Following this, the files should be deleted or assigned to an
+<td>All directories in local partitions which are world-writable should be owned by root or
+another system account. If any world-writable directories are not owned by a system account,
+this should be investigated. Following this, the files should be deleted or assigned to an
 appropriate owner.</td>
 </tr>
 <tr>
@@ -10509,68 +10544,63 @@ To properly set the permissions of <code>/boot/System.map-*</code>, run the comm
 <tr>
 <td>CCE-80816-2</td>
 <td>Ensure All SGID Executables Are Authorized</td>
-<td>The SGID (set group id) bit should be set only on files that were
-installed via authorized means. A straightforward means of identifying
-unauthorized SGID files is determine if any were not installed as part of an
-RPM package, which is cryptographically verified. Investigate the origin
-of any unpackaged SGID files.
-This configuration check considers authorized SGID files which were installed via RPM.
-It is assumed that when an individual has sudo access to install an RPM
-and all packages are signed with an organizationally-recognized GPG key,
-the software should be considered an approved package on the system.
-Any SGID file not deployed through an RPM will be flagged for further review.</td>
+<td>The SGID (set group id) bit should be set only on files that were installed via authorized
+means. A straightforward means of identifying unauthorized SGID files is determine if any were
+not installed as part of an RPM package, which is cryptographically verified. Investigate the
+origin of any unpackaged SGID files. This configuration check considers authorized SGID files
+those which were installed via RPM. It is assumed that when an individual has sudo access to
+install an RPM and all packages are signed with an organizationally-recognized GPG key, the
+software should be considered an approved package on the system. Any SGID file not deployed
+through an RPM will be flagged for further review.</td>
 </tr>
 <tr>
 <td>CCE-80817-0</td>
 <td>Ensure All SUID Executables Are Authorized</td>
-<td>The SUID (set user id) bit should be set only on files that were
-installed via authorized means. A straightforward means of identifying
-unauthorized SUID files is determine if any were not installed as part of an
-RPM package, which is cryptographically verified. Investigate the origin
-of any unpackaged SUID files.
-This configuration check considers authorized SUID files which were installed via RPM.
-It is assumed that when an individual has sudo access to install an RPM
-and all packages are signed with an organizationally-recognized GPG key,
-the software should be considered an approved package on the system.
-Any SUID file not deployed through an RPM will be flagged for further review.</td>
+<td>The SUID (set user id) bit should be set only on files that were installed via authorized
+means. A straightforward means of identifying unauthorized SUID files is determine if any were
+not installed as part of an RPM package, which is cryptographically verified. Investigate the
+origin of any unpackaged SUID files. This configuration check considers authorized SUID files
+those which were installed via RPM. It is assumed that when an individual has sudo access to
+install an RPM and all packages are signed with an organizationally-recognized GPG key, the
+software should be considered an approved package on the system. Any SUID file not deployed
+through an RPM will be flagged for further review.</td>
 </tr>
 <tr>
 <td>CCE-80818-8</td>
 <td>Ensure No World-Writable Files Exist</td>
-<td>It is generally a good idea to remove global (other) write
-access to a file when it is discovered. However, check with
-documentation for specific applications before making changes.
-Also, monitor for recurring world-writable files, as these may be
-symptoms of a misconfigured application or user account. Finally,
-this applies to real files and not virtual files that are a part of
-pseudo file systems such as <code>sysfs</code> or <code>procfs</code>.</td>
+<td>It is generally a good idea to remove global (other) write access to a file when it is
+discovered. However, check with documentation for specific applications before making changes.
+Also, monitor for recurring world-writable files, as these may be symptoms of a misconfigured
+application or user account. Finally, this applies to real files and not virtual files that
+are a part of pseudo file systems such as <code>sysfs</code> or <code>procfs</code>.</td>
 </tr>
 <tr>
 <td>CCE-83497-8</td>
 <td>Ensure All Files Are Owned by a Group</td>
-<td>If any files are not owned by a group, then the
-cause of their lack of group-ownership should be investigated.
-Following this, the files should be deleted or assigned to an
-appropriate group. The following command will discover and print
-any files on local partitions which do not belong to a valid group:
-<pre>$ df --local -P | awk '{if (NR!=1) print $6}' | sudo xargs -I '{}' find '{}' -xdev -nogroup</pre>
-To search all filesystems on a system including network mounted
-filesystems the following command can be run manually for each partition:
-<pre>$ sudo find PARTITION -xdev -nogroup</pre>
+<td>If any file is not group-owned by a group present in /etc/group, the cause of the lack of
+group-ownership must be investigated. Following this, those files should be deleted or
+assigned to an appropriate group.
+
+Locate the mount points related to local devices by the following command:
+<pre>$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)</pre>
+
+For all mount points listed by the previous command, it is necessary to search for files which
+do not belong to a valid group using the following command:
+<pre>$ sudo find <i>MOUNTPOINT</i> -xdev -nogroup 2&gt;/dev/null</pre>
 </td>
 </tr>
 <tr>
 <td>CCE-83499-4</td>
 <td>Ensure All Files Are Owned by a User</td>
-<td>If any files are not owned by a user, then the
-cause of their lack of ownership should be investigated.
-Following this, the files should be deleted or assigned to an
-appropriate user. The following command will discover and print
-any files on local partitions which do not belong to a valid user:
-<pre>$ df --local -P | awk {'if (NR!=1) print $6'} | sudo xargs -I '{}' find '{}' -xdev -nouser</pre>
-To search all filesystems on a system including network mounted
-filesystems the following command can be run manually for each partition:
-<pre>$ sudo find PARTITION -xdev -nouser</pre>
+<td>If any files are not owned by a user, then the cause of their lack of ownership should be
+investigated. Following this, the files should be deleted or assigned to an appropriate user.
+
+Locate the mount points related to local devices by the following command:
+<pre>$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)</pre>
+
+For all mount points listed by the previous command, it is necessary to search for files which
+do not belong to a valid user using the following command:
+<pre>$ sudo find <i>MOUNTPOINT</i> -xdev -nouser 2&gt;/dev/null</pre>
 </td>
 </tr>
 <tr>
@@ -10585,6 +10615,14 @@ To make sure that the setting is persistent, add the following line to a file in
 <td>Enable Kernel Parameter to Enforce DAC on Symlinks</td>
 <td>To set the runtime status of the <code>fs.protected_symlinks</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.protected_symlinks=1</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.protected_symlinks = 1</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86140-1</td>
+<td>Verify Permissions and Ownership of Old Passwords File</td>
+<td> To properly set the owner of <code>/etc/security/opasswd</code>, run the command: <pre>$ sudo chown root /etc/security/opasswd </pre>
+To properly set the group owner of <code>/etc/security/opasswd</code>, run the command: <pre>$ sudo chgrp root /etc/security/opasswd</pre>
+To properly set the permissions of <code>/etc/security/opasswd</code>, run the command: <pre>$ sudo chmod 0600 /etc/security/opasswd</pre>
 </td>
 </tr>
 <tr>
@@ -10636,6 +10674,14 @@ To make sure that the setting is persistent, add the following line to a file in
 </td>
 </tr>
 <tr>
+<td>CCE-87030-3</td>
+<td>Verify Group Who Owns /etc/shells File</td>
+<td>
+To properly set the group owner of <code>/etc/shells</code>, run the command:
+<pre>$ sudo chgrp root /etc/shells</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-83473-9</td>
 <td>Verify User Who Owns Backup group File</td>
 <td> To properly set the owner of <code>/etc/group-</code>, run the command: <pre>$ sudo chown root /etc/group- </pre>
@@ -10684,6 +10730,14 @@ To make sure that the setting is persistent, add the following line to a file in
 </td>
 </tr>
 <tr>
+<td>CCE-87055-0</td>
+<td>Verify Who Owns /etc/shells File</td>
+<td>
+To properly set the owner of <code>/etc/shells</code>, run the command:
+<pre>$ sudo chown root /etc/shells </pre>
+</td>
+</tr>
+<tr>
 <td>CCE-83483-8</td>
 <td>Verify Permissions on Backup group File</td>
 <td>
@@ -10719,8 +10773,8 @@ To properly set the permissions of <code>/etc/shadow-</code>, run the command:
 <td>CCE-80810-5</td>
 <td>Verify Permissions on group File</td>
 <td>
-To properly set the permissions of <code>/etc/passwd</code>, run the command:
-<pre>$ sudo chmod 0644 /etc/passwd</pre>
+To properly set the permissions of <code>/etc/group</code>, run the command:
+<pre>$ sudo chmod 0644 /etc/group</pre>
 </td>
 </tr>
 <tr>
@@ -10745,6 +10799,14 @@ To properly set the permissions of <code>/etc/passwd</code>, run the command:
 <td>
 To properly set the permissions of <code>/etc/shadow</code>, run the command:
 <pre>$ sudo chmod 0000 /etc/shadow</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86634-3</td>
+<td>Verify Permissions on /etc/shells File</td>
+<td>
+To properly set the permissions of <code>/etc/shells</code>, run the command:
+<pre>$ sudo chmod 0644 /etc/shells</pre>
 </td>
 </tr>
 <tr>
@@ -11131,7 +11193,7 @@ Linux filesystem embedded in small footprint systems. A
 decompress the image.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86615-2</td>
 <td>Disable Mounting of freevxfs</td>
 <td>
 To configure the system to prevent the <code>freevxfs</code>
@@ -11145,7 +11207,7 @@ add the following line to file <code>/etc/modprobe.d/freevxfs.conf</code>:
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86616-0</td>
 <td>Disable Mounting of hfs</td>
 <td>
 To configure the system to prevent the <code>hfs</code>
@@ -11159,7 +11221,7 @@ add the following line to file <code>/etc/modprobe.d/hfs.conf</code>:
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86617-8</td>
 <td>Disable Mounting of hfsplus</td>
 <td>
 To configure the system to prevent the <code>hfsplus</code>
@@ -11173,7 +11235,7 @@ add the following line to file <code>/etc/modprobe.d/hfsplus.conf</code>:
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86618-6</td>
 <td>Disable Mounting of jffs2</td>
 <td>
 To configure the system to prevent the <code>jffs2</code>
@@ -15554,6 +15616,12 @@ To properly set the permissions of <code>/etc/crontab</code>, run the command:
 Use <code>/etc/at.allow</code> instead.</td>
 </tr>
 <tr>
+<td>CCE-86184-9</td>
+<td>Ensure that /etc/cron.allow exists</td>
+<td>The file <code>/etc/cron.allow</code> should exist and should be used instead
+of <code>/etc/cron.deny</code>.</td>
+</tr>
+<tr>
 <td>CCE-86849-7</td>
 <td>Ensure that /etc/cron.deny does not exist</td>
 <td>The file <code>/etc/cron.deny</code> should not exist.
@@ -15856,6 +15924,18 @@ The <code>fapolicyd</code> service can be enabled with the following command:
 <td></td>
 <td>fapolicyd Must be Configured to Limit Access to Users Home Folders</td>
 <td>fapolicyd needs be configured so that users cannot give access to their home folders to other users.</td>
+</tr>
+<tr>
+<td>CCE-90745-1</td>
+<td>Remove ftp Package</td>
+<td>FTP (File Transfer Protocol) is a traditional and widely used standard tool for
+transferring files between a server and clients over a network, especially where no
+authentication is necessary (permits anonymous users to connect to a server).
+<br>
+The <code>ftp</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase ftp</pre>
+</td>
 </tr>
 <tr>
 <td>CCE-82414-4</td>
@@ -16596,6 +16676,14 @@ intended for use as a Kerberos Server it should be removed.</td>
 Common Criteria. To prevent using Kerberos by system daemons,
 remove the Kerberos keytab files, especially
 <code>/etc/krb5.keytab</code>.</td>
+</tr>
+<tr>
+<td>CCE-82728-7</td>
+<td>Uninstall 389-ds-base Package</td>
+<td>The 389-ds-base RPM is not installed by default on a Red Hat Enterprise Linux 8
+system. It is needed only by the 389-ds server, not by the
+clients which use LDAP for authentication. If the system is not
+intended for use as an LDAP Server it should be removed.</td>
 </tr>
 <tr>
 <td>CCE-82885-5</td>
@@ -18346,6 +18434,24 @@ The rule is parametrized to use the following MACs: <code><xccdf-1.2:sub xmlns:x
 has the privilege of the authenticated user. To enable privilege separation in
 SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <pre>UsePrivilegeSeparation <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_sshd_priv_separation" use="legacy"></xccdf-1.2:sub></pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86518-8</td>
+<td>Use Only Strong Key Exchange algorithms</td>
+<td>Limit the Key Exchange to strong algorithms.
+The following line in <code>/etc/ssh/sshd_config</code> demonstrates use
+of those:
+<pre>KexAlgorithms <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sshd_strong_kex" use="legacy"></xccdf-1.2:sub></pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86504-8</td>
+<td>Use Only Strong MACs</td>
+<td>Limit the MACs to strong hash algorithms.
+The following line in <code>/etc/ssh/sshd_config</code> demonstrates use
+of those MACs:
+<pre>MACs <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sshd_strong_macs" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>

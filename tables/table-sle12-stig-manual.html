@@ -48,9 +48,9 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>215</td>
+			<td>214</td>
 			<td>0</td>
-			<td>215</td>
+			<td>214</td>
 			<td>100.00%</td>
 			<td>
 				
@@ -542,7 +542,7 @@ Check that the lock screen is set to a publicly viewable image by running the fo
 If nothing is returned or "org.gnome.desktop.screensaver" is not set, this is a finding.</pre></td>
 	<td><pre>Note: If the system does not have X Windows installed, this requirement is Not Applicable.
 
-Configure the SUSE operating system to use a publically viewable image by finding the Settings menu and then navigate to the Background selection section: 
+Configure the SUSE operating system to use a publicly viewable image by finding the Settings menu and then navigate to the Background selection section: 
 
 - Click "Applications" on the bottom left.
 - Hover over "System Tools" with the mouse.
@@ -552,7 +552,7 @@ Configure the SUSE operating system to use a publically viewable image by findin
 - Click "Select".
 - Exit Settings Dialog.</pre></td>
 	<td>SLES-12-010100</td>
-	<td>SV-217111r603262_rule</td>
+	<td>SV-217111r918489_rule</td>
 </tr>
 
 <tr>
@@ -1172,7 +1172,7 @@ Replace "[Emergency_Administrator]" in the following command with the correct em
 	<td><pre>Inactive identifiers pose a risk to systems and applications because attackers may exploit an inactive identifier and potentially obtain undetected access to the system. Owners of inactive accounts will not notice if unauthorized access to their user account has been obtained.
 
 The SUSE operating system needs to track periods of inactivity and disable application identifiers after 35 days of inactivity.</pre></td>
-	<td><pre>Verify the SUSE operating system disables account identifiers after "35" days of inactivity after the password expiration
+	<td><pre>Verify the SUSE operating system disables account identifiers after 35 days of inactivity since the password expiration
 
 Check the account inactivity value by performing the following command:
 
@@ -1181,48 +1181,15 @@ Check the account inactivity value by performing the following command:
 INACTIVE=35
 
 If "INACTIVE" is not set to a value greater than "0" and less than or equal to "35", this is a finding.</pre></td>
-	<td><pre>Configure the SUSE operating system to disable account identifiers after "35" days of inactivity after the password expiration. 
+	<td><pre>Configure the SUSE operating system to disable account identifiers after 35 days of inactivity since the password expiration. 
 
-Run the following command to change the configuration for "useradd" to disable the account identifier after "35" days:
+Run the following command to change the configuration for "useradd" to disable the account identifier after 35 days:
 
 # sudo useradd -D -f 35
 
-DoD recommendation is "35" days, but a lower value greater than "0" is acceptable.</pre></td>
+DOD recommendation is 35 days, but a lower value greater than "0" is acceptable.</pre></td>
 	<td>SLES-12-010340</td>
-	<td>SV-217136r603262_rule</td>
-</tr>
-
-<tr>
-	<td>V-217137</td>
-	<td>SV-91825</td>
-	<td>medium</td>
-	<td>The SUSE operating system must provision temporary accounts with an expiration date for 72 hours.</td>
-	<td>SRG-OS-000002-GPOS-00002</td>
-	<td><pre>If temporary user accounts remain active when no longer needed or for an excessive period, these accounts may be used to gain unauthorized access. To mitigate this risk, automated termination of all temporary accounts must be set upon account creation.
-
-Temporary accounts are established as part of normal account activation procedures when there is a need for short-term accounts without the demand for immediacy in account activation.
-
-If temporary accounts are used, the SUSE operating system must be configured to automatically terminate these types of accounts after a DoD-defined time period of 72 hours.
-
-To address access requirements, many SUSE operating systems may be integrated with enterprise-level authentication/access mechanisms that meet or exceed access control policy requirements.</pre></td>
-	<td><pre>Verify that the SUSE operating system provisions temporary accounts with an expiration date for "72" hours.
-
-Ask the System Administrator if any temporary accounts have been added to the system. For every existing temporary account, run the following command to obtain its account expiration information:
-
-# sudo chage -l system_account_name
-
-Verify each of these accounts has an expiration date that is within "72" hours of its creation.
-
-If any temporary accounts have no expiration date set or do not expire within "72" hours of their creation, this is a finding.</pre></td>
-	<td><pre>In the event temporary accounts are required, configure the SUSE operating system to terminate them after "72" hours. 
-
-For every temporary account, run the following command to set an expiration date on it, substituting "system_account_name" with the appropriate value:
-
-# sudo chage -E `date -d "+3 days" +%Y-%m-%d` system_account_name
-
-`date -d "+3 days" +%Y-%m-%d` sets the 72-hour expiration date for the account at the time the command is run.</pre></td>
-	<td>SLES-12-010360</td>
-	<td>SV-217137r603262_rule</td>
+	<td>SV-217136r928528_rule</td>
 </tr>
 
 <tr>
@@ -1841,7 +1808,7 @@ Users' home directories/folders may contain information of a sensitive nature. N
 
 Apparmor can confine users to their home directory, not allowing them to make any changes outside of their own home directories. Confining users to their home directory will minimize the risk of sharing information.
 
-Satisfies: SRG-OS-000312-GPOS-00122, SRG-OS-000312-GPOS-00123, SRG-OS-000312-GPOS-00124, SRG-OS-000324-GPOS-00125, SRG-OS-000326-GPOS-00126, SRG-OS-000370-GPOS-00155, SRG-OS-000480-GPOS-00230</pre></td>
+Satisfies: SRG-OS-000312-GPOS-00122, SRG-OS-000312-GPOS-00123SRG-OS-000312-GPOS-00124, SRG-OS-000324-GPOS-00125, SRG-OS-000326-GPOS-00126, SRG-OS-000370-GPOS-00155, SRG-OS-000480-GPOS-00230</pre></td>
 	<td><pre>Verify that the SUSE operating system Apparmor tool is configured to control whitelisted applications and user home directory access control.
 
 Check that "pam_apparmor" is installed on the system with the following command:
@@ -4799,7 +4766,7 @@ For the changes to take effect immediately, start the service with the following
 
 # sudo systemctl restart sshd.service</pre></td>
 	<td>SLES-12-030100</td>
-	<td>SV-217264r854154_rule</td>
+	<td>SV-217264r916422_rule</td>
 </tr>
 
 <tr>
@@ -6317,12 +6284,12 @@ If any system wide shared library directory is returned, this is a finding.</pre
 	<td>V-237613</td>
 	<td>CCI-001499</td>
 	<td>medium</td>
-	<td>The SUSE operating system must have system commands set to a mode of 0755 or less permissive.</td>
+	<td>The SUSE operating system must have system commands set to a mode of 755 or less permissive.</td>
 	<td>SRG-OS-000259-GPOS-00100</td>
 	<td><pre>If the SUSE operating system were to allow any user to make changes to software libraries, then those changes might be implemented without undergoing the appropriate testing and approvals that are part of a robust change management process.
 
 This requirement applies to SUSE operating systems with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs which execute with escalated privileges. Only qualified and authorized individuals must be allowed to obtain access to information system components for purposes of initiating changes, including upgrades and modifications.</pre></td>
-	<td><pre>Verify the system commands contained in the following directories have mode 0755 or less permissive:
+	<td><pre>Verify the system commands contained in the following directories have mode 755 or less permissive:
 
 /bin
 /sbin
@@ -6331,7 +6298,7 @@ This requirement applies to SUSE operating systems with software libraries that 
 /usr/local/bin
 /usr/local/sbin
 
-Check that the system command files have mode 0755 or less permissive with the following command:
+Check that the system command files have mode 755 or less permissive with the following command:
 
 > find -L /bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin -perm /022 -type f -exec stat -c "%n %a" '{}' \;
 
@@ -6340,7 +6307,7 @@ If any files are found to be group-writable or world-writable, this is a finding
 
 > sudo find -L /bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin -perm /022 -type f -exec chmod 755 '{}' \;</pre></td>
 	<td>SLES-12-010877</td>
-	<td>SV-237613r646802_rule</td>
+	<td>SV-237613r917814_rule</td>
 </tr>
 
 <tr>
@@ -6877,7 +6844,7 @@ Done.</pre></td>
 	<td>medium</td>
 	<td>The SUSE operating system must automatically expire temporary accounts within 72 hours.</td>
 	<td>SRG-OS-000123-GPOS-00064</td>
-	<td><pre>Temporary accounts are privileged or nonprivileged accounts that are established during pressing circumstances, such as new software or hardware configuration or an incident response, where the need for prompt account activation requires bypassing normal account authorization procedures. If any inactive temporary accounts are left enabled on the system and are not either manually removed or automatically expired within 72 hours, the security posture of the system will be degraded and exposed to expoitation by unauthorized users or insider threat actors.
+	<td><pre>Temporary accounts are privileged or nonprivileged accounts that are established during pressing circumstances, such as new software or hardware configuration or an incident response, where the need for prompt account activation requires bypassing normal account authorization procedures. If any inactive temporary accounts are left enabled on the system and are not either manually removed or automatically expired within 72 hours, the security posture of the system will be degraded and exposed to exploitation by unauthorized users or insider threat actors.
 
 Temporary accounts are different from emergency accounts. Emergency accounts, also known as "last resort" or "break glass" accounts, are local logon accounts enabled on the system for emergency use by authorized system administrators to manage a system when standard logon methods are failing or not available. Emergency accounts are not subject to manual removal or scheduled expiration requirements.
 
@@ -6894,7 +6861,7 @@ If any temporary accounts have no expiration date set or do not expire within 72
 
      > sudo chage -E $(date -d +3days +%Y-%m-%d) <temporary_account_name></pre></td>
 	<td>SLES-12-010331</td>
-	<td>SV-256980r902831_rule</td>
+	<td>SV-256980r903128_rule</td>
 </tr>
 
 <tr>

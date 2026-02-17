@@ -67,24 +67,23 @@ Next, run the following command to return binaries to a normal, non-prelinked st
 <tr>
 <td>CCE-27157-7</td>
 <td>Verify File Hashes with RPM</td>
-<td>Without cryptographic integrity protections, system
-executables and files can be altered by unauthorized users without
-detection.
-The RPM package management system can check the hashes of
-installed software packages, including many that are important to system
-security.
-To verify that the cryptographic hash of system files and commands matches vendor
-values, run the following command to list which files on the system
-have hashes that differ from what is expected by the RPM database:
+<td>Without cryptographic integrity protections, system executables and files can be altered by
+unauthorized users without detection. The RPM package management system can check the hashes
+of installed software packages, including many that are important to system security.
+
+To verify that the cryptographic hash of system files and commands matches vendor values, run
+the following command to list which files on the system have hashes that differ from what is
+expected by the RPM database:
 <pre>$ rpm -Va --noconfig | grep '^..5'</pre>
-A "c" in the second column indicates that a file is a configuration file, which
-may appropriately be expected to change. If the file was not expected to
-change, investigate the cause of the change using audit logs or other means.
-The package can then be reinstalled to restore the file.
-Run the following command to determine which package owns the file:
+
+If the file was not expected to change, investigate the cause of the change using audit logs
+or other means. The package can then be reinstalled to restore the file. Run the following
+command to determine which package owns the file:
 <pre>$ rpm -qf <i>FILENAME</i></pre>
+
 The package can be reinstalled from a yum repository using the command:
 <pre>$ sudo yum reinstall <i>PACKAGENAME</i></pre>
+
 Alternatively, the package can be reinstalled from trusted media using the command:
 <pre>$ sudo rpm -Uvh <i>PACKAGENAME</i></pre>
 </td>
@@ -92,35 +91,31 @@ Alternatively, the package can be reinstalled from trusted media using the comma
 <tr>
 <td>CCE-80545-7</td>
 <td>Verify and Correct Ownership with RPM</td>
-<td>The RPM package management system can check file ownership
-permissions of installed software packages, including many that are
-important to system security. After locating a file with incorrect
-permissions, which can be found with
+<td>The RPM package management system can check file ownership permissions of installed software
+packages, including many that are important to system security. After locating a file with
+incorrect permissions, which can be found with:
 <pre>rpm -Va | awk '{ if (substr($0,6,1)=="U" || substr($0,7,1)=="G") print $NF }'</pre>
 run the following command to determine which package owns it:
 <pre>$ rpm -qf <i>FILENAME</i></pre>
-Next, run the following command to reset its permissions to
-the correct values:
+Next, run the following command to reset its permissions to the correct values:
 <pre>$ sudo rpm --setugids <i>PACKAGENAME</i></pre>
 </td>
 </tr>
 <tr>
 <td>CCE-27209-6</td>
 <td>Verify and Correct File Permissions with RPM</td>
-<td>The RPM package management system can check file access permissions
-of installed software packages, including many that are important
-to system security.
-Verify that the file permissions of system files
-and commands match vendor values. Check the file permissions
-with the following command:
+<td>The RPM package management system can check file access permissions of installed software
+packages, including many that are important to system security. Verify that the file
+permissions of system files and commands match vendor values. Check the file permissions with
+the following command:
 <pre>$ sudo rpm -Va | awk '{ if (substr($0,2,1)=="M") print $NF }'</pre>
 Output indicates files that do not match vendor defaults.
-After locating a file with incorrect permissions,
-run the following command to determine which package owns it:
+
+After locating a file with incorrect permissions, run the following command to determine which
+package owns it:
 <pre>$ rpm -qf <i>FILENAME</i></pre>
 <br>
-Next, run the following command to reset its permissions to
-the correct values:
+Next, run the following command to reset its permissions to the correct values:
 <pre>$ sudo rpm --setperms <i>PACKAGENAME</i></pre>
 </td>
 </tr>
@@ -442,9 +437,9 @@ option.</td>
 <tr>
 <td>CCE-86281-3</td>
 <td>Ensure /dev/shm is configured</td>
-<td>The <code>/dev/shm</code> is a traditional shared memory concept. 
-One program will create a memory portion, which other processes 
-(if permitted) can access. If <code>/dev/shm</code> is not configured, 
+<td>The <code>/dev/shm</code> is a traditional shared memory concept.
+One program will create a memory portion, which other processes
+(if permitted) can access. If <code>/dev/shm</code> is not configured,
 tmpfs will be mounted to /dev/shm by systemd.</td>
 </tr>
 <tr>
@@ -1746,7 +1741,7 @@ When entering a warning banner that spans several lines, remember
 to begin and end the string with <code>'</code> and use <code>\n</code> for new lines.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86224-3</td>
 <td>Install pam_pwquality Package</td>
 <td>
 The <code>libpwquality</code> package can be installed with the following command:
@@ -1839,7 +1834,7 @@ defined to work as expected.
 
 Ensure that pam_faillock.so module entries in
 <code>/etc/pam.d/password-auth</code> and <code>/etc/pam.d/system-auth</code> are
-followed by the assignment <code>deny=&lt;count&gt;</code> where count should be less than or equal to 
+followed by the assignment <code>deny=&lt;count&gt;</code> where count should be less than or equal to
 <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_deny" use="legacy"></xccdf-1.2:sub> and greater than 0.
 
 
@@ -1914,6 +1909,12 @@ usage of digits in a password. When set to a negative number, any password will 
 contain that many digits. When set to a positive number, pam_pwquality will grant +1 additional
 length credit for each digit. Modify the <code>dcredit</code> setting in
 <code>/etc/security/pwquality.conf</code> to require the use of a digit in passwords.</td>
+</tr>
+<tr>
+<td>CCE-87158-2</td>
+<td>Ensure PAM Enforces Password Requirements - Prevent the Use of Dictionary Words</td>
+<td>The pam_pwquality module's <code>dictcheck</code> check if passwords contains dictionary words. When
+<code>dictcheck</code> is set to <code>1</code> passwords will be checked for dictionary words.</td>
 </tr>
 <tr>
 <td>CCE-82020-9</td>
@@ -2579,6 +2580,21 @@ assigned.</td>
 <td>The <code>root</code> user should have a primary group of 0.</td>
 </tr>
 <tr>
+<td>CCE-86888-5</td>
+<td>Ensure the Group Used by pam_wheel.so Module Exists on System and is Empty</td>
+<td>Ensure that the group <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_pam_wheel_group_for_su" use="legacy"></xccdf-1.2:sub></code> referenced by
+<code>var_pam_wheel_group_for_su</code> variable and used as value for the <code>pam_wheel.so</code>
+<code>group</code> option exists and has no members. This empty group used by
+<code>pam_wheel.so</code> in <code>/etc/pam.d/su</code> ensures that no user can run commands with
+altered privileges through the <code>su</code> command.</td>
+</tr>
+<tr>
+<td>CCE-87722-5</td>
+<td>Ensure Authentication Required for Single User Mode</td>
+<td>Single user mode is used for recovery when the system detects an
+issue during boot or by manual selection from the bootloader.</td>
+</tr>
+<tr>
 <td>CCE-27294-8</td>
 <td>Direct root Logins Not Allowed</td>
 <td>To further limit access to the <code>root</code> account, administrators
@@ -2668,6 +2684,15 @@ sure that the following line exists in the file <code>/etc/pam.d/su</code>:
 </td>
 </tr>
 <tr>
+<td>CCE-86886-9</td>
+<td>Enforce Usage of pam_wheel with Group Parameter for su Authentication</td>
+<td>To ensure that only users who are members of the group set in the <code>group</code> option of
+<code>pam_wheel.so</code> module can run commands with altered privileges through the <code>su</code>
+command, make sure that the following line exists in the file <code>/etc/pam.d/su</code>:
+<pre>auth required pam_wheel.so use_uid group=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_pam_wheel_group_for_su" use="legacy"></xccdf-1.2:sub></pre>
+</td>
+</tr>
+<tr>
 <td>CCE-80434-4</td>
 <td>Ensure Home Directories are Created for New Users</td>
 <td>All local interactive user accounts, upon creation, should be assigned a home directory.
@@ -2727,8 +2752,10 @@ The <code>TMOUT</code>
 
 setting in a file loaded by <code>/etc/profile</code>or <code>/etc/bashrc</code>, e.g.
 <code>/etc/profile.d/tmout.sh</code> should read as follows:
+<pre>typeset -xr TMOUT=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_tmout" use="legacy"></xccdf-1.2:sub></pre>
+or
 <pre>declare -xr TMOUT=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_tmout" use="legacy"></xccdf-1.2:sub></pre>
-</td>
+Using the <code>typeset</code> keyword is preferred for wider compatibility with ksh and other shells.</td>
 </tr>
 <tr>
 <td>CCE-80526-7</td>
@@ -2816,6 +2843,15 @@ to an interactive user is owned by an interactive user.</td>
 directory with the following command:
 <pre>$ sudo chmod 0750 /home/<i>USER</i>/<i>FILE_DIR</i></pre>
 Files that begin with a "." are excluded from this requirement.</td>
+</tr>
+<tr>
+<td>CCE-89524-3</td>
+<td>Ensure users' .netrc Files are not group or world accessible</td>
+<td>While the system administrator can establish secure permissions for users' .netrc files, the
+users can easily override these.
+
+This rule ensures every .netrc file or directory under the home directory related
+to an interactive user is not group or world accessible</td>
 </tr>
 <tr>
 <td>CCE-80532-5</td>
@@ -3305,6 +3341,24 @@ edits of files involved in storing such process information:
 </td>
 </tr>
 <tr>
+<td>CCE-86219-3</td>
+<td>Record Events When Executables Are Run As Another User</td>
+<td>Verify the system generates an audit record when actions are run as another user.
+sudo provides users with temporary elevated privileges to perform operations, either as the superuser or another user.
+
+If audit is using the "auditctl" tool to load the rules, run the following command:
+
+<pre>$ sudo grep execve /etc/audit/audit.rules</pre>
+
+If audit is using the "augenrules" tool to load the rules, run the following command:
+
+<pre>$ sudo grep -r execve /etc/audit/rules.d</pre>
+<pre>-a always,exit -F arch=b32 -S execve -C euid!=uid -F auid!=unset -k user_emulation</pre>
+<pre>-a always,exit -F arch=b64  S execve -C euid!=uid -F auid!=unset -k user_emulation</pre>
+
+If both the "b32" and "b64" audit rules for "SUID" files are not defined, this is a finding.</td>
+</tr>
+<tr>
 <td>CCE-83555-3</td>
 <td>Record Events When Privileged Executables Are Run</td>
 <td>Verify the system generates an audit record when privileged functions are executed.
@@ -3479,6 +3533,19 @@ account changes:
 </td>
 </tr>
 <tr>
+<td>CCE-86245-8</td>
+<td>Record Attempts to perform maintenance activities</td>
+<td>The Red Hat Enterprise Linux 7 operating system must generate audit records for
+privileged activities, nonlocal maintenance, diagnostic sessions and
+other system-level access.
+
+Verify the operating system audits activities performed during nonlocal
+maintenance and diagnostic sessions. Run the following command:
+<pre>$ sudo auditctl -l | grep sudo.log
+-w /var/log/sudo.log -p wa -k maintenance</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-82071-2</td>
 <td>Record Access Events to Audit Log Directory</td>
 <td>The audit system should collect access events to read audit log directory.
@@ -3494,7 +3561,7 @@ utility to read audit rules during daemon startup, add the rule to
 <code>/etc/audit/audit.rules</code> file.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-88645-7</td>
 <td>System Audit Logs Must Have Mode 0750 or Less Permissive</td>
 <td>
 If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other than the <code>root</code>
@@ -3506,14 +3573,28 @@ Otherwise, change the mode of the audit log files with the following command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-88757-0</td>
+<td>System Audit Logs Must Be Group Owned By Root</td>
+<td>All audit logs must be group owned by root user. The path for audit log can
+be configured via <code>log_file</code> parameter in <pre>/etc/audit/auditd.conf</pre>
+or, by default, the path for audit log is <pre>/var/log/audit/</pre>.
+
+To properly set the group owner of <code>/var/log/audit/*</code>, run the command:
+<pre>$ sudo chgrp root /var/log/audit/*</pre>
+
+If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other
+than the <code>root</code> group account, change the group ownership of the audit logs
+to this specific group.</td>
+</tr>
+<tr>
+<td>CCE-88896-6</td>
 <td>Audit Configuration Files Must Be Owned By Group root</td>
 <td>All audit configuration files must be owned by group root.
 <pre>chown :root /etc/audit/audit*.{rules,conf} /etc/audit/rules.d/*</pre>
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-88786-9</td>
 <td>Audit Configuration Files Must Be Owned By Root</td>
 <td>All audit configuration files must be owned by root user.
 
@@ -3537,7 +3618,18 @@ To properly set the owner of <code>/var/log/audit/*</code>, run the command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-88700-0</td>
+<td>System Audit Logs Must Be Owned By Root</td>
+<td>All audit logs must be owned by root user. The path for audit log can be
+configured via <code>log_file</code> parameter in <pre>/etc/audit/auditd.conf</pre>
+or by default, the path for audit log is <pre>/var/log/audit/</pre>.
+
+To properly set the owner of <code>/var/log/audit/*</code>, run the command:
+<pre>$ sudo chown root /var/log/audit/* </pre>
+</td>
+</tr>
+<tr>
+<td>CCE-88763-8</td>
 <td>Audit Configuration Files Permissions are 640 or More Restrictive</td>
 <td>All audit configuration files permissions must be 640 or more restrictive.
 <pre>chmod 0640 /etc/audit/audit*.{rules,conf} /etc/audit/rules.d/*</pre>
@@ -3851,6 +3943,21 @@ utility to read audit rules during daemon startup, add the following line to
 <pre>-a always,exit -F arch=b32 -S umount2 -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S umount2 -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86256-5</td>
+<td>Record Any Attempts to Run chacl</td>
+<td>At a minimum, the audit system should collect any execution attempt
+of the <code>chacl</code> command for all users and root. If the <code>auditd</code>
+daemon is configured to use the <code>augenrules</code> program to read audit rules
+during daemon startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/chacl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F path=/usr/bin/chacl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 </tr>
 <tr>
@@ -5559,7 +5666,7 @@ If the system is 64 bit then also add the following lines:
 <td>To capture kernel module loading and unloading events, use following lines, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 <pre>
--a always,exit -F arch=<i>ARCH</i> -S init_module,finit_module,delete_module -F key=modules
+-a always,exit -F arch=<i>ARCH</i> -S init_module,finit_module,delete_module -F auid&gt;=1000 -F auid!=unset -F key=modules
 </pre>
 
 The place to add the lines depends on a way <code>auditd</code> daemon is configured. If it is configured
@@ -5631,6 +5738,21 @@ to use the <code>augenrules</code> program (the default), add the line to a file
 
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
 add the line to file <code>/etc/audit/audit.rules</code>.</td>
+</tr>
+<tr>
+<td>CCE-88102-9</td>
+<td>Ensure auditd Collects Information on Kernel Module Loading and Unloading - query_module</td>
+<td>If the <code>auditd</code> daemon is configured to use the <code>augenrules</code> program
+to read audit rules during daemon startup (the default), add the following lines to a file
+with suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code> to capture kernel module
+loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+<pre>-a always,exit -F arch=<i>ARCH</i> -S query_module -F auid&gt;=1000 -F auid!=unset -F key=modules</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility to read audit
+rules during daemon startup, add the following lines to <code>/etc/audit/audit.rules</code> file
+in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
+b64 as appropriate for your system:
+<pre>-a always,exit -F arch=<i>ARCH</i> -S query_module -F auid&gt;=1000 -F auid!=unset -F key=modules</pre>
+</td>
 </tr>
 <tr>
 <td>CCE-27204-7</td>
@@ -6160,6 +6282,21 @@ form to <code>/etc/audit/audit.rules</code>:
 </td>
 </tr>
 <tr>
+<td>CCE-87991-6</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - usermod</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-82074-6</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - usernetctl</td>
 <td>At a minimum, the audit system should collect the execution of
@@ -6421,7 +6558,7 @@ determined. Details regarding all possible values for <i>ACTION</i> are describe
 <code>auditd.conf</code> man page.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86102-1</td>
 <td>Configure auditd Disk Full Action when Disk Space Is Full</td>
 <td>The <code>auditd</code> service can be configured to take an action
 when disk space is running low but prior to running out of space completely.
@@ -7910,7 +8047,14 @@ specifies rules for logging and which files are to be used to log certain
 classes of messages.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-87415-6</td>
+<td>Install systemd-journal-remote Package</td>
+<td>Journald (via systemd-journal-remote ) supports the ability to send
+log events it gathers to a remote log host or to receive messages
+from remote hosts, thus enabling centralised log management.</td>
+</tr>
+<tr>
+<td>CCE-87634-2</td>
 <td>Enable systemd-journald Service</td>
 <td>The <code>systemd-journald</code> service is an essential component of
 systemd.
@@ -7935,6 +8079,18 @@ Utilities exist to accept remote export of journald logs.</td>
 <td>Ensure journald is configured to write log files to persistent disk</td>
 <td>The journald system may store log files in volatile memory or locally on disk.
 If the logs are only stored in volatile memory they will we lost upon reboot.</td>
+</tr>
+<tr>
+<td>CCE-87528-6</td>
+<td>Disable systemd-journal-remote Socket</td>
+<td>Journald supports the ability to receive messages from remote hosts,
+thus acting as a log server. Clients should not receive data from
+other hosts.
+NOTE:
+    The same package, systemd-journal-remote , is used for both sending
+    logs to remote hosts and receiving incoming logs.
+    With regards to receiving logs, there are two Systemd unit files;
+    systemd-journal-remote.socket and systemd-journal-remote.service.</td>
 </tr>
 <tr>
 <td>CCE-86153-4</td>
@@ -8250,7 +8406,7 @@ The <code>ip6tables</code> service can be enabled with the following command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-87026-1</td>
 <td>Verify iptables Enabled</td>
 <td>
 The <code>iptables</code> service can be enabled with the following command:
@@ -8277,7 +8433,7 @@ Configure all other interfaces to deny traffic to the loopback
 network.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86926-3</td>
 <td>Set configuration for loopback traffic</td>
 <td>Configure the loopback interface to accept traffic.
 Configure all other interfaces to deny traffic to the loopback
@@ -8781,6 +8937,30 @@ The <code>nftables</code> service can be disabled with the following command:
 </td>
 </tr>
 <tr>
+<td>CCE-86462-9</td>
+<td>Ensure nftables Default Deny Firewall Policy</td>
+<td>Base chain policy is the default verdict that will be applied to packets reaching the end of
+the chain. There are two policies: accept (Default) and drop. If the policy is set to accept,
+the firewall will accept any packet that is not configured to be denied and the packet will
+continue traversing the network stack.</td>
+</tr>
+<tr>
+<td>CCE-86333-2</td>
+<td>Ensure Base Chains Exist for Nftables</td>
+<td>Tables in nftables hold chains. Each table only has one address family and only applies
+to packets of this family. Tables can have one of six families.
+Chains are containers for rules. They exist in two kinds, base chains and regular chains.
+A base chain is an entry point for packets from the networking stack, a regular chain may
+be used as jump target and is used for better rule organization.</td>
+</tr>
+<tr>
+<td>CCE-86382-9</td>
+<td>Set nftables Configuration for Loopback Traffic</td>
+<td>Configure the loopback interface to accept traffic.
+Configure all other interfaces to deny traffic to the loopback
+network.</td>
+</tr>
+<tr>
 <td>CCE-86161-7</td>
 <td>Ensure a Table Exists for Nftables</td>
 <td>Tables in nftables hold chains. Each table only has one address family and only applies
@@ -8954,30 +9134,24 @@ Following this, the files should be deleted or assigned to root user.</td>
 <tr>
 <td>CCE-80130-8</td>
 <td>Verify that All World-Writable Directories Have Sticky Bits Set</td>
-<td>When the so-called 'sticky bit' is set on a directory,
-only the owner of a given file may remove that file from the
-directory. Without the sticky bit, any user with write access to a
-directory may remove any file in the directory. Setting the sticky
-bit prevents users from removing each other's files. In cases where
-there is no reason for a directory to be world-writable, a better
-solution is to remove that permission rather than to set the sticky
-bit. However, if a directory is used by a particular application,
-consult that application's documentation instead of blindly
-changing modes.
+<td>When the so-called 'sticky bit' is set on a directory, only the owner of a given file may
+remove that file from the directory. Without the sticky bit, any user with write access to a
+directory may remove any file in the directory. Setting the sticky bit prevents users from
+removing each other's files. In cases where there is no reason for a directory to be
+world-writable, a better solution is to remove that permission rather than to set the sticky
+bit. However, if a directory is used by a particular application, consult that application's
+documentation instead of blindly changing modes.
 <br>
-To set the sticky bit on a world-writable directory <i>DIR</i>, run the
-following command:
+To set the sticky bit on a world-writable directory <i>DIR</i>, run the following command:
 <pre>$ sudo chmod +t <i>DIR</i></pre>
 </td>
 </tr>
 <tr>
 <td>CCE-80136-5</td>
 <td>Ensure All World-Writable Directories Are Owned by a System Account</td>
-<td>All directories in local partitions which are
-world-writable should be owned by root or another
-system account. If any world-writable directories are not
-owned by a system account, this should be investigated.
-Following this, the files should be deleted or assigned to an
+<td>All directories in local partitions which are world-writable should be owned by root or
+another system account. If any world-writable directories are not owned by a system account,
+this should be investigated. Following this, the files should be deleted or assigned to an
 appropriate owner.</td>
 </tr>
 <tr>
@@ -9003,68 +9177,63 @@ To properly set the permissions of <code>/boot/System.map-*</code>, run the comm
 <tr>
 <td>CCE-80132-4</td>
 <td>Ensure All SGID Executables Are Authorized</td>
-<td>The SGID (set group id) bit should be set only on files that were
-installed via authorized means. A straightforward means of identifying
-unauthorized SGID files is determine if any were not installed as part of an
-RPM package, which is cryptographically verified. Investigate the origin
-of any unpackaged SGID files.
-This configuration check considers authorized SGID files which were installed via RPM.
-It is assumed that when an individual has sudo access to install an RPM
-and all packages are signed with an organizationally-recognized GPG key,
-the software should be considered an approved package on the system.
-Any SGID file not deployed through an RPM will be flagged for further review.</td>
+<td>The SGID (set group id) bit should be set only on files that were installed via authorized
+means. A straightforward means of identifying unauthorized SGID files is determine if any were
+not installed as part of an RPM package, which is cryptographically verified. Investigate the
+origin of any unpackaged SGID files. This configuration check considers authorized SGID files
+those which were installed via RPM. It is assumed that when an individual has sudo access to
+install an RPM and all packages are signed with an organizationally-recognized GPG key, the
+software should be considered an approved package on the system. Any SGID file not deployed
+through an RPM will be flagged for further review.</td>
 </tr>
 <tr>
 <td>CCE-80133-2</td>
 <td>Ensure All SUID Executables Are Authorized</td>
-<td>The SUID (set user id) bit should be set only on files that were
-installed via authorized means. A straightforward means of identifying
-unauthorized SUID files is determine if any were not installed as part of an
-RPM package, which is cryptographically verified. Investigate the origin
-of any unpackaged SUID files.
-This configuration check considers authorized SUID files which were installed via RPM.
-It is assumed that when an individual has sudo access to install an RPM
-and all packages are signed with an organizationally-recognized GPG key,
-the software should be considered an approved package on the system.
-Any SUID file not deployed through an RPM will be flagged for further review.</td>
+<td>The SUID (set user id) bit should be set only on files that were installed via authorized
+means. A straightforward means of identifying unauthorized SUID files is determine if any were
+not installed as part of an RPM package, which is cryptographically verified. Investigate the
+origin of any unpackaged SUID files. This configuration check considers authorized SUID files
+those which were installed via RPM. It is assumed that when an individual has sudo access to
+install an RPM and all packages are signed with an organizationally-recognized GPG key, the
+software should be considered an approved package on the system. Any SUID file not deployed
+through an RPM will be flagged for further review.</td>
 </tr>
 <tr>
 <td>CCE-80131-6</td>
 <td>Ensure No World-Writable Files Exist</td>
-<td>It is generally a good idea to remove global (other) write
-access to a file when it is discovered. However, check with
-documentation for specific applications before making changes.
-Also, monitor for recurring world-writable files, as these may be
-symptoms of a misconfigured application or user account. Finally,
-this applies to real files and not virtual files that are a part of
-pseudo file systems such as <code>sysfs</code> or <code>procfs</code>.</td>
+<td>It is generally a good idea to remove global (other) write access to a file when it is
+discovered. However, check with documentation for specific applications before making changes.
+Also, monitor for recurring world-writable files, as these may be symptoms of a misconfigured
+application or user account. Finally, this applies to real files and not virtual files that
+are a part of pseudo file systems such as <code>sysfs</code> or <code>procfs</code>.</td>
 </tr>
 <tr>
 <td>CCE-80135-7</td>
 <td>Ensure All Files Are Owned by a Group</td>
-<td>If any files are not owned by a group, then the
-cause of their lack of group-ownership should be investigated.
-Following this, the files should be deleted or assigned to an
-appropriate group. The following command will discover and print
-any files on local partitions which do not belong to a valid group:
-<pre>$ df --local -P | awk '{if (NR!=1) print $6}' | sudo xargs -I '{}' find '{}' -xdev -nogroup</pre>
-To search all filesystems on a system including network mounted
-filesystems the following command can be run manually for each partition:
-<pre>$ sudo find PARTITION -xdev -nogroup</pre>
+<td>If any file is not group-owned by a group present in /etc/group, the cause of the lack of
+group-ownership must be investigated. Following this, those files should be deleted or
+assigned to an appropriate group.
+
+Locate the mount points related to local devices by the following command:
+<pre>$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)</pre>
+
+For all mount points listed by the previous command, it is necessary to search for files which
+do not belong to a valid group using the following command:
+<pre>$ sudo find <i>MOUNTPOINT</i> -xdev -nogroup 2&gt;/dev/null</pre>
 </td>
 </tr>
 <tr>
 <td>CCE-80134-0</td>
 <td>Ensure All Files Are Owned by a User</td>
-<td>If any files are not owned by a user, then the
-cause of their lack of ownership should be investigated.
-Following this, the files should be deleted or assigned to an
-appropriate user. The following command will discover and print
-any files on local partitions which do not belong to a valid user:
-<pre>$ df --local -P | awk {'if (NR!=1) print $6'} | sudo xargs -I '{}' find '{}' -xdev -nouser</pre>
-To search all filesystems on a system including network mounted
-filesystems the following command can be run manually for each partition:
-<pre>$ sudo find PARTITION -xdev -nouser</pre>
+<td>If any files are not owned by a user, then the cause of their lack of ownership should be
+investigated. Following this, the files should be deleted or assigned to an appropriate user.
+
+Locate the mount points related to local devices by the following command:
+<pre>$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)</pre>
+
+For all mount points listed by the previous command, it is necessary to search for files which
+do not belong to a valid user using the following command:
+<pre>$ sudo find <i>MOUNTPOINT</i> -xdev -nouser 2&gt;/dev/null</pre>
 </td>
 </tr>
 <tr>
@@ -9079,6 +9248,14 @@ To make sure that the setting is persistent, add the following line to a file in
 <td>Enable Kernel Parameter to Enforce DAC on Symlinks</td>
 <td>To set the runtime status of the <code>fs.protected_symlinks</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.protected_symlinks=1</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.protected_symlinks = 1</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-87198-8</td>
+<td>Verify Permissions and Ownership of Old Passwords File</td>
+<td> To properly set the owner of <code>/etc/security/opasswd</code>, run the command: <pre>$ sudo chown root /etc/security/opasswd </pre>
+To properly set the group owner of <code>/etc/security/opasswd</code>, run the command: <pre>$ sudo chgrp root /etc/security/opasswd</pre>
+To properly set the permissions of <code>/etc/security/opasswd</code>, run the command: <pre>$ sudo chmod 0600 /etc/security/opasswd</pre>
 </td>
 </tr>
 <tr>
@@ -9130,6 +9307,14 @@ To make sure that the setting is persistent, add the following line to a file in
 </td>
 </tr>
 <tr>
+<td>CCE-86624-4</td>
+<td>Verify Group Who Owns /etc/shells File</td>
+<td>
+To properly set the group owner of <code>/etc/shells</code>, run the command:
+<pre>$ sudo chgrp root /etc/shells</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-83472-1</td>
 <td>Verify User Who Owns Backup group File</td>
 <td> To properly set the owner of <code>/etc/group-</code>, run the command: <pre>$ sudo chown root /etc/group- </pre>
@@ -9178,6 +9363,14 @@ To make sure that the setting is persistent, add the following line to a file in
 </td>
 </tr>
 <tr>
+<td>CCE-86622-8</td>
+<td>Verify Who Owns /etc/shells File</td>
+<td>
+To properly set the owner of <code>/etc/shells</code>, run the command:
+<pre>$ sudo chown root /etc/shells </pre>
+</td>
+</tr>
+<tr>
 <td>CCE-83482-0</td>
 <td>Verify Permissions on Backup group File</td>
 <td>
@@ -9213,8 +9406,8 @@ To properly set the permissions of <code>/etc/shadow-</code>, run the command:
 <td>CCE-82032-4</td>
 <td>Verify Permissions on group File</td>
 <td>
-To properly set the permissions of <code>/etc/passwd</code>, run the command:
-<pre>$ sudo chmod 0644 /etc/passwd</pre>
+To properly set the permissions of <code>/etc/group</code>, run the command:
+<pre>$ sudo chmod 0644 /etc/group</pre>
 </td>
 </tr>
 <tr>
@@ -9239,6 +9432,14 @@ To properly set the permissions of <code>/etc/passwd</code>, run the command:
 <td>
 To properly set the permissions of <code>/etc/shadow</code>, run the command:
 <pre>$ sudo chmod 0000 /etc/shadow</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86626-9</td>
+<td>Verify Permissions on /etc/shells File</td>
+<td>
+To properly set the permissions of <code>/etc/shells</code>, run the command:
+<pre>$ sudo chmod 0644 /etc/shells</pre>
 </td>
 </tr>
 <tr>
@@ -9374,6 +9575,50 @@ its permission with the following command:
 </td>
 </tr>
 <tr>
+<td>CCE-89014-5</td>
+<td>Verify that audit tools are owned by group root</td>
+<td>The Red Hat Enterprise Linux 7 operating system audit tools must have the proper
+ownership configured to protected against unauthorized access.
+
+Verify it by running the following command:
+<pre>$ stat -c "%n %G" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
+
+/sbin/auditctl root
+/sbin/aureport root
+/sbin/ausearch root
+/sbin/autrace root
+/sbin/auditd root
+/sbin/audispd root
+/sbin/augenrules root
+</pre>
+
+Audit tools needed to successfully view and manipulate audit information
+system activity and records. Audit tools include custom queries and report
+generators</td>
+</tr>
+<tr>
+<td>CCE-88959-2</td>
+<td>Verify that audit tools are owned by root</td>
+<td>The Red Hat Enterprise Linux 7 operating system audit tools must have the proper
+ownership configured to protected against unauthorized access.
+
+Verify it by running the following command:
+<pre>$ stat -c "%n %U" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
+
+/sbin/auditctl root
+/sbin/aureport root
+/sbin/ausearch root
+/sbin/autrace root
+/sbin/auditd root
+/sbin/audispd root
+/sbin/augenrules root
+</pre>
+
+Audit tools needed to successfully view and manipulate audit information
+system activity and records. Audit tools include custom queries and report
+generators</td>
+</tr>
+<tr>
 <td>CCE-82048-0</td>
 <td>Verify that System Executables Have Root Ownership</td>
 <td>System executables are stored in the following directories by default:
@@ -9409,6 +9654,28 @@ directories, is found to be owned by a user other than root correct its
 ownership with the following command:
 <pre>$ sudo chown root <i>FILE</i></pre>
 </td>
+</tr>
+<tr>
+<td>CCE-88909-7</td>
+<td>Verify that audit tools Have Mode 0755 or less</td>
+<td>The Red Hat Enterprise Linux 7 operating system audit tools must have the proper
+permissions configured to protected against unauthorized access.
+
+Verify it by running the following command:
+<pre>$ stat -c "%n %a" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
+
+/sbin/auditctl 755
+/sbin/aureport 755
+/sbin/ausearch 755
+/sbin/autrace 755
+/sbin/auditd 755
+/sbin/audispd 755
+/sbin/augenrules 755
+</pre>
+
+Audit tools needed to successfully view and manipulate audit information
+system activity and records. Audit tools include custom queries and report
+generators</td>
 </tr>
 <tr>
 <td>CCE-82040-7</td>
@@ -10326,7 +10593,7 @@ SELinux context with the use of the sudo command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-87213-5</td>
 <td>Ensure SELinux is Not Disabled</td>
 <td>The SELinux state should be set to <code>enforcing</code> or <code>permissive</code> at system boot
 time. In the file <code>/etc/selinux/config</code>, add or correct the following line to configure
@@ -13940,6 +14207,12 @@ To properly set the permissions of <code>/etc/crontab</code>, run the command:
 Use <code>/etc/at.allow</code> instead.</td>
 </tr>
 <tr>
+<td>CCE-86183-1</td>
+<td>Ensure that /etc/cron.allow exists</td>
+<td>The file <code>/etc/cron.allow</code> should exist and should be used instead
+of <code>/etc/cron.deny</code>.</td>
+</tr>
+<tr>
 <td>CCE-86848-9</td>
 <td>Ensure that /etc/cron.deny does not exist</td>
 <td>The file <code>/etc/cron.deny</code> should not exist.
@@ -14114,6 +14387,17 @@ The <code>dhcpd</code> service can be disabled with the following command:
 </td>
 </tr>
 <tr>
+<td>CCE-90761-8</td>
+<td>Uninstall dnsmasq Package</td>
+<td>dnsmasq is a lightweight tool that provides DNS caching, DNS forwarding and
+DHCP (Dynamic Host Configuration Protocol) services.
+<br>
+The <code>dnsmasq</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase dnsmasq</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-80326-2</td>
 <td>Uninstall bind Package</td>
 <td>The <code>named</code> service is provided by the <code>bind</code> package.
@@ -14241,6 +14525,18 @@ a storage. For setting up the LVM and configuring Docker, see the
 <td>fapolicyd needs be configured so that users cannot give access to their home folders to other users.</td>
 </tr>
 <tr>
+<td>CCE-90757-6</td>
+<td>Remove ftp Package</td>
+<td>FTP (File Transfer Protocol) is a traditional and widely used standard tool for
+transferring files between a server and clients over a network, especially where no
+authentication is necessary (permits anonymous users to connect to a server).
+<br>
+The <code>ftp</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase ftp</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-80245-4</td>
 <td>Uninstall vsftpd Package</td>
 <td>The <code>vsftpd</code> package can be removed with the following command: <pre> $ sudo yum erase vsftpd</pre>
@@ -14353,6 +14649,14 @@ $ sudo yum erase httpd</pre>
 <td>
 The <code>httpd</code> service can be disabled with the following command:
 <pre>$ sudo systemctl mask --now httpd.service</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-90758-4</td>
+<td>Uninstall nginx Package</td>
+<td>The <code>nginx</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase nginx</pre>
 </td>
 </tr>
 <tr>
@@ -14924,6 +15228,14 @@ Edit <code>/etc/dovecot/conf.d/10-ssl.conf</code> and add or correct the followi
 </td>
 </tr>
 <tr>
+<td>CCE-90760-0</td>
+<td>Uninstall cyrus-imapd Package</td>
+<td>The <code>cyrus-imapd</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase cyrus-imapd</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-80295-9</td>
 <td>Uninstall dovecot Package</td>
 <td>
@@ -14960,6 +15272,14 @@ intended for use as a Kerberos Server it should be removed.</td>
 Common Criteria. To prevent using Kerberos by system daemons,
 remove the Kerberos keytab files, especially
 <code>/etc/krb5.keytab</code>.</td>
+</tr>
+<tr>
+<td>CCE-82727-9</td>
+<td>Uninstall 389-ds-base Package</td>
+<td>The 389-ds-base RPM is not installed by default on a Red Hat Enterprise Linux 7
+system. It is needed only by the 389-ds server, not by the
+clients which use LDAP for authentication. If the system is not
+intended for use as an LDAP Server it should be removed.</td>
 </tr>
 <tr>
 <td>CCE-82884-8</td>
@@ -15697,6 +16017,16 @@ a NIS or NIS+ domain, should be disabled.
 
 The <code>ypbind</code> service can be disabled with the following command:
 <pre>$ sudo systemctl mask --now ypbind.service</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-90759-2</td>
+<td>Disable ypserv Service</td>
+<td>The <code>ypserv</code> service, which allows the system to act as a client in
+a NIS or NIS+ domain, should be disabled.
+
+The <code>ypserv</code> service can be disabled with the following command:
+<pre>$ sudo systemctl mask --now ypserv.service</pre>
 </td>
 </tr>
 <tr>

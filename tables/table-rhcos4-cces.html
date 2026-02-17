@@ -59,35 +59,31 @@ Next, run the following command to return binaries to a normal, non-prelinked st
 <tr>
 <td>CCE-82686-7</td>
 <td>Verify and Correct Ownership with RPM</td>
-<td>The RPM package management system can check file ownership
-permissions of installed software packages, including many that are
-important to system security. After locating a file with incorrect
-permissions, which can be found with
+<td>The RPM package management system can check file ownership permissions of installed software
+packages, including many that are important to system security. After locating a file with
+incorrect permissions, which can be found with:
 <pre>rpm -Va | awk '{ if (substr($0,6,1)=="U" || substr($0,7,1)=="G") print $NF }'</pre>
 run the following command to determine which package owns it:
 <pre>$ rpm -qf <i>FILENAME</i></pre>
-Next, run the following command to reset its permissions to
-the correct values:
+Next, run the following command to reset its permissions to the correct values:
 <pre>$ sudo rpm --setugids <i>PACKAGENAME</i></pre>
 </td>
 </tr>
 <tr>
 <td>CCE-82687-5</td>
 <td>Verify and Correct File Permissions with RPM</td>
-<td>The RPM package management system can check file access permissions
-of installed software packages, including many that are important
-to system security.
-Verify that the file permissions of system files
-and commands match vendor values. Check the file permissions
-with the following command:
+<td>The RPM package management system can check file access permissions of installed software
+packages, including many that are important to system security. Verify that the file
+permissions of system files and commands match vendor values. Check the file permissions with
+the following command:
 <pre>$ sudo rpm -Va | awk '{ if (substr($0,2,1)=="M") print $NF }'</pre>
 Output indicates files that do not match vendor defaults.
-After locating a file with incorrect permissions,
-run the following command to determine which package owns it:
+
+After locating a file with incorrect permissions, run the following command to determine which
+package owns it:
 <pre>$ rpm -qf <i>FILENAME</i></pre>
 <br>
-Next, run the following command to reset its permissions to
-the correct values:
+Next, run the following command to reset its permissions to the correct values:
 <pre>$ sudo rpm --setperms <i>PACKAGENAME</i></pre>
 </td>
 </tr>
@@ -95,7 +91,8 @@ the correct values:
 <td></td>
 <td>Install AIDE</td>
 <td>The <code>aide</code> package can be installed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf install aide</pre>
 </td>
 </tr>
 <tr>
@@ -127,7 +124,8 @@ If this check produces any unexpected output, investigate.</td>
 Instructions (AES-NI) engine, the system requires that the <code>dracut-fips-aesni</code>
 package be installed.
 The <code>dracut-fips-aesni</code> package can be installed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf install dracut-fips-aesni</pre>
 </td>
 </tr>
 <tr>
@@ -136,7 +134,8 @@ The <code>dracut-fips-aesni</code> package can be installed with the following c
 <td>To enable FIPS, the system requires that the <code>dracut-fips</code>
 package be installed.
 The <code>dracut-fips</code> package can be installed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf install dracut-fips</pre>
 </td>
 </tr>
 <tr>
@@ -171,6 +170,7 @@ To enable FIPS mode, run the following command:
 <td>Enable FIPS Mode in GRUB2</td>
 <td>To ensure FIPS mode is enabled, install package <code>dracut-fips</code>, and rebuild <code>initramfs</code> by running the following commands:
 <pre>
+$ sudo dnf install dracut-fips
 dracut -f</pre>
 After the <code>dracut</code> command has been run, add the argument <code>fips=1</code> to the default
 GRUB 2 command line for the Linux operating system in
@@ -396,9 +396,9 @@ the Red Hat Enterprise Linux CoreOS 4 Documentation web site:<br>
 <tr>
 <td></td>
 <td>Ensure /dev/shm is configured</td>
-<td>The <code>/dev/shm</code> is a traditional shared memory concept. 
-One program will create a memory portion, which other processes 
-(if permitted) can access. If <code>/dev/shm</code> is not configured, 
+<td>The <code>/dev/shm</code> is a traditional shared memory concept.
+One program will create a memory portion, which other processes
+(if permitted) can access. If <code>/dev/shm</code> is not configured,
 tmpfs will be mounted to /dev/shm by systemd.</td>
 </tr>
 <tr>
@@ -517,7 +517,8 @@ Enable=false
 <td>CCE-82523-2</td>
 <td>Install sudo Package</td>
 <td>The <code>sudo</code> package can be installed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf install sudo</pre>
 </td>
 </tr>
 <tr>
@@ -612,14 +613,16 @@ User specifications have to explicitly list the runas spec (i.e. the list of tar
 <td></td>
 <td>Ensure gnutls-utils is installed</td>
 <td>The <code>gnutls-utils</code> package can be installed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf install gnutls-utils</pre>
 </td>
 </tr>
 <tr>
 <td></td>
 <td>Ensure nss-tools is installed</td>
 <td>The <code>nss-tools</code> package can be installed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf install nss-tools</pre>
 </td>
 </tr>
 <tr>
@@ -1320,8 +1323,10 @@ The <code>TMOUT</code>
 
 setting in a file loaded by <code>/etc/profile</code>, e.g.
 <code>/etc/profile.d/tmout.sh</code> should read as follows:
+<pre>typeset -xr TMOUT=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_tmout" use="legacy"></xccdf-1.2:sub></pre>
+or
 <pre>declare -xr TMOUT=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_tmout" use="legacy"></xccdf-1.2:sub></pre>
-</td>
+Using the <code>typeset</code> keyword is preferred for wider compatibility with ksh and other shells.</td>
 </tr>
 <tr>
 <td></td>
@@ -1396,7 +1401,8 @@ considered during the check and properly remediated, if necessary.</td>
 <td></td>
 <td>Install audispd-plugins Package</td>
 <td>The <code>audispd-plugins</code> package can be installed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf install audispd-plugins</pre>
 </td>
 </tr>
 <tr>
@@ -4712,8 +4718,14 @@ The following rules configure audit as described above:
 -a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
 -a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
 -a always,exit -F path=/usr/bin/at -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F path=/usr/sbin/grub2-set-bootflag -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
 
 ## Privilege escalation via su or sudo. This is entirely handled by pam.
+## Special case for systemd-run. It is not audit aware, specifically watch it
+-a always,exit -F path=/usr/bin/systemd-run -F perm=x -F auid!=unset -F key=maybe-escalation
+## Special case for pkexec. It is not audit aware, specifically watch it
+-a always,exit -F path=/usr/bin/pkexec -F perm=x -F key=maybe-escalation
+
 
 ## Watch for configuration changes to privilege escalation.
 -a always,exit -F path=/etc/sudoers -F perm=wa -F key=special-config-changes
@@ -5759,7 +5771,7 @@ The configuration that was used to build kernel is available at <code>/boot/conf
 <tr>
 <td></td>
 <td>Ensure rsyslog is Installed</td>
-<td>Rsyslog is installed by default. The <code>rsyslog</code> package can be installed with the following command: <pre></pre>
+<td>Rsyslog is installed by default. The <code>rsyslog</code> package can be installed with the following command: <pre> $ sudo dnf install rsyslog</pre>
 </td>
 </tr>
 <tr>
@@ -5946,7 +5958,7 @@ To properly set the permissions of <code>/var/log/journal/.*/system.journal</cod
 <tr>
 <td></td>
 <td>Ensure logrotate is Installed</td>
-<td>logrotate is installed by default. The <code>logrotate</code> package can be installed with the following command: <pre></pre>
+<td>logrotate is installed by default. The <code>logrotate</code> package can be installed with the following command: <pre> $ sudo dnf install logrotate</pre>
 </td>
 </tr>
 <tr>
@@ -5973,7 +5985,8 @@ The <code>logrotate</code> timer can be enabled with the following command:
 <td>Ensure syslog-ng is Installed</td>
 <td>syslog-ng can be installed in replacement of rsyslog.
 The <code>syslog-ng-core</code> package can be installed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf install syslog-ng-core</pre>
 </td>
 </tr>
 <tr>
@@ -6084,7 +6097,8 @@ ResultActive=auth_admin
 <td>CCE-82521-6</td>
 <td>Install firewalld Package</td>
 <td>The <code>firewalld</code> package can be installed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf install firewalld</pre>
 </td>
 </tr>
 <tr>
@@ -6129,21 +6143,24 @@ Operator see
 <td>The libreswan package provides an implementation of IPsec
 and IKE, which permits the creation of secure tunnels over
 untrusted networks. The <code>libreswan</code> package can be installed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf install libreswan</pre>
 </td>
 </tr>
 <tr>
 <td>CCE-86834-9</td>
 <td>Install iptables-nft Package</td>
 <td>The <code>iptables-nft</code> package can be installed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf install iptables-nft</pre>
 </td>
 </tr>
 <tr>
 <td>CCE-82522-4</td>
 <td>Install iptables Package</td>
 <td>The <code>iptables</code> package can be installed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf install iptables</pre>
 </td>
 </tr>
 <tr>
@@ -6718,19 +6735,15 @@ Configure the system to disable all wireless network interfaces with the followi
 <tr>
 <td>CCE-82753-5</td>
 <td>Verify that All World-Writable Directories Have Sticky Bits Set</td>
-<td>When the so-called 'sticky bit' is set on a directory,
-only the owner of a given file may remove that file from the
-directory. Without the sticky bit, any user with write access to a
-directory may remove any file in the directory. Setting the sticky
-bit prevents users from removing each other's files. In cases where
-there is no reason for a directory to be world-writable, a better
-solution is to remove that permission rather than to set the sticky
-bit. However, if a directory is used by a particular application,
-consult that application's documentation instead of blindly
-changing modes.
+<td>When the so-called 'sticky bit' is set on a directory, only the owner of a given file may
+remove that file from the directory. Without the sticky bit, any user with write access to a
+directory may remove any file in the directory. Setting the sticky bit prevents users from
+removing each other's files. In cases where there is no reason for a directory to be
+world-writable, a better solution is to remove that permission rather than to set the sticky
+bit. However, if a directory is used by a particular application, consult that application's
+documentation instead of blindly changing modes.
 <br>
-To set the sticky bit on a world-writable directory <i>DIR</i>, run the
-following command:
+To set the sticky bit on a world-writable directory <i>DIR</i>, run the following command:
 <pre>$ sudo chmod +t <i>DIR</i></pre>
 </td>
 </tr>
@@ -6747,13 +6760,11 @@ To properly set the permissions of <code>/boot/System.map-*</code>, run the comm
 <tr>
 <td></td>
 <td>Ensure No World-Writable Files Exist</td>
-<td>It is generally a good idea to remove global (other) write
-access to a file when it is discovered. However, check with
-documentation for specific applications before making changes.
-Also, monitor for recurring world-writable files, as these may be
-symptoms of a misconfigured application or user account. Finally,
-this applies to real files and not virtual files that are a part of
-pseudo file systems such as <code>sysfs</code> or <code>procfs</code>.</td>
+<td>It is generally a good idea to remove global (other) write access to a file when it is
+discovered. However, check with documentation for specific applications before making changes.
+Also, monitor for recurring world-writable files, as these may be symptoms of a misconfigured
+application or user account. Finally, this applies to real files and not virtual files that
+are a part of pseudo file systems such as <code>sysfs</code> or <code>procfs</code>.</td>
 </tr>
 <tr>
 <td>CCE-82506-7</td>
@@ -6901,8 +6912,8 @@ To properly set the permissions of <code>/etc/shadow-</code>, run the command:
 <td></td>
 <td>Verify Permissions on group File</td>
 <td>
-To properly set the permissions of <code>/etc/passwd</code>, run the command:
-<pre>$ sudo chmod 0644 /etc/passwd</pre>
+To properly set the permissions of <code>/etc/group</code>, run the command:
+<pre>$ sudo chmod 0644 /etc/group</pre>
 </td>
 </tr>
 <tr>
@@ -7768,7 +7779,8 @@ operating system in <code>/boot/loader/entries/*.conf</code>.</td>
 <td></td>
 <td>Install libselinux Package</td>
 <td>The <code>libselinux</code> package can be installed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf install libselinux</pre>
 </td>
 </tr>
 <tr>
@@ -7777,7 +7789,8 @@ operating system in <code>/boot/loader/entries/*.conf</code>.</td>
 <td>The SETroubleshoot plugins are used to analyze SELinux AVC data. The service provides information around configuration errors,
 unauthorized intrusions, and other potential errors.
 The <code>setroubleshoot-plugins</code> package can be removed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf erase setroubleshoot-plugins</pre>
 </td>
 </tr>
 <tr>
@@ -7787,7 +7800,8 @@ The <code>setroubleshoot-plugins</code> package can be removed with the followin
 denials. The service provides information around configuration errors,
 unauthorized intrusions, and other potential errors.
 The <code>setroubleshoot-server</code> package can be removed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf erase setroubleshoot-server</pre>
 </td>
 </tr>
 <tr>
@@ -7972,14 +7986,16 @@ option time-offset</pre>
 <td>Uninstall bind Package</td>
 <td>The <code>named</code> service is provided by the <code>bind</code> package.
 The <code>bind</code> package can be removed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf erase bind</pre>
 </td>
 </tr>
 <tr>
 <td>CCE-82533-1</td>
 <td>Install fapolicyd Package</td>
 <td>The <code>fapolicyd</code> package can be installed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf install fapolicyd</pre>
 </td>
 </tr>
 <tr>
@@ -8064,12 +8080,21 @@ remove the Kerberos keytab files, especially
 <code>/etc/krb5.keytab</code>.</td>
 </tr>
 <tr>
+<td>CCE-82725-3</td>
+<td>Uninstall 389-ds-base Package</td>
+<td>The 389-ds-base RPM is not installed by default on a Red Hat Enterprise Linux CoreOS 4
+system. It is needed only by the 389-ds server, not by the
+clients which use LDAP for authentication. If the system is not
+intended for use as an LDAP Server it should be removed.</td>
+</tr>
+<tr>
 <td></td>
 <td>Ensure LDAP client is not installed</td>
 <td>The Lightweight Directory Access Protocol (LDAP) is a service that provides
 a method for looking up information from a central database.
 The <code>openldap-clients</code> package can be removed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf erase openldap-clients</pre>
 </td>
 </tr>
 <tr>
@@ -8077,7 +8102,8 @@ The <code>openldap-clients</code> package can be removed with the following comm
 <td>The Postfix package is installed</td>
 <td>A mail server is required for sending emails.
 The <code>postfix</code> package can be installed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf install postfix</pre>
 </td>
 </tr>
 <tr>
@@ -8086,7 +8112,8 @@ The <code>postfix</code> package can be installed with the following command:
 <td>Sendmail is not the default mail transfer agent and is
 not installed by default.
 The <code>sendmail</code> package can be removed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf erase sendmail</pre>
 </td>
 </tr>
 <tr>
@@ -8175,7 +8202,8 @@ This should be disabled by removing any instances of the
 typically done by establishing an authoritative time server or set of servers and having all
 systems synchronize their clocks to them.
 The <code>chrony</code> package can be installed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf install chrony</pre>
 </td>
 </tr>
 <tr>
@@ -8591,7 +8619,8 @@ Operator see
 <td>Install the Samba Common Package</td>
 <td>The <code>samba-common</code> package should be installed.
 The <code>samba-common</code> package can be installed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf install samba-common</pre>
 </td>
 </tr>
 <tr>
@@ -8600,7 +8629,8 @@ The <code>samba-common</code> package can be installed with the following comman
 <td>
 The <code>net-snmp</code> package provides the snmpd service.
 The <code>net-snmp</code> package can be removed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf erase net-snmp</pre>
 </td>
 </tr>
 <tr>
@@ -8608,7 +8638,8 @@ The <code>net-snmp</code> package can be removed with the following command:
 <td>Install the OpenSSH Server Package</td>
 <td>The <code>openssh-server</code> package should be installed.
 The <code>openssh-server</code> package can be installed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf install openssh-server</pre>
 </td>
 </tr>
 <tr>
@@ -8616,7 +8647,8 @@ The <code>openssh-server</code> package can be installed with the following comm
 <td>Remove the OpenSSH Server Package</td>
 <td>The <code>openssh-server</code> package should be removed.
 The <code>openssh-server</code> package can be removed with the following command:
-<pre></pre>
+<pre>
+$ sudo dnf erase openssh-server</pre>
 </td>
 </tr>
 <tr>

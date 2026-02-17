@@ -48,10 +48,10 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>215</td>
+			<td>214</td>
 			<td>4</td>
-			<td>211</td>
-			<td>98.14%</td>
+			<td>210</td>
+			<td>98.13%</td>
 			<td>
 				
 					SLES-12-010331
@@ -1438,40 +1438,6 @@ useradd man page for more information.</pre></td>
 </tr>
 
 <tr>
-	<td>V-217137</td>
-	<td>16</td>
-	<td>medium</td>
-	<td>The SUSE operating system must provision temporary accounts with an expiration date for 72 hours.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre>If temporary user accounts remain active when no longer needed or for
-an excessive period, these accounts may be used to gain unauthorized access.
-To mitigate this risk, automated termination of all temporary accounts
-must be set upon account creation.
-</pre></td>
-	<td><pre>Verify that temporary accounts have been provisioned with an expiration date
-of 72 hours. For every temporary account, run the following command to
-obtain its account aging and expiration information:
-$ sudo chage -l temporary_account_name
-Verify each of these accounts has an expiration date set within 72 hours or
-as documented.
-      Is it the case that any temporary accounts have no expiration date set or do not expire within 72 hours?
-      </pre></td>
-	<td><pre>Temporary accounts are established as part of normal account activation
-procedures when there is a need for short-term accounts. In the event
-temporary accounts are required, configure the system to
-terminate them after a documented time period. For every temporary account, run the following command to set an expiration date on
-it, substituting USER and YYYY-MM-DD
-appropriately:
-$ sudo chage -E YYYY-MM-DD USER
-YYYY-MM-DD indicates the documented expiration date for the
-account. For U.S. Government systems, the operating system must be
-configured to automatically terminate these types of accounts after a
-period of 72 hours.</pre></td>
-	<td>SLES-12-010360</td>
-	<td>account_temp_expire_date</td>
-</tr>
-
-<tr>
 	<td>V-217138</td>
 	<td>366</td>
 	<td>medium</td>
@@ -1799,14 +1765,13 @@ the SUSE Linux Enterprise 12 Documentation web site:
 	<td>medium</td>
 	<td>The sticky bit must be set on all SUSE operating system world-writable directories.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Failing to set the sticky bit on public directories allows unauthorized
-users to delete files in the directory structure.
+	<td><pre>Failing to set the sticky bit on public directories allows unauthorized users to delete files
+in the directory structure.
 
-The only authorized public directories are those temporary directories
-supplied with the system, or those designed to be temporary file
-repositories. The setting is normally reserved for directories used by the
-system, by users for temporary file storage (such as /tmp), and
-for directories requiring global read/write access.</pre></td>
+The only authorized public directories are those temporary directories supplied with the
+system, or those designed to be temporary file repositories. The setting is normally reserved
+for directories used by the system, by users for temporary file storage (such as /tmp),
+and for directories requiring global read/write access.</pre></td>
 	<td><pre>To find world-writable directories that lack the sticky bit, run the following command:
 $ sudo find / -type d \( -perm -0002 -a ! -perm -1000 \) -print 2>/dev/null
 fixtext: |-
@@ -1819,19 +1784,15 @@ srg_requirement:
 A sticky bit must be set on all SUSE Linux Enterprise 12 public directories to prevent unauthorized and unintended information transferred via shared system resources.
       Is it the case that any world-writable directories are missing the sticky bit?
       </pre></td>
-	<td><pre>When the so-called 'sticky bit' is set on a directory,
-only the owner of a given file may remove that file from the
-directory. Without the sticky bit, any user with write access to a
-directory may remove any file in the directory. Setting the sticky
-bit prevents users from removing each other's files. In cases where
-there is no reason for a directory to be world-writable, a better
-solution is to remove that permission rather than to set the sticky
-bit. However, if a directory is used by a particular application,
-consult that application's documentation instead of blindly
-changing modes.
+	<td><pre>When the so-called 'sticky bit' is set on a directory, only the owner of a given file may
+remove that file from the directory. Without the sticky bit, any user with write access to a
+directory may remove any file in the directory. Setting the sticky bit prevents users from
+removing each other's files. In cases where there is no reason for a directory to be
+world-writable, a better solution is to remove that permission rather than to set the sticky
+bit. However, if a directory is used by a particular application, consult that application's
+documentation instead of blindly changing modes.
 
-To set the sticky bit on a world-writable directory DIR, run the
-following command:
+To set the sticky bit on a world-writable directory DIR, run the following command:
 $ sudo chmod +t DIR</pre></td>
 	<td>SLES-12-010460</td>
 	<td>dir_perms_world_writable_sticky_bits</td>
@@ -2057,7 +2018,6 @@ audit tools by running the following command:
 /usr/sbin/aureport p+i+n+u+g+s+b+acl+selinux+xattrs+sha512
 /usr/sbin/autrace p+i+n+u+g+s+b+acl+selinux+xattrs+sha512
 /usr/sbin/audispd p+i+n+u+g+s+b+acl+selinux+xattrs+sha512
-
 
 /usr/sbin/augenrules p+i+n+u+g+s+b+acl+selinux+xattrs+sha512
 
@@ -2537,32 +2497,31 @@ offline_credentials_expiration = 1
 	<td>medium</td>
 	<td>All SUSE operating system files and directories must have a valid owner.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Unowned files do not directly imply a security problem, but they are generally
-a sign that something is amiss. They may
-be caused by an intruder, by incorrect software installation or
-draft software removal, or by failure to remove all files belonging
-to a deleted account. The files should be repaired so they
-will not cause problems when accounts are created in the future,
-and the cause should be discovered and addressed.</pre></td>
-	<td><pre>The following command will discover and print any
-files on local partitions which do not belong to a valid user.
-$ df --local -P | awk {'if (NR!=1) print $6'} | sudo xargs -I '{}' find '{}' -xdev -nouser
+	<td><pre>Unowned files do not directly imply a security problem, but they are generally a sign that
+something is amiss. They may be caused by an intruder, by incorrect software installation or
+draft software removal, or by failure to remove all files belonging to a deleted account, or
+other similar cases. The files should be repaired so they will not cause problems when
+accounts are created in the future, and the cause should be discovered and addressed.</pre></td>
+	<td><pre>The following command will locate the mount points related to local devices:
+$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)
 
-Either remove all files and directories from the system that do not have a
-valid user, or assign a valid user to all unowned files and directories on
-the system with the chown command:
-$ sudo chown user file
+The following command will show files which do not belong to a valid user:
+$ sudo find MOUNTPOINT -xdev -nouser 2>/dev/null
+
+Replace MOUNTPOINT by the mount points listed by the fist command.
+
+No files without a valid user should be located.
       Is it the case that files exist that are not owned by a valid user?
       </pre></td>
-	<td><pre>If any files are not owned by a user, then the
-cause of their lack of ownership should be investigated.
-Following this, the files should be deleted or assigned to an
-appropriate user. The following command will discover and print
-any files on local partitions which do not belong to a valid user:
-$ df --local -P | awk {'if (NR!=1) print $6'} | sudo xargs -I '{}' find '{}' -xdev -nouser
-To search all filesystems on a system including network mounted
-filesystems the following command can be run manually for each partition:
-$ sudo find PARTITION -xdev -nouser</pre></td>
+	<td><pre>If any files are not owned by a user, then the cause of their lack of ownership should be
+investigated. Following this, the files should be deleted or assigned to an appropriate user.
+
+Locate the mount points related to local devices by the following command:
+$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)
+
+For all mount points listed by the previous command, it is necessary to search for files which
+do not belong to a valid user using the following command:
+$ sudo find MOUNTPOINT -xdev -nouser 2>/dev/null</pre></td>
 	<td>SLES-12-010690</td>
 	<td>no_files_unowned_by_user</td>
 </tr>
@@ -2573,31 +2532,32 @@ $ sudo find PARTITION -xdev -nouser</pre></td>
 	<td>medium</td>
 	<td>All SUSE operating system files and directories must have a valid group owner.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Unowned files do not directly imply a security problem, but they are generally
-a sign that something is amiss. They may
-be caused by an intruder, by incorrect software installation or
-draft software removal, or by failure to remove all files belonging
-to a deleted account. The files should be repaired so they
-will not cause problems when accounts are created in the future,
-and the cause should be discovered and addressed.</pre></td>
-	<td><pre>The following command will discover and print any
-files on local partitions which do not belong to a valid group.
-$ df --local -P | awk '{if (NR!=1) print $6}' | sudo xargs -I '{}' find '{}' -xdev -nogroup
+	<td><pre>Unowned files do not directly imply a security problem, but they are generally a sign that
+something is amiss. They may be caused by an intruder, by incorrect software installation or
+draft software removal, or by failure to remove all files belonging to a deleted account, or
+other similar cases. The files should be repaired so they will not cause problems when
+accounts are created in the future, and the cause should be discovered and addressed.</pre></td>
+	<td><pre>The following command will locate the mount points related to local devices:
+$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)
 
-Either remove all files and directories from the system that do not have a valid group,
-or assign a valid group with the chgrp command:
-$ sudo chgrp group file
+The following command will show files which do not belong to a valid group:
+$ sudo find MOUNTPOINT -xdev -nogroup 2>/dev/null
+
+Replace MOUNTPOINT by the mount points listed by the fist command.
+
+No files without a valid group should be located.
       Is it the case that there is output?
       </pre></td>
-	<td><pre>If any files are not owned by a group, then the
-cause of their lack of group-ownership should be investigated.
-Following this, the files should be deleted or assigned to an
-appropriate group. The following command will discover and print
-any files on local partitions which do not belong to a valid group:
-$ df --local -P | awk '{if (NR!=1) print $6}' | sudo xargs -I '{}' find '{}' -xdev -nogroup
-To search all filesystems on a system including network mounted
-filesystems the following command can be run manually for each partition:
-$ sudo find PARTITION -xdev -nogroup</pre></td>
+	<td><pre>If any file is not group-owned by a group present in /etc/group, the cause of the lack of
+group-ownership must be investigated. Following this, those files should be deleted or
+assigned to an appropriate group.
+
+Locate the mount points related to local devices by the following command:
+$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)
+
+For all mount points listed by the previous command, it is necessary to search for files which
+do not belong to a valid group using the following command:
+$ sudo find MOUNTPOINT -xdev -nogroup 2>/dev/null</pre></td>
 	<td>SLES-12-010700</td>
 	<td>file_permissions_ungroupowned</td>
 </tr>
@@ -3262,7 +3222,7 @@ $ sudo chgrp root DIR</pre></td>
 	<td>V-237613</td>
 	<td>1499</td>
 	<td>medium</td>
-	<td>The SUSE operating system must have system commands set to a mode of 0755 or less permissive.</td>
+	<td>The SUSE operating system must have system commands set to a mode of 755 or less permissive.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>System binaries are executed by privileged users, as well as system services,
 and restrictive permissions are necessary to ensure execution of these programs
