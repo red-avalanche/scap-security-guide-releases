@@ -1025,7 +1025,7 @@ system security.</td>
 <td>CCE-27363-1</td>
 <td>Do Not Allow SSH Environment Options</td>
 <td xml:lang="en-US">To ensure users are not able to override environment
-options to the SSH daemon, add or correct the following line
+variables of the SSH daemon, add or correct the following line
 in <code>/etc/ssh/sshd_config</code>:
 <pre>PermitUserEnvironment no</pre>
 </td>
@@ -1395,6 +1395,8 @@ rather than relying on the automounter.
 
 The <code>autofs</code> service can be disabled with the following command:
 <pre>$ sudo systemctl disable autofs.service</pre>
+The <code>autofs</code> service can be masked with the following command:
+<pre>$ sudo systemctl mask autofs.service</pre>
 </td>
 <td xml:lang="en-US">Disabling the automounter permits the administrator to
 statically control filesystem mounting through <code>/etc/fstab</code>.
@@ -1941,6 +1943,8 @@ crash, which can load information from the crashed kernel for analysis.
 
 The <code>kdump</code> service can be disabled with the following command:
 <pre>$ sudo systemctl disable kdump.service</pre>
+The <code>kdump</code> service can be masked with the following command:
+<pre>$ sudo systemctl mask kdump.service</pre>
 </td>
 <td xml:lang="en-US">Kernel core dumps may contain the full contents of system memory at the
 time of the crash. Kernel core dumps consume a considerable amount of disk
@@ -3537,25 +3541,6 @@ unusual activity.</td>
 </td>
 </tr>
 <tr>
-<td>CCE-80661-2</td>
-<td>Ensure auditd Collects Information on Kernel Module Loading - create_module</td>
-<td xml:lang="en-US">To capture kernel module loading events, use following line, setting ARCH to
-either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
-<pre>-a always,exit -F arch=<i>ARCH</i> -S create_module -F key=modules</pre>
-
-Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
-to use the <code>augenrules</code> program (the default), add the line to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
-add the line to file <code>/etc/audit/audit.rules</code>.</td>
-<td xml:lang="en-US">The addition of kernel modules can be used to alter the behavior of
-the kernel and potentially introduce malicious code into kernel space. It is important
-to have an audit trail of modules that have been introduced into the kernel.</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
 <td>CCE-80414-6</td>
 <td>Ensure auditd Collects Information on Kernel Module Loading - init_module</td>
 <td xml:lang="en-US">To capture kernel module loading events, use following line, setting ARCH to
@@ -3610,63 +3595,6 @@ to use the <code>augenrules</code> program (the default), add the line to a file
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
 add the line to file <code>/etc/audit/audit.rules</code>.</td>
 <td xml:lang="en-US">The removal of kernel modules can be used to alter the behavior of
-the kernel and potentially introduce malicious code into kernel space. It is important
-to have an audit trail of modules that have been introduced into the kernel.</td>
-<td></td>
-<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
-</td>
-</tr>
-<tr>
-<td>CCE-80446-8</td>
-<td>Ensure auditd Collects Information on Kernel Module Loading - insmod</td>
-<td xml:lang="en-US">To capture invocation of insmod, utility used to insert modules into kernel,
-use the following line:
-<pre>-w /usr/sbin/insmod -p x -k modules</pre>
-Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
-to use the <code>augenrules</code> program (the default), add the line to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
-add the line to file <code>/etc/audit/audit.rules</code>.</td>
-<td xml:lang="en-US">The addition of kernel modules can be used to alter the behavior of
-the kernel and potentially introduce malicious code into kernel space. It is important
-to have an audit trail of modules that have been introduced into the kernel.</td>
-<td></td>
-<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
-</td>
-</tr>
-<tr>
-<td>CCE-80416-1</td>
-<td>Ensure auditd Collects Information on Kernel Module Unloading - rmmod</td>
-<td xml:lang="en-US">To capture invocation of rmmod, utility used to remove modules from kernel,
-add the following line:
-<pre>-w /usr/sbin/rmmod -p x -k modules</pre>
-Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
-to use the <code>augenrules</code> program (the default), add the line to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
-add the line to file <code>/etc/audit/audit.rules</code>.</td>
-<td xml:lang="en-US">The removal of kernel modules can be used to alter the behavior of
-the kernel and potentially introduce malicious code into kernel space. It is important
-to have an audit trail of modules that have been introduced into the kernel.</td>
-<td></td>
-<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
-</td>
-</tr>
-<tr>
-<td>CCE-80417-9</td>
-<td>Ensure auditd Collects Information on Kernel Module Loading and Unloading - modprobe</td>
-<td xml:lang="en-US">To capture invocation of modprobe, utility used to insert / remove modules from kernel,
-add the following line:
-<pre>-w /usr/sbin/modprobe -p x -k modules</pre>
-Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
-to use the <code>augenrules</code> program (the default), add the line to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
-add the line to file <code>/etc/audit/audit.rules</code>.</td>
-<td xml:lang="en-US">The addition/removal of kernel modules can be used to alter the behavior of
 the kernel and potentially introduce malicious code into kernel space. It is important
 to have an audit trail of modules that have been introduced into the kernel.</td>
 <td></td>
@@ -3869,11 +3797,18 @@ rsyslog by configuring it not to listen on the network.</td>
 </td>
 </tr>
 <tr>
-<td>CCE-80127-4</td>
-<td>Install McAfee Virus Scanning Software</td>
-<td xml:lang="en-US">Install McAfee VirusScan Enterprise for Linux antivirus software
-which is provided for DoD systems and uses signatures to search for the
-presence of viruses on the filesystem.</td>
+<td>CCE-27140-3</td>
+<td>Install Virus Scanning Software</td>
+<td xml:lang="en-US">Virus scanning software can be used to protect a system from penetration from
+computer viruses and to limit their spread through intermediate systems.
+
+The virus scanning software should be configured to perform scans dynamically
+on accessed files. If this capability is not available, the system must be
+configured to scan, at a minimum, all altered files on the system on a daily
+basis.
+
+If the system processes inbound SMTP mail, the virus scanner must be configured
+to scan all received mail.</td>
 <td xml:lang="en-US">Virus scanning software can be used to detect if a system has been compromised by
 computer viruses, as well as to limit their spread to other systems.</td>
 <td></td>
@@ -4131,7 +4066,7 @@ To set an idle timeout interval, edit the following line in <code>/etc/ssh/sshd_
 follows:
 <pre>ClientAliveInterval <b><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="sshd_idle_timeout_value"></ns0:sub></b></pre>
 The timeout <b>interval</b> is given in seconds. To have a timeout
-of 15 minutes, set <b>interval</b> to 900.
+of e.g. 10 minutes, set <b>interval</b> to 600.
 <br><br>
 If a shorter timeout has already been set for the login
 shell, that value will preempt any SSH
@@ -4141,7 +4076,7 @@ from correctly detecting that the user is idle.</td>
 opportunity for unauthorized personnel to take control of a management session
 enabled on the console or console port that has been let unattended.</td>
 <td></td>
-<td>AC-2(5)<br>SA-8(i)<br>AC-12<br>AC-17(b)<br>
+<td>AC-2(5)<br>SA-8(i)<br>AC-12<br>AC-17(b)<br>SC-10<br>
 </td>
 </tr>
 <tr>
@@ -4171,24 +4106,7 @@ edit <code>/etc/ssh/sshd_config</code> as follows:
 <td xml:lang="en-US">This ensures a user login will be terminated as soon as the <code>ClientAliveInterval</code>
 is reached.</td>
 <td></td>
-<td>AC-2(5)<br>SA-8<br>AC-12<br>AC-17(b)<br>
-</td>
-</tr>
-<tr>
-<td>CCE-27377-1</td>
-<td>Disable SSH Support for .rhosts Files</td>
-<td xml:lang="en-US">SSH can emulate the behavior of the obsolete rsh
-command in allowing users to enable insecure access to their
-accounts via <code>.rhosts</code> files.
-<br><br>
-To ensure this behavior is disabled, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
-<pre>IgnoreRhosts yes</pre>
-</td>
-<td xml:lang="en-US">SSH trust relationships mean a compromise on one host
-can allow an attacker to move trivially to other hosts.</td>
-<td></td>
-<td>AC-3<br>AC-17(b)<br>CM-6(a)<br>
+<td>AC-2(5)<br>SA-8<br>AC-12<br>AC-17(b)<br>SC-10<br>
 </td>
 </tr>
 <tr>
@@ -4224,24 +4142,6 @@ direct attack attempts on root's password.</td>
 </td>
 </tr>
 <tr>
-<td>CCE-80372-6</td>
-<td>Disable SSH Support for User Known Hosts</td>
-<td xml:lang="en-US">SSH can allow system users user host-based authentication to connect
-to systems if a cache of the remote systems public keys are available.
-This should be disabled.
-<br><br>
-To ensure this behavior is disabled, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
-<pre>IgnoreUserKnownHosts yes</pre>
-</td>
-<td xml:lang="en-US">Configuring this setting for the SSH daemon provides additional
-assurance that remove login via SSH will require a password, even
-in the event of misconfiguration elsewhere.</td>
-<td></td>
-<td>AC-17(b)<br>CM-6(a)<br>
-</td>
-</tr>
-<tr>
 <td>CCE-27320-1</td>
 <td>Allow Only SSH Protocol 2</td>
 <td xml:lang="en-US">Only SSH protocol version 2 connections should be
@@ -4264,7 +4164,9 @@ immediate root access to the system.</td>
 <td xml:lang="en-US">Limit the MACs to those hash algorithms which are FIPS-approved.
 The following line in <code>/etc/ssh/sshd_config</code>
 demonstrates use of FIPS-approved MACs:
+
 <pre>MACs hmac-sha2-512,hmac-sha2-256,hmac-sha1</pre>
+
 The man page <code>sshd_config(5)</code> contains a list of supported MACs.
 
 <br><br>
@@ -4285,7 +4187,7 @@ Red Hat Enterprise Linux 7 can be found at
 <td xml:lang="en-US">DoD Information Systems are required to use FIPS-approved cryptographic hash
 functions. The only SSHv2 hash algorithms meeting this requirement is SHA2.</td>
 <td></td>
-<td>AC-17(b)<br>AC-17(2)<br>IA-7<br>SC-13<br>
+<td>AC-17(b)<br>AC-17(2)<br>IA-7<br>SC-13<br>MA-4(6)<br>
 </td>
 </tr>
 <tr>
@@ -4302,7 +4204,10 @@ may be compromised.</td>
 <tr>
 <td>CCE-27485-2</td>
 <td>Verify Permissions on SSH Server Private *_key Key Files</td>
-<td xml:lang="en-US"> To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command: <pre>$ sudo chmod 0640 /etc/ssh/*_key</pre>
+<td xml:lang="en-US">
+
+To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
+<pre>$ sudo chmod 0640 /etc/ssh/*_key</pre>
 </td>
 <td xml:lang="en-US">If an unauthorized user obtains the private SSH host key file, the host could be
 impersonated.</td>
@@ -4362,7 +4267,7 @@ may be able to log into the system as another user.</td>
 <td xml:lang="en-US">When enabled, SSH will create an unprivileged child process that
 has the privilege of the authenticated user. To enable privilege separation in
 SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
-<pre>UsePrivilegeSeparation sandbox</pre>
+<pre>UsePrivilegeSeparation <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_priv_separation"></ns0:sub></pre>
 </td>
 <td xml:lang="en-US">SSH daemon privilege separation causes the SSH process to drop root privileges
 when not needed which would decrease the impact of software vulnerabilities in
@@ -4380,7 +4285,7 @@ is required, it should be enabled only after a user has authenticated; otherwise
 , it should be disabled. To disable compression or delay compression until after
 a user has successfully authenticated, add or correct the following line in the
 <code>/etc/ssh/sshd_config</code> file:
-<pre>Compression no</pre> or <pre>Compression delayed</pre>
+<pre>Compression <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_disable_compression"></ns0:sub></pre>
 </td>
 <td xml:lang="en-US">If compression is allowed in an SSH connection prior to authentication,
 vulnerabilities in the compression software could result in compromise of the

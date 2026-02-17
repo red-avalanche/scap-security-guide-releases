@@ -60,7 +60,7 @@ it into the keyring:
 
 Alternatively, the key may be pre-loaded during the RHEL installation. In
 such cases, the key can be installed by running the following command:
-<pre>sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-key-redhat-release</pre>
+<pre>sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release</pre>
 </td>
 <td xml:lang="en-US">Changes to software components can have significant effects on the overall
 security of the operating system. This requirement ensures the software has
@@ -1097,11 +1097,8 @@ of what was executed on the system, as well as, for accountability purposes.</td
 <td xml:lang="en-US">To capture kernel module loading and unloading events, use following lines, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 <pre>
--w /usr/sbin/insmod -p x -k modules
--w /usr/sbin/rmmod -p x -k modules
--w /usr/sbin/modprobe -p x -k modules
 
--a always,exit -F arch=<i>ARCH</i> -S init_module,finit_module,create_module,delete_module -F key=modules
+-a always,exit -F arch=<i>ARCH</i> -S init_module,finit_module,delete_module -F key=modules
 
 </pre>
 
@@ -1129,6 +1126,8 @@ system such as RHTSupport.
 
 The <code>abrtd</code> service can be disabled with the following command:
 <pre>$ sudo systemctl disable abrtd.service</pre>
+The <code>abrtd</code> service can be masked with the following command:
+<pre>$ sudo systemctl mask abrtd.service</pre>
 </td>
 <td xml:lang="en-US">Mishandling crash data could expose sensitive information about
 vulnerabilities in software executing on the system, as well as sensitive
@@ -1148,6 +1147,8 @@ recurring. The daemon <code>atd</code> keeps track of tasks scheduled via
 
 The <code>atd</code> service can be disabled with the following command:
 <pre>$ sudo systemctl disable atd.service</pre>
+The <code>atd</code> service can be masked with the following command:
+<pre>$ sudo systemctl mask atd.service</pre>
 </td>
 <td xml:lang="en-US">The <code>atd</code> service could be used by an unsophisticated insider to carry
 out activities outside of a normal login session, which could complicate
@@ -1171,6 +1172,8 @@ rather than relying on the automounter.
 
 The <code>autofs</code> service can be disabled with the following command:
 <pre>$ sudo systemctl disable autofs.service</pre>
+The <code>autofs</code> service can be masked with the following command:
+<pre>$ sudo systemctl mask autofs.service</pre>
 </td>
 <td xml:lang="en-US">Disabling the automounter permits the administrator to
 statically control filesystem mounting through <code>/etc/fstab</code>.
@@ -1192,6 +1195,8 @@ system time.
 
 The <code>ntpdate</code> service can be disabled with the following command:
 <pre>$ sudo systemctl disable ntpdate.service</pre>
+The <code>ntpdate</code> service can be masked with the following command:
+<pre>$ sudo systemctl mask ntpdate.service</pre>
 </td>
 <td xml:lang="en-US">The <code>ntpdate</code> service may only be suitable for systems which
 are rebooted frequently enough that clock drift does not cause problems between
@@ -1211,6 +1216,8 @@ applications. Communication with <code>oddjobd</code> through the system message
 
 The <code>oddjobd</code> service can be disabled with the following command:
 <pre>$ sudo systemctl disable oddjobd.service</pre>
+The <code>oddjobd</code> service can be masked with the following command:
+<pre>$ sudo systemctl mask oddjobd.service</pre>
 </td>
 <td xml:lang="en-US">The <code>oddjobd</code> service may provide necessary functionality in
 some environments, and can be disabled if it is not needed. Execution of
@@ -1230,6 +1237,8 @@ listen for connection attempts.
 
 The <code>qpidd</code> service can be disabled with the following command:
 <pre>$ sudo systemctl disable qpidd.service</pre>
+The <code>qpidd</code> service can be masked with the following command:
+<pre>$ sudo systemctl mask qpidd.service</pre>
 </td>
 <td xml:lang="en-US">The qpidd service is automatically installed when the "base" package
 selection is selected during installation. The qpidd service listens for
@@ -1250,6 +1259,8 @@ updated with a corresponding default route. By default this daemon is disabled.
 
 The <code>rdisc</code> service can be disabled with the following command:
 <pre>$ sudo systemctl disable rdisc.service</pre>
+The <code>rdisc</code> service can be masked with the following command:
+<pre>$ sudo systemctl mask rdisc.service</pre>
 </td>
 <td xml:lang="en-US">General-purpose systems typically have their network and routing
 information configured statically by a system administrator. Workstations or
@@ -1262,10 +1273,10 @@ dynamic network configuration information.</td>
 <tr>
 <td>CCE-80935-0</td>
 <td>Configure System Cryptography Policy</td>
-<td xml:lang="en-US">To configure the system cyptography policy to use ciphers only from the <code><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_system_crypto_policy"></ns0:sub></code>
+<td xml:lang="en-US">To configure the system cryptography policy to use ciphers only from the <code><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_system_crypto_policy"></ns0:sub></code>
 policy, run the following command:
 <pre>$ sudo update-crypto-policies --set <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_system_crypto_policy"></ns0:sub></pre>
-</td>
+The rule checks if settings for selected crypto policy are configured as expected. Configuration files in the <code>/etc/crypto-policies/back-ends</code> are either symlinks to correct files provided by Crypto-policies package or they are regular files in case crypto policy customizations are applied.</td>
 <td xml:lang="en-US">Centralized cryptographic policies simplify applying secure ciphers across an operating system and
 the applications that run on that operating system. Use of weak or untested encryption algorithms
 undermines the purposes of utilizing encryption to protect data.</td>
