@@ -48,9 +48,9 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>378</td>
+			<td>373</td>
 			<td>0</td>
-			<td>378</td>
+			<td>373</td>
 			<td>100.00%</td>
 			<td>
 				
@@ -214,10 +214,10 @@ Check to see if FIPS mode is enabled with the following command:
      $ fips-mode-setup --check
      FIPS mode is enabled
 
-If FIPS mode is "enabled", check to see if the kernel boot parameter is configured for FIPS mode with the following command:
+If FIPS mode is "enabled", check if the kernel boot parameter is configured for FIPS mode with the following command:
 
      $ sudo grub2-editenv list | grep fips
-     kernelopts=root=/dev/mapper/ol-root ro resume=/dev/mapper/ol-swap rd.lvm.lv=ol/root rd.lvm.lv=ol/swap rhgb quiet fips=1 boot=UUID=25856928-386b-4205-9a0e-a2953ae2712d audit=1 audit_backlog_limit=8192 pti=on random.trust_cpu=on slub_debug=P page_poison=1
+     kernelopts=...fips=1
 
 If the kernel boot parameter is configured to use FIPS mode, check to see if the system is in FIPS mode with the following command:
 
@@ -235,7 +235,7 @@ Enable FIPS mode after installation (not strict FIPS-compliant) with the followi
 
 Reboot the system for the changes to take effect.</pre></td>
 	<td>OL08-00-010020</td>
-	<td>SV-248524r958408_rule</td>
+	<td>SV-248524r1069154_rule</td>
 </tr>
 
 <tr>
@@ -1436,14 +1436,14 @@ The SSH service must be restarted for changes to take effect.</pre></td>
 	<td>SRG-OS-000250-GPOS-00093</td>
 	<td><pre>Without cryptographic integrity protections, information can be altered by unauthorized users without detection. 
  
-Remote access (e.g., RDP) is access to DoD nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless. 
+Remote access (e.g., RDP) is access to DOD nonpublic information systems by an authorized user (or an information system) communicating through an external, nonorganization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless. 
  
 Cryptographic mechanisms used for protecting the integrity of information include, for example, signed hash functions using asymmetric cryptography, enabling distribution of the public key to verify the hash information while maintaining the confidentiality of the secret key used to generate the hash. 
  
-OL 8 incorporates system-wide crypto policies by default. The employed algorithms can be viewed in the "/etc/crypto-policies/back-ends/openssl.config" file.</pre></td>
+OL 8 incorporates systemwide crypto policies by default. The employed algorithms can be viewed in the "/etc/crypto-policies/back-ends/openssl.config" file.</pre></td>
 	<td><pre>Verify the OpenSSL library is configured to use only ciphers employing FIPS 140-2-approved algorithms:
 
-Verify that system-wide crypto policies are in effect:
+Verify that systemwide crypto policies are in effect:
 
 $ sudo grep -i opensslcnf.config /etc/pki/tls/openssl.cnf
 
@@ -1451,20 +1451,20 @@ $ sudo grep -i opensslcnf.config /etc/pki/tls/openssl.cnf
 
 If the "opensslcnf.config" is not defined in the "/etc/pki/tls/openssl.cnf" file, this is a finding.
 
-Verify which system-wide crypto policy is in use:
+Verify which systemwide crypto policy is in use:
 
-$ sudo update-crypto-policies --show
+$ sudo fips-mode-setup --check
 
-FIPS
+FIPS mode is enabled.
 
-If the system-wide crypto policy is set to anything other than "FIPS", this is a finding.</pre></td>
-	<td><pre>Configure the OL 8 OpenSSL library to use only ciphers employing FIPS 140-2-approved algorithms with the following command:
+If the systemwide crypto policy is set to anything other than "FIPS", this is a finding.</pre></td>
+	<td><pre>Configure the OL 8 OpenSSL library to use only ciphers employing FIPS 140-2 approved algorithms with the following command:
 
 $ sudo fips-mode-setup --enable
 
 A reboot is required for the changes to take effect.</pre></td>
 	<td>OL08-00-010293</td>
-	<td>SV-248564r991554_rule</td>
+	<td>SV-248564r1069146_rule</td>
 </tr>
 
 <tr>
@@ -1684,11 +1684,11 @@ $ sudo chgrp root [FILE]</pre></td>
 	<td>V-248573</td>
 	<td>CCI-001744</td>
 	<td>medium</td>
-	<td>The OL 8 file integrity tool must notify the System Administrator (SA) when changes to the baseline configuration or anomalies in the operation of any security functions are discovered within an organizationally defined frequency.</td>
+	<td>The OL 8 file integrity tool must notify the system administrator (SA) when changes to the baseline configuration or anomalies in the operation of any security functions are discovered within an organizationally defined frequency.</td>
 	<td>SRG-OS-000363-GPOS-00150</td>
 	<td><pre>Unauthorized changes to the baseline configuration could make the system vulnerable to various attacks or allow unauthorized access to the operating system. Changes to operating system configurations can have unintended side effects, some of which may be relevant to security.
 
-Detecting such changes and providing an automated response can help avoid unintended, negative consequences that could ultimately affect the security state of the operating system. The operating system's Information System Security Manager (ISSM)/Information System Security Officer (ISSO) and SAs must be notified via email and/or monitoring system trap when there is an unauthorized modification of a configuration item.
+Detecting such changes and providing an automated response can help avoid unintended, negative consequences that could ultimately affect the security state of the operating system. The operating system's information system security manager (ISSM)/information system security officer (ISSO) and SAs must be notified via email and/or monitoring system trap when there is an unauthorized modification of a configuration item.
 
 Notifications provided by information systems include messages to local computer consoles and/or hardware indications, such as lights.
 
@@ -1703,34 +1703,36 @@ Check that OL 8 routinely executes a file integrity scan for changes to the syst
 
 Check the cron directories for scripts controlling the execution and notification of results of the file integrity application. For example, if AIDE is installed on the system, use the following commands:
 
-     $ sudo ls -al /etc/cron.* | grep aide
+To search for an aide script:
 
-     -rwxr-xr-x 1 root root 29 Nov 22 2015 aide
+$ sudo ls -al /etc/cron.* | grep aide
+-rwxr-xr-x 1 root root 29 Nov 22 2015 aide
 
-     $ sudo grep aide /etc/crontab /var/spool/cron/root
+To search for scheduled cron jobs:
 
-     /etc/crontab: 30 04 * * * /root/aide
-     /var/spool/cron/root: 30 04 * * * /root/aide
+$ sudo grep -r aide /etc/cron*
+/etc/cron.d/aide:0 0 * * * root /usr/sbin/aide --check | /bin/mail -s "$HOSTNAME - Daily AIDE integrity check run" root@example_server_name.mil
 
-     $ sudo more /etc/cron.daily/aide
+Check the contents of script files:
 
-     #!/bin/bash 
-     /usr/sbin/aide --check | /bin/mail -s "$HOSTNAME - Daily AIDE integrity check run" root@example_server_name.mil
+$ sudo more /etc/cron.d/aide
+#!/bin/bash
+/usr/sbin/aide --check | /bin/mail -s "$HOSTNAME - Daily AIDE integrity check run" root@example_server_name.mil
 
 If the file integrity application does not exist, a script file controlling the execution of the file integrity application does not exist, or the file integrity application does not notify designated personnel of changes, this is a finding.</pre></td>
 	<td><pre>Configure the file integrity tool to run automatically on the system at least weekly and to notify designated personnel if baseline configurations are changed in an unauthorized manner. The AIDE tool can be configured to email designated personnel with the use of the cron system.
 
-The following example output is generic. It will set cron to run AIDE daily and to send an email at the completion of the analysis.
+The following example output is generic. It will set cron to run AIDE daily and to send an email at the completion of the analysis. The file path in the more command is exemplary. Common paths include /etc/cron.d/<filename>, /etc/cron.daily/, /etc/cron.hourly/, /etc/cron.weekly/, or /etc/cron.monthly/.
 
-     $ sudo more /etc/cron.daily/aide
+$ sudo more /etc/cron.d/aide
 
-     #!/bin/bash
+#!/bin/bash
 
-     /usr/sbin/aide --check |/bin/mail -s "$HOSTNAME - Daily AIDE integrity check run" root@example_server_name.mil
+/usr/sbin/aide --check |/bin/mail -s "$HOSTNAME - Daily AIDE integrity check run" root@example_server_name.mil
 
 Note: Per requirement OL08-00-010358, the "mailx" package must be installed on the system to enable email functionality.</pre></td>
 	<td>OL08-00-010360</td>
-	<td>SV-248573r958794_rule</td>
+	<td>SV-248573r1069152_rule</td>
 </tr>
 
 <tr>
@@ -2435,39 +2437,36 @@ GRUB_CMDLINE_LINUX="vsyscall=none"</pre></td>
 	<td>V-248592</td>
 	<td>CCI-001084</td>
 	<td>medium</td>
-	<td>OL 8 must clear SLUB/SLAB objects to prevent use-after-free attacks.</td>
+	<td>OL 8 must clear memory when it is freed to prevent use-after-free attacks.</td>
 	<td>SRG-OS-000134-GPOS-00068</td>
 	<td><pre>Some adversaries launch attacks with the intent of executing code in nonexecutable regions of memory or in memory locations that are prohibited. Security safeguards employed to protect memory include, for example, data execution prevention and address space layout randomization. Data execution prevention safeguards can be either hardware-enforced or software-enforced with hardware providing the greater strength of mechanism.
 
 Poisoning writes an arbitrary value to freed pages, so any modification or reference to that page after being freed or before being initialized will be detected and prevented. This prevents many types of use-after-free vulnerabilities at little performance cost. Also prevents leak of data and detection of corrupted memory.
 
-SLAB objects are blocks of physically contiguous memory. SLUB is the unqueued SLAB allocator.</pre></td>
-	<td><pre>Verify that GRUB 2 is configured to enable poisoning of SLUB/SLAB objects to mitigate use-after-free vulnerabilities with the following commands:
+init_on_free is a Linux kernel boot parameter that enhances security by initializing memory regions when they are freed, preventing data leakage. This process ensures that stale data in freed memory cannot be accessed by malicious programs.
 
-Check that the current GRUB 2 configuration has poisoning of SLUB/SLAB objects enabled:
+SLUB canaries add a randomized value (canary) at the end of SLUB-allocated objects to detect memory corruption caused by buffer overflows or underflows. Redzoning adds padding (red zones) around SLUB-allocated objects to detect overflows or underflows by triggering a fault when adjacent memory is accessed. SLUB canaries are often more efficient and provide stronger detection against buffer overflows compared to redzoning. SLUB canaries are supported in hardened Linux kernels like the ones provided by Linux-hardened.
 
-$ sudo grub2-editenv list | grep slub_debug
+SLAB objects are blocks of physically contiguous memory. SLUB is the unqueued SLAB allocator.
 
-kernelopts=root=/dev/mapper/ol-root ro crashkernel=auto resume=/dev/mapper/ol-swap rd.lvm.lv=ol/root rd.lvm.lv=ol/swap rhgb quiet fips=1 slub_debug=P page_poison=1 vsyscall=none audit=1 audit_backlog_limit=8192 boot=UUID=8d171156-cd61-421c-ba41-1c021ac29e82
+Satisfies: SRG-OS-000433-GPOS-00192, SRG-OS-000134-GPOS-00068</pre></td>
+	<td><pre>Verify GRUB2 is configured to mitigate use-after-free vulnerabilities by employing memory poisoning.
 
-If "slub_debug" does not contain "P" or is missing, this is a finding.
+Inspect the "GRUB_CMDLINE_LINUX" entry of /etc/default/grub as follows:
+$ sudo grep -i grub_cmdline_linux /etc/default/grub
+GRUB_CMDLINE_LINUX="... init_on_free=1"
 
-Check that poisoning of SLUB/SLAB objects is enabled by default to persist in kernel updates: 
+If "init_on_free=1" is missing or commented out, this is a finding.</pre></td>
+	<td><pre>Configure OL 8 to enable init_on_free with the following command:
+$ sudo grubby --update-kernel=ALL --args="init_on_free=1"
 
-$ sudo grep slub_debug /etc/default/grub
+Regenerate the GRUB configuration:
+$ sudo grub2-mkconfig -o /boot/grub2/grub.cfg
 
-GRUB_CMDLINE_LINUX="slub_debug=P"
-
-If "slub_debug" does not contain "P", is missing, or is commented out, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to enable poisoning of SLUB/SLAB objects with the following commands:
-
-$ sudo grubby --update-kernel=ALL --args="slub_debug=P"
-
-Add or modify the following line in "/etc/default/grub" to ensure the configuration survives kernel updates:
-
-GRUB_CMDLINE_LINUX="slub_debug=P"</pre></td>
+Reboot the system:
+$ sudo reboot</pre></td>
 	<td>OL08-00-010423</td>
-	<td>SV-248592r958518_rule</td>
+	<td>SV-248592r1069149_rule</td>
 </tr>
 
 <tr>
@@ -2477,16 +2476,13 @@ GRUB_CMDLINE_LINUX="slub_debug=P"</pre></td>
 	<td>OL 8 must not let Meltdown and Spectre exploit critical vulnerabilities in modern processors.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>Hardware vulnerabilities allow programs to steal data that is currently processed on the computer. While programs are typically not permitted to read data from other programs, a malicious program can exploit Meltdown and Spectre to obtain secrets stored in the memory of other running programs. This might include passwords stored in a password manager or browser; personal photos, emails, and instant messages; and business-critical documents.</pre></td>
-	<td><pre>Determine the default kernel: 
-$ sudo grubby --default-kernel
+	<td><pre>Verify OL 8 is configured to enable mitigations with the following command:
 
-/boot/vmlinuz-5.4.17-2011.1.2.el8uek.x86_64
+$ grubby --info=/boot/vmlinuz-$(uname -r) | grep mitigations
 
-Using the default kernel, verify that Meltdown mitigations are not disabled:
+If the "mitigations" parameter is set to "off" (mitigations=off), this is a finding.
 
-$ sudo grubby --info=<path-to-default-kernel> | grep mitigations
-
-If the "mitigations" parameter is set to "off", this is a finding.</pre></td>
+Note: The default behavior of the kernel is to enable mitigations for vulnerabilities like Meltdown and Spectre based on hardware and system requirements. Therefore, if the "mitigation" parameter is not present or if it is set to on this is not a finding.</pre></td>
 	<td><pre>Determine the default kernel:  
  
 $ sudo grubby --default-kernel 
@@ -2499,7 +2495,7 @@ $ sudo grubby --update-kernel=<path-to-default-kernel>  --remove-args=mitigation
  
 Reboot the system for the change to take effect.</pre></td>
 	<td>OL08-00-010424</td>
-	<td>SV-248593r991589_rule</td>
+	<td>SV-248593r1069159_rule</td>
 </tr>
 
 <tr>
@@ -4865,138 +4861,6 @@ $ sudo dconf update</pre></td>
 </tr>
 
 <tr>
-	<td>V-248674</td>
-	<td>CCI-000056</td>
-	<td>medium</td>
-	<td>OL 8 must have the tmux package installed.</td>
-	<td>SRG-OS-000028-GPOS-00009</td>
-	<td><pre>A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not want to log out because of the temporary nature of the absence.
-
-The session lock is implemented at the point where session activity can be determined. Rather than be forced to wait for a period of time to expire before the user session can be locked, OL 8 needs to provide users with the ability to manually invoke a session lock so users can secure their session if it is necessary to temporarily vacate the immediate physical vicinity.
-
-Tmux is a terminal multiplexer that enables a number of terminals to be created, accessed, and controlled from a single screen.
-
-Satisfies: SRG-OS-000028-GPOS-00009, SRG-OS-000030-GPOS-00011</pre></td>
-	<td><pre>Verify OL 8 has the "tmux" package installed, by running the following command:
-
-$ sudo yum list installed tmux
-
-tmux.x86.64                     2.7-1.el8                         @repository
-
-If "tmux" is not installed, this is a finding.</pre></td>
-	<td><pre>Configure the operating system to enable a user to initiate a session lock via tmux.
-
-Install the "tmux" package, if it is not already installed, by running the following command:
-
-$ sudo yum install tmux</pre></td>
-	<td>OL08-00-020039</td>
-	<td>SV-248674r1015041_rule</td>
-</tr>
-
-<tr>
-	<td>V-248675</td>
-	<td>CCI-000056</td>
-	<td>medium</td>
-	<td>OL 8 must enable a user session lock until that user re-establishes access using established identification and authentication procedures for command line sessions.</td>
-	<td>SRG-OS-000028-GPOS-00009</td>
-	<td><pre>A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not want to log out because of the temporary nature of the absence.
-
-The session lock is implemented at the point where session activity can be determined. Rather than be forced to wait for a period of time to expire before the user session can be locked, OL 8 needs to provide users with the ability to manually invoke a session lock so users can secure their session if it is necessary to temporarily vacate the immediate physical vicinity.
-
-Tmux is a terminal multiplexer that enables a number of terminals to be created, accessed, and controlled from a single screen.
-
-Satisfies: SRG-OS-000028-GPOS-00009, SRG-OS-000030-GPOS-00011</pre></td>
-	<td><pre>Verify the operating system enables the user to manually initiate a session lock with the following command:
-
-     $ sudo grep -Ei 'lock-command|lock-session' /etc/tmux.conf
-
-     set -g lock-command vlock
-     bind X lock-session
-
-If the "lock-command" is not set and "lock-session" is not bound to a specific keyboard key in the global settings, this is a finding.</pre></td>
-	<td><pre>Configure the operating system to enable a user to manually initiate a session lock via tmux. This configuration binds the uppercase letter "X" to manually initiate a session lock after the prefix key "Ctrl + b" has been sent. The complete key sequence is thus "Ctrl + b" then "Shift + x" to lock tmux.
-
-Create a global configuration file "/etc/tmux.conf" and add the following lines:
-
-     set -g lock-command vlock
-     bind X lock-session
-
-Reload tmux configuration to take effect. This can be performed in tmux while it is running:
-
-     $ tmux source-file /etc/tmux.conf</pre></td>
-	<td>OL08-00-020040</td>
-	<td>SV-248675r1015042_rule</td>
-</tr>
-
-<tr>
-	<td>V-248676</td>
-	<td>CCI-000056</td>
-	<td>medium</td>
-	<td>OL 8 must ensure session control is automatically started at shell initialization.</td>
-	<td>SRG-OS-000028-GPOS-00009</td>
-	<td><pre>Tmux is a terminal multiplexer that enables a number of terminals to be created, accessed, and controlled from a single screen.
-
-Satisfies: SRG-OS-000028-GPOS-00009, SRG-OS-000030-GPOS-00011</pre></td>
-	<td><pre>Verify the operating system shell initialization file is configured to start each shell with the tmux terminal multiplexer with the following commands:
-
-Determine if tmux is currently running:
-
-     $ sudo ps all | grep tmux | grep -v grep
-
-If the command does not produce output, this is a finding.
- 
-Determine the location of the tmux script:
-
-     $ sudo grep tmux /etc/profile.d/*
-     /etc/profile.d/tmux.sh:  case "$name" in (sshd|login) tmux ;; esac
-
-Review the tmux script by using the following example:
-     $ sudo cat /etc/profile.d/tmux.sh
-
-if [ "$PS1" ]; then
-	parent=$(ps -o ppid= -p $$)
-	name=$(ps -o comm= -p $parent)
-	case "$name" in (sshd|login) tmux ;; esac
-fi
-
-If "tmux" is not configured as the example above, is commented out or missing, this is a finding.</pre></td>
-	<td><pre>Configure the operating system to initialize the tmux terminal multiplexer as each shell is called by adding the following lines to a custom.sh shell script in the /etc/profile.d/ directory:
-
-if [ "$PS1" ]; then
-	parent=$(ps -o ppid= -p $$)
-	name=$(ps -o comm= -p $parent)
-	case "$name" in (sshd|login) tmux ;; esac
-fi
-
-This setting will take effect at next logon.</pre></td>
-	<td>OL08-00-020041</td>
-	<td>SV-248676r1015043_rule</td>
-</tr>
-
-<tr>
-	<td>V-248677</td>
-	<td>CCI-000056</td>
-	<td>low</td>
-	<td>OL 8 must prevent users from disabling session control mechanisms.</td>
-	<td>SRG-OS-000028-GPOS-00009</td>
-	<td><pre>A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not want to log out because of the temporary nature of the absence.
-
-The session lock is implemented at the point where session activity can be determined. Rather than be forced to wait for a period of time to expire before the user session can be locked, OL 8 needs to provide users with the ability to manually invoke a session lock so users can secure their session if it is necessary to temporarily vacate the immediate physical vicinity.
-
-Tmux is a terminal multiplexer that enables a number of terminals to be created, accessed, and controlled from a single screen.
-
-Satisfies: SRG-OS-000028-GPOS-00009, SRG-OS-000030-GPOS-00011</pre></td>
-	<td><pre>Verify the operating system prevents users from disabling the tmux terminal multiplexer with the following command:
-
-$ sudo grep -i tmux /etc/shells
-
-If any output is produced, this is a finding.</pre></td>
-	<td><pre>Configure the operating system to prevent users from disabling the tmux terminal multiplexer by editing the "/etc/shells" configuration file to remove any instances of tmux.</pre></td>
-	<td>OL08-00-020042</td>
-	<td>SV-248677r1015044_rule</td>
-</tr>
-
-<tr>
 	<td>V-248678</td>
 	<td>CCI-000056</td>
 	<td>medium</td>
@@ -5103,33 +4967,6 @@ Update the system databases:
 $ sudo dconf update</pre></td>
 	<td>OL08-00-020060</td>
 	<td>SV-248680r958402_rule</td>
-</tr>
-
-<tr>
-	<td>V-248681</td>
-	<td>CCI-000057</td>
-	<td>medium</td>
-	<td>OL 8 must automatically lock command line user sessions after 15 minutes of inactivity.</td>
-	<td>SRG-OS-000029-GPOS-00010</td>
-	<td><pre>Terminating an idle session within a short time period reduces the window of opportunity for unauthorized personnel to take control of a management session enabled on the console or console port that has been left unattended. In addition, quickly terminating an idle session will also free up resources committed by the managed network element. 
-
-Terminating network connections associated with communications sessions includes, for example, de-allocating associated TCP/IP address/port pairs at the operating system level and de-allocating networking assignments at the application level if multiple application sessions are using a single operating system-level network connection. This does not mean the operating system terminates all sessions or network access; it only ends the inactive session and releases the resources associated with that session.
-
-Satisfies: SRG-OS-000029-GPOS-00010, SRG-OS-000031-GPOS-00012</pre></td>
-	<td><pre>Verify the operating system initiates a session lock after 15 minutes of inactivity.
-
-Check the value of the system inactivity timeout with the following command:
-
-$ sudo grep -i lock-after-time /etc/tmux.conf
-
-set -g lock-after-time 900
-
-If "lock-after-time" is not set to "900" or less in the global tmux configuration file to enforce session lock after inactivity, this is a finding.</pre></td>
-	<td><pre>Configure the operating system to enforce session lock after a period of 15 minutes of inactivity by adding the following line to the "/etc/tmux.conf" global configuration file:
-
-set -g lock-after-time 900</pre></td>
-	<td>OL08-00-020070</td>
-	<td>SV-248681r958402_rule</td>
 </tr>
 
 <tr>
@@ -7824,7 +7661,7 @@ $ sudo service auditd restart</pre></td>
 
 Audit records can be generated from various components within the information system (e.g., module or policy filter).
 The "rename" system call will rename the specified files by replacing the first occurrence of expression in their name by replacement.
-The "unlink" system call deletes a name from the filesystem.  If that name was the last link to a file and no processes have the file open, the file is deleted and the space it was using is made available for reuse.
+The "unlink" system call deletes a name from the filesystem. If that name was the last link to a file and no processes have the file open, the file is deleted and the space it was using is made available for reuse.
 The "rmdir" system call removes empty directories.
 The "renameat" system call renames a file, moving it between directories, if required.
 The "unlinkat" system call operates in exactly the same way as either "unlink" or "rmdir" except for the differences described in the manual page.
@@ -7844,17 +7681,16 @@ $ sudo grep 'rename\|unlink\|rmdir' /etc/audit/audit.rules
 If the command does not return an audit rule for "rename", "unlink", "rmdir", "renameat" and "unlinkat" or any of the lines returned are commented out, this is a finding. 
  
 Note: The "-k" allows for specifying an arbitrary identifier, and the string after it does not need to match the example output above.</pre></td>
-	<td><pre>Configure OL 8 to generate audit records for any use of the "rename", "unlink", "rmdir", "renameat", and "unlinkat" system calls by adding or updating the following lines to "/etc/audit/rules.d/audit.rules": 
- 
--a always,exit -F arch=b32 -S rename,unlink,rmdir,renameat,unlinkat -F success=1 -F auid>=1000 -F auid!=unset -k delete  
- 
--a always,exit -F arch=b64 -S rename,unlink,rmdir,renameat,unlinkat -F success=1 -F auid>=1000 -F auid!=unset -k delete 
- 
-The audit daemon must be restarted for the changes to take effect. To restart the audit daemon, run the following command: 
- 
+	<td><pre>Configure OL 8 to generate audit records for any use of the "rename", "unlink", "rmdir", "renameat", and "unlinkat" system calls by adding or updating the following lines to "/etc/audit/rules.d/audit.rules":
+
+-a always,exit -F arch=b32 -S rename,unlink,rmdir,renameat,unlinkat -F auid>=1000 -F auid!=unset -k delete
+-a always,exit -F arch=b64 -S rename,unlink,rmdir,renameat,unlinkat -F auid>=1000 -F auid!=unset -k delete
+
+The audit daemon must be restarted for the changes to take effect. To restart the audit daemon, run the following command:
+
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030361</td>
-	<td>SV-248774r958412_rule</td>
+	<td>SV-248774r1069140_rule</td>
 </tr>
 
 <tr>
@@ -8887,9 +8723,9 @@ $ActionSendStreamDriverMode 1</pre></td>
 	<td>SRG-OS-000342-GPOS-00133</td>
 	<td><pre>Information stored in one location is vulnerable to accidental or incidental deletion or alteration. 
  
-Offloading is a common process in information systems with limited audit storage capacity. 
+Off-loading is a common process in information systems with limited audit storage capacity. 
  
-OL 8 installation media provides "rsyslogd". This is a system utility providing support for message logging. Support for both internet and UNIX domain sockets enables this utility to support both local and remote logging. Coupling this utility with "gnutls" (which is a secure communications library implementing the SSL, TLS and DTLS protocols) provides a method to securely encrypt and offload auditing. 
+OL 8 installation media provides "rsyslogd". This is a system utility providing support for message logging. Support for both internet and Unix domain sockets enables this utility to support both local and remote logging. Coupling this utility with "gnutls" (which is a secure communications library implementing the SSL, TLS and DTLS protocols) provides a method to securely encrypt and offload auditing. 
  
 "Rsyslog" supported authentication modes include the following: 
 anon - anonymous authentication 
@@ -8904,14 +8740,16 @@ $ sudo grep -i '$ActionSendStreamDriverAuthMode' /etc/rsyslog.conf /etc/rsyslog.
  
 /etc/rsyslog.conf:$ActionSendStreamDriverAuthMode x509/name 
  
-If the value of the "$ActionSendStreamDriverAuthMode" option is not set to "x509/name" or the line is commented out, ask the System Administrator to indicate how the audit logs are offloaded to a different system or media.  
+If the value of the "$ActionSendStreamDriverAuthMode" option is not set to "x509/name" or the line is commented out, ask the system administrator to indicate how the audit logs are offloaded to a different system or media.  
  
+If the variable name "StreamDriverAuthMode" is present in an omfwd statement block, this is not a finding. However, if the "StreamDriverAuthMode" variable is in a module block, this is a finding.
+
 If there is no evidence that the transfer of the audit logs being offloaded to another system or media is encrypted, this is a finding.</pre></td>
-	<td><pre>Configure the operating system to authenticate the remote logging server for offloading audit logs by setting the following option in "/etc/rsyslog.conf" or "/etc/rsyslog.d/[customfile].conf": 
+	<td><pre>Configure the operating system to authenticate the remote logging server for off-loading audit logs by setting the following option in "/etc/rsyslog.conf" or "/etc/rsyslog.d/[customfile].conf": 
  
 $ActionSendStreamDriverAuthMode x509/name</pre></td>
 	<td>OL08-00-030720</td>
-	<td>SV-248817r958754_rule</td>
+	<td>SV-248817r1069157_rule</td>
 </tr>
 
 <tr>
@@ -12101,19 +11939,21 @@ $ sudo yum remove vsftpd</pre></td>
 	<td>medium</td>
 	<td>OL 8 must not have the "gssproxy" package installed if not required for operational support.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
-	<td><pre>Verify the operating system is configured to disable non-essential capabilities. The most secure way of ensuring a non-essential capability is disabled is to not have the capability installed. 
+	<td><pre>Verify the operating system is configured to disable nonessential capabilities. The most secure way of ensuring a nonessential capability is disabled is to not have the capability installed. 
  
 When an application uses Generic Security Services API (GSSAPI), typically it will have direct access to its security credentials, and all cryptographic operations are performed in the application's process. This is undesirable, but "gssproxy" can help in almost all use cases. It provides privilege separation to applications using the GSSAPI: The gssproxy daemon runs on the system, holds the application's credentials, and performs operations on behalf of the application.</pre></td>
-	<td><pre>Determine if the "gssproxy" package is installed with the following command: 
+	<td><pre>Note: For Oracle Linux systems, if there is an operational need for gssproxy to be installed, this requirement is Not Applicable.
+
+Determine if the "gssproxy" package is installed with the following command: 
  
 $ sudo yum list installed gssproxy 
  
 If the "gssproxy" package is installed, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to disable non-essential capabilities by removing the "gssproxy" package from the system with the following command: 
+	<td><pre>Configure OL 8 to disable nonessential capabilities by removing the "gssproxy" package from the system with the following command: 
  
 $ sudo yum remove gssproxy</pre></td>
 	<td>OL08-00-040370</td>
-	<td>SV-248904r991589_rule</td>
+	<td>SV-248904r1069143_rule</td>
 </tr>
 
 <tr>

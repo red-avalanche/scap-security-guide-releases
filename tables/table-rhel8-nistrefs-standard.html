@@ -458,14 +458,14 @@ At a minimum the audit system should collect file deletion events
 for all users and root. If the <tt>auditd</tt> daemon is configured to use the
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
 default), add the following line to a file with suffix <tt>.rules</tt> in the
-directory <tt>/etc/audit/rules.d</tt>, setting ARCH to either b32 or b64 as
-appropriate for your system:
-<pre>-a always,exit -F arch=ARCH -S rmdir,unlink,unlinkat,rename,renameat -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
+directory <tt>/etc/audit/rules.d</tt>, setting ARCH to either b32 for 32-bit
+system, or having two lines for both b32 and b64 in case your system is 64-bit:
+<pre>-a always,exit -F arch=ARCH -S rmdir,unlink,unlinkat,rename,renameat,renameat2 -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to
-<tt>/etc/audit/audit.rules</tt> file, setting ARCH to either b32 or b64 as
-appropriate for your system:
-<pre>-a always,exit -F arch=ARCH -S rmdir,unlink,unlinkat,rename -S renameat -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
+<tt>/etc/audit/audit.rules</tt> file, setting ARCH to either b32 for 32-bit
+system, or having two lines for both b32 and b64 in case your system is 64-bit:
+<pre>-a always,exit -F arch=ARCH -S rmdir,unlink,unlinkat,rename,renameat2 -S renameat -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
   </td>
   <td xml:lang="en-US">
 Auditing file deletions will create an audit trail for files that are removed
@@ -533,13 +533,15 @@ At a minimum, the audit system should collect media exportation
 events for all users and root. If the <tt>auditd</tt> daemon is configured to
 use the <tt>augenrules</tt> program to read audit rules during daemon startup
 (the default), add the following line to a file with suffix <tt>.rules</tt> in
-the directory <tt>/etc/audit/rules.d</tt>, setting ARCH to either b32 or b64 as
-appropriate for your system:
+the directory <tt>/etc/audit/rules.d</tt>, setting ARCH to either b32 for
+32-bit system, or having two lines for both b32 and b64 in case your
+system is 64-bit:
 <pre>-a always,exit -F arch=ARCH -S mount -F auid&gt;=1000 -F auid!=unset -F key=export</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to
-<tt>/etc/audit/audit.rules</tt> file, setting ARCH to either b32 or b64 as
-appropriate for your system:
+<tt>/etc/audit/audit.rules</tt> file, setting ARCH to either b32 for
+32-bit system, or having two lines for both b32 and b64 in case your
+system is 64-bit:
 <pre>-a always,exit -F arch=ARCH -S mount -F auid&gt;=1000 -F auid!=unset -F key=export</pre>
   </td>
   <td xml:lang="en-US">
@@ -558,8 +560,9 @@ loss.
 If the <tt>auditd</tt> daemon is configured to use the
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
 default), add the following lines to a file with suffix <tt>.rules</tt> in the
-directory <tt>/etc/audit/rules.d</tt>, setting ARCH to either b32 or b64 as
-appropriate for your system:
+directory <tt>/etc/audit/rules.d</tt>, setting ARCH to either b32 for
+32-bit system, or having two lines for both b32 and b64 in case your system
+is 64-bit:
 <pre>-a always,exit -F arch=ARCH -S sethostname,setdomainname -F key=audit_rules_networkconfig_modification
 -w /etc/issue -p wa -k audit_rules_networkconfig_modification
 -w /etc/issue.net -p wa -k audit_rules_networkconfig_modification
@@ -569,8 +572,9 @@ appropriate for your system:
 
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file, setting ARCH to either b32 or b64 as
-appropriate for your system:
+<tt>/etc/audit/audit.rules</tt> file, setting ARCH to either b32 for
+32-bit system, or having two lines for both b32 and b64 in case your system
+is 64-bit:
 <pre>-a always,exit -F arch=ARCH -S sethostname,setdomainname -F key=audit_rules_networkconfig_modification
 -w /etc/issue -p wa -k audit_rules_networkconfig_modification
 -w /etc/issue.net -p wa -k audit_rules_networkconfig_modification
@@ -721,18 +725,22 @@ to the system time should be audited.
   <td>CCE-80749-5</td>
   <td>Record Attempts to Alter the localtime File</td>
   <td xml:lang="en-US">
-If the <tt>auditd</tt> daemon is configured to use the
-<tt>augenrules</tt> program to read audit rules during daemon startup (the default),
-add the following line to a file with suffix <tt>.rules</tt> in the directory
-<tt>/etc/audit/rules.d</tt>:
+
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
 <pre>-w /etc/localtime -p wa -k audit_time_rules</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add the following line to
-<tt>/etc/audit/audit.rules</tt> file:
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt>:
+
 <pre>-w /etc/localtime -p wa -k audit_time_rules</pre>
-The -k option allows for the specification of a key in string form that can
-be used for better reporting capability through ausearch and aureport and
-should always be used.
   </td>
   <td xml:lang="en-US">
 Arbitrary changes to the system time can be used to obfuscate
@@ -828,8 +836,9 @@ setuid / setgid programs using the following command:
 <pre>$ sudo find <i>PARTITION</i> -xdev -perm /6000 -type f 2&gt;/dev/null</pre>
 
 For each setuid / setgid program identified by the previous command, an audit rule must be
-present in the appropriate place using the following line structure:
-<pre>-a always,exit -F path=<i>PROG_PATH</i> -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+present in the appropriate place using the following line structure, setting ARCH to either b32 for 32-bit
+system, or having two lines for both b32 and b64 in case your system is 64-bit:
+<pre>-a always,exit -F arch=ARCH -F path=<i>PROG_PATH</i> -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 
 If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> program to read
 audit rules during daemon startup, add the line to a file with suffix <tt>.rules</tt> in the
@@ -916,18 +925,40 @@ lack of prompt attention to patching could result in a system compromise.
   <td>CCE-80743-8</td>
   <td>Ensure auditd Collects System Administrator Actions</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect administrator actions
-for all users and root. If the <tt>auditd</tt> daemon is configured to use the
-<tt>augenrules</tt> program to read audit rules during daemon startup (the default),
-add the following line to a file with suffix <tt>.rules</tt> in the directory
-<tt>/etc/audit/rules.d</tt>:
-<pre>-w /etc/sudoers -p wa -k actions
--w /etc/sudoers.d/ -p wa -k actions</pre>
+
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
+<pre>-w /etc/sudoers -p wa -k actions</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add the following line to
-<tt>/etc/audit/audit.rules</tt> file:
-<pre>-w /etc/sudoers -p wa -k actions
--w /etc/sudoers.d/ -p wa -k actions</pre>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt>:
+
+<pre>-w /etc/sudoers -p wa -k actions</pre>
+
+
+
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
+<pre>-w /etc/sudoers.d/ -p wa -k actions</pre>
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt>:
+
+<pre>-w /etc/sudoers.d/ -p wa -k actions</pre>
   </td>
   <td xml:lang="en-US">
 The actions taken by system administrators should be audited to keep a record
@@ -1115,7 +1146,9 @@ be group-owned by the <tt>root</tt> group to prevent
 destruction or modification of the file.
 
 To properly set the group owner of <code>/boot/efi/EFI/redhat/grub.cfg</code>, run the command:
-<pre>$ sudo chgrp root /boot/efi/EFI/redhat/grub.cfg</pre>
+
+  <pre>$ sudo chgrp root /boot/efi/EFI/redhat/grub.cfg</pre>
+  
   </td>
   <td xml:lang="en-US">
 The <tt>root</tt> group is a highly-privileged group. Furthermore, the group-owner of this
@@ -1132,7 +1165,9 @@ The file <tt>/boot/efi/EFI/redhat/user.cfg</tt> should be group-owned by the
 <tt>root</tt> group to prevent reading or modification of the file.
 
 To properly set the group owner of <code>/boot/efi/EFI/redhat/user.cfg</code>, run the command:
-<pre>$ sudo chgrp root /boot/efi/EFI/redhat/user.cfg</pre>
+
+  <pre>$ sudo chgrp root /boot/efi/EFI/redhat/user.cfg</pre>
+  
   </td>
   <td xml:lang="en-US">
 The <tt>root</tt> group is a highly-privileged group. Furthermore, the group-owner of this
@@ -1146,7 +1181,9 @@ may be able to identify weaknesses in security upon boot and be able to exploit 
   <td>CCE-80796-6</td>
   <td>Verify Group Who Owns group File</td>
   <td xml:lang="en-US">
- To properly set the group owner of <code>/etc/group</code>, run the command: <pre>$ sudo chgrp root /etc/group</pre>
+ To properly set the group owner of <code>/etc/group</code>, run the command:
+<pre>$ sudo chgrp root /etc/group</pre>
+
   </td>
   <td xml:lang="en-US">
 The <tt>/etc/group</tt> file contains information regarding groups that are configured
@@ -1159,7 +1196,9 @@ on the system. Protection of this file is important for system security.
   <td>CCE-80798-2</td>
   <td>Verify Group Who Owns passwd File</td>
   <td xml:lang="en-US">
- To properly set the group owner of <code>/etc/passwd</code>, run the command: <pre>$ sudo chgrp root /etc/passwd</pre>
+ To properly set the group owner of <code>/etc/passwd</code>, run the command:
+<pre>$ sudo chgrp root /etc/passwd</pre>
+
   </td>
   <td xml:lang="en-US">
 The <tt>/etc/passwd</tt> file contains information about the users that are configured on
@@ -1172,7 +1211,9 @@ the system. Protection of this file is critical for system security.
   <td>CCE-80799-0</td>
   <td>Verify Group Who Owns shadow File</td>
   <td xml:lang="en-US">
- To properly set the group owner of <code>/etc/shadow</code>, run the command: <pre>$ sudo chgrp root /etc/shadow</pre>
+ To properly set the group owner of <code>/etc/shadow</code>, run the command:
+<pre>$ sudo chgrp root /etc/shadow</pre>
+
   </td>
   <td xml:lang="en-US">
 The <tt>/etc/shadow</tt> file stores password hashes. Protection of this file is
@@ -1190,7 +1231,9 @@ be group-owned by the <tt>root</tt> group to prevent
 destruction or modification of the file.
 
 To properly set the group owner of <code>/boot/grub2/grub.cfg</code>, run the command:
-<pre>$ sudo chgrp root /boot/grub2/grub.cfg</pre>
+
+  <pre>$ sudo chgrp root /boot/grub2/grub.cfg</pre>
+  
   </td>
   <td xml:lang="en-US">
 The <tt>root</tt> group is a highly-privileged group. Furthermore, the group-owner of this
@@ -1207,7 +1250,9 @@ The file <tt>/boot/grub2/user.cfg</tt> should be group-owned by the <tt>root</tt
 group to prevent reading or modification of the file.
 
 To properly set the group owner of <code>/boot/grub2/user.cfg</code>, run the command:
-<pre>$ sudo chgrp root /boot/grub2/user.cfg</pre>
+
+  <pre>$ sudo chgrp root /boot/grub2/user.cfg</pre>
+  
   </td>
   <td xml:lang="en-US">
 The <tt>root</tt> group is a highly-privileged group. Furthermore, the group-owner of this
@@ -1226,7 +1271,9 @@ be owned by the <tt>root</tt> user to prevent destruction
 or modification of the file.
 
 To properly set the owner of <code>/boot/efi/EFI/redhat/grub.cfg</code>, run the command:
-<pre>$ sudo chown root /boot/efi/EFI/redhat/grub.cfg </pre>
+
+  <pre>$ sudo chown root /boot/efi/EFI/redhat/grub.cfg </pre>
+  
   </td>
   <td xml:lang="en-US">
 Only root should be able to modify important boot parameters.
@@ -1242,7 +1289,9 @@ The file <tt>/boot/efi/EFI/redhat/user.cfg</tt> should be owned by the <tt>root<
 user to prevent reading or modification of the file.
 
 To properly set the owner of <code>/boot/efi/EFI/redhat/user.cfg</code>, run the command:
-<pre>$ sudo chown root /boot/efi/EFI/redhat/user.cfg </pre>
+
+  <pre>$ sudo chown root /boot/efi/EFI/redhat/user.cfg </pre>
+  
   </td>
   <td xml:lang="en-US">
 Only root should be able to modify important boot parameters. Also, non-root users who read
@@ -1256,7 +1305,9 @@ exploit them.
   <td>CCE-80801-4</td>
   <td>Verify User Who Owns group File</td>
   <td xml:lang="en-US">
- To properly set the owner of <code>/etc/group</code>, run the command: <pre>$ sudo chown root /etc/group </pre>
+ To properly set the owner of <code>/etc/group</code>, run the command:
+<pre>$ sudo chown root /etc/group </pre>
+
   </td>
   <td xml:lang="en-US">
 The <tt>/etc/group</tt> file contains information regarding groups that are configured
@@ -1269,7 +1320,9 @@ on the system. Protection of this file is important for system security.
   <td>CCE-80803-0</td>
   <td>Verify User Who Owns passwd File</td>
   <td xml:lang="en-US">
- To properly set the owner of <code>/etc/passwd</code>, run the command: <pre>$ sudo chown root /etc/passwd </pre>
+ To properly set the owner of <code>/etc/passwd</code>, run the command:
+<pre>$ sudo chown root /etc/passwd </pre>
+
   </td>
   <td xml:lang="en-US">
 The <tt>/etc/passwd</tt> file contains information about the users that are configured on
@@ -1282,7 +1335,9 @@ the system. Protection of this file is critical for system security.
   <td>CCE-80804-8</td>
   <td>Verify User Who Owns shadow File</td>
   <td xml:lang="en-US">
- To properly set the owner of <code>/etc/shadow</code>, run the command: <pre>$ sudo chown root /etc/shadow </pre>
+ To properly set the owner of <code>/etc/shadow</code>, run the command:
+<pre>$ sudo chown root /etc/shadow </pre>
+
   </td>
   <td xml:lang="en-US">
 The <tt>/etc/shadow</tt> file contains the list of local
@@ -1303,7 +1358,9 @@ be owned by the <tt>root</tt> user to prevent destruction
 or modification of the file.
 
 To properly set the owner of <code>/boot/grub2/grub.cfg</code>, run the command:
-<pre>$ sudo chown root /boot/grub2/grub.cfg </pre>
+
+  <pre>$ sudo chown root /boot/grub2/grub.cfg </pre>
+  
   </td>
   <td xml:lang="en-US">
 Only root should be able to modify important boot parameters.
@@ -1319,7 +1376,9 @@ The file <tt>/boot/grub2/user.cfg</tt> should be owned by the <tt>root</tt>
 user to prevent reading or modification of the file.
 
 To properly set the owner of <code>/boot/grub2/user.cfg</code>, run the command:
-<pre>$ sudo chown root /boot/grub2/user.cfg </pre>
+
+  <pre>$ sudo chown root /boot/grub2/user.cfg </pre>
+  
   </td>
   <td xml:lang="en-US">
 Only root should be able to modify important boot parameters. Also, non-root users who read

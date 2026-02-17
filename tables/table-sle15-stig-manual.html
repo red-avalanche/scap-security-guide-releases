@@ -1216,27 +1216,29 @@ Session termination terminates all processes associated with a user's logical se
 
 Conditions or trigger events requiring automatic session termination can include, for example, organization-defined periods of user inactivity, targeted responses to certain types of incidents, and time-of-day restrictions on information system use.
 
-This capability is typically reserved for specific SUSE operating system functionality where the system owner, data owner, or organization requires additional assurance.</pre></td>
+This capability is typically reserved for specific SUSE operating system functionality where the system owner, data owner, or organization requires additional assurance.
+
+In Linux, ClientAliveCountMax directive is used in the SSH daemon configuration file to define the number of client alive messages the SSH server will send without receiving any response from the client before terminating the session. The ClientAliveInterval (SLES-15-010280/ V-234827) sets a timeout interval in seconds after which if no data has been received from the client, the ssh daemon will send a message through the encrypted channel to request a response from the client. Together, these two settings provide a way to configure a timeout for inactive sessions.</pre></td>
 	<td><pre>Verify that all network connections associated with SSH traffic are automatically terminated at the end of the session or after 10 minutes of inactivity.
 
-Check that the "ClientAliveCountMax" variable is set to a value of "0" or less by performing the following command:
+Check that the "ClientAliveCountMax" variable is set to a value of "1" or less by performing the following command:
 
 > sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*clientalivecountmax'
 
-ClientAliveCountMax 0
+ClientAliveCountMax 1
 
-If "ClientAliveCountMax" does not exist or "ClientAliveCountMax" is not set to a value of "0" or less in "/etc/ssh/sshd_config", or the line is commented out, this is a finding.</pre></td>
+If "ClientAliveCountMax" does not exist or "ClientAliveCountMax" is not set to a value of "1" in "/etc/ssh/sshd_config", or the line is commented out, this is a finding.</pre></td>
 	<td><pre>Configure the SUSE operating system to automatically terminate all network connections associated with SSH traffic at the end of a session or after a 10-minute period of inactivity.
 
 Modify or append the following lines in the "/etc/ssh/sshd_config" file:
 
-ClientAliveCountMax 0
+ClientAliveCountMax 1
 
-In order for the changes to take effect, the SSH daemon must be restarted.
+For the changes to take effect, the SSH daemon must be restarted.
 
 > sudo systemctl restart sshd.service</pre></td>
 	<td>SLES-15-010320</td>
-	<td>SV-234830r986465_rule</td>
+	<td>SV-234830r1069400_rule</td>
 </tr>
 
 <tr>
@@ -1874,7 +1876,7 @@ To configure the system clock to synchronize to an authoritative DOD time source
 
 server [time_source] maxpoll 16</pre></td>
 	<td>SLES-15-010400</td>
-	<td>SV-234849r1009612_rule</td>
+	<td>SV-234849r1038944_rule</td>
 </tr>
 
 <tr>
@@ -1989,7 +1991,7 @@ Check that "/etc/sudoers" has no occurrences of "NOPASSWD" or "!authenticate" wi
 If any uncommented lines containing "!authenticate", or "NOPASSWD" are returned and active accounts on the system have valid passwords, this is a finding.</pre></td>
 	<td><pre>Configure the SUSE operating system to remove any occurrence of "NOPASSWD" or "!authenticate" found in the "/etc/sudoers" file. If the system does not use passwords for authentication, the "NOPASSWD" tag may exist in the file.</pre></td>
 	<td>SLES-15-010450</td>
-	<td>SV-234853r1009614_rule</td>
+	<td>SV-234853r1050789_rule</td>
 </tr>
 
 <tr>
@@ -2370,7 +2372,7 @@ Note: Per requirement SLES-15-010418, the "mailx" package must be installed on t
 Off-loading is a common process in information systems with limited audit storage capacity.</pre></td>
 	<td><pre>Verify that the SUSE operating system must off-load rsyslog messages for networked systems in real time and off-load standalone systems at least weekly.
 
-For stand-alone hosts, verify with the System Administrator that the log files are off-loaded at least weekly.
+For stand-alone hosts, verify with the system administrator that the log files are off-loaded at least weekly.
 
 For networked systems, check that rsyslog is sending log messages to a remote server with the following command:
 
@@ -2383,7 +2385,7 @@ If any active message labels in the file do not have a line to send log messages
 
 For stand-alone systems establish a procedure to off-load log messages at least once a week.
 
-For networked systems add a "@[Log_Server_IP_Address]" option to every active message label in "/etc/rsyslog.conf" that does not have one. Some examples are listed below:
+For networked systems add a "@[Log_Server_IP_Address]" option to every active message label in "/etc/rsyslog.conf" or in a file in "/etc/rsyslog.d/ that does not have one. Some examples are listed below:
 
 *.*;mail.none;news.none -/var/log/messages
 *.*;mail.none;news.none @192.168.1.101:514
@@ -2392,7 +2394,7 @@ An additional option is to capture all of the log messages and send them to a re
 
 *.* @@loghost:514</pre></td>
 	<td>SLES-15-010580</td>
-	<td>SV-234865r959008_rule</td>
+	<td>SV-234865r1082187_rule</td>
 </tr>
 
 <tr>
@@ -2780,7 +2782,7 @@ Defaults timestamp_timeout=[value]
 
 Note: The "[value]" must be a number that is greater than or equal to "0".</pre></td>
 	<td>SLES-15-020102</td>
-	<td>SV-234878r1009620_rule</td>
+	<td>SV-234878r1050789_rule</td>
 </tr>
 
 <tr>
@@ -3012,7 +3014,7 @@ Lock all interactive user accounts not using SHA512 hashing until the passwords 
 	<td>V-234888</td>
 	<td>CCI-004062</td>
 	<td>medium</td>
-	<td>The SUSE operating system must employ FIPS 140-2-approved cryptographic hashing algorithms for all stored passwords.</td>
+	<td>The SUSE operating system must employ FIPS 140-3 approved cryptographic hashing algorithms for all stored passwords.</td>
 	<td>SRG-OS-000073-GPOS-00041</td>
 	<td><pre>The system must use a strong hashing algorithm to store the password. The system must use a sufficient number of hashing rounds to ensure the required level of entropy.
 
@@ -3025,16 +3027,16 @@ Check that a minimum number of hash rounds is configured by running the followin
 
 > egrep "^SHA_CRYPT_" /etc/login.defs
 
-If only one of "SHA_CRYPT_MIN_ROUNDS" or "SHA_CRYPT_MAX_ROUNDS" is set, and this value is below "5000", this is a finding.
+If only one of "SHA_CRYPT_MIN_ROUNDS" or "SHA_CRYPT_MAX_ROUNDS" is set, and this value is below "100000", this is a finding.
 
-If both "SHA_CRYPT_MIN_ROUNDS" and "SHA_CRYPT_MAX_ROUNDS" are set, and the highest value for either is below "5000", this is a finding.</pre></td>
+If both "SHA_CRYPT_MIN_ROUNDS" and "SHA_CRYPT_MAX_ROUNDS" are set, and the highest value for either is below "100000", this is a finding.</pre></td>
 	<td><pre>Configure the SUSE operating system to encrypt all stored passwords with a strong cryptographic hash.
 
-Edit/modify the following line in the "/etc/login.defs" file and set "SHA_CRYPT_MIN_ROUNDS" to a value no lower than "5000":
+Edit/modify the following line in the "/etc/login.defs" file and set "SHA_CRYPT_MIN_ROUNDS" to a value no lower than "100000":
 
-SHA_CRYPT_MIN_ROUNDS 5000</pre></td>
+SHA_CRYPT_MIN_ROUNDS 100000</pre></td>
 	<td>SLES-15-020190</td>
-	<td>SV-234888r1009627_rule</td>
+	<td>SV-234888r1044810_rule</td>
 </tr>
 
 <tr>
@@ -3113,7 +3115,7 @@ PASS_MAX_DAYS [DAYS]
 
 The DOD requirement is 60 days or less (greater than zero, as zero days will lock the account immediately).</pre></td>
 	<td>SLES-15-020220</td>
-	<td>SV-234891r1009630_rule</td>
+	<td>SV-234891r1038967_rule</td>
 </tr>
 
 <tr>
@@ -3136,7 +3138,7 @@ If any results are returned that are not associated with a system account, this 
 
 The DOD requirement is 60 days.</pre></td>
 	<td>SLES-15-020230</td>
-	<td>SV-234892r1009631_rule</td>
+	<td>SV-234892r1038967_rule</td>
 </tr>
 
 <tr>
@@ -5086,7 +5088,7 @@ Add or update the following line (depending on configuration "disk_full_action" 
 
 disk_full_action = HALT</pre></td>
 	<td>SLES-15-030590</td>
-	<td>SV-234958r958426_rule</td>
+	<td>SV-234958r1038966_rule</td>
 </tr>
 
 <tr>
@@ -7125,7 +7127,7 @@ $ sudo vi /etc/pam.d/sudo
 
 Remove any occurrences of "pam_succeed_if" in the file.</pre></td>
 	<td>SLES-15-020104</td>
-	<td>SV-251724r1009640_rule</td>
+	<td>SV-251724r1050789_rule</td>
 </tr>
 
 <tr>

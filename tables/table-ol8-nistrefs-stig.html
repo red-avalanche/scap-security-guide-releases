@@ -477,15 +477,21 @@ unauthorized users.
   <td>N/A</td>
   <td>Record Any Attempts to Run chcon</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect any execution attempt
-of the <tt>chcon</tt> command for all users and root. If the <tt>auditd</tt>
-daemon is configured to use the <tt>augenrules</tt> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file:
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
@@ -507,15 +513,21 @@ unusual activity.
   <td>N/A</td>
   <td>Record Any Attempts to Run setfiles</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect any execution attempt
-of the <tt>setfiles</tt> command for all users and root. If the <tt>auditd</tt>
-daemon is configured to use the <tt>augenrules</tt> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file:
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
@@ -537,15 +549,21 @@ unusual activity.
   <td>N/A</td>
   <td>Record Any Attempts to Run setsebool</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect any execution attempt
-of the <tt>setsebool</tt> command for all users and root. If the <tt>auditd</tt>
-daemon is configured to use the <tt>augenrules</tt> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file:
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
@@ -571,13 +589,13 @@ At a minimum, the audit system should collect file deletion events
 for all users and root. If the <tt>auditd</tt> daemon is configured to use the
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
 default), add the following line to a file with suffix <tt>.rules</tt> in the
-directory <tt>/etc/audit/rules.d</tt>, setting ARCH to either b32 or b64 as
-appropriate for your system:
+directory <tt>/etc/audit/rules.d</tt>, setting ARCH to either b32 for 32-bit
+system, or having two lines for both b32 and b64 in case your system is 64-bit:
 <pre>-a always,exit -F arch=ARCH -S rename -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to
-<tt>/etc/audit/audit.rules</tt> file, setting ARCH to either b32 or b64 as
-appropriate for your system:
+<tt>/etc/audit/audit.rules</tt> file, setting ARCH to either b32 for 32-bit
+system, or having two lines for both b32 and b64 in case your system is 64-bit:
 <pre>-a always,exit -F arch=ARCH -S rename -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
   </td>
   <td xml:lang="en-US">
@@ -596,13 +614,13 @@ At a minimum, the audit system should collect file deletion events
 for all users and root. If the <tt>auditd</tt> daemon is configured to use the
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
 default), add the following line to a file with suffix <tt>.rules</tt> in the
-directory <tt>/etc/audit/rules.d</tt>, setting ARCH to either b32 or b64 as
-appropriate for your system:
+directory <tt>/etc/audit/rules.d</tt>, setting ARCH to either b32 for 32-bit
+system, or having two lines for both b32 and b64 in case your system is 64-bit:
 <pre>-a always,exit -F arch=ARCH -S renameat -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to
-<tt>/etc/audit/audit.rules</tt> file, setting ARCH to either b32 or b64 as
-appropriate for your system:
+<tt>/etc/audit/audit.rules</tt> file, setting ARCH to either b32 for 32-bit
+system, or having two lines for both b32 and b64 in case your system is 64-bit:
 <pre>-a always,exit -F arch=ARCH -S renameat -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
   </td>
   <td xml:lang="en-US">
@@ -621,13 +639,13 @@ At a minimum, the audit system should collect file deletion events
 for all users and root. If the <tt>auditd</tt> daemon is configured to use the
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
 default), add the following line to a file with suffix <tt>.rules</tt> in the
-directory <tt>/etc/audit/rules.d</tt>, setting ARCH to either b32 or b64 as
-appropriate for your system:
+directory <tt>/etc/audit/rules.d</tt>, setting ARCH to either b32 for 32-bit
+system, or having two lines for both b32 and b64 in case your system is 64-bit:
 <pre>-a always,exit -F arch=ARCH -S rmdir -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to
-<tt>/etc/audit/audit.rules</tt> file, setting ARCH to either b32 or b64 as
-appropriate for your system:
+<tt>/etc/audit/audit.rules</tt> file, setting ARCH to either b32 for 32-bit
+system, or having two lines for both b32 and b64 in case your system is 64-bit:
 <pre>-a always,exit -F arch=ARCH -S rmdir -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
   </td>
   <td xml:lang="en-US">
@@ -646,13 +664,13 @@ At a minimum, the audit system should collect file deletion events
 for all users and root. If the <tt>auditd</tt> daemon is configured to use the
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
 default), add the following line to a file with suffix <tt>.rules</tt> in the
-directory <tt>/etc/audit/rules.d</tt>, setting ARCH to either b32 or b64 as
-appropriate for your system:
+directory <tt>/etc/audit/rules.d</tt>, setting ARCH to either b32 for 32-bit
+system, or having two lines for both b32 and b64 in case your system is 64-bit:
 <pre>-a always,exit -F arch=ARCH -S unlink -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to
-<tt>/etc/audit/audit.rules</tt> file, setting ARCH to either b32 or b64 as
-appropriate for your system:
+<tt>/etc/audit/audit.rules</tt> file, setting ARCH to either b32 for 32-bit
+system, or having two lines for both b32 and b64 in case your system is 64-bit:
 <pre>-a always,exit -F arch=ARCH -S unlink -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
   </td>
   <td xml:lang="en-US">
@@ -671,13 +689,13 @@ At a minimum, the audit system should collect file deletion events
 for all users and root. If the <tt>auditd</tt> daemon is configured to use the
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
 default), add the following line to a file with suffix <tt>.rules</tt> in the
-directory <tt>/etc/audit/rules.d</tt>, setting ARCH to either b32 or b64 as
-appropriate for your system:
+directory <tt>/etc/audit/rules.d</tt>, setting ARCH to either b32 for 32-bit
+system, or having two lines for both b32 and b64 in case your system is 64-bit:
 <pre>-a always,exit -F arch=ARCH -S unlinkat -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to
-<tt>/etc/audit/audit.rules</tt> file, setting ARCH to either b32 or b64 as
-appropriate for your system:
+<tt>/etc/audit/audit.rules</tt> file, setting ARCH to either b32 for 32-bit
+system, or having two lines for both b32 and b64 in case your system is 64-bit:
 <pre>-a always,exit -F arch=ARCH -S unlinkat -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
   </td>
   <td xml:lang="en-US">
@@ -768,16 +786,22 @@ to have an audit trail of modules that have been introduced into the kernel.
   <td>Record Attempts to Alter Logon and Logout Events - faillock</td>
   <td xml:lang="en-US">
 The audit system already collects login information for all users
-and root. If the <tt>auditd</tt> daemon is configured to use the
-<tt>augenrules</tt> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <tt>.rules</tt> in the
-directory <tt>/etc/audit/rules.d</tt> in order to watch for attempted manual
-edits of files involved in storing logon events:
+and root.
+
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
 <pre>-w <tt>ol8</tt> -p wa -k logins</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file in order to watch for unattempted manual
-edits of files involved in storing logon events:
+<tt>/etc/audit/audit.rules</tt>:
+
 <pre>-w <tt>ol8</tt> -p wa -k logins</pre>
   </td>
   <td xml:lang="en-US">
@@ -792,16 +816,22 @@ as an attacker attempting to remove evidence of an intrusion.
   <td>Record Attempts to Alter Logon and Logout Events - lastlog</td>
   <td xml:lang="en-US">
 The audit system already collects login information for all users
-and root. If the <tt>auditd</tt> daemon is configured to use the
-<tt>augenrules</tt> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <tt>.rules</tt> in the
-directory <tt>/etc/audit/rules.d</tt> in order to watch for attempted manual
-edits of files involved in storing logon events:
+and root.
+
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
 <pre>-w /var/log/lastlog -p wa -k logins</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file in order to watch for unattempted manual
-edits of files involved in storing logon events:
+<tt>/etc/audit/audit.rules</tt>:
+
 <pre>-w /var/log/lastlog -p wa -k logins</pre>
   </td>
   <td xml:lang="en-US">
@@ -819,13 +849,15 @@ At a minimum, the audit system should collect media exportation
 events for all users and root. If the <tt>auditd</tt> daemon is configured to
 use the <tt>augenrules</tt> program to read audit rules during daemon startup
 (the default), add the following line to a file with suffix <tt>.rules</tt> in
-the directory <tt>/etc/audit/rules.d</tt>, setting ARCH to either b32 or b64 as
-appropriate for your system:
+the directory <tt>/etc/audit/rules.d</tt>, setting ARCH to either b32 for
+32-bit system, or having two lines for both b32 and b64 in case your
+system is 64-bit:
 <pre>-a always,exit -F arch=ARCH -S mount -F auid&gt;=1000 -F auid!=unset -F key=export</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to
-<tt>/etc/audit/audit.rules</tt> file, setting ARCH to either b32 or b64 as
-appropriate for your system:
+<tt>/etc/audit/audit.rules</tt> file, setting ARCH to either b32 for
+32-bit system, or having two lines for both b32 and b64 in case your
+system is 64-bit:
 <pre>-a always,exit -F arch=ARCH -S mount -F auid&gt;=1000 -F auid!=unset -F key=export</pre>
   </td>
   <td xml:lang="en-US">
@@ -841,15 +873,21 @@ loss.
   <td>N/A</td>
   <td>Ensure auditd Collects Information on the Use of Privileged Commands - crontab</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <tt>auditd</tt> daemon is
-configured to use the <tt>augenrules</tt> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add a line of the following
-form to <tt>/etc/audit/audit.rules</tt>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
@@ -871,15 +909,21 @@ unusual activity.
   <td>N/A</td>
   <td>Ensure auditd Collects Information on the Use of Privileged Commands - mount</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <tt>auditd</tt> daemon is
-configured to use the <tt>augenrules</tt> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add a line of the following
-form to <tt>/etc/audit/audit.rules</tt>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
@@ -901,18 +945,22 @@ unusual activity.
   <td>N/A</td>
   <td>Ensure auditd Collects Information on the Use of Privileged Commands - pam_timestamp_check</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <tt>auditd</tt> daemon is
-configured to use the <tt>augenrules</tt> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
--F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
+<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add a line of the following
-form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
--F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
+<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -933,15 +981,21 @@ unusual activity.
   <td>N/A</td>
   <td>Ensure auditd Collects Information on the Use of Privileged Commands - postdrop</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <tt>auditd</tt> daemon is
-configured to use the <tt>augenrules</tt> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add a line of the following
-form to <tt>/etc/audit/audit.rules</tt>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
@@ -963,15 +1017,21 @@ unusual activity.
   <td>N/A</td>
   <td>Ensure auditd Collects Information on the Use of Privileged Commands - postqueue</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <tt>auditd</tt> daemon is
-configured to use the <tt>augenrules</tt> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add a line of the following
-form to <tt>/etc/audit/audit.rules</tt>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
@@ -993,15 +1053,21 @@ unusual activity.
   <td>N/A</td>
   <td>Ensure auditd Collects Information on the Use of Privileged Commands - ssh-keysign</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <tt>auditd</tt> daemon is
-configured to use the <tt>augenrules</tt> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add a line of the following
-form to <tt>/etc/audit/audit.rules</tt>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
@@ -1023,15 +1089,21 @@ unusual activity.
   <td>N/A</td>
   <td>Ensure auditd Collects Information on the Use of Privileged Commands - su</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <tt>auditd</tt> daemon is
-configured to use the <tt>augenrules</tt> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add a line of the following
-form to <tt>/etc/audit/audit.rules</tt>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
@@ -1053,15 +1125,21 @@ unusual activity.
   <td>N/A</td>
   <td>Ensure auditd Collects Information on the Use of Privileged Commands - sudo</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <tt>auditd</tt> daemon is
-configured to use the <tt>augenrules</tt> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add a line of the following
-form to <tt>/etc/audit/audit.rules</tt>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
@@ -1083,15 +1161,21 @@ unusual activity.
   <td>N/A</td>
   <td>Ensure auditd Collects Information on the Use of Privileged Commands - umount</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <tt>auditd</tt> daemon is
-configured to use the <tt>augenrules</tt> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add a line of the following
-form to <tt>/etc/audit/audit.rules</tt>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
@@ -1113,15 +1197,21 @@ unusual activity.
   <td>N/A</td>
   <td>Ensure auditd Collects Information on the Use of Privileged Commands - userhelper</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <tt>auditd</tt> daemon is
-configured to use the <tt>augenrules</tt> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add a line of the following
-form to <tt>/etc/audit/audit.rules</tt>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
@@ -1451,15 +1541,21 @@ must be set upon account creation.
   <td>N/A</td>
   <td>Record Any Attempts to Run semanage</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect any execution attempt
-of the <tt>semanage</tt> command for all users and root. If the <tt>auditd</tt>
-daemon is configured to use the <tt>augenrules</tt> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file:
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
@@ -1481,15 +1577,21 @@ unusual activity.
   <td>N/A</td>
   <td>Ensure auditd Collects Information on the Use of Privileged Commands - chage</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <tt>auditd</tt> daemon is
-configured to use the <tt>augenrules</tt> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add a line of the following
-form to <tt>/etc/audit/audit.rules</tt>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
@@ -1511,15 +1613,21 @@ unusual activity.
   <td>N/A</td>
   <td>Ensure auditd Collects Information on the Use of Privileged Commands - chsh</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <tt>auditd</tt> daemon is
-configured to use the <tt>augenrules</tt> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add a line of the following
-form to <tt>/etc/audit/audit.rules</tt>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
@@ -1541,15 +1649,21 @@ unusual activity.
   <td>N/A</td>
   <td>Ensure auditd Collects Information on the Use of Privileged Commands - gpasswd</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <tt>auditd</tt> daemon is
-configured to use the <tt>augenrules</tt> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add a line of the following
-form to <tt>/etc/audit/audit.rules</tt>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
@@ -1571,15 +1685,21 @@ unusual activity.
   <td>N/A</td>
   <td>Ensure auditd Collects Information on the Use of Privileged Commands - newgrp</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <tt>auditd</tt> daemon is
-configured to use the <tt>augenrules</tt> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add a line of the following
-form to <tt>/etc/audit/audit.rules</tt>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
@@ -1601,15 +1721,21 @@ unusual activity.
   <td>N/A</td>
   <td>Ensure auditd Collects Information on the Use of Privileged Commands - passwd</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <tt>auditd</tt> daemon is
-configured to use the <tt>augenrules</tt> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add a line of the following
-form to <tt>/etc/audit/audit.rules</tt>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
@@ -1631,15 +1757,21 @@ unusual activity.
   <td>N/A</td>
   <td>Ensure auditd Collects Information on the Use of Privileged Commands - unix_chkpwd</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <tt>auditd</tt> daemon is
-configured to use the <tt>augenrules</tt> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add a line of the following
-form to <tt>/etc/audit/audit.rules</tt>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
@@ -1661,19 +1793,21 @@ unusual activity.
   <td>N/A</td>
   <td>Record Events that Modify User/Group Information - /etc/group</td>
   <td xml:lang="en-US">
-If the <tt>auditd</tt> daemon is configured to use the
-<tt>augenrules</tt> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <tt>.rules</tt> in the
-directory <tt>/etc/audit/rules.d</tt>, in order to capture events that modify
-account changes:
-<br /><br />
+
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
 <pre>-w /etc/group -p wa -k audit_rules_usergroup_modification</pre>
-<br /><br />
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file, in order to capture events that modify
-account changes:
-<br /><br />
+<tt>/etc/audit/audit.rules</tt>:
+
 <pre>-w /etc/group -p wa -k audit_rules_usergroup_modification</pre>
   </td>
   <td xml:lang="en-US">
@@ -1688,19 +1822,21 @@ users, groups, or modifications should be investigated for legitimacy.
   <td>N/A</td>
   <td>Record Events that Modify User/Group Information - /etc/gshadow</td>
   <td xml:lang="en-US">
-If the <tt>auditd</tt> daemon is configured to use the
-<tt>augenrules</tt> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <tt>.rules</tt> in the
-directory <tt>/etc/audit/rules.d</tt>, in order to capture events that modify
-account changes:
-<br /><br />
+
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
 <pre>-w /etc/gshadow -p wa -k audit_rules_usergroup_modification</pre>
-<br /><br />
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file, in order to capture events that modify
-account changes:
-<br /><br />
+<tt>/etc/audit/audit.rules</tt>:
+
 <pre>-w /etc/gshadow -p wa -k audit_rules_usergroup_modification</pre>
   </td>
   <td xml:lang="en-US">
@@ -1715,19 +1851,21 @@ users, groups, or modifications should be investigated for legitimacy.
   <td>N/A</td>
   <td>Record Events that Modify User/Group Information - /etc/security/opasswd</td>
   <td xml:lang="en-US">
-If the <tt>auditd</tt> daemon is configured to use the
-<tt>augenrules</tt> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <tt>.rules</tt> in the
-directory <tt>/etc/audit/rules.d</tt>, in order to capture events that modify
-account changes:
-<br /><br />
+
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
 <pre>-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
-<br /><br />
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file, in order to capture events that modify
-account changes:
-<br /><br />
+<tt>/etc/audit/audit.rules</tt>:
+
 <pre>-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
   </td>
   <td xml:lang="en-US">
@@ -1742,19 +1880,21 @@ users, groups, or modifications should be investigated for legitimacy.
   <td>N/A</td>
   <td>Record Events that Modify User/Group Information - /etc/passwd</td>
   <td xml:lang="en-US">
-If the <tt>auditd</tt> daemon is configured to use the
-<tt>augenrules</tt> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <tt>.rules</tt> in the
-directory <tt>/etc/audit/rules.d</tt>, in order to capture events that modify
-account changes:
-<br /><br />
+
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
 <pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
-<br /><br />
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file, in order to capture events that modify
-account changes:
-<br /><br />
+<tt>/etc/audit/audit.rules</tt>:
+
 <pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
   </td>
   <td xml:lang="en-US">
@@ -1769,19 +1909,21 @@ users, groups, or modifications should be investigated for legitimacy.
   <td>N/A</td>
   <td>Record Events that Modify User/Group Information - /etc/shadow</td>
   <td xml:lang="en-US">
-If the <tt>auditd</tt> daemon is configured to use the
-<tt>augenrules</tt> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <tt>.rules</tt> in the
-directory <tt>/etc/audit/rules.d</tt>, in order to capture events that modify
-account changes:
-<br /><br />
+
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
 <pre>-w /etc/shadow -p wa -k audit_rules_usergroup_modification</pre>
-<br /><br />
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file, in order to capture events that modify
-account changes:
-<br /><br />
+<tt>/etc/audit/audit.rules</tt>:
+
 <pre>-w /etc/shadow -p wa -k audit_rules_usergroup_modification</pre>
   </td>
   <td xml:lang="en-US">
@@ -1881,16 +2023,22 @@ ensures the security of the system.
   <td>N/A</td>
   <td>Ensure auditd Collects Information on the Use of Privileged Commands - kmod</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <tt>auditd</tt> daemon is
-configured to use the <tt>augenrules</tt> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add a line of the following
-form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Without generating audit records that are specific to the security and
@@ -1920,6 +2068,19 @@ That way, it avoids potential breakage of configuration, as it ships several tes
 that are well tested and supported to solve different use-cases.
   </td>
   <td>var_authselect_profile=sssd</td>
+</tr>
+<tr>
+  <td>SC-3</td>
+  <td>N/A</td>
+  <td>The system must booted with init_on_free=1</td>
+  <td xml:lang="en-US">
+Setting <tt>init_on_free=1</tt> on boot guarantees that pages and heap objects are initialized right after they're freed, so it won't be possible to access stale data by using a dangling pointer.
+  </td>
+  <td xml:lang="en-US">
+<tt>init_on_free</tt> is a Linux kernel boot parameter that enhances security by initializing memory regions when they are freed, preventing data leakage.
+This process ensures that stale data in freed memory cannot be accessed by malicious programs.
+  </td>
+  <td></td>
 </tr>
 <tr>
   <td>AC-3<br/>AC-3(3)(a)<br/>AU-9<br/>SC-7(21)</td>
@@ -3763,7 +3924,9 @@ users.
 All audit directories must be group owned by root user. By default, the path for audit log is <pre>/var/log/audit/</pre>.
 
 To properly set the group owner of <code>/var/log/audit</code>, run the command:
-<pre>$ sudo chgrp root /var/log/audit</pre>
+
+  <pre>$ sudo chgrp root /var/log/audit</pre>
+  
   </td>
   <td xml:lang="en-US">
 Unauthorized disclosure of audit records can reveal system and configuration data to
@@ -3779,7 +3942,9 @@ attackers, thus compromising its confidentiality.
 All audit directories must be owned by root user. By default, the path for audit log is <pre>/var/log/audit/</pre>.
 
 To properly set the owner of <code>/var/log/audit</code>, run the command:
-<pre>$ sudo chown root /var/log/audit </pre>
+
+  <pre>$ sudo chown root /var/log/audit </pre>
+  
   </td>
   <td xml:lang="en-US">
 Unauthorized disclosure of audit records can reveal system and configuration data to
@@ -3925,7 +4090,9 @@ be configured via <tt>log_file</tt> parameter in <pre>/etc/audit/auditd.conf</pr
 or, by default, the path for audit log is <pre>/var/log/audit/</pre>.
 
 To properly set the group owner of <code>/var/log/audit/*</code>, run the command:
-<pre>$ sudo chgrp root /var/log/audit/*</pre>
+
+  <pre>$ sudo chgrp root /var/log/audit/*</pre>
+  
   </td>
   <td xml:lang="en-US">
 Unauthorized disclosure of audit records can reveal system and configuration data to
@@ -3943,7 +4110,9 @@ configured via <tt>log_file</tt> parameter in <pre>/etc/audit/auditd.conf</pre>
 or by default, the path for audit log is <pre>/var/log/audit/</pre>.
 
 To properly set the owner of <code>/var/log/audit/*</code>, run the command:
-<pre>$ sudo chown root /var/log/audit/* </pre>
+
+  <pre>$ sudo chown root /var/log/audit/* </pre>
+  
   </td>
   <td xml:lang="en-US">
 Unauthorized disclosure of audit records can reveal system and configuration data to
@@ -4059,6 +4228,9 @@ admin, or administrator for the grub2 superuser account.
 <br /><br />
 Change the superuser to a different username (The default is 'root').
 <pre>$ sed -i 's/\(set superusers=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+The line mentioned above must be followed by the line
+<pre>export superusers</pre>
+so that the <tt>superusers</tt> is honored.
 <br /><br />
 Once the superuser account has been added,
 update the
@@ -4168,30 +4340,6 @@ and whether to enter single-user mode.
 <tr>
   <td>CM-6(a)</td>
   <td>N/A</td>
-  <td>Enable SLUB/SLAB allocator poisoning</td>
-  <td xml:lang="en-US">
-To enable poisoning of SLUB/SLAB objects,
-add the argument <tt>slub_debug=<tt>P</tt></tt> to the default
-GRUB 2 command line for the Linux operating system.
-To ensure that <tt>slub_debug=<tt>P</tt></tt> is added as a kernel command line
-argument to newly installed kernels, add <tt>slub_debug=<tt>P</tt></tt> to the
-default Grub2 command line for Linux operating systems. Modify the line within
-<tt>/etc/default/grub</tt> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... slub_debug=<tt>P</tt> ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="slub_debug=<tt>P</tt>"</pre>
-  </td>
-  <td xml:lang="en-US">
-Poisoning writes an arbitrary value to freed objects, so any modification or
-reference to that object after being freed or before being initialized will be
-detected and prevented.
-This prevents many types of use-after-free vulnerabilities at little performance cost.
-Also prevents leak of data and detection of corrupted memory.
-  </td>
-  <td>var_slub_debug_options=P</td>
-</tr>
-<tr>
-  <td>CM-6(a)</td>
-  <td>N/A</td>
   <td>Set the UEFI Boot Loader Admin Username to a Non-Default Value</td>
   <td xml:lang="en-US">
 The grub2 boot loader should have a superuser account and password
@@ -4205,6 +4353,9 @@ admin, or administrator for the grub2 superuser account.
 <br /><br />
 Change the superuser to a different username (The default is 'root').
 <pre>$ sed -i 's/\(set superusers=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+The line mentioned above must be followed by the line
+<pre>export superusers</pre>
+so that the <tt>superusers</tt> is honored.
 <br /><br />
 Once the superuser account has been added,
 update the
@@ -4430,22 +4581,6 @@ accounts are created in the future, and the cause should be discovered and addre
   <td></td>
 </tr>
 <tr>
-  <td>CM-6</td>
-  <td>N/A</td>
-  <td>Prevent user from disabling the screen lock</td>
-  <td xml:lang="en-US">
-The <tt>tmux</tt> terminal multiplexer is used to implement
-automatic session locking. It should not be listed in
-<tt>/etc/shells</tt>.
-  </td>
-  <td xml:lang="en-US">
-Not listing <tt>tmux</tt> among permitted shells
-prevents malicious program running as user
-from lowering security by disabling the screen lock.
-  </td>
-  <td></td>
-</tr>
-<tr>
   <td>CM-6(a)</td>
   <td>N/A</td>
   <td>Install AIDE</td>
@@ -4546,34 +4681,6 @@ Rsyslog is installed by default. The <code>rsyslog</code> package can be install
   <td xml:lang="en-US">
 The rsyslog package provides the rsyslog daemon, which provides
 system logging services.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>CM-6(a)</td>
-  <td>N/A</td>
-  <td>Install the tmux Package</td>
-  <td xml:lang="en-US">
-To enable console screen locking, install the <tt>tmux</tt> package.
-The <code>tmux</code> package can be installed with the following command:
-<pre>
-$ sudo yum install tmux</pre>
-A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not want to log out because of the temporary nature of the absence.
-The session lock is implemented at the point where session activity can be determined.
-Rather than be forced to wait for a period of time to expire before the user session can be locked, Oracle Linux 8 needs to provide users with the ability to manually invoke a session lock so users can secure their session if it is necessary to temporarily vacate the immediate physical vicinity.
-Instruct users to begin new terminal sessions with the following command:
-<pre>$ tmux</pre>
-The console can now be locked with the following key combination:
-<pre>ctrl+b :lock-session</pre>
-  </td>
-  <td xml:lang="en-US">
-A session time-out lock is a temporary action taken when a user stops work and moves away from the immediate
-physical vicinity of the information system but does not logout because of the temporary nature of the absence.
-Rather than relying on the user to manually lock their operation system session prior to vacating the vicinity,
-operating systems need to be able to identify when a user's session has idled and take action to initiate the
-session lock.
-<br /><br />
-The <tt>tmux</tt> package allows for a session lock to be implemented and configured.
   </td>
   <td></td>
 </tr>
@@ -4708,11 +4815,20 @@ they may not be supported in all environments.
 To use UDP for log message delivery:
 <pre>*.* @<i><tt>logcollector</tt></i></pre>
 <br />
+Or in RainerScript:
+<pre>*.* action(type="omfwd" ... target="<i><tt>logcollector</tt></i>" protocol="udp")</pre>
+<br />
 To use TCP for log message delivery:
 <pre>*.* @@<i><tt>logcollector</tt></i></pre>
 <br />
+Or in RainerScript:
+<pre>*.* action(type="omfwd" ... target="<i><tt>logcollector</tt></i>" protocol="tcp")</pre>
+<br />
 To use RELP for log message delivery:
 <pre>*.* :omrelp:<i><tt>logcollector</tt></i></pre>
+<br />
+Or in RainerScript:
+<pre>*.* action(type="omfwd" ... target="<i><tt>logcollector</tt></i>" protocol="relp")</pre>
 <br />
 There must be a resolvable DNS CNAME or Alias record set to "<tt>logcollector</tt>" for logs to be sent correctly to the centralized logging utility.
   </td>
@@ -5112,19 +5228,20 @@ reduces the risk of sharing files which should remain private.
   <td>N/A</td>
   <td>Disable graphical user interface</td>
   <td xml:lang="en-US">
-By removing the following packages,  the system no longer has X Windows installed.
-
-<tt>xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</tt>
+By removing the following packages, the system no longer has X Windows installed.
+ <tt>xorg-x11-server-Xorg</tt>
+ <tt>xorg-x11-server-common</tt>
+ <tt>xorg-x11-server-utils</tt>
+ <tt>xorg-x11-server-Xwayland</tt>
 
 If X Windows is not installed then the system cannot boot into graphical user mode.
 This prevents the system from being accidentally or maliciously booted into a <tt>graphical.target</tt>
 mode. To do so, run the following command:
-
 <pre>sudo yum remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</pre>
   </td>
   <td xml:lang="en-US">
-Unnecessary service packages must not be installed to decrease the attack surface of the system. X windows has a long history of security
-vulnerabilities and should not be installed unless approved and documented.
+Unnecessary service packages must not be installed to decrease the attack surface of the system.
+X windows has a long history of security vulnerabilities and should not be installed unless approved and documented.
   </td>
   <td></td>
 </tr>
@@ -5330,6 +5447,9 @@ recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>aut
 depending on the OS version.
 
 The chosen profile expects the directory to be <tt><tt>ol8</tt></tt>.
+
+To configure the tally directory, add the following line to <tt>/etc/security/faillock.conf</tt>:
+<pre>dir = <tt>ol8</tt></pre>
   </td>
   <td xml:lang="en-US">
 Locking out user accounts after a number of incorrect attempts prevents direct password
@@ -6783,26 +6903,6 @@ maliciously may result in an exceptional number of simultaneous login sessions.
   <td>var_accounts_max_concurrent_login_sessions=10</td>
 </tr>
 <tr>
-  <td>AC-11(a)<br/>AC-11(b)<br/>CM-6(a)</td>
-  <td>N/A</td>
-  <td>Configure the tmux Lock Command</td>
-  <td xml:lang="en-US">
-To enable console screen locking in <tt>tmux</tt> terminal multiplexer,
-the <tt>vlock</tt> command must be configured to be used as a locking
-mechanism.
-Add the following line to <tt>/etc/tmux.conf</tt>:
-<pre>set -g lock-command vlock</pre>.
-The console can now be locked with the following key combination:
-<pre>ctrl+b :lock-session</pre>
-  </td>
-  <td xml:lang="en-US">
-The <tt>tmux</tt> package allows for a session lock to be implemented and configured.
-However, the session lock is implemented by an external command. The <tt>tmux</tt>
-default configuration does not contain an effective session lock.
-  </td>
-  <td></td>
-</tr>
-<tr>
   <td>AC-11(a)<br/>CM-6(a)</td>
   <td>N/A</td>
   <td>Set GNOME3 Screensaver Inactivity Timeout</td>
@@ -6887,7 +6987,9 @@ be signed with a certificate recognized and approved by the organization.
   <td xml:lang="en-US">
 
 To properly set the group owner of <code>/var/log/lastlog</code>, run the command:
-<pre>$ sudo chgrp root /var/log/lastlog</pre>
+
+  <pre>$ sudo chgrp root /var/log/lastlog</pre>
+  
   </td>
   <td xml:lang="en-US">
 Unauthorized disclosure of the contents of the /var/log/lastlog file can reveal system data to
@@ -6902,7 +7004,9 @@ attackers, thus compromising its confidentiality.
   <td xml:lang="en-US">
 
 To properly set the owner of <code>/usr/bin/lastlog</code>, run the command:
-<pre>$ sudo chown root /usr/bin/lastlog </pre>
+
+  <pre>$ sudo chown root /usr/bin/lastlog </pre>
+  
   </td>
   <td xml:lang="en-US">
 Unauthorized disclosure of the contents of the /var/log/lastlog file can reveal system data to
@@ -7451,29 +7555,6 @@ unauthorized users without detection.
 <tr>
   <td>AC-17(2)</td>
   <td>N/A</td>
-  <td>Configure SSH Client to Use FIPS 140 Validated Ciphers: openssh.config</td>
-  <td xml:lang="en-US">
-Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
-OpenSSH is supported by system crypto policy, but the OpenSSH configuration may be
-set up incorrectly.
-
-To check that Crypto Policies settings for ciphers are configured correctly, ensure that
-<tt>/etc/crypto-policies/back-ends/openssh.config</tt> contains the following
-line and is not commented out:
-<pre>Ciphers <tt>stig_extended</tt></pre>
-  </td>
-  <td xml:lang="en-US">
-Overriding the system crypto policy makes the behavior of the OpenSSH client
-violate expectations, and makes system configuration more fragmented. By
-specifying a cipher list with the order of ciphers being in a “strongest to
-weakest” orientation, the system will automatically attempt to use the
-strongest cipher for securing SSH connections.
-  </td>
-  <td>sshd_approved_ciphers=stig_extended</td>
-</tr>
-<tr>
-  <td>AC-17(2)</td>
-  <td>N/A</td>
   <td>Configure SSH Server to Use FIPS 140-2 Validated Ciphers: opensshserver.config</td>
   <td xml:lang="en-US">
 Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
@@ -7493,27 +7574,6 @@ weakest” orientation, the system will automatically attempt to use the
 strongest cipher for securing SSH connections.
   </td>
   <td>sshd_approved_ciphers=stig_extended</td>
-</tr>
-<tr>
-  <td>AC-17(2)</td>
-  <td>N/A</td>
-  <td>Configure SSH Client to Use FIPS 140-2 Validated MACs: openssh.config</td>
-  <td xml:lang="en-US">
-Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
-OpenSSH is supported by system crypto policy, but the OpenSSH configuration may be
-set up incorrectly.
-
-To check that Crypto Policies settings are configured correctly, ensure that
-<tt>/etc/crypto-policies/back-ends/openssh.config</tt> contains the following
-line and is not commented out:
-<tt>MACs <tt>stig_extended</tt></tt>
-  </td>
-  <td xml:lang="en-US">
-Overriding the system crypto policy makes the behavior of the OpenSSH
-client violate expectations, and makes system configuration more
-fragmented.
-  </td>
-  <td>sshd_approved_macs=stig_extended</td>
 </tr>
 <tr>
   <td>AC-17(2)</td>
@@ -8021,15 +8081,21 @@ may be able to access or modify them.
   <td>N/A</td>
   <td>Record Any Attempts to Run chacl</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect any execution attempt
-of the <tt>chacl</tt> command for all users and root. If the <tt>auditd</tt>
-daemon is configured to use the <tt>augenrules</tt> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/bin/chacl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file:
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/bin/chacl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
@@ -8047,15 +8113,21 @@ information system (e.g., module or policy filter).
   <td>N/A</td>
   <td>Record Any Attempts to Run setfacl</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect any execution attempt
-of the <tt>setfacl</tt> command for all users and root. If the <tt>auditd</tt>
-daemon is configured to use the <tt>augenrules</tt> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file:
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
@@ -8099,16 +8171,22 @@ make auditing complicated or impossible.
   <td>N/A</td>
   <td>Record Any Attempts to Run ssh-agent</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect any execution attempt
-of the <tt>ssh-agent</tt> command for all users and root. If the <tt>auditd</tt>
-daemon is configured to use the <tt>augenrules</tt> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-ssh-agent</pre>
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
+<pre>-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-ssh-agent</pre>
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
+<pre>-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Without generating audit records that are specific to the security and
@@ -8126,15 +8204,21 @@ information system (e.g., module or policy filter).
   <td>N/A</td>
   <td>Ensure auditd Collects Information on the Use of Privileged Commands - unix_update</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <tt>auditd</tt> daemon is
-configured to use the <tt>augenrules</tt> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/sbin/unix_update -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add a line of the following
-form to <tt>/etc/audit/audit.rules</tt>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/sbin/unix_update -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
@@ -8156,15 +8240,21 @@ unusual activity.
   <td>N/A</td>
   <td>Ensure auditd Collects Information on the Use of Privileged Commands - usermod</td>
   <td xml:lang="en-US">
-At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <tt>auditd</tt> daemon is
-configured to use the <tt>augenrules</tt> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <tt>.rules</tt>
+in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add a line of the following
-form to <tt>/etc/audit/audit.rules</tt>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
@@ -8187,14 +8277,22 @@ unusual activity.
   <td>Ensure auditd Collects System Administrator Actions - /etc/sudoers</td>
   <td xml:lang="en-US">
 At a minimum, the audit system should collect administrator actions
-for all users and root. If the <tt>auditd</tt> daemon is configured to use the
-<tt>augenrules</tt> program to read audit rules during daemon startup (the default),
-add the following line to a file with suffix <tt>.rules</tt> in the directory
-<tt>/etc/audit/rules.d</tt>:
+for all users and root.
+
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
 <pre>-w /etc/sudoers -p wa -k actions</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add the following line to
-<tt>/etc/audit/audit.rules</tt> file:
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt>:
+
 <pre>-w /etc/sudoers -p wa -k actions</pre>
   </td>
   <td xml:lang="en-US">
@@ -8212,14 +8310,22 @@ files mitigates this risk.
   <td>Ensure auditd Collects System Administrator Actions - /etc/sudoers.d/</td>
   <td xml:lang="en-US">
 At a minimum, the audit system should collect administrator actions
-for all users and root. If the <tt>auditd</tt> daemon is configured to use the
-<tt>augenrules</tt> program to read audit rules during daemon startup (the default),
-add the following line to a file with suffix <tt>.rules</tt> in the directory
-<tt>/etc/audit/rules.d</tt>:
+for all users and root.
+
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
 <pre>-w /etc/sudoers.d/ -p wa -k actions</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add the following line to
-<tt>/etc/audit/audit.rules</tt> file:
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt>:
+
 <pre>-w /etc/sudoers.d/ -p wa -k actions</pre>
   </td>
   <td xml:lang="en-US">
@@ -8284,59 +8390,6 @@ Using the <tt>server</tt> directive allows for better control of where the syste
 <tr>
   <td></td>
   <td>N/A</td>
-  <td>Support session locking with tmux (not enforcing)</td>
-  <td xml:lang="en-US">
-The <tt>tmux</tt> terminal multiplexer is used to implement
-automatic session locking. It should be started from
-<tt>/etc/bashrc</tt> or drop-in files within <tt>/etc/profile.d/</tt>.
-  </td>
-  <td xml:lang="en-US">
-Unlike <tt>bash</tt> itself, the <tt>tmux</tt> terminal multiplexer
-provides a mechanism to lock sessions after period of inactivity.
-A session lock is a temporary action taken when a user stops work and moves away from the
-immediate physical vicinity of the information system but does not want to
-log out because of the temporary nature of the absence.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td></td>
-  <td>N/A</td>
-  <td>Configure tmux to lock session after inactivity</td>
-  <td xml:lang="en-US">
-To enable console screen locking in <tt>tmux</tt> terminal multiplexer
-after a period of inactivity,
-the <tt>lock-after-time</tt> option has to be set to a value greater than 0 and less than
-or equal to 900 in <tt>/etc/tmux.conf</tt>.
-  </td>
-  <td xml:lang="en-US">
-Locking the session after a period of inactivity limits the
-potential exposure if the session is left unattended.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td></td>
-  <td>N/A</td>
-  <td>Configure the tmux lock session key binding</td>
-  <td xml:lang="en-US">
-To set a key binding for the screen locking in <tt>tmux</tt> terminal multiplexer,
-the <tt>session-lock</tt> command must be bound to a key.
-Add the following line to <tt>/etc/tmux.conf</tt>:
-<pre>bind X lock-session</pre>.
-The console can now be locked with the following key combination:
-<pre>Ctrl+b Shift+x</pre>
-  </td>
-  <td xml:lang="en-US">
-The <tt>tmux</tt> package allows for a session lock to be implemented and configured.
-However, the session lock is implemented by an external command. The <tt>tmux</tt>
-default configuration does not contain an effective session lock.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td></td>
-  <td>N/A</td>
   <td>Enable the GNOME3 Screen Locking On Smartcard Removal</td>
   <td xml:lang="en-US">
 In the default graphical environment, screen locking on smartcard removal
@@ -8364,7 +8417,9 @@ prevent undesired access to system.
   <td>N/A</td>
   <td>Verify Group Who Owns /var/log Directory</td>
   <td xml:lang="en-US">
- To properly set the group owner of <code>/var/log</code>, run the command: <pre>$ sudo chgrp root /var/log</pre>
+ To properly set the group owner of <code>/var/log</code>, run the command:
+<pre>$ sudo chgrp root /var/log</pre>
+
   </td>
   <td xml:lang="en-US">
 The <tt>/var/log</tt> directory contains files with logs of error
@@ -8378,7 +8433,9 @@ personnel.
   <td>N/A</td>
   <td>Verify Group Who Owns /var/log/messages File</td>
   <td xml:lang="en-US">
- To properly set the group owner of <code>/var/log/messages</code>, run the command: <pre>$ sudo chgrp root /var/log/messages</pre>
+ To properly set the group owner of <code>/var/log/messages</code>, run the command:
+<pre>$ sudo chgrp root /var/log/messages</pre>
+
   </td>
   <td xml:lang="en-US">
 The <tt>/var/log/messages</tt> file contains logs of error messages in
@@ -8413,7 +8470,9 @@ able to access files that they legitimately should.
   <td>N/A</td>
   <td>Verify User Who Owns /var/log Directory</td>
   <td xml:lang="en-US">
- To properly set the owner of <code>/var/log</code>, run the command: <pre>$ sudo chown root /var/log </pre>
+ To properly set the owner of <code>/var/log</code>, run the command:
+<pre>$ sudo chown root /var/log </pre>
+
   </td>
   <td xml:lang="en-US">
 The <tt>/var/log</tt> directory contains files with logs of error
@@ -8427,7 +8486,9 @@ personnel.
   <td>N/A</td>
   <td>Verify User Who Owns /var/log/messages File</td>
   <td xml:lang="en-US">
- To properly set the owner of <code>/var/log/messages</code>, run the command: <pre>$ sudo chown root /var/log/messages </pre>
+ To properly set the owner of <code>/var/log/messages</code>, run the command:
+<pre>$ sudo chown root /var/log/messages </pre>
+
   </td>
   <td xml:lang="en-US">
 The <tt>/var/log/messages</tt> file contains logs of error messages in
@@ -8884,10 +8945,10 @@ Notice that if neither are set, they already have the default value of 5000.
 If either is set, they must have the minimum value of <tt>100000</tt>.
   </td>
   <td xml:lang="en-US">
-Passwords need to be protected at all times, and encryption is the standard
-method for protecting passwords. If passwords are not encrypted, they can
+Passwords need to be protected at all times, and hashing is the standard
+method for protecting passwords. If passwords are not hashed, they can
 be plainly read (i.e., clear text) and easily compromised. Passwords
-that are encrypted with a weak algorithm are no more protected than if
+that are hashed with a weak algorithm are no more protected than if
 they are kept in plain text.
 <br /><br />
 Using more hashing rounds makes password cracking attacks more difficult.
@@ -8933,7 +8994,7 @@ By decreasing the limit based on the amount of data and enabling
 time-based limit, effects of potential attacks against
 encryption keys are limited.
   </td>
-  <td>var_rekey_limit_time=1hour<br/>var_rekey_limit_size=1G</td>
+  <td>var_rekey_limit_size=1G<br/>var_rekey_limit_time=1hour</td>
 </tr>
 <tr>
   <td></td>
