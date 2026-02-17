@@ -1,0 +1,3429 @@
+<html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Protection Profile for General Purpose Operating Systems</title>
+</head>
+<body>
+<br><br><div style="text-align: center; font-size: x-large; font-weight:bold">Protection Profile for General Purpose Operating Systems</div>
+<br><br><style type="text/css">
+		table
+		{
+			border-collapse:collapse;
+		}
+		table, th, td
+		{
+			border: 2px solid #dcdcdc;
+			border-left: none;
+			border-right: none;
+			vertical-align: top;
+			padding: 2px;
+			font-family: verdana,arial,sans-serif;
+			font-size:11px;
+		}
+		pre { 
+			white-space: pre-wrap;
+			white-space: -moz-pre-wrap !important;
+			word-wrap:break-word; 
+		}
+		table tr:nth-child(2n+2) { background-color: #f4f4f4; }
+		thead
+		{
+			display: table-header-group;
+			font-weight: bold;
+			background-color: #dedede;
+		}
+	</style>
+<table>
+<thead>
+<td>CCE ID</td>
+<td>Rule Title</td>
+<td>Description</td>
+<td>Rationale</td>
+<td>Variable Setting</td>
+<td>NIST 800-53 Mapping</td>
+</thead>
+<tr>
+<td>CCE-80769-3</td>
+<td>Disable User Administration in GNOME3</td>
+<td xml:lang="en-US">By default, <code>GNOME</code> will allow all users to have some administratrion
+capability. This should be disabled so that non-administrative users are not making
+configuration changes. To configure the system to disable user administration
+capability in the Graphical User Interface (GUI), add or set
+<code>user-administration-disabled</code> to <code>true</code> in
+<code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
+<pre>[org/gnome/desktop/lockdown]
+user-administration-disabled=true
+</pre>
+Once the settings have been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/lockdown/user-administration-disabled</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td xml:lang="en-US">Allowing all users to have some administratrive capabilities to the system through
+the Graphical User Interface (GUI) when they would not have them otherwise could allow
+unintended configuration changes as well as a nefarious user the capability to make system
+changes such as adding new accounts, etc.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80656-2</td>
+<td>Ensure PAM Enforces Password Requirements - Minimum Length</td>
+<td xml:lang="en-US">The pam_pwquality module's <code>minlen</code> parameter controls requirements for
+minimum characters required in a password. Add <code>minlen=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_minlen"></ns0:sub></code>
+after pam_pwquality to set minimum password length requirements.</td>
+<td xml:lang="en-US">The shorter the password, the lower the number of possible combinations
+that need to be tested before the password is compromised.
+<br>
+Password complexity, or strength, is a measure of the effectiveness of a
+password in resisting attempts at guessing and brute-force attacks.
+Password length is one factor of several that helps to determine strength
+and how long it takes to crack a password. Use of more characters in a password
+helps to exponentially increase the time and/or resources required to
+compromose the password.</td>
+<td></td>
+<td>IA-5(1)(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80652-1</td>
+<td>Set Password Minimum Length in login.defs</td>
+<td xml:lang="en-US">To specify password length requirements for new accounts, edit the file
+<code>/etc/login.defs</code> and add or correct the following line:
+<pre>PASS_MIN_LEN <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_password_minlen_login_defs"></ns0:sub></pre>
+<br><br>
+The DoD requirement is <code>15</code>. 
+The FISMA requirement is <code>12</code>.
+The profile requirement is
+<code><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_password_minlen_login_defs"></ns0:sub></code>.
+If a program consults <code>/etc/login.defs</code> and also another PAM module
+(such as <code>pam_pwquality</code>) during a password change operation, then
+the most restrictive must be satisfied. See PAM section for more
+information about enforcing password quality requirements.</td>
+<td xml:lang="en-US">Requiring a minimum password length makes password
+cracking attacks more difficult by ensuring a larger
+search space. However, any security benefit from an onerous requirement
+must be carefully weighed against usability problems, support costs, or counterproductive
+behavior that may result.</td>
+<td></td>
+<td>IA-5(f)<br>IA-5(1)(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80663-8</td>
+<td>Ensure PAM Enforces Password Requirements - Minimum Special Characters</td>
+<td xml:lang="en-US">The pam_pwquality module's <code>ocredit=</code> parameter controls requirements for
+usage of special (or "other") characters in a password. When set to a negative number,
+any password will be required to contain that many special characters.
+When set to a positive number, pam_pwquality will grant +1
+additional length credit for each special character. Modify the <code>ocredit</code> setting
+in <code>/etc/security/pwquality.conf</code> to equal <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_ocredit"></ns0:sub>
+to require use of a special character in passwords.</td>
+<td xml:lang="en-US">Use of a complex password helps to increase the time and resources required
+to compromise the password. Password complexity, or strength, is a measure of
+the effectiveness of a password in resisting attempts at guessing and brute-force
+attacks.
+<br><br>
+Password complexity is one factor of several that determines how long it takes
+to crack a password. The more complex the password, the greater the number of
+possble combinations that need to be tested before the password is compromised.
+Requiring a minimum number of special characters makes password guessing attacks
+more difficult by ensuring a larger search space.</td>
+<td></td>
+<td>IA-5(b)<br>IA-5(c)<br>IA-5(1)(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80653-9</td>
+<td>Ensure PAM Enforces Password Requirements - Minimum Digit Characters</td>
+<td xml:lang="en-US">The pam_pwquality module's <code>dcredit</code> parameter controls requirements for
+usage of digits in a password. When set to a negative number, any password will be required to
+contain that many digits. When set to a positive number, pam_pwquality will grant +1 additional
+length credit for each digit. Modify the <code>dcredit</code> setting in
+<code>/etc/security/pwquality.conf</code> to require the use of a digit in passwords.</td>
+<td xml:lang="en-US">Use of a complex password helps to increase the time and resources required
+to compromise the password. Password complexity, or strength, is a measure of
+the effectiveness of a password in resisting attempts at guessing and brute-force
+attacks.
+<br><br>
+Password complexity is one factor of several that determines how long it takes
+to crack a password. The more complex the password, the greater the number of
+possible combinations that need to be tested before the password is compromised.
+Requiring digits makes password guessing attacks more difficult by ensuring a larger
+search space.</td>
+<td></td>
+<td>IA-5(1)(a)<br>IA-5(b)<br>IA-5(c)<br>194<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80665-3</td>
+<td>Ensure PAM Enforces Password Requirements - Minimum Uppercase Characters</td>
+<td xml:lang="en-US">The pam_pwquality module's <code>ucredit=</code> parameter controls requirements for
+usage of uppercase letters in a password. When set to a negative number, any password will be required to
+contain that many uppercase characters. When set to a positive number, pam_pwquality will grant +1 additional
+length credit for each uppercase character. Modify the <code>ucredit</code> setting in
+<code>/etc/security/pwquality.conf</code> to require the use of an uppercase character in passwords.</td>
+<td xml:lang="en-US">Use of a complex password helps to increase the time and resources reuiqred to compromise the password.
+Password complexity, or strength, is a measure of the effectiveness of a password in resisting attempts
+at guessing and brute-force attacks.
+<br><br>
+Password complexity is one factor of several that determines how long it takes to crack a password. The more
+complex the password, the greater the number of possible combinations that need to be tested before
+the password is compromised.</td>
+<td></td>
+<td>IA-5(b)<br>IA-5(c)<br>IA-5(1)(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80655-4</td>
+<td>Ensure PAM Enforces Password Requirements - Minimum Lowercase Characters</td>
+<td xml:lang="en-US">The pam_pwquality module's <code>lcredit</code> parameter controls requirements for
+usage of lowercase letters in a password. When set to a negative number, any password will be required to
+contain that many lowercase characters. When set to a positive number, pam_pwquality will grant +1 additional
+length credit for each lowercase character. Modify the <code>lcredit</code> setting in
+<code>/etc/security/pwquality.conf</code> to require the use of a lowercase character in passwords.</td>
+<td xml:lang="en-US">Use of a complex password helps to increase the time and resources required
+to compromise the password. Password complexity, or strength, is a measure of
+the effectiveness of a password in resisting attempts at guessing and brute-force
+attacks.
+<br><br>
+Password complexity is one factor of several that determines how long it takes
+to crack a password. The more complex the password, the greater the number of
+possble combinations that need to be tested before the password is compromised.
+Requiring a minimum number of lowercase characters makes password guessing attacks
+more difficult by ensuring a larger search space.</td>
+<td></td>
+<td>IA-5(b)<br>IA-5(c)<br>IA-5(1)(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80644-8</td>
+<td>Install the tmux Package</td>
+<td xml:lang="en-US">To enable console screen locking, install the <code>tmux</code> package.
+The <code>tmux</code> package can be installed with the following command:
+<pre>
+$ sudo yum install tmux</pre>
+Instruct users to begin new terminal sessions with the following command:
+<pre>$ tmux</pre>
+The console can now be locked with the following key combination:
+<pre>ctrl+b :lock-session</pre>
+</td>
+<td xml:lang="en-US">A session time-out lock is a temporary action taken when a user stops work and moves away from the immediate
+physical vicinity of the information system but does not logout because of the temporary nature of the absence.
+Rather than relying on the user to manually lock their operation system session prior to vacating the vicinity,
+operating systems need to be able to identify when a user's session has idled and take action to initiate the
+session lock.
+<br><br>
+The <code>tmux</code> package allows for a session lock to be implemented and configured.</td>
+<td></td>
+<td>AC-11(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80782-6</td>
+<td>Force dconf to use the textfiles instead of a binary DB</td>
+<td xml:lang="en-US">By default, DConf uses a binary database as a data backend.
+The database is compiled from config files by the <pre>dconf update</pre> command.
+
+dconf can be configured to look into those text files directly by inserting the
+<pre>service-db:keyfile/user</pre>
+directive at the beginning of the <pre>/etc/dconf/profile/user</pre> file.</td>
+<td xml:lang="en-US">Unlike text config files, the binary database is impossible to check by OVAL.
+Therefore, in order to evaluate dconf configuration, both have to be true at the same time -
+configuration files have to be compliant, and dconf has to be forced to use them
+as the primary settings storage.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80774-3</td>
+<td>Enable GNOME3 Screensaver Idle Activation</td>
+<td xml:lang="en-US">To activate the screensaver in the GNOME3 desktop after a period of inactivity,
+add or set <code>idle-activation-enabled</code> to <code>true</code> in
+<code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
+<pre>[org/gnome/desktop/screensaver]
+idle-activation-enabled=true</pre>
+Once the setting has been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/screensaver/idle-activation-enabled</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td xml:lang="en-US">A session time-out lock is a temporary action taken when a user stops work and moves away from the immediate
+physical vicinity of the information system but does not logout because of the temporary nature of the absence.
+Rather than relying on the user to manually lock their operating system session prior to vacating the vicinity,
+GNOME desktops can be configured to identify when a user's session has idled and take action to initiate the
+session lock.
+<br><br>
+Enabling idle activation of the screensaver ensures the screensaver will
+be activated after the idle delay.  Applications requiring continuous,
+real-time screen display (such as network management products) require the
+login session does not have administrator rights and the display station is located in a
+controlled-access area.</td>
+<td></td>
+<td>AC-11(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80775-0</td>
+<td>Set GNOME3 Screensaver Inactivity Timeout</td>
+<td xml:lang="en-US">The idle time-out value for inactivity in the GNOME3 desktop is configured via the <code>idle-delay</code>
+setting must be set under an appropriate configuration file(s) in the <code>/etc/dconf/db/local.d</code> directory
+and locked in <code>/etc/dconf/db/local.d/locks</code> directory to prevent user modification.
+<br><br>
+For example, to configure the system for a 15 minute delay, add the following to
+<code>/etc/dconf/db/local.d/00-security-settings</code>:
+<pre>[org/gnome/desktop/session]
+idle-delay=uint32 900</pre>
+Once the setting has been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/session/idle-delay</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td xml:lang="en-US">A session time-out lock is a temporary action taken when a user stops work and moves away from
+the immediate physical vicinity of the information system but does not logout because of the
+temporary nature of the absence. Rather than relying on the user to manually lock their operating
+system session prior to vacating the vicinity, GNOME3 can be configured to identify when
+a user's session has idled and take action to initiate a session lock.</td>
+<td></td>
+<td>AC-11(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80776-8</td>
+<td>Set GNOME3 Screensaver Lock Delay After Activation Period</td>
+<td xml:lang="en-US">To activate the locking delay of the screensaver in the GNOME3 desktop when
+the screensaver is activated, add or set <code>lock-delay</code> to <code>uint32 <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_screensaver_lock_delay"></ns0:sub></code> in
+<code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
+<pre>[org/gnome/desktop/screensaver]
+lock-delay=uint32 <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_screensaver_lock_delay"></ns0:sub>
+</pre>
+Once the setting has been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/screensaver/lock-delay</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td xml:lang="en-US">A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity
+of the information system but does not want to logout because of the temporary nature of the absense.</td>
+<td></td>
+<td>AC-11(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80777-6</td>
+<td>Enable GNOME3 Screensaver Lock After Idle Period</td>
+<td xml:lang="en-US">To activate locking of the screensaver in the GNOME3 desktop when it is activated,
+add or set <code>lock-enabled</code> to <code>true</code> in
+<code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
+<pre>[org/gnome/desktop/screensaver]
+lock-enabled=true
+</pre>
+Once the settings have been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td xml:lang="en-US">A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity
+of the information system but does not want to logout because of the temporary nature of the absense.</td>
+<td></td>
+<td>AC-11(b)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80778-4</td>
+<td>Implement Blank Screensaver</td>
+<td xml:lang="en-US">To set the screensaver mode in the GNOME3 desktop to a blank screen,
+add or set <code>picture-uri</code> to <code>string ''</code> in
+<code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
+<pre>[org/gnome/desktop/screensaver]
+picture-uri=''
+</pre>
+Once the settings have been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/screensaver/picture-uri</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td xml:lang="en-US">Setting the screensaver mode to blank-only conceals the
+contents of the display from passersby.</td>
+<td></td>
+<td>AC-11(b)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80779-2</td>
+<td>Disable Full User Name on Splash Shield</td>
+<td xml:lang="en-US">By default when the screen is locked, the splash shield will show the user's
+full name. This should be disabled to prevent casual observers from seeing
+who has access to the system. This can be disabled by adding or setting
+<code>show-full-name-in-top-bar</code> to <code>false</code> in
+<code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
+<pre>[org/gnome/desktop/screensaver]
+show-full-name-in-top-bar=false
+</pre>
+Once the settings have been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/screensaver/show-full-name-in-top-bar</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td xml:lang="en-US">Setting the splash screen to not reveal the logged in user's name
+conceals who has access to the system from passersby.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80780-0</td>
+<td>Ensure Users Cannot Change GNOME3 Screensaver Settings</td>
+<td xml:lang="en-US">If not already configured, ensure that users cannot change GNOME3 screensaver lock settings
+by adding <code>/org/gnome/desktop/screensaver/lock-delay</code>
+to <code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/screensaver/lock-delay</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td xml:lang="en-US">A session time-out lock is a temporary action taken when a user stops work and moves away from the immediate
+physical vicinity of the information system but does not logout because of the temporary nature of the absence.
+Rather than relying on the user to manually lock their operating system session prior to vacating the vicinity,
+GNOME desktops can be configured to identify when a user's session has idled and take action to initiate the
+session lock. As such, users should not be allowed to change session settings.</td>
+<td></td>
+<td>AC-11(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80781-8</td>
+<td>Ensure Users Cannot Change GNOME3 Session Idle Settings</td>
+<td xml:lang="en-US">If not already configured, ensure that users cannot change GNOME3 session idle settings
+by adding <code>/org/gnome/desktop/session/idle-delay</code>
+to <code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/session/idle-delay</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td xml:lang="en-US">A session time-out lock is a temporary action taken when a user stops work and moves away from the immediate
+physical vicinity of the information system but does not logout because of the temporary nature of the absence.
+Rather than relying on the user to manually lock their operating system session prior to vacating the vicinity,
+GNOME desktops can be configured to identify when a user's session has idled and take action to initiate the
+session lock. As such, users should not be allowed to change session settings.</td>
+<td></td>
+<td>AC-11(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80940-0</td>
+<td>Configure the tmux Lock Command</td>
+<td xml:lang="en-US">To enable console screen locking in <code>tmux</code> terminal multiplexer,
+the <code>vlock</code> command must be configured to be used as a locking
+mechanism.
+Add the following line to <code>/etc/tmux.conf</code>:
+<pre>set -g lock-command vlock</pre>.
+The console can now be locked with the following key combination:
+<pre>ctrl+b :lock-session</pre>
+</td>
+<td xml:lang="en-US">The <code>tmux</code> package allows for a session lock to be implemented and configured.
+However, the session lock is implemented by an external command. The <code>tmux</code>
+default configuration does not contain an effective session lock.</td>
+<td></td>
+<td>AC-11(a)<br>AC-11(b)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80673-7</td>
+<td>Set Interactive Session Timeout</td>
+<td xml:lang="en-US">Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
+all user sessions will terminate based on inactivity. The <code>TMOUT</code>
+setting in <code>/etc/profile</code> should read as follows:
+<pre>TMOUT=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></ns0:sub></pre>
+</td>
+<td xml:lang="en-US">Terminating an idle session within a short time period reduces
+the window of opportunity for unauthorized personnel to take control of a
+management session enabled on the console or console port that has been
+left unattended.</td>
+<td></td>
+<td>AC-12<br>SC-10<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80841-0</td>
+<td>Prevent Login to Accounts With Empty Password</td>
+<td xml:lang="en-US">If an account is configured for password authentication
+but does not have an assigned password, it may be possible to log
+into the account without authentication. Remove any instances of the <code>nullok</code>
+option in <code>/etc/pam.d/system-auth</code> to
+prevent logins with empty passwords.</td>
+<td xml:lang="en-US">If an account has an empty password, anyone could log in and
+run commands with the privileges of that account. Accounts with
+empty passwords should never be used in operational environments.</td>
+<td></td>
+<td>AC-6<br>IA-5(b)<br>IA-5(c)<br>IA-5(1)(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80828-7</td>
+<td>Set Boot Loader Password in grub2</td>
+<td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
+<br><br>
+To do so, select a superuser account name and password and and modify the
+<code>/etc/grub.d/01_users</code> configuration file with the new account name.
+<br><br>
+Since plaintext passwords are a security risk, generate a hash for the pasword
+by running the following command:
+<pre>$ grub2-setpassword</pre>
+When prompted, enter the password that was selected.
+<br><br>
+NOTE: It is recommended not to use common administrator account names like root,
+admin, or administrator for the grub2 superuser account.
+<br><br>
+Change the superuser to a different username (The default is 'root').
+<pre>$ sed -i s/root/bootuser/g /etc/grub.d/01_users</pre>
+<br><br>
+To meet FISMA Moderate, the bootloader superuser account and password MUST
+differ from the root account and password.
+Once the superuser account and password have been added,
+update the
+<code>grub.cfg</code> file by running:
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
+NOTE: Do NOT manually add the superuser account and password to the
+<code>grub.cfg</code> file as the grub2-mkconfig command overwrites this file.</td>
+<td xml:lang="en-US">Password protection on the boot loader configuration ensures
+users with physical access cannot trivially alter
+important bootloader settings. These include which kernel to use,
+and whether to enter single-user mode.</td>
+<td></td>
+<td>IA-2<br>IA-2(1)<br>IA-5(e)<br>AC-3<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80829-5</td>
+<td>Set the UEFI Boot Loader Password</td>
+<td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
+<br><br>
+To do so, select a superuser account name and password and and modify the
+<code>/etc/grub.d/01_users</code> configuration file with the new account name.
+<br><br>
+Since plaintext passwords are a security risk, generate a hash for the pasword
+by running the following command:
+<pre>$ grub2-setpassword</pre>
+When prompted, enter the password that was selected.
+<br><br>
+NOTE: It is recommended not to use common administrator account names like root,
+admin, or administrator for the grub2 superuser account.
+<br><br>
+Change the superuser to a different username (The default is 'root').
+<pre>$ sed -i s/root/bootuser/g /etc/grub.d/01_users</pre>
+<br><br>
+To meet FISMA Moderate, the bootloader superuser account and password MUST
+differ from the root account and password.
+Once the superuser account and password have been added,
+update the
+<code>grub.cfg</code> file by running:
+<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
+NOTE: Do NOT manually add the superuser account and password to the
+<code>grub.cfg</code> file as the grub2-mkconfig command overwrites this file.</td>
+<td xml:lang="en-US">Password protection on the boot loader configuration ensures
+users with physical access cannot trivially alter
+important bootloader settings. These include which kernel to use,
+and whether to enter single-user mode.</td>
+<td></td>
+<td>AC-3<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80826-1</td>
+<td>Verify that Interactive Boot is Disabled</td>
+<td xml:lang="en-US">Red Hat Enterprise Linux 8 systems support an "interactive boot" option that can
+be used to prevent services from being started. On a Red Hat Enterprise Linux 8
+system, interactive boot can be enabled by providing a <code>1</code>,
+<code>yes</code>, <code>true</code>, or <code>on</code> value to the
+<code>systemd.confirm_spawn</code> kernel argument in <code>/etc/default/grub</code>.
+Remove any instance of <pre>systemd.confirm_spawn=(1|yes|true|on)</pre> from
+the kernel arguments in that file to disable interactive boot. It is also
+required to change the runtime configuration, run:
+<pre>/sbin/grubby --update-kernel=ALL --remove-args="systemd.confirm_spawn"</pre>
+</td>
+<td xml:lang="en-US">Using interactive boot, the console user could disable auditing, firewalls,
+or other services, weakening system security.</td>
+<td></td>
+<td>SC-2<br>AC-3<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80855-0</td>
+<td>Require Authentication for Single User Mode</td>
+<td xml:lang="en-US">Single-user mode is intended as a system recovery
+method, providing a single user root access to the system by
+providing a boot option at startup. By default, no authentication
+is performed if single-user mode is selected.
+<br><br>
+
+By default, single-user mode is protected by requiring a password and is set
+in <code>/usr/lib/systemd/system/rescue.service</code>.</td>
+<td xml:lang="en-US">This prevents attackers with physical access from trivially bypassing security
+on the machine and gaining root access. Such accesses are further prevented
+by configuring the bootloader password.</td>
+<td></td>
+<td>IA-2<br>IA-2(1)<br>AC-3<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80876-6</td>
+<td>Disable debug-shell SystemD Service</td>
+<td xml:lang="en-US">SystemD's <code>debug-shell</code> service is intended to
+diagnose SystemD related boot issues with various <code>systemctl</code>
+commands. Once enabled and following a system reboot, the root shell
+will be available on <code>tty9</code> which is access by pressing
+<code>CTRL-ALT-F9</code>. The <code>debug-shell</code> service should only be used
+for SystemD related issues and should otherwise be disabled.
+<br><br>
+By default, the <code>debug-shell</code> SystemD service is disabled.
+
+The <code>debug-shell</code> service can be disabled with the following command:
+<pre>$ sudo systemctl disable debug-shell.service</pre>
+</td>
+<td xml:lang="en-US">This prevents attackers with physical access from trivially bypassing security
+on the machine through valid troubleshooting configurations and gaining root
+access when the system is rebooted.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80896-4</td>
+<td>Disable SSH Access via Empty Passwords</td>
+<td xml:lang="en-US">To explicitly disallow SSH login from accounts with
+empty passwords, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+<br>
+<pre>PermitEmptyPasswords no</pre>
+<br>
+Any accounts with empty passwords should be disabled immediately, and PAM configuration
+should prevent users from being able to assign themselves empty passwords.</td>
+<td xml:lang="en-US">Configuring this setting for the SSH daemon provides additional assurance
+that remote login via SSH will require a password, even in the event of 
+misconfiguration elsewhere.</td>
+<td></td>
+<td>AC-3<br>AC-6<br>AC-17(b)<br>CM-6(b)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80901-2</td>
+<td>Disable SSH Root Login</td>
+<td xml:lang="en-US">The root user should never be allowed to login to a
+system directly over a network.
+To disable root login via SSH, add or correct the following line
+in <code>/etc/ssh/sshd_config</code>:
+<pre>PermitRootLogin no</pre>
+</td>
+<td xml:lang="en-US">Even though the communications channel may be encrypted, an additional layer of
+security is gained by extending the policy of not logging directly on as root.
+In addition, logging in with a user-specific account provides individual
+accountability of actions performed on the system and also helps to minimize
+direct attack attempts on root's password.</td>
+<td></td>
+<td>AC-3<br>AC-6(2)<br>AC-17(b)<br>IA-2<br>IA-2(5)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80823-8</td>
+<td>Disable GDM Automatic Login</td>
+<td xml:lang="en-US">The GNOME Display Manager (GDM) can allow users to automatically login without
+user interaction or credentials. User should always be required to authenticate themselves
+to the system that they are authorized to use. To disable user ability to automatically
+login to the system, set the <code>AutomaticLoginEnable</code> to <code>false</code> in the
+<code>[daemon]</code> section in <code>/etc/gdm/custom.conf</code>. For example:
+<pre>[daemon]
+AutomaticLoginEnable=false</pre>
+</td>
+<td xml:lang="en-US">Failure to restrict system access to authenticated users negatively impacts operating
+system security.</td>
+<td></td>
+<td>CM-6(b)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80824-6</td>
+<td>Disable GDM Guest Login</td>
+<td xml:lang="en-US">The GNOME Display Manager (GDM) can allow users to login without credentials
+which can be useful for public kiosk scenarios. Allowing users to login without credentials
+or "guest" account access has inherent security risks and should be disabled. To do disable
+timed logins or guest account access, set the <code>TimedLoginEnable</code> to <code>false</code> in
+the <code>[daemon]</code> section in <code>/etc/gdm/custom.conf</code>. For example:
+<pre>[daemon]
+TimedLoginEnable=false</pre>
+</td>
+<td xml:lang="en-US">Failure to restrict system access to authenticated users negatively impacts operating
+system security.</td>
+<td></td>
+<td>CM-6(b)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80911-1</td>
+<td>Configure SSSD to Expire Offline Credentials</td>
+<td xml:lang="en-US">SSSD should be configured to expire offline credentials after 1 day.
+To configure SSSD to expire offline credentials, set
+<code>offline_credentials_expiration</code> to <code>1</code> under the <code>[pam]</code>
+section in <code>/etc/sssd/sssd.conf</code>. For example:
+<pre>[pam]
+offline_credentials_expiration = 1
+</pre>
+</td>
+<td xml:lang="en-US">If cached authentication information is out-of-date, the validity of the
+authentication information may be questionable.</td>
+<td></td>
+<td>IA-5(13)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80910-3</td>
+<td>Configure SSSD's Memory Cache to Expire</td>
+<td xml:lang="en-US">SSSD's memory cache should be configured to set to expire records after
+<code><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_sssd_memcache_timeout"></ns0:sub></code> seconds.
+To configure SSSD to expire memory cache, set <code>memcache_timeout</code> to
+<code><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_sssd_memcache_timeout"></ns0:sub></code> under the
+<code>[nss]</code> section in <code>/etc/sssd/sssd.conf</code>.
+
+For example:
+<pre>[nss]
+memcache_timeout = <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_sssd_memcache_timeout"></ns0:sub>
+</pre>
+</td>
+<td xml:lang="en-US">If cached authentication information is out-of-date, the validity of the
+authentication information may be questionable.</td>
+<td></td>
+<td>IA-5(10)<br>IA-5(13)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80786-7</td>
+<td>Disable Host-Based Authentication</td>
+<td xml:lang="en-US">SSH's cryptographic host-based authentication is
+more secure than <code>.rhosts</code> authentication. However, it is
+not recommended that hosts unilaterally trust one another, even
+within an organization.
+<br><br>
+To disable host-based authentication, add or correct the
+following line in <code>/etc/ssh/sshd_config</code>:
+<pre>HostbasedAuthentication no</pre>
+</td>
+<td xml:lang="en-US">SSH trust relationships mean a compromise on one host
+can allow an attacker to move trivially to other hosts.</td>
+<td></td>
+<td>AC-3<br>AC-17<br>CM-6(b)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80897-2</td>
+<td>Disable GSSAPI Authentication</td>
+<td xml:lang="en-US">Unless needed, SSH should not permit extraneous or unnecessary
+authentication mechanisms like GSSAPI. To disable GSSAPI authentication, add or
+correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+<pre>GSSAPIAuthentication no</pre>
+</td>
+<td xml:lang="en-US">GSSAPI authentication is used to provide additional authentication mechanisms to
+applications. Allowing GSSAPI authentication through SSH exposes the system's
+GSSAPI to remote hosts, increasing the attack surface of the system.</td>
+<td></td>
+<td>AC-17(b)<br>CM-6(c)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80898-0</td>
+<td>Disable Kerberos Authentication</td>
+<td xml:lang="en-US">Unless needed, SSH should not permit extraneous or unnecessary
+authentication mechanisms like Kerberos. To disable Kerberos authentication, add
+or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+<pre>KerberosAuthentication no</pre>
+</td>
+<td xml:lang="en-US">Kerberos authentication for SSH is often implemented using GSSAPI. If Kerberos
+is enabled through SSH, the SSH daemon provides a means of access to the
+system's Kerberos implementation. Vulnerabilities in the system's Kerberos
+implementations may be subject to exploitation.</td>
+<td></td>
+<td>CM-6(c)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80900-4</td>
+<td>Disable SSH Support for Rhosts RSA Authentication</td>
+<td xml:lang="en-US">SSH can allow authentication through the obsolete rsh
+command through the use of the authenticating user's SSH keys. This should be disabled.
+<br><br>
+To ensure this behavior is disabled, add or correct the
+following line in <code>/etc/ssh/sshd_config</code>:
+<pre>RhostsRSAAuthentication no</pre>
+</td>
+<td xml:lang="en-US">Configuring this setting for the SSH daemon provides additional
+assurance that remove login via SSH will require a password, even
+in the event of misconfiguration elsewhere.</td>
+<td></td>
+<td>CM-6(a)<br>AC-17(b)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80899-8</td>
+<td>Disable SSH Support for .rhosts Files</td>
+<td xml:lang="en-US">SSH can emulate the behavior of the obsolete rsh
+command in allowing users to enable insecure access to their
+accounts via <code>.rhosts</code> files.
+<br><br>
+To ensure this behavior is disabled, add or correct the
+following line in <code>/etc/ssh/sshd_config</code>:
+<pre>IgnoreRhosts yes</pre>
+</td>
+<td xml:lang="en-US">SSH trust relationships mean a compromise on one host
+can allow an attacker to move trivially to other hosts.</td>
+<td></td>
+<td>AC-3<br>AC-17(b)<br>CM-6(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80902-0</td>
+<td>Disable SSH Support for User Known Hosts</td>
+<td xml:lang="en-US">SSH can allow system users user host-based authentication to connect
+to systems if a cache of the remote systems public keys are available.
+This should be disabled.
+<br><br>
+To ensure this behavior is disabled, add or correct the
+following line in <code>/etc/ssh/sshd_config</code>:
+<pre>IgnoreUserKnownHosts yes</pre>
+</td>
+<td xml:lang="en-US">Configuring this setting for the SSH daemon provides additional
+assurance that remove login via SSH will require a password, even
+in the event of misconfiguration elsewhere.</td>
+<td></td>
+<td>AC-17(b)<br>CM-6(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80664-6</td>
+<td>Ensure PAM Enforces Password Requirements - Authentication Retry Prompts Permitted Per-Session</td>
+<td xml:lang="en-US">To configure the number of retry prompts that are permitted per-session:
+Edit the <code>pam_pwquality.so</code> statement in <code>/etc/pam.d/system-auth</code> to
+show <code>retry=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></ns0:sub></code>, or a lower value if
+site policy is more restrictive.
+The DoD requirement is a maximum of 3 prompts per session.</td>
+<td xml:lang="en-US">Setting the password retry prompts that are permitted on a per-session basis to a low value
+requires some software, such as SSH, to re-connect. This can slow down and
+draw additional attention to some types of password-guessing attacks. Note that this
+is different from account lockout, which is provided by the pam_faillock module.</td>
+<td></td>
+<td>CM-6(b)<br>IA-5(c)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80668-7</td>
+<td>Configure the root Account for Failed Password Attempts</td>
+<td xml:lang="en-US">To configure the system to lock out the <code>root</code> account after a
+number of incorrect login attempts using <code>pam_faillock.so</code>, modify
+the content of both <code>/etc/pam.d/system-auth</code> and
+<code>/etc/pam.d/password-auth</code> as follows:
+<br><br>
+<ul>
+<li>Modify the following line in the <code>AUTH</code> section to add
+<code>even_deny_root</code>:
+<pre>auth required pam_faillock.so preauth silent <b>even_deny_root</b> deny=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></ns0:sub> unlock_time=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></ns0:sub> fail_interval=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></ns0:sub></pre>
+</li>
+<li>Modify the following line in the <code>AUTH</code> section to add
+<code>even_deny_root</code>:
+<pre>auth [default=die] pam_faillock.so authfail <b>even_deny_root</b> deny=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></ns0:sub> unlock_time=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></ns0:sub> fail_interval=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></ns0:sub></pre>
+</li>
+</ul>
+</td>
+<td xml:lang="en-US">By limiting the number of failed logon attempts, the risk of unauthorized system access via user password
+guessing, otherwise known as brute-forcing, is reduced. Limits are imposed by locking the account.</td>
+<td></td>
+<td>AC-7(b)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80667-9</td>
+<td>Set Deny For Failed Password Attempts</td>
+<td xml:lang="en-US">To configure the system to lock out accounts after a number of incorrect login
+attempts using <code>pam_faillock.so</code>, modify the content of both
+<code>/etc/pam.d/system-auth</code> and <code>/etc/pam.d/password-auth</code> as follows:
+<br><br>
+<ul>
+<li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
+<pre>auth required pam_faillock.so preauth silent deny=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></ns0:sub> unlock_time=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></ns0:sub> fail_interval=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></ns0:sub></pre>
+</li>
+<li> add the following line immediately <code>after</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
+<pre>auth [default=die] pam_faillock.so authfail deny=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></ns0:sub> unlock_time=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></ns0:sub> fail_interval=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></ns0:sub></pre>
+</li>
+<li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>ACCOUNT</code> section:
+<pre>account required pam_faillock.so</pre>
+</li>
+</ul>
+</td>
+<td xml:lang="en-US">Locking out user accounts after a number of incorrect attempts
+prevents direct password guessing attacks.</td>
+<td></td>
+<td>AC-7(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80669-5</td>
+<td>Set Interval For Counting Failed Password Attempts</td>
+<td xml:lang="en-US">Utilizing <code>pam_faillock.so</code>, the <code>fail_interval</code> directive
+configures the system to lock out an account after a number of incorrect
+login attempts within a specified time period. Modify the content of both
+<code>/etc/pam.d/system-auth</code> and <code>/etc/pam.d/password-auth</code>
+as follows:
+<br><br>
+<ul>
+<li>Add the following line immediately <code>before</code> the
+    <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
+<pre>auth required pam_faillock.so preauth silent deny=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></ns0:sub> unlock_time=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></ns0:sub> fail_interval=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></ns0:sub></pre>
+</li>
+<li>Add the following line immediately <code>after</code> the
+    <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
+<pre>auth [default=die] pam_faillock.so authfail deny=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></ns0:sub> unlock_time=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></ns0:sub> fail_interval=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></ns0:sub>
+</pre>
+</li>
+<li>Add the following line immediately <code>before</code> the
+    <code>pam_unix.so</code> statement in the <code>ACCOUNT</code> section:
+<pre>account required pam_faillock.so</pre>
+</li>
+</ul>
+</td>
+<td xml:lang="en-US">By limiting the number of failed logon attempts the risk of unauthorized system
+access via user password guessing, otherwise known as brute-forcing, is reduced.
+Limits are imposed by locking the account.</td>
+<td></td>
+<td>AC-7(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80670-3</td>
+<td>Set Lockout Time for Failed Password Attempts</td>
+<td xml:lang="en-US">To configure the system to lock out accounts after a number of incorrect login
+attempts and require an administrator to unlock the account using <code>pam_faillock.so</code>,
+modify the content of both <code>/etc/pam.d/system-auth</code> and <code>/etc/pam.d/password-auth</code> as follows:
+<br><br>
+<ul>
+<li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
+<pre>auth required pam_faillock.so preauth silent deny=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></ns0:sub> unlock_time=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></ns0:sub> fail_interval=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></ns0:sub></pre>
+</li>
+<li> add the following line immediately <code>after</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
+<pre>auth [default=die] pam_faillock.so authfail deny=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></ns0:sub> unlock_time=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></ns0:sub> fail_interval=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></ns0:sub></pre>
+</li>
+<li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>ACCOUNT</code> section:
+<pre>account required pam_faillock.so</pre>
+</li>
+</ul>
+</td>
+<td xml:lang="en-US">Locking out user accounts after a number of incorrect attempts
+prevents direct password guessing attacks. Ensuring that an administrator is
+involved in unlocking locked accounts draws appropriate attention to such
+situations.</td>
+<td></td>
+<td>AC-7(b)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80771-9</td>
+<td>Set the GNOME3 Login Number of Failures</td>
+<td xml:lang="en-US">In the default graphical environment, the GNOME3 login
+screen and be configured to restart the authentication process after
+a configured number of attempts. This can be configured by setting
+<code>allowed-failures</code> to <code>3</code> or less.
+<br><br>
+To enable, add or edit <code>allowed-failures</code> to
+<code>/etc/dconf/db/gdm.d/00-security-settings</code>. For example:
+<pre>[org/gnome/login-screen]
+allowed-failures=3</pre>
+Once the setting has been added, add a lock to
+<code>/etc/dconf/db/gdm.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/login-screen/allowed-failures</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td xml:lang="en-US">Setting the password retry prompts that are permitted on a per-session basis to a low value
+requires some software, such as SSH, to re-connect. This can slow down and
+draw additional attention to some types of password-guessing attacks.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80877-4</td>
+<td>Verify firewalld Enabled</td>
+<td xml:lang="en-US"> The <code>firewalld</code> service can be enabled with the following command: <pre>$ sudo systemctl enable firewalld.service</pre>
+</td>
+<td xml:lang="en-US">Access control methods provide the ability to enhance system security posture
+by restricting services and known good IP addresses and address ranges. This
+prevents connections from unknown hosts and protocols.</td>
+<td></td>
+<td>CM-6(b)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80890-7</td>
+<td>Set Default firewalld Zone for Incoming Packets</td>
+<td xml:lang="en-US">To set the default zone to <code>drop</code> for
+the built-in default zone which processes incoming IPv4 and IPv6 packets,
+modify the following line in
+<code>/etc/firewalld/firewalld.conf</code> to be:
+<pre>DefaultZone=drop</pre>
+</td>
+<td xml:lang="en-US">In <code>firewalld</code> the default zone is applied only after all
+the applicable rules in the table are examined for a match. Setting the
+default zone to <code>drop</code> implements proper design for a firewall, i.e.
+any packets which are not explicitly permitted should not be
+accepted.</td>
+<td></td>
+<td>CM-6(b)<br>CM-7<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80863-4</td>
+<td>Ensure Logs Sent To Remote Host</td>
+<td xml:lang="en-US">To configure rsyslog to send logs to a remote log server,
+open <code>/etc/rsyslog.conf</code> and read and understand the last section of the file,
+which describes the multiple directives necessary to activate remote
+logging.
+Along with these other directives, the system can be configured
+to forward its logs to a particular log server by
+adding or correcting one of the following lines,
+substituting <code><i>loghost.example.com</i></code> appropriately.
+The choice of protocol depends on the environment of the system;
+although TCP and RELP provide more reliable message delivery,
+they may not be supported in all environments.
+<br>
+To use UDP for log message delivery:
+<pre>*.* @<i>loghost.example.com</i></pre>
+<br>
+To use TCP for log message delivery:
+<pre>*.* @@<i>loghost.example.com</i></pre>
+<br>
+To use RELP for log message delivery:
+<pre>*.* :omrelp:<i>loghost.example.com</i></pre>
+<br>
+There must be a resolvable DNS CNAME or Alias record set to "<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub>" for logs to be sent correctly to the centralized logging utility.</td>
+<td xml:lang="en-US">A log server (loghost) receives syslog messages from one or more
+systems. This data can be used as an additional log source in the event a
+system is compromised and its local logs are suspect. Forwarding log messages
+to a remote loghost also provides system administrators with a centralized
+place to view the status of multiple hosts within the enterprise.</td>
+<td></td>
+<td>AU-3(2)<br>AU-4(1)<br>AU-9<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80677-8</td>
+<td>Configure auditd to use audispd's syslog plugin</td>
+<td xml:lang="en-US">To configure the <code>auditd</code> service to use the
+<code>syslog</code> plug-in of the <code>audispd</code> audit event multiplexor, set
+the <code>active</code> line in <code>/etc/audit/plugins.d/syslog.conf</code> to <code>yes</code>.
+Restart the <code>auditd</code> service:
+<pre>$ sudo service auditd restart</pre>
+</td>
+<td xml:lang="en-US">The auditd service does not include the ability to send audit
+records to a centralized server for management directly. It does, however,
+include a plug-in for audit event multiplexor (audispd) to pass audit records
+to the local syslog server</td>
+<td></td>
+<td>AU-1(b)<br>AU-3(2)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80925-1</td>
+<td>Configure audispd Plugin To Send Logs To Remote Server</td>
+<td xml:lang="en-US">Configure the audispd plugin to off-load audit records onto a different
+system or media from the system being audited.
+Set the <code>remote_server</code> option in <pre>/etc/audit/audisp-remote.conf</pre>
+with an IP address or hostname of the system that the audispd plugin should
+send audit records to. For example replacing <i>REMOTE_SYSTEM</i> with an IP
+address or hostname:
+<pre>remote_server = <i>REMOTE_SYSTEM</i></pre>
+</td>
+<td xml:lang="en-US">Information stored in one location is vulnerable to accidental or incidental
+deletion or alteration.Off-loading is a common process in information systems
+with limited audit storage capacity.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80926-9</td>
+<td>Encrypt Audit Records Sent With audispd Plugin</td>
+<td xml:lang="en-US">Configure the operating system to encrypt the transfer of off-loaded audit
+records onto a different system or media from the system being audited.
+
+Set the <code>transport</code> option in <pre>/etc/audit/audisp-remote.conf</pre>
+to <code>KRB5</code>.</td>
+<td xml:lang="en-US">Information stored in one location is vulnerable to accidental or incidental deletion
+or alteration. Off-loading is a common process in information systems with limited
+audit storage capacity.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80768-5</td>
+<td>Enable GNOME3 Login Warning Banner</td>
+<td xml:lang="en-US">In the default graphical environment, displaying a login warning banner
+in the GNOME Display Manager's login screen can be enabled on the login
+screen by setting <code>banner-message-enable</code> to <code>true</code>.
+<br><br>
+To enable, add or edit <code>banner-message-enable</code> to
+<code>/etc/dconf/db/gdm.d/00-security-settings</code>. For example:
+<pre>[org/gnome/login-screen]
+banner-message-enable=true</pre>
+Once the setting has been added, add a lock to
+<code>/etc/dconf/db/gdm.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/login-screen/banner-message-enable</pre>
+After the settings have been set, run <code>dconf update</code>.
+The banner text must also be set.</td>
+<td xml:lang="en-US">Display of a standardized and approved use notification before granting access to the operating system
+ensures privacy and security notification verbiage used is consistent with applicable federal laws,
+Executive Orders, directives, policies, regulations, standards, and guidance.
+<br><br>
+For U.S. Government systems, system use notifications are required only for access via login interfaces
+with human users and are not required when such human interfaces do not exist.</td>
+<td></td>
+<td>AC-8(a)<br>AC-8(b)<br>AC-8(c)(1)<br>AC-8(c)(2)<br>AC-8(c)(3)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80770-1</td>
+<td>Set the GNOME3 Login Warning Banner Text</td>
+<td xml:lang="en-US">In the default graphical environment, configuring the login warning banner text
+in the GNOME Display Manager's login screen can be configured on the login
+screen by setting <code>banner-message-text</code> to <code>string '<i>APPROVED_BANNER</i>'</code>
+where <i>APPROVED_BANNER</i> is the approved banner for your environment.
+<br><br>
+To enable, add or edit <code>banner-message-text</code> to
+<code>/etc/dconf/db/gdm.d/00-security-settings</code>. For example:
+<pre>[org/gnome/login-screen]
+banner-message-text='<i>APPROVED_BANNER</i>'</pre>
+Once the setting has been added, add a lock to
+<code>/etc/dconf/db/gdm.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/login-screen/banner-message-text</pre>
+After the settings have been set, run <code>dconf update</code>.
+When entering a warning banner that spans several lines, remember
+to begin and end the string with <code>'</code> and use <code>\n</code> for new lines.</td>
+<td xml:lang="en-US">An appropriate warning message reinforces policy awareness during the logon
+process and facilitates possible legal action against attackers.</td>
+<td></td>
+<td>AC-8(a)<br>AC-8(b)<br>AC-8(c)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80763-6</td>
+<td>Modify the System Login Banner</td>
+<td xml:lang="en-US">To configure the system login banner edit <code>/etc/issue</code>. Replace the
+default text with a message compliant with the local site policy or a legal
+disclaimer.
+
+The DoD required text is either:
+<br><br>
+<code>You are accessing a U.S. Government (USG) Information System (IS) that
+is provided for USG-authorized use only. By using this IS (which includes
+any device attached to this IS), you consent to the following conditions:
+<br>-The USG routinely intercepts and monitors communications on this IS
+for purposes including, but not limited to, penetration testing, COMSEC
+monitoring, network operations and defense, personnel misconduct (PM), law
+enforcement (LE), and counterintelligence (CI) investigations.
+<br>-At any time, the USG may inspect and seize data stored on this IS.
+<br>-Communications using, or data stored on, this IS are not private,
+are subject to routine monitoring, interception, and search, and may be
+disclosed or used for any USG-authorized purpose.
+<br>-This IS includes security measures (e.g., authentication and access
+controls) to protect USG interests -- not for your personal benefit or
+privacy.
+<br>-Notwithstanding the above, using this IS does not constitute consent
+to PM, LE or CI investigative searching or monitoring of the content of
+privileged communications, or work product, related to personal
+representation or services by attorneys, psychotherapists, or clergy, and
+their assistants. Such communications and work product are private and
+confidential. See User Agreement for details.</code>
+<br><br>
+OR:
+<br><br>
+<code>I've read &amp; consent to terms in IS user agreem't.</code>
+</td>
+<td xml:lang="en-US">Display of a standardized and approved use notification before granting
+access to the operating system ensures privacy and security notification
+verbiage used is consistent with applicable federal laws, Executive Orders,
+directives, policies, regulations, standards, and guidance.
+<br><br>
+System use notifications are required only for access via login interfaces
+with human users and are not required when such human interfaces do not
+exist.</td>
+<td></td>
+<td>AC-8(a)<br>AC-8(b)<br>AC-8(c)(1)<br>AC-8(c)(2)<br>AC-8(c)(3)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80905-3</td>
+<td>Enable SSH Warning Banner</td>
+<td xml:lang="en-US">To enable the warning banner and ensure it is consistent
+across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+<pre>Banner /etc/issue</pre>
+Another section contains information on how to create an
+appropriate system-wide warning banner.</td>
+<td xml:lang="en-US">The warning message reinforces policy awareness during the logon process and
+facilitates possible legal action against attackers. Alternatively, systems
+whose ownership should not be obvious should ensure usage of a banner that does
+not provide easy attribution.</td>
+<td></td>
+<td>AC-8(a)<br>AC-8(b)<br>AC-8(c)(1)<br>AC-8(c)(2)<br>AC-8(c)(3)<br>AC-17(b)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80751-1</td>
+<td>Record Unauthorized Access Attempts to Files (unsuccessful) - creat</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
+accesses for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80962-4</td>
+<td>Record Unauthorized Creation Attempts to Files - openat O_CREAT</td>
+<td xml:lang="en-US">The audit system should collect unauthorized file accesses for
+all users and root. The <code>openat</code> syscall can be used to create new files
+when O_CREAT flag is specified.
+The following auidt rules will asure that unsuccessful attempts to create a
+file via <code>openat</code> syscall are collected.
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+rules below to a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the rules below to
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S openat -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S openat -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S openat -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S openat -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80963-2</td>
+<td>Record Unauthorized Modification Attempts to Files - openat O_TRUNC</td>
+<td xml:lang="en-US">The audit system should collect detailed unauthorized file accesses for
+all users and root. The <code>openat</code> syscall can be used to modify files
+if called for write operation of with O_TRUNC flag.
+The following auidt rules will asure that unsuccessful attempts to modify a
+file via <code>openat</code> syscall are collected.
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+rules below to a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the rules below to
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S openat -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S openat -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S openat -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S openat -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80754-5</td>
+<td>Record Unauthorized Access Attempts to Files (unsuccessful) - openat</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
+accesses for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80964-0</td>
+<td>Ensure auditd Rules For Unauthorized Attempts To openat Are Ordered Correctly</td>
+<td xml:lang="en-US">The audit system should collect detailed unauthorized file
+accesses for all users and root.
+To correctly identify unsuccessful creation, unsuccessful modification and unsuccessful access
+of files via <code>openat</code> syscall the audit rules collecting these events need to be in certain order.
+The more specific rules need to come before the less specific rules. The reason for that is that more
+specific rules cover a subset of events covered in the less specific rules, thus, they need to come
+before to not be overshadowed by less specific rules, which match a bigger set of events.
+Make sure that rules for unsuccessful calls of <code>openat</code> syscall are in the order shown below.
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), check the order of
+rules below in a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, check the order of rules below in
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S openat -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S openat -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S openat -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S openat -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+-a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S openat -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S openat -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S openat -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S openat -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+-a always,exit -F arch=b64 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+</pre>
+</td>
+<td xml:lang="en-US">The more specific rules cover a subset of events covered by the less specific rules.
+By ordering them from more specific to less specific, it is assured that the less specific
+rule will not catch events better recorded by the more specific rule.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80965-7</td>
+<td>Record Unauthorized Creation Attempts to Files - open_by_handle_at O_CREAT</td>
+<td xml:lang="en-US">The audit system should collect unauthorized file accesses for
+all users and root. The <code>open_by_handle_at</code> syscall can be used to create new files
+when O_CREAT flag is specified.
+The following auidt rules will asure that unsuccessful attempts to create a
+file via <code>open_by_handle_at</code> syscall are collected.
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+rules below to a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the rules below to
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80966-5</td>
+<td>Record Unauthorized Modification Attempts to Files - open_by_handle_at O_TRUNC</td>
+<td xml:lang="en-US">The audit system should collect detailed unauthorized file accesses for
+all users and root. The <code>open_by_handle_at</code> syscall can be used to modify files
+if called for write operation of with O_TRUNC flag.
+The following auidt rules will asure that unsuccessful attempts to modify a
+file via <code>open_by_handle_at</code> syscall are collected.
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+rules below to a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the rules below to
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80755-2</td>
+<td>Record Unauthorized Access Attempts to Files (unsuccessful) - open_by_handle_at</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
+accesses for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80967-3</td>
+<td>Ensure auditd Unauthorized Access Attempts To open_by_handle_at Are Ordered Correctly</td>
+<td xml:lang="en-US">The audit system should collect detailed unauthorized file
+accesses for all users and root.
+To correctly identify unsuccessful creation, unsuccessful modification and unsuccessful access
+of files via <code>open_by_handle_at</code> syscall the audit rules collecting these events need to be in certain order.
+The more specific rules need to come before the less specific rules. The reason for that is that more
+specific rules cover a subset of events covered in the less specific rules, thus, they need to come
+before to not be overshadowed by less specific rules, which match a bigger set of events.
+Make sure that rules for unsuccessful calls of <code>open_by_handle_at</code> syscall are in the order shown below.
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), check the order of
+rules below in a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, check the order of rules below in
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+-a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+-a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+</pre>
+</td>
+<td xml:lang="en-US">The more specific rules cover a subset of events covered by the less specific rules.
+By ordering them from more specific to less specific, it is assured that the less specific
+rule will not catch events better recorded by the more specific rule.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80968-1</td>
+<td>Record Unauthorized Creation Attempts to Files - open O_CREAT</td>
+<td xml:lang="en-US">The audit system should collect unauthorized file accesses for
+all users and root. The <code>open</code> syscall can be used to create new files
+when O_CREAT flag is specified.
+The following auidt rules will asure that unsuccessful attempts to create a
+file via <code>open</code> syscall are collected.
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+rules below to a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the rules below to
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80969-9</td>
+<td>Record Unauthorized Modification Attempts to Files - open O_TRUNC</td>
+<td xml:lang="en-US">The audit system should collect detailed unauthorized file accesses for
+all users and root. The <code>open</code> syscall can be used to modify files
+if called for write operation of with O_TRUNC flag.
+The following auidt rules will asure that unsuccessful attempts to modify a
+file via <code>open</code> syscall are collected.
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+rules below to a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the rules below to
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80753-7</td>
+<td>Record Unauthorized Access Attempts to Files (unsuccessful) - open</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
+accesses for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80970-7</td>
+<td>Ensure auditd Rules For Unauthorized Attempts To open Are Ordered Correctly</td>
+<td xml:lang="en-US">The audit system should collect detailed unauthorized file
+accesses for all users and root.
+To correctly identify unsuccessful creation, unsuccessful modification and unsuccessful access
+of files via <code>open</code> syscall the audit rules collecting these events need to be in certain order.
+The more specific rules need to come before the less specific rules. The reason for that is that more
+specific rules cover a subset of events covered in the less specific rules, thus, they need to come
+before to not be overshadowed by less specific rules, which match a bigger set of events.
+Make sure that rules for unsuccessful calls of <code>open</code> syscall are in the order shown below.
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), check the order of
+rules below in a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, check the order of rules below in
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+-a always,exit -F arch=b32 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+-a always,exit -F arch=b64 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+</pre>
+</td>
+<td xml:lang="en-US">The more specific rules cover a subset of events covered by the less specific rules.
+By ordering them from more specific to less specific, it is assured that the less specific
+rule will not catch events better recorded by the more specific rule.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80971-5</td>
+<td>Record Unsuccessul Delete Attempts to Files - unlink</td>
+<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+attempts for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file.
+<pre>-a always,exit -F arch=b32 -S unlink -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b32 -S unlink -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S unlink -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b64 -S unlink -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to delete files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80972-3</td>
+<td>Record Unsuccessul Delete Attempts to Files - unlinkat</td>
+<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+attempts for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file.
+<pre>-a always,exit -F arch=b32 -S unlinkat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b32 -S unlinkat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S unlinkat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b64 -S unlinkat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to delete files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80752-9</td>
+<td>Record Unauthorized Access Attempts to Files (unsuccessful) - ftruncate</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
+accesses for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S ftruncate -F exiu=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80756-0</td>
+<td>Record Unauthorized Access Attempts to Files (unsuccessful) - truncate</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
+accesses for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80973-1</td>
+<td>Record Unsuccessul Delete Attempts to Files - rename</td>
+<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+attempts for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file.
+<pre>-a always,exit -F arch=b32 -S rename -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b32 -S rename -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S rename -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b64 -S rename -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to delete files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80974-9</td>
+<td>Record Unsuccessul Delete Attempts to Files - renameat</td>
+<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+attempts for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file.
+<pre>-a always,exit -F arch=b32 -S renameat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b32 -S renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S renameat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b64 -S renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to delete files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80984-8</td>
+<td>Record Unsuccessul Ownership Changes to Files - chown</td>
+<td xml:lang="en-US">The audit system should collect unsuccessful file ownership change
+attempts for all users and root.
+If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file.
+<pre>-a always,exit -F arch=b32 -S chown -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-perm-change
+-a always,exit -F arch=b32 -S chown -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-perm-change</pre>
+If the system is 64 bit then also add the following lines:
+<pre>-a always,exit -F arch=b64 -S chown -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-perm-change
+-a always,exit -F arch=b64 -S chown -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-perm-change</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to change ownership of files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td>AU-12(c)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80985-5</td>
+<td>Record Unsuccessul Ownership Changes to Files - fchownat</td>
+<td xml:lang="en-US">The audit system should collect unsuccessful file ownership change
+attempts for all users and root.
+If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file.
+<pre>-a always,exit -F arch=b32 -S fchownat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-perm-change
+-a always,exit -F arch=b32 -S fchownat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-perm-change</pre>
+If the system is 64 bit then also add the following lines:
+<pre>-a always,exit -F arch=b64 -S fchownat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-perm-change
+-a always,exit -F arch=b64 -S fchownat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-perm-change</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to change ownership of files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td>AU-12(c)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80986-3</td>
+<td>Record Unsuccessul Ownership Changes to Files - fchown</td>
+<td xml:lang="en-US">The audit system should collect unsuccessful file ownership change
+attempts for all users and root.
+If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file.
+<pre>-a always,exit -F arch=b32 -S fchown -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-perm-change
+-a always,exit -F arch=b32 -S fchown -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-perm-change</pre>
+If the system is 64 bit then also add the following lines:
+<pre>-a always,exit -F arch=b64 -S fchown -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-perm-change
+-a always,exit -F arch=b64 -S fchown -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-perm-change</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to change ownership of files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td>AU-12(c)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80987-1</td>
+<td>Record Unsuccessul Ownership Changes to Files - lchown</td>
+<td xml:lang="en-US">The audit system should collect unsuccessful file ownership change
+attempts for all users and root.
+If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file.
+<pre>-a always,exit -F arch=b32 -S lchown -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-perm-change
+-a always,exit -F arch=b32 -S lchown -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-perm-change</pre>
+If the system is 64 bit then also add the following lines:
+<pre>-a always,exit -F arch=b64 -S lchown -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-perm-change
+-a always,exit -F arch=b64 -S lchown -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-perm-change</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to change ownership of files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td>AU-12(c)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80761-0</td>
+<td>Record Events that Modify User/Group Information - /etc/passwd</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</td>
+<td></td>
+<td>AC-2(4)<br>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80762-8</td>
+<td>Record Events that Modify User/Group Information - /etc/shadow</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/shadow -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/shadow -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</td>
+<td></td>
+<td>AC-2(4)<br>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80956-6</td>
+<td>Record Events that Modify User/Group Information via open syscall - /etc/shadow</td>
+<td xml:lang="en-US">The audit system should collect write events to /etc/shadow file for all users and root.
+If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S open -F a1&amp;03 -F path=/etc/shadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S open -F a1&amp;03 -F path=/etc/shadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify</pre>
+If the system is 64 bit then also add the following line:
+<pre>-a always,exit -F arch=b64 -S open -F a1&amp;03 -F path=/etc/shadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify</pre>
+</td>
+<td xml:lang="en-US">Creation of users through direct edition of /etc/shadow could be an indicator of malicious activity on a system.
+Auditing these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80958-2</td>
+<td>Record Events that Modify User/Group Information via openat syscall - /etc/shadow</td>
+<td xml:lang="en-US">The audit system should collect write events to /etc/shadow file for all users and root.
+If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S openat -F a2&amp;03 -F path=/etc/shadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S openat -F a2&amp;03 -F path=/etc/shadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify</pre>
+If the system is 64 bit then also add the following line:
+<pre>-a always,exit -F arch=b64 -S openat -F a2&amp;03 -F path=/etc/shadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify</pre>
+</td>
+<td xml:lang="en-US">Creation of users through direct edition of /etc/shadow could be an indicator of malicious activity on a system.
+Auditing these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80957-4</td>
+<td>Record Events that Modify User/Group Information via open_by_handle_at syscall - /etc/shadow</td>
+<td xml:lang="en-US">The audit system should collect write events to /etc/shadow file for all users and root.
+If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;03 -F path=/etc/shadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;03 -F path=/etc/shadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify</pre>
+If the system is 64 bit then also add the following line:
+<pre>-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;03 -F path=/etc/shadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify</pre>
+</td>
+<td xml:lang="en-US">Creation of users through direct edition of /etc/shadow could be an indicator of malicious activity on a system.
+Auditing these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80930-1</td>
+<td>Record Events that Modify User/Group Information via open syscall - /etc/passwd</td>
+<td xml:lang="en-US">The audit system should collect write events to /etc/passwd file for all users and root.
+If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S open -F a1&amp;03 -F path=/etc/passwd -F auid&gt;=1000 -F auid!=unset -F key=modify</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S open -F a1&amp;03 -F path=/etc/passwd -F auid&gt;=1000 -F auid!=unset -F key=modify</pre>
+If the system is 64 bit then also add the following line:
+<pre>-a always,exit -F arch=b64 -S open -F a1&amp;03 -F path=/etc/passwd -F auid&gt;=1000 -F auid!=unset -F key=modify</pre>
+</td>
+<td xml:lang="en-US">Creation of users through direct edition of /etc/passwd could be an indicator of malicious activity on a system.
+Auditing these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80931-9</td>
+<td>Record Events that Modify User/Group Information via openat syscall - /etc/passwd</td>
+<td xml:lang="en-US">The audit system should collect write events to /etc/passwd file for all users and root.
+If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S openat -F a2&amp;03 -F path=/etc/passwd -F auid&gt;=1000 -F auid!=unset -F key=modify</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S openat -F a2&amp;03 -F path=/etc/passwd -F auid&gt;=1000 -F auid!=unset -F key=modify</pre>
+If the system is 64 bit then also add the following line:
+<pre>-a always,exit -F arch=b64 -S openat -F a2&amp;03 -F path=/etc/passwd -F auid&gt;=1000 -F auid!=unset -F key=modify</pre>
+</td>
+<td xml:lang="en-US">Creation of users through direct edition of /etc/passwd could be an indicator of malicious activity on a system.
+Auditing these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80932-7</td>
+<td>Record Events that Modify User/Group Information via open_by_handle_at syscall - /etc/passwd</td>
+<td xml:lang="en-US">The audit system should collect write events to /etc/passwd file for all users and root.
+If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;03 -F path=/etc/passwd -F auid&gt;=1000 -F auid!=unset -F key=modify</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;03 -F path=/etc/passwd -F auid&gt;=1000 -F auid!=unset -F key=modify</pre>
+If the system is 64 bit then also add the following line:
+<pre>-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;03 -F path=/etc/passwd -F auid&gt;=1000 -F auid!=unset -F key=modify</pre>
+</td>
+<td xml:lang="en-US">Creation of users through direct edition of /etc/passwd could be an indicator of malicious activity on a system.
+Auditing these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80991-3</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - newgidmap</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/newgidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/newgidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threast.
+<br><br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td></td>
+<td>AU-12(c)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80729-7</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - newgrp</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threast.
+<br><br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td></td>
+<td>AU-3(1)<br>AU-12(c)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80992-1</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - newuidmap</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/newuidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/newuidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threast.
+<br><br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td></td>
+<td>AU-12(c)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80728-9</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - gpasswd</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threast.
+<br><br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td></td>
+<td>AU-3(1)<br>AU-12(c)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80758-6</td>
+<td>Record Events that Modify User/Group Information - /etc/group</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/group -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/group -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</td>
+<td></td>
+<td>AC-2(4)<br>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80759-4</td>
+<td>Record Events that Modify User/Group Information - /etc/gshadow</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/gshadow -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/gshadow -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</td>
+<td></td>
+<td>AC-2(4)<br>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80959-0</td>
+<td>Record Events that Modify User/Group Information via open syscall - /etc/gshadow</td>
+<td xml:lang="en-US">The audit system should collect write events to /etc/gshadow file for all users and root.
+If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S open -F a1&amp;03 -F path=/etc/gshadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S open -F a1&amp;03 -F path=/etc/gshadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify</pre>
+If the system is 64 bit then also add the following line:
+<pre>-a always,exit -F arch=b64 -S open -F a1&amp;03 -F path=/etc/gshadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify</pre>
+</td>
+<td xml:lang="en-US">Creation of users through direct edition of /etc/gshadow could be an indicator of malicious activity on a system.
+Auditing these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80961-6</td>
+<td>Record Events that Modify User/Group Information via openat syscall - /etc/gshadow</td>
+<td xml:lang="en-US">The audit system should collect write events to /etc/gshadow file for all users and root.
+If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S openat -F a2&amp;03 -F path=/etc/gshadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S openat -F a2&amp;03 -F path=/etc/gshadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify</pre>
+If the system is 64 bit then also add the following line:
+<pre>-a always,exit -F arch=b64 -S openat -F a2&amp;03 -F path=/etc/gshadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify</pre>
+</td>
+<td xml:lang="en-US">Creation of users through direct edition of /etc/gshadow could be an indicator of malicious activity on a system.
+Auditing these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80960-8</td>
+<td>Record Events that Modify User/Group Information via open_by_handle_at syscall - /etc/gshadow</td>
+<td xml:lang="en-US">The audit system should collect write events to /etc/gshadow file for all users and root.
+If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;03 -F path=/etc/gshadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;03 -F path=/etc/gshadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify</pre>
+If the system is 64 bit then also add the following line:
+<pre>-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;03 -F path=/etc/gshadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify</pre>
+</td>
+<td xml:lang="en-US">Creation of users through direct edition of /etc/gshadow could be an indicator of malicious activity on a system.
+Auditing these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80760-2</td>
+<td>Record Events that Modify User/Group Information - /etc/security/opasswd</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</td>
+<td></td>
+<td>AC-2(4)<br>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80927-7</td>
+<td>Record Events that Modify User/Group Information via open syscall - /etc/group</td>
+<td xml:lang="en-US">The audit system should collect write events to /etc/group file for all users and root.
+If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S open -F a1&amp;03 -F path=/etc/group -F auid&gt;=1000 -F auid!=unset -F key=modify</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S open -F a1&amp;03 -F path=/etc/group -F auid&gt;=1000 -F auid!=unset -F key=modify</pre>
+If the system is 64 bit then also add the following line:
+<pre>-a always,exit -F arch=b64 -S open -F a1&amp;03 -F path=/etc/group -F auid&gt;=1000 -F auid!=unset -F key=modify</pre>
+</td>
+<td xml:lang="en-US">Creation of groups through direct edition of /etc/group could be an indicator of malicious activity on a system.
+Auditing these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80928-5</td>
+<td>Record Events that Modify User/Group Information via openat syscall - /etc/group</td>
+<td xml:lang="en-US">The audit system should collect write events to /etc/group file for all users and root.
+If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S openat -F a2&amp;03 -F path=/etc/group -F auid&gt;=1000 -F auid!=unset -F key=modify</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S openat -F a2&amp;03 -F path=/etc/group -F auid&gt;=1000 -F auid!=unset -F key=modify</pre>
+If the system is 64 bit then also add the following line:
+<pre>-a always,exit -F arch=b64 -S openat -F a2&amp;03 -F path=/etc/group -F auid&gt;=1000 -F auid!=unset -F key=modify</pre>
+</td>
+<td xml:lang="en-US">Creation of groups through direct edition of /etc/group could be an indicator of malicious activity on a system.
+Auditing these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80929-3</td>
+<td>Record Events that Modify User/Group Information via open_by_handle_at syscall - /etc/group</td>
+<td xml:lang="en-US">The audit system should collect write events to /etc/group file for all group and root.
+If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;03 -F path=/etc/group -F auid&gt;=1000 -F auid!=unset -F key=modify</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;03 -F path=/etc/group -F auid&gt;=1000 -F auid!=unset -F key=modify</pre>
+If the system is 64 bit then also add the following line:
+<pre>-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;03 -F path=/etc/group -F auid&gt;=1000 -F auid!=unset -F key=modify</pre>
+</td>
+<td xml:lang="en-US">Creation of groups through direct edition of /etc/group could be an indicator of malicious activity on a system.
+Auditing these events could serve as evidence of potential system compromise.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80738-8</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - sudoedit</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threast.
+<br><br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td></td>
+<td>AU-3(1)<br>AU-12(c)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80737-0</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - sudo</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threast.
+<br><br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td></td>
+<td>AU-3(1)<br>AU-12(c)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80736-2</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - su</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threast.
+<br><br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td></td>
+<td>AU-3(1)<br>AU-12(c)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80718-0</td>
+<td>Record Attempts to Alter Logon and Logout Events - faillock</td>
+<td xml:lang="en-US">The audit system already collects login information for all users
+and root. If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/run/faillock -p wa -k logins</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file in order to watch for unattempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/run/faillock -p wa -k logins</pre>
+</td>
+<td xml:lang="en-US">Manual editing of these files may indicate nefarious activity, such
+as an attacker attempting to remove evidence of an intrusion.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80719-8</td>
+<td>Record Attempts to Alter Logon and Logout Events - lastlog</td>
+<td xml:lang="en-US">The audit system already collects login information for all users
+and root. If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/lastlog -p wa -k logins</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file in order to watch for unattempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/lastlog -p wa -k logins</pre>
+</td>
+<td xml:lang="en-US">Manual editing of these files may indicate nefarious activity, such
+as an attacker attempting to remove evidence of an intrusion.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80720-6</td>
+<td>Record Attempts to Alter Logon and Logout Events - tallylog</td>
+<td xml:lang="en-US">The audit system already collects login information for all users
+and root. If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/tallylog -p wa -k logins</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file in order to watch for unattempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/tallylog -p wa -k logins</pre>
+</td>
+<td xml:lang="en-US">Manual editing of these files may indicate nefarious activity, such
+as an attacker attempting to remove evidence of an intrusion.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80941-8</td>
+<td>Record Access Events to Audit Log directory</td>
+<td xml:lang="en-US">The audit system should collect access events to read audit log directory.
+The following audit rule will assure that access to audit log directory are
+collected.
+<pre>-a always,exit -F dir=/var/log/audit/ -F perm=r -F auid&gt;=1000 -F auid!=unset -F key=access-audit-trail</pre>
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+rule to a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the rule to
+<code>/etc/audit/audit.rules</code> file.</td>
+<td xml:lang="en-US">Attempts to read the logs should be recorded, suspicious access to audit log files could be an indicator of malicious activity on a system.
+Auditing these events could serve as evidence of potential system compromise.'</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80711-5</td>
+<td>Ensure auditd Collects Information on Kernel Module Unloading - delete_module</td>
+<td xml:lang="en-US">To capture kernel module unloading events, use following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
+<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
+
+Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
+to use the <code>augenrules</code> program (the default), add the line to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
+add the line to file <code>/etc/audit/audit.rules</code>.</td>
+<td xml:lang="en-US">The removal of kernel modules can be used to alter the behavior of
+the kernel and potentially introduce malicious code into kernel space. It is important
+to have an audit trail of modules that have been introduced into the kernel.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80713-1</td>
+<td>Ensure auditd Collects Information on Kernel Module Loading - init_module</td>
+<td xml:lang="en-US">To capture kernel module loading events, use following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
+<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F key=modules</pre>
+
+Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
+to use the <code>augenrules</code> program (the default), add the line to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
+add the line to file <code>/etc/audit/audit.rules</code>.</td>
+<td xml:lang="en-US">The addition of kernel modules can be used to alter the behavior of
+the kernel and potentially introduce malicious code into kernel space. It is important
+to have an audit trail of modules that have been introduced into the kernel.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80714-9</td>
+<td>Ensure auditd Collects Information on Kernel Module Loading - insmod</td>
+<td xml:lang="en-US">To capture invocation of insmod, utility used to insert modules into kernel,
+use the following line:
+<pre>-w /usr/sbin/insmod -p x -k modules</pre>
+Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
+to use the <code>augenrules</code> program (the default), add the line to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
+add the line to file <code>/etc/audit/audit.rules</code>.</td>
+<td xml:lang="en-US">The addition of kernel modules can be used to alter the behavior of
+the kernel and potentially introduce malicious code into kernel space. It is important
+to have an audit trail of modules that have been introduced into the kernel.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80715-6</td>
+<td>Ensure auditd Collects Information on Kernel Module Loading and Unloading - modprobe</td>
+<td xml:lang="en-US">To capture invocation of modprobe, utility used to insert / remove modules from kernel,
+add the following line:
+<pre>-w /usr/sbin/modprobe -p x -k modules</pre>
+Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
+to use the <code>augenrules</code> program (the default), add the line to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
+add the line to file <code>/etc/audit/audit.rules</code>.</td>
+<td xml:lang="en-US">The addition/removal of kernel modules can be used to alter the behavior of
+the kernel and potentially introduce malicious code into kernel space. It is important
+to have an audit trail of modules that have been introduced into the kernel.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80716-4</td>
+<td>Ensure auditd Collects Information on Kernel Module Unloading - rmmod</td>
+<td xml:lang="en-US">To capture invocation of rmmod, utility used to remove modules from kernel,
+add the following line:
+<pre>-w /usr/sbin/rmmod -p x -k modules</pre>
+Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
+to use the <code>augenrules</code> program (the default), add the line to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
+add the line to file <code>/etc/audit/audit.rules</code>.</td>
+<td xml:lang="en-US">The removal of kernel modules can be used to alter the behavior of
+the kernel and potentially introduce malicious code into kernel space. It is important
+to have an audit trail of modules that have been introduced into the kernel.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80865-9</td>
+<td>Ensure Software Patches Installed</td>
+<td xml:lang="en-US">
+If the system is joined to the Red Hat Network, a Red Hat Satellite Server,
+or a yum server, run the following command to install updates:
+<pre>$ sudo yum update</pre>
+If the system is not configured to use one of these sources, updates (in the form of RPM packages)
+can be manually downloaded from the Red Hat Network and installed using <code>rpm</code>.
+
+<br><br>
+NOTE: U.S. Defense systems are required to be patched within 30 days or sooner as local policy
+dictates.</td>
+<td xml:lang="en-US">Installing software updates is a fundamental mitigation against
+the exploitation of publicly-known vulnerabilities. If the most
+recent security patches and updates are not installed, unauthorized
+users may take advantage of weaknesses in the unpatched software. The
+lack of prompt attention to patching could result in a system compromise.</td>
+<td></td>
+<td>SI-2<br>SI-2(c)<br>MA-1(b)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80947-5</td>
+<td>The Installed Operating System Is Vendor Supported</td>
+<td xml:lang="en-US">The installed operating system must be maintained by a vendor.
+
+Red Hat Enterprise Linux is supported by Red Hat, Inc. As the Red Hat Enterprise
+Linux vendor, Red Hat, Inc. is responsible for providing security patches.</td>
+<td xml:lang="en-US">An operating system is considered "supported" if the vendor continues to
+provide security patches for the product.  With an unsupported release, it
+will not be possible to resolve any security issue discovered in the system
+software.</td>
+<td></td>
+<td>SI-2(c)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80830-3</td>
+<td>The Installed Operating System Is FIPS 140-2 Certified</td>
+<td xml:lang="en-US">To enable processing of sensitive information the operating system must
+provide certified cryptographic modules compliant with FIPS 140-2
+standard.</td>
+<td xml:lang="en-US">The Federal Information Processing Standard (FIPS) Publication 140-2, (FIPS
+PUB 140-2) is a computer security standard. The standard specifies security
+requirements for cryptographic modules used to protect sensitive
+unclassified information.  Refer to the full FIPS 140-2 standard at
+
+    <a href="http://csrc.nist.gov/publications/fips/fips140-2/fips1402.pdf">http://csrc.nist.gov/publications/fips/fips140-2/fips1402.pdf</a>
+for further details on the requirements.
+FIPS 140-2 validation is required by U.S. law when information systems use
+cryptography to protect sensitive government information. In order to
+achieve FIPS 140-2 certification, cryptographic modules are subject to
+extensive testing by independent laboratories, accredited by National
+Institute of Standards and Technology (NIST).</td>
+<td></td>
+<td>IA-5<br>IA-7<br>SC-13<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80825-3</td>
+<td>Enable Auditing for Processes Which Start Prior to the Audit Daemon</td>
+<td xml:lang="en-US">To ensure all processes can be audited, even those which start
+prior to the audit daemon, add the argument <code>audit=1</code> to the default
+GRUB 2 command line for the Linux operating system in
+<code>/etc/default/grub</code>, in the manner below:
+<pre>GRUB_CMDLINE_LINUX="crashkernel=auto rd.lvm.lv=VolGroup/LogVol06 rd.lvm.lv=VolGroup/lv_swap rhgb quiet rd.shell=0 audit=1"</pre>
+</td>
+<td xml:lang="en-US">Each process on the system carries an "auditable" flag which indicates whether
+its activities can be audited. Although <code>auditd</code> takes care of enabling
+this for all processes which launch after it does, adding the kernel argument
+ensures it is set for every process during boot.</td>
+<td></td>
+<td>AC-17(1)<br>AU-14(1)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-10<br>AU-12<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80943-4</td>
+<td>Extend Audit Backlog Limit for the Audit Daemon</td>
+<td xml:lang="en-US">To improve the kernel capacity to queue all log events, even those which occurred
+prior to the audit daemon, add the argument <code>audit_backlog_limit=8192</code> to the default
+GRUB 2 command line for the Linux operating system in
+<code>/etc/default/grub</code>, in the manner below:
+<pre>GRUB_CMDLINE_LINUX="crashkernel=auto rd.lvm.lv=VolGroup/LogVol06 rd.lvm.lv=VolGroup/lv_swap rhgb quiet rd.shell=0 audit=1 audit_backlog_limit=8192"</pre>
+</td>
+<td xml:lang="en-US">audit_backlog_limit sets the queue length for audit events awaiting transfer
+to the audit daemon. Until the audit daemon is up and running, all log messages
+are stored in this queue.  If the queue is overrun during boot process, the action
+defined by audit failure flag is taken.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80872-5</td>
+<td>Enable auditd Service</td>
+<td xml:lang="en-US">The <code>auditd</code> service is an essential userspace component of
+the Linux Auditing System, as it is responsible for writing audit records to
+disk.
+
+The <code>auditd</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable auditd.service</pre>
+</td>
+<td xml:lang="en-US">Without establishing what type of events occurred, it would be difficult
+to establish, correlate, and investigate the events leading up to an outage or attack.
+Ensuring the <code>auditd</code> service is active ensures audit records
+generated by the kernel are appropriately recorded.
+<br><br>
+Additionally, a properly configured audit subsystem ensures that actions of
+individual system users can be uniquely traced to those users so they
+can be held accountable for their actions.</td>
+<td></td>
+<td>AC-2(g)<br>AU-3<br>AC-17(1)<br>AU-1(b)<br>AU-10<br>AU-12(a)<br>AU-12(c)<br>AU-14(1)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80857-6</td>
+<td>Verify File Hashes with RPM</td>
+<td xml:lang="en-US">Without cryptographic integrity protections, system
+executables and files can be altered by unauthorized users without
+detection.
+The RPM package management system can check the hashes of
+installed software packages, including many that are important to system
+security.
+To verify that the cryptographic hash of system files and commands match vendor
+values, run the following command to list which files on the system
+have hashes that differ from what is expected by the RPM database:
+<pre>$ rpm -Va | grep '^..5'</pre>
+A "c" in the second column indicates that a file is a configuration file, which
+may appropriately be expected to change.  If the file was not expected to
+change, investigate the cause of the change using audit logs or other means.
+The package can then be reinstalled to restore the file.
+Run the following command to determine which package owns the file:
+<pre>$ rpm -qf <i>FILENAME</i></pre>
+The package can be reinstalled from a yum repository using the command:
+<pre>$ sudo yum reinstall <i>PACKAGENAME</i></pre>
+Alternatively, the package can be reinstalled from trusted media using the command:
+<pre>$ sudo rpm -Uvh <i>PACKAGENAME</i></pre>
+</td>
+<td xml:lang="en-US">The hashes of important files like system executables should match the
+information given by the RPM database. Executables with erroneous hashes could
+be a sign of nefarious activity on the system.</td>
+<td></td>
+<td>CM-6(d)<br>CM-6(3)<br>SI-7(1)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80866-7</td>
+<td>Ensure No Device Files are Unlabeled by SELinux</td>
+<td xml:lang="en-US">Device files, which are used for communication with important system
+resources, should be labeled with proper SELinux types. If any device
+files do not carry the SELinux type <code>device_t</code>, report the bug so
+that policy can be corrected. Supply information about what the device is
+and what programs use it.
+<br><br>
+To check for unlabeled device files, run the following command:
+<pre>$ sudo find /dev -context *:device_t:* \( -type c -o -type b \) -printf "%p %Z\n"</pre>
+It should produce no output in a well-configured system.</td>
+<td xml:lang="en-US">If a device file carries the SELinux type <code>device_t</code>, then SELinux
+cannot properly restrict access to the device file.</td>
+<td></td>
+<td>AC-6<br>AU-9<br>CM-3(f)<br>CM-7<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80867-5</td>
+<td>Ensure No Daemons are Unconfined by SELinux</td>
+<td xml:lang="en-US">Daemons for which the SELinux policy does not contain rules will inherit the
+context of the parent process. Because daemons are launched during
+startup and descend from the <code>init</code> process, they inherit the <code>initrc_t</code> context.
+<br>
+<br>
+To check for unconfined daemons, run the following command:
+<pre>$ sudo ps -eZ | egrep "initrc" | egrep -vw "tr|ps|egrep|bash|awk" | tr ':' ' ' | awk '{ print $NF }'</pre>
+It should produce no output in a well-configured system.</td>
+<td xml:lang="en-US">Daemons which run with the <code>initrc_t</code> context may cause AVC denials,
+or allow privileges that the daemon does not require.</td>
+<td></td>
+<td>AC-6<br>AU-9<br>CM-7<br>SC-39<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80868-3</td>
+<td>Configure SELinux Policy</td>
+<td xml:lang="en-US">The SELinux <code>targeted</code> policy is appropriate for
+general-purpose desktops and servers, as well as systems in many other roles.
+To configure the system to use this policy, add or correct the following line
+in <code>/etc/selinux/config</code>:
+<pre>SELINUXTYPE=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_selinux_policy_name"></ns0:sub></pre>
+Other policies, such as <code>mls</code>, provide additional security labeling
+and greater confinement but are not compatible with many general-purpose
+use cases.</td>
+<td xml:lang="en-US">Setting the SELinux policy to <code>targeted</code> or a more specialized policy
+ensures the system will confine processes that are likely to be
+targeted for exploitation, such as network or system services.
+<br><br>
+Note: During the development or debugging of SELinux modules, it is common to
+temporarily place non-production systems in <code>permissive</code> mode. In such
+temporary cases, SELinux policies should be developed, and once work
+is completed, the system should be reconfigured to
+<code><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_selinux_policy_name"></ns0:sub></code>.</td>
+<td></td>
+<td>AC-3<br>AC-3(3)<br>AC-3(4)<br>AC-4<br>AC-6<br>AU-9<br>SI-6(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80869-1</td>
+<td>Ensure SELinux State is Enforcing</td>
+<td xml:lang="en-US">The SELinux state should be set to <code><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_selinux_state"></ns0:sub></code> at
+system boot time.  In the file <code>/etc/selinux/config</code>, add or correct the
+following line to configure the system to boot into enforcing mode:
+<pre>SELINUX=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_selinux_state"></ns0:sub></pre>
+</td>
+<td xml:lang="en-US">Setting the SELinux state to enforcing ensures SELinux is able to confine
+potentially compromised processes to the security policy, which is designed to
+prevent them from causing damage to the system or further elevating their
+privileges.</td>
+<td></td>
+<td>AC-3<br>AC-3(3)<br>AC-3(4)<br>AC-4<br>AC-6<br>AU-9<br>SI-6(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80708-1</td>
+<td>Make the auditd Configuration Immutable</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code> in order to make the auditd configuration
+immutable:
+<pre>-e 2</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following line to
+<code>/etc/audit/audit.rules</code> file in order to make the auditd configuration
+immutable:
+<pre>-e 2</pre>
+With this setting, a reboot will be required to change any audit rules.</td>
+<td xml:lang="en-US">Making the audit configuration immutable prevents accidental as
+well as malicious modification of the audit rules, although it may be
+problematic if legitimate changes are needed during system
+operation</td>
+<td></td>
+<td>AC-6<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80795-8</td>
+<td>Ensure Red Hat GPG Key Installed</td>
+<td xml:lang="en-US">To ensure the system can cryptographically verify base software packages
+come from Red Hat (and to connect to the Red Hat Network to receive them),
+the Red Hat GPG key must properly be installed. To install the Red Hat GPG
+key, run:
+<pre>$ sudo subscription-manager register</pre>
+If the system is not connected to the Internet or an RHN Satellite, then
+install the Red Hat GPG key from trusted media such as the Red Hat
+installation CD-ROM or DVD. Assuming the disc is mounted in
+<code>/media/cdrom</code>, use the following command as the root user to import
+it into the keyring:
+<pre>$ sudo rpm --import /media/cdrom/RPM-GPG-KEY</pre>
+</td>
+<td xml:lang="en-US">Changes to software components can have significant effects on the overall
+security of the operating system. This requirement ensures the software has
+not been tampered with and that it has been provided by a trusted vendor.
+The Red Hat GPG key is necessary to cryptographically verify packages are
+from Red Hat.</td>
+<td></td>
+<td>CM-5(3)<br>CM-11(a)<br>SI-7<br>MA-1(b)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80790-9</td>
+<td>Ensure gpgcheck Enabled In Main yum Configuration</td>
+<td xml:lang="en-US">The <code>gpgcheck</code> option controls whether
+RPM packages' signatures are always checked prior to installation.
+To configure yum to check package signatures before installing
+them, ensure the following line appears in <code>/etc/yum.conf</code> in
+the <code>[main]</code> section:
+<pre>gpgcheck=1</pre>
+</td>
+<td xml:lang="en-US">Changes to any software components can have significant effects on the
+overall security of the operating system. This requirement ensures the
+software has not been tampered with and that it has been provided by a
+trusted vendor.
+<br>
+Accordingly, patches, service packs, device drivers, or operating system
+components must be signed with a certificate recognized and approved by the
+organization.
+<br>Verifying the authenticity of the software prior to installation
+validates the integrity of the patch or upgrade received from a vendor.
+This ensures the software has not been tampered with and that it has been
+provided by a trusted vendor. Self-signed certificates are disallowed by
+this requirement. Certificates used to verify the software must be from an
+approved Certificate Authority (CA).</td>
+<td></td>
+<td>CM-5(3)<br>CM-11<br>SI-7<br>MA-1(b)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80792-5</td>
+<td>Ensure gpgcheck Enabled for All yum Package Repositories</td>
+<td xml:lang="en-US">To ensure signature checking is not disabled for
+any repos, remove any lines from files in <code>/etc/yum.repos.d</code> of the form:
+<pre>gpgcheck=0</pre>
+</td>
+<td xml:lang="en-US">Verifying the authenticity of the software prior to installation validates
+the integrity of the patch or upgrade received from a vendor. This ensures
+the software has not been tampered with and that it has been provided by a
+trusted vendor. Self-signed certificates are disallowed by this
+requirement. Certificates used to verify the software must be from an
+approved Certificate Authority (CA)."</td>
+<td></td>
+<td>CM-5(3)<br>CM-11(a)<br>SI-7<br>MA-1(b)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80791-7</td>
+<td>Ensure gpgcheck Enabled for Local Packages</td>
+<td xml:lang="en-US">
+<code>yum</code> should be configured to verify the signature(s) of local packages
+prior to installation. To configure <code>yum</code> to verify signatures of local
+packages, set the <code>localpkg_gpgcheck</code> to <code>1</code> in <code>/etc/yum.conf</code>.</td>
+<td xml:lang="en-US">Changes to any software components can have significant effects to the overall security
+of the operating system. This requirement ensures the software has not been tampered and
+has been provided by a trusted vendor.
+<br><br>
+Accordingly, patches, service packs, device drivers, or operating system components must
+be signed with a certificate recognized and approved by the organization.</td>
+<td></td>
+<td>CM-5(3)<br>CM-11<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80942-6</td>
+<td>Enable FIPS Mode</td>
+<td xml:lang="en-US">To enable FIPS mode, run the following command:
+<pre>fips-mode-setup --enable</pre>
+<br>
+The <code>fips-mode-setup</code> command will configure the system in
+FIPS mode by automatically configuring the following:
+<ul>
+<li>Setting the kernel FIPS mode flag (<code>/proc/sys/crypto/fips_enabled</code>) to <code>1</code>
+</li>
+<li>Creating <code>/etc/system-fips</code>
+</li>
+<li>Setting the system crypto policy in <code>/etc/crypto-policies/config</code> to <code>FIPS</code>
+</li>
+<li>Loading the Dracut <code>fips</code> module</li>
+</ul>
+Furthermore, the system running in FIPS mode should be FIPS certified by NIST.</td>
+<td xml:lang="en-US">Use of weak or untested encryption algorithms undermines the purposes of utilizing encryption to
+protect data. The operating system must implement cryptographic modules adhering to the higher
+standards approved by the federal government since this provides assurance they have been tested
+and validated.</td>
+<td></td>
+<td>SC-13<br>AC-17(2)<br>IA-7<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80953-3</td>
+<td>Restrict usage of ptrace to descendant processes</td>
+<td xml:lang="en-US">To set the runtime status of the <code>kernel.yama.ptrace_scope</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.yama.ptrace_scope=1</pre>
+If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.yama.ptrace_scope = 1</pre>
+</td>
+<td xml:lang="en-US">Unrestricted usage of ptrace allows compromised binaries to run ptrace
+on another processes of the user. Like this, the attacker can steal
+sensitive information from the target processes (e.g. SSH sessions, web browser, ...)
+without any additional assistance from the user (i.e. without resorting to phishing).
+</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80915-2</td>
+<td>Restrict Exposed Kernel Pointer Addresses Access</td>
+<td xml:lang="en-US">To set the runtime status of the <code>kernel.kptr_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.kptr_restrict=1</pre>
+If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.kptr_restrict = 1</pre>
+</td>
+<td xml:lang="en-US">Exposing kernel pointers (through procfs or <code>seq_printf()</code>) exposes
+kernel writeable structures that can contain functions pointers. If a write vulnereability occurs
+in the kernel allowing a write access to any of this structure, the kernel can be compromise. This
+option disallow any program withtout the CAP_SYSLOG capability from getting the kernel pointers addresses,
+replacing them with 0.</td>
+<td></td>
+<td>SC-39<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80952-5</td>
+<td>Disable kernel image loading</td>
+<td xml:lang="en-US">To set the runtime status of the <code>kernel.kexec_load_disabled</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.kexec_load_disabled=1</pre>
+If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.kexec_load_disabled = 1</pre>
+</td>
+<td xml:lang="en-US">Disabling kexec_load allows greater control of the kernel memory.
+It makes it impossible to load another kernel image after it has been disabled.
+</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80913-7</td>
+<td>Restrict Access to Kernel Message Buffer</td>
+<td xml:lang="en-US">To set the runtime status of the <code>kernel.dmesg_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.dmesg_restrict=1</pre>
+If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.dmesg_restrict = 1</pre>
+</td>
+<td xml:lang="en-US">Unprivileged access to the kernel syslog can expose sensitive kernel
+address information.</td>
+<td></td>
+<td>SI-11<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80945-9</td>
+<td>Enable SLUB/SLAB allocator poisoning</td>
+<td xml:lang="en-US">To enable poisoning of SLUB/SLAB objects,
+add the argument <code>slub_debug=P</code> to the default
+GRUB 2 command line for the Linux operating system in
+<code>/etc/default/grub</code>, in the manner below:
+<pre>GRUB_CMDLINE_LINUX="slub_debug=P"</pre>
+</td>
+<td xml:lang="en-US">Poisoning writes an arbitrary value to freed objects, so any modification or
+reference to that object after being freed or before being initialized will be
+detected and prevented.
+This prevents many types of use-after-free vulnerabilities at little performance cost.
+Also prevents leak of data and detection of corrupted memory.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80944-2</td>
+<td>Enable page allocator poisoning</td>
+<td xml:lang="en-US">To enable poisoning of free pages,
+add the argument <code>page_poison=1</code> to the default
+GRUB 2 command line for the Linux operating system in
+<code>/etc/default/grub</code>, in the manner below:
+<pre>GRUB_CMDLINE_LINUX="page_poison=1"</pre>
+</td>
+<td xml:lang="en-US">Poisoning writes an arbitrary value to freed pages, so any modification or
+reference to that page after being freed or before being initialized will be
+detected and prevented.
+This prevents many types of use-after-free vulnerabilities at little performance cost.
+Also prevents leak of data and detection of corrupted memory.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80946-7</td>
+<td>Disable vsyscalls</td>
+<td xml:lang="en-US">To disable use of virtual syscalls,
+add the argument <code>vsyscall=none</code> to the default
+GRUB 2 command line for the Linux operating system in
+<code>/etc/default/grub</code>, in the manner below:
+<pre>GRUB_CMDLINE_LINUX="vsyscall=none"</pre>
+</td>
+<td xml:lang="en-US">Virtual Syscalls provide an opportunity of attack for a user who has control
+of the return instruction pointer.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80988-9</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - at</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/at -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/at -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threast.
+<br><br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td></td>
+<td>AU-12(c)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80727-1</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - crontab</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threast.
+<br><br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td></td>
+<td>AU-3(1)<br>AU-12(c)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80989-7</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - mount</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threast.
+<br><br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td></td>
+<td>AU-12(c)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80739-6</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - umount</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threast.
+<br><br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td></td>
+<td>AU-3(1)<br>AU-12(c)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80743-8</td>
+<td>Ensure auditd Collects System Administrator Actions</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect administrator actions
+for all users and root. If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the default),
+add the following line to a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>:
+<pre>-w /etc/sudoers -p wa -k actions
+-w /etc/sudoers.d/ -p wa -k actions</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following line to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-w /etc/sudoers -p wa -k actions
+-w /etc/sudoers.d/ -p wa -k actions</pre>
+</td>
+<td xml:lang="en-US">The actions taken by system administrators should be audited to keep a record
+of what was executed on the system, as well as, for accountability purposes.</td>
+<td></td>
+<td>AC-2(7)(b)<br>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-3(1)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80742-0</td>
+<td>Record Attempts to Alter Process and Session Initiation Information</td>
+<td xml:lang="en-US">The audit system already collects process information for all
+users and root. If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
+edits of files involved in storing such process information:
+<pre>-w /var/run/utmp -p wa -k session
+-w /var/log/btmp -p wa -k session
+-w /var/log/wtmp -p wa -k session</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file in order to watch for attempted manual
+edits of files involved in storing such process information:
+<pre>-w /var/run/utmp -p wa -k session
+-w /var/log/btmp -p wa -k session
+-w /var/log/wtmp -p wa -k session</pre>
+</td>
+<td xml:lang="en-US">Manual editing of these files may indicate nefarious activity, such
+as an attacker attempting to remove evidence of an intrusion.</td>
+<td></td>
+<td>AC-17(7)<br>AU-1(b)<br>AU-2(a)<br>AU-2(c)<br>AU-2(d)<br>AU-12(a)<br>AU-12(c)<br>IR-5<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80735-4</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - ssh-keysign</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/libexec/openssh/key-sign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threast.
+<br><br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td></td>
+<td>AU-3(1)<br>AU-12(c)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80859-2</td>
+<td>Ensure cron Is Logging To Rsyslog</td>
+<td xml:lang="en-US">Cron logging must be implemented to spot intrusions or trace
+cron job status. If <code>cron</code> is not logging to <code>rsyslog</code>, it
+can be implemented by adding the following to the <i>RULES</i> section of
+<code>/etc/rsyslog.conf</code>:
+<pre>cron.*                                                  /var/log/cron</pre>
+</td>
+<td xml:lang="en-US">Cron logging can be used to trace the successful or unsuccessful execution
+of cron jobs. It can also be used to spot intrusions into the use of the cron
+facility by unauthorized and malicious users.</td>
+<td></td>
+<td>AU-2(d)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80837-8</td>
+<td>Add nodev Option to /dev/shm</td>
+<td xml:lang="en-US">The <code>nodev</code> mount option can be used to prevent creation of device
+files in <code>/dev/shm</code>. Legitimate character and block devices should
+not exist within temporary directories like <code>/dev/shm</code>.
+Add the <code>nodev</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+<code>/dev/shm</code>.</td>
+<td xml:lang="en-US">The only legitimate location for device files is the <code>/dev</code> directory
+located on the root partition. The only exception to this is chroot jails.</td>
+<td></td>
+<td>CM-7<br>MP-2<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80838-6</td>
+<td>Add noexec Option to /dev/shm</td>
+<td xml:lang="en-US">The <code>noexec</code> mount option can be used to prevent binaries
+from being executed out of <code>/dev/shm</code>.
+It can be dangerous to allow the execution of binaries
+from world-writable temporary storage directories such as <code>/dev/shm</code>.
+Add the <code>noexec</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+<code>/dev/shm</code>.</td>
+<td xml:lang="en-US">Allowing users to execute binaries from world-writable directories
+such as <code>/dev/shm</code> can expose the system to potential compromise.</td>
+<td></td>
+<td>CM-7<br>MP-2<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80839-4</td>
+<td>Add nosuid Option to /dev/shm</td>
+<td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent execution
+of setuid programs in <code>/dev/shm</code>.  The SUID and SGID permissions should not
+be required in these world-writable directories.
+Add the <code>nosuid</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+<code>/dev/shm</code>.</td>
+<td xml:lang="en-US">The presence of SUID and SGID executables should be tightly controlled. Users
+should not be able to execute SUID or SGID binaries from temporary storage partitions.</td>
+<td></td>
+<td>CM-7<br>MP-2<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80948-3</td>
+<td>Uninstall Automatic Bug Reporting Tool (abrt)</td>
+<td xml:lang="en-US">The Automatic Bug Reporting Tool (<code>abrt</code>) collects
+and reports crash data when an application crash is detected. Using a variety
+of plugins, abrt can email crash reports to system administrators, log crash
+reports to files, or forward crash reports to a centralized issue tracking
+system such as RHTSupport.
+The <code>abrt</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase abrt</pre>
+</td>
+<td xml:lang="en-US">Mishandling crash data could expose sensitive information about
+vulnerabilities in software executing on the system, as well as sensitive
+information from within a process's address space or registers.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80935-0</td>
+<td>Configure System Cryptography Policy</td>
+<td xml:lang="en-US">To configure the system cyptography policy to use ciphers only from the <code><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_system_crypto_policy"></ns0:sub></code>
+policy, run the following command:
+<pre>$ sudo update-crypto-policies --set <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_system_crypto_policy"></ns0:sub></pre>
+</td>
+<td xml:lang="en-US">Centralized cryptographic policies simplify applying secure ciphers across an operating system and
+the applications that run on that operating system. Use of weak or untested encryption algorithms
+undermines the purposes of utilizing encryption to protect data.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80934-3</td>
+<td>Configure BIND to use System Crypto Policy</td>
+<td xml:lang="en-US">Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
+BIND is supported by crypto policy, but the BIND configuration may be
+set up to ignore it.
+
+To check that Crypto Policies settings are configured correctly, ensure that the <code>/etc/named.conf</code>
+includes the appropriate configuration:
+In the <code>options</code> section of <code>/etc/named.conf</code>, make sure that the following line
+is not commented out or superseded by later includes:
+<code>include "/etc/crypto-policies/back-ends/bind.config";</code>
+</td>
+<td xml:lang="en-US">Overriding the system crypto policy makes the behavior of the BIND service violate expectations,
+and makes system configuration more fragmented.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80938-4</td>
+<td>Configure OpenSSL library to use System Crypto Policy</td>
+<td xml:lang="en-US">Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
+OpenSSL is supported by crypto policy, but the OpenSSL configuration may be
+set up to ignore it.
+To check that Crypto Policies settings are configured correctly, you have to examine the OpenSSL config file
+available under <code>/etc/pki/tls/openssl.cnf</code>.
+This file has the <code>ini</code> format, and it enables crypto policy support
+if there is a <code>[ crypto_policy ]</code> section that contains the <code>.include /etc/crypto-policies/back-ends/openssl.config</code> directive.</td>
+<td xml:lang="en-US">Overriding the system crypto policy makes the behavior of the Java runtime violates expectations,
+and makes system configuration more fragmented.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80937-6</td>
+<td>Configure Libreswan to use System Crypto Policy</td>
+<td xml:lang="en-US">Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
+Libreswan is supported by system crypto policy, but the Libreswan configuration may be
+set up to ignore it.
+
+To check that Crypto Policies settings are configured correctly, ensure that the <code>/etc/ipsec.conf</code>
+includes the appropriate configuration file.
+In <code>/etc/ipsec.conf</code>, make sure that the following line
+is not commented out or superseded by later includes:
+<code>include /etc/crypto-policies/back-ends/libreswan.config</code>
+</td>
+<td xml:lang="en-US">Overriding the system crypto policy makes the behavior of the Libreswan
+service violate expectations, and makes system configuration more
+fragmented.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80939-2</td>
+<td>Configure SSH to use System Crypto Policy</td>
+<td xml:lang="en-US">Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
+SSH is supported by crypto policy, but the SSH configuration may be
+set up to ignore it.
+To check that Crypto Policies settings are configured correctly, ensure that
+the <code>CRYPTO_POLICY</code> variable is either commented or not set at all
+in the <code>/etc/sysconfig/sshd</code>.</td>
+<td xml:lang="en-US">Overriding the system crypto policy makes the behavior of the SSH service violate expectations,
+and makes system configuration more fragmented.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-80936-8</td>
+<td>Configure Kerberos to use System Crypto Policy</td>
+<td xml:lang="en-US">Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
+Kerberos is supported by crypto policy, but it's configuration may be
+set up to ignore it.
+To check that Crypto Policies settings for Kerberos are configured correctly, examine that there is a symlink at
+/etc/krb5.conf.d/crypto-policies targeting /etc/cypto-policies/back-ends/krb5.config.
+If the symlink exists, kerberos is configured to use the system-wide crypto policy settings.</td>
+<td xml:lang="en-US">Overriding the system crypto policy makes the behavior of Kerberos violate expectations,
+and makes system configuration more fragmented.</td>
+<td></td>
+<td></td>
+</tr>
+</table>
+</body>
+</html>

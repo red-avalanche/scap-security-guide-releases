@@ -1,0 +1,368 @@
+<html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title> Rules with
+			anssi
+			Reference in Guide to the Secure Configuration of Red Hat Enterprise Linux 8</title>
+</head>
+<body>
+<br><br><div style="text-align: center; font-size: x-large; font-weight:bold">
+			Rules with  anssi Reference in Guide to the Secure Configuration of Red Hat Enterprise Linux 8</div>
+<br><br><style type="text/css">
+		table
+		{
+			border-collapse:collapse;
+		}
+		table, th, td
+		{
+			border: 2px solid #dcdcdc;
+			border-left: none;
+			border-right: none;
+			vertical-align: top;
+			padding: 2px;
+			font-family: verdana,arial,sans-serif;
+			font-size:11px;
+		}
+		pre { 
+			white-space: pre-wrap;
+			white-space: -moz-pre-wrap !important;
+			word-wrap:break-word; 
+		}
+		table tr:nth-child(2n+2) { background-color: #f4f4f4; }
+		thead
+		{
+			display: table-header-group;
+			font-weight: bold;
+			background-color: #dedede;
+		}
+	</style>
+<table>
+<thead>
+<td>Reference (anssi)</td>
+<td>Rule Title</td>
+<td>Description</td>
+<td>Rationale</td>
+<td>Variable Setting</td>
+</thead>
+<tr>
+<td>NT007(R02)</td>
+<td>Uninstall the ssl compliant telnet server</td>
+<td xml:lang="en-US">The telnet daemon, even with ssl support, should be uninstalled.</td>
+<td xml:lang="en-US">telnet, even with ssl support, should not be installed. When remote shell is required, up-to-date ssh daemon can be used.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT007(R03)</td>
+<td>Uninstall the inet-based telnet server</td>
+<td xml:lang="en-US">The inet-based telnet daemon should be uninstalled.</td>
+<td xml:lang="en-US">telnet allows clear text communications, and does not protect any data transmission between client and server. Any confidential data can be listened and no integrity checking is made.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT007(R03)</td>
+<td>Uninstall the telnet server</td>
+<td xml:lang="en-US">The telnet daemon should be uninstalled.</td>
+<td xml:lang="en-US">telnet allows clear text communications, and does not protect any data transmission between client and server. Any confidential data can be listened and no integrity checking is made.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT012(R03)</td>
+<td>Install the ntp service</td>
+<td xml:lang="en-US">The ntpd service should be installed.</td>
+<td xml:lang="en-US">Time synchronization (using NTP) is required by almost all network and administrative tasks (syslog, cryptographic based services (authentication, etc.), etc.). Ntpd is regulary maintained and updated, supporting security features such as RFC 5906.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT012(R03)</td>
+<td>Enable the NTP Daemon</td>
+<td xml:lang="en-US"> The <code>ntpd</code> service can be enabled with the following command: <pre>$ sudo systemctl enable ntpd.service</pre>
+</td>
+<td xml:lang="en-US">Enabling the <code>ntpd</code> service ensures that the <code>ntpd</code>
+service will be running and that the system will synchronize its time to
+any servers specified. This is important whether the system is configured to be
+a client (and synchronize only its own clock) or it is also acting as an NTP
+server to other systems.  Synchronizing time is essential for authentication
+services such as Kerberos, but it is also important for maintaining accurate
+logs and auditing possible security breaches.
+<br><br>
+The NTP daemon offers all of the functionality of <code>ntpdate</code>, which is now
+deprecated.  Additional information on this is available at
+
+    <a href="http://support.ntp.org/bin/view/Dev/DeprecatingNtpdate">http://support.ntp.org/bin/view/Dev/DeprecatingNtpdate</a>.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT012(R03)</td>
+<td>Enable systemd_timesyncd Service</td>
+<td xml:lang="en-US"> The <code>systemd_timesyncd</code> service can be enabled with the following command: <pre>$ sudo systemctl enable systemd_timesyncd.service</pre>
+</td>
+<td xml:lang="en-US">Enabling the <code>systemd_timesyncd</code> service ensures that this host
+uses the ntp protocol to fetch time data from a ntp server.
+Synchronizing time is essential for authentication
+services such as Kerberos, but it is also important for maintaining accurate
+logs and auditing possible security breaches.
+<br><br>
+Additional information on Ubuntu network time protocol is
+available at
+
+    <a href="https://help.ubuntu.com/lts/serverguide/NTP.html.en">https://help.ubuntu.com/lts/serverguide/NTP.html.en</a>.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R5)</td>
+<td>Ensure syslog-ng is Installed</td>
+<td xml:lang="en-US">syslog-ng can be installed in replacement of rsyslog.
+The <code>syslog-ng-core</code> package can be installed with the following command:
+<pre>
+$ sudo yum install syslog-ng-core</pre>
+</td>
+<td xml:lang="en-US">The syslog-ng-core package provides the syslog-ng daemon, which provides
+system logging services.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R5)</td>
+<td>Enable syslog-ng Service</td>
+<td xml:lang="en-US">The <code>syslog-ng</code> service (in replacement of rsyslog) provides syslog-style logging by default on Debian 8.
+
+The <code>syslog-ng</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable syslog-ng.service</pre>
+</td>
+<td xml:lang="en-US">The <code>syslog-ng</code> service must be running in order to provide
+logging services, which are essential to system administration.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R5)</td>
+<td>Ensure rsyslog is Installed</td>
+<td xml:lang="en-US">Rsyslog is installed by default. The <code>rsyslog</code> package can be installed with the following command: <pre> $ sudo yum install rsyslog</pre>
+</td>
+<td xml:lang="en-US">The rsyslog package provides the rsyslog daemon, which provides
+system logging services.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R5)</td>
+<td>Enable rsyslog Service</td>
+<td xml:lang="en-US">The <code>rsyslog</code> service provides syslog-style logging by default on Red Hat Enterprise Linux 8.
+
+The <code>rsyslog</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable rsyslog.service</pre>
+</td>
+<td xml:lang="en-US">The <code>rsyslog</code> service must be running in order to provide
+logging services, which are essential to system administration.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R5)</td>
+<td>Ensure Users Re-Authenticate for Privilege Escalation - sudo !authenticate</td>
+<td xml:lang="en-US">The sudo <code>!authenticate</code> option, when specified, allows a user to execute commands using
+sudo without having to authenticate. This should be disabled by making sure that the
+<code>!authenticate</code> option does not exist in <code>/etc/sudoers</code> configuration file or
+any sudo configuration snippets in <code>/etc/sudoers.d/</code>.</td>
+<td xml:lang="en-US">Without re-authentication, users may access resources or perform tasks for which they
+do not have authorization.
+<br><br>
+When operating systems provide the capability to escalate a functional capability, it
+is critical that the user re-authenticate.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R5)</td>
+<td>Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD</td>
+<td xml:lang="en-US">The sudo <code>NOPASSWD</code> tag, when specified, allows a user to execute
+commands using sudo without having to authenticate. This should be disabled
+by making sure that the <code>NOPASSWD</code> tag does not exist in
+<code>/etc/sudoers</code> configuration file or any sudo configuration snippets
+in <code>/etc/sudoers.d/</code>.</td>
+<td xml:lang="en-US">Without re-authentication, users may access resources or perform tasks for which they
+do not have authorization.
+<br><br>
+When operating systems provide the capability to escalate a functional capability, it
+is critical that the user re-authenticate.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R7)</td>
+<td>Ensure Logs Sent To Remote Host</td>
+<td xml:lang="en-US">To configure rsyslog to send logs to a remote log server,
+open <code>/etc/rsyslog.conf</code> and read and understand the last section of the file,
+which describes the multiple directives necessary to activate remote
+logging.
+Along with these other directives, the system can be configured
+to forward its logs to a particular log server by
+adding or correcting one of the following lines,
+substituting <code><i>loghost.example.com</i></code> appropriately.
+The choice of protocol depends on the environment of the system;
+although TCP and RELP provide more reliable message delivery,
+they may not be supported in all environments.
+<br>
+To use UDP for log message delivery:
+<pre>*.* @<i>loghost.example.com</i></pre>
+<br>
+To use TCP for log message delivery:
+<pre>*.* @@<i>loghost.example.com</i></pre>
+<br>
+To use RELP for log message delivery:
+<pre>*.* :omrelp:<i>loghost.example.com</i></pre>
+<br>
+There must be a resolvable DNS CNAME or Alias record set to "<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub>" for logs to be sent correctly to the centralized logging utility.</td>
+<td xml:lang="en-US">A log server (loghost) receives syslog messages from one or more
+systems. This data can be used as an additional log source in the event a
+system is compromised and its local logs are suspect. Forwarding log messages
+to a remote loghost also provides system administrators with a centralized
+place to view the status of multiple hosts within the enterprise.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R11)</td>
+<td>IOMMU configuration directive</td>
+<td xml:lang="en-US">On x86 architecture supporting VT-d, the IOMMU manages the access control policy between the hardware devices and some
+    of the system critical units such as the memory.</td>
+<td xml:lang="en-US">On x86 architectures, activating the I/OMMU prevents the system from arbritrary accesses potentially made by
+    hardware devices.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R12)</td>
+<td>Ensure /srv Located On Separate Partition</td>
+<td xml:lang="en-US">If a file server (FTP, TFTP...) is hosted locally, create a separate partition
+for <code>/srv</code> at installation time (or migrate it later using LVM). If
+<code>/srv</code> will be mounted from another system such as an NFS server, then
+creating a separate partition is not necessary at installation time, and the
+mountpoint can instead be configured later.</td>
+<td xml:lang="en-US">Srv deserves files for local network file server such as FTP. Ensuring
+that <code>/srv</code> is mounted on its own partition enables the setting of
+more restrictive mount options, and also helps ensure that
+users cannot trivially fill partitions used for log or audit data storage.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R13)</td>
+<td>Verify that local System.map file (if exists) is readable only by root</td>
+<td xml:lang="en-US">Files containing sensitive informations should be protected by restrictive
+  permissions. Most of the time, there is no need that these files need to be read by any non-root user
+
+To properly set the permissions of <code>/boot/System.map-*</code>, run the command:
+<pre>$ sudo chmod 0600 /boot/System.map-*</pre>
+</td>
+<td xml:lang="en-US">The <code>System.map</code> file contains information about kernel symbols and
+  can give some hints to generate local exploitation.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R15)</td>
+<td>Disable unauthenticated repositories in APT configuration</td>
+<td xml:lang="en-US">Unauthenticated repositories should not be used for updates.</td>
+<td xml:lang="en-US">Repositories hosts all packages that will be intsalled on the system during update.
+    If a repository is not authenticated, the associated packages can't be trusted,
+    and then should not be installed localy.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R15)</td>
+<td>Ensure that official distribution repositories are used</td>
+<td xml:lang="en-US">Check that official Debian repositories, including security repository, are configured in apt.</td>
+<td xml:lang="en-US">The Debian distribution deliver DSA (Debian Security Announce), through the official
+    Debian security repository, to correct various vulnerabilities impacting the Debian
+    packages. Using the official repositories is the best way to ensure that the Debian
+    updates are integrated soon enough.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R23)</td>
+<td>Disallow creating symlinks to a file you not own</td>
+<td xml:lang="en-US">To set the runtime status of the <code>fs.protected_hardlinks</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.protected_hardlinks=1</pre>
+If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.protected_hardlinks = 1</pre>
+</td>
+<td xml:lang="en-US">Disallowing such hardlink mitigate vulnerabilities based on insecure file system
+accessed by privilegied programs, avoiding an exploitation vector exploiting unsafe use of
+<code>open()</code> or <code>creat()</code>.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R23)</td>
+<td>Disallow creating symlinks to a file you not own</td>
+<td xml:lang="en-US">To set the runtime status of the <code>fs.protected_symlinks</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.protected_symlinks=1</pre>
+If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.protected_symlinks = 1</pre>
+</td>
+<td xml:lang="en-US">Disallowing such symlink mitigate vulnerabilities based on insecure file system
+accessed by privilegied programs, avoiding an exploitation vector exploiting unsafe use of
+<code>open()</code> or <code>creat()</code>.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R23)</td>
+<td>Restrict Exposed Kernel Pointer Addresses Access</td>
+<td xml:lang="en-US">To set the runtime status of the <code>kernel.kptr_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.kptr_restrict=1</pre>
+If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.kptr_restrict = 1</pre>
+</td>
+<td xml:lang="en-US">Exposing kernel pointers (through procfs or <code>seq_printf()</code>) exposes
+kernel writeable structures that can contain functions pointers. If a write vulnereability occurs
+in the kernel allowing a write access to any of this structure, the kernel can be compromise. This
+option disallow any program withtout the CAP_SYSLOG capability from getting the kernel pointers addresses,
+replacing them with 0.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R46)</td>
+<td>Ensure syslog-ng is Installed</td>
+<td xml:lang="en-US">syslog-ng can be installed in replacement of rsyslog.
+The <code>syslog-ng-core</code> package can be installed with the following command:
+<pre>
+$ sudo yum install syslog-ng-core</pre>
+</td>
+<td xml:lang="en-US">The syslog-ng-core package provides the syslog-ng daemon, which provides
+system logging services.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R46)</td>
+<td>Enable syslog-ng Service</td>
+<td xml:lang="en-US">The <code>syslog-ng</code> service (in replacement of rsyslog) provides syslog-style logging by default on Debian 8.
+
+The <code>syslog-ng</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable syslog-ng.service</pre>
+</td>
+<td xml:lang="en-US">The <code>syslog-ng</code> service must be running in order to provide
+logging services, which are essential to system administration.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R46)</td>
+<td>Ensure rsyslog is Installed</td>
+<td xml:lang="en-US">Rsyslog is installed by default. The <code>rsyslog</code> package can be installed with the following command: <pre> $ sudo yum install rsyslog</pre>
+</td>
+<td xml:lang="en-US">The rsyslog package provides the rsyslog daemon, which provides
+system logging services.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R46)</td>
+<td>Enable rsyslog Service</td>
+<td xml:lang="en-US">The <code>rsyslog</code> service provides syslog-style logging by default on Red Hat Enterprise Linux 8.
+
+The <code>rsyslog</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable rsyslog.service</pre>
+</td>
+<td xml:lang="en-US">The <code>rsyslog</code> service must be running in order to provide
+logging services, which are essential to system administration.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R50)</td>
+<td>Install the cron service</td>
+<td xml:lang="en-US">The Cron service should be installed.</td>
+<td xml:lang="en-US">The cron service allow periodic job execution, needed for almost all administrative tasks and services (software update, log rotating, etc.). Access to cron service should be restricted to administrative accounts only.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R50)</td>
+<td>install the auditd service</td>
+<td xml:lang="en-US">The auditd service should be installed.</td>
+<td xml:lang="en-US">The auditd service is an access monitoring and accounting daemon, watching system calls to audit any access, in comparision with potential local access control policy such as SELinux policy.</td>
+<td></td>
+</tr>
+</table>
+</body>
+</html>
