@@ -2732,6 +2732,75 @@ with human users and are not required when such human interfaces do not exist.</
 </td>
 </tr>
 <tr>
+<td>CCE-80122-5</td>
+<td>Disable GNOME3 Automounting</td>
+<td xml:lang="en-US">The system's default desktop environment, GNOME3, will mount
+devices and removable media (such as DVDs, CDs and USB flash drives) whenever
+they are inserted into the system. To disable automount within GNOME3, add or set
+<code>automount</code> to <code>false</code> in <code>/etc/dconf/db/local.d/00-security-settings</code>.
+For example:
+<pre>[org/gnome/desktop/media-handling]
+automount=false</pre>
+Once the settings have been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/media-handling/automount</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td xml:lang="en-US">Disabling automatic mounting in GNOME3 can prevent
+the introduction of malware via removable media.
+It will, however, also prevent desktop users from legitimate use
+of removable media.</td>
+<td></td>
+<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-83692-4</td>
+<td>Disable GNOME3 Automount Opening</td>
+<td xml:lang="en-US">The system's default desktop environment, GNOME3, will mount
+devices and removable media (such as DVDs, CDs and USB flash drives) whenever
+they are inserted into the system. To disable automount-open within GNOME3, add or set
+<code>automount-open</code> to <code>false</code> in <code>/etc/dconf/db/local.d/00-security-settings</code>.
+For example:
+<pre>[org/gnome/desktop/media-handling]
+automount-open=false</pre>
+Once the settings have been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/media-handling/automount-open</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td xml:lang="en-US">Disabling automatic mounting in GNOME3 can prevent
+the introduction of malware via removable media.
+It will, however, also prevent desktop users from legitimate use
+of removable media.</td>
+<td></td>
+<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-83741-9</td>
+<td>Disable GNOME3 Automount running</td>
+<td xml:lang="en-US">The system's default desktop environment, GNOME3, will mount
+devices and removable media (such as DVDs, CDs and USB flash drives) whenever
+they are inserted into the system. To disable autorun-never within GNOME3, add or set
+<code>autorun-never</code> to <code>true</code> in <code>/etc/dconf/db/local.d/00-security-settings</code>.
+For example:
+<pre>[org/gnome/desktop/media-handling]
+autorun-never=true</pre>
+Once the settings have been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/media-handling/autorun-never</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td xml:lang="en-US">Disabling automatic mount running in GNOME3 can prevent
+the introduction of malware via removable media.
+It will, however, also prevent desktop users from legitimate use
+of removable media.</td>
+<td></td>
+<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
+</td>
+</tr>
+<tr>
 <td>CCE-80124-1</td>
 <td>Disable Ctrl-Alt-Del Reboot Key Sequence in GNOME3</td>
 <td xml:lang="en-US">By default, <code>GNOME</code> will reboot the system if the
@@ -2968,11 +3037,28 @@ session lock. As such, users should not be allowed to change session settings.</
 <td>Ensure All World-Writable Directories Are Owned by a System Account</td>
 <td xml:lang="en-US">All directories in local partitions which are
 world-writable should be owned by root or another
-system account.  If any world-writable directories are not
+system account. If any world-writable directories are not
 owned by a system account, this should be investigated.
 Following this, the files should be deleted or assigned to an
-appropriate group.</td>
+appropriate owner.</td>
 <td xml:lang="en-US">Allowing a user account to own a world-writable directory is
+undesirable because it allows the owner of that directory to remove
+or replace any files that may be placed in the directory by other
+users.</td>
+<td></td>
+<td>CM-6(a)<br>AC-6(1)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-83923-3</td>
+<td>Ensure All World-Writable Directories Are Group Owned by a System Account</td>
+<td xml:lang="en-US">All directories in local partitions which are
+world-writable should be group owned by root or another
+system account. If any world-writable directories are not
+group owned by a system account, this should be investigated.
+Following this, the files should be deleted or assigned to an
+appropriate group.</td>
+<td xml:lang="en-US">Allowing a user account to group own a world-writable directory is
 undesirable because it allows the owner of that directory to remove
 or replace any files that may be placed in the directory by other
 users.</td>
@@ -2983,8 +3069,7 @@ users.</td>
 <tr>
 <td>CCE-27511-5</td>
 <td>Disable Ctrl-Alt-Del Reboot Activation</td>
-<td xml:lang="en-US">
-By default, <code>SystemD</code> will reboot the system if the <code>Ctrl-Alt-Del</code>
+<td xml:lang="en-US">By default, <code>SystemD</code> will reboot the system if the <code>Ctrl-Alt-Del</code>
 key sequence is pressed.
 <br><br>
 To configure the system to ignore the <code>Ctrl-Alt-Del</code> key sequence from the
@@ -3143,6 +3228,23 @@ access their own files.</td>
 <td></td>
 </tr>
 <tr>
+<td>CCE-80125-8</td>
+<td>System Audit Logs Must Be Owned By Root</td>
+<td xml:lang="en-US">All audit logs must be owned by root user and group. By default, the path for audit log is <pre>/var/log/audit/</pre>.
+
+To properly set the owner of <code>/var/log/audit</code>, run the command:
+<pre>$ sudo chown root /var/log/audit </pre>
+
+To properly set the owner of <code>/var/log/audit/*</code>, run the command:
+<pre>$ sudo chown root /var/log/audit/* </pre>
+</td>
+<td xml:lang="en-US">Unauthorized disclosure of audit records can reveal system and configuration data to
+attackers, thus compromising its confidentiality.</td>
+<td></td>
+<td>CM-6(a)<br>AC-6(1)<br>AU-9(4)<br>
+</td>
+</tr>
+<tr>
 <td>CCE-80525-9</td>
 <td>Ensure All User Initialization Files Have Mode 0740 Or Less Permissive</td>
 <td xml:lang="en-US">Set the mode of the user initialization files to <code>0740</code> with the
@@ -3209,6 +3311,21 @@ will not cause problems when accounts are created in the future,
 and the cause should be discovered and addressed.</td>
 <td></td>
 <td>CM-6(a)<br>AC-6(1)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-27205-4</td>
+<td>System Audit Logs Must Have Mode 0640 or Less Permissive</td>
+<td xml:lang="en-US">If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other than the <code>root</code>
+group account, change the mode of the audit log files with the following command:
+<pre>$ sudo chmod 0640 <i>audit_file</i></pre>
+<br>
+Otherwise, change the mode of the audit log files with the following command:
+<pre>$ sudo chmod 0600 <i>audit_file</i></pre>
+</td>
+<td xml:lang="en-US">If users can write to audit logs, audit trails can be modified or destroyed.</td>
+<td></td>
+<td>CM-6(a)<br>AC-6(1)<br>AU-9(4)<br>
 </td>
 </tr>
 <tr>
@@ -3308,8 +3425,12 @@ protection enabled to protect boot-time settings.
 <br><br>
 Since plaintext passwords are a security risk, generate a hash for the password
 by running the following command:
+
 <pre>$ grub2-setpassword</pre>
+
 When prompted, enter the password that was selected.
+<br><br>
+
 <br><br>
 Once the superuser password has been added,
 update the
@@ -3332,12 +3453,16 @@ protection enabled to protect boot-time settings.
 <br><br>
 Since plaintext passwords are a security risk, generate a hash for the password
 by running the following command:
+
 <pre>$ grub2-setpassword</pre>
+
 When prompted, enter the password that was selected.
 <br><br>
+
 Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
+
 <pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
 </td>
 <td xml:lang="en-US">Password protection on the boot loader configuration ensures
@@ -3395,8 +3520,8 @@ Access Card.</td>
 <td>The Installed Operating System Is Vendor Supported</td>
 <td xml:lang="en-US">The installed operating system must be maintained by a vendor.
 
-SUSE Linux Enterprise is supported by SUSE. As the SUSE Linux Enterprise
-vendor, SUSE is responsible for providing security patches.</td>
+Red Hat Enterprise Linux is supported by Red Hat, Inc. As the Red Hat Enterprise
+Linux vendor, Red Hat, Inc. is responsible for providing security patches.</td>
 <td xml:lang="en-US">An operating system is considered "supported" if the vendor continues to
 provide security patches for the product.  With an unsupported release, it
 will not be possible to resolve any security issue discovered in the system
@@ -3620,9 +3745,12 @@ to only authorized personnel.</td>
 <td>Prevent Login to Accounts With Empty Password</td>
 <td xml:lang="en-US">If an account is configured for password authentication
 but does not have an assigned password, it may be possible to log
-into the account without authentication. Remove any instances of the <code>nullok</code>
-option in <code>/etc/pam.d/system-auth</code> to
-prevent logins with empty passwords.</td>
+into the account without authentication. Remove any instances of the
+<code>nullok</code> in
+
+<code>/etc/pam.d/system-auth</code>
+
+to prevent logins with empty passwords.</td>
 <td xml:lang="en-US">If an account has an empty password, anyone could log in and
 run commands with the privileges of that account. Accounts with
 empty passwords should never be used in operational environments.</td>
@@ -3903,7 +4031,6 @@ method, providing a single user root access to the system by
 providing a boot option at startup. By default, no authentication
 is performed if single-user mode is selected.
 <br><br>
-
 By default, single-user mode is protected by requiring a password and is set
 in <code>/usr/lib/systemd/system/rescue.service</code>.</td>
 <td xml:lang="en-US">This prevents attackers with physical access from trivially bypassing security
@@ -5116,6 +5243,26 @@ serve to create a man-in-the-middle attack or be used to create a denial of
 service to valid network resources.</td>
 <td></td>
 <td>AC-18(a)<br>AC-18(3)<br>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>MP-7<br>
+</td>
+</tr>
+<tr>
+<td>CCE-27285-6</td>
+<td>Disable X Windows Startup By Setting Default Target</td>
+<td xml:lang="en-US">Systems that do not require a graphical user interface should only boot by
+default into <code>multi-user.target</code> mode. This prevents accidental booting of the system
+into a <code>graphical.target</code> mode. Setting the system's default target to
+<code>multi-user.target</code> will prevent automatic startup of the X server. To do so, run:
+<pre>$ systemctl set-default multi-user.target</pre>
+You should see the following output:
+<pre>Removed symlink /etc/systemd/system/default.target.
+Created symlink from /etc/systemd/system/default.target to /usr/lib/systemd/system/multi-user.target.</pre>
+</td>
+<td xml:lang="en-US">Services that are not required for system and application processes
+must not be active to decrease the attack surface of the system. X windows has a
+long history of security vulnerabilities and should not be used unless approved
+and documented.</td>
+<td></td>
+<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
 </td>
 </tr>
 </table>

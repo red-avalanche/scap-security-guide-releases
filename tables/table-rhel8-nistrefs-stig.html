@@ -178,6 +178,40 @@ Note that passwords which are changed on compromised systems will still be compr
 </td>
 </tr>
 <tr>
+<td>CCE-83364-0</td>
+<td>Ensure PAM Enforces Password Requirements - Enforce for Local Accounts Only</td>
+<td xml:lang="en-US">The pam_pwquality module's <code>local_users_only</code> parameter controls requirements for
+enforcing password complexity by pam_pwquality only for local user accounts and ignoring
+centralized user account management password complexity configurations. Enable the <code>local_users_only</code>
+setting in <code>/etc/security/pwquality.conf</code> to require password complexity enforcement
+for only local user accounts.</td>
+<td xml:lang="en-US">The operating system must provide automated mechanisms for supporting account management
+functions. Enterprise environments make application account management challenging and
+complex. A manual process for account management functions adds the risk of a potential
+oversight or other error.</td>
+<td></td>
+<td>AC-2(1)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-83377-2</td>
+<td>Ensure PAM Enforces Password Requirements - Enforce for root User</td>
+<td xml:lang="en-US">The pam_pwquality module's <code>enforce_for_root</code> parameter controls requirements for
+enforcing password complexity for the root user. Enable the <code>enforce_for_root</code>
+setting in <code>/etc/security/pwquality.conf</code> to require the <code>root</code> user
+to use complex passwords.</td>
+<td xml:lang="en-US">Use of a complex password helps to increase the time and resources required to compromise
+the password. Password complexity, or strength, is a measure of the effectiveness of a
+password in resisting attempts at guessing and brute-force attacks.
+
+Password complexity is one factor of several that determines how long it takes to crack a
+password. The more complex the password, the greater the number of possible combinations
+that need to be tested before the password is compromised.</td>
+<td></td>
+<td>IA-5(c)<br>IA-5(1)(a)<br>CM-6(a)<br>IA-5(4)<br>
+</td>
+</tr>
+<tr>
 <td>CCE-80655-4</td>
 <td>Ensure PAM Enforces Password Requirements - Minimum Lowercase Characters</td>
 <td xml:lang="en-US">The pam_pwquality module's <code>lcredit</code> parameter controls requirements for
@@ -379,6 +413,22 @@ attempts using <code>pam_faillock.so</code>, modify the content of both
 prevents direct password guessing attacks.</td>
 <td></td>
 <td>CM-6(a)<br>AC-7(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-83401-0</td>
+<td>Enforce pam_faillock for Local Accounts Only</td>
+<td xml:lang="en-US">The pam_faillock module's <code>local_users_only</code> parameter controls requirements for
+enforcing failed lockout attempts only for local user accounts and ignoring
+centralized user account management failed attempt configurations. Enable the <code>local_users_only</code>
+setting in <code>/etc/security/faillock.conf</code> to require failed password attempts
+for only local user accounts.</td>
+<td xml:lang="en-US">The operating system must provide automated mechanisms for supporting account management
+functions. Enterprise environments make application account management challenging and
+complex. A manual process for account management functions adds the risk of a potential
+oversight or other error.</td>
+<td></td>
+<td>AC-2(1)<br>
 </td>
 </tr>
 <tr>
@@ -1496,8 +1546,7 @@ loss of availability of systems due to unintentional reboot.</td>
 <tr>
 <td>CCE-80785-9</td>
 <td>Disable Ctrl-Alt-Del Reboot Activation</td>
-<td xml:lang="en-US">
-By default, <code>SystemD</code> will reboot the system if the <code>Ctrl-Alt-Del</code>
+<td xml:lang="en-US">By default, <code>SystemD</code> will reboot the system if the <code>Ctrl-Alt-Del</code>
 key sequence is pressed.
 <br><br>
 To configure the system to ignore the <code>Ctrl-Alt-Del</code> key sequence from the
@@ -1802,6 +1851,26 @@ or other services, weakening system security.</td>
 </td>
 </tr>
 <tr>
+<td>CCE-83314-5</td>
+<td>Configure kernel to trust the CPU random number generator</td>
+<td xml:lang="en-US">There exist two ways how to ensure that the Linux kernel trusts the CPU
+hardware random number generator. If the option is configured during kernel
+compilation, e.g. the option <code>CONFIG_RANDOM_TRUST_CPU</code> is set to
+<code>Y</code>, make sure that it is not overridden with the boot parameter.
+There must not exist the boot parameter <code>random.trust_cpu=off</code>. If
+the option is not compiled in, make sure that <code>random.trust_cpu=on</code>
+is configured as a boot parameter by running the following command:
+<pre>sudo grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) random.trust_cpu=on"</pre>
+</td>
+<td xml:lang="en-US">The Linux kernel offers an option which signifies if the kernel should trust
+data provided by CPU hardware random number generator. Hardware random
+number generators can provide random data very quickly and are used to generate random cryptographic keys. They can
+be useful during boot time when other means of getting random data can be
+slow because there is not yet enough entropy in the system.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>CCE-80944-2</td>
 <td>Enable page allocator poisoning</td>
 <td xml:lang="en-US">To enable poisoning of free pages,
@@ -1862,12 +1931,16 @@ protection enabled to protect boot-time settings.
 <br><br>
 Since plaintext passwords are a security risk, generate a hash for the password
 by running the following command:
+
 <pre>$ grub2-setpassword</pre>
+
 When prompted, enter the password that was selected.
 <br><br>
+
 Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
+
 <pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
 </td>
 <td xml:lang="en-US">Password protection on the boot loader configuration ensures
@@ -1891,6 +1964,21 @@ GRUB 2 command line for the Linux operating system in
 of the return instruction pointer.</td>
 <td></td>
 <td>CM-7(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80947-5</td>
+<td>The Installed Operating System Is Vendor Supported</td>
+<td xml:lang="en-US">The installed operating system must be maintained by a vendor.
+
+Red Hat Enterprise Linux is supported by Red Hat, Inc. As the Red Hat Enterprise
+Linux vendor, Red Hat, Inc. is responsible for providing security patches.</td>
+<td xml:lang="en-US">An operating system is considered "supported" if the vendor continues to
+provide security patches for the product.  With an unsupported release, it
+will not be possible to resolve any security issue discovered in the system
+software.</td>
+<td></td>
+<td>CM-6(a)<br>MA-6<br>SA-13(a)<br>
 </td>
 </tr>
 <tr>
@@ -2020,26 +2108,6 @@ the system against exploitation of any flaws in its implementation.</td>
 <td></td>
 <td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
 </td>
-</tr>
-<tr>
-<td>CCE-83314-5</td>
-<td>Configure kernel to trust the CPU random number generator</td>
-<td xml:lang="en-US">There exist two ways how to ensure that the Linux kernel trusts the CPU
-hardware random number generator. If the option is configured during kernel
-compilation, e.g. the option <code>CONFIG_RANDOM_TRUST_CPU</code> is set to
-<code>Y</code>, make sure that it is not overridden with the boot parameter.
-There must not exist the boot parameter <code>random.trust_cpu=off</code>. If
-the option is not compiled in, make sure that <code>random.trust_cpu=on</code>
-is configured as a boot parameter by running the following command:
-<pre>sudo grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) random.trust_cpu=on"</pre>
-</td>
-<td xml:lang="en-US">The Linux kernel offers an option which signifies if the kernel should trust
-data provided by CPU hardware random number generator. Hardware random
-number generators can provide random data very quickly and are used to generate random cryptographic keys. They can
-be useful during boot time when other means of getting random data can be
-slow because there is not yet enough entropy in the system.</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td>CCE-82941-6</td>
@@ -2375,9 +2443,12 @@ should not be able to execute SUID or SGID binaries from temporary storage parti
 <td>Prevent Login to Accounts With Empty Password</td>
 <td xml:lang="en-US">If an account is configured for password authentication
 but does not have an assigned password, it may be possible to log
-into the account without authentication. Remove any instances of the <code>nullok</code>
-option in <code>/etc/pam.d/system-auth</code> to
-prevent logins with empty passwords.</td>
+into the account without authentication. Remove any instances of the
+<code>nullok</code> in
+
+<code>/etc/pam.d/system-auth</code>
+
+to prevent logins with empty passwords.</td>
 <td xml:lang="en-US">If an account has an empty password, anyone could log in and
 run commands with the privileges of that account. Accounts with
 empty passwords should never be used in operational environments.</td>
@@ -3023,7 +3094,6 @@ method, providing a single user root access to the system by
 providing a boot option at startup. By default, no authentication
 is performed if single-user mode is selected.
 <br><br>
-
 By default, single-user mode is protected by requiring a password and is set
 in <code>/usr/lib/systemd/system/rescue.service</code>.</td>
 <td xml:lang="en-US">This prevents attackers with physical access from trivially bypassing security
@@ -3254,6 +3324,59 @@ information systems gaining access include, for example, hardware tokens
 providing time-based or challenge-response authenticators and smart cards such
 as the U.S. Government Personal Identity Verification card and the DoD Common
 Access Card.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-82880-6</td>
+<td>Configure session renegotiation for SSH client</td>
+<td xml:lang="en-US">The <code>RekeyLimit</code> parameter specifies how often
+the session key is renegotiated, both in terms of
+amount of data that may be transmitted and the time
+elapsed. To decrease the default limits, put line
+<code>RekeyLimit <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_ssh_client_rekey_limit_size"></xccdf-1.1:sub> <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_ssh_client_rekey_limit_time"></xccdf-1.1:sub></code> to file <code>/etc/ssh/ssh_config.d/02-rekey-limit.conf</code>.
+Make sure that there is no other <code>RekeyLimit</code> configuration preceding
+the <code>include</code> directive in the main config file
+<code>/etc/ssh/ssh_config</code>. Check also other files in
+<code>/etc/ssh/ssh_config.d</code> directory. Files are processed according to
+lexicographical order of file names. Make sure that there is no file
+processed before <code>02-rekey-limit.conf</code> containing definition of
+<code>RekeyLimit</code>.</td>
+<td xml:lang="en-US">By decreasing the limit based on the amount of data and enabling
+time-based limit, effects of potential attacks against
+encryption keys are limited.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-83349-1</td>
+<td>SSH client uses strong entropy to seed (for CSH like shells)</td>
+<td xml:lang="en-US">To set up SSH client to use entropy from a high-quality source, make sure
+that the appropriate shell environment variable is configured. The
+<code>SSH_USE_STRONG_RNG</code> environment variable determines how many bytes
+of entropy to use. Make sure that the file
+<code>/etc/profile.d/cc-ssh-strong-rng.csh</code> contains line
+<pre>setenv SSH_USE_STRONG_RNG 32</pre>.</td>
+<td xml:lang="en-US">Some SSH implementations use the openssl library for entropy, which by default, doesn't use high-entropy sources.
+Randomness is needed to generate considerably more secure data-encryption keys. Plaintext padding, initialization vectors
+in encryption algorithms, and high-quality entropy eliminates the possibility that the output of
+the random number generator used by SSH would be known to potential attackers.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-83346-7</td>
+<td>SSH client uses strong entropy to seed (Bash-like shells)</td>
+<td xml:lang="en-US">To set up SSH client to use entropy from a high-quality source, make sure
+that the appropriate shell environment variable is configured. The
+<code>SSH_USE_STRONG_RNG</code> environment variable determines how many bytes
+of entropy to use. Make sure that the file
+<code>/etc/profile.d/cc-ssh-strong-rng.sh</code> contains line
+<pre>export SSH_USE_STRONG_RNG=32</pre>.</td>
+<td xml:lang="en-US">Some SSH implementations use the openssl library for entropy, which by default, doesn't use high-entropy sources.
+Randomness is needed to generate considerably more secure data-encryption keys. Plaintext padding, initialization vectors
+in encryption algorithms, and high-quality entropy eliminates the possibility that the output of
+the random number generator used by SSH would be known to potential attackers.</td>
 <td></td>
 <td></td>
 </tr>
@@ -3956,6 +4079,20 @@ to <code>/etc/usbguard/rules.conf</code>.</td>
 <td xml:lang="en-US">Without allowing Human Interface Devices, it might not be possible
 to interact with the system. Without allowing hubs, it might not be possible to use any
 USB devices on the system.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-83318-6</td>
+<td>Enforce usage of pam_wheel for su authentication</td>
+<td xml:lang="en-US">To ensure that only users who are members of the <code>wheel</code> group can
+run commands with altered privileges through the <code>su</code> command, make
+sure that the following line exists in the file <code>/etc/pam.d/su</code>:
+<pre>auth             required        pam_wheel.so use_uid</pre>
+</td>
+<td xml:lang="en-US">The <code>su</code> program allows to run commands with a substitute user and
+group ID. It is commonly used to run commands as the root user. Limiting
+access to such command is considered a good security practice.</td>
 <td></td>
 <td></td>
 </tr>
