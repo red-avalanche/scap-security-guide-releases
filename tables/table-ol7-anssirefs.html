@@ -56,6 +56,20 @@ can be listened and no integrity checking is made.'</td>
 </tr>
 <tr>
 <td>BP28(R1)</td>
+<td>Uninstall DHCP Server Package</td>
+<td xml:lang="en-US">If the system does not need to act as a DHCP server,
+the dhcp package can be uninstalled.
+
+The <code>dhcp</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase dhcp</pre>
+</td>
+<td xml:lang="en-US">Removing the DHCP server ensures that it cannot be easily or
+accidentally reactivated and disrupt network operation.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R1)</td>
 <td>Uninstall Sendmail Package</td>
 <td xml:lang="en-US">Sendmail is not the default mail transfer agent and is
 not installed by default.
@@ -70,15 +84,147 @@ should be used instead.</td>
 </tr>
 <tr>
 <td>BP28(R1)</td>
-<td>Uninstall DHCP Server Package</td>
-<td xml:lang="en-US">If the system does not need to act as a DHCP server,
-the dhcp package can be uninstalled.
-The <code>dhcp</code> package can be removed with the following command:
+<td>Uninstall xinetd Package</td>
+<td xml:lang="en-US">The <code>xinetd</code> package can be removed with the following command:
 <pre>
-$ sudo yum erase dhcp</pre>
+$ sudo yum erase xinetd</pre>
 </td>
-<td xml:lang="en-US">Removing the DHCP server ensures that it cannot be easily or
-accidentally reactivated and disrupt network operation.</td>
+<td xml:lang="en-US">Removing the <code>xinetd</code> package decreases the risk of the
+xinetd service's accidental (or intentional) activation.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R1)</td>
+<td>Remove NIS Client</td>
+<td xml:lang="en-US">The Network Information Service (NIS), formerly known as Yellow Pages,
+is a client-server directory service protocol used to distribute system configuration
+files. The NIS client (<code>ypbind</code>) was used to bind a system to an NIS server
+and receive the distributed configuration files.</td>
+<td xml:lang="en-US">The NIS service is inherently an insecure system that has been vulnerable
+to DOS attacks, buffer overflows and has poor authentication for querying
+NIS maps. NIS generally has been replaced by such protocols as Lightweight
+Directory Access Protocol (LDAP). It is recommended that the service be
+removed.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R1)</td>
+<td>Uninstall ypserv Package</td>
+<td xml:lang="en-US">The <code>ypserv</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase ypserv</pre>
+</td>
+<td xml:lang="en-US">The NIS service provides an unencrypted authentication service which does
+not provide for the confidentiality and integrity of user passwords or the
+remote session.
+
+Removing the <code>ypserv</code> package decreases the risk of the accidental
+(or intentional) activation of NIS or NIS+ services.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R1)</td>
+<td>Uninstall rsh-server Package</td>
+<td xml:lang="en-US">The <code>rsh-server</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase rsh-server</pre>
+</td>
+<td xml:lang="en-US">The <code>rsh-server</code> service provides unencrypted remote access service which does not
+provide for the confidentiality and integrity of user passwords or the remote session and has very weak
+authentication. If a privileged user were to login using this service, the privileged user password
+could be compromised. The <code>rsh-server</code> package provides several obsolete and insecure
+network services. Removing it decreases the risk of those services' accidental (or intentional)
+activation.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R1)</td>
+<td>Uninstall rsh Package</td>
+<td xml:lang="en-US">
+The <code>rsh</code> package contains the client commands
+
+for the rsh services</td>
+<td xml:lang="en-US">These legacy clients contain numerous security exposures and have
+been replaced with the more secure SSH package. Even if the server is removed,
+it is best to ensure the clients are also removed to prevent users from
+inadvertently attempting to use these commands and therefore exposing
+
+their credentials. Note that removing the <code>rsh</code> package removes
+
+the clients for <code>rsh</code>,<code>rcp</code>, and <code>rlogin</code>.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R1)</td>
+<td>Uninstall talk-server Package</td>
+<td xml:lang="en-US">The <code>talk-server</code> package can be removed with the following command: <pre> $ sudo yum erase talk-server</pre>
+</td>
+<td xml:lang="en-US">The talk software presents a security risk as it uses unencrypted protocols
+for communications. Removing the <code>talk-server</code> package decreases the
+risk of the accidental (or intentional) activation of talk services.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R1)</td>
+<td>Uninstall talk Package</td>
+<td xml:lang="en-US">The <code>talk</code> package contains the client program for the
+Internet talk protocol, which allows the user to chat with other users on
+different systems. Talk is a communication program which copies lines from one
+terminal to the terminal of another user.
+The <code>talk</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase talk</pre>
+</td>
+<td xml:lang="en-US">The talk software presents a security risk as it uses unencrypted protocols
+for communications. Removing the <code>talk</code> package decreases the
+risk of the accidental (or intentional) activation of talk client program.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R1)</td>
+<td>Uninstall telnet-server Package</td>
+<td xml:lang="en-US">The <code>telnet-server</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase telnet-server</pre>
+</td>
+<td xml:lang="en-US">It is detrimental for operating systems to provide, or install by default,
+functionality exceeding requirements or mission objectives. These
+unnecessary capabilities are often overlooked and therefore may remain
+unsecure. They increase the risk to the platform by providing additional
+attack vectors.
+<br>
+The telnet service provides an unencrypted remote access service which does
+not provide for the confidentiality and integrity of user passwords or the
+remote session. If a privileged user were to login using this service, the
+privileged user password could be compromised.
+<br>
+Removing the <code>telnet-server</code> package decreases the risk of the
+telnet service's accidental (or intentional) activation.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R1)</td>
+<td>Remove telnet Clients</td>
+<td xml:lang="en-US">The telnet client allows users to start connections to other systems via
+the telnet protocol.</td>
+<td xml:lang="en-US">The <code>telnet</code> protocol is insecure and unencrypted. The use
+of an unencrypted transmission medium could allow an unauthorized user
+to steal credentials. The <code>ssh</code> package provides an
+encrypted session and stronger security and is included in Oracle Linux 7.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R1)</td>
+<td>Uninstall tftp-server Package</td>
+<td xml:lang="en-US">The <code>tftp-server</code> package can be removed with the following command: <pre> $ sudo yum erase tftp-server</pre>
+</td>
+<td xml:lang="en-US">Removing the <code>tftp-server</code> package decreases the risk of the accidental
+(or intentional) activation of tftp services.
+<br><br>
+If TFTP is required for operational support (such as transmission of router
+configurations), its use must be documented with the Information Systems
+Securty Manager (ISSM), restricted to only authorized personnel, and have
+access control rules established.</td>
 <td></td>
 </tr>
 <tr>
@@ -261,6 +407,17 @@ lack of prompt attention to patching could result in a system compromise.</td>
 </tr>
 <tr>
 <td>BP28(R9)</td>
+<td>Enable NX or XD Support in the BIOS</td>
+<td xml:lang="en-US">Reboot the system and enter the BIOS or Setup configuration menu.
+Navigate the BIOS configuration menu and make sure that the option is enabled. The setting may be located
+under a Security section. Look for Execute Disable (XD) on Intel-based systems and No Execute (NX)
+on AMD-based systems.</td>
+<td xml:lang="en-US">Computers with the ability to prevent this type of code execution frequently put an option in the BIOS that will
+allow users to turn the feature on or off at will.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R9)</td>
 <td>Install PAE Kernel on Supported 32-bit x86 Systems</td>
 <td xml:lang="en-US">Systems that are using the 64-bit x86 kernel package
 do not need to install the kernel-PAE package because the 64-bit
@@ -276,17 +433,6 @@ bootloader to load the new kernel at boot. Verify this after reboot
 and modify <code>/etc/default/grub</code> if necessary.</td>
 <td xml:lang="en-US">On 32-bit systems that support the XD or NX bit, the vendor-supplied
 PAE kernel is required to enable either Execute Disable (XD) or No Execute (NX) support.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R9)</td>
-<td>Enable NX or XD Support in the BIOS</td>
-<td xml:lang="en-US">Reboot the system and enter the BIOS or Setup configuration menu.
-Navigate the BIOS configuration menu and make sure that the option is enabled. The setting may be located
-under a Security section. Look for Execute Disable (XD) on Intel-based systems and No Execute (NX)
-on AMD-based systems.</td>
-<td xml:lang="en-US">Computers with the ability to prevent this type of code execution frequently put an option in the BIOS that will
-allow users to turn the feature on or off at will.</td>
 <td></td>
 </tr>
 <tr>
@@ -308,6 +454,18 @@ Address Space Layout Randomization (ASLR) and systematic presence of No eXecute 
 </tr>
 <tr>
 <td>BP28(R12)</td>
+<td>Ensure /boot Located On Separate Partition</td>
+<td xml:lang="en-US">It is recommended that the <code>/boot</code> directory resides on a separate
+partition. This makes it easier to apply restrictions e.g. through the
+<code>noexec</code> mount option. Eventually, the <code>/boot</code> partition can
+be configured not to be mounted automatically with the <code>noauto</code> mount
+option.</td>
+<td xml:lang="en-US">The <code>/boot</code> partition contains the kernel and bootloader files.
+Access to this partition should be restricted.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R12)</td>
 <td>Ensure /home Located On Separate Partition</td>
 <td xml:lang="en-US">If user home directories will be stored locally, create a separate partition
 for <code>/home</code> at installation time (or migrate it later using LVM). If
@@ -317,29 +475,6 @@ mountpoint can instead be configured later.</td>
 <td xml:lang="en-US">Ensuring that <code>/home</code> is mounted on its own partition enables the
 setting of more restrictive mount options, and also helps ensure that
 users cannot trivially fill partitions used for log or audit data storage.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R12)</td>
-<td>Ensure /var/log Located On Separate Partition</td>
-<td xml:lang="en-US">System logs are stored in the <code>/var/log</code> directory.
-Ensure that it has its own partition or logical
-volume at installation time, or migrate it using LVM.</td>
-<td xml:lang="en-US">Placing <code>/var/log</code> in its own partition
-enables better separation between log files
-and other files in <code>/var/</code>.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R12)</td>
-<td>Ensure /boot Located On Separate Partition</td>
-<td xml:lang="en-US">It is recommended that the <code>/boot</code> directory resides on a separate
-partition. This makes it easier to apply restrictions e.g. through the
-<code>noexec</code> mount option. Eventually, the <code>/boot</code> partition can
-be configured not to be mounted automatically with the <code>noauto</code> mount
-option.</td>
-<td xml:lang="en-US">The <code>/boot</code> partition contains the kernel and bootloader files.
-Access to this partition should be restricted.</td>
 <td></td>
 </tr>
 <tr>
@@ -369,15 +504,13 @@ users cannot trivially fill partitions used for log or audit data storage.</td>
 </tr>
 <tr>
 <td>BP28(R12)</td>
-<td>Ensure /var Located On Separate Partition</td>
-<td xml:lang="en-US">The <code>/var</code> directory is used by daemons and other system
-services to store frequently-changing data. Ensure that <code>/var</code> has its own partition
-or logical volume at installation time, or migrate it using LVM.</td>
-<td xml:lang="en-US">Ensuring that <code>/var</code> is mounted on its own partition enables the
-setting of more restrictive mount options. This helps protect
-system services such as daemons or other programs which use it.
-It is not uncommon for the <code>/var</code> directory to contain
-world-writable directories installed by other software packages.</td>
+<td>Ensure /tmp Located On Separate Partition</td>
+<td xml:lang="en-US">The <code>/tmp</code> directory is a world-writable directory used
+for temporary file storage. Ensure it has its own partition or
+logical volume at installation time, or migrate it using LVM.</td>
+<td xml:lang="en-US">The <code>/tmp</code> partition is used as temporary storage by many programs.
+Placing <code>/tmp</code> in its own partition enables the setting of more
+restrictive mount options, which can help protect programs which use it.</td>
 <td></td>
 </tr>
 <tr>
@@ -392,23 +525,36 @@ restrictions through mount options.</td>
 </tr>
 <tr>
 <td>BP28(R12)</td>
+<td>Ensure /var Located On Separate Partition</td>
+<td xml:lang="en-US">The <code>/var</code> directory is used by daemons and other system
+services to store frequently-changing data. Ensure that <code>/var</code> has its own partition
+or logical volume at installation time, or migrate it using LVM.</td>
+<td xml:lang="en-US">Ensuring that <code>/var</code> is mounted on its own partition enables the
+setting of more restrictive mount options. This helps protect
+system services such as daemons or other programs which use it.
+It is not uncommon for the <code>/var</code> directory to contain
+world-writable directories installed by other software packages.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R12)</td>
+<td>Ensure /var/log Located On Separate Partition</td>
+<td xml:lang="en-US">System logs are stored in the <code>/var/log</code> directory.
+Ensure that it has its own partition or logical
+volume at installation time, or migrate it using LVM.</td>
+<td xml:lang="en-US">Placing <code>/var/log</code> in its own partition
+enables better separation between log files
+and other files in <code>/var/</code>.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R12)</td>
 <td>Ensure /var/tmp Located On Separate Partition</td>
 <td xml:lang="en-US">The <code>/var/tmp</code> directory is a world-writable directory used
 for temporary file storage. Ensure it has its own partition or
 logical volume at installation time, or migrate it using LVM.</td>
 <td xml:lang="en-US">The <code>/var/tmp</code> partition is used as temporary storage by many programs.
 Placing <code>/var/tmp</code> in its own partition enables the setting of more
-restrictive mount options, which can help protect programs which use it.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R12)</td>
-<td>Ensure /tmp Located On Separate Partition</td>
-<td xml:lang="en-US">The <code>/tmp</code> directory is a world-writable directory used
-for temporary file storage. Ensure it has its own partition or
-logical volume at installation time, or migrate it using LVM.</td>
-<td xml:lang="en-US">The <code>/tmp</code> partition is used as temporary storage by many programs.
-Placing <code>/tmp</code> in its own partition enables the setting of more
 restrictive mount options, which can help protect programs which use it.</td>
 <td></td>
 </tr>
@@ -428,6 +574,32 @@ be used for exploit creation.</td>
 </tr>
 <tr>
 <td>BP28(R12)</td>
+<td>Add noexec Option to /boot</td>
+<td xml:lang="en-US">The <code>noexec</code> mount option can be used to prevent binaries from being
+executed out of <code>/boot</code>. 
+Add the <code>noexec</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+<code>/boot</code>.</td>
+<td xml:lang="en-US">The <code>/boot</code> partition contains the kernel and the bootloader. No
+binaries should be executed from this partition after the booting process
+finishes.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R12)</td>
+<td>Add nosuid Option to /boot</td>
+<td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
+execution of setuid programs in <code>/boot</code>. The SUID and SGID permissions
+should not be required on the boot partition.
+Add the <code>nosuid</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+<code>/boot</code>.</td>
+<td xml:lang="en-US">The presence of SUID and SGID executables should be tightly controlled. Users
+should not be able to execute SUID or SGID binaries from boot partitions.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R12)</td>
 <td>Add nodev Option to /home</td>
 <td xml:lang="en-US">The <code>nodev</code> mount option can be used to prevent device files from
 being created in <code>/home</code>.
@@ -443,66 +615,46 @@ located on the root partition. The only exception to this is chroot jails.</td>
 </tr>
 <tr>
 <td>BP28(R12)</td>
-<td>Add noexec Option to /var</td>
+<td>Add noexec Option to /home</td>
 <td xml:lang="en-US">The <code>noexec</code> mount option can be used to prevent binaries from being
-executed out of <code>/var</code>. 
+executed out of <code>/home</code>. 
 Add the <code>noexec</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
-<code>/var</code>.</td>
-<td xml:lang="en-US">The <code>/var</code> directory contains variable system data such as logs,
-mails and caches. No binaries should be executed from this directory.</td>
+<code>/home</code>.</td>
+<td xml:lang="en-US">The <code>/home</code> directory contains data of individual users. Binaries in
+this directory should not be considered as trusted and users should not be
+able to execute them.</td>
 <td></td>
 </tr>
 <tr>
 <td>BP28(R12)</td>
-<td>Add nodev Option to /tmp</td>
-<td xml:lang="en-US">The <code>nodev</code> mount option can be used to prevent device files from
-being created in <code>/tmp</code>. Legitimate character and block devices
-should not exist within temporary directories like <code>/tmp</code>.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
-<code>/tmp</code>.</td>
-<td xml:lang="en-US">The only legitimate location for device files is the <code>/dev</code> directory
-located on the root partition. The only exception to this is chroot jails.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R12)</td>
-<td>Add noexec Option to /var/tmp</td>
-<td xml:lang="en-US">The <code>noexec</code> mount option can be used to prevent binaries
-from being executed out of <code>/var/tmp</code>.
-Add the <code>noexec</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
-<code>/var/tmp</code>.</td>
-<td xml:lang="en-US">Allowing users to execute binaries from world-writable directories
-such as <code>/var/tmp</code> should never be necessary in normal operation and
-can expose the system to potential compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R12)</td>
-<td>Add nodev Option to /var/tmp</td>
-<td xml:lang="en-US">The <code>nodev</code> mount option can be used to prevent device files from
-being created in <code>/var/tmp</code>. Legitimate character and block devices
-should not exist within temporary directories like <code>/var/tmp</code>.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
-<code>/var/tmp</code>.</td>
-<td xml:lang="en-US">The only legitimate location for device files is the <code>/dev</code> directory
-located on the root partition. The only exception to this is chroot jails.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R12)</td>
-<td>Add nosuid Option to /boot</td>
+<td>Add nosuid Option to /home</td>
 <td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
-execution of setuid programs in <code>/boot</code>. The SUID and SGID permissions
-should not be required on the boot partition.
+execution of setuid programs in <code>/home</code>. The SUID and SGID permissions
+should not be required in these user data directories.
 Add the <code>nosuid</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
-<code>/boot</code>.</td>
+<code>/home</code>.</td>
 <td xml:lang="en-US">The presence of SUID and SGID executables should be tightly controlled. Users
-should not be able to execute SUID or SGID binaries from boot partitions.</td>
+should not be able to execute SUID or SGID binaries from user home directory partitions.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R12)</td>
+<td>Add nodev Option to Non-Root Local Partitions</td>
+<td xml:lang="en-US">The <code>nodev</code> mount option prevents files from being interpreted as
+character or block devices. Legitimate character and block devices should
+exist only in the <code>/dev</code> directory on the root partition or within
+chroot jails built for system services.
+Add the <code>nodev</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+
+    any non-root local partitions.</td>
+<td xml:lang="en-US">The <code>nodev</code> mount option prevents files from being
+interpreted as character or block devices. The only legitimate location
+for device files is the <code>/dev</code> directory located on the root partition.
+The only exception to this is chroot jails, for which it is not advised
+to set <code>nodev</code> on these filesystems.</td>
 <td></td>
 </tr>
 <tr>
@@ -535,6 +687,19 @@ not be able to execute SUID or SGID binaries from this directory.</td>
 </tr>
 <tr>
 <td>BP28(R12)</td>
+<td>Add nodev Option to /tmp</td>
+<td xml:lang="en-US">The <code>nodev</code> mount option can be used to prevent device files from
+being created in <code>/tmp</code>. Legitimate character and block devices
+should not exist within temporary directories like <code>/tmp</code>.
+Add the <code>nodev</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+<code>/tmp</code>.</td>
+<td xml:lang="en-US">The only legitimate location for device files is the <code>/dev</code> directory
+located on the root partition. The only exception to this is chroot jails.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R12)</td>
 <td>Add noexec Option to /tmp</td>
 <td xml:lang="en-US">The <code>noexec</code> mount option can be used to prevent binaries
 from being executed out of <code>/tmp</code>.
@@ -544,19 +709,6 @@ Add the <code>noexec</code> option to the fourth column of
 <td xml:lang="en-US">Allowing users to execute binaries from world-writable directories
 such as <code>/tmp</code> should never be necessary in normal operation and
 can expose the system to potential compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R12)</td>
-<td>Add nosuid Option to /var/tmp</td>
-<td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
-execution of setuid programs in <code>/var/tmp</code>. The SUID and SGID permissions
-should not be required in these world-writable directories.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
-<code>/var/tmp</code>.</td>
-<td xml:lang="en-US">The presence of SUID and SGID executables should be tightly controlled. Users
-should not be able to execute SUID or SGID binaries from temporary storage partitions.</td>
 <td></td>
 </tr>
 <tr>
@@ -574,27 +726,15 @@ should not be able to execute SUID or SGID binaries from temporary storage parti
 </tr>
 <tr>
 <td>BP28(R12)</td>
-<td>Add noexec Option to /boot</td>
-<td xml:lang="en-US">The <code>noexec</code> mount option can be used to prevent binaries from being
-executed out of <code>/boot</code>. 
+<td>Add noexec Option to /var/log</td>
+<td xml:lang="en-US">The <code>noexec</code> mount option can be used to prevent binaries
+from being executed out of <code>/var/log</code>.
 Add the <code>noexec</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
-<code>/boot</code>.</td>
-<td xml:lang="en-US">The <code>/boot</code> partition contains the kernel and the bootloader. No
-binaries should be executed from this partition after the booting process
-finishes.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R12)</td>
-<td>Add nosuid Option to /var</td>
-<td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
-execution of setuid programs in <code>/var</code>. The SUID and SGID permissions
-should not be required for this directory.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
-<code>/var</code>.</td>
-<td xml:lang="en-US">The presence of SUID and SGID executables should be tightly controlled.</td>
+<code>/var/log</code>.</td>
+<td xml:lang="en-US">Allowing users to execute binaries from directories containing log files
+such as <code>/var/log</code> should never be necessary in normal operation and
+can expose the system to potential compromise.</td>
 <td></td>
 </tr>
 <tr>
@@ -613,59 +753,65 @@ designated for log files.</td>
 </tr>
 <tr>
 <td>BP28(R12)</td>
-<td>Add nosuid Option to /home</td>
+<td>Add noexec Option to /var</td>
+<td xml:lang="en-US">The <code>noexec</code> mount option can be used to prevent binaries from being
+executed out of <code>/var</code>. 
+Add the <code>noexec</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+<code>/var</code>.</td>
+<td xml:lang="en-US">The <code>/var</code> directory contains variable system data such as logs,
+mails and caches. No binaries should be executed from this directory.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R12)</td>
+<td>Add nosuid Option to /var</td>
 <td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
-execution of setuid programs in <code>/home</code>. The SUID and SGID permissions
-should not be required in these user data directories.
+execution of setuid programs in <code>/var</code>. The SUID and SGID permissions
+should not be required for this directory.
 Add the <code>nosuid</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
-<code>/home</code>.</td>
-<td xml:lang="en-US">The presence of SUID and SGID executables should be tightly controlled. Users
-should not be able to execute SUID or SGID binaries from user home directory partitions.</td>
+<code>/var</code>.</td>
+<td xml:lang="en-US">The presence of SUID and SGID executables should be tightly controlled.</td>
 <td></td>
 </tr>
 <tr>
 <td>BP28(R12)</td>
-<td>Add noexec Option to /home</td>
-<td xml:lang="en-US">The <code>noexec</code> mount option can be used to prevent binaries from being
-executed out of <code>/home</code>. 
-Add the <code>noexec</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
-<code>/home</code>.</td>
-<td xml:lang="en-US">The <code>/home</code> directory contains data of individual users. Binaries in
-this directory should not be considered as trusted and users should not be
-able to execute them.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R12)</td>
-<td>Add nodev Option to Non-Root Local Partitions</td>
-<td xml:lang="en-US">The <code>nodev</code> mount option prevents files from being interpreted as
-character or block devices. Legitimate character and block devices should
-exist only in the <code>/dev</code> directory on the root partition or within
-chroot jails built for system services.
+<td>Add nodev Option to /var/tmp</td>
+<td xml:lang="en-US">The <code>nodev</code> mount option can be used to prevent device files from
+being created in <code>/var/tmp</code>. Legitimate character and block devices
+should not exist within temporary directories like <code>/var/tmp</code>.
 Add the <code>nodev</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
-
-    any non-root local partitions.</td>
-<td xml:lang="en-US">The <code>nodev</code> mount option prevents files from being
-interpreted as character or block devices. The only legitimate location
-for device files is the <code>/dev</code> directory located on the root partition.
-The only exception to this is chroot jails, for which it is not advised
-to set <code>nodev</code> on these filesystems.</td>
+<code>/var/tmp</code>.</td>
+<td xml:lang="en-US">The only legitimate location for device files is the <code>/dev</code> directory
+located on the root partition. The only exception to this is chroot jails.</td>
 <td></td>
 </tr>
 <tr>
 <td>BP28(R12)</td>
-<td>Add noexec Option to /var/log</td>
+<td>Add noexec Option to /var/tmp</td>
 <td xml:lang="en-US">The <code>noexec</code> mount option can be used to prevent binaries
-from being executed out of <code>/var/log</code>.
+from being executed out of <code>/var/tmp</code>.
 Add the <code>noexec</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
-<code>/var/log</code>.</td>
-<td xml:lang="en-US">Allowing users to execute binaries from directories containing log files
-such as <code>/var/log</code> should never be necessary in normal operation and
+<code>/var/tmp</code>.</td>
+<td xml:lang="en-US">Allowing users to execute binaries from world-writable directories
+such as <code>/var/tmp</code> should never be necessary in normal operation and
 can expose the system to potential compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R12)</td>
+<td>Add nosuid Option to /var/tmp</td>
+<td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
+execution of setuid programs in <code>/var/tmp</code>. The SUID and SGID permissions
+should not be required in these world-writable directories.
+Add the <code>nosuid</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+<code>/var/tmp</code>.</td>
+<td xml:lang="en-US">The presence of SUID and SGID executables should be tightly controlled. Users
+should not be able to execute SUID or SGID binaries from temporary storage partitions.</td>
 <td></td>
 </tr>
 <tr>
@@ -679,6 +825,32 @@ To properly set the permissions of <code>/boot/System.map-*</code>, run the comm
 </td>
 <td xml:lang="en-US">The <code>System.map</code> file contains information about kernel symbols and
   can give some hints to generate local exploitation.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R15)</td>
+<td>Ensure gpgcheck Enabled In Main yum Configuration</td>
+<td xml:lang="en-US">The <code>gpgcheck</code> option controls whether
+RPM packages' signatures are always checked prior to installation.
+To configure yum to check package signatures before installing
+them, ensure the following line appears in <code>/etc/yum.conf</code> in
+the <code>[main]</code> section:
+<pre>gpgcheck=1</pre>
+</td>
+<td xml:lang="en-US">Changes to any software components can have significant effects on the
+overall security of the operating system. This requirement ensures the
+software has not been tampered with and that it has been provided by a
+trusted vendor.
+<br>
+Accordingly, patches, service packs, device drivers, or operating system
+components must be signed with a certificate recognized and approved by the
+organization.
+<br>Verifying the authenticity of the software prior to installation
+validates the integrity of the patch or upgrade received from a vendor.
+This ensures the software has not been tampered with and that it has been
+provided by a trusted vendor. Self-signed certificates are disallowed by
+this requirement. Certificates used to verify the software must be from an
+approved Certificate Authority (CA).</td>
 <td></td>
 </tr>
 <tr>
@@ -709,81 +881,6 @@ the software has not been tampered with and that it has been provided by a
 trusted vendor. Self-signed certificates are disallowed by this
 requirement. Certificates used to verify the software must be from an
 approved Certificate Authority (CA)."</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R15)</td>
-<td>Ensure gpgcheck Enabled In Main yum Configuration</td>
-<td xml:lang="en-US">The <code>gpgcheck</code> option controls whether
-RPM packages' signatures are always checked prior to installation.
-To configure yum to check package signatures before installing
-them, ensure the following line appears in <code>/etc/yum.conf</code> in
-the <code>[main]</code> section:
-<pre>gpgcheck=1</pre>
-</td>
-<td xml:lang="en-US">Changes to any software components can have significant effects on the
-overall security of the operating system. This requirement ensures the
-software has not been tampered with and that it has been provided by a
-trusted vendor.
-<br>
-Accordingly, patches, service packs, device drivers, or operating system
-components must be signed with a certificate recognized and approved by the
-organization.
-<br>Verifying the authenticity of the software prior to installation
-validates the integrity of the patch or upgrade received from a vendor.
-This ensures the software has not been tampered with and that it has been
-provided by a trusted vendor. Self-signed certificates are disallowed by
-this requirement. Certificates used to verify the software must be from an
-approved Certificate Authority (CA).</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R17)</td>
-<td>Set the UEFI Boot Loader Admin Username to a Non-Default Value</td>
-<td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
-protection enabled to protect boot-time settings.
-<br><br>
-To maximize the protection, select a password-protected superuser account with unique name, and modify the
-<code>/etc/grub.d/01_users</code> configuration file to reflect the account name change.
-<br><br>
-It is highly suggested not to use common administrator account names like root,
-admin, or administrator for the grub2 superuser account.
-<br><br>
-Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
-<br><br>
-Once the superuser account has been added,
-update the
-<code>grub.cfg</code> file by running:
-<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
-</td>
-<td xml:lang="en-US">Having a non-default grub superuser username makes password-guessing attacks less effective.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R17)</td>
-<td>Set the UEFI Boot Loader Password</td>
-<td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
-protection enabled to protect boot-time settings.
-<br><br>
-Since plaintext passwords are a security risk, generate a hash for the password
-by running the following command:
-
-<pre>$ grub2-setpassword</pre>
-
-When prompted, enter the password that was selected.
-<br><br>
-
-Once the superuser password has been added,
-update the
-<code>grub.cfg</code> file by running:
-
-<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
-</td>
-<td xml:lang="en-US">Password protection on the boot loader configuration ensures
-users with physical access cannot trivially alter
-important bootloader settings. These include which kernel to use,
-and whether to enter single-user mode.</td>
 <td></td>
 </tr>
 <tr>
@@ -836,33 +933,52 @@ and whether to enter single-user mode.</td>
 <td></td>
 </tr>
 <tr>
-<td>BP28(R18)</td>
-<td>Set Interval For Counting Failed Password Attempts</td>
-<td xml:lang="en-US">Utilizing <code>pam_faillock.so</code>, the <code>fail_interval</code> directive
-configures the system to lock out an account after a number of incorrect
-login attempts within a specified time period. Modify the content of both
-<code>/etc/pam.d/system-auth</code> and <code>/etc/pam.d/password-auth</code>
-as follows:
+<td>BP28(R17)</td>
+<td>Set the UEFI Boot Loader Admin Username to a Non-Default Value</td>
+<td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
 <br><br>
-<ul>
-<li>Add the following line immediately <code>before</code> the
-    <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth required pam_faillock.so preauth silent deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
-</li>
-<li>Add the following line immediately <code>after</code> the
-    <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth [default=die] pam_faillock.so authfail deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub>
-</pre>
-</li>
-<li>Add the following line immediately <code>before</code> the
-    <code>pam_unix.so</code> statement in the <code>ACCOUNT</code> section:
-<pre>account required pam_faillock.so</pre>
-</li>
-</ul>
+To maximize the protection, select a password-protected superuser account with unique name, and modify the
+<code>/etc/grub.d/01_users</code> configuration file to reflect the account name change.
+<br><br>
+It is highly suggested not to use common administrator account names like root,
+admin, or administrator for the grub2 superuser account.
+<br><br>
+Change the superuser to a different username (The default is 'root').
+<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<br><br>
+Once the superuser account has been added,
+update the
+<code>grub.cfg</code> file by running:
+<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
 </td>
-<td xml:lang="en-US">By limiting the number of failed logon attempts the risk of unauthorized system
-access via user password guessing, otherwise known as brute-forcing, is reduced.
-Limits are imposed by locking the account.</td>
+<td xml:lang="en-US">Having a non-default grub superuser username makes password-guessing attacks less effective.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R17)</td>
+<td>Set the UEFI Boot Loader Password</td>
+<td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
+<br><br>
+Since plaintext passwords are a security risk, generate a hash for the password
+by running the following command:
+
+<pre>$ grub2-setpassword</pre>
+
+When prompted, enter the password that was selected.
+<br><br>
+
+Once the superuser password has been added,
+update the
+<code>grub.cfg</code> file by running:
+
+<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
+</td>
+<td xml:lang="en-US">Password protection on the boot loader configuration ensures
+users with physical access cannot trivially alter
+important bootloader settings. These include which kernel to use,
+and whether to enter single-user mode.</td>
 <td></td>
 </tr>
 <tr>
@@ -934,6 +1050,36 @@ guessing, otherwise known as brute-forcing, is reduced. Limits are imposed by lo
 </tr>
 <tr>
 <td>BP28(R18)</td>
+<td>Set Interval For Counting Failed Password Attempts</td>
+<td xml:lang="en-US">Utilizing <code>pam_faillock.so</code>, the <code>fail_interval</code> directive
+configures the system to lock out an account after a number of incorrect
+login attempts within a specified time period. Modify the content of both
+<code>/etc/pam.d/system-auth</code> and <code>/etc/pam.d/password-auth</code>
+as follows:
+<br><br>
+<ul>
+<li>Add the following line immediately <code>before</code> the
+    <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
+<pre>auth required pam_faillock.so preauth silent deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
+</li>
+<li>Add the following line immediately <code>after</code> the
+    <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
+<pre>auth [default=die] pam_faillock.so authfail deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub>
+</pre>
+</li>
+<li>Add the following line immediately <code>before</code> the
+    <code>pam_unix.so</code> statement in the <code>ACCOUNT</code> section:
+<pre>account required pam_faillock.so</pre>
+</li>
+</ul>
+</td>
+<td xml:lang="en-US">By limiting the number of failed logon attempts the risk of unauthorized system
+access via user password guessing, otherwise known as brute-forcing, is reduced.
+Limits are imposed by locking the account.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R18)</td>
 <td>Set Lockout Time for Failed Password Attempts</td>
 <td xml:lang="en-US">To configure the system to lock out accounts after a number of incorrect login
 attempts and require an administrator to unlock the account using <code>pam_faillock.so</code>,
@@ -955,23 +1101,6 @@ If <code>unlock_time</code> is set to <code>0</code>, manual intervention by an 
 prevents direct password guessing attacks. Ensuring that an administrator is
 involved in unlocking locked accounts draws appropriate attention to such
 situations.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R18)</td>
-<td>Ensure PAM Enforces Password Requirements - Minimum Uppercase Characters</td>
-<td xml:lang="en-US">The pam_pwquality module's <code>ucredit=</code> parameter controls requirements for
-usage of uppercase letters in a password. When set to a negative number, any password will be required to
-contain that many uppercase characters. When set to a positive number, pam_pwquality will grant +1 additional
-length credit for each uppercase character. Modify the <code>ucredit</code> setting in
-<code>/etc/security/pwquality.conf</code> to require the use of an uppercase character in passwords.</td>
-<td xml:lang="en-US">Use of a complex password helps to increase the time and resources reuiqred to compromise the password.
-Password complexity, or strength, is a measure of the effectiveness of a password in resisting attempts
-at guessing and brute-force attacks.
-<br><br>
-Password complexity is one factor of several that determines how long it takes to crack a password. The more
-complex the password, the greater the number of possible combinations that need to be tested before
-the password is compromised.</td>
 <td></td>
 </tr>
 <tr>
@@ -1055,24 +1184,19 @@ more difficult by ensuring a larger search space.</td>
 </tr>
 <tr>
 <td>BP28(R18)</td>
-<td>Set Password Minimum Length in login.defs</td>
-<td xml:lang="en-US">To specify password length requirements for new accounts, edit the file
-<code>/etc/login.defs</code> and add or correct the following line:
-<pre>PASS_MIN_LEN <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_password_minlen_login_defs"></xccdf-1.1:sub></pre>
+<td>Ensure PAM Enforces Password Requirements - Minimum Uppercase Characters</td>
+<td xml:lang="en-US">The pam_pwquality module's <code>ucredit=</code> parameter controls requirements for
+usage of uppercase letters in a password. When set to a negative number, any password will be required to
+contain that many uppercase characters. When set to a positive number, pam_pwquality will grant +1 additional
+length credit for each uppercase character. Modify the <code>ucredit</code> setting in
+<code>/etc/security/pwquality.conf</code> to require the use of an uppercase character in passwords.</td>
+<td xml:lang="en-US">Use of a complex password helps to increase the time and resources reuiqred to compromise the password.
+Password complexity, or strength, is a measure of the effectiveness of a password in resisting attempts
+at guessing and brute-force attacks.
 <br><br>
-The DoD requirement is <code>15</code>.
-The FISMA requirement is <code>12</code>.
-The profile requirement is
-<code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_password_minlen_login_defs"></xccdf-1.1:sub></code>.
-If a program consults <code>/etc/login.defs</code> and also another PAM module
-(such as <code>pam_pwquality</code>) during a password change operation, then
-the most restrictive must be satisfied. See PAM section for more
-information about enforcing password quality requirements.</td>
-<td xml:lang="en-US">Requiring a minimum password length makes password
-cracking attacks more difficult by ensuring a larger
-search space. However, any security benefit from an onerous requirement
-must be carefully weighed against usability problems, support costs, or counterproductive
-behavior that may result.</td>
+Password complexity is one factor of several that determines how long it takes to crack a password. The more
+complex the password, the greater the number of possible combinations that need to be tested before
+the password is compromised.</td>
 <td></td>
 </tr>
 <tr>
@@ -1094,6 +1218,28 @@ Setting the password maximum age ensures users are required to
 periodically change their passwords. Requiring shorter password lifetimes
 increases the risk of users writing down the password in a convenient
 location subject to physical compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R18)</td>
+<td>Set Password Minimum Length in login.defs</td>
+<td xml:lang="en-US">To specify password length requirements for new accounts, edit the file
+<code>/etc/login.defs</code> and add or correct the following line:
+<pre>PASS_MIN_LEN <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_password_minlen_login_defs"></xccdf-1.1:sub></pre>
+<br><br>
+The DoD requirement is <code>15</code>.
+The FISMA requirement is <code>12</code>.
+The profile requirement is
+<code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_password_minlen_login_defs"></xccdf-1.1:sub></code>.
+If a program consults <code>/etc/login.defs</code> and also another PAM module
+(such as <code>pam_pwquality</code>) during a password change operation, then
+the most restrictive must be satisfied. See PAM section for more
+information about enforcing password quality requirements.</td>
+<td xml:lang="en-US">Requiring a minimum password length makes password
+cracking attacks more difficult by ensuring a larger
+search space. However, any security benefit from an onerous requirement
+must be carefully weighed against usability problems, support costs, or counterproductive
+behavior that may result.</td>
 <td></td>
 </tr>
 <tr>
@@ -1178,108 +1324,9 @@ direct attack attempts on root's password.</td>
 </tr>
 <tr>
 <td>BP28(R22)</td>
-<td>Configure Accepting Default Router in Router Advertisements on All IPv6 Interfaces By Default</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.accept_ra_defrtr</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_ra_defrtr=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_ra_defrtr = 0</pre>
-</td>
-<td xml:lang="en-US">An illicit router advertisement message could result in a man-in-the-middle attack.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R22)</td>
-<td>Disable Kernel Parameter for Accepting ICMP Redirects by Default on IPv6 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_redirects=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_redirects = 0</pre>
-</td>
-<td xml:lang="en-US">An illicit ICMP redirect message could result in a man-in-the-middle attack.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R22)</td>
-<td>Configure Auto Configuration on All IPv6 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.autoconf</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.autoconf=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.autoconf = 0</pre>
-</td>
-<td xml:lang="en-US">An illicit router advertisement message could result in a man-in-the-middle attack.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R22)</td>
-<td>Configure Accepting Router Preference in Router Advertisements on All IPv6 Interfaces By Default</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.accept_ra_rtr_pref</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_ra_rtr_pref=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_ra_rtr_pref = 0</pre>
-</td>
-<td xml:lang="en-US">An illicit router advertisement message could result in a man-in-the-middle attack.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R22)</td>
-<td>Configure Maximum Number of Autoconfigured Addresses on All IPv6 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.max_addresses</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.max_addresses=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.max_addresses = 1</pre>
-</td>
-<td xml:lang="en-US">The number of global unicast IPv6 addresses for each interface should be limited exactly to the number of statically configured addresses.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R22)</td>
-<td>Disable Accepting ICMP Redirects for All IPv6 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.accept_redirects=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_redirects = 0</pre>
-</td>
-<td xml:lang="en-US">An illicit ICMP redirect message could result in a man-in-the-middle attack.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R22)</td>
 <td>Configure Accepting Default Router in Router Advertisements on All IPv6 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.accept_ra_defrtr</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.accept_ra_defrtr=0</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_ra_defrtr = 0</pre>
-</td>
-<td xml:lang="en-US">An illicit router advertisement message could result in a man-in-the-middle attack.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R22)</td>
-<td>Configure Denying Router Solicitations on All IPv6 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.router_solicitations</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.router_solicitations=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.router_solicitations = 0</pre>
-</td>
-<td xml:lang="en-US">To prevent discovery of the system by other systems, router solicitation requests should be denied.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R22)</td>
-<td>Configure Denying Router Solicitations on All IPv6 Interfaces By Default</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.router_solicitations</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.router_solicitations=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.router_solicitations = 0</pre>
-</td>
-<td xml:lang="en-US">To prevent discovery of the system by other systems, router solicitation requests should be denied.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R22)</td>
-<td>Configure Maximum Number of Autoconfigured Addresses on All IPv6 Interfaces By Default</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.max_addresses</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.max_addresses=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.max_addresses = 1</pre>
-</td>
-<td xml:lang="en-US">The number of global unicast IPv6 addresses for each interface should be limited exactly to the number of statically configured addresses.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R22)</td>
-<td>Configure Auto Configuration on All IPv6 Interfaces By Default</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.autoconf</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.autoconf=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.autoconf = 0</pre>
-</td>
-<td xml:lang="en-US">An illicit router advertisement message could result in a man-in-the-middle attack.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R22)</td>
-<td>Configure Accepting Prefix Information in Router Advertisements on All IPv6 Interfaces By Default</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.accept_ra_pinfo</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_ra_pinfo=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_ra_pinfo = 0</pre>
 </td>
 <td xml:lang="en-US">An illicit router advertisement message could result in a man-in-the-middle attack.</td>
 <td></td>
@@ -1304,6 +1351,15 @@ To make sure that the setting is persistent, add the following line to a file in
 </tr>
 <tr>
 <td>BP28(R22)</td>
+<td>Disable Accepting ICMP Redirects for All IPv6 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.accept_redirects=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_redirects = 0</pre>
+</td>
+<td xml:lang="en-US">An illicit ICMP redirect message could result in a man-in-the-middle attack.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
 <td>Disable Kernel Parameter for Accepting Source-Routed Packets on all IPv6 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.accept_source_route=0</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_source_route = 0</pre>
@@ -1320,6 +1376,69 @@ uses. It should be disabled unless it is absolutely required.</td>
 </tr>
 <tr>
 <td>BP28(R22)</td>
+<td>Configure Auto Configuration on All IPv6 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.autoconf</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.autoconf=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.autoconf = 0</pre>
+</td>
+<td xml:lang="en-US">An illicit router advertisement message could result in a man-in-the-middle attack.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
+<td>Configure Maximum Number of Autoconfigured Addresses on All IPv6 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.max_addresses</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.max_addresses=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.max_addresses = 1</pre>
+</td>
+<td xml:lang="en-US">The number of global unicast IPv6 addresses for each interface should be limited exactly to the number of statically configured addresses.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
+<td>Configure Denying Router Solicitations on All IPv6 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.router_solicitations</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.router_solicitations=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.router_solicitations = 0</pre>
+</td>
+<td xml:lang="en-US">To prevent discovery of the system by other systems, router solicitation requests should be denied.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
+<td>Configure Accepting Default Router in Router Advertisements on All IPv6 Interfaces By Default</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.accept_ra_defrtr</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_ra_defrtr=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_ra_defrtr = 0</pre>
+</td>
+<td xml:lang="en-US">An illicit router advertisement message could result in a man-in-the-middle attack.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
+<td>Configure Accepting Prefix Information in Router Advertisements on All IPv6 Interfaces By Default</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.accept_ra_pinfo</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_ra_pinfo=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_ra_pinfo = 0</pre>
+</td>
+<td xml:lang="en-US">An illicit router advertisement message could result in a man-in-the-middle attack.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
+<td>Configure Accepting Router Preference in Router Advertisements on All IPv6 Interfaces By Default</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.accept_ra_rtr_pref</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_ra_rtr_pref=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_ra_rtr_pref = 0</pre>
+</td>
+<td xml:lang="en-US">An illicit router advertisement message could result in a man-in-the-middle attack.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
+<td>Disable Kernel Parameter for Accepting ICMP Redirects by Default on IPv6 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_redirects=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_redirects = 0</pre>
+</td>
+<td xml:lang="en-US">An illicit ICMP redirect message could result in a man-in-the-middle attack.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
 <td>Disable Kernel Parameter for Accepting Source-Routed Packets on IPv6 Interfaces by Default</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_source_route=0</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_source_route = 0</pre>
@@ -1332,6 +1451,200 @@ the system is functioning as a router.
 
 Accepting source-routed packets in the IPv6 protocol has few legitimate
 uses. It should be disabled unless it is absolutely required.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
+<td>Configure Auto Configuration on All IPv6 Interfaces By Default</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.autoconf</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.autoconf=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.autoconf = 0</pre>
+</td>
+<td xml:lang="en-US">An illicit router advertisement message could result in a man-in-the-middle attack.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
+<td>Configure Maximum Number of Autoconfigured Addresses on All IPv6 Interfaces By Default</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.max_addresses</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.max_addresses=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.max_addresses = 1</pre>
+</td>
+<td xml:lang="en-US">The number of global unicast IPv6 addresses for each interface should be limited exactly to the number of statically configured addresses.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
+<td>Configure Denying Router Solicitations on All IPv6 Interfaces By Default</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.router_solicitations</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.router_solicitations=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.router_solicitations = 0</pre>
+</td>
+<td xml:lang="en-US">To prevent discovery of the system by other systems, router solicitation requests should be denied.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
+<td>Disable Accepting ICMP Redirects for All IPv4 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.accept_redirects=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.accept_redirects = 0</pre>
+</td>
+<td xml:lang="en-US">ICMP redirect messages are used by routers to inform hosts that a more
+direct route exists for a particular destination. These messages modify the
+host's route table and are unauthenticated. An illicit ICMP redirect
+message could result in a man-in-the-middle attack.
+<br>
+This feature of the IPv4 protocol has few legitimate uses. It should be
+disabled unless absolutely required."</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
+<td>Disable Kernel Parameter for Accepting Source-Routed Packets on all IPv4 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.accept_source_route=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.accept_source_route = 0</pre>
+</td>
+<td xml:lang="en-US">Source-routed packets allow the source of the packet to suggest routers
+forward the packet along a different path than configured on the router,
+which can be used to bypass network security measures. This requirement
+applies only to the forwarding of source-routerd traffic, such as when IPv4
+forwarding is enabled and the system is functioning as a router.
+<br><br>
+Accepting source-routed packets in the IPv4 protocol has few legitimate
+uses. It should be disabled unless it is absolutely required.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
+<td>Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.log_martians</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.log_martians=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.log_martians = 1</pre>
+</td>
+<td xml:lang="en-US">The presence of "martian" packets (which have impossible addresses)
+as well as spoofed packets, source-routed packets, and redirects could be a
+sign of nefarious network activity. Logging these packets enables this activity
+to be detected.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
+<td>Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.rp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.rp_filter=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.rp_filter = 1</pre>
+</td>
+<td xml:lang="en-US">Enabling reverse path filtering drops packets with source addresses
+that should not have been able to be received on the interface they were
+received on. It should not be used on systems which are routers for
+complicated networks, but is helpful for end hosts and routers serving small
+networks.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
+<td>Disable Kernel Parameter for Accepting Secure ICMP Redirects on all IPv4 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.secure_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.secure_redirects=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.secure_redirects = 0</pre>
+</td>
+<td xml:lang="en-US">Accepting "secure" ICMP redirects (from those gateways listed as
+default gateways) has few legitimate uses. It should be disabled unless it is
+absolutely required.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
+<td>Disable Kernel Parameter for Accepting ICMP Redirects by Default on IPv4 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.accept_redirects=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.accept_redirects = 0</pre>
+</td>
+<td xml:lang="en-US">ICMP redirect messages are used by routers to inform hosts that a more
+direct route exists for a particular destination. These messages modify the
+host's route table and are unauthenticated. An illicit ICMP redirect
+message could result in a man-in-the-middle attack.
+<br>This feature of the IPv4 protocol has few legitimate uses. It should
+be disabled unless absolutely required.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
+<td>Disable Kernel Parameter for Accepting Source-Routed Packets on IPv4 Interfaces by Default</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.accept_source_route=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.accept_source_route = 0</pre>
+</td>
+<td xml:lang="en-US">Source-routed packets allow the source of the packet to suggest routers
+forward the packet along a different path than configured on the router,
+which can be used to bypass network security measures.
+<br>
+Accepting source-routed packets in the IPv4 protocol has few legitimate
+uses. It should be disabled unless it is absolutely required, such as when
+IPv4 forwarding is enabled and the system is legitimately functioning as a
+router.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
+<td>Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces by Default</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.rp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.rp_filter=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.rp_filter = 1</pre>
+</td>
+<td xml:lang="en-US">Enabling reverse path filtering drops packets with source addresses
+that should not have been able to be received on the interface they were
+received on. It should not be used on systems which are routers for
+complicated networks, but is helpful for end hosts and routers serving small
+networks.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
+<td>Configure Kernel Parameter for Accepting Secure Redirects By Default</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.secure_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.secure_redirects=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.secure_redirects = 0</pre>
+</td>
+<td xml:lang="en-US">Accepting "secure" ICMP redirects (from those gateways listed as
+default gateways) has few legitimate uses. It should be disabled unless it is
+absolutely required.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
+<td>Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.icmp_ignore_bogus_error_responses</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.icmp_ignore_bogus_error_responses=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.icmp_ignore_bogus_error_responses = 1</pre>
+</td>
+<td xml:lang="en-US">Ignoring bogus ICMP error responses reduces
+log size, although some activity would not be logged.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
+<td>Set Kernel Parameter to Increase Local Port Range</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.ip_local_port_range</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.ip_local_port_range=32768 65535</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.ip_local_port_range = 32768 65535</pre>
+</td>
+<td xml:lang="en-US">This setting defines the local port range that is used by TCP and UDP to
+choose the local port. The first number is the first, the second the last
+local port number.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
+<td>Enable Kernel Parameter to Use TCP RFC 1337 on IPv4 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.tcp_rfc1337</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.tcp_rfc1337=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.tcp_rfc1337 = 1</pre>
+</td>
+<td xml:lang="en-US">Enable TCP behavior conformant with RFC 1337. When disabled, if a RST is
+received in TIME_WAIT state, we close the socket immediately without waiting
+for the end of the TIME_WAIT period.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R22)</td>
+<td>Enable Kernel Parameter to Use TCP Syncookies on IPv4 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.tcp_syncookies</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.tcp_syncookies=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.tcp_syncookies = 1</pre>
+</td>
+<td xml:lang="en-US">A TCP SYN flood attack can cause a denial of service by filling a
+system's TCP connection table with connections in the SYN_RCVD state.
+Syncookies can be used to track a connection when a subsequent ACK is received,
+verifying the initiator is attempting a valid connection and is not a flood
+source. This feature is activated when a flood condition is detected, and
+enables the system to continue servicing valid connection requests.</td>
 <td></td>
 </tr>
 <tr>
@@ -1373,170 +1686,29 @@ the network.</td>
 <td></td>
 </tr>
 <tr>
-<td>BP28(R22)</td>
-<td>Disable Kernel Parameter for Accepting Secure ICMP Redirects on all IPv4 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.secure_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.secure_redirects=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.secure_redirects = 0</pre>
+<td>BP28(R23)</td>
+<td>Enable Kernel Parameter to Enforce DAC on Hardlinks</td>
+<td xml:lang="en-US">To set the runtime status of the <code>fs.protected_hardlinks</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.protected_hardlinks=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.protected_hardlinks = 1</pre>
 </td>
-<td xml:lang="en-US">Accepting "secure" ICMP redirects (from those gateways listed as
-default gateways) has few legitimate uses. It should be disabled unless it is
-absolutely required.</td>
+<td xml:lang="en-US">By enabling this kernel parameter, users can no longer create soft or hard links to
+files which they do not own. Disallowing such hardlinks mitigate vulnerabilities
+based on insecure file system accessed by privileged programs, avoiding an
+exploitation vector exploiting unsafe use of <code>open()</code> or <code>creat()</code>.</td>
 <td></td>
 </tr>
 <tr>
-<td>BP28(R22)</td>
-<td>Disable Kernel Parameter for Accepting ICMP Redirects by Default on IPv4 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.accept_redirects=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.accept_redirects = 0</pre>
+<td>BP28(R23)</td>
+<td>Enable Kernel Parameter to Enforce DAC on Symlinks</td>
+<td xml:lang="en-US">To set the runtime status of the <code>fs.protected_symlinks</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.protected_symlinks=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.protected_symlinks = 1</pre>
 </td>
-<td xml:lang="en-US">ICMP redirect messages are used by routers to inform hosts that a more
-direct route exists for a particular destination. These messages modify the
-host's route table and are unauthenticated. An illicit ICMP redirect
-message could result in a man-in-the-middle attack.
-<br>This feature of the IPv4 protocol has few legitimate uses. It should
-be disabled unless absolutely required.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R22)</td>
-<td>Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.log_martians</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.log_martians=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.log_martians = 1</pre>
-</td>
-<td xml:lang="en-US">The presence of "martian" packets (which have impossible addresses)
-as well as spoofed packets, source-routed packets, and redirects could be a
-sign of nefarious network activity. Logging these packets enables this activity
-to be detected.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R22)</td>
-<td>Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.rp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.rp_filter=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.rp_filter = 1</pre>
-</td>
-<td xml:lang="en-US">Enabling reverse path filtering drops packets with source addresses
-that should not have been able to be received on the interface they were
-received on. It should not be used on systems which are routers for
-complicated networks, but is helpful for end hosts and routers serving small
-networks.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R22)</td>
-<td>Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.icmp_ignore_bogus_error_responses</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.icmp_ignore_bogus_error_responses=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.icmp_ignore_bogus_error_responses = 1</pre>
-</td>
-<td xml:lang="en-US">Ignoring bogus ICMP error responses reduces
-log size, although some activity would not be logged.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R22)</td>
-<td>Set Kernel Parameter to Increase Local Port Range</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.ip_local_port_range</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.ip_local_port_range=32768 65535</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.ip_local_port_range = 32768 65535</pre>
-</td>
-<td xml:lang="en-US">This setting defines the local port range that is used by TCP and UDP to
-choose the local port. The first number is the first, the second the last
-local port number.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R22)</td>
-<td>Disable Kernel Parameter for Accepting Source-Routed Packets on IPv4 Interfaces by Default</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.accept_source_route=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.accept_source_route = 0</pre>
-</td>
-<td xml:lang="en-US">Source-routed packets allow the source of the packet to suggest routers
-forward the packet along a different path than configured on the router,
-which can be used to bypass network security measures.
-<br>
-Accepting source-routed packets in the IPv4 protocol has few legitimate
-uses. It should be disabled unless it is absolutely required, such as when
-IPv4 forwarding is enabled and the system is legitimately functioning as a
-router.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R22)</td>
-<td>Disable Accepting ICMP Redirects for All IPv4 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.accept_redirects=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.accept_redirects = 0</pre>
-</td>
-<td xml:lang="en-US">ICMP redirect messages are used by routers to inform hosts that a more
-direct route exists for a particular destination. These messages modify the
-host's route table and are unauthenticated. An illicit ICMP redirect
-message could result in a man-in-the-middle attack.
-<br>
-This feature of the IPv4 protocol has few legitimate uses. It should be
-disabled unless absolutely required."</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R22)</td>
-<td>Enable Kernel Parameter to Use TCP Syncookies on IPv4 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.tcp_syncookies</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.tcp_syncookies=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.tcp_syncookies = 1</pre>
-</td>
-<td xml:lang="en-US">A TCP SYN flood attack can cause a denial of service by filling a
-system's TCP connection table with connections in the SYN_RCVD state.
-Syncookies can be used to track a connection when a subsequent ACK is received,
-verifying the initiator is attempting a valid connection and is not a flood
-source. This feature is activated when a flood condition is detected, and
-enables the system to continue servicing valid connection requests.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R22)</td>
-<td>Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces by Default</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.rp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.rp_filter=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.rp_filter = 1</pre>
-</td>
-<td xml:lang="en-US">Enabling reverse path filtering drops packets with source addresses
-that should not have been able to be received on the interface they were
-received on. It should not be used on systems which are routers for
-complicated networks, but is helpful for end hosts and routers serving small
-networks.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R22)</td>
-<td>Disable Kernel Parameter for Accepting Source-Routed Packets on all IPv4 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.accept_source_route=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.accept_source_route = 0</pre>
-</td>
-<td xml:lang="en-US">Source-routed packets allow the source of the packet to suggest routers
-forward the packet along a different path than configured on the router,
-which can be used to bypass network security measures. This requirement
-applies only to the forwarding of source-routerd traffic, such as when IPv4
-forwarding is enabled and the system is functioning as a router.
-<br><br>
-Accepting source-routed packets in the IPv4 protocol has few legitimate
-uses. It should be disabled unless it is absolutely required.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R22)</td>
-<td>Configure Kernel Parameter for Accepting Secure Redirects By Default</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.secure_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.secure_redirects=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.secure_redirects = 0</pre>
-</td>
-<td xml:lang="en-US">Accepting "secure" ICMP redirects (from those gateways listed as
-default gateways) has few legitimate uses. It should be disabled unless it is
-absolutely required.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R22)</td>
-<td>Enable Kernel Parameter to Use TCP RFC 1337 on IPv4 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.tcp_rfc1337</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.tcp_rfc1337=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.tcp_rfc1337 = 1</pre>
-</td>
-<td xml:lang="en-US">Enable TCP behavior conformant with RFC 1337. When disabled, if a RST is
-received in TIME_WAIT state, we close the socket immediately without waiting
-for the end of the TIME_WAIT period.</td>
+<td xml:lang="en-US">By enabling this kernel parameter, symbolic links are permitted to be followed
+only when outside a sticky world-writable directory, or when the UID of the
+link and follower match, or when the directory owner matches the symlink's owner.
+Disallowing such symlinks helps mitigate vulnerabilities based on insecure file system
+accessed by privileged programs, avoiding an exploitation vector exploiting unsafe use of
+<code>open()</code> or <code>creat()</code>.</td>
 <td></td>
 </tr>
 <tr>
@@ -1551,23 +1723,34 @@ address information.</td>
 </tr>
 <tr>
 <td>BP28(R23)</td>
+<td>Limit CPU consumption of the Perf system</td>
+<td xml:lang="en-US">To set the runtime status of the <code>kernel.perf_cpu_time_max_percent</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.perf_cpu_time_max_percent=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.perf_cpu_time_max_percent = 1</pre>
+</td>
+<td xml:lang="en-US">The <code>kernel.perf_cpu_time_max_percent</code> configures a treshold of
+maximum percentile of CPU that can be used by Perf system. Restricting usage
+of <code>Perf</code> system decreases risk of potential availability problems.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R23)</td>
+<td>Limit sampling frequency of the Perf system</td>
+<td xml:lang="en-US">To set the runtime status of the <code>kernel.perf_event_max_sample_rate</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.perf_event_max_sample_rate=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.perf_event_max_sample_rate = 1</pre>
+</td>
+<td xml:lang="en-US">The <code>kernel.perf_event_max_sample_rate</code> parameter configures maximum
+frequency of collecting of samples for the Perf system. It is expressed in
+samples per second. Restricting usage of <code>Perf</code> system decreases risk
+of potential availability problems.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R23)</td>
 <td>Disallow kernel profiling by unprivileged users</td>
 <td xml:lang="en-US">To set the runtime status of the <code>kernel.perf_event_paranoid</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.perf_event_paranoid=2</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.perf_event_paranoid = 2</pre>
 </td>
 <td xml:lang="en-US">Kernel profiling can reveal sensitive information about kernel behaviour.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R23)</td>
-<td>Prevent applications from mapping low portion of virtual memory</td>
-<td xml:lang="en-US">To set the runtime status of the <code>vm.mmap_min_addr</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w vm.mmap_min_addr=65536</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>vm.mmap_min_addr = 65536</pre>
-</td>
-<td xml:lang="en-US">The <code>vm.mmap_min_addr</code> parameter specifies the minimum virtual
-address that a process is allowed to mmap. Allowing a process to mmap low
-portion of virtual memory can have security implications such as such as
-heightened risk of kernel null pointer dereference defects.</td>
 <td></td>
 </tr>
 <tr>
@@ -1596,25 +1779,27 @@ disturbing its availability.</td>
 </tr>
 <tr>
 <td>BP28(R23)</td>
-<td>Limit sampling frequency of the Perf system</td>
-<td xml:lang="en-US">To set the runtime status of the <code>kernel.perf_event_max_sample_rate</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.perf_event_max_sample_rate=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.perf_event_max_sample_rate = 1</pre>
+<td>Prevent applications from mapping low portion of virtual memory</td>
+<td xml:lang="en-US">To set the runtime status of the <code>vm.mmap_min_addr</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w vm.mmap_min_addr=65536</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>vm.mmap_min_addr = 65536</pre>
 </td>
-<td xml:lang="en-US">The <code>kernel.perf_event_max_sample_rate</code> parameter configures maximum
-frequency of collecting of samples for the Perf system. It is expressed in
-samples per second. Restricting usage of <code>Perf</code> system decreases risk
-of potential availability problems.</td>
+<td xml:lang="en-US">The <code>vm.mmap_min_addr</code> parameter specifies the minimum virtual
+address that a process is allowed to mmap. Allowing a process to mmap low
+portion of virtual memory can have security implications such as such as
+heightened risk of kernel null pointer dereference defects.</td>
 <td></td>
 </tr>
 <tr>
 <td>BP28(R23)</td>
-<td>Limit CPU consumption of the Perf system</td>
-<td xml:lang="en-US">To set the runtime status of the <code>kernel.perf_cpu_time_max_percent</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.perf_cpu_time_max_percent=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.perf_cpu_time_max_percent = 1</pre>
+<td>Disable Core Dumps for SUID programs</td>
+<td xml:lang="en-US">To set the runtime status of the <code>fs.suid_dumpable</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.suid_dumpable=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.suid_dumpable = 0</pre>
 </td>
-<td xml:lang="en-US">The <code>kernel.perf_cpu_time_max_percent</code> configures a treshold of
-maximum percentile of CPU that can be used by Perf system. Restricting usage
-of <code>Perf</code> system decreases risk of potential availability problems.</td>
+<td xml:lang="en-US">The core dump of a setuid program is more likely to contain
+sensitive data, as the program itself runs with greater privileges than the
+user who initiated execution of the program.  Disabling the ability for any
+setuid program to write a core file decreases the risk of unauthorized access
+of such data.</td>
 <td></td>
 </tr>
 <tr>
@@ -1642,45 +1827,6 @@ process's address space during an attempt at exploitation.  Additionally,
 ASLR makes it more difficult for an attacker to know the location of
 existing code in order to re-purpose it using return oriented programming
 (ROP) techniques.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R23)</td>
-<td>Disable Core Dumps for SUID programs</td>
-<td xml:lang="en-US">To set the runtime status of the <code>fs.suid_dumpable</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.suid_dumpable=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.suid_dumpable = 0</pre>
-</td>
-<td xml:lang="en-US">The core dump of a setuid program is more likely to contain
-sensitive data, as the program itself runs with greater privileges than the
-user who initiated execution of the program.  Disabling the ability for any
-setuid program to write a core file decreases the risk of unauthorized access
-of such data.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R23)</td>
-<td>Enable Kernel Parameter to Enforce DAC on Hardlinks</td>
-<td xml:lang="en-US">To set the runtime status of the <code>fs.protected_hardlinks</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.protected_hardlinks=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.protected_hardlinks = 1</pre>
-</td>
-<td xml:lang="en-US">By enabling this kernel parameter, users can no longer create soft or hard links to
-files which they do not own. Disallowing such hardlinks mitigate vulnerabilities
-based on insecure file system accessed by privileged programs, avoiding an
-exploitation vector exploiting unsafe use of <code>open()</code> or <code>creat()</code>.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R23)</td>
-<td>Enable Kernel Parameter to Enforce DAC on Symlinks</td>
-<td xml:lang="en-US">To set the runtime status of the <code>fs.protected_symlinks</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.protected_symlinks=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.protected_symlinks = 1</pre>
-</td>
-<td xml:lang="en-US">By enabling this kernel parameter, symbolic links are permitted to be followed
-only when outside a sticky world-writable directory, or when the UID of the
-link and follower match, or when the directory owner matches the symlink's owner.
-Disallowing such symlinks helps mitigate vulnerabilities based on insecure file system
-accessed by privileged programs, avoiding an exploitation vector exploiting unsafe use of
-<code>open()</code> or <code>creat()</code>.</td>
 <td></td>
 </tr>
 <tr>
@@ -1815,6 +1961,19 @@ difficult.</td>
 </tr>
 <tr>
 <td>BP28(R32)</td>
+<td>Set number of Password Hashing Rounds - password-auth</td>
+<td xml:lang="en-US">Configure the number or rounds for the password hashing algorithm. This can be
+accomplished by using the <code>rounds</code> option for the <code>pam_unix</code> PAM module.
+<br><br>
+In file <code>/etc/pam.d/password-auth</code> append <code>rounds=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_rounds"></xccdf-1.1:sub></code>
+to the <code>pam_unix.so</code> file, as shown below:
+<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_rounds"></xccdf-1.1:sub></pre>
+The system's default number of rounds is 5000.</td>
+<td xml:lang="en-US">Using a higher number of rounds makes password cracking attacks more difficult.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R32)</td>
 <td>Set number of Password Hashing Rounds - system-auth</td>
 <td xml:lang="en-US">Configure the number or rounds for the password hashing algorithm. This can be
 accomplished by using the <code>rounds</code> option for the <code>pam_unix</code> PAM module.
@@ -1827,16 +1986,16 @@ The system's default number of rounds is 5000.</td>
 <td></td>
 </tr>
 <tr>
-<td>BP28(R32)</td>
-<td>Set number of Password Hashing Rounds - password-auth</td>
-<td xml:lang="en-US">Configure the number or rounds for the password hashing algorithm. This can be
-accomplished by using the <code>rounds</code> option for the <code>pam_unix</code> PAM module.
-<br><br>
-In file <code>/etc/pam.d/password-auth</code> append <code>rounds=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_rounds"></xccdf-1.1:sub></code>
-to the <code>pam_unix.so</code> file, as shown below:
-<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_rounds"></xccdf-1.1:sub></pre>
-The system's default number of rounds is 5000.</td>
-<td xml:lang="en-US">Using a higher number of rounds makes password cracking attacks more difficult.</td>
+<td>BP28(R35)</td>
+<td>Ensure the Default Bash Umask is Set Correctly</td>
+<td xml:lang="en-US">To ensure the default umask for users of the Bash shell is set properly,
+add or correct the <code>umask</code> setting in <code>/etc/bashrc</code> to read
+as follows:
+<pre>umask <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_user_umask"></xccdf-1.1:sub></pre>
+</td>
+<td xml:lang="en-US">The umask value influences the permissions assigned to files when they are created.
+A misconfigured umask value could result in files with excessive permissions that can be read or
+written to by unauthorized users.</td>
 <td></td>
 </tr>
 <tr>
@@ -1856,19 +2015,6 @@ written to by unauthorized users.</td>
 <td>Ensure the Default Umask is Set Correctly in /etc/profile</td>
 <td xml:lang="en-US">To ensure the default umask controlled by <code>/etc/profile</code> is set properly,
 add or correct the <code>umask</code> setting in <code>/etc/profile</code> to read as follows:
-<pre>umask <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_user_umask"></xccdf-1.1:sub></pre>
-</td>
-<td xml:lang="en-US">The umask value influences the permissions assigned to files when they are created.
-A misconfigured umask value could result in files with excessive permissions that can be read or
-written to by unauthorized users.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R35)</td>
-<td>Ensure the Default Bash Umask is Set Correctly</td>
-<td xml:lang="en-US">To ensure the default umask for users of the Bash shell is set properly,
-add or correct the <code>umask</code> setting in <code>/etc/bashrc</code> to read
-as follows:
 <pre>umask <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_user_umask"></xccdf-1.1:sub></pre>
 </td>
 <td xml:lang="en-US">The umask value influences the permissions assigned to files when they are created.
@@ -1928,6 +2074,17 @@ on the system. Protection of this file is important for system security.</td>
 </tr>
 <tr>
 <td>BP28(R36)</td>
+<td>Verify Permissions on gshadow File</td>
+<td xml:lang="en-US">
+To properly set the permissions of <code>/etc/gshadow</code>, run the command:
+<pre>$ sudo chmod 0000 /etc/gshadow</pre>
+</td>
+<td xml:lang="en-US">The <code>/etc/gshadow</code> file contains group password hashes. Protection of this file
+is critical for system security.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R36)</td>
 <td>Verify Permissions on passwd File</td>
 <td xml:lang="en-US">
 To properly set the permissions of <code>/etc/passwd</code>, run the command:
@@ -1936,17 +2093,6 @@ To properly set the permissions of <code>/etc/passwd</code>, run the command:
 <td xml:lang="en-US">If the <code>/etc/passwd</code> file is writable by a group-owner or the
 world the risk of its compromise is increased. The file contains the list of
 accounts on the system and associated information, and protection of this file
-is critical for system security.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R36)</td>
-<td>Verify Permissions on gshadow File</td>
-<td xml:lang="en-US">
-To properly set the permissions of <code>/etc/gshadow</code>, run the command:
-<pre>$ sudo chmod 0000 /etc/gshadow</pre>
-</td>
-<td xml:lang="en-US">The <code>/etc/gshadow</code> file contains group password hashes. Protection of this file
 is critical for system security.</td>
 <td></td>
 </tr>
@@ -2107,6 +2253,19 @@ To disable the <code>polyinstantiation_enabled</code> SELinux boolean, run the f
 </tr>
 <tr>
 <td>BP28(R40)</td>
+<td>Ensure All World-Writable Directories Are Owned by root user</td>
+<td xml:lang="en-US">All directories in local partitions which are world-writable should be owned
+by root. If any world-writable directories are not owned by root, this
+should be investigated. Following this, the files should be deleted or
+assigned to root user.</td>
+<td xml:lang="en-US">Allowing a user account to own a world-writable directory is
+undesirable because it allows the owner of that directory to remove
+or replace any files that may be placed in the directory by other
+users.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R40)</td>
 <td>Verify that All World-Writable Directories Have Sticky Bits Set</td>
 <td xml:lang="en-US">When the so-called 'sticky bit' is set on a directory,
 only the owner of a given file may remove that file from the
@@ -2131,19 +2290,6 @@ supplied with the system, or those designed to be temporary file
 repositories. The setting is normally reserved for directories used by the
 system, by users for temporary file storage (such as <code>/tmp</code>), and
 for directories requiring global read/write access.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R40)</td>
-<td>Ensure All World-Writable Directories Are Owned by root user</td>
-<td xml:lang="en-US">All directories in local partitions which are world-writable should be owned
-by root. If any world-writable directories are not owned by root, this
-should be investigated. Following this, the files should be deleted or
-assigned to root user.</td>
-<td xml:lang="en-US">Allowing a user account to own a world-writable directory is
-undesirable because it allows the owner of that directory to remove
-or replace any files that may be placed in the directory by other
-users.</td>
 <td></td>
 </tr>
 <tr>
@@ -2358,7 +2504,9 @@ By default, the database will be written to the file <code>/var/lib/aide/aide.db
 Storing the database, the configuration file <code>/etc/aide.conf</code>, and the binary
 <code>/usr/sbin/aide</code> (or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
 The newly-generated database can be installed as follows:
+
 <pre>$ sudo cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz</pre>
+
 To initiate a manual check, run the following command:
 <pre>$ sudo /usr/sbin/aide --check</pre>
 If this check produces any unexpected output, investigate.</td>
@@ -2394,24 +2542,6 @@ monitoring system trap when there is an unauthorized modification of a configura
 </tr>
 <tr>
 <td>BP28(R51)</td>
-<td>Configure AIDE to Verify Access Control Lists (ACLs)</td>
-<td xml:lang="en-US">By default, the <code>acl</code> option is added to the <code>FIPSR</code> ruleset in AIDE.
-If using a custom ruleset or the <code>acl</code> option is missing, add <code>acl</code>
-to the appropriate ruleset.
-For example, add <code>acl</code> to the following line in <code>/etc/aide.conf</code>:
-<pre>FIPSR = p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha256</pre>
-AIDE rules can be configured in multiple ways; this is merely one example that is already
-configured by default.
-
-The remediation provided with this rule adds <code>acl</code> to all rule sets available in
-<code>/etc/aide.conf</code>
-</td>
-<td xml:lang="en-US">ACLs can provide permissions beyond those permitted through the file mode and must be
-verified by the file integrity tools.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R51)</td>
 <td>Configure Notification of Post-AIDE Scan Details</td>
 <td xml:lang="en-US">AIDE should notify appropriate personnel of the details of a scan after the scan has been run.
 If AIDE has already been configured for periodic execution in <code>/etc/crontab</code>, append the
@@ -2430,6 +2560,24 @@ negative consequences that could ultimately affect the security state of the ope
 system. The operating system's Information Management Officer (IMO)/Information System
 Security Officer (ISSO) and System Administrators (SAs) must be notified via email and/or
 monitoring system trap when there is an unauthorized modification of a configuration item.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R51)</td>
+<td>Configure AIDE to Verify Access Control Lists (ACLs)</td>
+<td xml:lang="en-US">By default, the <code>acl</code> option is added to the <code>FIPSR</code> ruleset in AIDE.
+If using a custom ruleset or the <code>acl</code> option is missing, add <code>acl</code>
+to the appropriate ruleset.
+For example, add <code>acl</code> to the following line in <code>/etc/aide.conf</code>:
+<pre>FIPSR = p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha256</pre>
+AIDE rules can be configured in multiple ways; this is merely one example that is already
+configured by default.
+
+The remediation provided with this rule adds <code>acl</code> to all rule sets available in
+<code>/etc/aide.conf</code>
+</td>
+<td xml:lang="en-US">ACLs can provide permissions beyond those permitted through the file mode and must be
+verified by the file integrity tools.</td>
 <td></td>
 </tr>
 <tr>
@@ -2460,14 +2608,14 @@ Ensure the group owner of /usr/bin/sudo is <xccdf-1.1:sub xmlns:xccdf-1.1="http:
 </tr>
 <tr>
 <td>BP28(R58)</td>
-<td>Ensure Only Users Logged In To Real tty Can Execute Sudo - sudo use_pty</td>
-<td xml:lang="en-US">The sudo <code>use_pty</code> tag, when specified, will only execute sudo
-commands from users logged in to a real tty.
-This should be enabled by making sure that the <code>use_pty</code> tag exists in
+<td>Ensure sudo Runs In A Minimal Environment - sudo env_reset</td>
+<td xml:lang="en-US">The sudo <code>env_reset</code> tag, when specified, will run the command in a minimal environment,
+containing the TERM, PATH, HOME, MAIL, SHELL, LOGNAME, USER and SUDO_* variables.
+This should be enabled by making sure that the <code>env_reset</code> tag exists in
 <code>/etc/sudoers</code> configuration file or any sudo configuration snippets
 in <code>/etc/sudoers.d/</code>.</td>
-<td xml:lang="en-US">Requiring that sudo commands be run in a pseudo-terminal can prevent an attacker from retaining
-access to the user's terminal after the main program has finished executing.</td>
+<td xml:lang="en-US">Forcing sudo to reset the environment ensures that environment variables are not passed on to the
+command accidentaly, preventing leak of potentially sensitive information.</td>
 <td></td>
 </tr>
 <tr>
@@ -2480,6 +2628,29 @@ This should be enabled by making sure that the <code>ignore_dot</code> tag exist
 in <code>/etc/sudoers.d/</code>.</td>
 <td xml:lang="en-US">Ignoring the commands in the user's current directory prevents an attacker from executing commands
 downloaded locally.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R58)</td>
+<td>Ensure Privileged Escalated Commands Cannot Execute Other Commands - sudo NOEXEC</td>
+<td xml:lang="en-US">The sudo <code>NOEXEC</code> tag, when specified, prevents user executed
+commands from executing other commands, like a shell for example.
+This should be enabled by making sure that the <code>NOEXEC</code> tag exists in
+<code>/etc/sudoers</code> configuration file or any sudo configuration snippets
+in <code>/etc/sudoers.d/</code>.</td>
+<td xml:lang="en-US">Restricting the capability of sudo allowed commands to execute sub-commands
+prevents users from running programs with privileges they wouldn't have otherwise.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R58)</td>
+<td>Ensure sudo passwd_timeout is appropriate - sudo passwd_timeout</td>
+<td xml:lang="en-US">The sudo <code>passwd_timeout</code> tag sets the amount of time sudo password prompt waits.
+The passwd_timeout should be configured by making sure that the
+<code>passwd_timeout=sub_var_value("var_sudo_passwd_timeout")</code> tag exists in
+<code>/etc/sudoers</code> configuration file or any sudo configuration snippets
+in <code>/etc/sudoers.d/</code>.</td>
+<td xml:lang="en-US">Reducing the time <code>sudo</code> waits for a a password reduces the time the process is exposed.</td>
 <td></td>
 </tr>
 <tr>
@@ -2509,26 +2680,14 @@ written to by unauthorized users.</td>
 </tr>
 <tr>
 <td>BP28(R58)</td>
-<td>Ensure Privileged Escalated Commands Cannot Execute Other Commands - sudo NOEXEC</td>
-<td xml:lang="en-US">The sudo <code>NOEXEC</code> tag, when specified, prevents user executed
-commands from executing other commands, like a shell for example.
-This should be enabled by making sure that the <code>NOEXEC</code> tag exists in
+<td>Ensure Only Users Logged In To Real tty Can Execute Sudo - sudo use_pty</td>
+<td xml:lang="en-US">The sudo <code>use_pty</code> tag, when specified, will only execute sudo
+commands from users logged in to a real tty.
+This should be enabled by making sure that the <code>use_pty</code> tag exists in
 <code>/etc/sudoers</code> configuration file or any sudo configuration snippets
 in <code>/etc/sudoers.d/</code>.</td>
-<td xml:lang="en-US">Restricting the capability of sudo allowed commands to execute sub-commands
-prevents users from running programs with privileges they wouldn't have otherwise.</td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R58)</td>
-<td>Ensure sudo Runs In A Minimal Environment - sudo env_reset</td>
-<td xml:lang="en-US">The sudo <code>env_reset</code> tag, when specified, will run the command in a minimal environment,
-containing the TERM, PATH, HOME, MAIL, SHELL, LOGNAME, USER and SUDO_* variables.
-This should be enabled by making sure that the <code>env_reset</code> tag exists in
-<code>/etc/sudoers</code> configuration file or any sudo configuration snippets
-in <code>/etc/sudoers.d/</code>.</td>
-<td xml:lang="en-US">Forcing sudo to reset the environment ensures that environment variables are not passed on to the
-command accidentaly, preventing leak of potentially sensitive information.</td>
+<td xml:lang="en-US">Requiring that sudo commands be run in a pseudo-terminal can prevent an attacker from retaining
+access to the user's terminal after the main program has finished executing.</td>
 <td></td>
 </tr>
 <tr>
@@ -2645,30 +2804,6 @@ privileges.</td>
 </tr>
 <tr>
 <td>BP28(R67)</td>
-<td>Disable the ssh_sysadm_login SELinux Boolean</td>
-<td xml:lang="en-US">By default, the SELinux boolean <code>ssh_sysadm_login</code> is disabled.
-If this setting is enabled, it should be disabled.
-
-To disable the <code>ssh_sysadm_login</code> SELinux boolean, run the following command:
-<pre>$ sudo setsebool -P ssh_sysadm_login off</pre>
-</td>
-<td xml:lang="en-US"></td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R67)</td>
-<td>Disable the selinuxuser_execheap SELinux Boolean</td>
-<td xml:lang="en-US">By default, the SELinux boolean <code>selinuxuser_execheap</code> is disabled.
-If this setting is enabled, it should be disabled.
-
-To disable the <code>selinuxuser_execheap</code> SELinux boolean, run the following command:
-<pre>$ sudo setsebool -P selinuxuser_execheap off</pre>
-</td>
-<td xml:lang="en-US"></td>
-<td></td>
-</tr>
-<tr>
-<td>BP28(R67)</td>
 <td>Disable the secure_mode_insmod SELinux Boolean</td>
 <td xml:lang="en-US">By default, the SELinux boolean <code>secure_mode_insmod</code> is disabled.
 If this setting is enabled, it should be disabled.
@@ -2681,6 +2816,19 @@ To disable the <code>secure_mode_insmod</code> SELinux boolean, run the followin
 </tr>
 <tr>
 <td>BP28(R67)</td>
+<td>Disable the selinuxuser_execheap SELinux Boolean</td>
+<td xml:lang="en-US">By default, the SELinux boolean <code>selinuxuser_execheap</code> is disabled.
+When enabled this boolean is enabled it allows selinuxusers to execute code from the heap.
+If this setting is enabled, it should be disabled.
+
+To disable the <code>selinuxuser_execheap</code> SELinux boolean, run the following command:
+<pre>$ sudo setsebool -P selinuxuser_execheap off</pre>
+</td>
+<td xml:lang="en-US">Disabling code execution from the heap blocks buffer overflow attacks.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R67)</td>
 <td>disable the selinuxuser_execstack SELinux Boolean</td>
 <td xml:lang="en-US">By default, the SELinux boolean <code>selinuxuser_execstack</code> is enabled.
 This setting should be disabled as unconfined executables should not be able
@@ -2688,6 +2836,18 @@ to make their stack executable.
 
 To disable the <code>selinuxuser_execstack</code> SELinux boolean, run the following command:
 <pre>$ sudo setsebool -P selinuxuser_execstack off</pre>
+</td>
+<td xml:lang="en-US">Disabling code execution from the stack blocks buffer overflow attacks.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R67)</td>
+<td>Disable the ssh_sysadm_login SELinux Boolean</td>
+<td xml:lang="en-US">By default, the SELinux boolean <code>ssh_sysadm_login</code> is disabled.
+If this setting is enabled, it should be disabled.
+
+To disable the <code>ssh_sysadm_login</code> SELinux boolean, run the following command:
+<pre>$ sudo setsebool -P ssh_sysadm_login off</pre>
 </td>
 <td xml:lang="en-US"></td>
 <td></td>
@@ -2832,9 +2992,7 @@ services such as Kerberos, but it is also important for maintaining accurate
 logs and auditing possible security breaches.
 <br><br>
 The NTP daemon offers all of the functionality of <code>ntpdate</code>, which is now
-deprecated.  Additional information on this is available at
-
-    <a href="http://support.ntp.org/bin/view/Dev/DeprecatingNtpdate">http://support.ntp.org/bin/view/Dev/DeprecatingNtpdate</a>.</td>
+deprecated.</td>
 <td></td>
 </tr>
 <tr>

@@ -363,10 +363,11 @@ more difficult by ensuring a larger search space.</td>
 <td>CCE-27160-1</td>
 <td>Ensure PAM Enforces Password Requirements - Authentication Retry Prompts Permitted Per-Session</td>
 <td xml:lang="en-US">To configure the number of retry prompts that are permitted per-session:
-Edit the <code>pam_pwquality.so</code> statement in <code>/etc/pam.d/system-auth</code> to
-show <code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if
-site policy is more restrictive.
-The DoD requirement is a maximum of 3 prompts per session.</td>
+Edit the <code>pam_pwquality.so</code> statement in
+<code>/etc/pam.d/system-auth</code>  to show
+<code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if site
+policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+per session.</td>
 <td xml:lang="en-US">Setting the password retry prompts that are permitted on a per-session basis to a low value
 requires some software, such as SSH, to re-connect. This can slow down and
 draw additional attention to some types of password-guessing attacks. Note that this
@@ -1961,7 +1962,7 @@ which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
 unusual activity.</td>
 <td></td>
-<td>AC-2(4)<br>AU-2(d)<br>AU-12(c)<br>AC-6(9)<br>CM-6(a)<br>
+<td>AC-2(4)<br>AU-2(d)<br>AU-3<br>AU-3.1<br>AU-12(a)<br>AU-12(c)<br>AU-12.1(ii)<br>AU-12.1(iv)<br>AC-6(9)<br>CM-6(a)<br>MA-4(1)(a)<br>
 </td>
 </tr>
 <tr>
@@ -1990,6 +1991,29 @@ limited capability. As such, motivation exists to monitor these programs for
 unusual activity.</td>
 <td></td>
 <td>AU-2(d)<br>AU-12(c)<br>AC-6(9)<br>CM-6(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-83555-3</td>
+<td>Record Events When Privileged Executables Are Run</td>
+<td xml:lang="en-US">Verify the system generates an audit record when privileged functions are executed.
+<pre># grep -iw execve <code>/etc/audit/audit.rules</code></pre>
+
+<pre>-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k setuid</pre>
+<pre>-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k setuid</pre>
+<pre>-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k setgid</pre>
+<pre>-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k setgid</pre>
+
+If both the "b32" and "b64" audit rules for "SUID" files are not defined, this is a finding.
+If both the "b32" and "b64" audit rules for "SGID" files are not defined, this is a finding.</td>
+<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have
+compromised information system accounts, is a serious and ongoing concern
+and can have significant adverse impacts on organizations. Auditing the use
+of privileged functions is one way to detect such misuse and identify the
+risk from insider threats and the advanced persistent threat.</td>
+<td></td>
+<td>CM-5(1)<br>AU-7(a)<br>AU-7(b)<br>AU-8(b)<br>AU-12(3)<br>AC-6(9)<br>
 </td>
 </tr>
 <tr>
@@ -2558,6 +2582,7 @@ new versions have been installed. To configure <code>yum</code> to remove the
 
 previous software components after updating, set the <code>clean_requirements_on_remove</code>
 
+
 to <code>1</code> in <code>/etc/yum.conf</code>.</td>
 <td xml:lang="en-US">Previous versions of software components that are not removed from the information
 system after updates have been installed may be exploited by some adversaries.</td>
@@ -3024,12 +3049,9 @@ can allow an attacker to move trivially to other hosts.</td>
 <td xml:lang="en-US">To configure the system to notify users of last logon/access
 using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code>
 settings in
-
 <code>/etc/pam.d/postlogin</code> to read as follows:
-<pre>session     [success=1 default=ignore] pam_succeed_if.so service !~ gdm* service !~ su* quiet
-session     [default=1]   pam_lastlog.so nowtmp showfailed
-session     optional      pam_lastlog.so silent noupdate showfailed</pre>
-</td>
+<pre>session     required pam_lastlog.so showfailed</pre>
+And make sure that the <code>silent</code> option is not set.</td>
 <td xml:lang="en-US">Users need to be aware of activity that occurs regarding
 their account. Providing users with information regarding the number
 of unsuccessful attempts that were made to login to their account
@@ -3671,7 +3693,11 @@ into the account without authentication. Remove any instances of the
 
 <code>/etc/pam.d/system-auth</code>
 
-to prevent logins with empty passwords.</td>
+to prevent logins with empty passwords.
+Note that this rule is not applicable for systems running within a
+container. Having user with empty password within a container is not
+considered a risk, because it should not be possible to directly login into
+a container anyway.</td>
 <td xml:lang="en-US">If an account has an empty password, anyone could log in and
 run commands with the privileges of that account. Accounts with
 empty passwords should never be used in operational environments.</td>
@@ -3842,7 +3868,7 @@ access control rules established.</td>
 <td xml:lang="en-US">Removing the <code>vsftpd</code> package decreases the risk of its
 accidental activation.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>IA-5(1)(c)<br>IA-5(1).1(v)<br>CM-7<br>CM-7.1(ii)<br>
 </td>
 </tr>
 <tr>
@@ -4961,7 +4987,8 @@ The expected output for:
 <td xml:lang="en-US">If the rootpw, targetpw, or runaspw flags are defined and not disabled, by default the operating system will prompt
 the invoking user for the "root" user password.</td>
 <td></td>
-<td></td>
+<td>CM-6(b)<br>CM-6.1(iv)<br>
+</td>
 </tr>
 <tr>
 <td>CCE-27127-0</td>

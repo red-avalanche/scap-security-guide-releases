@@ -363,10 +363,11 @@ more difficult by ensuring a larger search space.</td>
 <td></td>
 <td>Ensure PAM Enforces Password Requirements - Authentication Retry Prompts Permitted Per-Session</td>
 <td xml:lang="en-US">To configure the number of retry prompts that are permitted per-session:
-Edit the <code>pam_pwquality.so</code> statement in <code>/etc/pam.d/system-auth</code> to
-show <code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if
-site policy is more restrictive.
-The DoD requirement is a maximum of 3 prompts per session.</td>
+Edit the <code>pam_pwquality.so</code> statement in
+<code>/etc/pam.d/system-auth</code>  to show
+<code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if site
+policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+per session.</td>
 <td xml:lang="en-US">Setting the password retry prompts that are permitted on a per-session basis to a low value
 requires some software, such as SSH, to re-connect. This can slow down and
 draw additional attention to some types of password-guessing attacks. Note that this
@@ -1997,7 +1998,7 @@ which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
 unusual activity.</td>
 <td></td>
-<td>AC-2(4)<br>AU-2(d)<br>AU-12(c)<br>AC-6(9)<br>CM-6(a)<br>
+<td>AC-2(4)<br>AU-2(d)<br>AU-3<br>AU-3.1<br>AU-12(a)<br>AU-12(c)<br>AU-12.1(ii)<br>AU-12.1(iv)<br>AC-6(9)<br>CM-6(a)<br>MA-4(1)(a)<br>
 </td>
 </tr>
 <tr>
@@ -2607,6 +2608,7 @@ new versions have been installed. To configure <code>yum</code> to remove the
 
 previous software components after updating, set the <code>clean_requirements_on_remove</code>
 
+
 to <code>1</code> in <code>/etc/yum.conf</code>.</td>
 <td xml:lang="en-US">Previous versions of software components that are not removed from the information
 system after updates have been installed may be exploited by some adversaries.</td>
@@ -3096,12 +3098,9 @@ can allow an attacker to move trivially to other hosts.</td>
 <td xml:lang="en-US">To configure the system to notify users of last logon/access
 using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code>
 settings in
-
 <code>/etc/pam.d/postlogin</code> to read as follows:
-<pre>session     [success=1 default=ignore] pam_succeed_if.so service !~ gdm* service !~ su* quiet
-session     [default=1]   pam_lastlog.so nowtmp showfailed
-session     optional      pam_lastlog.so silent noupdate showfailed</pre>
-</td>
+<pre>session     required pam_lastlog.so showfailed</pre>
+And make sure that the <code>silent</code> option is not set.</td>
 <td xml:lang="en-US">Users need to be aware of activity that occurs regarding
 their account. Providing users with information regarding the number
 of unsuccessful attempts that were made to login to their account
@@ -3793,7 +3792,11 @@ into the account without authentication. Remove any instances of the
 
 <code>/etc/pam.d/system-auth</code>
 
-to prevent logins with empty passwords.</td>
+to prevent logins with empty passwords.
+Note that this rule is not applicable for systems running within a
+container. Having user with empty password within a container is not
+considered a risk, because it should not be possible to directly login into
+a container anyway.</td>
 <td xml:lang="en-US">If an account has an empty password, anyone could log in and
 run commands with the privileges of that account. Accounts with
 empty passwords should never be used in operational environments.</td>
@@ -3964,23 +3967,7 @@ access control rules established.</td>
 <td xml:lang="en-US">Removing the <code>vsftpd</code> package decreases the risk of its
 accidental activation.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>Remove the X Windows Package Group</td>
-<td xml:lang="en-US">By removing the xorg-x11-server-common package, the system no longer has X Windows
-installed. If X Windows is not installed then the system cannot boot into graphical user mode.
-This prevents the system from being accidentally or maliciously booted into a <code>graphical.target</code>
-mode. To do so, run the following command:
-<pre>$ sudo yum groupremove "X Window System"</pre>
-<pre>$ sudo yum remove xorg-x11-server-common</pre>
-</td>
-<td xml:lang="en-US">Unnecessary service packages must not be installed to decrease the attack surface of the system. X windows has a long history of security
-vulnerabilities and should not be installed unless approved and documented.</td>
-<td></td>
-<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>IA-5(1)(c)<br>IA-5(1).1(v)<br>CM-7<br>CM-7.1(ii)<br>
 </td>
 </tr>
 <tr>
@@ -5082,6 +5069,40 @@ is critical that the user re-authenticate.</td>
 </tr>
 <tr>
 <td></td>
+<td>The operating system must restrict privilege elevation to authorized personnel</td>
+<td xml:lang="en-US">The sudo command allows a user to execute programs with elevated
+(administrator) privileges. It prompts the user for their password
+and confirms your request to execute a command by checking a file,
+called sudoers.
+Restrict privileged actions by removing the following entries from the sudoers file:
+<code>ALL ALL=(ALL) ALL</code>
+<code>ALL ALL=(ALL:ALL) ALL</code>
+</td>
+<td xml:lang="en-US">If the "sudoers" file is not configured correctly, any user defined
+on the system can initiate privileged actions on the target system.</td>
+<td></td>
+<td>CM-6(b)<br>CM-6(iv)<br>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure invoking users password for privilege escalation when using sudo</td>
+<td xml:lang="en-US">The sudoers security policy requires that users authenticate themselves before they can use sudo.
+When sudoers requires authentication, it validates the invoking user's credentials.
+The expected output for:
+<pre>sudo egrep -i '(!rootpw|!targetpw|!runaspw)' /etc/sudoers /etc/sudoers.d/* | grep -v '#'</pre>
+<pre> /etc/sudoers:Defaults !targetpw
+      /etc/sudoers:Defaults !rootpw
+      /etc/sudoers:Defaults !runaspw </pre>
+</td>
+<td xml:lang="en-US">If the rootpw, targetpw, or runaspw flags are defined and not disabled, by default the operating system will prompt
+the invoking user for the "root" user password.</td>
+<td></td>
+<td>CM-6(b)<br>CM-6.1(iv)<br>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>Enable Randomized Layout of Virtual Address Space</td>
 <td xml:lang="en-US">To set the runtime status of the <code>kernel.randomize_va_space</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.randomize_va_space=2</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.randomize_va_space = 2</pre>
@@ -5326,22 +5347,29 @@ service to valid network resources.</td>
 </tr>
 <tr>
 <td></td>
-<td>Disable X Windows Startup By Setting Default Target</td>
-<td xml:lang="en-US">Systems that do not require a graphical user interface should only boot by
-default into <code>multi-user.target</code> mode. This prevents accidental booting of the system
-into a <code>graphical.target</code> mode. Setting the system's default target to
-<code>multi-user.target</code> will prevent automatic startup of the X server. To do so, run:
+<td>Disable graphical user interface</td>
+<td xml:lang="en-US">By removing the following packages,  the system no longer has X Windows installed.
+
+<code>xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils</code>
+
+If X Windows is not installed then the system cannot boot into graphical user mode.
+This prevents the system from being accidentally or maliciously booted into a <code>graphical.target</code>
+mode. To do so, run the following command:
+
+<pre>sudo yum remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils</pre>
+
+Additionally, setting the system's default target to
+<code>multi-user.target</code> will prevent automatic startup of the X server.
+To do so, run:
 <pre>$ systemctl set-default multi-user.target</pre>
 You should see the following output:
 <pre>Removed symlink /etc/systemd/system/default.target.
 Created symlink from /etc/systemd/system/default.target to /usr/lib/systemd/system/multi-user.target.</pre>
 </td>
-<td xml:lang="en-US">Services that are not required for system and application processes
-must not be active to decrease the attack surface of the system. X windows has a
-long history of security vulnerabilities and should not be used unless approved
-and documented.</td>
+<td xml:lang="en-US">Unnecessary service packages must not be installed to decrease the attack surface of the system. X windows has a long history of security
+vulnerabilities and should not be installed unless approved and documented.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
+<td>CM-6(b)<br>
 </td>
 </tr>
 </table>

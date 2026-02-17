@@ -412,7 +412,7 @@ If properly configured, the output should be true.
 To ensure that users cannot disable the screensaver idle inactivity setting, run the following:
 $ grep idle-activation-enabled /etc/dconf/db/local.d/locks/*
 If properly configured, the output should be /org/gnome/desktop/screensaver/idle-activation-enabled
-      Is it the case that idle_activation_enabled is not enabled or configured?
+      Is it the case that idle-activation-enabled is not enabled or configured?
       </td>
 <td>To activate the screensaver in the GNOME3 desktop after a period of inactivity,
 add or set <code>idle-activation-enabled</code> to <code>true</code> in
@@ -436,7 +436,7 @@ of the information system but does not want to logout because of the temporary n
 <td>To ensure that users cannot disable the screensaver idle inactivity setting, run the following:
 $ grep idle-activation-enabled /etc/dconf/db/local.d/locks/*
 If properly configured, the output should be /org/gnome/desktop/screensaver/idle-activation-enabled
-      Is it the case that idle_activation_enabled is not locked?
+      Is it the case that idle-activation-enabled is not locked?
       </td>
 <td>If not already configured, ensure that users cannot change GNOME3 screensaver lock settings
 by adding <pre>/org/gnome/desktop/screensaver/idle-activation-enabled</pre>
@@ -485,17 +485,18 @@ requires some software, such as SSH, to re-connect. This can slow down and
 draw additional attention to some types of password-guessing attacks. Note that this
 is different from account lockout, which is provided by the pam_faillock module.</td>
 <td>To check how many retry attempts are permitted on a per-session basis, run the following command:
-$ grep pam_pwquality /etc/pam.d/system-auth
+$ grep pam_pwquality /etc/pam.d/system-auth 
 The retry parameter will indicate how many attempts are permitted.
 The DoD required value is less than or equal to 3.
 This would appear as retry=3, or a lower value.
       Is it the case that it is not the required value?
       </td>
 <td>To configure the number of retry prompts that are permitted per-session:
-Edit the <code>pam_pwquality.so</code> statement in <code>/etc/pam.d/system-auth</code> to
-show <code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if
-site policy is more restrictive.
-The DoD requirement is a maximum of 3 prompts per session.</td>
+Edit the <code>pam_pwquality.so</code> statement in
+<code>/etc/pam.d/system-auth</code>  to show
+<code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if site
+policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+per session.</td>
 <td>RHEL-07-010118</td>
 </tr>
 <tr>
@@ -508,17 +509,18 @@ requires some software, such as SSH, to re-connect. This can slow down and
 draw additional attention to some types of password-guessing attacks. Note that this
 is different from account lockout, which is provided by the pam_faillock module.</td>
 <td>To check how many retry attempts are permitted on a per-session basis, run the following command:
-$ grep pam_pwquality /etc/pam.d/system-auth
+$ grep pam_pwquality /etc/pam.d/system-auth 
 The retry parameter will indicate how many attempts are permitted.
 The DoD required value is less than or equal to 3.
 This would appear as retry=3, or a lower value.
       Is it the case that it is not the required value?
       </td>
 <td>To configure the number of retry prompts that are permitted per-session:
-Edit the <code>pam_pwquality.so</code> statement in <code>/etc/pam.d/system-auth</code> to
-show <code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if
-site policy is more restrictive.
-The DoD requirement is a maximum of 3 prompts per session.</td>
+Edit the <code>pam_pwquality.so</code> statement in
+<code>/etc/pam.d/system-auth</code>  to show
+<code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if site
+policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+per session.</td>
 <td>RHEL-07-010119</td>
 </tr>
 <tr>
@@ -1029,7 +1031,11 @@ into the account without authentication. Remove any instances of the
 
 <code>/etc/pam.d/system-auth</code>
 
-to prevent logins with empty passwords.</td>
+to prevent logins with empty passwords.
+Note that this rule is not applicable for systems running within a
+container. Having user with empty password within a container is not
+considered a risk, because it should not be possible to directly login into
+a container anyway.</td>
 <td>RHEL-07-010290</td>
 </tr>
 <tr>
@@ -1725,7 +1731,9 @@ monitoring system trap when there is an unauthorized modification of a configura
 <td>To determine that periodic AIDE execution has been scheduled, run the following command:
 $ grep aide /etc/crontab
 The output should return something similar to the following:
+
 05 4 * * * root /usr/sbin/aide --check
+
 
 NOTE: The usage of special cron times, such as @daily or @weekly, is acceptable.
       Is it the case that there is no output?
@@ -1977,6 +1985,7 @@ clean_requirements_on_remove=1
 new versions have been installed. To configure <code>yum</code> to remove the
 
 previous software components after updating, set the <code>clean_requirements_on_remove</code>
+
 
 to <code>1</code> in <code>/etc/yum.conf</code>.</td>
 <td>RHEL-07-020200</td>
@@ -6265,20 +6274,17 @@ allows the user to determine if any unauthorized activity has occurred
 and gives them an opportunity to notify administrators.</td>
 <td>To ensure that last logon/access notification is configured correctly, run
 the following command:
-
 $ grep pam_lastlog.so /etc/pam.d/postlogin
-The output should show output showfailed.
+The output should show output showfailed and must not contain
+silent.
       Is it the case that that is not the case?
       </td>
 <td>To configure the system to notify users of last logon/access
 using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code>
 settings in
-
 <code>/etc/pam.d/postlogin</code> to read as follows:
-<pre>session     [success=1 default=ignore] pam_succeed_if.so service !~ gdm* service !~ su* quiet
-session     [default=1]   pam_lastlog.so nowtmp showfailed
-session     optional      pam_lastlog.so silent noupdate showfailed</pre>
-</td>
+<pre>session     required pam_lastlog.so showfailed</pre>
+And make sure that the <code>silent</code> option is not set.</td>
 <td>RHEL-07-040530</td>
 </tr>
 <tr>

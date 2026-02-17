@@ -294,7 +294,7 @@ assigned.</td>
 <td xml:lang="en-US">The system must use a strong hashing algorithm to store the password. The
 system must use a sufficient number of hashing rounds to ensure the required
 level of entropy.</td>
-<td xml:lang="en-US">Verify the SUSE operating system requires the shadow password suite
+<td xml:lang="en-US">Verify the operating system requires the shadow password suite
 configuration be set to encrypt interactive user passwords using a strong
 cryptographic hash.
 Check that the interactive user account passwords are using a strong
@@ -648,6 +648,44 @@ The remediation provided with this rule adds <code>xattrs</code> to all rule set
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
 <td>CCI-000366<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>apparmor_configured</td>
+<td>medium</td>
+<td>Ensure AppArmor is Active and Configured</td>
+<td xml:lang="en-US">Using a whitelist provides a configuration management method for allowing
+the execution of only authorized software. Using only authorized software
+decreases risk by limiting the number of potential vulnerabilities.<br><br>
+
+The organization must identify authorized software programs and permit
+execution of authorized software by adding each authorized program to the
+"pam_apparmor" exception policy. The process used to identify software
+programs that are authorized to execute on organizational information
+systems is commonly referred to as whitelisting.<br><br>
+
+Verification of whitelisted software occurs prior to execution or at system
+startup.<br><br>
+
+Users' home directories/folders may contain information of a sensitive
+nature. Nonprivileged users should coordinate any sharing of information
+with a System Administrator (SA) through shared resources.<br><br>
+
+Apparmor can confine users to their home directory, not allowing them to
+make any changes outside of their own home directories. Confining users to
+their home directory will minimize the risk of sharing information.</td>
+<td xml:lang="en-US">Verify that the Apparmor tool is configured to
+control whitelisted applications and user home directory access
+control.<br><br>
+
+The <code>apparmor</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable apparmor.service</pre>
+</td>
+<td></td>
+<td>SRG-OS-000368-GPOS-00154<br>SRG-OS-000370-GPOS-00155<br>SRG-OS-000312-GPOS-00122<br>SRG-OS-000312-GPOS-00123<br>SRG-OS-000312-GPOS-00124<br>SRG-OS-000326-GPOS-00126<br>SRG-OS-000324-GPOS-00125<br>
+</td>
+<td>CCI-001764<br>CCI-001774<br>CCI-002165<br>CCI-002233<br>CCI-002235<br>
 </td>
 <td></td>
 </tr>
@@ -1967,9 +2005,9 @@ form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td></td>
-<td>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000392-GPOS-00172<br>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000392-GPOS-00172<br>
 </td>
-<td>CCI-000135<br>CCI-000172<br>CCI-002884<br>
+<td>CCI-000130<br>CCI-000135<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
 </td>
 <td></td>
 </tr>
@@ -1992,10 +2030,13 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+
 <pre>-a always,exit -F path=/usr/bin/usermod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
+
 <pre>-a always,exit -F path=/usr/bin/usermod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td></td>
@@ -2015,7 +2056,7 @@ compromised information system accounts, is a serious and ongoing concern
 and can have significant adverse impacts on organizations. Auditing the use
 of privileged functions is one way to detect such misuse and identify the
 risk from insider threats and the advanced persistent threat.</td>
-<td xml:lang="en-US">Verify the SUSE operating system generates an audit record when privileged functions are executed.
+<td xml:lang="en-US">Verify the system generates an audit record when privileged functions are executed.
 <pre># grep -iw execve <code>/etc/audit/audit.rules</code></pre>
 
 <pre>-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k setuid</pre>
@@ -2400,9 +2441,10 @@ account changes:
 <td xml:lang="en-US">Information stored in one location is vulnerable to accidental or incidental
 deletion or alteration.Off-loading is a common process in information
 systems with limited audit storage capacity.</td>
-<td xml:lang="en-US">The SUSE operating system must allocate audit record storage capacity to
-store at least one weeks worth of audit records when audit records are not
-immediately sent to a central audit record storage facility.
+<td xml:lang="en-US">The SUSE Linux Enterprise 12 operating system must allocate audit record storage
+capacity to store at least one weeks worth of audit records when audit
+records are not immediately sent to a central audit record storage
+facility.
 
 The partition size needed to capture a week's worth of audit records is
 based on the activity level of the system and the total storage capacity
@@ -2692,6 +2734,7 @@ system after updates have been installed may be exploited by some adversaries.</
 new versions have been installed. To configure <code>zypper</code> to remove the
 
 previous software components after updating, set the <code>solver.upgradeRemoveDroppedPackages</code>
+
 
 to <code>1</code> in <code>/etc/zypp/zypp.conf</code>.</td>
 <td></td>
@@ -3002,6 +3045,101 @@ After the settings have been set, run <code>dconf update</code>.</td>
 <td></td>
 </tr>
 <tr>
+<td>dir_group_ownership_library_dirs</td>
+<td>medium</td>
+<td>Verify that Shared Library Directories Have Root Group Ownership</td>
+<td xml:lang="en-US">Files from shared library directories are loaded into the address
+space of processes (including privileged ones) or of the kernel itself at
+runtime. Proper ownership of library directories is necessary to protect
+the integrity of the system.</td>
+<td xml:lang="en-US">System-wide shared library files, which are linked to executables
+during process load time or run time, are stored in the following directories
+by default:
+<pre>/lib
+/lib64
+/usr/lib
+/usr/lib64
+</pre>
+Kernel modules, which can be added to the kernel during runtime, are also
+stored in <code>/lib/modules</code>. All files in these directories should be
+group-owned by the <code>root</code> user. If the  directories, is found to be owned
+by a user other than root correct its
+ownership with the following command:
+<pre>$ sudo chgrp root <i>DIR</i></pre>
+</td>
+<td></td>
+<td>SRG-OS-000259-GPOS-00100<br>
+</td>
+<td>CCI-001499<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>dir_ownership_library_dirs</td>
+<td>medium</td>
+<td>Verify that Shared Library Directories Have Root Ownership</td>
+<td xml:lang="en-US">Files from shared library directories are loaded into the address
+space of processes (including privileged ones) or of the kernel itself at
+runtime. Proper ownership of library directories is necessary to protect
+the integrity of the system.</td>
+<td xml:lang="en-US">System-wide shared library files, which are linked to executables
+during process load time or run time, are stored in the following directories
+by default:
+<pre>/lib
+/lib64
+/usr/lib
+/usr/lib64
+</pre>
+Kernel modules, which can be added to the kernel during runtime, are also
+stored in <code>/lib/modules</code>. All files in these directories should be
+owned by the <code>root</code> user. If the  directories, is found to be owned
+by a user other than root correct its
+ownership with the following command:
+<pre>$ sudo chown root <i>DIR</i></pre>
+</td>
+<td></td>
+<td>SRG-OS-000259-GPOS-00100<br>
+</td>
+<td>CCI-001499<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>dir_permissions_library_dirs</td>
+<td>medium</td>
+<td>Verify that Shared Library Directories Have Restrictive Permissions</td>
+<td xml:lang="en-US">If the operating system were to allow any user to make changes to software libraries,
+then those changes might be implemented without undergoing the appropriate testing
+and approvals that are part of a robust change management process.
+
+This requirement applies to operating systems with software libraries that are accessible
+and configurable, as in the case of interpreted languages. Software libraries also include
+privileged programs which execute with escalated privileges. Only qualified and authorized
+individuals must be allowed to obtain access to information system components for purposes
+of initiating changes, including upgrades and modifications.</td>
+<td xml:lang="en-US">System-wide shared library directories, which contain are linked to executables
+during process load time or run time, are stored in the following directories
+by default:
+<pre>/lib
+/lib64
+/usr/lib
+/usr/lib64
+</pre>
+Kernel modules, which can be added to the kernel during runtime, are
+stored in <code>/lib/modules</code>. All sub-directories in these directories
+should not be group-writable or world-writable. If any file in these
+directories is found to be group-writable or world-writable, correct
+its permission with the following command:
+<pre>$ sudo chmod go-w <i>DIR</i></pre>
+</td>
+<td></td>
+<td>SRG-OS-000259-GPOS-00100<br>
+</td>
+<td>CCI-001499<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>dir_perms_world_writable_sticky_bits</td>
 <td>medium</td>
 <td>Verify that All World-Writable Directories Have Sticky Bits Set</td>
@@ -3057,6 +3195,77 @@ appropriate group.</td>
 <td></td>
 </tr>
 <tr>
+<td>dir_system_commands_group_root_owned</td>
+<td>medium</td>
+<td>Verify that system commands directories have root as a group owner</td>
+<td xml:lang="en-US">If the operating system were to allow any user to make changes to 
+software libraries, then those changes might be implemented without 
+undergoing the appropriate testing and approvals that are part of a 
+robust change management process.
+
+This requirement applies to operating systems with software libraries
+that are accessible and configurable, as in the case of interpreted languages. 
+Software libraries also include privileged programs which execute with escalated 
+privileges. Only qualified and authorized individuals must be allowed to obtain 
+access to information system components for purposes of initiating changes, 
+including upgrades and modifications.</td>
+<td xml:lang="en-US">System commands are stored in the following directories:
+by default:
+<pre>/bin 
+/sbin 
+/usr/bin 
+/usr/sbin 
+/usr/local/bin 
+/usr/local/sbin
+</pre>
+All these directories should have <code>root</code> user as a group owner. 
+If any system command directory is not group owned by a user other than root 
+correct its ownership with the following command:
+<pre>$ sudo chgrp root <i>DIR</i></pre>
+</td>
+<td></td>
+<td>SRG-OS-000259-GPOS-00100<br>
+</td>
+<td>CCI-001499<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>dir_system_commands_root_owned</td>
+<td>medium</td>
+<td>Verify that system commands directories have root ownership</td>
+<td xml:lang="en-US">If the operating system were to allow any user to make changes to 
+software libraries, then those changes might be implemented without 
+undergoing the appropriate testing and approvals that are part of a 
+robust change management process.
+
+This requirement applies to operating systems with software libraries
+that are accessible and configurable, as in the case of interpreted languages. 
+Software libraries also include privileged programs which execute with escalated 
+privileges. Only qualified and authorized individuals must be allowed to obtain 
+access to information system components for purposes of initiating changes, 
+including upgrades and modifications.</td>
+<td xml:lang="en-US">System commands are stored in the following directories by default:
+<pre>/bin 
+/sbin 
+/usr/bin 
+/usr/sbin 
+/usr/local/bin 
+/usr/local/sbin
+</pre>
+All these directories should be owned by the <code>root</code> user. 
+If any system command directory is not owned by a user other than root 
+correct its ownership with the following command:
+<pre>$ sudo chown root <i>DIR</i></pre>
+</td>
+<td></td>
+<td>SRG-OS-000259-GPOS-00100<br>
+</td>
+<td>CCI-001499<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>disable_ctrlaltdel_reboot</td>
 <td>high</td>
 <td>Disable Ctrl-Alt-Del Reboot Activation</td>
@@ -3095,7 +3304,6 @@ and gives them an opportunity to notify administrators.</td>
 <td xml:lang="en-US">To configure the system to notify users of last logon/access
 using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code>
 settings in
-
 <code>/etc/pam.d/login</code> to read as follows:
 <pre>session     required pam_lastlog.so showfailed</pre>
 And make sure that the <code>silent</code> option is not set.</td>
@@ -3248,6 +3456,97 @@ interactive users home directory, use the following command:
 <td></td>
 </tr>
 <tr>
+<td>file_groupownership_system_commands_dirs</td>
+<td>medium</td>
+<td>Verify that system commands files are group owned by root </td>
+<td xml:lang="en-US">If the operating system allows any user to make changes to software
+libraries, then those changes might be implemented without undergoing the
+appropriate testing and approvals that are part of a robust change management
+process.
+This requirement applies to operating systems with software libraries
+that are accessible and configurable, as in the case of interpreted languages.
+Software libraries also include privileged programs which execute with
+escalated privileges. Only qualified and authorized individuals must be
+allowed to obtain access to information system components for purposes
+of initiating changes, including upgrades and modifications.</td>
+<td xml:lang="en-US">System commands files are stored in the following directories by default:
+<pre>/bin
+/sbin
+/usr/bin
+/usr/sbin
+/usr/local/bin
+/usr/local/sbin
+</pre>
+All files in these directories should be owned by the <code>root</code> group.
+If the directory, or any file in these directories, is found to be owned
+by a group other than root correct its ownership with the following command:
+<pre>$ sudo chgrp root <i>FILE</i></pre>
+</td>
+<td></td>
+<td>SRG-OS-000259-GPOS-00100<br>
+</td>
+<td>CCI-001499<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>file_ownership_binary_dirs</td>
+<td>medium</td>
+<td>Verify that System Executables Have Root Ownership</td>
+<td xml:lang="en-US">System binaries are executed by privileged users as well as system services,
+and restrictive permissions are necessary to ensure that their
+execution of these programs cannot be co-opted.</td>
+<td xml:lang="en-US">System executables are stored in the following directories by default:
+<pre>/bin
+/sbin
+/usr/bin
+/usr/libexec
+/usr/local/bin
+/usr/local/sbin
+/usr/sbin</pre>
+All files in these directories should be owned by the <code>root</code> user.
+If any file <i>FILE</i> in these directories is found
+to be owned by a user other than root, correct its ownership with the
+following command:
+<pre>$ sudo chown root <i>FILE</i></pre>
+</td>
+<td></td>
+<td>SRG-OS-000259-GPOS-00100<br>
+</td>
+<td>CCI-001499<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>file_ownership_library_dirs</td>
+<td>medium</td>
+<td>Verify that Shared Library Files Have Root Ownership</td>
+<td xml:lang="en-US">Files from shared library directories are loaded into the address
+space of processes (including privileged ones) or of the kernel itself at
+runtime. Proper ownership is necessary to protect the integrity of the system.</td>
+<td xml:lang="en-US">System-wide shared library files, which are linked to executables
+during process load time or run time, are stored in the following directories
+by default:
+<pre>/lib
+/lib64
+/usr/lib
+/usr/lib64
+</pre>
+Kernel modules, which can be added to the kernel during runtime, are also
+stored in <code>/lib/modules</code>. All files in these directories should be
+owned by the <code>root</code> user. If the directory, or any file in these
+directories, is found to be owned by a user other than root correct its
+ownership with the following command:
+<pre>$ sudo chown root <i>FILE</i></pre>
+</td>
+<td></td>
+<td>SRG-OS-000259-GPOS-00100<br>
+</td>
+<td>CCI-001499<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>file_permission_user_init_files</td>
 <td>medium</td>
 <td>Ensure All User Initialization Files Have Mode 0740 Or Less Permissive</td>
@@ -3266,6 +3565,34 @@ following command:
 <td></td>
 </tr>
 <tr>
+<td>file_permissions_binary_dirs</td>
+<td>medium</td>
+<td>Verify that System Executables Have Restrictive Permissions</td>
+<td xml:lang="en-US">System binaries are executed by privileged users, as well as system services,
+and restrictive permissions are necessary to ensure execution of these programs
+cannot be co-opted.</td>
+<td xml:lang="en-US">System executables are stored in the following directories by default:
+<pre>/bin
+/sbin
+/usr/bin
+/usr/libexec
+/usr/local/bin
+/usr/local/sbin
+/usr/sbin</pre>
+All files in these directories should not be group-writable or world-writable.
+If any file <i>FILE</i> in these directories is found
+to be group-writable or world-writable, correct its permission with the
+following command:
+<pre>$ sudo chmod go-w <i>FILE</i></pre>
+</td>
+<td></td>
+<td>SRG-OS-000259-GPOS-00100<br>
+</td>
+<td>CCI-001499<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>file_permissions_home_directories</td>
 <td>medium</td>
 <td>All Interactive User Home Directories Must Have mode 0750 Or Less Permissive</td>
@@ -3280,6 +3607,35 @@ following command:
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
 <td>CCI-000366<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>file_permissions_library_dirs</td>
+<td>medium</td>
+<td>Verify that Shared Library Files Have Restrictive Permissions</td>
+<td xml:lang="en-US">Files from shared library directories are loaded into the address
+space of processes (including privileged ones) or of the kernel itself at
+runtime. Restrictive permissions are necessary to protect the integrity of the system.</td>
+<td xml:lang="en-US">System-wide shared library files, which are linked to executables
+during process load time or run time, are stored in the following directories
+by default:
+<pre>/lib
+/lib64
+/usr/lib
+/usr/lib64
+</pre>
+Kernel modules, which can be added to the kernel during runtime, are
+stored in <code>/lib/modules</code>. All files in these directories
+should not be group-writable or world-writable. If any file in these
+directories is found to be group-writable or world-writable, correct
+its permission with the following command:
+<pre>$ sudo chmod go-w <i>FILE</i></pre>
+</td>
+<td></td>
+<td>SRG-OS-000259-GPOS-00100<br>
+</td>
+<td>CCI-001499<br>
 </td>
 <td></td>
 </tr>
@@ -3343,6 +3699,33 @@ may be compromised.</td>
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
 <td>CCI-000366<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>file_permissions_system_commands_dirs</td>
+<td>medium</td>
+<td>Verify that system commands are protected from unauthorized access</td>
+<td xml:lang="en-US">System binaries are executed by privileged users, as well as system services,
+and restrictive permissions are necessary to ensure execution of these programs
+cannot be co-opted.</td>
+<td xml:lang="en-US">System commands are stored in the following directories by default:
+<pre>/bin
+/sbin
+/usr/bin
+/usr/sbin
+/usr/local/bin
+/usr/local/sbin</pre>
+All files in these directories should not be group-writable or world-writable.
+If any file <i>FILE</i> in these directories is found
+to be group-writable or world-writable, correct its permission with the
+following command:
+<pre>$ sudo chmod 755 <i>FILE</i></pre>
+</td>
+<td></td>
+<td>SRG-OS-000259-GPOS-00100<br>
+</td>
+<td>CCI-001499<br>
 </td>
 <td></td>
 </tr>
@@ -3653,6 +4036,25 @@ vendor, SUSE is responsible for providing security patches.</td>
 <td></td>
 </tr>
 <tr>
+<td>is_fips_mode_enabled</td>
+<td>high</td>
+<td>Verify '/proc/sys/crypto/fips_enabled' exists</td>
+<td xml:lang="en-US">Use of weak or untested encryption algorithms undermines the purposes of utilizing encryption to
+protect data. The operating system must implement cryptographic modules adhering to the higher
+standards approved by the federal government since this provides assurance they have been tested
+and validated.</td>
+<td xml:lang="en-US">On a system where FIPS 140-2 mode is enabled, <code>/proc/sys/crypto/fips_enabled</code> must exist.
+To verify FIPS mode, run the following command:
+<pre>cat /proc/sys/crypto/fips_enabled</pre>
+</td>
+<td></td>
+<td>SRG-OS-000478-GPOS-00223<br>SRG-OS-000396-GPOS-00176<br>
+</td>
+<td>CCI-002450<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>kernel_module_usb-storage_disabled</td>
 <td>medium</td>
 <td>Disable Modprobe Loading of USB Storage Driver</td>
@@ -3788,7 +4190,11 @@ into the account without authentication. Remove any instances of the
 
 password authentication configurations in <code>/etc/pam.d/</code>
 
-to prevent logins with empty passwords.</td>
+to prevent logins with empty passwords.
+Note that this rule is not applicable for systems running within a
+container. Having user with empty password within a container is not
+considered a risk, because it should not be possible to directly login into
+a container anyway.</td>
 <td></td>
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
@@ -3838,6 +4244,32 @@ and users that are trusted by the local system.
 To remove these files, run the following command to delete them from any
 location:
 <pre>$ sudo rm /[path]/[to]/[file]/shosts.equiv</pre>
+</td>
+<td></td>
+<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>no_shelllogin_for_systemaccounts</td>
+<td>medium</td>
+<td>Ensure that System Accounts Do Not Run a Shell Upon Login</td>
+<td xml:lang="en-US">Ensuring shells are not given to system accounts upon login makes it more
+difficult for attackers to make use of system accounts.</td>
+<td xml:lang="en-US">Some accounts are not associated with a human user of the system, and exist to
+perform some administrative function. Should an attacker be able to log into
+these accounts, they should not be granted access to a shell.
+<br><br>
+The login shell for each local account is stored in the last field of each line
+in <code>/etc/passwd</code>. System accounts are those user accounts with a user ID
+less than UID_MIN, where value of UID_MIN directive is set in
+/etc/login.defs configuration file. In the default configuration UID_MIN is set
+to 1000, thus system accounts are those user accounts with a user ID less than
+1000. The user ID is stored in the third field. If any system account
+<i>SYSACCT</i> (other than root) has a login shell, disable it with the
+command: <pre>$ sudo usermod -s /sbin/nologin <i>SYSACCT</i></pre>
 </td>
 <td></td>
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
@@ -3944,6 +4376,23 @@ $ sudo zypper install aide</pre>
 <td></td>
 </tr>
 <tr>
+<td>package_pam_apparmor_installed</td>
+<td>medium</td>
+<td>Install the pam_apparmor Package</td>
+<td xml:lang="en-US">Protection of system integrity using AppArmor depends on this package being
+installed.</td>
+<td xml:lang="en-US">The <code>pam_apparmor</code> package can be installed with the following command:
+<pre>
+$ sudo zypper install pam_apparmor</pre>
+</td>
+<td></td>
+<td>SRG-OS-000368-GPOS-00154<br>SRG-OS-000370-GPOS-00155<br>SRG-OS-000312-GPOS-00122<br>SRG-OS-000312-GPOS-00123<br>SRG-OS-000312-GPOS-00124<br>SRG-OS-000326-GPOS-00126<br>SRG-OS-000324-GPOS-00125<br>
+</td>
+<td>CCI-001764<br>CCI-001774<br>CCI-002165<br>CCI-002233<br>CCI-002235<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>package_telnet-server_removed</td>
 <td>high</td>
 <td>Uninstall telnet-server Package</td>
@@ -3968,6 +4417,21 @@ $ sudo zypper remove telnet-server</pre>
 <td>SRG-OS-000095-GPOS-00049<br>
 </td>
 <td>CCI-000381<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>package_vsftpd_removed</td>
+<td>high</td>
+<td>Uninstall vsftpd Package</td>
+<td xml:lang="en-US">Removing the <code>vsftpd</code> package decreases the risk of its
+accidental activation.</td>
+<td xml:lang="en-US">The <code>vsftpd</code> package can be removed with the following command: <pre> $ sudo zypper remove vsftpd</pre>
+</td>
+<td></td>
+<td>SRG-OS-000074-GPOS-00042<br>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>SRG-OS-000095-GPOS-00049<br>
+</td>
+<td>CCI-000197<br>CCI-000366<br>CCI-000381<br>
 </td>
 <td></td>
 </tr>
@@ -4131,8 +4595,8 @@ are created or passwords are changed. It is common practice for
 administrators to create temporary passwords for user accounts that allow
 the users to log on, yet force them to change the password once they have
 successfully authenticated.</td>
-<td xml:lang="en-US">Temporary passwords for SUSE operating system logons must require an
-immediate change to a permanent password.
+<td xml:lang="en-US">Temporary passwords for SUSE Linux Enterprise 12 operating system logons must
+require an immediate change to a permanent password.
 
 Verify that a policy exists that ensures when a user is created, it is
 creating using a method that forces a user to change their password upon
@@ -4163,6 +4627,39 @@ $ sudo newaliases</pre>
 <td>SRG-OS-000046-GPOS-00022<br>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
 <td>CCI-000139<br>CCI-000366<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>root_permissions_syslibrary_files</td>
+<td>medium</td>
+<td>Verify the system-wide library files in directories
+"/lib", "/lib64", "/usr/lib/" and "/usr/lib64" are owned by root.</td>
+<td xml:lang="en-US">If the operating system were to allow any user to make changes to software libraries,
+then those changes might be implemented without undergoing the appropriate testing and
+approvals that are part of a robust change management process.
+
+This requirement applies to operating systems with software libraries that are
+accessible and configurable, as in the case of interpreted languages. Software libraries
+also include privileged programs which execute with escalated privileges. Only qualified
+and authorized individuals must be allowed to obtain access to information system components
+for purposes of initiating changes, including upgrades and modifications.</td>
+<td xml:lang="en-US">System-wide library files are stored in the following directories
+by default:
+<pre>/lib
+/lib64
+/usr/lib
+/usr/lib64
+</pre>
+All system-wide shared library files should be protected from unauthorised
+access. If any of these files is not owned by root, correct its owner with
+the following command:
+<pre>$ sudo chgrp root <i>DIR</i></pre>
+</td>
+<td></td>
+<td>SRG-OS-000259-GPOS-00100<br>
+</td>
+<td>CCI-001499<br>
 </td>
 <td></td>
 </tr>
@@ -4892,6 +5389,26 @@ SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> 
 <td></td>
 </tr>
 <tr>
+<td>sshd_x11_use_localhost</td>
+<td>medium</td>
+<td>Prevent remote hosts from connecting to the proxy display</td>
+<td xml:lang="en-US">When X11 forwarding is enabled, there may be additional exposure to the
+server and client displays if the sshd proxy display is configured to listen
+on the wildcard address. By default, sshd binds the forwarding server to the
+loopback address and sets the hostname part of the <code>DISPLAY</code>
+environment variable to localhost. This prevents remote hosts from
+connecting to the proxy display.  </td>
+<td xml:lang="en-US">The SSH daemon should prevent remote hosts from connecting to the proxy
+display. Make sure that the option <code>X11UseLocalhost</code> is set to
+<code>yes</code> within the SSH server configuration file.</td>
+<td></td>
+<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>sssd_memcache_timeout</td>
 <td>medium</td>
 <td>Configure SSSD's Memory Cache to Expire</td>
@@ -4974,6 +5491,72 @@ in <code>/etc/sudoers.d/</code>.</td>
 <td>SRG-OS-000373-GPOS-00158<br>SRG-OS-000373-GPOS-00157<br>SRG-OS-000373-GPOS-00156<br>
 </td>
 <td>CCI-002038<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>sudo_require_reauthentication</td>
+<td>medium</td>
+<td>The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+<td xml:lang="en-US">Without re-authentication, users may access resources or perform tasks for which they
+do not have authorization.
+<br><br>
+When operating systems provide the capability to escalate a functional capability, it
+is critical that the user re-authenticate.</td>
+<td xml:lang="en-US">The sudo <code>timestamp_timeout</code> tag sets the amount of time sudo password prompt waits.
+The default <code>timestamp_timeout</code> value is 5 minutes.
+The timestamp_timeout should be configured by making sure that the
+<code>timestamp_timeout</code> tag exists in
+<code>/etc/sudoers</code> configuration file or any sudo configuration snippets
+in <code>/etc/sudoers.d/</code>.
+If the value is set to an integer less than 0, the user's time stamp will not expire 
+and the user will not have to re-authenticate for privileged actions until the user's session is terminated.</td>
+<td></td>
+<td>SRG-OS-000373-GPOS-00158<br>SRG-OS-000373-GPOS-00157<br>SRG-OS-000373-GPOS-00156<br>
+</td>
+<td>CCI-002038<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>sudo_restrict_privilege_elevation_to_authorized</td>
+<td>medium</td>
+<td>The operating system must restrict privilege elevation to authorized personnel</td>
+<td xml:lang="en-US">If the "sudoers" file is not configured correctly, any user defined
+on the system can initiate privileged actions on the target system.</td>
+<td xml:lang="en-US">The sudo command allows a user to execute programs with elevated
+(administrator) privileges. It prompts the user for their password
+and confirms your request to execute a command by checking a file,
+called sudoers.
+Restrict privileged actions by removing the following entries from the sudoers file:
+<code>ALL ALL=(ALL) ALL</code>
+<code>ALL ALL=(ALL:ALL) ALL</code>
+</td>
+<td></td>
+<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>sudoers_validate_passwd</td>
+<td>medium</td>
+<td>Ensure invoking users password for privilege escalation when using sudo</td>
+<td xml:lang="en-US">If the rootpw, targetpw, or runaspw flags are defined and not disabled, by default the operating system will prompt
+the invoking user for the "root" user password.</td>
+<td xml:lang="en-US">The sudoers security policy requires that users authenticate themselves before they can use sudo.
+When sudoers requires authentication, it validates the invoking user's credentials.
+The expected output for:
+<pre>sudo egrep -i '(!rootpw|!targetpw|!runaspw)' /etc/sudoers /etc/sudoers.d/* | grep -v '#'</pre>
+<pre> /etc/sudoers:Defaults !targetpw
+      /etc/sudoers:Defaults !rootpw
+      /etc/sudoers:Defaults !runaspw </pre>
+</td>
+<td></td>
+<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
+</td>
+<td>CCI-000366<br>CCI-002227<br>
 </td>
 <td></td>
 </tr>
@@ -5075,9 +5658,9 @@ replacing them with 0.</td>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.kptr_restrict = 1</pre>
 </td>
 <td></td>
-<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
+<td>SRG-OS-000433-GPOS-00193<br>SRG-OS-000433-GPOS-00192<br>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
-<td>CCI-000366<br>
+<td>CCI-002824<br>CCI-000366<br>
 </td>
 <td></td>
 </tr>
@@ -5282,6 +5865,21 @@ To make sure that the setting is persistent, add the following line to a file in
 <td></td>
 </tr>
 <tr>
+<td>sysctl_net_ipv6_conf_all_accept_redirects</td>
+<td>medium</td>
+<td>Disable Accepting ICMP Redirects for All IPv6 Interfaces</td>
+<td xml:lang="en-US">An illicit ICMP redirect message could result in a man-in-the-middle attack.</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.accept_redirects=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_redirects = 0</pre>
+</td>
+<td></td>
+<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
+</td>
+<td>CCI-000366<br>CCI-001551<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>sysctl_net_ipv6_conf_all_accept_source_route</td>
 <td>medium</td>
 <td>Disable Kernel Parameter for Accepting Source-Routed Packets on all IPv6 Interfaces</td>
@@ -5304,6 +5902,23 @@ To make sure that the setting is persistent, add the following line to a file in
 <td></td>
 </tr>
 <tr>
+<td>sysctl_net_ipv6_conf_all_forwarding</td>
+<td>medium</td>
+<td>Disable Kernel Parameter for IPv6 Forwarding</td>
+<td xml:lang="en-US">IP forwarding permits the kernel to forward packets from one network
+interface to another. The ability to forward packets between two networks is
+only appropriate for systems acting as routers.</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.forwarding</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.forwarding=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.forwarding = 0</pre>
+</td>
+<td></td>
+<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>sysctl_net_ipv6_conf_default_accept_redirects</td>
 <td>medium</td>
 <td>Disable Kernel Parameter for Accepting ICMP Redirects by Default on IPv6 Interfaces</td>
@@ -5315,6 +5930,28 @@ To make sure that the setting is persistent, add the following line to a file in
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
 <td>CCI-000366<br>CCI-001551<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>sysctl_net_ipv6_conf_default_accept_source_route</td>
+<td>medium</td>
+<td>Disable Kernel Parameter for Accepting Source-Routed Packets on IPv6 Interfaces by Default</td>
+<td xml:lang="en-US">Source-routed packets allow the source of the packet to suggest routers
+forward the packet along a different path than configured on the router, which can
+be used to bypass network security measures. This requirement applies only to the
+forwarding of source-routerd traffic, such as when IPv6 forwarding is enabled and
+the system is functioning as a router.
+
+Accepting source-routed packets in the IPv6 protocol has few legitimate
+uses. It should be disabled unless it is absolutely required.</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_source_route=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_source_route = 0</pre>
+</td>
+<td></td>
+<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
+</td>
+<td>CCI-000366<br>
 </td>
 <td></td>
 </tr>
