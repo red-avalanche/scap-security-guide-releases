@@ -128,16 +128,26 @@ $ sudo yum install aide</pre>
 <td>CCE-27220-3</td>
 <td>Build and Test AIDE Database</td>
 <td xml:lang="en-US">Run the following command to generate a new database:
+
 <pre>$ sudo /usr/sbin/aide --init</pre>
-By default, the database will be written to the file <code>/var/lib/aide/aide.db.new.gz</code>.
+
+By default, the database will be written to the file
+
+<code>/var/lib/aide/aide.db.new.gz</code>.
+
 Storing the database, the configuration file <code>/etc/aide.conf</code>, and the binary
-<code>/usr/sbin/aide</code> (or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
+
+<code>/usr/sbin/aide</code>
+
+(or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
 The newly-generated database can be installed as follows:
 
 <pre>$ sudo cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz</pre>
 
 To initiate a manual check, run the following command:
+
 <pre>$ sudo /usr/sbin/aide --check</pre>
+
 If this check produces any unexpected output, investigate.</td>
 </tr>
 <tr>
@@ -1147,6 +1157,17 @@ Restrict privileged actions by removing the following entries from the sudoers f
 <td xml:lang="en-US">The sudo <code>NOPASSWD</code> tag, when specified, allows a user to execute commands using sudo without having to authenticate. Only the <code>vdsm</code> user should have this capability in any sudo configuration snippets in <code>/etc/sudoers.d/</code>.</td>
 </tr>
 <tr>
+<td>CCE-86277-1</td>
+<td>Ensure sudo only includes the default configuration directory</td>
+<td xml:lang="en-US">Administrators can configure authorized <code>sudo</code> users via drop-in files, and it is possible to include
+other directories and configuration files from the file currently being parsed.
+
+Make sure that <code>/etc/sudoers</code> only includes drop-in configuration files from <code>/etc/sudoers.d</code>.
+The <code>/etc/sudoers</code> should contain only one <code>#includedir</code> directive pointing to
+<code>/etc/sudoers.d</code>, and no file in <code>/etc/sudoers.d/</code> should include other files or directories.
+Note that the '#' character doesn't denote a comment in the configuration file.</td>
+</tr>
+<tr>
 <td>CCE-83631-2</td>
 <td>Explicit arguments in sudo specifications</td>
 <td xml:lang="en-US">All commands in the sudoers file must strictly specify the arguments allowed to be used for a given user.
@@ -1370,6 +1391,22 @@ $ sudo yum erase iprutils</pre>
 <td xml:lang="en-US">The <code>krb5-workstation</code> package can be removed with the following command:
 <pre>
 $ sudo yum erase krb5-workstation</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Uninstall libreport-plugin-logger Package</td>
+<td xml:lang="en-US">The <code>libreport-plugin-logger</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase libreport-plugin-logger</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Uninstall libreport-plugin-rhtsupport Package</td>
+<td xml:lang="en-US">The <code>libreport-plugin-rhtsupport</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase libreport-plugin-rhtsupport</pre>
 </td>
 </tr>
 <tr>
@@ -1612,6 +1649,7 @@ screen by setting <code>banner-message-text</code> to <code>'<i>APPROVED_BANNER<
 where <i>APPROVED_BANNER</i> is the approved banner for your environment.
 <br><br>
 To enable, add or edit <code>banner-message-text</code> to
+
 <code>/etc/dconf/db/gdm.d/00-security-settings</code>. For example:
 <pre>[org/gnome/login-screen]
 banner-message-text='<i>APPROVED_BANNER</i>'</pre>
@@ -1619,9 +1657,27 @@ Once the setting has been added, add a lock to
 <code>/etc/dconf/db/gdm.d/locks/00-security-settings-lock</code> to prevent user modification.
 For example:
 <pre>/org/gnome/login-screen/banner-message-text</pre>
+
 After the settings have been set, run <code>dconf update</code>.
 When entering a warning banner that spans several lines, remember
 to begin and end the string with <code>'</code> and use <code>\n</code> for new lines.</td>
+</tr>
+<tr>
+<td></td>
+<td>Install pam_pwquality Package</td>
+<td xml:lang="en-US">
+The <code>libpwquality</code> package can be installed with the following command:
+<pre>
+$ sudo yum install libpwquality</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Disallow Configuration to Bypass Password Requirements for Privilege Escalation</td>
+<td xml:lang="en-US">Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre>
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.</td>
 </tr>
 <tr>
 <td>CCE-27275-7</td>
@@ -1828,12 +1884,30 @@ in <code>/etc/security/pwquality.conf</code> to equal <xccdf-1.1:sub xmlns:xccdf
 to require use of a special character in passwords.</td>
 </tr>
 <tr>
+<td>CCE-85876-1</td>
+<td>Ensure PAM password complexity module is enabled in password-auth</td>
+<td xml:lang="en-US">To enable PAM password complexity in password-auth file:
+Edit the <code>password</code> section in
+<code>/etc/pam.d/password-auth</code> to show
+<code>password    requisite                                    pam_pwquality.so</code>.</td>
+</tr>
+<tr>
+<td>CCE-85874-6</td>
+<td>Ensure PAM password complexity module is enabled in system-auth</td>
+<td xml:lang="en-US">To enable PAM password complexity in system-auth file:
+Edit the <code>password</code> section in
+<code>/etc/pam.d/system-auth</code> to show
+<code>password    requisite                                    pam_pwquality.so</code>.</td>
+</tr>
+<tr>
 <td>CCE-27160-1</td>
 <td>Ensure PAM Enforces Password Requirements - Authentication Retry Prompts Permitted Per-Session</td>
 <td xml:lang="en-US">To configure the number of retry prompts that are permitted per-session:
+
 Edit the <code>pam_pwquality.so</code> statement in
 
-<code>/etc/pam.d/system-auth</code>  to show
+<code>/etc/pam.d/system-auth</code> to show
+
 
 <code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if site
 policy is more restrictive. The DoD requirement is a maximum of 3 prompts
@@ -1864,6 +1938,24 @@ algorithm for password hashing:
 the system will use SHA-512 as the hashing algorithm:
 <pre>ENCRYPT_METHOD SHA512</pre>
 </td>
+</tr>
+<tr>
+<td>CCE-85943-9</td>
+<td>Set PAM's Password Hashing Algorithm - password-auth</td>
+<td xml:lang="en-US">The PAM system service can be configured to only store encrypted
+representations of passwords. In
+<code>/etc/pam.d/password-auth</code>,
+the
+<code>password</code> section of the file controls which PAM modules execute
+during a password change. Set the <code>pam_unix.so</code> module in the
+<code>password</code> section to include the argument <code>sha512</code>, as shown
+below:
+<br>
+<pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i></pre>
+<br>
+This will help ensure when local users change their passwords, hashes for
+the new passwords will be generated using the SHA-512 algorithm. This is
+the default.</td>
 </tr>
 <tr>
 <td>CCE-82043-1</td>
@@ -2269,11 +2361,22 @@ into the account without authentication. Remove any instances of the
 
 <code>/etc/pam.d/system-auth</code>
 
-to prevent logins with empty passwords.
-Note that this rule is not applicable for systems running within a
-container. Having user with empty password within a container is not
-considered a risk, because it should not be possible to directly login into
-a container anyway.</td>
+to prevent logins with empty passwords.</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure There Are No Accounts With Blank or Null Passwords</td>
+<td xml:lang="en-US">Check the "/etc/shadow" file for blank passwords with the
+following command:
+<pre>$ sudo awk -F: '!$2 {print $1}' /etc/shadow</pre>
+If the command returns any results, this is a finding.
+Configure all accounts on the system to have a password or lock
+the account with the following commands:
+Perform a password reset:
+<pre>$ sudo passwd [username]</pre>
+Lock an account:
+<pre>$ sudo passwd -l [username]</pre>
+</td>
 </tr>
 <tr>
 <td>CCE-83388-9</td>
@@ -2709,20 +2812,27 @@ The <code>auditd</code> service can be enabled with the following command:
 <td>Enable Auditing for Processes Which Start Prior to the Audit Daemon</td>
 <td xml:lang="en-US">To ensure all processes can be audited, even those which start
 prior to the audit daemon, add the argument <code>audit=1</code> to the default
-GRUB 2 command line for the Linux operating system in
-
-<code>/etc/default/grub</code>, so that the line looks similar to
+GRUB 2 command line for the Linux operating system.
+To ensure that <code>audit=1</code> is added as a kernel command line
+argument to newly installed kernels, ad <code>audit=1</code> to the
+default Grub2 command line for Linux operating systems.  Modify the line within
+<code>/etc/default/grub</code> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit=1 ..."</pre>
-In case the <code>GRUB_DISABLE_RECOVERY</code> is set to true, then the parameter should be added to the <code>GRUB_CMDLINE_LINUX_DEFAULT</code> instead.</td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit=1"</pre>
+</td>
 </tr>
 <tr>
 <td>CCE-82156-1</td>
 <td>Extend Audit Backlog Limit for the Audit Daemon</td>
 <td xml:lang="en-US">To improve the kernel capacity to queue all log events, even those which occurred
 prior to the audit daemon, add the argument <code>audit_backlog_limit=8192</code> to the default
-GRUB 2 command line for the Linux operating system in
-<code>/etc/default/grub</code>, in the manner below:
-<pre>GRUB_CMDLINE_LINUX="crashkernel=auto rd.lvm.lv=VolGroup/LogVol06 rd.lvm.lv=VolGroup/lv_swap rhgb quiet rd.shell=0 audit=1 audit_backlog_limit=8192"</pre>
+GRUB 2 command line for the Linux operating system.
+To ensure that <code>audit_backlog_limit=8192</code> is added as a kernel command line
+argument to newly installed kernels, ad <code>audit_backlog_limit=8192</code> to the
+default Grub2 command line for Linux operating systems.  Modify the line within
+<code>/etc/default/grub</code> as shown below:
+<pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
 </td>
 </tr>
 <tr>
@@ -3210,6 +3320,25 @@ group account, change the mode of the audit log files with the following command
 <br>
 Otherwise, change the mode of the audit log files with the following command:
 <pre>$ sudo chmod 0700 /var/log/audit</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Audit Configuration Files Must Be Owned By Group root</td>
+<td xml:lang="en-US">All audit configuration files must be owned by group root.
+<pre>chown :root /etc/audit/audit*.{rules,conf} /etc/audit/rules.d/*</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Audit Configuration Files Must Be Owned By Root</td>
+<td xml:lang="en-US">All audit configuration files must be owned by root user.
+
+To properly set the owner of <code>/etc/audit/</code>, run the command:
+<pre>$ sudo chown root /etc/audit/ </pre>
+
+To properly set the owner of <code>/etc/audit/rules.d/</code>, run the command:
+<pre>$ sudo chown root /etc/audit/rules.d/ </pre>
 </td>
 </tr>
 <tr>
@@ -6151,16 +6280,96 @@ cp /usr/share/doc/audit*/rules/{10-base-config,11-loginuid,30-ospp-v42,43-module
 <td>CCE-82351-8</td>
 <td>IOMMU configuration directive</td>
 <td xml:lang="en-US">On x86 architecture supporting VT-d, the IOMMU manages the access control policy between the hardware devices and some
-    of the system critical units such as the memory.</td>
+    of the system critical units such as the memory.
+To ensure that <code>iommu=force</code> is added as a kernel command line
+argument to newly installed kernels, ad <code>iommu=force</code> to the
+default Grub2 command line for Linux operating systems.  Modify the line within
+<code>/etc/default/grub</code> as shown below:
+<pre>GRUB_CMDLINE_LINUX="... iommu=force ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="iommu=force"</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Force kernel panic on uncorrected MCEs</td>
+<td xml:lang="en-US">A Machine Check Exception is an error generated by the CPU itdetects an error
+in itself, memory or I/O devices.
+These errors may be corrected and generate a check log entry, if an error
+cannot be corrected the kernel may panic or SIGBUS.
+
+To force the kernel to panic on any uncorrected error reported by Machine Check
+set the MCE tolerance to zero by adding <code>mce=0</code>
+to the default GRUB 2 command line for the Linux operating system.
+To ensure that <code>mce=0</code> is added as a kernel command line
+argument to newly installed kernels, ad <code>mce=0</code> to the
+default Grub2 command line for Linux operating systems.  Modify the line within
+<code>/etc/default/grub</code> as shown below:
+<pre>GRUB_CMDLINE_LINUX="... mce=0 ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="mce=0"</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure SMAP is not disabled during boot</td>
+<td xml:lang="en-US">The SMAP is used to prevent the supervisor mode from unintentionally reading/writing into
+memory pages in the user space, it is enabled by default since Linux kernel 3.7.
+But it could be disabled through kernel boot parameters.
+
+Ensure that Supervisor Mode Access Prevention (SMAP) is not disabled by
+the <code>nosmap</code> boot paramenter option.
+
+Check that the line <pre>GRUB_CMDLINE_LINUX="..."</pre> within <code>/etc/default/grub</code>
+doesn't contain the argument <code>nosmap</code>.
+Run the following command to update command line for already installed kernels:
+<pre># grubby --update-kernel=ALL --remove-args="nosmap"</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure SMEP is not disabled during boot</td>
+<td xml:lang="en-US">The SMEP is used to prevent the supervisor mode from executing user space code,
+it is enabled by default since Linux kernel 3.0. But it could be disabled through
+kernel boot parameters.
+
+Ensure that Supervisor Mode Execution Prevention (SMEP) is not disabled by
+the <code>nosmep</code> boot paramenter option.
+
+Check that the line <pre>GRUB_CMDLINE_LINUX="..."</pre> within <code>/etc/default/grub</code>
+doesn't contain the argument <code>nosmep</code>.
+Run the following command to update command line for already installed kernels:
+<pre># grubby --update-kernel=ALL --remove-args="nosmep"</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Disable merging of slabs with similar size</td>
+<td xml:lang="en-US">The kernel may merge similar slabs together to reduce overhead and increase
+cache hotness of objects.
+Disabling merging of slabs keeps the slabs separate and reduces the risk of
+kernel heap overflows overwriting objects in merged caches.
+
+To disable merging of slabs in the Kernel add the argument <code>slab_nomerge=yes</code>
+to the default GRUB 2 command line for the Linux operating system.
+To ensure that <code>slab_nomerge=yes</code> is added as a kernel command line
+argument to newly installed kernels, ad <code>slab_nomerge=yes</code> to the
+default Grub2 command line for Linux operating systems.  Modify the line within
+<code>/etc/default/grub</code> as shown below:
+<pre>GRUB_CMDLINE_LINUX="... slab_nomerge=yes ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="slab_nomerge=yes"</pre>
+</td>
 </tr>
 <tr>
 <td>CCE-82159-5</td>
 <td>Disable vsyscalls</td>
 <td xml:lang="en-US">To disable use of virtual syscalls,
 add the argument <code>vsyscall=none</code> to the default
-GRUB 2 command line for the Linux operating system in
-<code>/etc/default/grub</code>, in the manner below:
-<pre>GRUB_CMDLINE_LINUX="vsyscall=none"</pre>
+GRUB 2 command line for the Linux operating system.
+To ensure that <code>vsyscall=none</code> is added as a kernel command line
+argument to newly installed kernels, ad <code>vsyscall=none</code> to the
+default Grub2 command line for Linux operating systems.  Modify the line within
+<code>/etc/default/grub</code> as shown below:
+<pre>GRUB_CMDLINE_LINUX="... vsyscall=none ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="vsyscall=none"</pre>
 </td>
 </tr>
 <tr>
@@ -6798,15 +7007,13 @@ add or correct the following line in
 <td>Ensure IPv6 is disabled through kernel boot parameter</td>
 <td xml:lang="en-US">To disable IPv6 protocol support in the Linux kernel,
 add the argument <code>ipv6.disable=1</code> to the default
-GRUB2 command line for the Linux operating system in
-
-<code>/etc/default/grub</code>, so that the line looks similar to
+GRUB2 command line for the Linux operating system.
+To ensure that <code>ipv6.disable=1</code> is added as a kernel command line
+argument to newly installed kernels, ad <code>ipv6.disable=1</code> to the
+default Grub2 command line for Linux operating systems.  Modify the line within
+<code>/etc/default/grub</code> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... ipv6.disable=1 ..."</pre>
-In case the <code>GRUB_DISABLE_RECOVERY</code> is set to true, then the parameter should be added to the <code>GRUB_CMDLINE_LINUX_DEFAULT</code> instead.
-Run one of following command to ensure that the configuration is applied when booting currently installed kernels:
-<pre>sudo grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
-or
-<pre>sudo /sbin/grubby --update-kernel=ALL --args="ipv6.disable=1"</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="ipv6.disable=1"</pre>
 </td>
 </tr>
 <tr>
@@ -7604,6 +7811,12 @@ To properly set the permissions of <code>/etc/shadow</code>, run the command:
 </tr>
 <tr>
 <td></td>
+<td>Verify Group Who Owns /var/log/syslog File</td>
+<td xml:lang="en-US"> To properly set the group owner of <code>/var/log/syslog</code>, run the command: <pre>$ sudo chgrp adm /var/log/syslog</pre>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>Verify User Who Owns /var/log Directory</td>
 <td xml:lang="en-US"> To properly set the owner of <code>/var/log</code>, run the command: <pre>$ sudo chown root /var/log </pre>
 </td>
@@ -7612,6 +7825,12 @@ To properly set the permissions of <code>/etc/shadow</code>, run the command:
 <td></td>
 <td>Verify User Who Owns /var/log/messages File</td>
 <td xml:lang="en-US"> To properly set the owner of <code>/var/log/messages</code>, run the command: <pre>$ sudo chown root /var/log/messages </pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Verify User Who Owns /var/log/syslog File</td>
+<td xml:lang="en-US"> To properly set the owner of <code>/var/log/syslog</code>, run the command: <pre>$ sudo chown syslog /var/log/syslog </pre>
 </td>
 </tr>
 <tr>
@@ -7632,6 +7851,31 @@ To properly set the permissions of <code>/var/log/messages</code>, run the comma
 </tr>
 <tr>
 <td></td>
+<td>Verify Permissions on /var/log/syslog File</td>
+<td xml:lang="en-US">
+To properly set the permissions of <code>/var/log/syslog</code>, run the command:
+<pre>$ sudo chmod 0640 /var/log/syslog</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Verify that System Executable Have Root Ownership</td>
+<td xml:lang="en-US">
+<pre>/bin
+/sbin
+/usr/bin
+/usr/sbin
+/usr/local/bin
+/usr/local/sbin</pre>
+All these directories should be owned by the <code>root</code> user.
+If any directory <i>DIR</i> in these directories is found
+to be owned by a user other than root, correct its ownership with the
+following command:
+<pre>$ sudo chown root <i>DIR</i></pre>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>Verify that Shared Library Directories Have Root Ownership</td>
 <td xml:lang="en-US">System-wide shared library files, which are linked to executables
 during process load time or run time, are stored in the following directories
@@ -7647,6 +7891,23 @@ owned by the <code>root</code> user. If the  directories, is found to be owned
 by a user other than root correct its
 ownership with the following command:
 <pre>$ sudo chown root <i>DIR</i></pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Verify that System Executable Directories Have Restrictive Permissions</td>
+<td xml:lang="en-US">System executables are stored in the following directories by default:
+<pre>/bin
+/sbin
+/usr/bin
+/usr/sbin
+/usr/local/bin
+/usr/local/sbin</pre>
+These directories should not be group-writable or world-writable.
+If any directory <i>DIR</i> in these directories is found to be
+group-writable or world-writable, correct its permission with the
+following command:
+<pre>$ sudo chmod go-w <i>DIR</i></pre>
 </td>
 </tr>
 <tr>
@@ -8048,6 +8309,24 @@ Add the <code>nosuid</code> option to the fourth column of
 <code>/opt</code>.</td>
 </tr>
 <tr>
+<td>CCE-85881-1</td>
+<td>Add hidepid Option to /proc</td>
+<td xml:lang="en-US">The <code>hidepid</code> mount option is applicable to <code>/proc</code> and is used to
+control who can access the information in <code>/proc/[pid]</code> directories.
+The option can have one of the following values:
+<pre>
+0: Everybody may access all /proc/[pid] directories.
+1: Users may not access files and subdirectories inside any /proc/[pid] directories
+   but their own. The /proc/[pid] directories themselves remain visible.
+2: Same as for mode 1, but in addition the /proc/[pid] directories belonging to other
+   users become invisible.
+</pre>
+For example, if you choose the value 2:
+Add the <code>hidepid=2</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+<code>/proc</code>.</td>
+</tr>
+<tr>
 <td>CCE-83320-2</td>
 <td>Add nosuid Option to /srv</td>
 <td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
@@ -8240,6 +8519,13 @@ To make sure that the setting is persistent, add the following line to a file in
 </td>
 </tr>
 <tr>
+<td></td>
+<td>Kernel panic on oops</td>
+<td xml:lang="en-US">To set the runtime status of the <code>kernel.panic_on_oops</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.panic_on_oops=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.panic_on_oops = 1</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-83369-9</td>
 <td>Limit CPU consumption of the Perf system</td>
 <td xml:lang="en-US">To set the runtime status of the <code>kernel.perf_cpu_time_max_percent</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.perf_cpu_time_max_percent=1</pre>
@@ -8344,8 +8630,8 @@ ExecShield.</td>
 <tr>
 <td>CCE-80659-6</td>
 <td>Restrict Exposed Kernel Pointer Addresses Access</td>
-<td xml:lang="en-US">To set the runtime status of the <code>kernel.kptr_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.kptr_restrict=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.kptr_restrict = 1</pre>
+<td xml:lang="en-US">To set the runtime status of the <code>kernel.kptr_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.kptr_restrict=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sysctl_kernel_kptr_restrict_value"></xccdf-1.1:sub></pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.kptr_restrict = <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sysctl_kernel_kptr_restrict_value"></xccdf-1.1:sub></pre>
 </td>
 </tr>
 <tr>
@@ -8384,9 +8670,13 @@ and modify <code>/etc/default/grub</code> if necessary.</td>
 <td>Enable page allocator poisoning</td>
 <td xml:lang="en-US">To enable poisoning of free pages,
 add the argument <code>page_poison=1</code> to the default
-GRUB 2 command line for the Linux operating system in
-<code>/etc/default/grub</code>, in the manner below:
-<pre>GRUB_CMDLINE_LINUX="page_poison=1"</pre>
+GRUB 2 command line for the Linux operating system.
+To ensure that <code>page_poison=1</code> is added as a kernel command line
+argument to newly installed kernels, ad <code>page_poison=1</code> to the
+default Grub2 command line for Linux operating systems.  Modify the line within
+<code>/etc/default/grub</code> as shown below:
+<pre>GRUB_CMDLINE_LINUX="... page_poison=1 ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="page_poison=1"</pre>
 </td>
 </tr>
 <tr>
@@ -8394,9 +8684,13 @@ GRUB 2 command line for the Linux operating system in
 <td>Enable SLUB/SLAB allocator poisoning</td>
 <td xml:lang="en-US">To enable poisoning of SLUB/SLAB objects,
 add the argument <code>slub_debug=P</code> to the default
-GRUB 2 command line for the Linux operating system in
-<code>/etc/default/grub</code>, in the manner below:
-<pre>GRUB_CMDLINE_LINUX="slub_debug=P"</pre>
+GRUB 2 command line for the Linux operating system.
+To ensure that <code>slub_debug=P</code> is added as a kernel command line
+argument to newly installed kernels, ad <code>slub_debug=P</code> to the
+default Grub2 command line for Linux operating systems.  Modify the line within
+<code>/etc/default/grub</code> as shown below:
+<pre>GRUB_CMDLINE_LINUX="... slub_debug=P ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="slub_debug=P"</pre>
 </td>
 </tr>
 <tr>
@@ -13525,10 +13819,12 @@ The <code>ntpd</code> service can be enabled with the following command:
 <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_time_service_set_maxpoll"></xccdf-1.1:sub> in <code>/etc/ntp.conf</code> or
 <code>/etc/chrony.conf</code> to continuously poll time servers. To configure
 <code>maxpoll</code> in <code>/etc/ntp.conf</code> or <code>/etc/chrony.conf</code>
-add the following:
+add the following after each `server`, `pool` or `peer` entry:
 <pre>maxpoll <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_time_service_set_maxpoll"></xccdf-1.1:sub></pre>
 to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
-should be configured too.</td>
+should be configured too.
+If no <code>server</code> or <code>pool</code> directives are configured, the rule evaluates
+to pass.</td>
 </tr>
 <tr>
 <td>CCE-27012-4</td>
@@ -13597,6 +13893,11 @@ To ensure that chronyd is running under chrony user account, Add or edit the
 <code>OPTIONS</code> variable in <code>/etc/sysconfig/chronyd</code> to include <code>-u chrony</code>:
 <pre>OPTIONS="-u chrony"</pre>
 This recommendation only applies if chrony is in use on the system.</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure Chrony is only configured with the server directive</td>
+<td xml:lang="en-US">Check that Chrony only has time sources configured with the <code>server</code> directive.</td>
 </tr>
 <tr>
 <td>CCE-83418-4</td>
@@ -14239,6 +14540,56 @@ This is unusual, as SSH is a common method for encrypted and authenticated
 remote access.</td>
 </tr>
 <tr>
+<td>CCE-83399-6</td>
+<td>Set SSH Client Alive Count Max to zero</td>
+<td xml:lang="en-US">The SSH server sends at most <code>ClientAliveCountMax</code> messages
+during a SSH session and waits for a response from the SSH client.
+The option <code>ClientAliveInterval</code> configures timeout after
+each <code>ClientAliveCountMax</code> message. If the SSH server does not
+receive a response from the client, then the connection is considered idle
+and terminated.
+
+To ensure the SSH idle timeout occurs precisely when the
+<code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
+value of <code>0</code> in
+
+
+<code>/etc/ssh/sshd_config</code>:</td>
+</tr>
+<tr>
+<td>CCE-27082-7</td>
+<td>Set SSH Client Alive Count Max</td>
+<td xml:lang="en-US">The SSH server sends at most <code>ClientAliveCountMax</code> messages
+during a SSH session and waits for a response from the SSH client.
+The option <code>ClientAliveInterval</code> configures timeout after
+each <code>ClientAliveCountMax</code> message. If the SSH server does not
+receive a response from the client, then the connection is considered idle
+and terminated.
+For SSH earlier than v8.2, a <code>ClientAliveCountMax</code> value of <code>0</code>
+causes an idle timeout precisely when the <code>ClientAliveInterval</code> is set.
+Starting with v8.2, a value of <code>0</code> disables the timeout functionality
+completely. If the option is set to a number greater than <code>0</code>, then
+the idle session will be disconnected after
+<code>ClientAliveInterval * ClientAliveCountMax</code> seconds.</td>
+</tr>
+<tr>
+<td>CCE-27433-2</td>
+<td>Set SSH Idle Timeout Interval</td>
+<td xml:lang="en-US">SSH allows administrators to set an idle timeout interval. After this interval
+has passed, the idle user will be automatically logged out.
+<br><br>
+To set an idle timeout interval, edit the following line in <code>/etc/ssh/sshd_config</code> as
+follows:
+<pre>ClientAliveInterval <b><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sshd_idle_timeout_value"></xccdf-1.1:sub></b></pre>
+<br><br>
+The timeout <b>interval</b> is given in seconds. For example, have a timeout
+of 10 minutes, set <b>interval</b> to 600.
+<br><br>
+If a shorter timeout has already been set for the login shell, that value will
+preempt any SSH setting made in <code>/etc/ssh/sshd_config</code>. Keep in mind that
+some processes may stop SSH  from correctly detecting that the user is idle.</td>
+</tr>
+<tr>
 <td>CCE-27413-4</td>
 <td>Disable Host-Based Authentication</td>
 <td xml:lang="en-US">SSH's cryptographic host-based authentication is
@@ -14609,58 +14960,14 @@ To explicitly enable LastLog in SSH, add or correct the following line in
 <td xml:lang="en-US">The <code>RekeyLimit</code> parameter specifies how often
 the session key of the is renegotiated, both in terms of
 amount of data that may be transmitted and the time
-elapsed. To decrease the default limits, put line
-<code>RekeyLimit <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_rekey_limit_size"></xccdf-1.1:sub> <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_rekey_limit_time"></xccdf-1.1:sub></code> to file <code>/etc/ssh/sshd_config</code>.</td>
-</tr>
-<tr>
-<td>CCE-27433-2</td>
-<td>Set SSH Idle Timeout Interval</td>
-<td xml:lang="en-US">SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
-<br><br>
-To set an idle timeout interval, edit the following line in <code>/etc/ssh/sshd_config</code> as
-follows:
-<pre>ClientAliveInterval <b><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sshd_idle_timeout_value"></xccdf-1.1:sub></b></pre>
-<br><br>
-The timeout <b>interval</b> is given in seconds. For example, have a timeout
-of 10 minutes, set <b>interval</b> to 600.
-<br><br>
-If a shorter timeout has already been set for the login shell, that value will
-preempt any SSH setting made in <code>/etc/ssh/sshd_config</code>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</td>
-</tr>
-<tr>
-<td>CCE-27082-7</td>
-<td>Set SSH Client Alive Count Max</td>
-<td xml:lang="en-US">The SSH server sends at most <code>ClientAliveCountMax</code> messages
-during a SSH session and waits for a response from the SSH client.
-The option <code>ClientAliveInterval</code> configures timeout after
-each <code>ClientAliveCountMax</code> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
-and terminated.
-For SSH earlier than v8.2, a <code>ClientAliveCountMax</code> value of <code>0</code>
-causes an idle timeout precisely when the <code>ClientAliveInterval</code> is set.
-Starting with v8.2, a value of <code>0</code> disables the timeout functionality
-completely. If the option is set to a number greater than <code>0</code>, then
-the idle session will be disconnected after
-<code>ClientAliveInterval * ClientAliveCountMax</code> seconds.</td>
-</tr>
-<tr>
-<td>CCE-83399-6</td>
-<td>Set SSH Client Alive Count Max to zero</td>
-<td xml:lang="en-US">The SSH server sends at most <code>ClientAliveCountMax</code> messages
-during a SSH session and waits for a response from the SSH client.
-The option <code>ClientAliveInterval</code> configures timeout after
-each <code>ClientAliveCountMax</code> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
-and terminated.
-
-To ensure the SSH idle timeout occurs precisely when the
-<code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
-value of <code>0</code> in
+elapsed.<br>
+To decrease the default limits, add or correct the following line in
 
 
-<code>/etc/ssh/sshd_config</code>:</td>
+<code>/etc/ssh/sshd_config</code>:
+
+<pre>RekeyLimit <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_rekey_limit_size"></xccdf-1.1:sub> <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_rekey_limit_time"></xccdf-1.1:sub></pre>
+</td>
 </tr>
 <tr>
 <td>CCE-86550-1</td>
@@ -15018,14 +15325,6 @@ This prevents the system from being accidentally or maliciously booted into a <c
 mode. To do so, run the following command:
 
 <pre>sudo yum remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils</pre>
-
-Additionally, setting the system's default target to
-<code>multi-user.target</code> will prevent automatic startup of the X server.
-To do so, run:
-<pre>$ systemctl set-default multi-user.target</pre>
-You should see the following output:
-<pre>Removed symlink /etc/systemd/system/default.target.
-Created symlink from /etc/systemd/system/default.target to /usr/lib/systemd/system/multi-user.target.</pre>
 </td>
 </tr>
 <tr>

@@ -1955,65 +1955,6 @@ can allow an attacker to move trivially to other hosts.
   <td></td>
 </tr>
 <tr>
-  <td>AC-3<br/>AC-3.1<br/>AC-3</td>
-  <td>N/A</td>
-  <td>Set Boot Loader Password in grub2 - systems prior to version 7.2</td>
-  <td xml:lang="en-US">
-The grub2 boot loader should have a superuser account and password
-protection enabled to protect boot-time settings.
-<br /><br />
-Since plaintext passwords are a security risk, generate an encrypted grub2 password
-for the grub superusers with the following command:
-<pre>$ grub2-mkpasswd-pbkdf2</pre>
-When prompted, enter the password that was selected.
-<br /><br />
-Using the hash from the output, modify the <tt>/etc/grub.d/40_custom</tt>
-file with the following content:
-<pre>set superusers="root"
-password_pbkdf2 root grub.pbkdf2.sha512.VeryLongString
-</pre>
-Once the superuser password has been added, update the
-<tt>grub.cfg</tt> file by running:
-<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
-  </td>
-  <td xml:lang="en-US">
-Password protection on the boot loader configuration ensures
-users with physical access cannot trivially alter
-important bootloader settings. These include which kernel to use,
-and whether to enter single-user mode.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>AC-3<br/>AC-3.1<br/>AC-3</td>
-  <td>N/A</td>
-  <td>Set the UEFI Boot Loader Password - systems prior to version 7.2</td>
-  <td xml:lang="en-US">
-The grub2 boot loader should have a superuser account and password
-protection enabled to protect boot-time settings.
-<br /><br />
-Since plaintext passwords are a security risk, generate a hash for the password
-by running the following command: <pre># grub2-mkpasswd-pbkdf2</pre>
-When prompted, enter the password that was selected.
-<br /><br />
-Using the hash from the output, modify the <tt>/etc/grub.d/40_custom</tt>
-file with the following content:
-<pre>set superusers="root"
-password_pbkdf2 boot grub.pbkdf2.sha512.VeryLongString
-</pre>
-Once the superuser password has been added, update the
-<tt>grub.cfg</tt> file by running:
-<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
-  </td>
-  <td xml:lang="en-US">
-Password protection on the boot loader configuration ensures
-users with physical access cannot trivially alter
-important bootloader settings. These include which kernel to use,
-and whether to enter single-user mode.
-  </td>
-  <td></td>
-</tr>
-<tr>
   <td>AC-3<br/>AC-3(3)(a)<br/>AU-9<br/>SC-7(21)</td>
   <td>N/A</td>
   <td>Configure SELinux Policy</td>
@@ -2059,6 +2000,61 @@ privileges.
   <td>var_selinux_state=enforcing</td>
 </tr>
 <tr>
+  <td>AC-3(4)<br/>AC-6(10)</td>
+  <td>N/A</td>
+  <td>Confine SELinux Users To Roles That Conform To Least Privilege</td>
+  <td xml:lang="en-US">
+Configure the operating system to confine SELinux users to roles that conform
+to least privilege. Use the following command to map the "staff_u" SELinux user
+to the "staff_r" and "sysadm_r" roles:
+<pre>$ sudo semanage user -m staff_u -R staff_r -R sysadm_r</pre>
+<br /><br />
+Use the following command to map the "user_u" SELinux user to the "user_r" role:
+<pre>$ sudo semanage -m user_u -R user_r</pre>
+  </td>
+  <td xml:lang="en-US">
+Preventing non-privileged users from executing privileged functions mitigates
+the risk that unauthorized individuals or processes may gain unnecessary access
+to information or privileges.
+<br /><br />
+Privileged functions include, for example,
+establishing accounts, performing system integrity checks, or administering
+cryptographic key management activities. Non-privileged users are individuals
+who do not possess appropriate authorizations. Circumventing intrusion detection
+and prevention mechanisms or malicious code protection mechanisms are examples
+of privileged functions that require protection from non-privileged users.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>AC-3(4)<br/>AC-6(10)</td>
+  <td>N/A</td>
+  <td>Elevate The SELinux Context When An Administrator Calls The Sudo Command</td>
+  <td xml:lang="en-US">
+Configure the operating system to elevate the SELinux context when an administrator calls
+the sudo command.
+Edit a file in the /etc/sudoers.d directory with the following command:
+<pre>sudo visudo -f /etc/sudoers.d/<i>CUSTOM_FILE</i></pre>
+Use the following example to build the <i>CUSTOM_FILE</i> in the /etc/sudoers.d directory
+to allow any administrator belonging to a designated sudoers admin group to elevate their
+SELinux context with the use of the sudo command:
+<pre>%wheel ALL=(ALL) TYPE=sysadm_t ROLE=sysadm_r ALL</pre>
+  </td>
+  <td xml:lang="en-US">
+Preventing non-privileged users from executing privileged functions mitigates
+the risk that unauthorized individuals or processes may gain unnecessary access
+to information or privileges.
+<br /><br />
+Privileged functions include, for example,
+establishing accounts, performing system integrity checks, or administering
+cryptographic key management activities. Non-privileged users are individuals
+who do not possess appropriate authorizations. Circumventing intrusion detection
+and prevention mechanisms or malicious code protection mechanisms are examples
+of privileged functions that require protection from non-privileged users.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>CA-3(5)<br/>CM-7(b)<br/>SC-7(23)<br/>CM-6(a)</td>
   <td>N/A</td>
   <td>Set Default firewalld Zone for Incoming Packets</td>
@@ -2086,12 +2082,12 @@ accepted.
 To specify the number of days after a password expires (which
 signifies inactivity) until an account is permanently disabled, add or correct
 the following line in <tt>/etc/default/useradd</tt>:
-<pre>INACTIVE=<i><tt>0</tt></i></pre>
+<pre>INACTIVE=<i><tt>35</tt></i></pre>
 If a password is currently on the verge of expiration, then
-<tt><tt>0</tt></tt>
+<tt><tt>35</tt></tt>
 day(s) remain(s) until the account is automatically
 disabled. However, if the password will not expire for another 60 days, then 60
-days plus <tt><tt>0</tt></tt> day(s) could
+days plus <tt><tt>35</tt></tt> day(s) could
 elapse until the account would be automatically disabled. See the
 <tt>useradd</tt> man page for more information.
   </td>
@@ -2100,7 +2096,7 @@ Disabling inactive accounts ensures that accounts which may not
 have been responsibly removed are not available to attackers
 who may have compromised their credentials.
   </td>
-  <td>var_account_disable_post_pw_expiration=0</td>
+  <td>var_account_disable_post_pw_expiration=35</td>
 </tr>
 <tr>
   <td>AC-4<br/>CM-7(b)<br/>CA-3(5)<br/>SC-7(21)<br/>CM-6(a)</td>
@@ -2775,7 +2771,7 @@ default authenticators, then anyone can gather data about the system and the net
 and use the information to potentially compromise the integrity of the system and
 network(s).
   </td>
-  <td>var_snmpd_rw_string=changemerw<br/>var_snmpd_ro_string=changemero</td>
+  <td>var_snmpd_ro_string=changemero<br/>var_snmpd_rw_string=changemerw</td>
 </tr>
 <tr>
   <td>CM-5(1)<br/>AU-7(a)<br/>AU-7(b)<br/>AU-8(b)<br/>AU-12(3)<br/>AC-6(9)</td>
@@ -2833,10 +2829,6 @@ into the account without authentication. Remove any instances of the
 <tt>/etc/pam.d/system-auth</tt>
 
 to prevent logins with empty passwords.
-Note that this rule is not applicable for systems running within a
-container. Having user with empty password within a container is not
-considered a risk, because it should not be possible to directly login into
-a container anyway.
   </td>
   <td xml:lang="en-US">
 If an account has an empty password, anyone could log in and
@@ -2881,9 +2873,11 @@ approved Certificate Authority (CA).
   <td>Ensure PAM Enforces Password Requirements - Authentication Retry Prompts Permitted Per-Session</td>
   <td xml:lang="en-US">
 To configure the number of retry prompts that are permitted per-session:
+
 Edit the <tt>pam_pwquality.so</tt> statement in
 
-<tt>/etc/pam.d/system-auth</tt>  to show
+<tt>/etc/pam.d/system-auth</tt> to show
+
 
 <tt>retry=<tt>3</tt></tt>, or a lower value if site
 policy is more restrictive. The DoD requirement is a maximum of 3 prompts
@@ -3037,13 +3031,15 @@ to distinguish.
   <td>Configure Time Service Maxpoll Interval</td>
   <td xml:lang="en-US">
 The <tt>maxpoll</tt> should be configured to
-<tt>system_default</tt> in <tt>/etc/ntp.conf</tt> or
+<tt>18_hours</tt> in <tt>/etc/ntp.conf</tt> or
 <tt>/etc/chrony.conf</tt> to continuously poll time servers. To configure
 <tt>maxpoll</tt> in <tt>/etc/ntp.conf</tt> or <tt>/etc/chrony.conf</tt>
-add the following:
-<pre>maxpoll <tt>system_default</tt></pre>
+add the following after each `server`, `pool` or `peer` entry:
+<pre>maxpoll <tt>18_hours</tt></pre>
 to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
 should be configured too.
+If no <tt>server</tt> or <tt>pool</tt> directives are configured, the rule evaluates
+to pass.
   </td>
   <td xml:lang="en-US">
 Inaccurate time stamps make it more difficult to correlate
@@ -3052,7 +3048,7 @@ time a particular event occurred on a system is critical when conducting
 forensic analysis and investigating system events. Sources outside the
 configured acceptable allowance (drift) may be inaccurate.
   </td>
-  <td>var_time_service_set_maxpoll=system_default</td>
+  <td>var_time_service_set_maxpoll=18_hours</td>
 </tr>
 <tr>
   <td>CM-6(a)<br/>AC-6(1)<br/>CM-7(b)</td>
@@ -3593,6 +3589,29 @@ should be installed to their default location on the local filesystem.
   <td></td>
 </tr>
 <tr>
+  <td>CM-6(b)<br/>CM-6.1(iv)</td>
+  <td>N/A</td>
+  <td>Ensure There Are No Accounts With Blank or Null Passwords</td>
+  <td xml:lang="en-US">
+Check the "/etc/shadow" file for blank passwords with the
+following command:
+<pre>$ sudo awk -F: '!$2 {print $1}' /etc/shadow</pre>
+If the command returns any results, this is a finding.
+Configure all accounts on the system to have a password or lock
+the account with the following commands:
+Perform a password reset:
+<pre>$ sudo passwd [username]</pre>
+Lock an account:
+<pre>$ sudo passwd -l [username]</pre>
+  </td>
+  <td xml:lang="en-US">
+If an account has an empty password, anyone could log in and
+run commands with the privileges of that account. Accounts with
+empty passwords should never be used in operational environments.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>CM-6(a)<br/>AC-6(1)</td>
   <td>N/A</td>
   <td>Ensure All Files Are Owned by a User</td>
@@ -4101,14 +4120,6 @@ This prevents the system from being accidentally or maliciously booted into a <t
 mode. To do so, run the following command:
 
 <pre>sudo yum remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils</pre>
-
-Additionally, setting the system's default target to
-<tt>multi-user.target</tt> will prevent automatic startup of the X server.
-To do so, run:
-<pre>$ systemctl set-default multi-user.target</pre>
-You should see the following output:
-<pre>Removed symlink /etc/systemd/system/default.target.
-Created symlink from /etc/systemd/system/default.target to /usr/lib/systemd/system/multi-user.target.</pre>
   </td>
   <td xml:lang="en-US">
 Unnecessary service packages must not be installed to decrease the attack surface of the system. X windows has a long history of security
@@ -5061,6 +5072,7 @@ screen by setting <tt>banner-message-text</tt> to <tt>'<i>APPROVED_BANNER</i>'</
 where <i>APPROVED_BANNER</i> is the approved banner for your environment.
 <br /><br />
 To enable, add or edit <tt>banner-message-text</tt> to
+
 <tt>/etc/dconf/db/gdm.d/00-security-settings</tt>. For example:
 <pre>[org/gnome/login-screen]
 banner-message-text='<i>APPROVED_BANNER</i>'</pre>
@@ -5068,6 +5080,7 @@ Once the setting has been added, add a lock to
 <tt>/etc/dconf/db/gdm.d/locks/00-security-settings-lock</tt> to prevent user modification.
 For example:
 <pre>/org/gnome/login-screen/banner-message-text</pre>
+
 After the settings have been set, run <tt>dconf update</tt>.
 When entering a warning banner that spans several lines, remember
 to begin and end the string with <tt>'</tt> and use <tt>\n</tt> for new lines.
@@ -5233,6 +5246,23 @@ A session lock is a temporary action taken when a user stops work and moves away
 of the information system but does not want to logout because of the temporary nature of the absense.
   </td>
   <td>var_screensaver_lock_delay=5_seconds</td>
+</tr>
+<tr>
+  <td>IA-11</td>
+  <td>N/A</td>
+  <td>Disallow Configuration to Bypass Password Requirements for Privilege Escalation</td>
+  <td xml:lang="en-US">
+Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre>
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.
+  </td>
+  <td xml:lang="en-US">
+Without re-authentication, users may access resources or perform tasks for which they do not
+have authorization. When operating systems provide the capability to escalate a functional
+capability, it is critical the user re-authenticate.
+  </td>
+  <td></td>
 </tr>
 <tr>
   <td>CM-11(a)<br/>CM-11(b)<br/>CM-6(a)<br/>CM-5(3)<br/>SA-12<br/>SA-12(10)</td>
@@ -6104,6 +6134,31 @@ activity.
 <tr>
   <td></td>
   <td>N/A</td>
+  <td>Disable the ssh_sysadm_login SELinux Boolean</td>
+  <td xml:lang="en-US">
+By default, the SELinux boolean <tt>ssh_sysadm_login</tt> is disabled.
+If this setting is enabled, it should be disabled.
+
+To disable the <code>ssh_sysadm_login</code> SELinux boolean, run the following command:
+<pre>$ sudo setsebool -P ssh_sysadm_login off</pre>
+  </td>
+  <td xml:lang="en-US">
+Preventing non-privileged users from executing privileged functions mitigates
+the risk that unauthorized individuals or processes may gain unnecessary access
+to information or privileges.
+
+Privileged functions include, for example, establishing accounts, performing
+system integrity checks, or administering cryptographic key management
+activities. Non-privileged users are individuals who do not possess appropriate
+authorizations. Circumventing intrusion detection and prevention mechanisms or
+malicious code protection mechanisms are examples of privileged functions that
+require protection from non-privileged users.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td>N/A</td>
   <td>Map System Users To The Appropriate SELinux Role</td>
   <td xml:lang="en-US">
 Configure the operating system to prevent non-privileged users from executing
@@ -6197,6 +6252,26 @@ above (or their subset), keeping the given order of algorithms.
   <td xml:lang="en-US">
 DoD Information Systems are required to use FIPS-approved cryptographic hash
 functions. The only SSHv2 hash algorithms meeting this requirement is SHA2.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td>N/A</td>
+  <td>Ensure sudo only includes the default configuration directory</td>
+  <td xml:lang="en-US">
+Administrators can configure authorized <tt>sudo</tt> users via drop-in files, and it is possible to include
+other directories and configuration files from the file currently being parsed.
+
+Make sure that <tt>/etc/sudoers</tt> only includes drop-in configuration files from <tt>/etc/sudoers.d</tt>.
+The <tt>/etc/sudoers</tt> should contain only one <tt>#includedir</tt> directive pointing to
+<tt>/etc/sudoers.d</tt>, and no file in <tt>/etc/sudoers.d/</tt> should include other files or directories.
+Note that the '#' character doesn't denote a comment in the configuration file.
+  </td>
+  <td xml:lang="en-US">
+Some <tt>sudo</tt> configurtion options allow users to run programs without re-authenticating.
+Use of these configuration options makes it easier for one compromised accound to be used to
+compromise other accounts.
   </td>
   <td></td>
 </tr>
