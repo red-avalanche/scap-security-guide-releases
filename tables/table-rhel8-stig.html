@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<html>
 <head lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Rules in DISA STIG for Red Hat Enterprise Linux 8</title>
@@ -48,10 +48,10 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>371</td>
-			<td>17</td>
+			<td>372</td>
+			<td>18</td>
 			<td>354</td>
-			<td>95.42%</td>
+			<td>95.16%</td>
 			<td>
 				
 					RHEL-08-010090
@@ -87,6 +87,8 @@
 					RHEL-08-020231
 				
 					RHEL-08-020332
+				
+					RHEL-08-040400
 				
 			</td>
 		</tr>
@@ -1047,31 +1049,31 @@ $ sudo chmod +t DIR</pre></td>
 	<td><pre>This ensures a user login will be terminated as soon as the ClientAliveInterval
 is reached.</pre></td>
 	<td><pre>To ensure ClientAliveInterval is set correctly, run the following command:
-
 $ sudo grep ClientAliveCountMax /etc/ssh/sshd_config
-
 If properly configured, the output should be:
-ClientAliveCountMax 0
-
-In this case, the SSH idle timeout occurs precisely when
-the ClientAliveInterval is set.
+ClientAliveCountMax 
+For SSH earlier than v8.2, a ClientAliveCountMax value of 0 causes a timeout precisely when
+the ClientAliveInterval is set.  Starting with v8.2, a value of 0 disables the timeout
+functionality completely.
+If the option is set to a number greater than 0, then the session will be disconnected after
+ClientAliveInterval * ClientAliveCountMax seconds witout receiving a keep alive message.
       Is it the case that it is commented out or not configured properly?
       </pre></td>
 	<td><pre>The SSH server sends at most ClientAliveCountMax messages
 during a SSH session and waits for a response from the SSH client.
 The option ClientAliveInterval configures timeout after
 each ClientAliveCountMax message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
-
-To ensure the SSH idle timeout occurs precisely when the
-ClientAliveInterval is set, set the ClientAliveCountMax to
-value of 0 in
-
-
-/etc/ssh/sshd_config:</pre></td>
+For SSH earlier than v8.2, a ClientAliveCountMax value of 0
+causes a timeout precisely when the ClientAliveInterval is set.
+Starting with v8.2, a value of 0 disables the timeout functionality
+completely. If the option is set to a number greater than 0, then
+the session will be disconnected after
+ClientAliveInterval * ClientAliveCountMax seconds without receiving
+a keep alive message.</pre></td>
 	<td>RHEL-08-010200</td>
-	<td>sshd_set_keepalive_0</td>
+	<td>sshd_set_keepalive</td>
 </tr>
 
 <tr>
@@ -1089,10 +1091,10 @@ If properly configured, the output should be:
 ClientAliveInterval 
       Is it the case that it is commented out or not configured properly?
       </pre></td>
-	<td><pre>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+	<td><pre>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 
-To set an idle timeout interval, edit the following line in /etc/ssh/sshd_config as
+To set this timeout interval, edit the following line in /etc/ssh/sshd_config as
 follows:
 ClientAliveInterval 
 
@@ -1101,7 +1103,7 @@ of 10 minutes, set interval to 600.
 
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in /etc/ssh/sshd_config. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</pre></td>
+some processes may stop SSH from correctly detecting that the user is idle.</pre></td>
 	<td>RHEL-08-010201</td>
 	<td>sshd_set_idle_timeout</td>
 </tr>
@@ -1841,12 +1843,14 @@ has been provided by a trusted vendor.
 
 Accordingly, patches, service packs, device drivers, or operating system components must
 be signed with a certificate recognized and approved by the organization.</pre></td>
-	<td><pre>To verify that localpkg_gpgcheck is configured properly, run the following
-command:
+	<td><pre>Verify that yum verifies the signature of local packages prior to install with the following command:
+
 $ grep localpkg_gpgcheck /etc/yum.conf
-The output should return something similar to:
+
 localpkg_gpgcheck=1
-      Is it the case that gpgcheck is not enabled or configured correctly to verify local packages?
+
+If "localpkg_gpgcheck" is not set to "1", or if the option is missing or commented out, ask the System Administrator how the certificates for patches and other operating system components are verified.
+      Is it the case that there is no process to validate certificates for local packages that is approved by the organization?
       </pre></td>
 	<td><pre>yum should be configured to verify the signature(s) of local packages
 prior to installation. To configure yum to verify signatures of local
@@ -3220,15 +3224,12 @@ unprotected directories, they could be maliciously modified to destroy user
 files or otherwise compromise the system at the user level. If the system is
 compromised at the user level, it is easier to elevate privileges to eventually
 compromise the system at the root and network level.</pre></td>
-	<td><pre>Verify that local initialization files do not execute world-writable programs,
-execute the following command:
+	<td><pre>Verify that local initialization files do not execute world-writable programs with the following command:
+
+Note: The example will be for a system that is configured to create user home directories in the "/home" directory.
+
 $ sudo find /home -perm -002 -type f -name ".[^.]*" -exec ls -ld {} \;
-For all files listed, check for their presence in the local
-initialization files with the following command:
-Note: The example will be for a system that is configured to create
-users' home directories in the "/home" directory.
- sudo find /home/* -maxdepth 1 -type f -name \.\* -exec grep -H <file> {} \; 
-      Is it the case that user initialization files are executing world-writable programs?
+      Is it the case that any local initialization files are found to reference world-writable files?
       </pre></td>
 	<td><pre>Set the mode on files being executed by the user initialization files with the
 following command:
@@ -3395,10 +3396,12 @@ Enabling core dumps on production systems is not recommended,
 however there may be overriding operational requirements to enable advanced
 debuging. Permitting temporary enablement of core dumps during such situations
 should be reviewed through local needs and policy.</pre></td>
-	<td><pre>Verify that logging core dump backtraces is disabled, run the
-following command:
-$ grep ProcessSizeMax /etc/systemd/coredump.conf
-      Is it the case that ProcessSizeMax is not set to zero?
+	<td><pre>Verify Red Hat Enterprise Linux 8 disables core dump backtraces by issuing the following command:
+
+$ grep -i process /etc/systemd/coredump.conf
+
+ProcessSizeMax=0
+      Is it the case that the "ProcessSizeMax" item is missing, commented out, or the value is anything other than "0" and the need for core dumps is not documented with the Information System Security Officer (ISSO) as an operational requirement for all domains that have the "core" item assigned?
       </pre></td>
 	<td><pre>The ProcessSizeMax option in [Coredump] section
 of /etc/systemd/coredump.conf
@@ -3465,12 +3468,12 @@ an empty entry, such as a leading or trailing colon or two consecutive colons,
 this is interpreted as the current working directory. If deviations from the
 default system search path for the local interactive user are required, they
 must be documented with the Information System Security Officer (ISSO).</pre></td>
-	<td><pre>To verify that all interactive user initialization files executable search
-path statements do not contain statements that will reference a working
-directory other than the users home directory, run the following command:
-$ sudo grep -r PATH /home/
-Inspect the output for any PATH is references directories outside the home directory.
-      Is it the case that paths contain more than local home directories?
+	<td><pre>Verify that all local interactive user initialization file executable search path statements do not contain statements that will reference a working directory other than user home directories with the following commands:
+
+$ sudo grep -i path= /home/*/.*
+
+/home/[localinteractiveuser]/.bash_profile:PATH=$PATH:$HOME/.local/bin:$HOME/bin
+      Is it the case that any local interactive user initialization files have executable search path statements that include directories outside of their home directory and is not documented with the ISSO as an operational requirement?
       </pre></td>
 	<td><pre>Ensure that all interactive user initialization files executable search
 path statements do not contain statements that will reference a working
@@ -3536,11 +3539,11 @@ appropriate group.</pre></td>
 	<td>SRG-OS-ID</td>
 	<td><pre>If local interactive users are not assigned a valid home directory, there is no
 place for the storage and control of files they should own.</pre></td>
-	<td><pre>To verify interactive users on the system have a home directory assigned,
-run the following command:
-$ sudo awk -F":" '{print $1 ":" $6}' /etc/passwd
-Inspect the output and verify that all interactive users have a home directory
-defined.
+	<td><pre>Verify that interactive users on the system have a home directory assigned with the following command:
+
+$ sudo awk -F: '($3>=1000)&&($7 !~ /nologin/){print $1, $3, $6}' /etc/passwd
+
+Inspect the output and verify that all interactive users (normally users with a UID greater that 1000) have a home directory defined.
       Is it the case that users home directory is not defined?
       </pre></td>
 	<td><pre>Assign home directories to all interactive users that currently do not
@@ -3661,9 +3664,13 @@ the user may be given access to the / directory as the current working directory
 upon logon. This could create a Denial of Service because the user would not be
 able to access their logon configuration files, and it may give them visibility
 to system files they normally would not be able to access.</pre></td>
-	<td><pre>To verify the assigned home directory of all interactive users on the system
-exist, run the following command:
+	<td><pre>Verify the assigned home directories of all interactive users on the system exist with the following command:
+
 $ sudo pwck -r
+
+user 'mailnull': directory 'var/spool/mqueue' does not exist
+
+The output should not return any interactive users.
       Is it the case that users home directory does not exist?
       </pre></td>
 	<td><pre>Create home directories to all interactive users that currently do not
@@ -4049,19 +4056,26 @@ to unlock a user. This should be done using the faillock tool.</pre></td>
 	<td>medium</td>
 	<td>RHEL 8 must ensure account lockouts persist.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Having lockouts persist across reboots ensures that account is only unlocked by an administrator.
-If the lockouts did not persist across reboots an attack could simply reboot the system to continue brute force attacks against the accounts on the system.
-</pre></td>
-	<td><pre>Verify the "/etc/security/faillock.conf" file is configured use a non-default faillock directory to ensure contents persist after reboot:
-
+	<td><pre>Locking out user accounts after a number of incorrect attempts prevents direct password
+guessing attacks. In combination with the silent option, user enumeration attacks
+are also mitigated.</pre></td>
+	<td><pre>To ensure the tally directory is configured correctly, run the following command:
 $ sudo grep 'dir =' /etc/security/faillock.conf
-
-dir = /var/log/faillock
+The output should show that dir is set to something other than "/var/run/faillock"
       Is it the case that the "dir" option is not set to a non-default documented tally log directory, is missing or commented out?
       </pre></td>
-	<td><pre>By setting a `dir` in the faillock configuration account lockouts will persist across reboots.</pre></td>
+	<td><pre>This rule ensures that the system lock out accounts using pam_faillock.so persist
+after system reboot. From "pam_faillock" man pages:
+Note that the default directory that "pam_faillock" uses is usually cleared on system
+boot so the access will be reenabled after system reboot. If that is undesirable, a different
+tally directory must be set with the "dir" option.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as authselect or authconfig,
+depending on the OS version.</pre></td>
 	<td>RHEL-08-020017</td>
-	<td>account_passwords_pam_faillock_dir</td>
+	<td>accounts_passwords_pam_faillock_dir</td>
 </tr>
 
 <tr>
@@ -4119,7 +4133,7 @@ audit
       </pre></td>
 	<td><pre>PAM faillock locks an account due to excessive password failures, this event must be logged.</pre></td>
 	<td>RHEL-08-020021</td>
-	<td>account_passwords_pam_faillock_audit</td>
+	<td>accounts_passwords_pam_faillock_audit</td>
 </tr>
 
 <tr>
@@ -4411,18 +4425,16 @@ ctrl+b :lock-session</pre></td>
 	<td><pre>The tmux package allows for a session lock to be implemented and configured.
 However, the session lock is implemented by an external command. The tmux
 default configuration does not contain an effective session lock.</pre></td>
-	<td><pre>To verify that vlock is configured as a locking mechanism in tmux, run the following command:
+	<td><pre>Verify Red Hat Enterprise Linux 8 enables the user to initiate a session lock with the following command:
 
-$ sudo grep lock-command /etc/tmux.conf
-
-The output should return the following:
+$ grep lock-command /etc/tmux.conf
 
 set -g lock-command vlock
 
 Then, verify that the /etc/tmux.conf file can be read by other users than root:
 
 $ sudo ls -al /etc/tmux.conf
-      Is it the case that lock-command is not set?
+      Is it the case that the "lock-command" is not set in the global settings to call "vlock"?
       </pre></td>
 	<td><pre>To enable console screen locking in tmux terminal multiplexer,
 the vlock command must be configured to be used as a locking
@@ -4446,16 +4458,30 @@ provides a mechanism to lock sessions after period of inactivity.
 A session lock is a temporary action taken when a user stops work and moves away from the
 immediate physical vicinity of the information system but does not want to
 log out because of the temporary nature of the absence.</pre></td>
-	<td><pre>To verify that tmux is configured to execute,
-run the following command:
-$ grep -A1 -B3 "case ..name. in sshd|login) exec tmux ;; esac" /etc/bashrc /etc/profile.d/*
-The output should return the following:
+	<td><pre>Verify Red Hat Enterprise Linux 8 shell initialization file is configured to start each shell with the tmux terminal multiplexer.
+
+Determine the location of the tmux script with the following command:
+
+$ sudo grep tmux /etc/bashrc /etc/profile.d/*
+
+/etc/profile.d/tmux.sh:  case "$name" in (sshd|login) exec tmux ;; esac
+
+Review the tmux script by using the following example:
+
+$ cat /etc/profile.d/tmux.sh
+
 if [ "$PS1" ]; then
-  parent=$(ps -o ppid= -p $$)
-  name=$(ps -o comm= -p $parent)
-  case "$name" in sshd|login) exec tmux ;; esac
+parent=$(ps -o ppid= -p $$)
+name=$(ps -o comm= -p $parent)
+case "$name" in (sshd|login) exec tmux ;; esac
 fi
-      Is it the case that exec tmux is not present at the end of bashrc?
+
+If the shell file is not configured as the example above, is commented out, or is missing, this is a finding.
+
+Determine if tmux is currently running with the following command:
+
+$ sudo ps all | grep tmux | grep -v grep
+      Is it the case that the command does not produce output?
       </pre></td>
 	<td><pre>The tmux terminal multiplexer is used to implement
 automatic session locking. It should be started from
@@ -4558,19 +4584,18 @@ idle-delay=uint32 900</pre></td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Locking the session after a period of inactivity limits the
 potential exposure if the session is left unattended.</pre></td>
-	<td><pre>To verify that session locking after period of inactivity is configured in tmux,
-run the following command:
+	<td><pre>Verify Red Hat Enterprise Linux 8 initiates a session lock after 15 minutes of inactivity.
 
-$ sudo grep lock-after-time /etc/tmux.conf
+Check the value of the system inactivity timeout with the following command:
 
-The output should return the following:
+$ grep -i lock-after-time /etc/tmux.conf
 
 set -g lock-after-time 900
 
 Then, verify that the /etc/tmux.conf file can be read by other users than root:
 
 $ sudo ls -al /etc/tmux.conf
-      Is it the case that lock-after-time is set to a value greater than 900 or zero?
+      Is it the case that "lock-after-time" is not set to "900" or less in the global tmux configuration file to enforce session lock after inactivity?
       </pre></td>
 	<td><pre>To enable console screen locking in tmux terminal multiplexer
 after a period of inactivity,
@@ -4801,11 +4826,14 @@ at guessing and brute-force attacks.
 Password complexity is one factor of several that determines how long it takes to crack a password. The more
 complex the password, the greater the number of possible combinations that need to be tested before
 the password is compromised.</pre></td>
-	<td><pre>To check how many uppercase characters are required in a password, run the following command:
-$ grep ucredit /etc/security/pwquality.conf
-The ucredit parameter (as a negative number) will indicate how many uppercase characters are required.
-This would appear as ucredit = -1.
-      Is it the case that ucredit is not found or not set to the required value?
+	<td><pre>Verify that Red Hat Enterprise Linux 8 enforces password complexity by requiring that at least one upper-case character.
+
+Check the value for "ucredit" with the following command:
+
+$ sudo grep ucredit /etc/security/pwquality.conf /etc/security/pwquality.conf.d/*.conf
+
+ucredit = -1
+      Is it the case that the value of "ucredit" is a positive number or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's ucredit= parameter controls requirements for
 usage of uppercase letters in a password. When set to a negative number, any password will be required to
@@ -4832,10 +4860,14 @@ to crack a password. The more complex the password, the greater the number of
 possble combinations that need to be tested before the password is compromised.
 Requiring a minimum number of lowercase characters makes password guessing attacks
 more difficult by ensuring a larger search space.</pre></td>
-	<td><pre>To check how many lowercase characters are required in a password, run the following command:
-$ grep lcredit /etc/security/pwquality.conf
-The lcredit parameter (as a negative number) will indicate how many special characters are required.
-      Is it the case that lcredit is not found or not less than or equal to the required value?
+	<td><pre>Verify that Red Hat Enterprise Linux 8 enforces password complexity by requiring that at least one lower-case character.
+
+Check the value for "lcredit" with the following command:
+
+$ sudo grep lcredit /etc/security/pwquality.conf /etc/security/pwquality.conf.d/*.conf
+
+/etc/security/pwquality.conf:lcredit = -1
+      Is it the case that the value of "lcredit" is a positive number or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's lcredit parameter controls requirements for
 usage of lowercase letters in a password. When set to a negative number, any password will be required to
@@ -4862,10 +4894,14 @@ to crack a password. The more complex the password, the greater the number of
 possible combinations that need to be tested before the password is compromised.
 Requiring digits makes password guessing attacks more difficult by ensuring a larger
 search space.</pre></td>
-	<td><pre>To check how many digits are required in a password, run the following command:
-$ grep dcredit /etc/security/pwquality.conf
-The dcredit parameter (as a negative number) will indicate how many digits are required.
-      Is it the case that dcredit is not found or not equal to or less than the required value?
+	<td><pre>Verify that Red Hat Enterprise Linux 8 enforces password complexity by requiring that at least one numeric character be used.
+
+Check the value for "dcredit" with the following command:
+
+$ sudo grep dcredit /etc/security/pwquality.conf /etc/security/pwquality.conf.d/*.conf
+
+/etc/security/pwquality.conf:dcredit = 
+      Is it the case that the value of "dcredit" is a positive number or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's dcredit parameter controls requirements for
 usage of digits in a password. When set to a negative number, any password will be required to
@@ -4889,8 +4925,11 @@ attempts at guessing and brute-force attacks.
 Password complexity is one factor of several that determines how long it takes to crack a password. The
 more complex a password, the greater the number of possible combinations that need to be tested before the
 password is compromised.</pre></td>
-	<td><pre>To check the value for maximum consecutive repeating characters, run the following command:
-$ sudo grep maxclassrepeat /etc/security/pwquality.conf
+	<td><pre>Verify the value of the "maxclassrepeat" option in "/etc/security/pwquality.conf" with the following command:
+
+$ grep maxclassrepeat /etc/security/pwquality.conf
+
+maxclassrepeat = 
       Is it the case that the value of "maxclassrepeat" is set to "0", more than "<sub idref="var_password_pam_maxclassrepeat" />" or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's maxclassrepeat parameter controls requirements for
@@ -4917,8 +4956,11 @@ complex the password, the greater the number of possible combinations that need 
 password is compromised.
 
 Passwords with excessive repeating characters may be more vulnerable to password-guessing attacks.</pre></td>
-	<td><pre>To check the maximum value for consecutive repeating characters, run the following command:
-$ sudo grep maxrepeat /etc/security/pwquality.conf
+	<td><pre>Verify the value of the "maxrepeat" option in "/etc/security/pwquality.conf" with the following command:
+
+$ grep maxrepeat /etc/security/pwquality.conf
+
+maxrepeat = 
       Is it the case that the value of "maxrepeat" is set to more than "<sub idref="var_password_pam_maxrepeat" />" or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's maxrepeat parameter controls requirements for
@@ -4946,12 +4988,11 @@ the password is compromised.
 
 Requiring a minimum number of character categories makes password guessing attacks more difficult
 by ensuring a larger search space.</pre></td>
-	<td><pre>To check how many categories of characters must be used in password during a password change,
-run the following command:
-$ sudo grep minclass /etc/security/pwquality.conf
-The minclass parameter will indicate how many character classes must be used. If
-the requirement was for the password to contain characters from  different categories,
-then this would appear as minclass = .
+	<td><pre>Verify the value of the "minclass" option in "/etc/security/pwquality.conf" with the following command:
+
+$ grep minclass /etc/security/pwquality.conf
+
+minclass = 
       Is it the case that the value of "minclass" is set to less than "<sub idref="var_password_pam_minclass" />" or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's minclass parameter controls
@@ -4993,12 +5034,12 @@ before the password is compromised.
 Requiring a minimum number of different characters during password changes ensures that
 newly changed passwords should not resemble previously compromised ones.
 Note that passwords which are changed on compromised systems will still be compromised, however.</pre></td>
-	<td><pre>To check how many characters must differ during a password change, run the following command:
-$ sudo grep difok /etc/security/pwquality.conf
-difok = 
+	<td><pre>Verify the value of the "difok" option in "/etc/security/pwquality.conf" with the following command:
 
-The difok parameter will indicate how many characters must differ.
-      Is it the case that difok is not found or set to less than the required value?
+$ sudo grep difok /etc/security/pwquality.conf
+
+difok = 
+      Is it the case that the value of "difok" is set to less than "<sub idref="var_password_pam_difok" />", or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's difok parameter sets the number of characters
 in a password that must not be present in and old password during a password change.
@@ -5021,7 +5062,7 @@ changes to defeat the password reuse or history enforcement requirement. If
 users are allowed to immediately and continually change their password, the
 password could be repeatedly changed in a short period of time to defeat the
 organization's policy regarding password reuse.</pre></td>
-	<td><pre>Check whether the minimum time period between password changes for each user account is one day or greater.
+	<td><pre>Verify that Red Hat Enterprise Linux 8 has configured the minimum time period between password changes for each user account is one day or greater with the following command:
 
 $ sudo awk -F: '$4 < 1 {print $1 " " $4}' /etc/shadow
       Is it the case that any results are returned that are not associated with a system account?
@@ -5037,7 +5078,7 @@ $ sudo chage -m 1 USER</pre></td>
 	<td>V-230365</td>
 	<td>198</td>
 	<td>medium</td>
-	<td>RHEL 8 passwords for new users or password changes must have a 24 hours/1 day minimum password lifetime restriction in /etc/logins.def.</td>
+	<td>RHEL 8 passwords for new users or password changes must have a 24 hours/1 day minimum password lifetime restriction in /etc/login.defs.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Enforcing a minimum password lifetime helps to prevent repeated password
 changes to defeat the password reuse or history enforcement requirement. If
@@ -5047,9 +5088,14 @@ defeat the organization's policy regarding password reuse.
 
 Setting the minimum password age protects against users cycling back to a
 favorite password after satisfying the password reuse requirement.</pre></td>
-	<td><pre>To check the minimum password age, run the command:
-$ grep PASS_MIN_DAYS /etc/login.defs
-      Is it the case that it is not equal to or greater than the required value?
+	<td><pre>Verify Red Hat Enterprise Linux 8 enforces 24 hours/1 day as the minimum password lifetime for new user accounts.
+
+Check for the value of "PASS_MIN_DAYS" in "/etc/login.defs" with the following command:
+
+$ grep -i pass_min_days /etc/login.defs
+
+PASS_MIN_DAYS 
+      Is it the case that the "PASS_MIN_DAYS" parameter value is not "<sub idref="var_accounts_minimum_age_login_defs" />" or greater, or is commented out?
       </pre></td>
 	<td><pre>To specify password minimum age for new accounts,
 edit the file /etc/login.defs
@@ -5077,10 +5123,12 @@ Setting the password maximum age ensures users are required to
 periodically change their passwords. Requiring shorter password lifetimes
 increases the risk of users writing down the password in a convenient
 location subject to physical compromise.</pre></td>
-	<td><pre>To check the maximum password age, run the command:
-$ grep PASS_MAX_DAYS /etc/login.defs
-The profile requirement is .
-      Is it the case that PASS_MAX_DAYS is not set equal to or greater than the required value?
+	<td><pre>Verify that Red Hat Enterprise Linux 8 enforces a -day maximum password lifetime for new user accounts by running the following command:
+
+$ grep -i pass_max_days /etc/login.defs
+
+PASS_MAX_DAYS 
+      Is it the case that the "PASS_MAX_DAYS" parameter value is greater than "<sub idref="var_accounts_maximum_age_login_defs" />", or commented out?
       </pre></td>
 	<td><pre>To specify password maximum age for new accounts,
 edit the file /etc/login.defs
@@ -5190,10 +5238,12 @@ Password length is one factor of several that helps to determine strength
 and how long it takes to crack a password. Use of more characters in a password
 helps to exponentially increase the time and/or resources required to
 compromise the password.</pre></td>
-	<td><pre>To check how many characters are required in a password, run the following command:
+	<td><pre>Verify that Red Hat Enterprise Linux 8 enforces a minimum -character password length with the following command:
+
 $ grep minlen /etc/security/pwquality.conf
-Your output should contain minlen = 
-      Is it the case that minlen is not found, or not equal to or greater than the required value?
+
+minlen = 
+      Is it the case that the command does not return a "minlen" value of "<sub idref="var_password_pam_minlen" />" or greater, does not return a line, or the line is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's minlen parameter controls requirements for
 minimum characters required in a password. Add minlen=
@@ -5222,13 +5272,12 @@ after pam_pwquality to set minimum password length requirements.</pre></td>
 	<td>RHEL 8 duplicate User IDs (UIDs) must not exist for interactive users.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>To assure accountability and prevent unauthenticated access, interactive users must be identified and authenticated to prevent potential misuse and compromise of the system.</pre></td>
-	<td><pre>Run the following command to check for duplicate account names:
-Check that the operating system contains no duplicate UIDs for interactive users by running the following command:
-# awk -F ":" 'list[$3]++{print $1, $3}' /etc/passwd
-If output is produced, this is a finding.
-Configure the operating system to contain no duplicate UIDs for interactive users.
-Edit the file "/etc/passwd" and provide each interactive user account that has a duplicate UID with a unique UID.
-      Is it the case that a line is returned?
+	<td><pre>Verify that Red Hat Enterprise Linux 8 contains no duplicate User IDs (UIDs) for interactive users.
+
+Check that the operating system contains no duplicate UIDs for interactive users with the following command:
+
+$ sudo awk -F ":" 'list[$3]++{print $1, $3}' /etc/passwd
+      Is it the case that output is produced and the accounts listed are interactive user accounts?
       </pre></td>
 	<td><pre>Change user IDs (UIDs), or delete accounts, so each has a unique name.</pre></td>
 	<td>RHEL-08-020240</td>
@@ -5332,7 +5381,7 @@ must be set upon account creation.
 
 For every emergency account, run the following command to obtain its account aging and expiration information:
 
-$ sudo chage -l  emergency_account_name
+$ sudo chage -l emergency_account_name
 
 Verify each of these accounts has an expiration date set within 72 hours or as documented.
       Is it the case that any emergency accounts have no expiration date set or do not expire within 72 hours?
@@ -5369,10 +5418,11 @@ to crack a password. The more complex the password, the greater the number of
 possible combinations that need to be tested before the password is compromised.
 Requiring a minimum number of special characters makes password guessing attacks
 more difficult by ensuring a larger search space.</pre></td>
-	<td><pre>To check how many special characters are required in a password, run the following command:
-$ grep ocredit /etc/security/pwquality.conf
-The ocredit parameter (as a negative number) will indicate how many special
-characters are required.
+	<td><pre>Verify that Red Hat Enterprise Linux 8 enforces password complexity by requiring that at least one special character with the following command:
+
+$ sudo grep ocredit /etc/security/pwquality.conf /etc/security/pwquality.conf.d/*.conf
+
+ocredit = 
       Is it the case that value of "ocredit" is a positive number or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's ocredit= parameter controls requirements for
@@ -5442,11 +5492,12 @@ complex the password, the greater the number of possible combinations that need 
 password is compromised.
 
 Passwords with dictionary words may be more vulnerable to password-guessing attacks.</pre></td>
-	<td><pre>To check if dictionary words are disallowed run the following command:
+	<td><pre>Verify Red Hat Enterprise Linux 8 prevents the use of dictionary words for passwords with the following command:
+
 $ sudo grep dictcheck /etc/security/pwquality.conf /etc/pwquality.conf.d/*.conf
-The dictcheck parameter should be equal to 1. The value should look like
-dictcheck=1
-      Is it the case that dictcheck is not found or not equal to the required value?
+
+/etc/security/pwquality.conf:dictcheck=1
+      Is it the case that "dictcheck" does not have a value other than "0", or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's dictcheck check if passwords contains dictionary words. When
 dictcheck is set to 1 passwords will be checked for dictionary words.</pre></td>
@@ -5462,13 +5513,11 @@ dictcheck is set to 1 passwords will be checked for dictionary words.</pre></td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Increasing the time between a failed authentication attempt and re-prompting to
 enter credentials helps to slow a single-threaded brute force attack.</pre></td>
-	<td><pre>Verify the FAIL_DELAY setting is configured correctly in the /etc/login.defs file by
-running the following command:
-$ sudo grep -i "FAIL_DELAY" /etc/login.defs
-All output must show the value of FAIL_DELAY set as shown in the below:
+	<td><pre>Verify Red Hat Enterprise Linux 8 enforces a delay of at least  seconds between console logon prompts following a failed logon attempt with the following command:
+
 $ sudo grep -i "FAIL_DELAY" /etc/login.defs
 FAIL_DELAY 
-      Is it the case that the above command returns no output, or FAIL_DELAY is configured less than the expected value?
+      Is it the case that the value of "FAIL_DELAY" is not set to "<sub idref="var_accounts_fail_delay" />" or greater, or the line is commented out?
       </pre></td>
 	<td><pre>To ensure the logon failure delay controlled by /etc/login.defs is set properly,
 add or correct the FAIL_DELAY setting in /etc/login.defs to read as follows:
@@ -5590,7 +5639,7 @@ to prevent logins with empty passwords.</pre></td>
 
 <tr>
 	<td>V-230381</td>
-	<td>366</td>
+	<td>52</td>
 	<td>low</td>
 	<td>RHEL 8 must display the date and time of the last successful account logon upon logon.</td>
 	<td>SRG-OS-ID</td>
@@ -5619,7 +5668,7 @@ pam_lastlog module.</pre></td>
 
 <tr>
 	<td>V-230382</td>
-	<td>366</td>
+	<td>52</td>
 	<td>medium</td>
 	<td>RHEL 8 must display the date and time of the last successful account logon upon an SSH logon.</td>
 	<td>SRG-OS-ID</td>
@@ -5657,12 +5706,12 @@ PrintLastLog yes</pre></td>
 	<td><pre>The umask value influences the permissions assigned to files when they are created.
 A misconfigured umask value could result in files with excessive permissions that can be read and
 written to by unauthorized users.</pre></td>
-	<td><pre>Verify the UMASK setting is configured correctly in the /etc/login.defs file by
-running the following command:
-$ sudo grep "UMASK" /etc/login.defs
-All output must show the value of UMASK set as shown in the below:
+	<td><pre>Verify Red Hat Enterprise Linux 8 defines default permissions for all authenticated users in such a way that the user can only read and modify their own files with the following command:
+
+# grep -i umask /etc/login.defs
+
 UMASK 
-      Is it the case that the above command returns no output, or the umask is configured incorrectly?
+      Is it the case that the value for the "UMASK" parameter is not "<sub idref="var_accounts_user_umask" />", or the "UMASK" parameter is missing or is commented out?
       </pre></td>
 	<td><pre>To ensure the default umask controlled by /etc/login.defs is set properly,
 add or correct the UMASK setting in /etc/login.defs to read as follows:
@@ -5683,10 +5732,19 @@ be represented as a four-digit number, the first digit representing special
 access modes is typically ignored or required to be 0. This requirement
 applies to the globally configured system defaults and the local interactive
 user defaults for each account on the system.</pre></td>
-	<td><pre>Verify the UMASK setting is not configured for interactive users,
-run the following command:
-$ sudo grep -ri "UMASK" /home
-      Is it the case that the above command returns no output, or if the umask is configured incorrectly?
+	<td><pre>Verify that the default umask for all local interactive users is "077".
+
+Identify the locations of all local interactive user home directories by looking at the "/etc/passwd" file.
+
+Check all local interactive user initialization files for interactive users with the following command:
+
+Note: The example is for a system that is configured to create users home directories in the "/home" directory.
+
+# grep -ri umask /home/
+
+/home/smithj/.bash_history:grep -i umask /etc/bashrc /etc/csh.cshrc /etc/profile
+/home/smithj/.bash_history:grep -i umask /etc/login.defs
+      Is it the case that any local interactive user initialization files are found to have a umask statement that sets a value less restrictive than "077"?
       </pre></td>
 	<td><pre>Remove the UMASK environment variable from all interactive users initialization files.</pre></td>
 	<td>RHEL-08-020352</td>
@@ -5798,12 +5856,12 @@ cron.*                                                  /var/log/cron</pre></td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Email sent to the root account is typically aliased to the
 administrators of the system, who can take appropriate action.</pre></td>
-	<td><pre>Verify that the Red Hat Enterprise Linux 8 "auditd" service is configured to notify the SA and ISSO in the event of an audit processing failure.
-Inspect /etc/audit/auditd.conf and locate the following line to
-determine if the system is configured to send email to an
-account when it needs to notify an administrator:
+	<td><pre>Verify that Red Hat Enterprise Linux 8 is configured to notify the SA and/or ISSO (at a minimum) in the event of an audit processing failure with the following command:
+
+$ sudo grep action_mail_acct /etc/audit/auditd.conf
+
 action_mail_acct = 
-      Is it the case that auditd is not configured to send emails per identified actions?
+      Is it the case that the value of the "action_mail_acct" keyword is not set to "<sub idref="var_auditd_action_mail_acct" />" and/or other accounts for security personnel, the "action_mail_acct" keyword is missing, or the retuned line is commented out, ask the system administrator to indicate how they and the ISSO are notified of an audit process failure. If there is no evidence of the proper personnel being notified of an audit processing failure?
       </pre></td>
 	<td><pre>The auditd service can be configured to send email to
 a designated account in certain situations. Add or correct the following line
@@ -8333,10 +8391,12 @@ When using rsyslogd to off-load logs the remote system must be authenticated.</p
 	<td>SRG-OS-ID</td>
 	<td><pre>Notifying administrators of an impending disk space problem may allow them to
 take corrective action prior to any disruption.</pre></td>
-	<td><pre>Inspect /etc/audit/auditd.conf and locate the following line to
-determine if the system is configured correctly:
-space_left PERCENTAGE%
-      Is it the case that the system is not configured with a specific percentage to notify administrators of an issue?
+	<td><pre>Verify Red Hat Enterprise Linux 8 takes action when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity with the following command:
+
+$ sudo grep -w space_left /etc/audit/auditd.conf
+
+space_left = %
+      Is it the case that the value of the "space_left" keyword is not set to <sub idref="var_auditd_space_left_percentage" />% of the storage volume allocated to audit logs, or if the line is commented out, ask the System Administrator to indicate how the system is providing real-time alerts to the SA and ISSO. If the "space_left" value is not configured to the correct value?
       </pre></td>
 	<td><pre>The auditd service can be configured to take an action
 when disk space is running low but prior to running out of space completely.
@@ -8357,13 +8417,14 @@ notify the user of an issue.</pre></td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Notifying administrators of an impending disk space problem may
 allow them to take corrective action prior to any disruption.</pre></td>
-	<td><pre>Inspect /etc/audit/auditd.conf and locate the following line to
-determine if the system is configured to email the administrator when
-disk space is starting to run low:
-$ sudo grep space_left_action /etc/audit/auditd.conf
-space_left_action
-Acceptable values are email, suspend, single, and halt.
-      Is it the case that the system is not configured to send an email to the system administrator when disk space is starting to run low?
+	<td><pre>Verify Red Hat Enterprise Linux 8 notifies the SA and ISSO (at a minimum) when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity with the following command:
+
+$ sudo grep -w space_left_action /etc/audit/auditd.conf
+
+space_left_action = 
+
+If the value of the "space_left_action" is not set to "", or if the line is commented out, ask the System Administrator to indicate how the system is providing real-time alerts to the SA and ISSO.
+      Is it the case that there is no evidence that real-time alerts are configured on the system?
       </pre></td>
 	<td><pre>The auditd service can be configured to take an action
 when disk space starts to run low.
@@ -8403,13 +8464,13 @@ A line with the appropriate server should be returned, any line returned startin
 	<td>low</td>
 	<td>RHEL 8 must disable the chrony daemon from acting as a server.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Minimizing the exposure of the server functionality of the chrony
-daemon diminishes the attack surface.</pre></td>
-	<td><pre>To verify that port has been set properly, perform the following:
-$ grep '\bport\b' /etc/chrony.conf
-The output should return
+	<td><pre>In order to prevent unauthorized connection of devices, unauthorized transfer of information, or unauthorized tunneling (i.e., embedding of data types within data types), organizations must disable or restrict unused or unnecessary physical and logical ports/protocols on information systems.
+Operating systems are capable of providing a wide variety of functions and services. Some of the functions and services provided by default may not be necessary to support essential organizational operations. Additionally, it is sometimes convenient to provide multiple services from a single component (e.g., VPN and IPS); however, doing so increases risk over limiting the services provided by any one component.
+To support the requirements and principles of least functionality, the operating system must support the organizational requirements, providing only essential capabilities and limiting the use of ports, protocols, and/or services to only those required, authorized, and approved to conduct official business or to address authorized quality of life issues.</pre></td>
+	<td><pre>Verify Red Hat Enterprise Linux 8 disables the chrony daemon from acting as a server with the following command:
+$ grep -w port /etc/chrony.conf
 port 0
-      Is it the case that port is not set or port is set to a non-zero value?
+      Is it the case that the "port" option is not set to "0", is commented out, or is missing?
       </pre></td>
 	<td><pre>The port option in /etc/chrony.conf can be set to
 0 to make chrony daemon to never open any listening port
@@ -8424,13 +8485,12 @@ for server operation and to operate strictly in a client-only mode.</pre></td>
 	<td>low</td>
 	<td>RHEL 8 must disable network management of the chrony daemon.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Not exposing the management interface of the chrony daemon on
-the network diminishes the attack space.</pre></td>
-	<td><pre>To verify that cmdport has been set properly, perform the following:
-$ grep '\bcmdport\b' /etc/chrony.conf
-The output should return
+	<td><pre>Minimizing the exposure of the server functionality of the chrony
+daemon diminishes the attack surface.</pre></td>
+	<td><pre>Verify Red Hat Enterprise Linux 8 disables network management of the chrony daemon with the following command:
+$ grep -w cmdport /etc/chrony.conf
 cmdport 0
-      Is it the case that cmdport is not set or cmdport is set to a non-zero value?
+      Is it the case that the "cmdport" option is not set to "0", is commented out, or is missing?
       </pre></td>
 	<td><pre>The cmdport option in /etc/chrony.conf can be set to
 0 to stop chrony daemon from listening on the UDP port 323
@@ -8840,8 +8900,11 @@ use of ports, protocols, and/or services to only those required, authorized, and
 conduct official business.</pre></td>
 	<td><pre>Inspect the list of enabled firewall ports and verify they are configured correctly by running
 the following command:
+
 $ sudo firewall-cmd --list-all
-      Is it the case that the firewalld rules are not configured?
+
+Ask the System Administrator for the site or program Ports, Protocols, and Services Management Component Local Service Assessment (PPSM CLSA). Verify the services allowed by the firewall match the PPSM CLSA.
+      Is it the case that there are additional ports, protocols, or services that are not in the PPSM CLSA, or there are ports, protocols, or services that are prohibited by the PPSM Category Assurance List (CAL), or there are no firewall rules configured?
       </pre></td>
 	<td><pre>Configure the firewalld ports to allow approved services to have access to the system.
 To configure firewalld to open ports, run the following command:
@@ -9034,11 +9097,17 @@ service to valid network resources.</pre></td>
 	<td><pre>Verify that there are no wireless interfaces configured on the system
 with the following command:
 
-$ sudo nmcli device
-The output should only contain wireless devices in unavailable state, like in the
-following example:
-wlp0s20f3          wifi      unavailable             -- 
-      Is it the case that wireless interfaces are not active?
+Note: This requirement is Not Applicable for systems that do not have physical wireless network radios.
+
+$ nmcli device status
+DEVICE          TYPE      STATE         CONNECTION
+virbr0          bridge    connected     virbr0
+wlp7s0          wifi      connected     wifiSSID
+enp6s0          ethernet  disconnected  --
+p2p-dev-wlp7s0  wifi-p2p  disconnected  --
+lo              loopback  unmanaged     --
+virbr0-nic      tun       unmanaged     --
+      Is it the case that a wireless interface is configured and has not been documented and approved by the Information System Security Officer (ISSO)?
       </pre></td>
 	<td><pre>Deactivating wireless network interfaces should prevent normal usage of the wireless
 capability.
@@ -9523,9 +9592,12 @@ $ sudo grep permissive /etc/fapolicyd/fapolicyd.conf
 
 permissive = 0
 
-Check that fapolicyd employs a deny-all policy on system mounts with the following command:
-
+Check that fapolicyd employs a deny-all policy on system mounts with the following commands:
+For RHEL 8.5 systems and older:
 $ sudo tail /etc/fapolicyd/fapolicyd.rules
+
+For RHEL 8.6 systems and newer:
+$ sudo tail /etc/fapolicyd/compiled.rules
 
 allow exe=/usr/bin/python3.7 : ftype=text/x-python
 deny_audit perm=any pattern=ld_so : all
@@ -9567,7 +9639,9 @@ $ sudo yum install usbguard</pre></td>
 properly, avoiding the system to become inaccessible.</pre></td>
 	<td><pre>Verify the USBGuard has a policy configured with the following command:
 
-$ sudo usbguard list-rules
+$ usbguard list-rules
+
+allow id 1d6b:0001 serial
 
 If the command does not return results or an error is returned, ask the SA to indicate how unauthorized peripherals are being blocked.
       Is it the case that there is no evidence that unauthorized peripherals are being blocked before establishing a connection?
@@ -10564,7 +10638,7 @@ sudo yum remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-util
 must not be active to decrease the attack surface of the system. X windows has a
 long history of security vulnerabilities and should not be used unless approved
 and documented.</pre></td>
-	<td><pre>Verify the default target is multi-user, run the following command:
+	<td><pre>Verify that Red Hat Enterprise Linux 8 is configured to boot to the command line:
 $ systemctl get-default
 multi-user.target
       Is it the case that the system default target is not set to "multi-user.target" and the Information System Security Officer (ISSO) lacks a documented requirement for a graphical user interface?
@@ -10691,20 +10765,27 @@ X11UseLocalhost yes</pre></td>
 	<td><pre>Using the -s option causes the TFTP service to only serve files from the
 given directory. Serving files from an intentionally-specified directory
 reduces the risk of sharing files which should remain private.</pre></td>
-	<td><pre>If TFTP is not installed, this is not applicable. To determine if TFTP is
-installed, run the following command:
+	<td><pre>Verify the TFTP daemon is configured to operate in secure mode.
+
+Check if a TFTP server is installed with the following command:
+
 $ rpm -qa | grep tftp
 
-Verify tftp is configured by with the -s option by
-running the following command:
+
+If a TFTP server is not installed, this is Not Applicable.
+
+
+If a TFTP server is installed, verify TFTP is configured by with
+the -s option by running the following command:
+
 grep "server_args" /etc/xinetd.d/tftp
 server_args = -s 
-      Is it the case that "server_args" line does not have a "-s" option, and a subdirectory is not assigned?
+      Is it the case that '"server_args" line does not have a "-s" option, and a subdirectory is not assigned'?
       </pre></td>
-	<td><pre>If running the tftp service is necessary, it should be configured
-to change its root directory at startup. To do so, ensure
-/etc/xinetd.d/tftp includes -s as a command line argument, as shown in
-the following example:
+	<td><pre>If running the Trivial File Transfer Protocol (TFTP) service is necessary,
+it should be configured to change its root directory at startup. To do so,
+ensure /etc/xinetd.d/tftp includes -s as a command line argument,
+as shown in the following example:
 server_args = -s </pre></td>
 	<td>RHEL-08-040350</td>
 	<td>tftpd_uses_secure_mode</td>
@@ -10783,6 +10864,19 @@ $ rpm -q tuned
 $ sudo yum erase tuned</pre></td>
 	<td>RHEL-08-040390</td>
 	<td>package_tuned_removed</td>
+</tr>
+
+<tr>
+	<td>V-254520</td>
+	<td></td>
+	<td>medium</td>
+	<td>RHEL 8 must prevent non-privileged users from executing privileged functions, including disabling, circumventing, or altering implemented security safeguards/countermeasures.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre></pre></td>
+	<td><pre></pre></td>
+	<td><pre></pre></td>
+	<td>RHEL-08-040400</td>
+	<td>Missing Rule</td>
 </tr>
 
 </table>

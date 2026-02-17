@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<html>
 <head lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>DISA STIG for Red Hat Enterprise Linux 7</title>
@@ -1424,6 +1424,33 @@ authentication device.
   <td></td>
 </tr>
 <tr>
+  <td>AC-2(2)<br/>AC-2(3)<br/>CM-6(a)</td>
+  <td>CCE-88242-3</td>
+  <td>Assign Expiration Date to Emergency Accounts</td>
+  <td xml:lang="en-US">
+Emergency accounts are privileged accounts established in response to
+crisis situations where the need for rapid account activation is required.
+In the event emergency accounts are required, configure the system to
+terminate them after a documented time period. For every emergency account,
+run the following command to set an expiration date on it, substituting
+<tt><i>ACCOUNT_NAME</i></tt> and <tt><i>YYYY-MM-DD</i></tt>
+appropriately:
+<pre>$ sudo chage -E <i>YYYY-MM-DD ACCOUNT_NAME</i></pre>
+<tt><i>YYYY-MM-DD</i></tt> indicates the documented expiration date for the
+account. For U.S. Government systems, the operating system must be
+configured to automatically terminate these types of accounts after a
+period of 72 hours.
+  </td>
+  <td xml:lang="en-US">
+If emergency user accounts remain active when no longer needed or for
+an excessive period, these accounts may be used to gain unauthorized access.
+To mitigate this risk, automated termination of all emergency accounts
+must be set upon account creation.
+<br />
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>SI-2(2)</td>
   <td>CCE-86262-3</td>
   <td>Ensure McAfee Endpoint Security for Linux (ENSL) is running</td>
@@ -1862,10 +1889,10 @@ The SSH server sends at most <tt>ClientAliveCountMax</tt> messages
 during a SSH session and waits for a response from the SSH client.
 The option <tt>ClientAliveInterval</tt> configures timeout after
 each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 
-To ensure the SSH idle timeout occurs precisely when the
+To ensure the SSH timeout occurs precisely when the
 <tt>ClientAliveInterval</tt> is set, set the <tt>ClientAliveCountMax</tt> to
 value of <tt>0</tt> in
 
@@ -1931,11 +1958,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Without generating audit records that are specific to the security and
@@ -3956,12 +3983,12 @@ may be able to log into the system as another user.
 <tr>
   <td>CM-6(a)<br/>AC-17(a)<br/>AC-2(5)<br/>AC-12<br/>AC-17(a)<br/>SC-10<br/>CM-6(a)</td>
   <td>CCE-27433-2</td>
-  <td>Set SSH Idle Timeout Interval</td>
+  <td>Set SSH Client Alive Interval</td>
   <td xml:lang="en-US">
-SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br /><br />
-To set an idle timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
+To set this timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
 follows:
 <pre>ClientAliveInterval <b><tt>10_minutes</tt></b></pre>
 <br/><br/>
@@ -3970,7 +3997,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br /><br />
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.
+some processes may stop SSH from correctly detecting that the user is idle.
   </td>
   <td xml:lang="en-US">
 Terminating an idle ssh session within a short time period reduces the window of
@@ -4073,10 +4100,10 @@ the invoking user for the "root" user password.
   <td>CCE-80214-0</td>
   <td>Ensure tftp Daemon Uses Secure Mode</td>
   <td xml:lang="en-US">
-If running the <tt>tftp</tt> service is necessary, it should be configured
-to change its root directory at startup. To do so, ensure
-<tt>/etc/xinetd.d/tftp</tt> includes <tt>-s</tt> as a command line argument, as shown in
-the following example:
+If running the Trivial File Transfer Protocol (TFTP) service is necessary,
+it should be configured to change its root directory at startup. To do so,
+ensure <tt>/etc/xinetd.d/tftp</tt> includes <tt>-s</tt> as a command line argument,
+as shown in the following example:
 <pre>server_args = -s <tt>/var/lib/tftpboot</tt></pre>
   </td>
   <td xml:lang="en-US">
@@ -5106,7 +5133,29 @@ not provide easy attribution.
   <td></td>
 </tr>
 <tr>
-  <td>AC-9<br/>AC-17(a)<br/>CM-6(a)</td>
+  <td>AC-9<br/>AC-9(1)</td>
+  <td>CCE-27275-7</td>
+  <td>Ensure PAM Displays Last Logon/Access Notification</td>
+  <td xml:lang="en-US">
+To configure the system to notify users of last logon/access
+using <tt>pam_lastlog</tt>, add or correct the <tt>pam_lastlog</tt>
+settings in
+<tt>/etc/pam.d/postlogin</tt> to read as follows:
+<pre>session     required pam_lastlog.so showfailed</pre>
+And make sure that the <tt>silent</tt> option is not set for
+<tt>pam_lastlog</tt> module.
+  </td>
+  <td xml:lang="en-US">
+Users need to be aware of activity that occurs regarding
+their account. Providing users with information regarding the number
+of unsuccessful attempts that were made to login to their account
+allows the user to determine if any unauthorized activity has occurred
+and gives them an opportunity to notify administrators.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>AC-9<br/>AC-9(1)</td>
   <td>CCE-80225-6</td>
   <td>Enable SSH Print Last Log</td>
   <td xml:lang="en-US">
@@ -5125,28 +5174,6 @@ To explicitly enable LastLog in SSH, add or correct the following line in
   <td xml:lang="en-US">
 Providing users feedback on when account accesses last occurred facilitates user
 recognition and reporting of unauthorized account use.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>AC-9(1)<br/>CM-6(a)</td>
-  <td>CCE-27275-7</td>
-  <td>Ensure PAM Displays Last Logon/Access Notification</td>
-  <td xml:lang="en-US">
-To configure the system to notify users of last logon/access
-using <tt>pam_lastlog</tt>, add or correct the <tt>pam_lastlog</tt>
-settings in
-<tt>/etc/pam.d/postlogin</tt> to read as follows:
-<pre>session     required pam_lastlog.so showfailed</pre>
-And make sure that the <tt>silent</tt> option is not set for
-<tt>pam_lastlog</tt> module.
-  </td>
-  <td xml:lang="en-US">
-Users need to be aware of activity that occurs regarding
-their account. Providing users with information regarding the number
-of unsuccessful attempts that were made to login to their account
-allows the user to determine if any unauthorized activity has occurred
-and gives them an opportunity to notify administrators.
   </td>
   <td></td>
 </tr>

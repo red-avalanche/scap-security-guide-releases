@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<html>
 <head lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>SRGs from General Purpose Operating System Security Requirements Guide Mapped to DISA STIG for Red Hat Enterprise Linux 7</title>
@@ -84,12 +84,15 @@ Account management functions include: assigning group or role membership; identi
 
 
 
+
   <tr>
-    <td>V-56575</td>
+    <td>CCI-000016</td>
     <td>SRG-OS-000002-GPOS-00002</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must automatically remove or disable temporary user accounts after 72 hours.</td>
-    <td></td>
+
+    <td>CCE-88242-3: Assign Expiration Date to Emergency Accounts</td>
+
     <td>If temporary user accounts remain active when no longer needed or for an excessive period, these accounts may be used to gain unauthorized access. To mitigate this risk, automated termination of all temporary accounts must be set upon account creation.
 
 Temporary accounts are established as part of normal account activation procedures when there is a need for short-term accounts without the demand for immediacy in account activation.
@@ -97,17 +100,46 @@ Temporary accounts are established as part of normal account activation procedur
 If temporary accounts are used, the operating system must be configured to automatically terminate these types of accounts after a DoD-defined time period of 72 hours.
 
 To address access requirements, many operating systems may be integrated with enterprise-level authentication/access mechanisms that meet or exceed access control policy requirements.</td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
+    <td>Emergency accounts are privileged accounts established in response to
+crisis situations where the need for rapid account activation is required.
+In the event emergency accounts are required, configure the system to
+terminate them after a documented time period. For every emergency account,
+run the following command to set an expiration date on it, substituting
+<tt><i>ACCOUNT_NAME</i></tt> and <tt><i>YYYY-MM-DD</i></tt>
+appropriately:
+<pre>$ sudo chage -E <i>YYYY-MM-DD ACCOUNT_NAME</i></pre>
+<tt><i>YYYY-MM-DD</i></tt> indicates the documented expiration date for the
+account. For U.S. Government systems, the operating system must be
+configured to automatically terminate these types of accounts after a
+period of 72 hours.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system automatically removes or disables local temporary user accounts after 72 hours. If it does not, this is a finding.</td>
+    <td>Verify emergency accounts have been provisioned with an expiration date of 72 hours.
+
+For every emergency account, run the following command to obtain its account aging and expiration information:
+
+$ sudo chage -l emergency_account_name
+
+Verify each of these accounts has an expiration date set within 72 hours or as documented. Is it the case that any emergency accounts have no expiration date set or do not expire within 72 hours?</td>
+    <td>Configure the operating system to automatically remove or disable local temporary user accounts after 72 hours.</td>
+    <td>Emergency accounts are privileged accounts established in response to
+crisis situations where the need for rapid account activation is required.
+In the event emergency accounts are required, configure the system to
+terminate them after a documented time period. For every emergency account,
+run the following command to set an expiration date on it, substituting
+<tt><i>ACCOUNT_NAME</i></tt> and <tt><i>YYYY-MM-DD</i></tt>
+appropriately:
+<pre>$ sudo chage -E <i>YYYY-MM-DD ACCOUNT_NAME</i></pre>
+<tt><i>YYYY-MM-DD</i></tt> indicates the documented expiration date for the
+account. For U.S. Government systems, the operating system must be
+configured to automatically terminate these types of accounts after a
+period of 72 hours.</td>
+    <td>medium</td>
     <td></td>
     <td></td>
     <td></td>
   </tr>
+
 
 
 
@@ -1290,7 +1322,7 @@ on the system:
 <pre>$ sudo grep TMOUT /etc/profile /etc/profile.d/*.sh</pre>
 
 The output should return the following:
-<pre>TMOUT=<sub idref="var_accounts_tmout" /></pre> Is it the case that TMOUT is not set or its value is greater than expected setting?</td>
+<pre>TMOUT=<sub idref="var_accounts_tmout" /></pre> Is it the case that value of TMOUT is not less than or equal to expected setting?</td>
     <td>Configure the operating system to initiate a session lock after a 15-minute period of inactivity for all connection types.</td>
     <td>Setting the <tt>TMOUT</tt> option in <tt>/etc/profile</tt> ensures that
 all user sessions will terminate based on inactivity.
@@ -3578,11 +3610,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system produces audit records containing information to establish what type of events occurred. If it does not, this is a finding.</td>
     <td>Verify that Red Hat Enterprise Linux 7 is configured to audit the execution of the "kmod" command with the following command:
@@ -3596,11 +3628,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -6839,11 +6871,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system generates audit records containing the full-text recording of privileged commands. If it does not, this is a finding.</td>
     <td>Verify that Red Hat Enterprise Linux 7 is configured to audit the execution of the "kmod" command with the following command:
@@ -6857,11 +6889,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -8318,11 +8350,11 @@ via email for those situations:
 <pre>action_mail_acct = <sub idref="var_auditd_action_mail_acct" /></pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system alerts the ISSO and SA (at a minimum) in the event of an audit processing failure. If it does not, this is a finding.</td>
-    <td>Verify that the Red Hat Enterprise Linux 7 "auditd" service is configured to notify the SA and ISSO in the event of an audit processing failure.
-Inspect <tt>/etc/audit/auditd.conf</tt> and locate the following line to
-determine if the system is configured to send email to an
-account when it needs to notify an administrator:
-<pre>action_mail_acct = <sub idref="var_auditd_action_mail_acct" /></pre> Is it the case that auditd is not configured to send emails per identified actions?</td>
+    <td>Verify that Red Hat Enterprise Linux 7 is configured to notify the SA and/or ISSO (at a minimum) in the event of an audit processing failure with the following command:
+
+<pre>$ sudo grep action_mail_acct /etc/audit/auditd.conf
+
+action_mail_acct = <sub idref="var_auditd_action_mail_acct" /></pre> Is it the case that the value of the "action_mail_acct" keyword is not set to "<sub idref="var_auditd_action_mail_acct" />" and/or other accounts for security personnel, the "action_mail_acct" keyword is missing, or the retuned line is commented out, ask the system administrator to indicate how they and the ISSO are notified of an audit process failure. If there is no evidence of the proper personnel being notified of an audit processing failure?</td>
     <td>Configure the operating system to alert the ISSO and SA (at a minimum) in the event of an audit processing failure.</td>
     <td>The <tt>auditd</tt> service can be configured to send email to
 a designated account in certain situations. Add or correct the following line
@@ -11430,11 +11462,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system provides audit record generation capability for DoD-defined auditable events for all operating system components. 
 
@@ -11470,11 +11502,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -15086,10 +15118,13 @@ length credit for each uppercase character. Modify the <tt>ucredit</tt> setting 
 <tt>/etc/security/pwquality.conf</tt> to require the use of an uppercase character in passwords.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system enforces password complexity by requiring that at least one upper-case character be used. If it does not, this is a finding.</td>
-    <td>To check how many uppercase characters are required in a password, run the following command:
-<pre>$ grep ucredit /etc/security/pwquality.conf</pre>
-The <tt>ucredit</tt> parameter (as a negative number) will indicate how many uppercase characters are required.
-This would appear as <tt>ucredit = -1</tt>. Is it the case that ucredit is not found or not set to the required value?</td>
+    <td>Verify that Red Hat Enterprise Linux 7 enforces password complexity by requiring that at least one upper-case character.
+
+Check the value for "ucredit" with the following command:
+
+$ sudo grep ucredit /etc/security/pwquality.conf /etc/security/pwquality.conf.d/*.conf
+
+ucredit = -1 Is it the case that the value of "ucredit" is a positive number or is commented out?</td>
     <td>Configure the operating system to enforce password complexity by requiring that at least one upper-case character be used.</td>
     <td>The pam_pwquality module's <tt>ucredit=</tt> parameter controls requirements for
 usage of uppercase letters in a password. When set to a negative number, any password will be required to
@@ -15125,9 +15160,13 @@ length credit for each lowercase character. Modify the <tt>lcredit</tt> setting 
 <tt>/etc/security/pwquality.conf</tt> to require the use of a lowercase character in passwords.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system enforces password complexity by requiring that at least one lower-case character be used. If it does not, this is a finding.</td>
-    <td>To check how many lowercase characters are required in a password, run the following command:
-<pre>$ grep lcredit /etc/security/pwquality.conf</pre>
-The <tt>lcredit</tt> parameter (as a negative number) will indicate how many special characters are required. Is it the case that lcredit is not found or not less than or equal to the required value?</td>
+    <td>Verify that Red Hat Enterprise Linux 7 enforces password complexity by requiring that at least one lower-case character.
+
+Check the value for "lcredit" with the following command:
+
+<pre>$ sudo grep lcredit /etc/security/pwquality.conf /etc/security/pwquality.conf.d/*.conf
+
+/etc/security/pwquality.conf:lcredit = -1</pre> Is it the case that the value of "lcredit" is a positive number or is commented out?</td>
     <td>Configure the operating system to enforce password complexity by requiring that at least one lower-case character be used.</td>
     <td>The pam_pwquality module's <tt>lcredit</tt> parameter controls requirements for
 usage of lowercase letters in a password. When set to a negative number, any password will be required to
@@ -15158,10 +15197,13 @@ length credit for each uppercase character. Modify the <tt>ucredit</tt> setting 
 <tt>/etc/security/pwquality.conf</tt> to require the use of an uppercase character in passwords.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system enforces password complexity by requiring that at least one lower-case character be used. If it does not, this is a finding.</td>
-    <td>To check how many uppercase characters are required in a password, run the following command:
-<pre>$ grep ucredit /etc/security/pwquality.conf</pre>
-The <tt>ucredit</tt> parameter (as a negative number) will indicate how many uppercase characters are required.
-This would appear as <tt>ucredit = -1</tt>. Is it the case that ucredit is not found or not set to the required value?</td>
+    <td>Verify that Red Hat Enterprise Linux 7 enforces password complexity by requiring that at least one upper-case character.
+
+Check the value for "ucredit" with the following command:
+
+$ sudo grep ucredit /etc/security/pwquality.conf /etc/security/pwquality.conf.d/*.conf
+
+ucredit = -1 Is it the case that the value of "ucredit" is a positive number or is commented out?</td>
     <td>Configure the operating system to enforce password complexity by requiring that at least one lower-case character be used.</td>
     <td>The pam_pwquality module's <tt>ucredit=</tt> parameter controls requirements for
 usage of uppercase letters in a password. When set to a negative number, any password will be required to
@@ -15197,9 +15239,13 @@ length credit for each digit. Modify the <tt>dcredit</tt> setting in
 <tt>/etc/security/pwquality.conf</tt> to require the use of a digit in passwords.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system enforces password complexity by requiring that at least one numeric character be used. If it does not, this is a finding.</td>
-    <td>To check how many digits are required in a password, run the following command:
-<pre>$ grep dcredit /etc/security/pwquality.conf</pre>
-The <tt>dcredit</tt> parameter (as a negative number) will indicate how many digits are required. Is it the case that dcredit is not found or not equal to or less than the required value?</td>
+    <td>Verify that Red Hat Enterprise Linux 7 enforces password complexity by requiring that at least one numeric character be used.
+
+Check the value for "dcredit" with the following command:
+
+<pre>$ sudo grep dcredit /etc/security/pwquality.conf /etc/security/pwquality.conf.d/*.conf
+
+/etc/security/pwquality.conf:dcredit = <sub idref="var_password_pam_dcredit" /></pre> Is it the case that the value of "dcredit" is a positive number or is commented out?</td>
     <td>Configure the operating system to enforce password complexity by requiring that at least one numeric character be used.</td>
     <td>The pam_pwquality module's <tt>dcredit</tt> parameter controls requirements for
 usage of digits in a password. When set to a negative number, any password will be required to
@@ -15238,11 +15284,11 @@ to equal <sub idref="var_password_pam_difok" /> to require differing characters
 when changing passwords.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system requires the change of at least eight of the total number of characters when passwords are changed. If it does not, this is a finding.</td>
-    <td>To check how many characters must differ during a password change, run the following command:
+    <td>Verify the value of the "difok" option in "/etc/security/pwquality.conf" with the following command:
+
 <pre>$ sudo grep difok /etc/security/pwquality.conf
-difok = <sub idref="var_password_pam_difok" />
-</pre>
-The <tt>difok</tt> parameter will indicate how many characters must differ. Is it the case that difok is not found or set to less than the required value?</td>
+
+difok = <sub idref="var_password_pam_difok" /></pre> Is it the case that the value of "difok" is set to less than "<sub idref="var_password_pam_difok" />", or is commented out?</td>
     <td> Configure the operating system to require the change of at least eight of the total number of characters when passwords are changed.</td>
     <td>The pam_pwquality module's <tt>difok</tt> parameter sets the number of characters
 in a password that must not be present in and old password during a password change.
@@ -15276,8 +15322,11 @@ which contain more than that number of consecutive characters from the same char
 to prevent a run of (<sub idref="var_password_pam_maxclassrepeat" /> + 1) or more identical characters.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system requires the change of at least eight of the total number of characters when passwords are changed. If it does not, this is a finding.</td>
-    <td>To check the value for maximum consecutive repeating characters, run the following command:
-<pre>$ sudo grep maxclassrepeat /etc/security/pwquality.conf</pre> Is it the case that the value of "maxclassrepeat" is set to "0", more than "<sub idref="var_password_pam_maxclassrepeat" />" or is commented out?</td>
+    <td>Verify the value of the "maxclassrepeat" option in "/etc/security/pwquality.conf" with the following command:
+
+<pre>$ grep maxclassrepeat /etc/security/pwquality.conf
+
+maxclassrepeat = <sub idref="var_password_pam_maxclassrepeat" /></pre> Is it the case that the value of "maxclassrepeat" is set to "0", more than "<sub idref="var_password_pam_maxclassrepeat" />" or is commented out?</td>
     <td> Configure the operating system to require the change of at least eight of the total number of characters when passwords are changed.</td>
     <td>The pam_pwquality module's <tt>maxclassrepeat</tt> parameter controls requirements for
 consecutive repeating characters from the same character class. When set to a positive number, it will reject passwords
@@ -15310,8 +15359,11 @@ in <tt>/etc/security/pwquality.conf</tt> to equal <sub idref="var_password_pam_m
 run of (<sub idref="var_password_pam_maxrepeat" /> + 1) or more identical characters.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system requires the change of at least eight of the total number of characters when passwords are changed. If it does not, this is a finding.</td>
-    <td>To check the maximum value for consecutive repeating characters, run the following command:
-<pre>$ sudo grep maxrepeat /etc/security/pwquality.conf</pre> Is it the case that the value of "maxrepeat" is set to more than "<sub idref="var_password_pam_maxrepeat" />" or is commented out?</td>
+    <td>Verify the value of the "maxrepeat" option in "/etc/security/pwquality.conf" with the following command:
+
+<pre>$ grep maxrepeat /etc/security/pwquality.conf
+
+maxrepeat = <sub idref="var_password_pam_maxrepeat" /></pre> Is it the case that the value of "maxrepeat" is set to more than "<sub idref="var_password_pam_maxrepeat" />" or is commented out?</td>
     <td> Configure the operating system to require the change of at least eight of the total number of characters when passwords are changed.</td>
     <td>The pam_pwquality module's <tt>maxrepeat</tt> parameter controls requirements for
 consecutive repeating characters. When set to a positive number, it will reject passwords
@@ -15355,12 +15407,11 @@ to require <sub idref="var_password_pam_minclass" />
 differing categories of characters when changing passwords.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system requires the change of at least eight of the total number of characters when passwords are changed. If it does not, this is a finding.</td>
-    <td>To check how many categories of characters must be used in password during a password change,
-run the following command:
-<pre>$ sudo grep minclass /etc/security/pwquality.conf</pre>
-The <tt>minclass</tt> parameter will indicate how many character classes must be used. If
-the requirement was for the password to contain characters from <sub idref="var_password_pam_minclass" /> different categories,
-then this would appear as <tt>minclass = <sub idref="var_password_pam_minclass" /></tt>. Is it the case that the value of "minclass" is set to less than "<sub idref="var_password_pam_minclass" />" or is commented out?</td>
+    <td>Verify the value of the "minclass" option in "/etc/security/pwquality.conf" with the following command:
+
+<pre>$ grep minclass /etc/security/pwquality.conf
+
+minclass = <sub idref="var_password_pam_minclass" /></pre> Is it the case that the value of "minclass" is set to less than "<sub idref="var_password_pam_minclass" />" or is commented out?</td>
     <td> Configure the operating system to require the change of at least eight of the total number of characters when passwords are changed.</td>
     <td>The pam_pwquality module's <tt>minclass</tt> parameter controls
 requirements for usage of different character classes, or types, of character
@@ -15646,8 +15697,13 @@ environments. The DoD requirement is 1.
 The profile requirement is <tt><sub idref="var_accounts_minimum_age_login_defs" /></tt>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify operating system enforces 24 hours/1 day as the minimum password lifetime. If it does not, this is a finding.</td>
-    <td>To check the minimum password age, run the command:
-<pre>$ grep PASS_MIN_DAYS /etc/login.defs</pre> Is it the case that it is not equal to or greater than the required value?</td>
+    <td>Verify Red Hat Enterprise Linux 7 enforces 24 hours/1 day as the minimum password lifetime for new user accounts.
+
+Check for the value of "PASS_MIN_DAYS" in "/etc/login.defs" with the following command:
+
+<pre>$ grep -i pass_min_days /etc/login.defs
+
+PASS_MIN_DAYS <sub idref="var_accounts_minimum_age_login_defs" /></pre> Is it the case that the "PASS_MIN_DAYS" parameter value is not "<sub idref="var_accounts_minimum_age_login_defs" />" or greater, or is commented out?</td>
     <td>Configure operating system to enforce 24 hours/1 day as the minimum password lifetime.</td>
     <td>To specify password minimum age for new accounts,
 edit the file <tt>/etc/login.defs</tt>
@@ -15676,7 +15732,7 @@ lifetime by running the following command:
 <pre>$ sudo chage -m 1 <i>USER</i></pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify operating system enforces 24 hours/1 day as the minimum password lifetime. If it does not, this is a finding.</td>
-    <td>Check whether the minimum time period between password changes for each user account is one day or greater.
+    <td>Verify that Red Hat Enterprise Linux 7 has configured the minimum time period between password changes for each user account is one day or greater with the following command:
 
 $ sudo awk -F: '$4 &lt; 1 {print $1 " " $4}' /etc/shadow Is it the case that any results are returned that are not associated with a system account?</td>
     <td>Configure operating system to enforce 24 hours/1 day as the minimum password lifetime.</td>
@@ -15712,9 +15768,11 @@ The DoD requirement is 60.
 The profile requirement is <tt><sub idref="var_accounts_maximum_age_login_defs" /></tt>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify operating system enforces a 60-day maximum password lifetime restriction. If it does not, this is a finding.</td>
-    <td>To check the maximum password age, run the command:
-<pre>$ grep PASS_MAX_DAYS /etc/login.defs</pre>
-The profile requirement is <tt><sub idref="var_accounts_maximum_age_login_defs" /></tt>. Is it the case that PASS_MAX_DAYS is not set equal to or greater than the required value?</td>
+    <td>Verify that Red Hat Enterprise Linux 7 enforces a <sub idref="var_accounts_maximum_age_login_defs" />-day maximum password lifetime for new user accounts by running the following command:
+
+<pre>$ grep -i pass_max_days /etc/login.defs
+
+PASS_MAX_DAYS <sub idref="var_accounts_maximum_age_login_defs" /></pre> Is it the case that the "PASS_MAX_DAYS" parameter value is greater than "<sub idref="var_accounts_maximum_age_login_defs" />", or commented out?</td>
     <td>Configure operating system to enforce a 60-day maximum password lifetime restriction. </td>
     <td>To specify password maximum age for new accounts,
 edit the file <tt>/etc/login.defs</tt>
@@ -15868,9 +15926,11 @@ minimum characters required in a password. Add <tt>minlen=<sub idref="var_passwo
 after pam_pwquality to set minimum password length requirements.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system enforces a minimum 15-character password length. If it does not, this is a finding.</td>
-    <td>To check how many characters are required in a password, run the following command:
-<pre>$ grep minlen /etc/security/pwquality.conf</pre>
-Your output should contain <tt>minlen = <sub idref="var_password_pam_minlen" /></tt> Is it the case that minlen is not found, or not equal to or greater than the required value?</td>
+    <td>Verify that Red Hat Enterprise Linux 7 enforces a minimum <sub idref="var_password_pam_minlen" />-character password length with the following command:
+
+<pre>$ grep minlen /etc/security/pwquality.conf
+
+minlen = <sub idref="var_password_pam_minlen" /></pre> Is it the case that the command does not return a "minlen" value of "<sub idref="var_password_pam_minlen" />" or greater, does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to enforce a minimum 15-character password length.</td>
     <td>The pam_pwquality module's <tt>minlen</tt> parameter controls requirements for
 minimum characters required in a password. Add <tt>minlen=<sub idref="var_password_pam_minlen" /></tt>
@@ -15966,7 +16026,7 @@ Once the superuser account has been added,
 update the
 <tt>grub.cfg</tt> file by running:
 <pre>grubby --update-kernel=ALL</pre></td>
-    <td>medium</td>
+    <td>high</td>
     <td></td>
     <td></td>
     <td></td>
@@ -16331,7 +16391,10 @@ command:
     <td>Verify the operating system is configured to prohibit or restrict the use of functions, ports, protocols, and/or services, as defined in the PPSM CAL and vulnerability assessments. If it does not, this is a finding.</td>
     <td>Inspect the list of enabled firewall ports and verify they are configured correctly by running
 the following command:
-<pre>$ sudo firewall-cmd --list-all</pre> Is it the case that the firewalld rules are not configured?</td>
+
+<pre>$ sudo firewall-cmd --list-all</pre>
+
+Ask the System Administrator for the site or program Ports, Protocols, and Services Management Component Local Service Assessment (PPSM CLSA). Verify the services allowed by the firewall match the PPSM CLSA. Is it the case that there are additional ports, protocols, or services that are not in the PPSM CLSA, or there are ports, protocols, or services that are prohibited by the PPSM Category Assurance List (CAL), or there are no firewall rules configured?</td>
     <td>Configure the operating system to prohibit or restrict the use of functions, ports, protocols, and/or services, as defined in the PPSM CAL and vulnerability assessments.</td>
     <td>Configure the <tt>firewalld</tt> ports to allow approved services to have access to the system.
 To configure <tt>firewalld</tt> to open ports, run the following command:
@@ -17220,7 +17283,7 @@ Once the settings have been added, add a lock to
 For example:
 <pre>/org/gnome/desktop/media-handling/autorun-never</pre>
 After the settings have been set, run <tt>dconf update</tt>.</td>
-    <td>medium</td>
+    <td>low</td>
     <td></td>
     <td></td>
     <td></td>
@@ -17627,28 +17690,60 @@ The <code>auditd</code> service can be enabled with the following command:
 
 
 
+
   <tr>
-    <td>V-56805</td>
+    <td>CCI-001682</td>
     <td>SRG-OS-000123-GPOS-00064</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The information system must automatically remove or disable emergency accounts after the crisis is resolved or 72 hours.</td>
-    <td></td>
+
+    <td>CCE-88242-3: Assign Expiration Date to Emergency Accounts</td>
+
     <td>Emergency accounts are privileged accounts that are established in response to crisis situations where the need for rapid account activation is required. Therefore, emergency account activation may bypass normal account authorization processes. If these accounts are automatically disabled, system maintenance during emergencies may not be possible, thus adversely affecting system availability. 
 
 Emergency accounts are different from infrequently used accounts (i.e., local logon accounts used by the organization's system administrators when network or normal logon/access is not available). Infrequently used accounts are not subject to automatic termination dates.  Emergency accounts are accounts created in response to crisis situations, usually for use by maintenance personnel. The automatic expiration or disabling time period may be extended as needed until the crisis is resolved; however, it must not be extended indefinitely. A permanent account should be established for privileged users who need long-term maintenance accounts.
 
 To address access requirements, many operating systems can be integrated with enterprise-level authentication/access mechanisms that meet or exceed access control policy requirements. </td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
+    <td>Emergency accounts are privileged accounts established in response to
+crisis situations where the need for rapid account activation is required.
+In the event emergency accounts are required, configure the system to
+terminate them after a documented time period. For every emergency account,
+run the following command to set an expiration date on it, substituting
+<tt><i>ACCOUNT_NAME</i></tt> and <tt><i>YYYY-MM-DD</i></tt>
+appropriately:
+<pre>$ sudo chage -E <i>YYYY-MM-DD ACCOUNT_NAME</i></pre>
+<tt><i>YYYY-MM-DD</i></tt> indicates the documented expiration date for the
+account. For U.S. Government systems, the operating system must be
+configured to automatically terminate these types of accounts after a
+period of 72 hours.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system is configured such that emergency administrator accounts are automatically removed or disabled within 72 hours. If it is not, this is a finding.</td>
+    <td>Verify emergency accounts have been provisioned with an expiration date of 72 hours.
+
+For every emergency account, run the following command to obtain its account aging and expiration information:
+
+$ sudo chage -l emergency_account_name
+
+Verify each of these accounts has an expiration date set within 72 hours or as documented. Is it the case that any emergency accounts have no expiration date set or do not expire within 72 hours?</td>
+    <td>Configure the operating system such that emergency administrator accounts are automatically removed or disabled within 72 hours.</td>
+    <td>Emergency accounts are privileged accounts established in response to
+crisis situations where the need for rapid account activation is required.
+In the event emergency accounts are required, configure the system to
+terminate them after a documented time period. For every emergency account,
+run the following command to set an expiration date on it, substituting
+<tt><i>ACCOUNT_NAME</i></tt> and <tt><i>YYYY-MM-DD</i></tt>
+appropriately:
+<pre>$ sudo chage -E <i>YYYY-MM-DD ACCOUNT_NAME</i></pre>
+<tt><i>YYYY-MM-DD</i></tt> indicates the documented expiration date for the
+account. For U.S. Government systems, the operating system must be
+configured to automatically terminate these types of accounts after a
+period of 72 hours.</td>
+    <td>medium</td>
     <td></td>
     <td></td>
     <td></td>
   </tr>
+
 
 
 
@@ -17743,17 +17838,17 @@ above (or their subset), keeping the given order of algorithms.</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must terminate all sessions and network connections related to nonlocal maintenance when nonlocal maintenance is completed.</td>
 
-    <td>CCE-27433-2: Set SSH Idle Timeout Interval</td>
+    <td>CCE-27433-2: Set SSH Client Alive Interval</td>
 
     <td> If a maintenance session or connection remains open after maintenance is completed, it may be hijacked by an attacker and used to compromise or damage the system.
 
 Some maintenance and test tools are either standalone devices with their own operating systems or are applications bundled with an operating system.
 
 Nonlocal maintenance and diagnostic activities are those activities conducted by individuals communicating through a network, either an external network (e.g., the Internet) or an internal network. Local maintenance and diagnostic activities are those activities carried out by individuals physically present at the information system or information system component and not communicating across a network connection.</td>
-    <td>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+    <td>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br /><br />
-To set an idle timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
+To set this timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
 follows:
 <pre>ClientAliveInterval <b><sub idref="sshd_idle_timeout_value" /></b></pre>
 <br/><br/>
@@ -17762,7 +17857,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br /><br />
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</td>
+some processes may stop SSH from correctly detecting that the user is idle.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system terminates all sessions and network connections related to nonlocal maintenance when nonlocal maintenance is completed. If it does not, this is a finding.</td>
     <td>Run the following command to see what the timeout interval is:
@@ -17770,10 +17865,10 @@ some processes may stop SSH  from correctly detecting that the user is idle.</td
 If properly configured, the output should be:
 <pre>ClientAliveInterval <sub idref="sshd_idle_timeout_value" /></pre> Is it the case that it is commented out or not configured properly?</td>
     <td>Configure the operating system to terminate all sessions and network connections related to nonlocal maintenance when nonlocal maintenance is completed.</td>
-    <td>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+    <td>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br /><br />
-To set an idle timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
+To set this timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
 follows:
 <pre>ClientAliveInterval <b><sub idref="sshd_idle_timeout_value" /></b></pre>
 <br/><br/>
@@ -17782,7 +17877,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br /><br />
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</td>
+some processes may stop SSH from correctly detecting that the user is idle.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -17806,10 +17901,10 @@ Nonlocal maintenance and diagnostic activities are those activities conducted by
 during a SSH session and waits for a response from the SSH client.
 The option <tt>ClientAliveInterval</tt> configures timeout after
 each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 
-To ensure the SSH idle timeout occurs precisely when the
+To ensure the SSH timeout occurs precisely when the
 <tt>ClientAliveInterval</tt> is set, set the <tt>ClientAliveCountMax</tt> to
 value of <tt>0</tt> in
 
@@ -17824,17 +17919,17 @@ value of <tt>0</tt> in
 If properly configured, the output should be:
 <pre>ClientAliveCountMax 0</pre>
 
-In this case, the SSH idle timeout occurs precisely when
+In this case, the SSH timeout occurs precisely when
 the <tt>ClientAliveInterval</tt> is set. Is it the case that it is commented out or not configured properly?</td>
     <td>Configure the operating system to terminate all sessions and network connections related to nonlocal maintenance when nonlocal maintenance is completed.</td>
     <td>The SSH server sends at most <tt>ClientAliveCountMax</tt> messages
 during a SSH session and waits for a response from the SSH client.
 The option <tt>ClientAliveInterval</tt> configures timeout after
 each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 
-To ensure the SSH idle timeout occurs precisely when the
+To ensure the SSH timeout occurs precisely when the
 <tt>ClientAliveInterval</tt> is set, set the <tt>ClientAliveCountMax</tt> to
 value of <tt>0</tt> in
 
@@ -17909,7 +18004,7 @@ $ sudo getenforce
 system boot time.  In the file <tt>/etc/selinux/config</tt>, add or correct the
 following line to configure the system to boot into enforcing mode:
 <pre>SELINUX=<sub idref="var_selinux_state" /></pre></td>
-    <td>medium</td>
+    <td>high</td>
     <td></td>
     <td></td>
     <td></td>
@@ -17999,7 +18094,7 @@ on the system:
 <pre>$ sudo grep TMOUT /etc/profile /etc/profile.d/*.sh</pre>
 
 The output should return the following:
-<pre>TMOUT=<sub idref="var_accounts_tmout" /></pre> Is it the case that TMOUT is not set or its value is greater than expected setting?</td>
+<pre>TMOUT=<sub idref="var_accounts_tmout" /></pre> Is it the case that value of TMOUT is not less than or equal to expected setting?</td>
     <td>Configure the operating system to terminate all network connections associated with a communications session at the end of the session, or as follows: for in-band management sessions (privileged sessions), the session must be terminated after 10 minutes of inactivity; and for user sessions (non-privileged session), the session must be terminated after 15 minutes of inactivity, except to fulfill documented and validated mission requirements.</td>
     <td>Setting the <tt>TMOUT</tt> option in <tt>/etc/profile</tt> ensures that
 all user sessions will terminate based on inactivity.
@@ -18021,15 +18116,15 @@ setting in a file loaded by <tt>/etc/profile</tt>, e.g.
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must terminate all network connections associated with a communications session at the end of the session, or as follows: for in-band management sessions (privileged sessions), the session must be terminated after 10 minutes of inactivity; and for user sessions (non-privileged session), the session must be terminated after 15 minutes of inactivity, except to fulfill documented and validated mission requirements.</td>
 
-    <td>CCE-27433-2: Set SSH Idle Timeout Interval</td>
+    <td>CCE-27433-2: Set SSH Client Alive Interval</td>
 
     <td>Terminating an idle session within a short time period reduces the window of opportunity for unauthorized personnel to take control of a management session enabled on the console or console port that has been left unattended. In addition, quickly terminating an idle session will also free up resources committed by the managed network element. 
 
 Terminating network connections associated with communications sessions includes, for example, de-allocating associated TCP/IP address/port pairs at the operating system level, and de-allocating networking assignments at the application level if multiple application sessions are using a single operating system-level network connection. This does not mean that the operating system terminates all sessions or network access; it only ends the inactive session and releases the resources associated with that session.</td>
-    <td>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+    <td>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br /><br />
-To set an idle timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
+To set this timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
 follows:
 <pre>ClientAliveInterval <b><sub idref="sshd_idle_timeout_value" /></b></pre>
 <br/><br/>
@@ -18038,7 +18133,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br /><br />
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</td>
+some processes may stop SSH from correctly detecting that the user is idle.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system terminates all network connections associated with a communications session at the end of the session, or as follows: for in-band management sessions (privileged sessions), the session must be terminated after 10 minutes of inactivity; and for user sessions (non-privileged session), the session must be terminated after 15 minutes of inactivity, except to fulfill documented and validated mission requirements. 
 
@@ -18048,10 +18143,10 @@ If it does not, this is a finding.</td>
 If properly configured, the output should be:
 <pre>ClientAliveInterval <sub idref="sshd_idle_timeout_value" /></pre> Is it the case that it is commented out or not configured properly?</td>
     <td>Configure the operating system to terminate all network connections associated with a communications session at the end of the session, or as follows: for in-band management sessions (privileged sessions), the session must be terminated after 10 minutes of inactivity; and for user sessions (non-privileged session), the session must be terminated after 15 minutes of inactivity, except to fulfill documented and validated mission requirements.</td>
-    <td>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+    <td>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br /><br />
-To set an idle timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
+To set this timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
 follows:
 <pre>ClientAliveInterval <b><sub idref="sshd_idle_timeout_value" /></b></pre>
 <br/><br/>
@@ -18060,7 +18155,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br /><br />
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</td>
+some processes may stop SSH from correctly detecting that the user is idle.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -18082,10 +18177,10 @@ Terminating network connections associated with communications sessions includes
 during a SSH session and waits for a response from the SSH client.
 The option <tt>ClientAliveInterval</tt> configures timeout after
 each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 
-To ensure the SSH idle timeout occurs precisely when the
+To ensure the SSH timeout occurs precisely when the
 <tt>ClientAliveInterval</tt> is set, set the <tt>ClientAliveCountMax</tt> to
 value of <tt>0</tt> in
 
@@ -18102,17 +18197,17 @@ If it does not, this is a finding.</td>
 If properly configured, the output should be:
 <pre>ClientAliveCountMax 0</pre>
 
-In this case, the SSH idle timeout occurs precisely when
+In this case, the SSH timeout occurs precisely when
 the <tt>ClientAliveInterval</tt> is set. Is it the case that it is commented out or not configured properly?</td>
     <td>Configure the operating system to terminate all network connections associated with a communications session at the end of the session, or as follows: for in-band management sessions (privileged sessions), the session must be terminated after 10 minutes of inactivity; and for user sessions (non-privileged session), the session must be terminated after 15 minutes of inactivity, except to fulfill documented and validated mission requirements.</td>
     <td>The SSH server sends at most <tt>ClientAliveCountMax</tt> messages
 during a SSH session and waits for a response from the SSH client.
 The option <tt>ClientAliveInterval</tt> configures timeout after
 each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 
-To ensure the SSH idle timeout occurs precisely when the
+To ensure the SSH timeout occurs precisely when the
 <tt>ClientAliveInterval</tt> is set, set the <tt>ClientAliveCountMax</tt> to
 value of <tt>0</tt> in
 
@@ -20444,10 +20539,11 @@ in <tt>/etc/security/pwquality.conf</tt> to equal <sub idref="var_password_pam_o
 to require use of a special character in passwords.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system enforces password complexity by requiring that at least one special character be used. If it does not, this is a finding.</td>
-    <td>To check how many special characters are required in a password, run the following command:
-<pre>$ grep ocredit /etc/security/pwquality.conf</pre>
-The <tt>ocredit</tt> parameter (as a negative number) will indicate how many special
-characters are required. Is it the case that value of "ocredit" is a positive number or is commented out?</td>
+    <td>Verify that Red Hat Enterprise Linux 7 enforces password complexity by requiring that at least one special character with the following command:
+
+<pre>$ sudo grep ocredit /etc/security/pwquality.conf /etc/security/pwquality.conf.d/*.conf
+
+ocredit = <sub idref="var_password_pam_ocredit" /></pre> Is it the case that value of "ocredit" is a positive number or is commented out?</td>
     <td>Configure the operating system to enforce password complexity by requiring that at least one special character be used.</td>
     <td>The pam_pwquality module's <tt>ocredit=</tt> parameter controls requirements for
 usage of special (or "other") characters in a password. When set to a negative number,
@@ -20872,7 +20968,7 @@ the correct values:
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must automatically terminate a user session after inactivity time-outs have expired or at shutdown.</td>
 
-    <td>CCE-27433-2: Set SSH Idle Timeout Interval</td>
+    <td>CCE-27433-2: Set SSH Client Alive Interval</td>
 
     <td>Automatic session termination addresses the termination of user-initiated logical sessions in contrast to the termination of network connections that are associated with communications sessions (i.e., network disconnect). A logical session (for local, network, and remote access) is initiated whenever a user (or process acting on behalf of a user) accesses an organizational information system. Such user sessions can be terminated (and thus terminate user access) without terminating network sessions.
 
@@ -20881,10 +20977,10 @@ Session termination terminates all processes associated with a user's logical se
 Conditions or trigger events requiring automatic session termination can include, for example, organization-defined periods of user inactivity, targeted responses to certain types of incidents, and time-of-day restrictions on information system use.
 
 This capability is typically reserved for specific operating system functionality where the system owner, data owner, or organization requires additional assurance.</td>
-    <td>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+    <td>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br /><br />
-To set an idle timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
+To set this timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
 follows:
 <pre>ClientAliveInterval <b><sub idref="sshd_idle_timeout_value" /></b></pre>
 <br/><br/>
@@ -20893,7 +20989,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br /><br />
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</td>
+some processes may stop SSH from correctly detecting that the user is idle.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system automatically terminates a user session after inactivity time-outs have expired or at shutdown. If it does not, this is a finding.</td>
     <td>Run the following command to see what the timeout interval is:
@@ -20901,10 +20997,10 @@ some processes may stop SSH  from correctly detecting that the user is idle.</td
 If properly configured, the output should be:
 <pre>ClientAliveInterval <sub idref="sshd_idle_timeout_value" /></pre> Is it the case that it is commented out or not configured properly?</td>
     <td>Configure the operating system to automatically terminate a user session after inactivity time-outs have expired or at shutdown.</td>
-    <td>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+    <td>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br /><br />
-To set an idle timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
+To set this timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
 follows:
 <pre>ClientAliveInterval <b><sub idref="sshd_idle_timeout_value" /></b></pre>
 <br/><br/>
@@ -20913,7 +21009,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br /><br />
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</td>
+some processes may stop SSH from correctly detecting that the user is idle.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -20939,10 +21035,10 @@ This capability is typically reserved for specific operating system functionalit
 during a SSH session and waits for a response from the SSH client.
 The option <tt>ClientAliveInterval</tt> configures timeout after
 each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 
-To ensure the SSH idle timeout occurs precisely when the
+To ensure the SSH timeout occurs precisely when the
 <tt>ClientAliveInterval</tt> is set, set the <tt>ClientAliveCountMax</tt> to
 value of <tt>0</tt> in
 
@@ -20957,17 +21053,17 @@ value of <tt>0</tt> in
 If properly configured, the output should be:
 <pre>ClientAliveCountMax 0</pre>
 
-In this case, the SSH idle timeout occurs precisely when
+In this case, the SSH timeout occurs precisely when
 the <tt>ClientAliveInterval</tt> is set. Is it the case that it is commented out or not configured properly?</td>
     <td>Configure the operating system to automatically terminate a user session after inactivity time-outs have expired or at shutdown.</td>
     <td>The SSH server sends at most <tt>ClientAliveCountMax</tt> messages
 during a SSH session and waits for a response from the SSH client.
 The option <tt>ClientAliveInterval</tt> configures timeout after
 each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 
-To ensure the SSH idle timeout occurs precisely when the
+To ensure the SSH timeout occurs precisely when the
 <tt>ClientAliveInterval</tt> is set, set the <tt>ClientAliveCountMax</tt> to
 value of <tt>0</tt> in
 
@@ -21055,7 +21151,10 @@ command:
     <td>Verify the operating system controls remote access methods. If it does not, this is a finding.</td>
     <td>Inspect the list of enabled firewall ports and verify they are configured correctly by running
 the following command:
-<pre>$ sudo firewall-cmd --list-all</pre> Is it the case that the firewalld rules are not configured?</td>
+
+<pre>$ sudo firewall-cmd --list-all</pre>
+
+Ask the System Administrator for the site or program Ports, Protocols, and Services Management Component Local Service Assessment (PPSM CLSA). Verify the services allowed by the firewall match the PPSM CLSA. Is it the case that there are additional ports, protocols, or services that are not in the PPSM CLSA, or there are ports, protocols, or services that are prohibited by the PPSM Category Assurance List (CAL), or there are no firewall rules configured?</td>
     <td>Configure the operating system to control remote access methods.</td>
     <td>Configure the <tt>firewalld</tt> ports to allow approved services to have access to the system.
 To configure <tt>firewalld</tt> to open ports, run the following command:
@@ -21158,10 +21257,16 @@ Configure the system to disable all wireless network interfaces with the followi
     <td>Verify that there are no wireless interfaces configured on the system
 with the following command:
 
-<pre>$ sudo nmcli device</pre>
-The output should only contain wireless devices in unavailable state, like in the
-following example:
-<pre>wlp0s20f3          wifi      unavailable             -- </pre> Is it the case that wireless interfaces are not active?</td>
+Note: This requirement is Not Applicable for systems that do not have physical wireless network radios.
+
+<pre>$ nmcli device status</pre>
+<pre>DEVICE          TYPE      STATE         CONNECTION
+virbr0          bridge    connected     virbr0
+wlp7s0          wifi      connected     wifiSSID
+enp6s0          ethernet  disconnected  --
+p2p-dev-wlp7s0  wifi-p2p  disconnected  --
+lo              loopback  unmanaged     --
+virbr0-nic      tun       unmanaged     --</pre> Is it the case that a wireless interface is configured and has not been documented and approved by the Information System Security Officer (ISSO)?</td>
     <td>Configure the operating system to protect wireless access to and from the system using encryption.</td>
     <td>Deactivating wireless network interfaces should prevent normal usage of the wireless
 capability.
@@ -21204,10 +21309,16 @@ Configure the system to disable all wireless network interfaces with the followi
     <td>Verify that there are no wireless interfaces configured on the system
 with the following command:
 
-<pre>$ sudo nmcli device</pre>
-The output should only contain wireless devices in unavailable state, like in the
-following example:
-<pre>wlp0s20f3          wifi      unavailable             -- </pre> Is it the case that wireless interfaces are not active?</td>
+Note: This requirement is Not Applicable for systems that do not have physical wireless network radios.
+
+<pre>$ nmcli device status</pre>
+<pre>DEVICE          TYPE      STATE         CONNECTION
+virbr0          bridge    connected     virbr0
+wlp7s0          wifi      connected     wifiSSID
+enp6s0          ethernet  disconnected  --
+p2p-dev-wlp7s0  wifi-p2p  disconnected  --
+lo              loopback  unmanaged     --
+virbr0-nic      tun       unmanaged     --</pre> Is it the case that a wireless interface is configured and has not been documented and approved by the Information System Security Officer (ISSO)?</td>
     <td>Configure the operating system to protect wireless access to the system using authentication of users and/or devices.</td>
     <td>Deactivating wireless network interfaces should prevent normal usage of the wireless
 capability.
@@ -22958,11 +23069,11 @@ via email for those situations:
 <pre>action_mail_acct = <sub idref="var_auditd_action_mail_acct" /></pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system immediately notifies the SA and ISSO (at a minimum) when allocated audit record storage volume reaches 75% of the repository maximum audit record storage capacity. If it does not, this is a finding.</td>
-    <td>Verify that the Red Hat Enterprise Linux 7 "auditd" service is configured to notify the SA and ISSO in the event of an audit processing failure.
-Inspect <tt>/etc/audit/auditd.conf</tt> and locate the following line to
-determine if the system is configured to send email to an
-account when it needs to notify an administrator:
-<pre>action_mail_acct = <sub idref="var_auditd_action_mail_acct" /></pre> Is it the case that auditd is not configured to send emails per identified actions?</td>
+    <td>Verify that Red Hat Enterprise Linux 7 is configured to notify the SA and/or ISSO (at a minimum) in the event of an audit processing failure with the following command:
+
+<pre>$ sudo grep action_mail_acct /etc/audit/auditd.conf
+
+action_mail_acct = <sub idref="var_auditd_action_mail_acct" /></pre> Is it the case that the value of the "action_mail_acct" keyword is not set to "<sub idref="var_auditd_action_mail_acct" />" and/or other accounts for security personnel, the "action_mail_acct" keyword is missing, or the retuned line is commented out, ask the system administrator to indicate how they and the ISSO are notified of an audit process failure. If there is no evidence of the proper personnel being notified of an audit processing failure?</td>
     <td>Configure the operating system to immediately notify the SA and ISSO (at a minimum) when allocated audit record storage volume reaches 75% of the repository maximum audit record storage capacity.</td>
     <td>The <tt>auditd</tt> service can be configured to send email to
 a designated account in certain situations. Add or correct the following line
@@ -23004,12 +23115,13 @@ which is <tt>suspend</tt>) as it is more likely to get prompt attention. Accepta
 also include <tt>suspend</tt>, <tt>single</tt>, and <tt>halt</tt>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system immediately notifies the SA and ISSO (at a minimum) when allocated audit record storage volume reaches 75% of the repository maximum audit record storage capacity. If it does not, this is a finding.</td>
-    <td>Inspect <tt>/etc/audit/auditd.conf</tt> and locate the following line to
-determine if the system is configured to email the administrator when
-disk space is starting to run low:
-<tt>$ sudo grep space_left_action /etc/audit/auditd.conf</tt>
-<pre>space_left_action</pre>
-Acceptable values are <tt>email</tt>, <tt>suspend</tt>, <tt>single</tt>, and <tt>halt</tt>. Is it the case that the system is not configured to send an email to the system administrator when disk space is starting to run low?</td>
+    <td>Verify Red Hat Enterprise Linux 7 notifies the SA and ISSO (at a minimum) when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity with the following command:
+
+<pre>$ sudo grep -w space_left_action /etc/audit/auditd.conf
+
+space_left_action = <sub idref="var_auditd_space_left_action" /></pre>
+
+If the value of the "space_left_action" is not set to "<sub idref="var_auditd_space_left_action" />", or if the line is commented out, ask the System Administrator to indicate how the system is providing real-time alerts to the SA and ISSO. Is it the case that there is no evidence that real-time alerts are configured on the system?</td>
     <td>Configure the operating system to immediately notify the SA and ISSO (at a minimum) when allocated audit record storage volume reaches 75% of the repository maximum audit record storage capacity.</td>
     <td>The <tt>auditd</tt> service can be configured to take an action
 when disk space <i>starts</i> to run low.
@@ -23053,9 +23165,11 @@ Set this value to at least 25 to cause the system to
 notify the user of an issue.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system immediately notifies the SA and ISSO (at a minimum) when allocated audit record storage volume reaches 75% of the repository maximum audit record storage capacity. If it does not, this is a finding.</td>
-    <td>Inspect <tt>/etc/audit/auditd.conf</tt> and locate the following line to
-determine if the system is configured correctly:
-<pre>space_left <i>PERCENTAGE</i>%</pre> Is it the case that the system is not configured with a specific percentage to notify administrators of an issue?</td>
+    <td>Verify Red Hat Enterprise Linux 7 takes action when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity with the following command:
+
+<pre>$ sudo grep -w space_left /etc/audit/auditd.conf</pre>
+
+<pre>space_left = <sub idref="var_auditd_space_left_percentage" />%</pre> Is it the case that the value of the "space_left" keyword is not set to <sub idref="var_auditd_space_left_percentage" />% of the storage volume allocated to audit logs, or if the line is commented out, ask the System Administrator to indicate how the system is providing real-time alerts to the SA and ISSO. If the "space_left" value is not configured to the correct value?</td>
     <td>Configure the operating system to immediately notify the SA and ISSO (at a minimum) when allocated audit record storage volume reaches 75% of the repository maximum audit record storage capacity.</td>
     <td>The <tt>auditd</tt> service can be configured to take an action
 when disk space is running low but prior to running out of space completely.
@@ -24024,13 +24138,13 @@ the <tt>[main]</tt> section:
 <pre>gpgcheck=1</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system prevents the installation of patches, service packs, device drivers, or operating system components without verification they have been digitally signed using a certificate that is recognized and approved by the organization. If it does not, this is a finding.</td>
-    <td>To determine whether <tt>yum</tt> is configured to use <tt>gpgcheck</tt>,
-inspect <tt>/etc/yum.conf</tt> and ensure the following appears in the
-<tt>[main]</tt> section:
+    <td>Verify that yum verifies the signature of packages from a repository prior to install with the following command:
+
+<pre>$ grep gpgcheck /etc/yum.conf</pre>
+
 <pre>gpgcheck=1</pre>
-A value of <tt>1</tt> indicates that <tt>gpgcheck</tt> is enabled. Absence of a
-<tt>gpgcheck</tt> line or a setting of <tt>0</tt> indicates that it is
-disabled. Is it the case that GPG checking is not enabled?</td>
+
+If "gpgcheck" is not set to "1", or if the option is missing or commented out, ask the System Administrator how the certificates for patches and other operating system components are verified. Is it the case that there is no process to validate certificates that is approved by the organization?</td>
     <td>Configure the operating system to prevent the installation of patches, service packs, device drivers, or operating system components without verification they have been digitally signed using a certificate that is recognized and approved by the organization.</td>
     <td>The <tt>gpgcheck</tt> option controls whether
 RPM packages' signatures are always checked prior to installation.
@@ -24062,11 +24176,13 @@ prior to installation. To configure <tt>yum</tt> to verify signatures of local
 packages, set the <tt>localpkg_gpgcheck</tt> to <tt>1</tt> in <tt>/etc/yum.conf</tt>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system prevents the installation of patches, service packs, device drivers, or operating system components without verification they have been digitally signed using a certificate that is recognized and approved by the organization. If it does not, this is a finding.</td>
-    <td>To verify that <tt>localpkg_gpgcheck</tt> is configured properly, run the following
-command:
+    <td>Verify that yum verifies the signature of local packages prior to install with the following command:
+
 <pre>$ grep localpkg_gpgcheck /etc/yum.conf</pre>
-The output should return something similar to:
-<pre>localpkg_gpgcheck=1</pre> Is it the case that gpgcheck is not enabled or configured correctly to verify local packages?</td>
+
+<pre>localpkg_gpgcheck=1</pre>
+
+If "localpkg_gpgcheck" is not set to "1", or if the option is missing or commented out, ask the System Administrator how the certificates for patches and other operating system components are verified. Is it the case that there is no process to validate certificates for local packages that is approved by the organization?</td>
     <td>Configure the operating system to prevent the installation of patches, service packs, device drivers, or operating system components without verification they have been digitally signed using a certificate that is recognized and approved by the organization.</td>
     <td><tt>yum</tt> should be configured to verify the signature(s) of local packages
 prior to installation. To configure <tt>yum</tt> to verify signatures of local
@@ -25396,7 +25512,7 @@ Once the settings have been added, add a lock to
 For example:
 <pre>/org/gnome/desktop/media-handling/autorun-never</pre>
 After the settings have been set, run <tt>dconf update</tt>.</td>
-    <td>medium</td>
+    <td>low</td>
     <td></td>
     <td></td>
     <td></td>
@@ -27460,11 +27576,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system audits all activities performed during nonlocal maintenance and diagnostic sessions. If it does not, this is a finding.</td>
     <td>Verify that Red Hat Enterprise Linux 7 is configured to audit the execution of the "kmod" command with the following command:
@@ -27478,11 +27594,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -29106,13 +29222,13 @@ above (or their subset), keeping the given order of algorithms.</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must verify remote disconnection at the termination of nonlocal maintenance and diagnostic sessions, when used for nonlocal maintenance sessions.</td>
 
-    <td>CCE-27433-2: Set SSH Idle Timeout Interval</td>
+    <td>CCE-27433-2: Set SSH Client Alive Interval</td>
 
     <td>If the remote connection is not closed and verified as closed, the session may remain open and be exploited by an attacker; this is referred to as a zombie session. Remote connections must be disconnected and verified as disconnected when nonlocal maintenance sessions have been terminated and are no longer available for use.</td>
-    <td>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+    <td>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br /><br />
-To set an idle timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
+To set this timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
 follows:
 <pre>ClientAliveInterval <b><sub idref="sshd_idle_timeout_value" /></b></pre>
 <br/><br/>
@@ -29121,7 +29237,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br /><br />
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</td>
+some processes may stop SSH from correctly detecting that the user is idle.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system verifies remote disconnection at the termination of nonlocal maintenance and diagnostic sessions, when used for nonlocal maintenance sessions. If it does not, this is a finding.</td>
     <td>Run the following command to see what the timeout interval is:
@@ -29129,10 +29245,10 @@ some processes may stop SSH  from correctly detecting that the user is idle.</td
 If properly configured, the output should be:
 <pre>ClientAliveInterval <sub idref="sshd_idle_timeout_value" /></pre> Is it the case that it is commented out or not configured properly?</td>
     <td>Configure the operating system to verify remote disconnection at the termination of nonlocal maintenance and diagnostic sessions, when used for nonlocal maintenance sessions.</td>
-    <td>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+    <td>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br /><br />
-To set an idle timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
+To set this timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
 follows:
 <pre>ClientAliveInterval <b><sub idref="sshd_idle_timeout_value" /></b></pre>
 <br/><br/>
@@ -29141,7 +29257,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br /><br />
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</td>
+some processes may stop SSH from correctly detecting that the user is idle.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -29512,10 +29628,16 @@ If it does not, this is a finding.</td>
     <td>Verify that there are no wireless interfaces configured on the system
 with the following command:
 
-<pre>$ sudo nmcli device</pre>
-The output should only contain wireless devices in unavailable state, like in the
-following example:
-<pre>wlp0s20f3          wifi      unavailable             -- </pre> Is it the case that wireless interfaces are not active?</td>
+Note: This requirement is Not Applicable for systems that do not have physical wireless network radios.
+
+<pre>$ nmcli device status</pre>
+<pre>DEVICE          TYPE      STATE         CONNECTION
+virbr0          bridge    connected     virbr0
+wlp7s0          wifi      connected     wifiSSID
+enp6s0          ethernet  disconnected  --
+p2p-dev-wlp7s0  wifi-p2p  disconnected  --
+lo              loopback  unmanaged     --
+virbr0-nic      tun       unmanaged     --</pre> Is it the case that a wireless interface is configured and has not been documented and approved by the Information System Security Officer (ISSO)?</td>
     <td>Configure the operating system to implement cryptographic mechanisms to prevent unauthorized disclosure of information and/or detect changes to information during transmission unless otherwise protected by alternative physical safeguards, such as, at a minimum, a Protected Distribution System (PDS).</td>
     <td>Deactivating wireless network interfaces should prevent normal usage of the wireless
 capability.
@@ -29898,7 +30020,7 @@ $ sudo getenforce
 system boot time.  In the file <tt>/etc/selinux/config</tt>, add or correct the
 following line to configure the system to boot into enforcing mode:
 <pre>SELINUX=<sub idref="var_selinux_state" /></pre></td>
-    <td>medium</td>
+    <td>high</td>
     <td></td>
     <td></td>
     <td></td>
@@ -33381,11 +33503,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system generates audit records when successful/unsuccessful attempts to modify privileges occur. If it does not, this is a finding.</td>
     <td>Verify that Red Hat Enterprise Linux 7 is configured to audit the execution of the "kmod" command with the following command:
@@ -33399,11 +33521,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -39679,11 +39801,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system generates audit records for privileged activities or other system-level access. If it does not, this is a finding.</td>
     <td>Verify that Red Hat Enterprise Linux 7 is configured to audit the execution of the "kmod" command with the following command:
@@ -39697,11 +39819,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -41258,11 +41380,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the audit system is configured to audit the loading and unloading of dynamic kernel modules. If it does not, this is a finding.</td>
     <td>Verify that Red Hat Enterprise Linux 7 is configured to audit the execution of the "kmod" command with the following command:
@@ -41276,11 +41398,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -42504,11 +42626,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system generates audit records for all kernel module load, unload, and restart actions, and also for all program initiations. If it does not, this is a finding.</td>
     <td>Verify that Red Hat Enterprise Linux 7 is configured to audit the execution of the "kmod" command with the following command:
@@ -42522,11 +42644,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -42943,12 +43065,10 @@ add or correct the <tt>FAIL_DELAY</tt> setting in <tt>/etc/login.defs</tt> to re
 <pre>FAIL_DELAY <sub idref="var_accounts_fail_delay" /></pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system enforces a delay of at least 4 seconds between logon prompts following a failed logon attempt. If it does not, this is a finding.</td>
-    <td>Verify the <tt>FAIL_DELAY</tt> setting is configured correctly in the <tt>/etc/login.defs</tt> file by
-running the following command:
-<pre>$ sudo grep -i "FAIL_DELAY" /etc/login.defs</pre>
-All output must show the value of <tt>FAIL_DELAY</tt> set as shown in the below:
+    <td>Verify Red Hat Enterprise Linux 7 enforces a delay of at least <sub idref="var_accounts_fail_delay" /> seconds between console logon prompts following a failed logon attempt with the following command:
+
 <pre>$ sudo grep -i "FAIL_DELAY" /etc/login.defs
-FAIL_DELAY <sub idref="var_accounts_fail_delay" /></pre> Is it the case that the above command returns no output, or FAIL_DELAY is configured less than the expected value?</td>
+FAIL_DELAY <sub idref="var_accounts_fail_delay" /></pre> Is it the case that the value of "FAIL_DELAY" is not set to "<sub idref="var_accounts_fail_delay" />" or greater, or the line is commented out?</td>
     <td>Configure the operating system to enforce a delay of at least 4 seconds between logon prompts following a failed logon attempt.</td>
     <td>To ensure the logon failure delay controlled by <tt>/etc/login.defs</tt> is set properly,
 add or correct the <tt>FAIL_DELAY</tt> setting in <tt>/etc/login.defs</tt> to read as follows:
@@ -43150,9 +43270,18 @@ Configuration settings are the set of parameters that can be changed in hardware
     <td>Remove the <tt>UMASK</tt> environment variable from all interactive users initialization files.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
-    <td>Verify the <tt>UMASK</tt> setting is not configured for interactive users,
-run the following command:
-<pre>$ sudo grep -ri "UMASK" /home</pre> Is it the case that the above command returns no output, or if the umask is configured incorrectly?</td>
+    <td>Verify that the default umask for all local interactive users is "077".
+
+Identify the locations of all local interactive user home directories by looking at the "/etc/passwd" file.
+
+Check all local interactive user initialization files for interactive users with the following command:
+
+Note: The example is for a system that is configured to create users home directories in the "/home" directory.
+
+# grep -ri umask /home/
+
+/home/smithj/.bash_history:grep -i umask /etc/bashrc /etc/csh.cshrc /etc/profile
+/home/smithj/.bash_history:grep -i umask /etc/login.defs Is it the case that any local interactive user initialization files are found to have a umask statement that sets a value less restrictive than "077"?</td>
     <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
     <td>Remove the <tt>UMASK</tt> environment variable from all interactive users initialization files.</td>
     <td>medium</td>
@@ -43216,14 +43345,11 @@ following command:
 <pre>$ sudo chmod o-w <i>FILE</i></pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
-    <td>Verify that local initialization files do not execute world-writable programs,
-execute the following command:
-<pre>$ sudo find /home -perm -002 -type f -name ".[^.]*" -exec ls -ld {} \;</pre>
-For all files listed, check for their presence in the local
-initialization files with the following command:
-Note: The example will be for a system that is configured to create
-users' home directories in the "/home" directory.
-<pre> sudo find /home/* -maxdepth 1 -type f -name \.\* -exec grep -H &lt;file&gt; {} \; </pre> Is it the case that user initialization files are executing world-writable programs?</td>
+    <td>Verify that local initialization files do not execute world-writable programs with the following command:
+
+Note: The example will be for a system that is configured to create user home directories in the "/home" directory.
+
+<pre>$ sudo find /home -perm -002 -type f -name ".[^.]*" -exec ls -ld {} \;</pre> Is it the case that any local initialization files are found to reference world-writable files?</td>
     <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
     <td>Set the mode on files being executed by the user initialization files with the
 following command:
@@ -43286,11 +43412,11 @@ path statements do not contain statements that will reference a working
 directory other than the users home directory.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
-    <td>To verify that all interactive user initialization files executable search
-path statements do not contain statements that will reference a working
-directory other than the users home directory, run the following command:
-<pre>$ sudo grep -r PATH /home/</pre>
-Inspect the output for any PATH is references directories outside the home directory. Is it the case that paths contain more than local home directories?</td>
+    <td>Verify that all local interactive user initialization file executable search path statements do not contain statements that will reference a working directory other than user home directories with the following commands:
+
+<pre>$ sudo grep -i path= /home/*/.*
+
+/home/[localinteractiveuser]/.bash_profile:PATH=$PATH:$HOME/.local/bin:$HOME/bin</pre> Is it the case that any local interactive user initialization files have executable search path statements that include directories outside of their home directory and is not documented with the ISSO as an operational requirement?</td>
     <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
     <td>Ensure that all interactive user initialization files executable search
 path statements do not contain statements that will reference a working
@@ -43318,9 +43444,13 @@ home directory assigned in <tt>/etc/passwd</tt>:
 <pre>$ sudo mkdir /home/<i>USER</i></pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
-    <td>To verify the assigned home directory of all interactive users on the system
-exist, run the following command:
-<pre>$ sudo pwck -r</pre> Is it the case that users home directory does not exist?</td>
+    <td>Verify the assigned home directories of all interactive users on the system exist with the following command:
+
+<pre>$ sudo pwck -r
+
+user 'mailnull': directory 'var/spool/mqueue' does not exist</pre>
+
+The output should not return any interactive users. Is it the case that users home directory does not exist?</td>
     <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
     <td>Create home directories to all interactive users that currently do not
 have a home directory assigned. Use the following commands to create the user
@@ -43743,7 +43873,7 @@ Once the settings have been added, add a lock to
 For example:
 <pre>/org/gnome/desktop/media-handling/autorun-never</pre>
 After the settings have been set, run <tt>dconf update</tt>.</td>
-    <td>medium</td>
+    <td>low</td>
     <td></td>
     <td></td>
     <td></td>
@@ -46791,26 +46921,33 @@ To make sure that the setting is persistent, add the following line to a file in
     <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
 
 Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
-    <td>If running the <tt>tftp</tt> service is necessary, it should be configured
-to change its root directory at startup. To do so, ensure
-<tt>/etc/xinetd.d/tftp</tt> includes <tt>-s</tt> as a command line argument, as shown in
-the following example:
+    <td>If running the Trivial File Transfer Protocol (TFTP) service is necessary,
+it should be configured to change its root directory at startup. To do so,
+ensure <tt>/etc/xinetd.d/tftp</tt> includes <tt>-s</tt> as a command line argument,
+as shown in the following example:
 <pre>server_args = -s <sub idref="var_tftpd_secure_directory" /></pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
-    <td>If TFTP is not installed, this is not applicable. To determine if TFTP is
-installed, run the following command:
+    <td>Verify the TFTP daemon is configured to operate in secure mode.
+
+Check if a TFTP server is installed with the following command:
+
 <pre>$ rpm -qa | grep tftp</pre>
+
+
+If a TFTP server is not installed, this is Not Applicable.
 <br /><br />
-Verify <tt>tftp</tt> is configured by with the <tt>-s</tt> option by
-running the following command:
+
+If a TFTP server is installed, verify TFTP is configured by with
+the <tt>-s</tt> option by running the following command:
+
 <pre>grep "server_args" /etc/xinetd.d/tftp</pre>
-<pre>server_args = -s <sub idref="var_tftpd_secure_directory" /></pre> Is it the case that "server_args" line does not have a "-s" option, and a subdirectory is not assigned?</td>
+<pre>server_args = -s <sub idref="var_tftpd_secure_directory" /></pre> Is it the case that '"server_args" line does not have a "-s" option, and a subdirectory is not assigned'?</td>
     <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-    <td>If running the <tt>tftp</tt> service is necessary, it should be configured
-to change its root directory at startup. To do so, ensure
-<tt>/etc/xinetd.d/tftp</tt> includes <tt>-s</tt> as a command line argument, as shown in
-the following example:
+    <td>If running the Trivial File Transfer Protocol (TFTP) service is necessary,
+it should be configured to change its root directory at startup. To do so,
+ensure <tt>/etc/xinetd.d/tftp</tt> includes <tt>-s</tt> as a command line argument,
+as shown in the following example:
 <pre>server_args = -s <sub idref="var_tftpd_secure_directory" /></pre></td>
     <td>medium</td>
     <td></td>
@@ -46881,11 +47018,11 @@ add or correct the <tt>UMASK</tt> setting in <tt>/etc/login.defs</tt> to read as
 <pre>UMASK <sub idref="var_accounts_user_umask" /></pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system defines default permissions for all authenticated users in such a way that the user can only read and modify their own files. If it does not, this is a finding.</td>
-    <td>Verify the <tt>UMASK</tt> setting is configured correctly in the <tt>/etc/login.defs</tt> file by
-running the following command:
-<pre>$ sudo grep "UMASK" /etc/login.defs</pre>
-All output must show the value of <tt>UMASK</tt> set as shown in the below:
-<pre>UMASK <sub idref="var_accounts_user_umask" /></pre> Is it the case that the above command returns no output, or the umask is configured incorrectly?</td>
+    <td>Verify Red Hat Enterprise Linux 7 defines default permissions for all authenticated users in such a way that the user can only read and modify their own files with the following command:
+
+<pre># grep -i umask /etc/login.defs
+
+UMASK <sub idref="var_accounts_user_umask" /></pre> Is it the case that the value for the "UMASK" parameter is not "<sub idref="var_accounts_user_umask" />", or the "UMASK" parameter is missing or is commented out?</td>
     <td>Configure the operating system to define default permissions for all authenticated users in such a way that the user can only read and modify their own files.</td>
     <td>To ensure the default umask controlled by <tt>/etc/login.defs</tt> is set properly,
 add or correct the <tt>UMASK</tt> setting in <tt>/etc/login.defs</tt> to read as follows:
@@ -46908,9 +47045,18 @@ add or correct the <tt>UMASK</tt> setting in <tt>/etc/login.defs</tt> to read as
     <td>Remove the <tt>UMASK</tt> environment variable from all interactive users initialization files.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system defines default permissions for all authenticated users in such a way that the user can only read and modify their own files. If it does not, this is a finding.</td>
-    <td>Verify the <tt>UMASK</tt> setting is not configured for interactive users,
-run the following command:
-<pre>$ sudo grep -ri "UMASK" /home</pre> Is it the case that the above command returns no output, or if the umask is configured incorrectly?</td>
+    <td>Verify that the default umask for all local interactive users is "077".
+
+Identify the locations of all local interactive user home directories by looking at the "/etc/passwd" file.
+
+Check all local interactive user initialization files for interactive users with the following command:
+
+Note: The example is for a system that is configured to create users home directories in the "/home" directory.
+
+# grep -ri umask /home/
+
+/home/smithj/.bash_history:grep -i umask /etc/bashrc /etc/csh.cshrc /etc/profile
+/home/smithj/.bash_history:grep -i umask /etc/login.defs Is it the case that any local interactive user initialization files are found to have a umask statement that sets a value less restrictive than "077"?</td>
     <td>Configure the operating system to define default permissions for all authenticated users in such a way that the user can only read and modify their own files.</td>
     <td>Remove the <tt>UMASK</tt> environment variable from all interactive users initialization files.</td>
     <td>medium</td>

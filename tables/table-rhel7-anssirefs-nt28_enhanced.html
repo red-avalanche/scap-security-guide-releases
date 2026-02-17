@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<html>
 <head lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>ANSSI-BP-028 (enhanced)</title>
@@ -2142,12 +2142,12 @@ left unattended.
 <tr>
   <td>BP28(R29)</td>
   <td>CCE-27433-2</td>
-  <td>Set SSH Idle Timeout Interval</td>
+  <td>Set SSH Client Alive Interval</td>
   <td xml:lang="en-US">
-SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br /><br />
-To set an idle timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
+To set this timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
 follows:
 <pre>ClientAliveInterval <b><tt>10_minutes</tt></b></pre>
 <br/><br/>
@@ -2156,7 +2156,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br /><br />
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.
+some processes may stop SSH from correctly detecting that the user is idle.
   </td>
   <td xml:lang="en-US">
 Terminating an idle ssh session within a short time period reduces the window of
@@ -2174,14 +2174,15 @@ The SSH server sends at most <tt>ClientAliveCountMax</tt> messages
 during a SSH session and waits for a response from the SSH client.
 The option <tt>ClientAliveInterval</tt> configures timeout after
 each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 For SSH earlier than v8.2, a <tt>ClientAliveCountMax</tt> value of <tt>0</tt>
-causes an idle timeout precisely when the <tt>ClientAliveInterval</tt> is set.
+causes a timeout precisely when the <tt>ClientAliveInterval</tt> is set.
 Starting with v8.2, a value of <tt>0</tt> disables the timeout functionality
 completely. If the option is set to a number greater than <tt>0</tt>, then
-the idle session will be disconnected after
-<tt>ClientAliveInterval * ClientAliveCountMax</tt> seconds.
+the session will be disconnected after
+<tt>ClientAliveInterval * ClientAliveCountMax</tt> seconds without receiving
+a keep alive message.
   </td>
   <td xml:lang="en-US">
 This ensures a user login will be terminated as soon as the <tt>ClientAliveInterval</tt>

@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<html>
 <head lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>DISA STIG for Red Hat Enterprise Linux 8</title>
@@ -1877,22 +1877,22 @@ lack of prompt attention to patching could result in a system compromise.
 </tr>
 <tr>
   <td>AC-2(5)<br/>AC-12<br/>AC-17(a)<br/>SC-10<br/>CM-6(a)</td>
-  <td>CCE-83405-1</td>
-  <td>Set SSH Client Alive Count Max to zero</td>
+  <td>CCE-80907-9</td>
+  <td>Set SSH Client Alive Count Max</td>
   <td xml:lang="en-US">
 The SSH server sends at most <tt>ClientAliveCountMax</tt> messages
 during a SSH session and waits for a response from the SSH client.
 The option <tt>ClientAliveInterval</tt> configures timeout after
 each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
-
-To ensure the SSH idle timeout occurs precisely when the
-<tt>ClientAliveInterval</tt> is set, set the <tt>ClientAliveCountMax</tt> to
-value of <tt>0</tt> in
-
-
-<tt>/etc/ssh/sshd_config</tt>:
+For SSH earlier than v8.2, a <tt>ClientAliveCountMax</tt> value of <tt>0</tt>
+causes a timeout precisely when the <tt>ClientAliveInterval</tt> is set.
+Starting with v8.2, a value of <tt>0</tt> disables the timeout functionality
+completely. If the option is set to a number greater than <tt>0</tt>, then
+the session will be disconnected after
+<tt>ClientAliveInterval * ClientAliveCountMax</tt> seconds without receiving
+a keep alive message.
   </td>
   <td xml:lang="en-US">
 This ensures a user login will be terminated as soon as the <tt>ClientAliveInterval</tt>
@@ -4697,12 +4697,12 @@ may be able to log into the system as another user.
 <tr>
   <td>CM-6(a)<br/>AC-17(a)<br/>AC-2(5)<br/>AC-12<br/>AC-17(a)<br/>SC-10<br/>CM-6(a)</td>
   <td>CCE-80906-1</td>
-  <td>Set SSH Idle Timeout Interval</td>
+  <td>Set SSH Client Alive Interval</td>
   <td xml:lang="en-US">
-SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br /><br />
-To set an idle timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
+To set this timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
 follows:
 <pre>ClientAliveInterval <b><tt>10_minutes</tt></b></pre>
 <br/><br/>
@@ -4711,7 +4711,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br /><br />
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.
+some processes may stop SSH from correctly detecting that the user is idle.
   </td>
   <td xml:lang="en-US">
 Terminating an idle ssh session within a short time period reduces the window of
@@ -4930,10 +4930,10 @@ only appropriate for systems acting as routers.
   <td>CCE-82434-2</td>
   <td>Ensure tftp Daemon Uses Secure Mode</td>
   <td xml:lang="en-US">
-If running the <tt>tftp</tt> service is necessary, it should be configured
-to change its root directory at startup. To do so, ensure
-<tt>/etc/xinetd.d/tftp</tt> includes <tt>-s</tt> as a command line argument, as shown in
-the following example:
+If running the Trivial File Transfer Protocol (TFTP) service is necessary,
+it should be configured to change its root directory at startup. To do so,
+ensure <tt>/etc/xinetd.d/tftp</tt> includes <tt>-s</tt> as a command line argument,
+as shown in the following example:
 <pre>server_args = -s <tt>/var/lib/tftpboot</tt></pre>
   </td>
   <td xml:lang="en-US">
@@ -5079,18 +5079,6 @@ operation.
   <td></td>
 </tr>
 <tr>
-  <td>AC-7 (a)</td>
-  <td>CCE-86107-0</td>
-  <td>Account Lockouts Must Be Logged</td>
-  <td xml:lang="en-US">
-PAM faillock locks an account due to excessive password failures, this event must be logged.
-  </td>
-  <td xml:lang="en-US">
-Without auditing of these events it may be harder or impossible to identify what an attacker did after an attack.
-  </td>
-  <td></td>
-</tr>
-<tr>
   <td>AC-7(b)<br/>CM-6(a)</td>
   <td>CCE-84037-1</td>
   <td>Ensure the Logon Failure Delay is Set Correctly in login.defs</td>
@@ -5104,6 +5092,18 @@ Increasing the time between a failed authentication attempt and re-prompting to
 enter credentials helps to slow a single-threaded brute force attack.
   </td>
   <td>var_accounts_fail_delay=4</td>
+</tr>
+<tr>
+  <td>AC-7 (a)</td>
+  <td>CCE-86099-9</td>
+  <td>Account Lockouts Must Be Logged</td>
+  <td xml:lang="en-US">
+PAM faillock locks an account due to excessive password failures, this event must be logged.
+  </td>
+  <td xml:lang="en-US">
+Without auditing of these events it may be harder or impossible to identify what an attacker did after an attack.
+  </td>
+  <td></td>
 </tr>
 <tr>
   <td>SI-7<br/>SI-7(1)<br/>CM-6(a)</td>
@@ -6125,8 +6125,8 @@ The <tt>cmdport</tt> option in <tt>/etc/chrony.conf</tt> can be set to
 for management connections made by chronyc.
   </td>
   <td xml:lang="en-US">
-Not exposing the management interface of the chrony daemon on
-the network diminishes the attack space.
+Minimizing the exposure of the server functionality of the chrony
+daemon diminishes the attack surface.
   </td>
   <td></td>
 </tr>
@@ -6321,8 +6321,9 @@ The <tt>port</tt> option in <tt>/etc/chrony.conf</tt> can be set to
 for server operation and to operate strictly in a client-only mode.
   </td>
   <td xml:lang="en-US">
-Minimizing the exposure of the server functionality of the chrony
-daemon diminishes the attack surface.
+In order to prevent unauthorized connection of devices, unauthorized transfer of information, or unauthorized tunneling (i.e., embedding of data types within data types), organizations must disable or restrict unused or unnecessary physical and logical ports/protocols on information systems.
+Operating systems are capable of providing a wide variety of functions and services. Some of the functions and services provided by default may not be necessary to support essential organizational operations. Additionally, it is sometimes convenient to provide multiple services from a single component (e.g., VPN and IPS); however, doing so increases risk over limiting the services provided by any one component.
+To support the requirements and principles of least functionality, the operating system must support the organizational requirements, providing only essential capabilities and limiting the use of ports, protocols, and/or services to only those required, authorized, and approved to conduct official business or to address authorized quality of life issues.
   </td>
   <td></td>
 </tr>
@@ -6372,6 +6373,28 @@ devices.
   <td xml:lang="en-US">
 The <tt>usbguard</tt> must be configured to allow connected USB devices to work
 properly, avoiding the system to become inaccessible.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>AC-9<br/>AC-9(1)</td>
+  <td>CCE-80788-3</td>
+  <td>Ensure PAM Displays Last Logon/Access Notification</td>
+  <td xml:lang="en-US">
+To configure the system to notify users of last logon/access
+using <tt>pam_lastlog</tt>, add or correct the <tt>pam_lastlog</tt>
+settings in
+<tt>/etc/pam.d/postlogin</tt> to read as follows:
+<pre>session     required pam_lastlog.so showfailed</pre>
+And make sure that the <tt>silent</tt> option is not set for
+<tt>pam_lastlog</tt> module.
+  </td>
+  <td xml:lang="en-US">
+Users need to be aware of activity that occurs regarding
+their account. Providing users with information regarding the number
+of unsuccessful attempts that were made to login to their account
+allows the user to determine if any unauthorized activity has occurred
+and gives them an opportunity to notify administrators.
   </td>
   <td></td>
 </tr>
@@ -6427,7 +6450,7 @@ Therefore, protecting audit tools is necessary to prevent unauthorized operation
   <td></td>
 </tr>
 <tr>
-  <td>AC-9<br/>AC-17(a)<br/>CM-6(a)</td>
+  <td>AC-9<br/>AC-9(1)</td>
   <td>CCE-82281-7</td>
   <td>Enable SSH Print Last Log</td>
   <td xml:lang="en-US">
@@ -6446,28 +6469,6 @@ To explicitly enable LastLog in SSH, add or correct the following line in
   <td xml:lang="en-US">
 Providing users feedback on when account accesses last occurred facilitates user
 recognition and reporting of unauthorized account use.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>AC-9(1)<br/>CM-6(a)</td>
-  <td>CCE-80788-3</td>
-  <td>Ensure PAM Displays Last Logon/Access Notification</td>
-  <td xml:lang="en-US">
-To configure the system to notify users of last logon/access
-using <tt>pam_lastlog</tt>, add or correct the <tt>pam_lastlog</tt>
-settings in
-<tt>/etc/pam.d/postlogin</tt> to read as follows:
-<pre>session     required pam_lastlog.so showfailed</pre>
-And make sure that the <tt>silent</tt> option is not set for
-<tt>pam_lastlog</tt> module.
-  </td>
-  <td xml:lang="en-US">
-Users need to be aware of activity that occurs regarding
-their account. Providing users with information regarding the number
-of unsuccessful attempts that were made to login to their account
-allows the user to determine if any unauthorized activity has occurred
-and gives them an opportunity to notify administrators.
   </td>
   <td></td>
 </tr>
@@ -8558,7 +8559,7 @@ By decreasing the limit based on the amount of data and enabling
 time-based limit, effects of potential attacks against
 encryption keys are limited.
   </td>
-  <td>var_rekey_limit_time=1hour<br/>var_rekey_limit_size=1G</td>
+  <td>var_rekey_limit_size=1G<br/>var_rekey_limit_time=1hour</td>
 </tr>
 <tr>
   <td></td>

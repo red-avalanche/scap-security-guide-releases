@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<html>
 <head lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>DISA STIG with GUI for Oracle Linux 7</title>
@@ -1479,11 +1479,11 @@ can be enabled on the login screen by setting <tt>enable-smartcard-authenticatio
 to <tt>true</tt>.
 <br /><br />
 To enable, add or edit <tt>enable-smartcard-authentication</tt> to
-<tt>/etc/dconf/db/gdm.d/00-security-settings</tt>. For example:
+<tt>/etc/dconf/db/local.d/00-security-settings</tt>. For example:
 <pre>[org/gnome/login-screen]
 enable-smartcard-authentication=true</pre>
 Once the setting has been added, add a lock to
-<tt>/etc/dconf/db/gdm.d/locks/00-security-settings-lock</tt> to prevent user modification.
+<tt>/etc/dconf/db/local.d/locks/00-security-settings-lock</tt> to prevent user modification.
 For example:
 <pre>/org/gnome/login-screen/enable-smartcard-authentication</pre>
 After the settings have been set, run <tt>dconf update</tt>.
@@ -1874,10 +1874,10 @@ The SSH server sends at most <tt>ClientAliveCountMax</tt> messages
 during a SSH session and waits for a response from the SSH client.
 The option <tt>ClientAliveInterval</tt> configures timeout after
 each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 
-To ensure the SSH idle timeout occurs precisely when the
+To ensure the SSH timeout occurs precisely when the
 <tt>ClientAliveInterval</tt> is set, set the <tt>ClientAliveCountMax</tt> to
 value of <tt>0</tt> in
 
@@ -2792,7 +2792,7 @@ default authenticators, then anyone can gather data about the system and the net
 and use the information to potentially compromise the integrity of the system and
 network(s).
   </td>
-  <td>var_snmpd_ro_string=changemero<br/>var_snmpd_rw_string=changemerw</td>
+  <td>var_snmpd_rw_string=changemerw<br/>var_snmpd_ro_string=changemero</td>
 </tr>
 <tr>
   <td>CM-5(1)<br/>AU-7(a)<br/>AU-7(b)<br/>AU-8(b)<br/>AU-12(3)<br/>AC-6(9)</td>
@@ -4017,12 +4017,12 @@ may be able to log into the system as another user.
 <tr>
   <td>CM-6(a)<br/>AC-17(a)<br/>AC-2(5)<br/>AC-12<br/>AC-17(a)<br/>SC-10<br/>CM-6(a)</td>
   <td>N/A</td>
-  <td>Set SSH Idle Timeout Interval</td>
+  <td>Set SSH Client Alive Interval</td>
   <td xml:lang="en-US">
-SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br /><br />
-To set an idle timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
+To set this timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
 follows:
 <pre>ClientAliveInterval <b><tt>10_minutes</tt></b></pre>
 <br/><br/>
@@ -4031,7 +4031,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br /><br />
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.
+some processes may stop SSH from correctly detecting that the user is idle.
   </td>
   <td xml:lang="en-US">
 Terminating an idle ssh session within a short time period reduces the window of
@@ -4134,10 +4134,10 @@ the invoking user for the "root" user password.
   <td>N/A</td>
   <td>Ensure tftp Daemon Uses Secure Mode</td>
   <td xml:lang="en-US">
-If running the <tt>tftp</tt> service is necessary, it should be configured
-to change its root directory at startup. To do so, ensure
-<tt>/etc/xinetd.d/tftp</tt> includes <tt>-s</tt> as a command line argument, as shown in
-the following example:
+If running the Trivial File Transfer Protocol (TFTP) service is necessary,
+it should be configured to change its root directory at startup. To do so,
+ensure <tt>/etc/xinetd.d/tftp</tt> includes <tt>-s</tt> as a command line argument,
+as shown in the following example:
 <pre>server_args = -s <tt>/var/lib/tftpboot</tt></pre>
   </td>
   <td xml:lang="en-US">
@@ -5072,11 +5072,11 @@ in the GNOME Display Manager's login screen can be enabled on the login
 screen by setting <tt>banner-message-enable</tt> to <tt>true</tt>.
 <br /><br />
 To enable, add or edit <tt>banner-message-enable</tt> to
-<tt>/etc/dconf/db/gdm.d/00-security-settings</tt>. For example:
+<tt>/etc/dconf/db/local.d/00-security-settings</tt>. For example:
 <pre>[org/gnome/login-screen]
 banner-message-enable=true</pre>
 Once the setting has been added, add a lock to
-<tt>/etc/dconf/db/gdm.d/locks/00-security-settings-lock</tt> to prevent user modification.
+<tt>/etc/dconf/db/local.d/locks/00-security-settings-lock</tt> to prevent user modification.
 For example:
 <pre>/org/gnome/login-screen/banner-message-enable</pre>
 After the settings have been set, run <tt>dconf update</tt>.
@@ -5104,11 +5104,11 @@ where <i>APPROVED_BANNER</i> is the approved banner for your environment.
 <br /><br />
 To enable, add or edit <tt>banner-message-text</tt> to
 
-<tt>/etc/dconf/db/gdm.d/00-security-settings</tt>. For example:
+<tt>/etc/dconf/db/local.d/00-security-settings</tt>. For example:
 <pre>[org/gnome/login-screen]
 banner-message-text='<i>APPROVED_BANNER</i>'</pre>
 Once the setting has been added, add a lock to
-<tt>/etc/dconf/db/gdm.d/locks/00-security-settings-lock</tt> to prevent user modification.
+<tt>/etc/dconf/db/local.d/locks/00-security-settings-lock</tt> to prevent user modification.
 For example:
 <pre>/org/gnome/login-screen/banner-message-text</pre>
 
@@ -5146,7 +5146,29 @@ not provide easy attribution.
   <td></td>
 </tr>
 <tr>
-  <td>AC-9<br/>AC-17(a)<br/>CM-6(a)</td>
+  <td>AC-9<br/>AC-9(1)</td>
+  <td>N/A</td>
+  <td>Ensure PAM Displays Last Logon/Access Notification</td>
+  <td xml:lang="en-US">
+To configure the system to notify users of last logon/access
+using <tt>pam_lastlog</tt>, add or correct the <tt>pam_lastlog</tt>
+settings in
+<tt>/etc/pam.d/postlogin</tt> to read as follows:
+<pre>session     required pam_lastlog.so showfailed</pre>
+And make sure that the <tt>silent</tt> option is not set for
+<tt>pam_lastlog</tt> module.
+  </td>
+  <td xml:lang="en-US">
+Users need to be aware of activity that occurs regarding
+their account. Providing users with information regarding the number
+of unsuccessful attempts that were made to login to their account
+allows the user to determine if any unauthorized activity has occurred
+and gives them an opportunity to notify administrators.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>AC-9<br/>AC-9(1)</td>
   <td>N/A</td>
   <td>Enable SSH Print Last Log</td>
   <td xml:lang="en-US">
@@ -5165,28 +5187,6 @@ To explicitly enable LastLog in SSH, add or correct the following line in
   <td xml:lang="en-US">
 Providing users feedback on when account accesses last occurred facilitates user
 recognition and reporting of unauthorized account use.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>AC-9(1)<br/>CM-6(a)</td>
-  <td>N/A</td>
-  <td>Ensure PAM Displays Last Logon/Access Notification</td>
-  <td xml:lang="en-US">
-To configure the system to notify users of last logon/access
-using <tt>pam_lastlog</tt>, add or correct the <tt>pam_lastlog</tt>
-settings in
-<tt>/etc/pam.d/postlogin</tt> to read as follows:
-<pre>session     required pam_lastlog.so showfailed</pre>
-And make sure that the <tt>silent</tt> option is not set for
-<tt>pam_lastlog</tt> module.
-  </td>
-  <td xml:lang="en-US">
-Users need to be aware of activity that occurs regarding
-their account. Providing users with information regarding the number
-of unsuccessful attempts that were made to login to their account
-allows the user to determine if any unauthorized activity has occurred
-and gives them an opportunity to notify administrators.
   </td>
   <td></td>
 </tr>
@@ -5489,6 +5489,7 @@ server can be forged compromising LDAP remote access sessions.
   <td xml:lang="en-US">
 SSH server private keys - files that match the <code>/etc/ssh/*_key</code> glob, have to have restricted permissions.
 If those files are owned by the <code>root</code> user and the <code>root</code> group, they have to have the <code>0600</code> permission or stricter.
+If they are owned by the <code>root</code> user, but by a dedicated group <code>ssh_keys</code>, they can have the <code>0640</code> permission or stricter.
   </td>
   <td xml:lang="en-US">
 If an unauthorized user obtains the private SSH host key file, the host could be
@@ -6009,7 +6010,7 @@ By default, DConf uses a binary database as a data backend.
 The system-level database is compiled from keyfiles in the /etc/dconf/db/
 directory by the <pre>dconf update</pre> command. More specifically, content present
 in the following directories:
-<pre>/etc/dconf/db/gdm.d</pre>
+<pre>/etc/dconf/db/local.d</pre>
 <pre>/etc/dconf/db/local.d</pre>
   </td>
   <td xml:lang="en-US">

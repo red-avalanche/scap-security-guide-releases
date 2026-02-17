@@ -57,12 +57,12 @@ Owners of inactive accounts will not notice if unauthorized access to their user
 <td>To specify the number of days after a password expires (which
 signifies inactivity) until an account is permanently disabled, add or correct
 the following line in <code>/etc/default/useradd</code>:
-<pre>INACTIVE=<i><sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_account_disable_post_pw_expiration" use="legacy"></sub></i></pre>
+<pre>INACTIVE=<i><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_account_disable_post_pw_expiration" use="legacy"></xccdf-1.2:sub></i></pre>
 If a password is currently on the verge of expiration, then
-<code><sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_account_disable_post_pw_expiration" use="legacy"></sub></code>
+<code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_account_disable_post_pw_expiration" use="legacy"></xccdf-1.2:sub></code>
 day(s) remain(s) until the account is automatically
 disabled. However, if the password will not expire for another 60 days, then 60
-days plus <code><sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_account_disable_post_pw_expiration" use="legacy"></sub></code> day(s) could
+days plus <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_account_disable_post_pw_expiration" use="legacy"></xccdf-1.2:sub></code> day(s) could
 elapse until the account would be automatically disabled. See the
 <code>useradd</code> man page for more information.</td>
 <td><pre>To verify the INACTIVE setting, run the following command:
@@ -169,13 +169,12 @@ as documented.
 <td>Ensure All Accounts on the System Have Unique User IDs</td>
 <td>To assure accountability and prevent unauthenticated access, interactive users must be identified and authenticated to prevent potential misuse and compromise of the system.</td>
 <td>Change user IDs (UIDs), or delete accounts, so each has a unique name.</td>
-<td><pre>Run the following command to check for duplicate account names:
-Check that the operating system contains no duplicate UIDs for interactive users by running the following command:
-# awk -F ":" 'list[$3]++{print $1, $3}' /etc/passwd
-If output is produced, this is a finding.
-Configure the operating system to contain no duplicate UIDs for interactive users.
-Edit the file "/etc/passwd" and provide each interactive user account that has a duplicate UID with a unique UID.
-      Is it the case that a line is returned?
+<td><pre>Verify that SUSE Linux Enterprise 15 contains no duplicate User IDs (UIDs) for interactive users.
+
+Check that the operating system contains no duplicate UIDs for interactive users with the following command:
+
+$ sudo awk -F ":" 'list[$3]++{print $1, $3}' /etc/passwd
+      Is it the case that output is produced and the accounts listed are interactive user accounts?
       </pre></td>
 <td>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000104-GPOS-00051<br>SRG-OS-000121-GPOS-00062<br>
 </td>
@@ -256,7 +255,7 @@ Service attacks. This addresses concurrent sessions for a single account and doe
 concurrent sessions by a single user via multiple accounts. To set the number of concurrent
 sessions per user add the following line in <code>/etc/security/limits.conf</code> or
 a file under <code>/etc/security/limits.d/</code>:
-<pre>* hard maxlogins <sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_max_concurrent_login_sessions" use="legacy"></sub></pre>
+<pre>* hard maxlogins <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_max_concurrent_login_sessions" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 <td><pre>Verify SUSE Linux Enterprise 15 limits the number of concurrent sessions to
 "" for all
@@ -293,14 +292,16 @@ location subject to physical compromise.</td>
 <td>To specify password maximum age for new accounts,
 edit the file <code>/etc/login.defs</code>
 and add or correct the following line:
-<pre>PASS_MAX_DAYS <sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></sub></pre>
+<pre>PASS_MAX_DAYS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></xccdf-1.2:sub></pre>
 A value of 180 days is sufficient for many environments.
 The DoD requirement is 60.
-The profile requirement is <code><sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></sub></code>.</td>
-<td><pre>To check the maximum password age, run the command:
-$ grep PASS_MAX_DAYS /etc/login.defs
-The profile requirement is .
-      Is it the case that PASS_MAX_DAYS is not set equal to or greater than the required value?
+The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
+<td><pre>Verify that SUSE Linux Enterprise 15 enforces a -day maximum password lifetime for new user accounts by running the following command:
+
+$ grep -i pass_max_days /etc/login.defs
+
+PASS_MAX_DAYS 
+      Is it the case that the "PASS_MAX_DAYS" parameter value is greater than "&lt;sub idref="var_accounts_maximum_age_login_defs" /&gt;", or commented out?
       </pre></td>
 <td>SRG-OS-000076-GPOS-00044<br>
 </td>
@@ -404,9 +405,9 @@ passwords need to be changed periodically. If the operating system does
 not limit the lifetime of passwords and force users to change their
 passwords, there is the risk that the operating system passwords could be
 compromised.</td>
-<td>Configure non-compliant accounts to enforce a <sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></sub>-day maximum password lifetime
+<td>Configure non-compliant accounts to enforce a <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></xccdf-1.2:sub>-day maximum password lifetime
 restriction by running the following command:
-<pre>$ sudo chage -M <sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></sub> <i>USER</i></pre>
+<pre>$ sudo chage -M <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></xccdf-1.2:sub> <i>USER</i></pre>
 </td>
 <td><pre>Check whether the maximum time period for existing passwords is restricted to  days with the following commands:
 
@@ -435,7 +436,7 @@ organization's policy regarding password reuse.</td>
 lifetime by running the following command:
 <pre>$ sudo chage -m 1 <i>USER</i></pre>
 </td>
-<td><pre>Check whether the minimum time period between password changes for each user account is one day or greater.
+<td><pre>Verify that SUSE Linux Enterprise 15 has configured the minimum time period between password changes for each user account is one day or greater with the following command:
 
 $ sudo awk -F: '$4 &lt; 1 {print $1 " " $4}' /etc/shadow
       Is it the case that any results are returned that are not associated with a system account?
@@ -456,8 +457,8 @@ the chances that an unauthorized user may gain access to an account.</td>
 <td>To configure the system to introduce a delay after failed logon attempts,
 add or correct the <code>pam_faildelay</code> settings in
 <code>/etc/pam.d/common-auth</code> to make sure its <code>delay</code> parameter
-is at least <sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_delay" use="legacy"></sub> or greater. For example:
-<pre>auth required pam_faildelay.so delay=<sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_delay" use="legacy"></sub></pre>
+is at least <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_delay" use="legacy"></xccdf-1.2:sub> or greater. For example:
+<pre>auth required pam_faildelay.so delay=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_delay" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 <td><pre>Verify that the SUSE Linux Enterprise 15 operating system enforces a minimum delay betweeen
 logon prompts following a failed logon attempt.
@@ -494,15 +495,15 @@ modify the content of both <code>/etc/pam.d/common-auth</code> and
 <ul>
 <li> add or modify the <code>pam_tally2.so</code> module line in
 <code>/etc/pam.d/common-auth</code> to ensure both <code>onerr=fail</code> and
-<code>deny=<sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_tally2" use="legacy"></sub></code> are present. For example:
-<pre>auth required pam_tally2.so onerr=fail silent audit deny=<sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_tally2" use="legacy"></sub></pre>
+<code>deny=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_tally2" use="legacy"></xccdf-1.2:sub></code> are present. For example:
+<pre>auth required pam_tally2.so onerr=fail silent audit deny=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_tally2" use="legacy"></xccdf-1.2:sub></pre>
 </li>
 <li> add or modify the following line in <code>/etc/pam.d/common-account</code>:
 <pre>account required pam_tally2.so</pre>
 </li>
 </ul>
 </td>
-<td>The SUSE Linux Enterprise 15 operating system must lock an account after - at most - <sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_tally2" use="legacy"></sub>
+<td>The SUSE Linux Enterprise 15 operating system must lock an account after - at most - <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_tally2" use="legacy"></xccdf-1.2:sub>
 consecutive invalid access attempts.</td>
 <td><pre>Check that the systems locks a user account after - at most - 
 consecutive failed login attempts with the following command:
@@ -545,7 +546,7 @@ The value of TMOUT should be exported and read only.
 The <code>TMOUT</code>
 
 setting in <code>/etc/profile.d/autologout.sh</code> should read as follows:
-<pre>TMOUT=<sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_tmout" use="legacy"></sub></pre>
+<pre>TMOUT=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_tmout" use="legacy"></xccdf-1.2:sub></pre>
 readonly TMOUT
 export TMOUT</td>
 <td><pre>Run the following command to ensure the TMOUT value is configured for all users
@@ -558,7 +559,7 @@ TMOUT=
 
 readonly TMOUT
 export TMOUT
-      Is it the case that TMOUT is not set or its value is greater than expected setting?
+      Is it the case that value of TMOUT is not less than or equal to expected setting?
       </pre></td>
 <td>SRG-OS-000029-GPOS-00010<br>SRG-OS-000163-GPOS-00072<br>SRG-OS-000279-GPOS-00109<br>
 </td>
@@ -576,14 +577,14 @@ A misconfigured umask value could result in files with excessive permissions tha
 written to by unauthorized users.</td>
 <td>To ensure the default umask controlled by <code>/etc/login.defs</code> is set properly,
 add or correct the <code>UMASK</code> setting in <code>/etc/login.defs</code> to read as follows:
-<pre>UMASK <sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_user_umask" use="legacy"></sub></pre>
+<pre>UMASK <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_user_umask" use="legacy"></xccdf-1.2:sub></pre>
 </td>
-<td><pre>Verify the UMASK setting is configured correctly in the /etc/login.defs file by
-running the following command:
-$ sudo grep "UMASK" /etc/login.defs
-All output must show the value of UMASK set as shown in the below:
+<td><pre>Verify SUSE Linux Enterprise 15 defines default permissions for all authenticated users in such a way that the user can only read and modify their own files with the following command:
+
+# grep -i umask /etc/login.defs
+
 UMASK 
-      Is it the case that the above command returns no output, or the umask is configured incorrectly?
+      Is it the case that the value for the "UMASK" parameter is not "&lt;sub idref="var_accounts_user_umask" /&gt;", or the "UMASK" parameter is missing or is commented out?
       </pre></td>
 <td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
 </td>
@@ -605,15 +606,12 @@ compromise the system at the root and network level.</td>
 following command:
 <pre>$ sudo chmod o-w <i>FILE</i></pre>
 </td>
-<td><pre>Verify that local initialization files do not execute world-writable programs,
-execute the following command:
+<td><pre>Verify that local initialization files do not execute world-writable programs with the following command:
+
+Note: The example will be for a system that is configured to create user home directories in the "/home" directory.
+
 $ sudo find /home -perm -002 -type f -name ".[^.]*" -exec ls -ld {} \;
-For all files listed, check for their presence in the local
-initialization files with the following command:
-Note: The example will be for a system that is configured to create
-users' home directories in the "/home" directory.
- sudo find /home/* -maxdepth 1 -type f -name \.\* -exec grep -H &lt;file&gt; {} \; 
-      Is it the case that user initialization files are executing world-writable programs?
+      Is it the case that any local initialization files are found to reference world-writable files?
       </pre></td>
 <td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
 </td>
@@ -638,12 +636,12 @@ must be documented with the Information System Security Officer (ISSO).</td>
 <td>Ensure that all interactive user initialization files executable search
 path statements do not contain statements that will reference a working
 directory other than the users home directory.</td>
-<td><pre>To verify that all interactive user initialization files executable search
-path statements do not contain statements that will reference a working
-directory other than the users home directory, run the following command:
-$ sudo grep -r PATH /home/
-Inspect the output for any PATH is references directories outside the home directory.
-      Is it the case that paths contain more than local home directories?
+<td><pre>Verify that all local interactive user initialization file executable search path statements do not contain statements that will reference a working directory other than user home directories with the following commands:
+
+$ sudo grep -i path= /home/*/.*
+
+/home/[localinteractiveuser]/.bash_profile:PATH=$PATH:$HOME/.local/bin:$HOME/bin
+      Is it the case that any local interactive user initialization files have executable search path statements that include directories outside of their home directory and is not documented with the ISSO as an operational requirement?
       </pre></td>
 <td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
 </td>
@@ -665,11 +663,11 @@ This rule checks if the home directory is properly defined in a folder which has
 at least one parent folder, like "user" in "/home/user" or "/remote/users/user".
 Therefore, this rule will report a finding for home directories like <code>/users</code>,
 <code>/tmp</code> or <code>/</code>.</td>
-<td><pre>To verify interactive users on the system have a home directory assigned,
-run the following command:
-$ sudo awk -F":" '{print $1 ":" $6}' /etc/passwd
-Inspect the output and verify that all interactive users have a home directory
-defined.
+<td><pre>Verify that interactive users on the system have a home directory assigned with the following command:
+
+$ sudo awk -F: '($3&gt;=1000)&amp;&amp;($7 !~ /nologin/){print $1, $3, $6}' /etc/passwd
+
+Inspect the output and verify that all interactive users (normally users with a UID greater that 1000) have a home directory defined.
       Is it the case that users home directory is not defined?
       </pre></td>
 <td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
@@ -693,9 +691,13 @@ have a home directory assigned. Use the following commands to create the user
 home directory assigned in <code>/etc/passwd</code>:
 <pre>$ sudo mkdir /home/<i>USER</i></pre>
 </td>
-<td><pre>To verify the assigned home directory of all interactive users on the system
-exist, run the following command:
+<td><pre>Verify the assigned home directories of all interactive users on the system exist with the following command:
+
 $ sudo pwck -r
+
+user 'mailnull': directory 'var/spool/mqueue' does not exist
+
+The output should not return any interactive users.
       Is it the case that users home directory does not exist?
       </pre></td>
 <td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
@@ -3687,7 +3689,7 @@ mode for corrective action. Acceptable values also include <code>syslog</code> a
 <code>halt</code>. For certain systems, the need for availability
 outweighs the need to log all actions, and a different setting should be
 determined.
-This profile configures the <i>action</i> to be <code><sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_audispd_network_failure_action" use="legacy"></sub></code>.</td>
+This profile configures the <i>action</i> to be <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_audispd_network_failure_action" use="legacy"></xccdf-1.2:sub></code>.</td>
 <td><pre>Inspect /etc/audit/audisp-remote.conf and locate the following line to
 determine if the system is configured to perform a correct action according to the policy:
 $ sudo grep -i network_failure_action /etc/audit/audisp-remote.conf
@@ -3747,14 +3749,14 @@ administrators of the system, who can take appropriate action.</td>
 a designated account in certain situations. Add or correct the following line
 in <code>/etc/audit/auditd.conf</code> to ensure that administrators are notified
 via email for those situations:
-<pre>action_mail_acct = <sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_auditd_action_mail_acct" use="legacy"></sub></pre>
+<pre>action_mail_acct = <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_auditd_action_mail_acct" use="legacy"></xccdf-1.2:sub></pre>
 </td>
-<td><pre>Verify that the SUSE Linux Enterprise 15 "auditd" service is configured to notify the SA and ISSO in the event of an audit processing failure.
-Inspect /etc/audit/auditd.conf and locate the following line to
-determine if the system is configured to send email to an
-account when it needs to notify an administrator:
+<td><pre>Verify that SUSE Linux Enterprise 15 is configured to notify the SA and/or ISSO (at a minimum) in the event of an audit processing failure with the following command:
+
+$ sudo grep action_mail_acct /etc/audit/auditd.conf
+
 action_mail_acct = 
-      Is it the case that auditd is not configured to send emails per identified actions?
+      Is it the case that the value of the "action_mail_acct" keyword is not set to "&lt;sub idref="var_auditd_action_mail_acct" /&gt;" and/or other accounts for security personnel, the "action_mail_acct" keyword is missing, or the retuned line is commented out, ask the system administrator to indicate how they and the ISSO are notified of an audit process failure. If there is no evidence of the proper personnel being notified of an audit processing failure?
       </pre></td>
 <td>SRG-OS-000046-GPOS-00022<br>SRG-OS-000343-GPOS-00134<br>
 </td>
@@ -3907,11 +3909,11 @@ $ cat /etc/issue
 Synchronizing internal information system clocks provides uniformity of time stamps for information systems with multiple system clocks and systems connected over a network.
 Organizations should consider endpoints that may not have regular access to the authoritative time server (e.g., mobile, teleworking, and tactical endpoints).</td>
 <td>The <code>maxpoll</code> should be configured to
-<sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_time_service_set_maxpoll" use="legacy"></sub> in <code>/etc/ntp.conf</code> or
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_time_service_set_maxpoll" use="legacy"></xccdf-1.2:sub> in <code>/etc/ntp.conf</code> or
 <code>/etc/chrony.conf</code> to continuously poll time servers. To configure
 <code>maxpoll</code> in <code>/etc/ntp.conf</code> or <code>/etc/chrony.conf</code>
 add the following after each `server`, `pool` or `peer` entry:
-<pre>maxpoll <sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_time_service_set_maxpoll" use="legacy"></sub></pre>
+<pre>maxpoll <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_time_service_set_maxpoll" use="legacy"></xccdf-1.2:sub></pre>
 to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
 should be configured too.
 If no <code>server</code> or <code>pool</code> directives are configured, the rule evaluates
@@ -4001,7 +4003,7 @@ the total number of positions in the current password. In other words,
 characters may be the same within the two passwords; however, the positions
 of the like characters must be different.
 Make sure the <code>difok</code> parameter for the pam_cracklib module is
-configured to greater than or equal to <code><sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_difok" use="legacy"></sub></code>.</td>
+configured to greater than or equal to <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_difok" use="legacy"></xccdf-1.2:sub></code>.</td>
 <td><pre>To check how many characters must differ during a password change, run the
 following command:
 # grep pam_cracklib.so /etc/pam.d/common-password
@@ -4062,7 +4064,7 @@ strength and how long it takes to crack a password. Use of more characters in
 a password helps to exponentially increase the time and/or resources
 required to compromise the password.</td>
 <td>The pam_cracklib module's <code>minlen</code> parameter controls requirements for
-minimum characters required in a password. Add <code>minlen=<sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_minlen" use="legacy"></sub></code>
+minimum characters required in a password. Add <code>minlen=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_minlen" use="legacy"></xccdf-1.2:sub></code>
  to set minimum password length requirements.</td>
 <td><pre>To check how many characters are required in a password, run the following command:
 $ grep pam_cracklib.so /etc/pam.d/common-password
@@ -4088,7 +4090,7 @@ negative number, any password will be required to contain that many special
 characters. When set to a positive number, pam_cracklib will grant +1
 additional length credit for each special character.
 Make sure the <code>ocredit</code> parameter for the pam_cracklib module is
-set to less than or equal to <code><sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_ocredit" use="legacy"></sub></code>. For example, <code>ocredit=<sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_ocredit" use="legacy"></sub></code>.</td>
+set to less than or equal to <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_ocredit" use="legacy"></xccdf-1.2:sub></code>. For example, <code>ocredit=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_ocredit" use="legacy"></xccdf-1.2:sub></code>.</td>
 <td><pre>To check how many special characters are required in a password, run the
 following command:
 # grep pam_cracklib.so /etc/pam.d/common-password
@@ -4114,7 +4116,7 @@ This would appear as ocredit=-1.
 <td>The pam_cracklib module's <code>retry</code> parameter controls the maximum
 number of times to prompt the user for the password before returning
 with error. Make sure it is configured with a value that is no more than
-<sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_retry" use="legacy"></sub>. For example, <code>retry=1</code>.</td>
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_retry" use="legacy"></xccdf-1.2:sub>. For example, <code>retry=1</code>.</td>
 <td><pre>Check the password retry limit with the following command:
 
 # grep pam_cracklib.so /etc/pam.d/common-password
@@ -4375,6 +4377,34 @@ If properly configured, the output should be /org/gnome/desktop/screensaver/pict
 <td>CCI-000060<br>
 </td>
 <td>AC-11 (1)<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_dconf_gnome_session_idle_user_locks</td>
+<td>medium</td>
+<td>Ensure Users Cannot Change GNOME3 Session Idle Settings</td>
+<td>A session time-out lock is a temporary action taken when a user stops work and moves away from the immediate
+physical vicinity of the information system but does not logout because of the temporary nature of the absence.
+Rather than relying on the user to manually lock their operating system session prior to vacating the vicinity,
+GNOME desktops can be configured to identify when a user's session has idled and take action to initiate the
+session lock. As such, users should not be allowed to change session settings.</td>
+<td>If not already configured, ensure that users cannot change GNOME3 session idle settings
+by adding <code>/org/gnome/desktop/session/idle-delay</code>
+to <code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/session/idle-delay</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td><pre>To ensure that users cannot change session idle and lock settings, run the following:
+$ grep 'idle-delay' /etc/dconf/db/local.d/locks/*
+If properly configured, the output should return:
+/org/gnome/desktop/session/idle-delay
+      Is it the case that idle-delay is not locked?
+      </pre></td>
+<td>SRG-OS-000029-GPOS-00010<br>SRG-OS-000031-GPOS-00012<br>
+</td>
+<td>CCI-000057<br>CCI-000060<br>
+</td>
+<td>AC-11 a<br>AC-11 (1)<br>
 </td>
 </tr>
 <tr>
@@ -4768,11 +4798,10 @@ $ sudo grep pam_lastlog /etc/pam.d/login
 session required pam_lastlog.so showfailed
       Is it the case that "pam_lastlog" is missing from "/etc/pam.d/login" file, or the silent option is present?
       </pre></td>
-<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
+<td></td>
+<td>CCI-000052<br>
 </td>
-<td>CCI-000366<br>
-</td>
-<td>CM-6 b<br>
+<td>AC-9<br>
 </td>
 </tr>
 <tr>
@@ -4875,14 +4904,14 @@ them, ensure the following line appears in <code>/etc/zypp/zypp.conf</code> in
 the <code>[main]</code> section:
 <pre>gpgcheck=1</pre>
 </td>
-<td><pre>To determine whether zypper is configured to use gpgcheck,
-inspect /etc/zypp/zypp.conf and ensure the following appears in the
-[main] section:
+<td><pre>Verify that zypper verifies the signature of packages from a repository prior to install with the following command:
+
+$ grep gpgcheck /etc/zypp/zypp.conf
+
 gpgcheck=1
-A value of 1 indicates that gpgcheck is enabled. Absence of a
-gpgcheck line or a setting of 0 indicates that it is
-disabled.
-      Is it the case that GPG checking is not enabled?
+
+If "gpgcheck" is not set to "1", or if the option is missing or commented out, ask the System Administrator how the certificates for patches and other operating system components are verified.
+      Is it the case that there is no process to validate certificates that is approved by the organization?
       </pre></td>
 <td>SRG-OS-000366-GPOS-00153<br>
 </td>
@@ -6455,10 +6484,10 @@ notify system administrators of active or impending issues.  These messages must
 be forwarded to at least one monitored email address.</td>
 <td>Make sure that mails delivered to root user are forwarded to a monitored
 email address. Make sure that the address
-<sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_postfix_root_mail_alias" use="legacy"></sub> is a valid email address
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_postfix_root_mail_alias" use="legacy"></xccdf-1.2:sub> is a valid email address
 reachable from the system in question. Use the following command to
 configure the alias:
-<pre>$ sudo echo "root: <sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_postfix_root_mail_alias" use="legacy"></sub>" &gt;&gt; /etc/aliases
+<pre>$ sudo echo "root: <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_postfix_root_mail_alias" use="legacy"></xccdf-1.2:sub>" &gt;&gt; /etc/aliases
 $ sudo newaliases</pre>
 </td>
 <td><pre>Find the list of alias maps used by the Postfix mail server:
@@ -6529,21 +6558,21 @@ logging.
 Along with these other directives, the system can be configured
 to forward its logs to a particular log server by
 adding or correcting one of the following lines,
-substituting <code><i><sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_rsyslog_remote_loghost_address" use="legacy"></sub></i></code> appropriately.
+substituting <code><i><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_rsyslog_remote_loghost_address" use="legacy"></xccdf-1.2:sub></i></code> appropriately.
 The choice of protocol depends on the environment of the system;
 although TCP and RELP provide more reliable message delivery,
 they may not be supported in all environments.
 <br>
 To use UDP for log message delivery:
-<pre>*.* @<i><sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_rsyslog_remote_loghost_address" use="legacy"></sub></i></pre>
+<pre>*.* @<i><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_rsyslog_remote_loghost_address" use="legacy"></xccdf-1.2:sub></i></pre>
 <br>
 To use TCP for log message delivery:
-<pre>*.* @@<i><sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_rsyslog_remote_loghost_address" use="legacy"></sub></i></pre>
+<pre>*.* @@<i><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_rsyslog_remote_loghost_address" use="legacy"></xccdf-1.2:sub></i></pre>
 <br>
 To use RELP for log message delivery:
-<pre>*.* :omrelp:<i><sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_rsyslog_remote_loghost_address" use="legacy"></sub></i></pre>
+<pre>*.* :omrelp:<i><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_rsyslog_remote_loghost_address" use="legacy"></xccdf-1.2:sub></i></pre>
 <br>
-There must be a resolvable DNS CNAME or Alias record set to "<sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_rsyslog_remote_loghost_address" use="legacy"></sub>" for logs to be sent correctly to the centralized logging utility.</td>
+There must be a resolvable DNS CNAME or Alias record set to "<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_rsyslog_remote_loghost_address" use="legacy"></xccdf-1.2:sub>" for logs to be sent correctly to the centralized logging utility.</td>
 <td><pre>To ensure logs are sent to a remote host, examine the file
 /etc/rsyslog.conf.
 If using UDP, a line similar to the following should be present:
@@ -7025,7 +7054,7 @@ is required, it should be enabled only after a user has authenticated; otherwise
 it should be disabled. To disable compression or delay compression until after
 a user has successfully authenticated, add or correct the following line in the
 <code>/etc/ssh/sshd_config</code> file:
-<pre>Compression <sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_sshd_disable_compression" use="legacy"></sub></pre>
+<pre>Compression <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_sshd_disable_compression" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 <td><pre>To check if compression is enabled or set correctly, run the
 following command:
@@ -7306,33 +7335,32 @@ If a line indicating yes is returned, then the required value is set.
 
       Is it the case that the required value is not set?
       </pre></td>
-<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
+<td></td>
+<td>CCI-000052<br>
 </td>
-<td>CCI-000366<br>
-</td>
-<td>CM-6 b<br>
+<td>AC-9<br>
 </td>
 </tr>
 <tr>
 <td>xccdf_org.ssgproject.content_rule_sshd_set_idle_timeout</td>
 <td>medium</td>
-<td>Set SSH Idle Timeout Interval</td>
+<td>Set SSH Client Alive Interval</td>
 <td>Terminating an idle ssh session within a short time period reduces the window of
 opportunity for unauthorized personnel to take control of a management session
 enabled on the console or console port that has been let unattended.</td>
-<td>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+<td>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br><br>
-To set an idle timeout interval, edit the following line in <code>/etc/ssh/sshd_config</code> as
+To set this timeout interval, edit the following line in <code>/etc/ssh/sshd_config</code> as
 follows:
-<pre>ClientAliveInterval <b><sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sshd_idle_timeout_value" use="legacy"></sub></b></pre>
+<pre>ClientAliveInterval <b><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sshd_idle_timeout_value" use="legacy"></xccdf-1.2:sub></b></pre>
 <br><br>
 The timeout <b>interval</b> is given in seconds. For example, have a timeout
 of 10 minutes, set <b>interval</b> to 600.
 <br><br>
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <code>/etc/ssh/sshd_config</code>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</td>
+some processes may stop SSH from correctly detecting that the user is idle.</td>
 <td><pre>Run the following command to see what the timeout interval is:
 $ sudo grep ClientAliveInterval /etc/ssh/sshd_config
 If properly configured, the output should be:
@@ -7356,10 +7384,10 @@ is reached.</td>
 during a SSH session and waits for a response from the SSH client.
 The option <code>ClientAliveInterval</code> configures timeout after
 each <code>ClientAliveCountMax</code> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 
-To ensure the SSH idle timeout occurs precisely when the
+To ensure the SSH timeout occurs precisely when the
 <code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
 value of <code>0</code> in
 
@@ -7372,7 +7400,7 @@ $ sudo grep ClientAliveCountMax /etc/ssh/sshd_config
 If properly configured, the output should be:
 ClientAliveCountMax 0
 
-In this case, the SSH idle timeout occurs precisely when
+In this case, the SSH timeout occurs precisely when
 the ClientAliveInterval is set.
       Is it the case that it is commented out or not configured properly?
       </pre></td>
@@ -7484,14 +7512,14 @@ MACs
 <td>If cached authentication information is out-of-date, the validity of the
 authentication information may be questionable.</td>
 <td>SSSD's memory cache should be configured to set to expire records after
-<code><sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_sssd_memcache_timeout" use="legacy"></sub></code> seconds.
+<code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_sssd_memcache_timeout" use="legacy"></xccdf-1.2:sub></code> seconds.
 To configure SSSD to expire memory cache, set <code>memcache_timeout</code> to
-<code><sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_sssd_memcache_timeout" use="legacy"></sub></code> under the
+<code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_sssd_memcache_timeout" use="legacy"></xccdf-1.2:sub></code> under the
 <code>[nss]</code> section in <code>/etc/sssd/sssd.conf</code>.
 
 For example:
 <pre>[nss]
-memcache_timeout = <sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_sssd_memcache_timeout" use="legacy"></sub>
+memcache_timeout = <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_sssd_memcache_timeout" use="legacy"></xccdf-1.2:sub>
 </pre>
 </td>
 <td><pre>To verify that SSSD's in-memory cache expires after a day, run the following command:
@@ -7743,8 +7771,8 @@ writeable structures which may contain functions pointers. If a write vulnerabil
 occurs in the kernel, allowing write access to any of this structure, the kernel can
 be compromised. This option disallow any program without the CAP_SYSLOG capability
 to get the addresses of kernel pointers by replacing them with 0.</td>
-<td>To set the runtime status of the <code>kernel.kptr_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.kptr_restrict=<sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sysctl_kernel_kptr_restrict_value" use="legacy"></sub></pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.kptr_restrict = <sub xmlns="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sysctl_kernel_kptr_restrict_value" use="legacy"></sub></pre>
+<td>To set the runtime status of the <code>kernel.kptr_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.kptr_restrict=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sysctl_kernel_kptr_restrict_value" use="legacy"></xccdf-1.2:sub></pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.kptr_restrict = <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sysctl_kernel_kptr_restrict_value" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 <td><pre>The runtime status of the kernel.kptr_restrict kernel parameter can be queried
 by running the following command:
@@ -8253,7 +8281,7 @@ state up.
 
 If a wireless interface is configured it must be documented and approved by
 the local Authorizing Official.
-      Is it the case that wireless interfaces are not active?
+      Is it the case that a wireless interface is configured and has not been documented and approved by the Information System Security Officer (ISSO)?
       </pre></td>
 <td>SRG-OS-000423-GPOS-00187<br>SRG-OS-000481-GPOS-00481<br>SRG-OS-000424-GPOS-00188<br>SRG-OS-000300-GPOS-00118<br>SRG-OS-000299-GPOS-00117<br>
 </td>

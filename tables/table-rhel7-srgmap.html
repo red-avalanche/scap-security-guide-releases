@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<html>
 <head lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>SRGs from General Purpose Operating System Security Requirements Guide Mapped to DISA STIG for Red Hat Enterprise Linux 7</title>
@@ -76,7 +76,27 @@ If temporary accounts are used, the operating system must be configured to autom
 To address access requirements, many operating systems may be integrated with enterprise-level authentication/access mechanisms that meet or exceed access control policy requirements.</td>
 
 
-    <td></td>
+    <td>
+
+      <table>
+        <tr>
+          <td>Assign Expiration Date to Emergency Accounts</td>
+          <td>Emergency accounts are privileged accounts established in response to
+crisis situations where the need for rapid account activation is required.
+In the event emergency accounts are required, configure the system to
+terminate them after a documented time period. For every emergency account,
+run the following command to set an expiration date on it, substituting
+<tt><i>ACCOUNT_NAME</i></tt> and <tt><i>YYYY-MM-DD</i></tt>
+appropriately:
+<pre>$ sudo chage -E <i>YYYY-MM-DD ACCOUNT_NAME</i></pre>
+<tt><i>YYYY-MM-DD</i></tt> indicates the documented expiration date for the
+account. For U.S. Government systems, the operating system must be
+configured to automatically terminate these types of accounts after a
+period of 72 hours.</td>
+        </tr>
+      </table>
+
+    </td>
 </tr>
 
   <tr>
@@ -1389,11 +1409,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -2621,11 +2641,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -4034,11 +4054,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -6287,7 +6307,27 @@ Emergency accounts are different from infrequently used accounts (i.e., local lo
 To address access requirements, many operating systems can be integrated with enterprise-level authentication/access mechanisms that meet or exceed access control policy requirements. </td>
 
 
-    <td></td>
+    <td>
+
+      <table>
+        <tr>
+          <td>Assign Expiration Date to Emergency Accounts</td>
+          <td>Emergency accounts are privileged accounts established in response to
+crisis situations where the need for rapid account activation is required.
+In the event emergency accounts are required, configure the system to
+terminate them after a documented time period. For every emergency account,
+run the following command to set an expiration date on it, substituting
+<tt><i>ACCOUNT_NAME</i></tt> and <tt><i>YYYY-MM-DD</i></tt>
+appropriately:
+<pre>$ sudo chage -E <i>YYYY-MM-DD ACCOUNT_NAME</i></pre>
+<tt><i>YYYY-MM-DD</i></tt> indicates the documented expiration date for the
+account. For U.S. Government systems, the operating system must be
+configured to automatically terminate these types of accounts after a
+period of 72 hours.</td>
+        </tr>
+      </table>
+
+    </td>
 </tr>
 
   <tr>
@@ -6347,11 +6387,11 @@ Nonlocal maintenance and diagnostic activities are those activities conducted by
 
       <table>
         <tr>
-          <td>Set SSH Idle Timeout Interval</td>
-          <td>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+          <td>Set SSH Client Alive Interval</td>
+          <td>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br /><br />
-To set an idle timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
+To set this timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
 follows:
 <pre>ClientAliveInterval <b><sub idref="sshd_idle_timeout_value" /></b></pre>
 <br/><br/>
@@ -6360,7 +6400,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br /><br />
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</td>
+some processes may stop SSH from correctly detecting that the user is idle.</td>
         </tr>
       </table>
 
@@ -6371,10 +6411,10 @@ some processes may stop SSH  from correctly detecting that the user is idle.</td
 during a SSH session and waits for a response from the SSH client.
 The option <tt>ClientAliveInterval</tt> configures timeout after
 each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 
-To ensure the SSH idle timeout occurs precisely when the
+To ensure the SSH timeout occurs precisely when the
 <tt>ClientAliveInterval</tt> is set, set the <tt>ClientAliveCountMax</tt> to
 value of <tt>0</tt> in
 
@@ -6486,11 +6526,11 @@ setting in a file loaded by <tt>/etc/profile</tt>, e.g.
 
       <table>
         <tr>
-          <td>Set SSH Idle Timeout Interval</td>
-          <td>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+          <td>Set SSH Client Alive Interval</td>
+          <td>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br /><br />
-To set an idle timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
+To set this timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
 follows:
 <pre>ClientAliveInterval <b><sub idref="sshd_idle_timeout_value" /></b></pre>
 <br/><br/>
@@ -6499,7 +6539,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br /><br />
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</td>
+some processes may stop SSH from correctly detecting that the user is idle.</td>
         </tr>
       </table>
 
@@ -6510,10 +6550,10 @@ some processes may stop SSH  from correctly detecting that the user is idle.</td
 during a SSH session and waits for a response from the SSH client.
 The option <tt>ClientAliveInterval</tt> configures timeout after
 each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 
-To ensure the SSH idle timeout occurs precisely when the
+To ensure the SSH timeout occurs precisely when the
 <tt>ClientAliveInterval</tt> is set, set the <tt>ClientAliveCountMax</tt> to
 value of <tt>0</tt> in
 
@@ -7753,11 +7793,11 @@ This capability is typically reserved for specific operating system functionalit
 
       <table>
         <tr>
-          <td>Set SSH Idle Timeout Interval</td>
-          <td>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+          <td>Set SSH Client Alive Interval</td>
+          <td>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br /><br />
-To set an idle timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
+To set this timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
 follows:
 <pre>ClientAliveInterval <b><sub idref="sshd_idle_timeout_value" /></b></pre>
 <br/><br/>
@@ -7766,7 +7806,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br /><br />
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</td>
+some processes may stop SSH from correctly detecting that the user is idle.</td>
         </tr>
       </table>
 
@@ -7777,10 +7817,10 @@ some processes may stop SSH  from correctly detecting that the user is idle.</td
 during a SSH session and waits for a response from the SSH client.
 The option <tt>ClientAliveInterval</tt> configures timeout after
 each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 
-To ensure the SSH idle timeout occurs precisely when the
+To ensure the SSH timeout occurs precisely when the
 <tt>ClientAliveInterval</tt> is set, set the <tt>ClientAliveCountMax</tt> to
 value of <tt>0</tt> in
 
@@ -10581,11 +10621,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -11168,11 +11208,11 @@ above (or their subset), keeping the given order of algorithms.</td>
 
       <table>
         <tr>
-          <td>Set SSH Idle Timeout Interval</td>
-          <td>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+          <td>Set SSH Client Alive Interval</td>
+          <td>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br /><br />
-To set an idle timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
+To set this timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
 follows:
 <pre>ClientAliveInterval <b><sub idref="sshd_idle_timeout_value" /></b></pre>
 <br/><br/>
@@ -11181,7 +11221,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br /><br />
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</td>
+some processes may stop SSH from correctly detecting that the user is idle.</td>
         </tr>
       </table>
 
@@ -12920,11 +12960,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -15345,11 +15385,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -15926,11 +15966,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -16463,11 +16503,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -17923,10 +17963,10 @@ To make sure that the setting is persistent, add the following line to a file in
       <table>
         <tr>
           <td>Ensure tftp Daemon Uses Secure Mode</td>
-          <td>If running the <tt>tftp</tt> service is necessary, it should be configured
-to change its root directory at startup. To do so, ensure
-<tt>/etc/xinetd.d/tftp</tt> includes <tt>-s</tt> as a command line argument, as shown in
-the following example:
+          <td>If running the Trivial File Transfer Protocol (TFTP) service is necessary,
+it should be configured to change its root directory at startup. To do so,
+ensure <tt>/etc/xinetd.d/tftp</tt> includes <tt>-s</tt> as a command line argument,
+as shown in the following example:
 <pre>server_args = -s <sub idref="var_tftpd_secure_directory" /></pre></td>
         </tr>
       </table>

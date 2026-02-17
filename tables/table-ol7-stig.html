@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<html>
 <head lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Rules in DISA STIG for Oracle Linux 7</title>
@@ -163,10 +163,10 @@ Executive Orders, directives, policies, regulations, standards, and guidance.
 For U.S. Government systems, system use notifications are required only for access via login interfaces
 with human users and are not required when such human interfaces do not exist.</pre></td>
 	<td><pre>To ensure a login warning banner is enabled, run the following:
-$ grep banner-message-enable /etc/dconf/db/gdm.d/*
+$ grep banner-message-enable /etc/dconf/db/local.d/*
 If properly configured, the output should be true.
 To ensure a login warning banner is locked and cannot be changed by a user, run the following:
-$ grep banner-message-enable /etc/dconf/db/gdm.d/locks/*
+$ grep banner-message-enable /etc/dconf/db/local.d/locks/*
 If properly configured, the output should be /org/gnome/login-screen/banner-message-enable.
       Is it the case that it is not?
       </pre></td>
@@ -175,11 +175,11 @@ in the GNOME Display Manager's login screen can be enabled on the login
 screen by setting banner-message-enable to true.
 
 To enable, add or edit banner-message-enable to
-/etc/dconf/db/gdm.d/00-security-settings. For example:
+/etc/dconf/db/local.d/00-security-settings. For example:
 [org/gnome/login-screen]
 banner-message-enable=true
 Once the setting has been added, add a lock to
-/etc/dconf/db/gdm.d/locks/00-security-settings-lock to prevent user modification.
+/etc/dconf/db/local.d/locks/00-security-settings-lock to prevent user modification.
 For example:
 /org/gnome/login-screen/banner-message-enable
 After the settings have been set, run dconf update.
@@ -198,10 +198,10 @@ The banner text must also be set.</pre></td>
 process and facilitates possible legal action against attackers.</pre></td>
 	<td><pre>
 To ensure the login warning banner text is properly set, run the following:
-$ grep banner-message-text /etc/dconf/db/gdm.d/*
+$ grep banner-message-text /etc/dconf/db/local.d/*
 If properly configured, the proper banner text will appear.
 To ensure the login warning banner text is locked and cannot be changed by a user, run the following:
-$ grep banner-message-text /etc/dconf/db/gdm.d/locks/*
+$ grep banner-message-text /etc/dconf/db/local.d/locks/*
 If properly configured, the output should be /org/gnome/login-screen/banner-message-text.
       Is it the case that it does not?
       </pre></td>
@@ -212,11 +212,11 @@ where APPROVED_BANNER is the approved banner for your environment.
 
 To enable, add or edit banner-message-text to
 
-/etc/dconf/db/gdm.d/00-security-settings. For example:
+/etc/dconf/db/local.d/00-security-settings. For example:
 [org/gnome/login-screen]
 banner-message-text='APPROVED_BANNER'
 Once the setting has been added, add a lock to
-/etc/dconf/db/gdm.d/locks/00-security-settings-lock to prevent user modification.
+/etc/dconf/db/local.d/locks/00-security-settings-lock to prevent user modification.
 For example:
 /org/gnome/login-screen/banner-message-text
 
@@ -325,10 +325,10 @@ After the settings have been set, run dconf update.</pre></td>
 that provided by a username and password combination. Smart cards leverage PKI
 (public key infrastructure) in order to provide and verify credentials.</pre></td>
 	<td><pre>To ensure smart card authentication on the login screen is enabled, run the following command:
-$ grep enable-smartcard-authentication /etc/dconf/db/gdm.d/*
+$ grep enable-smartcard-authentication /etc/dconf/db/local.d/*
 The output should be true.
 To ensure that users cannot disable smart card authentication on the login screen, run the following:
-$ grep enable-smartcard-authentication /etc/dconf/db/gdm.d/locks/*
+$ grep enable-smartcard-authentication /etc/dconf/db/local.d/locks/*
 If properly configured, the output should be /org/gnome/login-screen/enable-smartcard-authentication
       Is it the case that enable-smartcard-authentication has not been configured or is disabled?
       </pre></td>
@@ -337,11 +337,11 @@ can be enabled on the login screen by setting enable-smartcard-authentication
 to true.
 
 To enable, add or edit enable-smartcard-authentication to
-/etc/dconf/db/gdm.d/00-security-settings. For example:
+/etc/dconf/db/local.d/00-security-settings. For example:
 [org/gnome/login-screen]
 enable-smartcard-authentication=true
 Once the setting has been added, add a lock to
-/etc/dconf/db/gdm.d/locks/00-security-settings-lock to prevent user modification.
+/etc/dconf/db/local.d/locks/00-security-settings-lock to prevent user modification.
 For example:
 /org/gnome/login-screen/enable-smartcard-authentication
 After the settings have been set, run dconf update.</pre></td>
@@ -613,11 +613,14 @@ at guessing and brute-force attacks.
 Password complexity is one factor of several that determines how long it takes to crack a password. The more
 complex the password, the greater the number of possible combinations that need to be tested before
 the password is compromised.</pre></td>
-	<td><pre>To check how many uppercase characters are required in a password, run the following command:
-$ grep ucredit /etc/security/pwquality.conf
-The ucredit parameter (as a negative number) will indicate how many uppercase characters are required.
-This would appear as ucredit = -1.
-      Is it the case that ucredit is not found or not set to the required value?
+	<td><pre>Verify that Oracle Linux 7 enforces password complexity by requiring that at least one upper-case character.
+
+Check the value for "ucredit" with the following command:
+
+$ sudo grep ucredit /etc/security/pwquality.conf /etc/security/pwquality.conf.d/*.conf
+
+ucredit = -1
+      Is it the case that the value of "ucredit" is a positive number or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's ucredit= parameter controls requirements for
 usage of uppercase letters in a password. When set to a negative number, any password will be required to
@@ -644,10 +647,14 @@ to crack a password. The more complex the password, the greater the number of
 possble combinations that need to be tested before the password is compromised.
 Requiring a minimum number of lowercase characters makes password guessing attacks
 more difficult by ensuring a larger search space.</pre></td>
-	<td><pre>To check how many lowercase characters are required in a password, run the following command:
-$ grep lcredit /etc/security/pwquality.conf
-The lcredit parameter (as a negative number) will indicate how many special characters are required.
-      Is it the case that lcredit is not found or not less than or equal to the required value?
+	<td><pre>Verify that Oracle Linux 7 enforces password complexity by requiring that at least one lower-case character.
+
+Check the value for "lcredit" with the following command:
+
+$ sudo grep lcredit /etc/security/pwquality.conf /etc/security/pwquality.conf.d/*.conf
+
+/etc/security/pwquality.conf:lcredit = -1
+      Is it the case that the value of "lcredit" is a positive number or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's lcredit parameter controls requirements for
 usage of lowercase letters in a password. When set to a negative number, any password will be required to
@@ -674,10 +681,14 @@ to crack a password. The more complex the password, the greater the number of
 possible combinations that need to be tested before the password is compromised.
 Requiring digits makes password guessing attacks more difficult by ensuring a larger
 search space.</pre></td>
-	<td><pre>To check how many digits are required in a password, run the following command:
-$ grep dcredit /etc/security/pwquality.conf
-The dcredit parameter (as a negative number) will indicate how many digits are required.
-      Is it the case that dcredit is not found or not equal to or less than the required value?
+	<td><pre>Verify that Oracle Linux 7 enforces password complexity by requiring that at least one numeric character be used.
+
+Check the value for "dcredit" with the following command:
+
+$ sudo grep dcredit /etc/security/pwquality.conf /etc/security/pwquality.conf.d/*.conf
+
+/etc/security/pwquality.conf:dcredit = 
+      Is it the case that the value of "dcredit" is a positive number or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's dcredit parameter controls requirements for
 usage of digits in a password. When set to a negative number, any password will be required to
@@ -704,10 +715,11 @@ to crack a password. The more complex the password, the greater the number of
 possible combinations that need to be tested before the password is compromised.
 Requiring a minimum number of special characters makes password guessing attacks
 more difficult by ensuring a larger search space.</pre></td>
-	<td><pre>To check how many special characters are required in a password, run the following command:
-$ grep ocredit /etc/security/pwquality.conf
-The ocredit parameter (as a negative number) will indicate how many special
-characters are required.
+	<td><pre>Verify that Oracle Linux 7 enforces password complexity by requiring that at least one special character with the following command:
+
+$ sudo grep ocredit /etc/security/pwquality.conf /etc/security/pwquality.conf.d/*.conf
+
+ocredit = 
       Is it the case that value of "ocredit" is a positive number or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's ocredit= parameter controls requirements for
@@ -740,12 +752,12 @@ before the password is compromised.
 Requiring a minimum number of different characters during password changes ensures that
 newly changed passwords should not resemble previously compromised ones.
 Note that passwords which are changed on compromised systems will still be compromised, however.</pre></td>
-	<td><pre>To check how many characters must differ during a password change, run the following command:
-$ sudo grep difok /etc/security/pwquality.conf
-difok = 
+	<td><pre>Verify the value of the "difok" option in "/etc/security/pwquality.conf" with the following command:
 
-The difok parameter will indicate how many characters must differ.
-      Is it the case that difok is not found or set to less than the required value?
+$ sudo grep difok /etc/security/pwquality.conf
+
+difok = 
+      Is it the case that the value of "difok" is set to less than "<sub idref="var_password_pam_difok" />", or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's difok parameter sets the number of characters
 in a password that must not be present in and old password during a password change.
@@ -773,12 +785,11 @@ the password is compromised.
 
 Requiring a minimum number of character categories makes password guessing attacks more difficult
 by ensuring a larger search space.</pre></td>
-	<td><pre>To check how many categories of characters must be used in password during a password change,
-run the following command:
-$ sudo grep minclass /etc/security/pwquality.conf
-The minclass parameter will indicate how many character classes must be used. If
-the requirement was for the password to contain characters from  different categories,
-then this would appear as minclass = .
+	<td><pre>Verify the value of the "minclass" option in "/etc/security/pwquality.conf" with the following command:
+
+$ grep minclass /etc/security/pwquality.conf
+
+minclass = 
       Is it the case that the value of "minclass" is set to less than "<sub idref="var_password_pam_minclass" />" or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's minclass parameter controls
@@ -816,8 +827,11 @@ complex the password, the greater the number of possible combinations that need 
 password is compromised.
 
 Passwords with excessive repeating characters may be more vulnerable to password-guessing attacks.</pre></td>
-	<td><pre>To check the maximum value for consecutive repeating characters, run the following command:
-$ sudo grep maxrepeat /etc/security/pwquality.conf
+	<td><pre>Verify the value of the "maxrepeat" option in "/etc/security/pwquality.conf" with the following command:
+
+$ grep maxrepeat /etc/security/pwquality.conf
+
+maxrepeat = 
       Is it the case that the value of "maxrepeat" is set to more than "<sub idref="var_password_pam_maxrepeat" />" or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's maxrepeat parameter controls requirements for
@@ -842,8 +856,11 @@ attempts at guessing and brute-force attacks.
 Password complexity is one factor of several that determines how long it takes to crack a password. The
 more complex a password, the greater the number of possible combinations that need to be tested before the
 password is compromised.</pre></td>
-	<td><pre>To check the value for maximum consecutive repeating characters, run the following command:
-$ sudo grep maxclassrepeat /etc/security/pwquality.conf
+	<td><pre>Verify the value of the "maxclassrepeat" option in "/etc/security/pwquality.conf" with the following command:
+
+$ grep maxclassrepeat /etc/security/pwquality.conf
+
+maxclassrepeat = 
       Is it the case that the value of "maxclassrepeat" is set to "0", more than "<sub idref="var_password_pam_maxclassrepeat" />" or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's maxclassrepeat parameter controls requirements for
@@ -976,9 +993,14 @@ defeat the organization's policy regarding password reuse.
 
 Setting the minimum password age protects against users cycling back to a
 favorite password after satisfying the password reuse requirement.</pre></td>
-	<td><pre>To check the minimum password age, run the command:
-$ grep PASS_MIN_DAYS /etc/login.defs
-      Is it the case that it is not equal to or greater than the required value?
+	<td><pre>Verify Oracle Linux 7 enforces 24 hours/1 day as the minimum password lifetime for new user accounts.
+
+Check for the value of "PASS_MIN_DAYS" in "/etc/login.defs" with the following command:
+
+$ grep -i pass_min_days /etc/login.defs
+
+PASS_MIN_DAYS 
+      Is it the case that the "PASS_MIN_DAYS" parameter value is not "<sub idref="var_accounts_minimum_age_login_defs" />" or greater, or is commented out?
       </pre></td>
 	<td><pre>To specify password minimum age for new accounts,
 edit the file /etc/login.defs
@@ -1002,7 +1024,7 @@ changes to defeat the password reuse or history enforcement requirement. If
 users are allowed to immediately and continually change their password, the
 password could be repeatedly changed in a short period of time to defeat the
 organization's policy regarding password reuse.</pre></td>
-	<td><pre>Check whether the minimum time period between password changes for each user account is one day or greater.
+	<td><pre>Verify that Oracle Linux 7 has configured the minimum time period between password changes for each user account is one day or greater with the following command:
 
 $ sudo awk -F: '$4 < 1 {print $1 " " $4}' /etc/shadow
       Is it the case that any results are returned that are not associated with a system account?
@@ -1029,10 +1051,12 @@ Setting the password maximum age ensures users are required to
 periodically change their passwords. Requiring shorter password lifetimes
 increases the risk of users writing down the password in a convenient
 location subject to physical compromise.</pre></td>
-	<td><pre>To check the maximum password age, run the command:
-$ grep PASS_MAX_DAYS /etc/login.defs
-The profile requirement is .
-      Is it the case that PASS_MAX_DAYS is not set equal to or greater than the required value?
+	<td><pre>Verify that Oracle Linux 7 enforces a -day maximum password lifetime for new user accounts by running the following command:
+
+$ grep -i pass_max_days /etc/login.defs
+
+PASS_MAX_DAYS 
+      Is it the case that the "PASS_MAX_DAYS" parameter value is greater than "<sub idref="var_accounts_maximum_age_login_defs" />", or commented out?
       </pre></td>
 	<td><pre>To specify password maximum age for new accounts,
 edit the file /etc/login.defs
@@ -1114,10 +1138,12 @@ Password length is one factor of several that helps to determine strength
 and how long it takes to crack a password. Use of more characters in a password
 helps to exponentially increase the time and/or resources required to
 compromise the password.</pre></td>
-	<td><pre>To check how many characters are required in a password, run the following command:
+	<td><pre>Verify that Oracle Linux 7 enforces a minimum -character password length with the following command:
+
 $ grep minlen /etc/security/pwquality.conf
-Your output should contain minlen = 
-      Is it the case that minlen is not found, or not equal to or greater than the required value?
+
+minlen = 
+      Is it the case that the command does not return a "minlen" value of "<sub idref="var_password_pam_minlen" />" or greater, does not return a line, or the line is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's minlen parameter controls requirements for
 minimum characters required in a password. Add minlen=
@@ -1513,13 +1539,11 @@ any sudo configuration snippets in /etc/sudoers.d/.</pre></td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Increasing the time between a failed authentication attempt and re-prompting to
 enter credentials helps to slow a single-threaded brute force attack.</pre></td>
-	<td><pre>Verify the FAIL_DELAY setting is configured correctly in the /etc/login.defs file by
-running the following command:
-$ sudo grep -i "FAIL_DELAY" /etc/login.defs
-All output must show the value of FAIL_DELAY set as shown in the below:
+	<td><pre>Verify Oracle Linux 7 enforces a delay of at least  seconds between console logon prompts following a failed logon attempt with the following command:
+
 $ sudo grep -i "FAIL_DELAY" /etc/login.defs
 FAIL_DELAY 
-      Is it the case that the above command returns no output, or FAIL_DELAY is configured less than the expected value?
+      Is it the case that the value of "FAIL_DELAY" is not set to "<sub idref="var_accounts_fail_delay" />" or greater, or the line is commented out?
       </pre></td>
 	<td><pre>To ensure the logon failure delay controlled by /etc/login.defs is set properly,
 add or correct the FAIL_DELAY setting in /etc/login.defs to read as follows:
@@ -2201,14 +2225,14 @@ This ensures the software has not been tampered with and that it has been
 provided by a trusted vendor. Self-signed certificates are disallowed by
 this requirement. Certificates used to verify the software must be from an
 approved Certificate Authority (CA).</pre></td>
-	<td><pre>To determine whether yum is configured to use gpgcheck,
-inspect /etc/yum.conf and ensure the following appears in the
-[main] section:
+	<td><pre>Verify that yum verifies the signature of packages from a repository prior to install with the following command:
+
+$ grep gpgcheck /etc/yum.conf
+
 gpgcheck=1
-A value of 1 indicates that gpgcheck is enabled. Absence of a
-gpgcheck line or a setting of 0 indicates that it is
-disabled.
-      Is it the case that GPG checking is not enabled?
+
+If "gpgcheck" is not set to "1", or if the option is missing or commented out, ask the System Administrator how the certificates for patches and other operating system components are verified.
+      Is it the case that there is no process to validate certificates that is approved by the organization?
       </pre></td>
 	<td><pre>The gpgcheck option controls whether
 RPM packages' signatures are always checked prior to installation.
@@ -2232,12 +2256,14 @@ has been provided by a trusted vendor.
 
 Accordingly, patches, service packs, device drivers, or operating system components must
 be signed with a certificate recognized and approved by the organization.</pre></td>
-	<td><pre>To verify that localpkg_gpgcheck is configured properly, run the following
-command:
+	<td><pre>Verify that yum verifies the signature of local packages prior to install with the following command:
+
 $ grep localpkg_gpgcheck /etc/yum.conf
-The output should return something similar to:
+
 localpkg_gpgcheck=1
-      Is it the case that gpgcheck is not enabled or configured correctly to verify local packages?
+
+If "localpkg_gpgcheck" is not set to "1", or if the option is missing or commented out, ask the System Administrator how the certificates for patches and other operating system components are verified.
+      Is it the case that there is no process to validate certificates for local packages that is approved by the organization?
       </pre></td>
 	<td><pre>yum should be configured to verify the signature(s) of local packages
 prior to installation. To configure yum to verify signatures of local
@@ -2569,12 +2595,12 @@ After the settings have been set, run dconf update.</pre></td>
 	<td><pre>The umask value influences the permissions assigned to files when they are created.
 A misconfigured umask value could result in files with excessive permissions that can be read and
 written to by unauthorized users.</pre></td>
-	<td><pre>Verify the UMASK setting is configured correctly in the /etc/login.defs file by
-running the following command:
-$ sudo grep "UMASK" /etc/login.defs
-All output must show the value of UMASK set as shown in the below:
+	<td><pre>Verify Oracle Linux 7 defines default permissions for all authenticated users in such a way that the user can only read and modify their own files with the following command:
+
+# grep -i umask /etc/login.defs
+
 UMASK 
-      Is it the case that the above command returns no output, or the umask is configured incorrectly?
+      Is it the case that the value for the "UMASK" parameter is not "<sub idref="var_accounts_user_umask" />", or the "UMASK" parameter is missing or is commented out?
       </pre></td>
 	<td><pre>To ensure the default umask controlled by /etc/login.defs is set properly,
 add or correct the UMASK setting in /etc/login.defs to read as follows:
@@ -2822,9 +2848,13 @@ the user may be given access to the / directory as the current working directory
 upon logon. This could create a Denial of Service because the user would not be
 able to access their logon configuration files, and it may give them visibility
 to system files they normally would not be able to access.</pre></td>
-	<td><pre>To verify the assigned home directory of all interactive users on the system
-exist, run the following command:
+	<td><pre>Verify the assigned home directories of all interactive users on the system exist with the following command:
+
 $ sudo pwck -r
+
+user 'mailnull': directory 'var/spool/mqueue' does not exist
+
+The output should not return any interactive users.
       Is it the case that users home directory does not exist?
       </pre></td>
 	<td><pre>Create home directories to all interactive users that currently do not
@@ -3071,12 +3101,12 @@ an empty entry, such as a leading or trailing colon or two consecutive colons,
 this is interpreted as the current working directory. If deviations from the
 default system search path for the local interactive user are required, they
 must be documented with the Information System Security Officer (ISSO).</pre></td>
-	<td><pre>To verify that all interactive user initialization files executable search
-path statements do not contain statements that will reference a working
-directory other than the users home directory, run the following command:
-$ sudo grep -r PATH /home/
-Inspect the output for any PATH is references directories outside the home directory.
-      Is it the case that paths contain more than local home directories?
+	<td><pre>Verify that all local interactive user initialization file executable search path statements do not contain statements that will reference a working directory other than user home directories with the following commands:
+
+$ sudo grep -i path= /home/*/.*
+
+/home/[localinteractiveuser]/.bash_profile:PATH=$PATH:$HOME/.local/bin:$HOME/bin
+      Is it the case that any local interactive user initialization files have executable search path statements that include directories outside of their home directory and is not documented with the ISSO as an operational requirement?
       </pre></td>
 	<td><pre>Ensure that all interactive user initialization files executable search
 path statements do not contain statements that will reference a working
@@ -3096,15 +3126,12 @@ unprotected directories, they could be maliciously modified to destroy user
 files or otherwise compromise the system at the user level. If the system is
 compromised at the user level, it is easier to elevate privileges to eventually
 compromise the system at the root and network level.</pre></td>
-	<td><pre>Verify that local initialization files do not execute world-writable programs,
-execute the following command:
+	<td><pre>Verify that local initialization files do not execute world-writable programs with the following command:
+
+Note: The example will be for a system that is configured to create user home directories in the "/home" directory.
+
 $ sudo find /home -perm -002 -type f -name ".[^.]*" -exec ls -ld {} \;
-For all files listed, check for their presence in the local
-initialization files with the following command:
-Note: The example will be for a system that is configured to create
-users' home directories in the "/home" directory.
- sudo find /home/* -maxdepth 1 -type f -name \.\* -exec grep -H <file> {} \; 
-      Is it the case that user initialization files are executing world-writable programs?
+      Is it the case that any local initialization files are found to reference world-writable files?
       </pre></td>
 	<td><pre>Set the mode on files being executed by the user initialization files with the
 following command:
@@ -3329,10 +3356,19 @@ be represented as a four-digit number, the first digit representing special
 access modes is typically ignored or required to be 0. This requirement
 applies to the globally configured system defaults and the local interactive
 user defaults for each account on the system.</pre></td>
-	<td><pre>Verify the UMASK setting is not configured for interactive users,
-run the following command:
-$ sudo grep -ri "UMASK" /home
-      Is it the case that the above command returns no output, or if the umask is configured incorrectly?
+	<td><pre>Verify that the default umask for all local interactive users is "077".
+
+Identify the locations of all local interactive user home directories by looking at the "/etc/passwd" file.
+
+Check all local interactive user initialization files for interactive users with the following command:
+
+Note: The example is for a system that is configured to create users home directories in the "/home" directory.
+
+# grep -ri umask /home/
+
+/home/smithj/.bash_history:grep -i umask /etc/bashrc /etc/csh.cshrc /etc/profile
+/home/smithj/.bash_history:grep -i umask /etc/login.defs
+      Is it the case that any local interactive user initialization files are found to have a umask statement that sets a value less restrictive than "077"?
       </pre></td>
 	<td><pre>Remove the UMASK environment variable from all interactive users initialization files.</pre></td>
 	<td>OL07-00-021040</td>
@@ -3990,13 +4026,14 @@ notify the user of an issue.</pre></td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Notifying administrators of an impending disk space problem may
 allow them to take corrective action prior to any disruption.</pre></td>
-	<td><pre>Inspect /etc/audit/auditd.conf and locate the following line to
-determine if the system is configured to email the administrator when
-disk space is starting to run low:
-$ sudo grep space_left_action /etc/audit/auditd.conf
-space_left_action
-Acceptable values are email, suspend, single, and halt.
-      Is it the case that the system is not configured to send an email to the system administrator when disk space is starting to run low?
+	<td><pre>Verify Oracle Linux 7 notifies the SA and ISSO (at a minimum) when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity with the following command:
+
+$ sudo grep -w space_left_action /etc/audit/auditd.conf
+
+space_left_action = 
+
+If the value of the "space_left_action" is not set to "", or if the line is commented out, ask the System Administrator to indicate how the system is providing real-time alerts to the SA and ISSO.
+      Is it the case that there is no evidence that real-time alerts are configured on the system?
       </pre></td>
 	<td><pre>The auditd service can be configured to take an action
 when disk space starts to run low.
@@ -4021,12 +4058,12 @@ also include suspend, single, and halt.</pre></td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Email sent to the root account is typically aliased to the
 administrators of the system, who can take appropriate action.</pre></td>
-	<td><pre>Verify that the Oracle Linux 7 "auditd" service is configured to notify the SA and ISSO in the event of an audit processing failure.
-Inspect /etc/audit/auditd.conf and locate the following line to
-determine if the system is configured to send email to an
-account when it needs to notify an administrator:
+	<td><pre>Verify that Oracle Linux 7 is configured to notify the SA and/or ISSO (at a minimum) in the event of an audit processing failure with the following command:
+
+$ sudo grep action_mail_acct /etc/audit/auditd.conf
+
 action_mail_acct = 
-      Is it the case that auditd is not configured to send emails per identified actions?
+      Is it the case that the value of the "action_mail_acct" keyword is not set to "<sub idref="var_auditd_action_mail_acct" />" and/or other accounts for security personnel, the "action_mail_acct" keyword is missing, or the retuned line is commented out, ask the system administrator to indicate how they and the ISSO are notified of an audit process failure. If there is no evidence of the proper personnel being notified of an audit processing failure?
       </pre></td>
 	<td><pre>The auditd service can be configured to send email to
 a designated account in certain situations. Add or correct the following line
@@ -5551,8 +5588,11 @@ use of ports, protocols, and/or services to only those required, authorized, and
 conduct official business.</pre></td>
 	<td><pre>Inspect the list of enabled firewall ports and verify they are configured correctly by running
 the following command:
+
 $ sudo firewall-cmd --list-all
-      Is it the case that the firewalld rules are not configured?
+
+Ask the System Administrator for the site or program Ports, Protocols, and Services Management Component Local Service Assessment (PPSM CLSA). Verify the services allowed by the firewall match the PPSM CLSA.
+      Is it the case that there are additional ports, protocols, or services that are not in the PPSM CLSA, or there are ports, protocols, or services that are prohibited by the PPSM Category Assurance List (CAL), or there are no firewall rules configured?
       </pre></td>
 	<td><pre>Configure the firewalld ports to allow approved services to have access to the system.
 To configure firewalld to open ports, run the following command:
@@ -5613,7 +5653,7 @@ $ sudo grep TMOUT /etc/profile /etc/profile.d/*.sh
 
 The output should return the following:
 TMOUT=
-      Is it the case that TMOUT is not set or its value is greater than expected setting?
+      Is it the case that value of TMOUT is not less than or equal to expected setting?
       </pre></td>
 	<td><pre>Setting the TMOUT option in /etc/profile ensures that
 all user sessions will terminate based on inactivity.
@@ -5829,10 +5869,10 @@ If properly configured, the output should be:
 ClientAliveInterval 
       Is it the case that it is commented out or not configured properly?
       </pre></td>
-	<td><pre>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+	<td><pre>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 
-To set an idle timeout interval, edit the following line in /etc/ssh/sshd_config as
+To set this timeout interval, edit the following line in /etc/ssh/sshd_config as
 follows:
 ClientAliveInterval 
 
@@ -5841,7 +5881,7 @@ of 10 minutes, set interval to 600.
 
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in /etc/ssh/sshd_config. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</pre></td>
+some processes may stop SSH from correctly detecting that the user is idle.</pre></td>
 	<td>OL07-00-040320</td>
 	<td>sshd_set_idle_timeout</td>
 </tr>
@@ -5890,25 +5930,26 @@ is reached.</pre></td>
 $ sudo grep ClientAliveCountMax /etc/ssh/sshd_config
 If properly configured, the output should be:
 ClientAliveCountMax 
-For SSH earlier than v8.2, a ClientAliveCountMax value of 0 causes an idle timeout precisely when
+For SSH earlier than v8.2, a ClientAliveCountMax value of 0 causes a timeout precisely when
 the ClientAliveInterval is set.  Starting with v8.2, a value of 0 disables the timeout
 functionality completely.
-If the option is set to a number greater than 0, then the idle session will be disconnected after
-ClientAliveInterval * ClientAliveCountMax seconds.
+If the option is set to a number greater than 0, then the session will be disconnected after
+ClientAliveInterval * ClientAliveCountMax seconds witout receiving a keep alive message.
       Is it the case that it is commented out or not configured properly?
       </pre></td>
 	<td><pre>The SSH server sends at most ClientAliveCountMax messages
 during a SSH session and waits for a response from the SSH client.
 The option ClientAliveInterval configures timeout after
 each ClientAliveCountMax message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 For SSH earlier than v8.2, a ClientAliveCountMax value of 0
-causes an idle timeout precisely when the ClientAliveInterval is set.
+causes a timeout precisely when the ClientAliveInterval is set.
 Starting with v8.2, a value of 0 disables the timeout functionality
 completely. If the option is set to a number greater than 0, then
-the idle session will be disconnected after
-ClientAliveInterval * ClientAliveCountMax seconds.</pre></td>
+the session will be disconnected after
+ClientAliveInterval * ClientAliveCountMax seconds without receiving
+a keep alive message.</pre></td>
 	<td>OL07-00-040340</td>
 	<td>sshd_set_keepalive</td>
 </tr>
@@ -6128,7 +6169,8 @@ If properly configured, the output should indicate the following permissions:
       Is it the case that /etc/ssh/*_key does not have unix mode -rw-------?
       </pre></td>
 	<td><pre>SSH server private keys - files that match the /etc/ssh/*_key glob, have to have restricted permissions.
-If those files are owned by the root user and the root group, they have to have the 0600 permission or stricter.</pre></td>
+If those files are owned by the root user and the root group, they have to have the 0600 permission or stricter.
+If they are owned by the root user, but by a dedicated group ssh_keys, they can have the 0640 permission or stricter.</pre></td>
 	<td>OL07-00-040420</td>
 	<td>file_permissions_sshd_private_key</td>
 </tr>
@@ -6909,20 +6951,27 @@ X11UseLocalhost yes</pre></td>
 	<td><pre>Using the -s option causes the TFTP service to only serve files from the
 given directory. Serving files from an intentionally-specified directory
 reduces the risk of sharing files which should remain private.</pre></td>
-	<td><pre>If TFTP is not installed, this is not applicable. To determine if TFTP is
-installed, run the following command:
+	<td><pre>Verify the TFTP daemon is configured to operate in secure mode.
+
+Check if a TFTP server is installed with the following command:
+
 $ rpm -qa | grep tftp
 
-Verify tftp is configured by with the -s option by
-running the following command:
+
+If a TFTP server is not installed, this is Not Applicable.
+
+
+If a TFTP server is installed, verify TFTP is configured by with
+the -s option by running the following command:
+
 grep "server_args" /etc/xinetd.d/tftp
 server_args = -s 
-      Is it the case that "server_args" line does not have a "-s" option, and a subdirectory is not assigned?
+      Is it the case that '"server_args" line does not have a "-s" option, and a subdirectory is not assigned'?
       </pre></td>
-	<td><pre>If running the tftp service is necessary, it should be configured
-to change its root directory at startup. To do so, ensure
-/etc/xinetd.d/tftp includes -s as a command line argument, as shown in
-the following example:
+	<td><pre>If running the Trivial File Transfer Protocol (TFTP) service is necessary,
+it should be configured to change its root directory at startup. To do so,
+ensure /etc/xinetd.d/tftp includes -s as a command line argument,
+as shown in the following example:
 server_args = -s </pre></td>
 	<td>OL07-00-040720</td>
 	<td>tftpd_uses_secure_mode</td>
@@ -7221,11 +7270,17 @@ service to valid network resources.</pre></td>
 	<td><pre>Verify that there are no wireless interfaces configured on the system
 with the following command:
 
-$ sudo nmcli device
-The output should only contain wireless devices in unavailable state, like in the
-following example:
-wlp0s20f3          wifi      unavailable             -- 
-      Is it the case that wireless interfaces are not active?
+Note: This requirement is Not Applicable for systems that do not have physical wireless network radios.
+
+$ nmcli device status
+DEVICE          TYPE      STATE         CONNECTION
+virbr0          bridge    connected     virbr0
+wlp7s0          wifi      connected     wifiSSID
+enp6s0          ethernet  disconnected  --
+p2p-dev-wlp7s0  wifi-p2p  disconnected  --
+lo              loopback  unmanaged     --
+virbr0-nic      tun       unmanaged     --
+      Is it the case that a wireless interface is configured and has not been documented and approved by the Information System Security Officer (ISSO)?
       </pre></td>
 	<td><pre>Deactivating wireless network interfaces should prevent normal usage of the wireless
 capability.
