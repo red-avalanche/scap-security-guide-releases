@@ -570,7 +570,7 @@ Use of a complex password helps to increase the time and resources required
 to compromise the password. Password complexity, or strength, is a measure of
 the effectiveness of a password in resisting attempts at guessing and brute-force
 attacks.
-<br /><br />
+<br />
 Password complexity is one factor of several that determines how long it takes
 to crack a password. The more complex the password, the greater the number of
 possble combinations that need to be tested before the password is compromised.
@@ -622,7 +622,7 @@ attacks.
 <br /><br />
 Password complexity is one factor of several that determines how long it takes
 to crack a password. The more complex the password, the greater the number of
-possble combinations that need to be tested before the password is compromised.
+possible combinations that need to be tested before the password is compromised.
 Requiring a minimum number of special characters makes password guessing attacks
 more difficult by ensuring a larger search space.
   </td>
@@ -640,7 +640,7 @@ length credit for each uppercase character. Modify the <tt>ucredit</tt> setting 
 <tt>/etc/security/pwquality.conf</tt> to require the use of an uppercase character in passwords.
   </td>
   <td xml:lang="en-US">
-Use of a complex password helps to increase the time and resources reuiqred to compromise the password.
+Use of a complex password helps to increase the time and resources required to compromise the password.
 Password complexity, or strength, is a measure of the effectiveness of a password in resisting attempts
 at guessing and brute-force attacks.
 <br /><br />
@@ -655,26 +655,13 @@ the password is compromised.
   <td>CCE-82030-8</td>
   <td>Limit Password Reuse</td>
   <td xml:lang="en-US">
-Do not allow users to reuse recent passwords. This can be
-accomplished by using the <tt>remember</tt> option for the <tt>pam_unix</tt>
-or <tt>pam_pwhistory</tt> PAM modules.
-<br /><br />
-In the file <tt>/etc/pam.d/system-auth</tt>, append <tt>remember=<tt>2</tt></tt>
-to the line which refers to the <tt>pam_unix.so</tt> or <tt>pam_pwhistory.so</tt>module, as shown below:
-<ul>
-<li>for the <tt>pam_unix.so</tt> case:
-<pre>password sufficient pam_unix.so <i>...existing_options...</i> remember=<tt>2</tt></pre>
-</li>
-<li>for the <tt>pam_pwhistory.so</tt> case:
-<pre>password requisite pam_pwhistory.so <i>...existing_options...</i> remember=<tt>2</tt></pre>
-</li>
-</ul>
-The DoD STIG requirement is 5 passwords.
+Do not allow users to reuse recent passwords. This can be accomplished by using the
+<tt>remember</tt> option for the <tt>pam_unix</tt> or <tt>pam_pwhistory</tt> PAM modules.
   </td>
   <td xml:lang="en-US">
 Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
   </td>
-  <td>var_password_pam_unix_remember=2</td>
+  <td></td>
 </tr>
 <tr>
   <td>BP28(R18)</td>
@@ -685,8 +672,8 @@ This rule configures the system to lock out accounts after a number of incorrect
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid any errors when manually editing these files,
-it is recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.
   </td>
   <td xml:lang="en-US">
@@ -705,8 +692,8 @@ This rule configures the system to lock out the <tt>root</tt> account after a nu
 incorrect login attempts using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid any errors when manually editing these files,
-it is recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.
   </td>
   <td xml:lang="en-US">
@@ -723,31 +710,14 @@ the account.
   <td xml:lang="en-US">
 Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
-period. First make sure the feature is enabled using the following command:
-<br /><br />
-
-<ul>
-<li><pre>authconfig --enablefaillock --update</pre></li>
-</ul>
-<br />
-Then modify the content of both <tt>/etc/pam.d/system-auth</tt> and
-<tt>/etc/pam.d/password-auth</tt> as follows:
-<br /><br />
-<ul>
-<li> edit the fail_interval parameter in the following line <tt>before</tt> the <tt>pam_unix.so</tt>
-statement in the <tt>auth</tt> section, like this:
-<pre>auth required pam_faillock.so preauth silent deny=<tt>3</tt> unlock_time=<tt>900</tt> <tt>fail_interval=<tt>900</tt></tt></pre></li>
-<li> edit the deny parameter in the following line <tt>after</tt> the <tt>pam_unix.so</tt>
-statement in the <tt>auth</tt> section, like this:
-<pre>auth required pam_faillock.so authfail deny=<tt>3</tt> unlock_time=<tt>900</tt> <tt>fail_interval=<tt>900</tt></tt></pre></li>
-</ul>
+period.
   </td>
   <td xml:lang="en-US">
 By limiting the number of failed logon attempts the risk of unauthorized system
 access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.
   </td>
-  <td>var_accounts_passwords_pam_faillock_unlock_time=900<br/>var_accounts_passwords_pam_faillock_fail_interval=900<br/>var_accounts_passwords_pam_faillock_deny=3</td>
+  <td></td>
 </tr>
 <tr>
   <td>BP28(R18)</td>
@@ -778,7 +748,7 @@ Configure the number or rounds for the password hashing algorithm. This can be
 accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
 <br /><br />
 In file <tt>/etc/pam.d/password-auth</tt> append <tt>rounds=<tt>65536</tt></tt>
-to the <tt>pam_unix.so</tt> file, as shown below:
+to the <tt>pam_unix.so</tt> entry, as shown below:
 <pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<tt>65536</tt></pre>
 The system's default number of rounds is 5000.
   </td>
@@ -796,7 +766,7 @@ Configure the number or rounds for the password hashing algorithm. This can be
 accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
 <br /><br />
 In file <tt>/etc/pam.d/system-auth</tt> append <tt>rounds=<tt>65536</tt></tt>
-to the <tt>pam_unix.so</tt> file, as shown below:
+to the <tt>pam_unix.so</tt> entry, as shown below:
 <pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<tt>65536</tt></pre>
 The system's default number of rounds is 5000.
   </td>
@@ -811,11 +781,7 @@ Using a higher number of rounds makes password cracking attacks more difficult.
   <td>Set PAM's Password Hashing Algorithm</td>
   <td xml:lang="en-US">
 The PAM system service can be configured to only store encrypted
-representations of passwords. In
-
-<tt>/etc/pam.d/system-auth</tt>,
-
-the
+representations of passwords. In "/etc/pam.d/password-auth", the
 <tt>password</tt> section of the file controls which PAM modules execute
 during a password change. Set the <tt>pam_unix.so</tt> module in the
 <tt>password</tt> section to include the argument <tt>sha512</tt>, as shown

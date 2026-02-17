@@ -116,8 +116,7 @@ The following rules configure audit as described above:
 --backlog_wait_time 60000
 
 ## Set failure mode to syslog
--f 1
-</pre>
+-f 1    </pre>
 
 The <tt>Audit</tt> package provides pre-configured  rules in <tt>/usr/share/audit/sample-rules</tt>. The above content can be found in <tt>/usr/share/audit/sample-rules/10-base-config.rules</tt>.
 To deploy this configuration, it is recommended to copy it over to the <tt>/etc/audit/rules.d/</tt> directory:
@@ -269,8 +268,7 @@ Changing login UIDs while this configuration is enforced requires special capabi
 
 The following rules configure audit as described above:
 <pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable
-</pre>
+--loginuid-immutable    </pre>
 
 The <tt>Audit</tt> provides pre-configured  rules in <tt>/usr/share/audit/sample-rules</tt>. The above content can be found in <tt>/usr/share/audit/sample-rules/11-loginuid.rules</tt>.
 To deploy this configuration, it is recommended to copy it over to the <tt>/etc/audit/rules.d/</tt> directory:
@@ -478,8 +476,7 @@ The following rules configure audit as described above:
 ## Application invocation. The requirements list an optional requirement
 ## FPT_SRP_EXT.1 Software Restriction Policies. This event is intended to
 ## state results from that policy. This would be handled entirely by
-## that daemon.
-</pre>
+## that daemon.    </pre>
 
 The <tt>Audit</tt> package provides pre-configured  rules in <tt>/usr/share/audit/sample-rules</tt>. The above content can be found in <tt>/usr/share/audit/sample-rules/30-ospp-v42.rules</tt>.
 To deploy this configuration, it is recommended to copy it over to the <tt>/etc/audit/rules.d/</tt> directory:
@@ -687,12 +684,17 @@ system, interactive boot can be enabled by providing a <tt>1</tt>,
 <tt>yes</tt>, <tt>true</tt>, or <tt>on</tt> value to the
 <tt>systemd.confirm_spawn</tt> kernel argument in <tt>/etc/default/grub</tt>.
 Remove any instance of <pre>systemd.confirm_spawn=(1|yes|true|on)</pre> from
-the kernel arguments in that file to disable interactive boot. It is also
-required to change the runtime configuration, run:
+the kernel arguments in that file to disable interactive boot.
+Recovery booting must also be disabled. Confirm that
+<tt>GRUB_DISABLE_RECOVERY=true</tt> is set in  <tt>/etc/default/grub</tt>.
+It is also required to change the runtime configuration, run:
+
 <pre>/sbin/grubby --update-kernel=ALL --remove-args="systemd.confirm_spawn"</pre>
+
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
   </td>
   <td xml:lang="en-US">
-Using interactive boot, the console user could disable auditing, firewalls,
+Using interactive or recovery boot, the console user could disable auditing, firewalls,
 or other services, weakening system security.
   </td>
   <td></td>
@@ -844,6 +846,31 @@ privileges.
   <td>var_selinux_state=enforcing</td>
 </tr>
 <tr>
+  <td>CM-3(6)<br/>SC-12(2)<br/>SC-12(3)<br/>IA-7<br/>SC-13<br/>CM-6(a)<br/>SC-12</td>
+  <td>N/A</td>
+  <td>Enable FIPS Mode</td>
+  <td xml:lang="en-US">
+To enable FIPS mode, run the following command:
+<pre>fips-mode-setup --enable</pre>
+<br />
+The <tt>fips-mode-setup</tt> command will configure the system in
+FIPS mode by automatically configuring the following:
+<ul>
+<li>Setting the kernel FIPS mode flag (<tt>/proc/sys/crypto/fips_enabled</tt>) to <tt>1</tt></li>
+<li>Creating <tt>/etc/system-fips</tt></li>
+<li>Setting the system crypto policy in <tt>/etc/crypto-policies/config</tt> to <tt><tt>fips_ospp</tt></tt></li>
+<li>Loading the Dracut <tt>fips</tt> module</li>
+</ul>
+  </td>
+  <td xml:lang="en-US">
+Use of weak or untested encryption algorithms undermines the purposes of utilizing encryption to
+protect data. The operating system must implement cryptographic modules adhering to the higher
+standards approved by the federal government since this provides assurance they have been tested
+and validated.
+  </td>
+  <td>var_system_crypto_policy=fips_ospp</td>
+</tr>
+<tr>
   <td>AC-4<br/>CM-7(b)<br/>CA-3(5)<br/>SC-7(21)<br/>CM-6(a)</td>
   <td>N/A</td>
   <td>Verify firewalld Enabled</td>
@@ -956,7 +983,7 @@ Use of a complex password helps to increase the time and resources required
 to compromise the password. Password complexity, or strength, is a measure of
 the effectiveness of a password in resisting attempts at guessing and brute-force
 attacks.
-<br /><br />
+<br />
 Password complexity is one factor of several that determines how long it takes
 to crack a password. The more complex the password, the greater the number of
 possble combinations that need to be tested before the password is compromised.
@@ -977,7 +1004,7 @@ which contain more than that number of consecutive characters from the same char
 to prevent a run of (<tt>4</tt> + 1) or more identical characters.
   </td>
   <td xml:lang="en-US">
-Use of a complex password helps to increase the time and resources required to comrpomise the password.
+Use of a complex password helps to increase the time and resources required to compromise the password.
 Password complexity, or strength, is a measure of the effectiveness of a password in resisting
 attempts at guessing and brute-force attacks.
 <br />
@@ -1054,7 +1081,7 @@ attacks.
 <br /><br />
 Password complexity is one factor of several that determines how long it takes
 to crack a password. The more complex the password, the greater the number of
-possble combinations that need to be tested before the password is compromised.
+possible combinations that need to be tested before the password is compromised.
 Requiring a minimum number of special characters makes password guessing attacks
 more difficult by ensuring a larger search space.
   </td>
@@ -1072,7 +1099,7 @@ length credit for each uppercase character. Modify the <tt>ucredit</tt> setting 
 <tt>/etc/security/pwquality.conf</tt> to require the use of an uppercase character in passwords.
   </td>
   <td xml:lang="en-US">
-Use of a complex password helps to increase the time and resources reuiqred to compromise the password.
+Use of a complex password helps to increase the time and resources required to compromise the password.
 Password complexity, or strength, is a measure of the effectiveness of a password in resisting attempts
 at guessing and brute-force attacks.
 <br /><br />
@@ -1087,26 +1114,13 @@ the password is compromised.
   <td>N/A</td>
   <td>Limit Password Reuse</td>
   <td xml:lang="en-US">
-Do not allow users to reuse recent passwords. This can be
-accomplished by using the <tt>remember</tt> option for the <tt>pam_unix</tt>
-or <tt>pam_pwhistory</tt> PAM modules.
-<br /><br />
-In the file <tt>/etc/pam.d/system-auth</tt>, append <tt>remember=<tt>5</tt></tt>
-to the line which refers to the <tt>pam_unix.so</tt> or <tt>pam_pwhistory.so</tt>module, as shown below:
-<ul>
-<li>for the <tt>pam_unix.so</tt> case:
-<pre>password sufficient pam_unix.so <i>...existing_options...</i> remember=<tt>5</tt></pre>
-</li>
-<li>for the <tt>pam_pwhistory.so</tt> case:
-<pre>password requisite pam_pwhistory.so <i>...existing_options...</i> remember=<tt>5</tt></pre>
-</li>
-</ul>
-The DoD STIG requirement is 5 passwords.
+Do not allow users to reuse recent passwords. This can be accomplished by using the
+<tt>remember</tt> option for the <tt>pam_unix</tt> or <tt>pam_pwhistory</tt> PAM modules.
   </td>
   <td xml:lang="en-US">
 Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
   </td>
-  <td>var_password_pam_unix_remember=5</td>
+  <td></td>
 </tr>
 <tr>
   <td>IA-5(1)(a)<br/>IA-5(c)<br/>CM-6(a)</td>
@@ -1217,8 +1231,8 @@ This rule configures the system to lock out accounts after a number of incorrect
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid any errors when manually editing these files,
-it is recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.
   </td>
   <td xml:lang="en-US">
@@ -1235,28 +1249,14 @@ are also mitigated.
   <td xml:lang="en-US">
 Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
-period. First make sure the feature is enabled using the following command:
-<br /><br />
-
-<ul>
-<li><pre>authselect enable-feature with-faillock</pre></li>
-</ul>
-<br />
-Then edit the <tt>/etc/security/faillock.conf</tt> file as follows:
-<br /><br />
-<ul>
-<li> add, uncomment or edit the following line:
-<pre>fail_interval = <tt>900</tt></pre></li>
-<li> add or uncomment the following line:
-<pre>silent</pre></li>
-</ul>
+period.
   </td>
   <td xml:lang="en-US">
 By limiting the number of failed logon attempts the risk of unauthorized system
 access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.
   </td>
-  <td>var_accounts_passwords_pam_faillock_fail_interval=900</td>
+  <td></td>
 </tr>
 <tr>
   <td>CM-6(a)<br/>AC-7(b)</td>
@@ -1496,8 +1496,8 @@ To improve the kernel capacity to queue all log events, even those which occurre
 prior to the audit daemon, add the argument <tt>audit_backlog_limit=8192</tt> to the default
 GRUB 2 command line for the Linux operating system.
 To ensure that <tt>audit_backlog_limit=8192</tt> is added as a kernel command line
-argument to newly installed kernels, ad <tt>audit_backlog_limit=8192</tt> to the
-default Grub2 command line for Linux operating systems.  Modify the line within
+argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to the
+default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
@@ -1519,8 +1519,8 @@ To enable poisoning of free pages,
 add the argument <tt>page_poison=1</tt> to the default
 GRUB 2 command line for the Linux operating system.
 To ensure that <tt>page_poison=1</tt> is added as a kernel command line
-argument to newly installed kernels, ad <tt>page_poison=1</tt> to the
-default Grub2 command line for Linux operating systems.  Modify the line within
+argument to newly installed kernels, add <tt>page_poison=1</tt> to the
+default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... page_poison=1 ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="page_poison=1"</pre>
@@ -1543,8 +1543,8 @@ To enable poisoning of SLUB/SLAB objects,
 add the argument <tt>slub_debug=P</tt> to the default
 GRUB 2 command line for the Linux operating system.
 To ensure that <tt>slub_debug=P</tt> is added as a kernel command line
-argument to newly installed kernels, ad <tt>slub_debug=P</tt> to the
-default Grub2 command line for Linux operating systems.  Modify the line within
+argument to newly installed kernels, add <tt>slub_debug=P</tt> to the
+default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... slub_debug=P ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="slub_debug=P"</pre>
@@ -1637,7 +1637,14 @@ The <code>firewalld</code> package can be installed with the following command:
 $ sudo yum install firewalld</pre>
   </td>
   <td xml:lang="en-US">
-The firewalld package should be installed to provide access control methods.
+"Firewalld" provides an easy and effective way to block/limit remote access to the system via ports, services, and protocols.
+
+Remote access services, such as those providing remote access to network devices and information systems, which lack automated control capabilities, increase risk and make remote user access management difficult at best.
+
+Remote access is access to DoD nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
+
+Oracle Linux 8 functionality (e.g., SSH) must be capable of taking enforcement action if the audit reveals unauthorized activity.
+Automated control of remote access sessions allows organizations to ensure ongoing compliance with remote access policies by enforcing connection rules of remote access applications on a variety of information system components (e.g., servers, workstations, notebook computers, smartphones, and tablets)."
   </td>
   <td></td>
 </tr>
@@ -2069,8 +2076,8 @@ To disable use of virtual syscalls,
 add the argument <tt>vsyscall=none</tt> to the default
 GRUB 2 command line for the Linux operating system.
 To ensure that <tt>vsyscall=none</tt> is added as a kernel command line
-argument to newly installed kernels, ad <tt>vsyscall=none</tt> to the
-default Grub2 command line for Linux operating systems.  Modify the line within
+argument to newly installed kernels, add <tt>vsyscall=none</tt> to the
+default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... vsyscall=none ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="vsyscall=none"</pre>
@@ -2088,7 +2095,7 @@ of the return instruction pointer.
   <td xml:lang="en-US">
 
 To configure the system to prevent the <code>cramfs</code>
-kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cramfs.conf</code>:
 <pre>install cramfs /bin/true</pre>
 This effectively prevents usage of this uncommon filesystem.
 
@@ -2114,7 +2121,7 @@ message-oriented communication, with several streams of messages
 within one connection.
 
 To configure the system to prevent the <code>sctp</code>
-kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
 <pre>install sctp /bin/true</pre>
   </td>
   <td xml:lang="en-US">
@@ -2133,7 +2140,7 @@ is designed to provide communications between nodes in a
 cluster.
 
 To configure the system to prevent the <code>tipc</code>
-kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/tipc.conf</code>:
 <pre>install tipc /bin/true</pre>
   </td>
   <td xml:lang="en-US">
@@ -2797,7 +2804,7 @@ the network.
 <tr>
   <td>CM-7(a)<br/>CM-7(b)<br/>SC-5(1)<br/>SC-5(2)<br/>SC-5(3)(a)<br/>CM-6(a)</td>
   <td>N/A</td>
-  <td>Enable Kernel Parameter to Use TCP Syncookies on IPv4 Interfaces</td>
+  <td>Enable Kernel Parameter to Use TCP Syncookies on Network Interfaces</td>
   <td xml:lang="en-US">
 To set the runtime status of the <code>net.ipv4.tcp_syncookies</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.tcp_syncookies=1</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>net.ipv4.tcp_syncookies = 1</pre>
@@ -2991,7 +2998,7 @@ not provide easy attribution.
   <td></td>
 </tr>
 <tr>
-  <td>AU-8(1)</td>
+  <td>AU-8(1)<br/>AU-12(1)</td>
   <td>N/A</td>
   <td>Disable chrony daemon from acting as server</td>
   <td xml:lang="en-US">
@@ -3173,8 +3180,7 @@ address information.
   <td xml:lang="en-US">
 To enable FIPS mode, run the following command:
 <pre>fips-mode-setup --enable</pre>
-To enable FIPS, the system requires that the <tt>fips</tt> module is added in
-<tt>dracut</tt> configuration.
+To enable FIPS, the system requires that the <tt>fips</tt> module is added in <tt>dracut</tt> configuration.
 Check if <tt>/etc/dracut.conf.d/40-fips.conf</tt> contain <tt>add_dracutmodules+=" fips "</tt>
   </td>
   <td xml:lang="en-US">
@@ -3184,31 +3190,6 @@ standards approved by the federal government since this provides assurance they 
 and validated.
   </td>
   <td></td>
-</tr>
-<tr>
-  <td>SC-12(2)<br/>SC-12(3)<br/>IA-7<br/>SC-13<br/>CM-6(a)<br/>SC-12</td>
-  <td>N/A</td>
-  <td>Enable FIPS Mode</td>
-  <td xml:lang="en-US">
-To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
-<br />
-The <tt>fips-mode-setup</tt> command will configure the system in
-FIPS mode by automatically configuring the following:
-<ul>
-<li>Setting the kernel FIPS mode flag (<tt>/proc/sys/crypto/fips_enabled</tt>) to <tt>1</tt></li>
-<li>Creating <tt>/etc/system-fips</tt></li>
-<li>Setting the system crypto policy in <tt>/etc/crypto-policies/config</tt> to <tt><tt>fips_ospp</tt></tt></li>
-<li>Loading the Dracut <tt>fips</tt> module</li>
-</ul>
-  </td>
-  <td xml:lang="en-US">
-Use of weak or untested encryption algorithms undermines the purposes of utilizing encryption to
-protect data. The operating system must implement cryptographic modules adhering to the higher
-standards approved by the federal government since this provides assurance they have been tested
-and validated.
-  </td>
-  <td>var_system_crypto_policy=fips_ospp</td>
 </tr>
 <tr>
   <td>SC-13<br/>SC-12(2)<br/>SC-12(3)</td>
@@ -3241,7 +3222,7 @@ Kerberos is supported by crypto policy, but it's configuration may be
 set up to ignore it.
 To check that Crypto Policies settings for Kerberos are configured correctly, examine that there is a symlink at
 /etc/krb5.conf.d/crypto-policies targeting /etc/cypto-policies/back-ends/krb5.config.
-If the symlink exists, kerberos is configured to use the system-wide crypto policy settings.
+If the symlink exists, Kerberos is configured to use the system-wide crypto policy settings.
   </td>
   <td xml:lang="en-US">
 Overriding the system crypto policy makes the behavior of Kerberos violate expectations,
@@ -3258,8 +3239,8 @@ To enable Kernel page-table isolation,
 add the argument <tt>pti=on</tt> to the default
 GRUB 2 command line for the Linux operating system.
 To ensure that <tt>pti=on</tt> is added as a kernel command line
-argument to newly installed kernels, ad <tt>pti=on</tt> to the
-default Grub2 command line for Linux operating systems.  Modify the line within
+argument to newly installed kernels, add <tt>pti=on</tt> to the
+default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... pti=on ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="pti=on"</pre>
@@ -3389,8 +3370,8 @@ To ensure all processes can be audited, even those which start
 prior to the audit daemon, add the argument <tt>audit=1</tt> to the default
 GRUB 2 command line for the Linux operating system.
 To ensure that <tt>audit=1</tt> is added as a kernel command line
-argument to newly installed kernels, ad <tt>audit=1</tt> to the
-default Grub2 command line for Linux operating systems.  Modify the line within
+argument to newly installed kernels, add <tt>audit=1</tt> to the
+default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit=1 ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit=1"</pre>
@@ -3413,7 +3394,7 @@ network, data link, and physical layers, based on virtual circuits
 and virtual paths.
 
 To configure the system to prevent the <code>atm</code>
-kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/atm.conf</code>:
 <pre>install atm /bin/true</pre>
   </td>
   <td xml:lang="en-US">
@@ -3450,7 +3431,7 @@ protocol which was initially developed for automotive and
 is now also used in marine, industrial, and medical applications.
 
 To configure the system to prevent the <code>can</code>
-kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/can.conf</code>:
 <pre>install can /bin/true</pre>
   </td>
   <td xml:lang="en-US">
@@ -3468,7 +3449,7 @@ The IEEE 1394 (FireWire) is a serial bus standard for
 high-speed real-time communication.
 
 To configure the system to prevent the <code>firewire-core</code>
-kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/firewire-core.conf</code>:
 <pre>install firewire-core /bin/true</pre>
   </td>
   <td xml:lang="en-US">
@@ -3486,11 +3467,11 @@ To set the runtime status of the <code>kernel.kptr_restrict</code> kernel parame
 To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>kernel.kptr_restrict = <tt>1</tt></pre>
   </td>
   <td xml:lang="en-US">
-Exposing kernel pointers (through procfs or <tt>seq_printf()</tt>) exposes
-kernel writeable structures that can contain functions pointers. If a write vulnereability occurs
-in the kernel allowing a write access to any of this structure, the kernel can be compromise. This
-option disallow any program withtout the CAP_SYSLOG capability from getting the kernel pointers addresses,
-replacing them with 0.
+Exposing kernel pointers (through procfs or <tt>seq_printf()</tt>) exposes kernel
+writeable structures which may contain functions pointers. If a write vulnerability
+occurs in the kernel, allowing write access to any of this structure, the kernel can
+be compromised. This option disallow any program without the CAP_SYSLOG capability
+to get the addresses of kernel pointers by replacing them with 0.
   </td>
   <td>sysctl_kernel_kptr_restrict_value=1</td>
 </tr>
@@ -3527,6 +3508,9 @@ automatic session locking. It should be started from
   <td xml:lang="en-US">
 Unlike <tt>bash</tt> itself, the <tt>tmux</tt> terminal multiplexer
 provides a mechanism to lock sessions after period of inactivity.
+A session lock is a temporary action taken when a user stops work and moves away from the
+immediate physical vicinity of the information system but does not want to
+log out because of the temporary nature of the absence.
   </td>
   <td></td>
 </tr>
@@ -3559,8 +3543,8 @@ There must not exist the boot parameter <tt>random.trust_cpu=off</tt>. If
 the option is not compiled in, make sure that <tt>random.trust_cpu=on</tt>
 is configured as a boot parameter.
 To ensure that <tt>random.trust_cpu=on</tt> is added as a kernel command line
-argument to newly installed kernels, ad <tt>random.trust_cpu=on</tt> to the
-default Grub2 command line for Linux operating systems.  Modify the line within
+argument to newly installed kernels, add <tt>random.trust_cpu=on</tt> to the
+default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... random.trust_cpu=on ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="random.trust_cpu=on"</pre>
@@ -4138,7 +4122,7 @@ By decreasing the limit based on the amount of data and enabling
 time-based limit, effects of potential attacks against
 encryption keys are limited.
   </td>
-  <td>var_ssh_client_rekey_limit_size=1G<br/>var_ssh_client_rekey_limit_time=1hour</td>
+  <td>var_ssh_client_rekey_limit_time=1hour<br/>var_ssh_client_rekey_limit_size=1G</td>
 </tr>
 <tr>
   <td></td>

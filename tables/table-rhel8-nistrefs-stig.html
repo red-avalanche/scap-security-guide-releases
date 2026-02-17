@@ -76,8 +76,7 @@ Changing login UIDs while this configuration is enforced requires special capabi
 
 The following rules configure audit as described above:
 <pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable
-</pre>
+--loginuid-immutable    </pre>
 
 The <tt>Audit</tt> provides pre-configured  rules in <tt>/usr/share/audit/sample-rules</tt>. The above content can be found in <tt>/usr/share/audit/sample-rules/11-loginuid.rules</tt>.
 To deploy this configuration, it is recommended to copy it over to the <tt>/etc/audit/rules.d/</tt> directory:
@@ -720,7 +719,9 @@ malicious processes that attempt to delete log files to conceal their presence.
   <td xml:lang="en-US">
 To capture kernel module unloading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
-<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
+
+<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
+
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
 to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
@@ -745,12 +746,14 @@ If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> progr
 to read audit rules during daemon startup (the default), add the following lines to a file
 with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
 loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
-If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
+
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
+    If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
 rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
 in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
 b64 as appropriate for your system:
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
+
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
   </td>
   <td xml:lang="en-US">
 The addition/removal of kernel modules can be used to alter the behavior of
@@ -766,7 +769,9 @@ to have an audit trail of modules that have been introduced into the kernel.
   <td xml:lang="en-US">
 To capture kernel module loading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
-<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F key=modules</pre>
+
+<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
+
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
 to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
@@ -1495,9 +1500,9 @@ Install McAfee Endpoint Security for Linux antivirus software
 which is provided for DoD systems and uses signatures to search for the
 presence of viruses on the filesystem.
 
-The <code>mcafeetp</code> package can be installed with the following command:
+The <code>McAfeeTP</code> package can be installed with the following command:
 <pre>
-$ sudo yum install mcafeetp</pre>
+$ sudo yum install McAfeeTP</pre>
   </td>
   <td xml:lang="en-US">
 Virus scanning software can be used to detect if a system has been compromised by
@@ -1897,18 +1902,18 @@ system after updates have been installed may be exploited by some adversaries.
 <tr>
   <td>IA-2(11)</td>
   <td>CCE-86120-3</td>
-  <td>Certificate certificate status checking in SSSD</td>
+  <td>Certificate status checking in SSSD</td>
   <td xml:lang="en-US">
 Multifactor solutions that require devices separate from information systems gaining access include,
 for example, hardware tokens providing time-based or challenge-response authenticators and smart cards.
-By configuring <tt>certificate_verification</tt> to <tt>ocsp_dgst=sha1</tt> sures that certificates for
+Configuring <tt>certificate_verification</tt> to <tt>ocsp_dgst=<tt>sha1</tt></tt> ensures that certificates for
 multifactor solutions are checked via Online Certificate Status Protocol (OCSP).
   </td>
   <td xml:lang="en-US">
-Enusring that multifactor solutions certificates are checked via Online Certificate Status Protocol (OCSP)
+Ensuring that multifactor solutions certificates are checked via Online Certificate Status Protocol (OCSP)
 ensures the security of the system.
   </td>
-  <td></td>
+  <td>var_sssd_certificate_verification_digest_function=sha1</td>
 </tr>
 <tr>
   <td>AU-3<br/>AU-3.1<br/>AU-12(a)<br/>AU-12.1(ii)<br/>AU-12.1(iv)AU-12(c)<br/>MA-4(1)(a)</td>
@@ -1983,6 +1988,31 @@ privileges.
   <td>var_selinux_state=enforcing</td>
 </tr>
 <tr>
+  <td>CM-3(6)<br/>SC-12(2)<br/>SC-12(3)<br/>IA-7<br/>SC-13<br/>CM-6(a)<br/>SC-12</td>
+  <td>CCE-80942-6</td>
+  <td>Enable FIPS Mode</td>
+  <td xml:lang="en-US">
+To enable FIPS mode, run the following command:
+<pre>fips-mode-setup --enable</pre>
+<br />
+The <tt>fips-mode-setup</tt> command will configure the system in
+FIPS mode by automatically configuring the following:
+<ul>
+<li>Setting the kernel FIPS mode flag (<tt>/proc/sys/crypto/fips_enabled</tt>) to <tt>1</tt></li>
+<li>Creating <tt>/etc/system-fips</tt></li>
+<li>Setting the system crypto policy in <tt>/etc/crypto-policies/config</tt> to <tt><tt>fips</tt></tt></li>
+<li>Loading the Dracut <tt>fips</tt> module</li>
+</ul>
+  </td>
+  <td xml:lang="en-US">
+Use of weak or untested encryption algorithms undermines the purposes of utilizing encryption to
+protect data. The operating system must implement cryptographic modules adhering to the higher
+standards approved by the federal government since this provides assurance they have been tested
+and validated.
+  </td>
+  <td>var_system_crypto_policy=fips</td>
+</tr>
+<tr>
   <td>IA-4(e)<br/>AC-2(3)<br/>CM-6(a)</td>
   <td>CCE-80954-1</td>
   <td>Set Account Expiration Following Inactivity</td>
@@ -2000,9 +2030,9 @@ elapse until the account would be automatically disabled. See the
 <tt>useradd</tt> man page for more information.
   </td>
   <td xml:lang="en-US">
-Disabling inactive accounts ensures that accounts which may not
-have been responsibly removed are not available to attackers
-who may have compromised their credentials.
+Inactive identifiers pose a risk to systems and applications because attackers may exploit an inactive identifier and potentially obtain undetected access to the system.
+Disabling inactive accounts ensures that accounts which may not have been responsibly removed are not available to attackers who may have compromised their credentials.
+Owners of inactive accounts will not notice if unauthorized access to their user account has been obtained.
   </td>
   <td>var_account_disable_post_pw_expiration=35</td>
 </tr>
@@ -2011,37 +2041,30 @@ who may have compromised their credentials.
   <td>CCE-84300-3</td>
   <td>Configure the Firewalld Ports</td>
   <td xml:lang="en-US">
-Configure the <tt>firewalld</tt> ports to allow approved
-services to have access to the system. To configure <tt>firewalld</tt>
-to open ports, run the following command:
-<pre>$ sudo firewall-cmd --permanent --add-port=<i>port_number</i>/tcp</pre>
-or
-<pre>$ sudo firewall-cmd --permanent --add-port=<i>service_name</i></pre>
-Run the command list above for each of the ports listed below:
-
-To configure <code>firewalld</code> to allow access, run the following command(s):
-
-
-<code>firewall-cmd --permanent --add-service=ssh</code>
+Configure the <tt>firewalld</tt> ports to allow approved services to have access to the system.
+To configure <tt>firewalld</tt> to open ports, run the following command:
+<pre>firewall-cmd --permanent --add-port=<i>port_number/tcp</i></pre>
+To configure <tt>firewalld</tt> to allow access for pre-defined services, run the following
+command:
+<pre>firewall-cmd --permanent --add-service=<i>service_name</i></pre>
   </td>
   <td xml:lang="en-US">
-In order to prevent unauthorized connection of devices, unauthorized
-transfer of information, or unauthorized tunneling (i.e., embedding of data
-types within data types), organizations must disable or restrict unused or
-unnecessary physical and logical ports/protocols on information systems.
+In order to prevent unauthorized connection of devices, unauthorized transfer of information,
+or unauthorized tunneling (i.e., embedding of data types within data types), organizations must
+disable or restrict unused or unnecessary physical and logical ports/protocols on information
+systems.
 <br /><br />
-Operating systems are capable of providing a wide variety of functions and
-services. Some of the functions and services provided by default may not be
-necessary to support essential organizational operations.
-Additionally, it is sometimes convenient to provide multiple services from
-a single component (e.g., VPN and IPS); however, doing so increases risk
-over limiting the services provided by any one component.
+Operating systems are capable of providing a wide variety of functions and services.
+Some of the functions and services provided by default may not be necessary to support
+essential organizational operations.
+Additionally, it is sometimes convenient to provide multiple services from a single component
+(e.g., VPN and IPS); however, doing so increases risk over limiting the services provided by
+one component.
 <br /><br />
-To support the requirements and principles of least functionality, the
-operating system must support the organizational requirements, providing
-only essential capabilities and limiting the use of ports, protocols,
-and/or services to only those required, authorized, and approved to conduct
-official business or to address authorized quality of life issues.
+To support the requirements and principles of least functionality, the operating system must
+support the organizational requirements, providing only essential capabilities and limiting the
+use of ports, protocols, and/or services to only those required, authorized, and approved to
+conduct official business.
   </td>
   <td></td>
 </tr>
@@ -2305,7 +2328,7 @@ Use of a complex password helps to increase the time and resources required
 to compromise the password. Password complexity, or strength, is a measure of
 the effectiveness of a password in resisting attempts at guessing and brute-force
 attacks.
-<br /><br />
+<br />
 Password complexity is one factor of several that determines how long it takes
 to crack a password. The more complex the password, the greater the number of
 possble combinations that need to be tested before the password is compromised.
@@ -2326,7 +2349,7 @@ which contain more than that number of consecutive characters from the same char
 to prevent a run of (<tt>4</tt> + 1) or more identical characters.
   </td>
   <td xml:lang="en-US">
-Use of a complex password helps to increase the time and resources required to comrpomise the password.
+Use of a complex password helps to increase the time and resources required to compromise the password.
 Password complexity, or strength, is a measure of the effectiveness of a password in resisting
 attempts at guessing and brute-force attacks.
 <br />
@@ -2439,7 +2462,7 @@ attacks.
 <br /><br />
 Password complexity is one factor of several that determines how long it takes
 to crack a password. The more complex the password, the greater the number of
-possble combinations that need to be tested before the password is compromised.
+possible combinations that need to be tested before the password is compromised.
 Requiring a minimum number of special characters makes password guessing attacks
 more difficult by ensuring a larger search space.
   </td>
@@ -2450,40 +2473,26 @@ more difficult by ensuring a larger search space.
   <td>CCE-83478-8</td>
   <td>Limit Password Reuse: password-auth</td>
   <td xml:lang="en-US">
-Do not allow users to reuse recent passwords. This can be
-accomplished by using the <tt>remember</tt> option for the
-<tt>pam_pwhistory</tt> PAM modules.
-<br /><br />
-In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter
-<tt>remember</tt> is present, and that the value
-for the <tt>remember</tt> parameter is <tt>5</tt> or greater. For example:
-<pre>password <tt>required</tt> pam_pwhistory.so <i>...existing_options...</i> remember=<tt>5</tt> use_authtok</pre>
-The DoD STIG requirement is 5 passwords.
+Do not allow users to reuse recent passwords. This can be accomplished by using the
+<tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
   </td>
   <td xml:lang="en-US">
 Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
   </td>
-  <td>var_password_pam_remember_control_flag=required<br/>var_password_pam_remember=5</td>
+  <td></td>
 </tr>
 <tr>
   <td>IA-5(f)<br/>IA-5(1)(e)</td>
   <td>CCE-83480-4</td>
   <td>Limit Password Reuse: system-auth</td>
   <td xml:lang="en-US">
-Do not allow users to reuse recent passwords. This can be
-accomplished by using the <tt>remember</tt> option for the
-<tt>pam_pwhistory</tt> PAM modules.
-<br /><br />
-In the file <tt>/etc/pam.d/system-auth</tt>, make sure the parameter
-<tt>remember</tt> is present, and that the value
-for the <tt>remember</tt> parameter is <tt>5</tt> or greater. For example:
-<pre>password <tt>required</tt> pam_pwhistory.so <i>...existing_options...</i> remember=<tt>5</tt> use_authtok</pre>
-The DoD STIG requirement is 5 passwords.
+Do not allow users to reuse recent passwords. This can be accomplished by using the
+<tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
   </td>
   <td xml:lang="en-US">
 Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
   </td>
-  <td>var_password_pam_remember_control_flag=required<br/>var_password_pam_remember=5</td>
+  <td></td>
 </tr>
 <tr>
   <td>IA-5(c)<br/>IA-5(1)(a)<br/>CM-6(a)<br/>IA-5(4)</td>
@@ -2497,7 +2506,7 @@ length credit for each uppercase character. Modify the <tt>ucredit</tt> setting 
 <tt>/etc/security/pwquality.conf</tt> to require the use of an uppercase character in passwords.
   </td>
   <td xml:lang="en-US">
-Use of a complex password helps to increase the time and resources reuiqred to compromise the password.
+Use of a complex password helps to increase the time and resources required to compromise the password.
 Password complexity, or strength, is a measure of the effectiveness of a password in resisting attempts
 at guessing and brute-force attacks.
 <br /><br />
@@ -2512,9 +2521,9 @@ the password is compromised.
   <td>CCE-82473-0</td>
   <td>Set Existing Passwords Maximum Age</td>
   <td xml:lang="en-US">
-Configure non-compliant accounts to enforce a 60-day maximum password lifetime
+Configure non-compliant accounts to enforce a <tt>60</tt>-day maximum password lifetime
 restriction by running the following command:
-<pre>$ sudo chage -M 60 <i>USER</i></pre>
+<pre>$ sudo chage -M <tt>60</tt> <i>USER</i></pre>
   </td>
   <td xml:lang="en-US">
 Any password, no matter how complex, can eventually be cracked. Therefore,
@@ -2523,7 +2532,7 @@ not limit the lifetime of passwords and force users to change their
 passwords, there is the risk that the operating system passwords could be
 compromised.
   </td>
-  <td></td>
+  <td>var_accounts_maximum_age_login_defs=60</td>
 </tr>
 <tr>
   <td>IA-5(f)<br/>IA-5(1)(d)<br/>CM-6(a)</td>
@@ -2589,36 +2598,6 @@ determined. Details regarding all possible values for <i>ACTION</i> are describe
   <td xml:lang="en-US">
 Taking appropriate action in case of a filled audit storage volume will minimize
 the possibility of losing audit records.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>AU-5(b)<br/>AU-5(2)<br/>AU-5(1)<br/>AU-5(4)<br/>CM-6(a)</td>
-  <td>CCE-80682-8</td>
-  <td>Configure auditd max_log_file_action Upon Reaching Maximum Log Size</td>
-  <td xml:lang="en-US">
-The default action to take when the logs reach their maximum size
-is to rotate the log files, discarding the oldest one. To configure the action taken
-by <tt>auditd</tt>, add or correct the line in <tt>/etc/audit/auditd.conf</tt>:
-<pre>max_log_file_action = <i>ACTION</i></pre>
-Possible values for <i>ACTION</i> are described in the <tt>auditd.conf</tt> man
-page. These include:
-<ul>
-<li><tt>ignore</tt></li>
-<li><tt>syslog</tt></li>
-<li><tt>suspend</tt></li>
-<li><tt>rotate</tt></li>
-<li><tt>keep_logs</tt></li>
-</ul>
-Set the <tt><i>ACTION</i></tt> to <tt>rotate</tt> to ensure log rotation
-occurs. This is the default. The setting is case-insensitive.
-  </td>
-  <td xml:lang="en-US">
-Automatically rotating logs (by setting this to <tt>rotate</tt>)
-minimizes the chances of the system unexpectedly running out of disk space by
-being overwhelmed with log data. However, for systems that must never discard
-log data, or which use external processes to transfer it and reclaim space,
-<tt>keep_logs</tt> can be employed.
   </td>
   <td></td>
 </tr>
@@ -2763,11 +2742,7 @@ difficult.
   <td>Set PAM's Password Hashing Algorithm</td>
   <td xml:lang="en-US">
 The PAM system service can be configured to only store encrypted
-representations of passwords. In
-
-<tt>/etc/pam.d/system-auth</tt>,
-
-the
+representations of passwords. In "/etc/pam.d/password-auth", the
 <tt>password</tt> section of the file controls which PAM modules execute
 during a password change. Set the <tt>pam_unix.so</tt> module in the
 <tt>password</tt> section to include the argument <tt>sha512</tt>, as shown
@@ -2828,7 +2803,7 @@ configuration be set to encrypt interactive user passwords using a strong
 cryptographic hash.
 Check that the interactive user account passwords are using a strong
 password hash with the following command:
-<pre># sudo cut -d: -f2 /etc/shadow
+<pre>$ sudo cut -d: -f2 /etc/shadow
 $6$kcOnRq/5$NUEYPuyL.wghQwWssXRcLRFiiru7f5JPV6GaJhNC2aK5F3PZpE/BCCtwrxRc/AInKMNX3CdMw11m9STiql12f/</pre>
 Password hashes <tt>!</tt> or <tt>*</tt> indicate inactive accounts not
 available for logon and are not evaluated.
@@ -2850,10 +2825,12 @@ level of entropy.
 Verify the system generates an audit record when privileged functions are executed.
 <pre># grep -iw execve <tt>/etc/audit/audit.rules</tt></pre>
 
+
 <pre>-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k setuid</pre>
 <pre>-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k setuid</pre>
 <pre>-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k setgid</pre>
 <pre>-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k setgid</pre>
+
 
 If both the "b32" and "b64" audit rules for "SUID" files are not defined, this is a finding.
 If both the "b32" and "b64" audit rules for "SGID" files are not defined, this is a finding.
@@ -2995,7 +2972,7 @@ the integrity of the system.
 <tr>
   <td>CM-5(6)<br/>CM-5(6).1</td>
   <td>CCE-86519-6</td>
-  <td>Verify that system commands files are group owned by root </td>
+  <td>Verify that system commands files are group owned by root</td>
   <td xml:lang="en-US">
 System commands files are stored in the following directories by default:
 <pre>/bin
@@ -3164,8 +3141,8 @@ This rule configures the system to lock out accounts after a number of incorrect
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid any errors when manually editing these files,
-it is recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.
   </td>
   <td xml:lang="en-US">
@@ -3184,8 +3161,8 @@ This rule configures the system to lock out the <tt>root</tt> account after a nu
 incorrect login attempts using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid any errors when manually editing these files,
-it is recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.
   </td>
   <td xml:lang="en-US">
@@ -3202,28 +3179,14 @@ the account.
   <td xml:lang="en-US">
 Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
-period. First make sure the feature is enabled using the following command:
-<br /><br />
-
-<ul>
-<li><pre>authselect enable-feature with-faillock</pre></li>
-</ul>
-<br />
-Then edit the <tt>/etc/security/faillock.conf</tt> file as follows:
-<br /><br />
-<ul>
-<li> add, uncomment or edit the following line:
-<pre>fail_interval = <tt>900</tt></pre></li>
-<li> add or uncomment the following line:
-<pre>silent</pre></li>
-</ul>
+period.
   </td>
   <td xml:lang="en-US">
 By limiting the number of failed logon attempts the risk of unauthorized system
 access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.
   </td>
-  <td>var_accounts_passwords_pam_faillock_fail_interval=900</td>
+  <td></td>
 </tr>
 <tr>
   <td>CM-6(a)<br/>AC-7(b)</td>
@@ -3321,7 +3284,7 @@ to distinguish.
   <td></td>
 </tr>
 <tr>
-  <td>CM-6(a)<br/>AU-8(1)(b)</td>
+  <td>CM-6(a)<br/>AU-8(1)(b)<br/>AU-12(1)</td>
   <td>CCE-84059-5</td>
   <td>Configure Time Service Maxpoll Interval</td>
   <td xml:lang="en-US">
@@ -3464,6 +3427,48 @@ of the information system but does not want to logout because of the temporary n
   <td></td>
 </tr>
 <tr>
+  <td>CM-6(a)</td>
+  <td>CCE-80780-0</td>
+  <td>Ensure Users Cannot Change GNOME3 Screensaver Settings</td>
+  <td xml:lang="en-US">
+If not already configured, ensure that users cannot change GNOME3 screensaver lock settings
+by adding <tt>/org/gnome/desktop/screensaver/lock-delay</tt>
+to <tt>/etc/dconf/db/local.d/locks/00-security-settings-lock</tt> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/screensaver/lock-delay</pre>
+After the settings have been set, run <tt>dconf update</tt>.
+  </td>
+  <td xml:lang="en-US">
+A session time-out lock is a temporary action taken when a user stops work and moves away from the immediate
+physical vicinity of the information system but does not logout because of the temporary nature of the absence.
+Rather than relying on the user to manually lock their operating system session prior to vacating the vicinity,
+GNOME desktops can be configured to identify when a user's session has idled and take action to initiate the
+session lock. As such, users should not be allowed to change session settings.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>CM-6(a)</td>
+  <td>CCE-80781-8</td>
+  <td>Ensure Users Cannot Change GNOME3 Session Idle Settings</td>
+  <td xml:lang="en-US">
+If not already configured, ensure that users cannot change GNOME3 session idle settings
+by adding <tt>/org/gnome/desktop/session/idle-delay</tt>
+to <tt>/etc/dconf/db/local.d/locks/00-security-settings-lock</tt> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/session/idle-delay</pre>
+After the settings have been set, run <tt>dconf update</tt>.
+  </td>
+  <td xml:lang="en-US">
+A session time-out lock is a temporary action taken when a user stops work and moves away from the immediate
+physical vicinity of the information system but does not logout because of the temporary nature of the absence.
+Rather than relying on the user to manually lock their operating system session prior to vacating the vicinity,
+GNOME desktops can be configured to identify when a user's session has idled and take action to initiate the
+session lock. As such, users should not be allowed to change session settings.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>CM-6(a)<br/>AC-6(1)</td>
   <td>CCE-80783-4</td>
   <td>Verify that All World-Writable Directories Have Sticky Bits Set</td>
@@ -3492,6 +3497,26 @@ supplied with the system, or those designed to be temporary file
 repositories. The setting is normally reserved for directories used by the
 system, by users for temporary file storage (such as <tt>/tmp</tt>), and
 for directories requiring global read/write access.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>CM-6(a)<br/>AC-6(1)</td>
+  <td>CCE-85886-0</td>
+  <td>Ensure All World-Writable Directories Are Group Owned by a System Account</td>
+  <td xml:lang="en-US">
+All directories in local partitions which are
+world-writable should be group owned by root or another
+system account. If any world-writable directories are not
+group owned by a system account, this should be investigated.
+Following this, the files should be deleted or assigned to an
+appropriate group.
+  </td>
+  <td xml:lang="en-US">
+Allowing a user account to group own a world-writable directory is
+undesirable because it allows the owner of that directory to remove
+or replace any files that may be placed in the directory by other
+users.
   </td>
   <td></td>
 </tr>
@@ -3643,7 +3668,8 @@ Detailed information on encrypting partitions using LUKS or LUKS ciphers can be 
 the Red Hat Enterprise Linux 8 Documentation web site:<br />
 
     
-    <a xmlns='http://www.w3.org/1999/xhtml' href='https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/security_hardening/encrypting-block-devices-using-luks_security-hardening'>https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/security_hardening/encrypting-block-devices-using-luks_security-hardening</a>.
+    <a xmlns='http://www.w3.org/1999/xhtml' href='https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/security_hardening/encrypting-block-devices-using-luks_security-hardening'>https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/security_hardening/encrypting-block-devices-using-luks_security-hardening</a>
+.
   </td>
   <td xml:lang="en-US">
 The risk of a system's physical compromise, particularly mobile systems such as
@@ -3816,8 +3842,8 @@ To improve the kernel capacity to queue all log events, even those which occurre
 prior to the audit daemon, add the argument <tt>audit_backlog_limit=8192</tt> to the default
 GRUB 2 command line for the Linux operating system.
 To ensure that <tt>audit_backlog_limit=8192</tt> is added as a kernel command line
-argument to newly installed kernels, ad <tt>audit_backlog_limit=8192</tt> to the
-default Grub2 command line for Linux operating systems.  Modify the line within
+argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to the
+default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
@@ -3839,8 +3865,8 @@ To enable poisoning of free pages,
 add the argument <tt>page_poison=1</tt> to the default
 GRUB 2 command line for the Linux operating system.
 To ensure that <tt>page_poison=1</tt> is added as a kernel command line
-argument to newly installed kernels, ad <tt>page_poison=1</tt> to the
-default Grub2 command line for Linux operating systems.  Modify the line within
+argument to newly installed kernels, add <tt>page_poison=1</tt> to the
+default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... page_poison=1 ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="page_poison=1"</pre>
@@ -3887,8 +3913,8 @@ To enable poisoning of SLUB/SLAB objects,
 add the argument <tt>slub_debug=P</tt> to the default
 GRUB 2 command line for the Linux operating system.
 To ensure that <tt>slub_debug=P</tt> is added as a kernel command line
-argument to newly installed kernels, ad <tt>slub_debug=P</tt> to the
-default Grub2 command line for Linux operating systems.  Modify the line within
+argument to newly installed kernels, add <tt>slub_debug=P</tt> to the
+default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... slub_debug=P ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="slub_debug=P"</pre>
@@ -4140,7 +4166,14 @@ The <code>firewalld</code> package can be installed with the following command:
 $ sudo yum install firewalld</pre>
   </td>
   <td xml:lang="en-US">
-The firewalld package should be installed to provide access control methods.
+"Firewalld" provides an easy and effective way to block/limit remote access to the system via ports, services, and protocols.
+
+Remote access services, such as those providing remote access to network devices and information systems, which lack automated control capabilities, increase risk and make remote user access management difficult at best.
+
+Remote access is access to DoD nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
+
+Red Hat Enterprise Linux 8 functionality (e.g., SSH) must be capable of taking enforcement action if the audit reveals unauthorized activity.
+Automated control of remote access sessions allows organizations to ensure ongoing compliance with remote access policies by enforcing connection rules of remote access applications on a variety of information system components (e.g., servers, workstations, notebook computers, smartphones, and tablets)."
   </td>
   <td></td>
 </tr>
@@ -4847,7 +4880,7 @@ With this setting, a reboot will be required to change any audit rules.
 Making the audit configuration immutable prevents accidental as
 well as malicious modification of the audit rules, although it may be
 problematic if legitimate changes are needed during system
-operation
+operation.
   </td>
   <td></td>
 </tr>
@@ -4919,8 +4952,8 @@ To disable use of virtual syscalls,
 add the argument <tt>vsyscall=none</tt> to the default
 GRUB 2 command line for the Linux operating system.
 To ensure that <tt>vsyscall=none</tt> is added as a kernel command line
-argument to newly installed kernels, ad <tt>vsyscall=none</tt> to the
-default Grub2 command line for Linux operating systems.  Modify the line within
+argument to newly installed kernels, add <tt>vsyscall=none</tt> to the
+default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... vsyscall=none ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="vsyscall=none"</pre>
@@ -4938,7 +4971,7 @@ of the return instruction pointer.
   <td xml:lang="en-US">
 
 To configure the system to prevent the <code>cramfs</code>
-kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cramfs.conf</code>:
 <pre>install cramfs /bin/true</pre>
 This effectively prevents usage of this uncommon filesystem.
 
@@ -4964,7 +4997,7 @@ message-oriented communication, with several streams of messages
 within one connection.
 
 To configure the system to prevent the <code>sctp</code>
-kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
 <pre>install sctp /bin/true</pre>
   </td>
   <td xml:lang="en-US">
@@ -4983,7 +5016,7 @@ is designed to provide communications between nodes in a
 cluster.
 
 To configure the system to prevent the <code>tipc</code>
-kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/tipc.conf</code>:
 <pre>install tipc /bin/true</pre>
   </td>
   <td xml:lang="en-US">
@@ -5001,7 +5034,7 @@ To prevent USB storage devices from being used, configure the kernel module load
 to prevent automatic loading of the USB storage driver.
 
 To configure the system to prevent the <code>usb-storage</code>
-kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
 <pre>install usb-storage /bin/true</pre>
 This will prevent the <tt>modprobe</tt> program from loading the <tt>usb-storage</tt>
 module, but will not prevent an administrator (or another program) from using the
@@ -5393,6 +5426,28 @@ The audit package should be installed.
   </td>
   <td xml:lang="en-US">
 The auditd service is an access monitoring and accounting daemon, watching system calls to audit any access, in comparison with potential local access control policy such as SELinux policy.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>IA-7<br/>IA-7.1</td>
+  <td>CCE-85887-8</td>
+  <td>Remove the Kerberos Server Package</td>
+  <td xml:lang="en-US">
+The <tt>krb5-server</tt> package should be removed if not in use.
+Is this system the Kerberos server? If not, remove the package.
+The <code>krb5-server</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase krb5-server</pre>
+The krb5-server RPM is not installed by default on a Red Hat Enterprise Linux 8
+system. It is needed only by the Kerberos servers, not by the
+clients which use Kerberos for authentication. If the system is not
+intended for use as a Kerberos Server it should be removed.
+  </td>
+  <td xml:lang="en-US">
+Unnecessary packages should not be installed to decrease the attack
+surface of the system.  While this software is clearly essential on an KDC
+server, it is not necessary on typical desktop or workstation systems.
   </td>
   <td></td>
 </tr>
@@ -6034,7 +6089,7 @@ not provide easy attribution.
   <td></td>
 </tr>
 <tr>
-  <td>AU-8(1)</td>
+  <td>AU-8(1)<br/>AU-12(1)</td>
   <td>CCE-82988-7</td>
   <td>Disable chrony daemon from acting as server</td>
   <td xml:lang="en-US">
@@ -6094,6 +6149,40 @@ devices.
   <td xml:lang="en-US">
 The <tt>usbguard</tt> must be configured to allow connected USB devices to work
 properly, avoiding the system to become inaccessible.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>AU-9</td>
+  <td>CCE-86239-1</td>
+  <td>Audit Tools Must Be Group-owned by Root</td>
+  <td xml:lang="en-US">
+Red Hat Enterprise Linux 8 systems providing tools to interface with audit information will leverage user permissions and roles identifying the user accessing the tools, and the corresponding rights the user enjoys, to make access decisions regarding the access to audit tools.
+
+Audit tools include, but are not limited to, vendor-provided and open source audit tools needed to successfully view and manipulate audit information system activity and records. Audit tools include custom queries and report generators.
+
+Audit tools must have the correct group owner.
+  </td>
+  <td xml:lang="en-US">
+Protecting audit information also includes identifying and protecting the tools used to view and manipulate log data.
+Therefore, protecting audit tools is necessary to prevent unauthorized operations on audit information.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>AU-9</td>
+  <td>CCE-86259-9</td>
+  <td>Audit Tools Must Be Owned by Root</td>
+  <td xml:lang="en-US">
+Red Hat Enterprise Linux 8 systems providing tools to interface with audit information will leverage user permissions and roles identifying the user accessing the tools, and the corresponding rights the user enjoys, to make access decisions regarding the access to audit tools.
+
+Audit tools include, but are not limited to, vendor-provided and open source audit tools needed to successfully view and manipulate audit information system activity and records. Audit tools include custom queries and report generators.
+
+Audit tools must have the correct owner.
+  </td>
+  <td xml:lang="en-US">
+Protecting audit information also includes identifying and protecting the tools used to view and manipulate log data.
+Therefore, protecting audit tools is necessary to prevent unauthorized operations on audit information.
   </td>
   <td></td>
 </tr>
@@ -6223,11 +6312,6 @@ For example, to configure the system for a 15 minute delay, add the following to
 <tt>/etc/dconf/db/local.d/00-security-settings</tt>:
 <pre>[org/gnome/desktop/session]
 idle-delay=uint32 900</pre>
-Once the setting has been added, add a lock to
-<tt>/etc/dconf/db/local.d/locks/00-security-settings-lock</tt> to prevent user modification.
-For example:
-<pre>/org/gnome/desktop/session/idle-delay</pre>
-After the settings have been set, run <tt>dconf update</tt>.
   </td>
   <td xml:lang="en-US">
 A session time-out lock is a temporary action taken when a user stops work and moves away from
@@ -6237,6 +6321,25 @@ system session prior to vacating the vicinity, GNOME3 can be configured to ident
 a user's session has idled and take action to initiate a session lock.
   </td>
   <td></td>
+</tr>
+<tr>
+  <td>AC-11(a)<br/>CM-6(a)</td>
+  <td>CCE-80776-8</td>
+  <td>Set GNOME3 Screensaver Lock Delay After Activation Period</td>
+  <td xml:lang="en-US">
+To activate the locking delay of the screensaver in the GNOME3 desktop when
+the screensaver is activated, add or set <tt>lock-delay</tt> to <tt>uint32 <tt>5_seconds</tt></tt> in
+<tt>/etc/dconf/db/local.d/00-security-settings</tt>. For example:
+<pre>[org/gnome/desktop/screensaver]
+lock-delay=uint32 <tt>5_seconds</tt>
+</pre>
+After the settings have been set, run <tt>dconf update</tt>.
+  </td>
+  <td xml:lang="en-US">
+A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity
+of the information system but does not want to logout because of the temporary nature of the absense.
+  </td>
+  <td>var_screensaver_lock_delay=5_seconds</td>
 </tr>
 <tr>
   <td>CM-11(a)<br/>CM-11(b)<br/>CM-6(a)<br/>CM-5(3)<br/>SA-12<br/>SA-12(10)</td>
@@ -6378,8 +6481,7 @@ those responsible for one.
   <td xml:lang="en-US">
 To enable FIPS mode, run the following command:
 <pre>fips-mode-setup --enable</pre>
-To enable FIPS, the system requires that the <tt>fips</tt> module is added in
-<tt>dracut</tt> configuration.
+To enable FIPS, the system requires that the <tt>fips</tt> module is added in <tt>dracut</tt> configuration.
 Check if <tt>/etc/dracut.conf.d/40-fips.conf</tt> contain <tt>add_dracutmodules+=" fips "</tt>
   </td>
   <td xml:lang="en-US">
@@ -6392,37 +6494,11 @@ and validated.
 </tr>
 <tr>
   <td>SC-12(2)<br/>SC-12(3)<br/>IA-7<br/>SC-13<br/>CM-6(a)<br/>SC-12</td>
-  <td>CCE-80942-6</td>
-  <td>Enable FIPS Mode</td>
-  <td xml:lang="en-US">
-To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
-<br />
-The <tt>fips-mode-setup</tt> command will configure the system in
-FIPS mode by automatically configuring the following:
-<ul>
-<li>Setting the kernel FIPS mode flag (<tt>/proc/sys/crypto/fips_enabled</tt>) to <tt>1</tt></li>
-<li>Creating <tt>/etc/system-fips</tt></li>
-<li>Setting the system crypto policy in <tt>/etc/crypto-policies/config</tt> to <tt><tt>fips</tt></tt></li>
-<li>Loading the Dracut <tt>fips</tt> module</li>
-</ul>
-  </td>
-  <td xml:lang="en-US">
-Use of weak or untested encryption algorithms undermines the purposes of utilizing encryption to
-protect data. The operating system must implement cryptographic modules adhering to the higher
-standards approved by the federal government since this provides assurance they have been tested
-and validated.
-  </td>
-  <td>var_system_crypto_policy=fips</td>
-</tr>
-<tr>
-  <td>SC-12(2)<br/>SC-12(3)<br/>IA-7<br/>SC-13<br/>CM-6(a)<br/>SC-12</td>
   <td>CCE-84027-2</td>
   <td>Set kernel parameter 'crypto.fips_enabled' to 1</td>
   <td xml:lang="en-US">
 System running in FIPS mode is indicated by kernel parameter
-<tt>'crypto.fips_enabled'</tt>. This parameter should be set to <tt>1</tt>
-in FIPS mode.
+<tt>'crypto.fips_enabled'</tt>. This parameter should be set to <tt>1</tt> in FIPS mode.
 To enable FIPS mode, run the following command:
 <pre>fips-mode-setup --enable</pre>
   </td>
@@ -6465,7 +6541,7 @@ Kerberos is supported by crypto policy, but it's configuration may be
 set up to ignore it.
 To check that Crypto Policies settings for Kerberos are configured correctly, examine that there is a symlink at
 /etc/krb5.conf.d/crypto-policies targeting /etc/cypto-policies/back-ends/krb5.config.
-If the symlink exists, kerberos is configured to use the system-wide crypto policy settings.
+If the symlink exists, Kerberos is configured to use the system-wide crypto policy settings.
   </td>
   <td xml:lang="en-US">
 Overriding the system crypto policy makes the behavior of Kerberos violate expectations,
@@ -6482,8 +6558,8 @@ To enable Kernel page-table isolation,
 add the argument <tt>pti=on</tt> to the default
 GRUB 2 command line for the Linux operating system.
 To ensure that <tt>pti=on</tt> is added as a kernel command line
-argument to newly installed kernels, ad <tt>pti=on</tt> to the
-default Grub2 command line for Linux operating systems.  Modify the line within
+argument to newly installed kernels, add <tt>pti=on</tt> to the
+default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... pti=on ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="pti=on"</pre>
@@ -6706,8 +6782,8 @@ To ensure all processes can be audited, even those which start
 prior to the audit daemon, add the argument <tt>audit=1</tt> to the default
 GRUB 2 command line for the Linux operating system.
 To ensure that <tt>audit=1</tt> is added as a kernel command line
-argument to newly installed kernels, ad <tt>audit=1</tt> to the
-default Grub2 command line for Linux operating systems.  Modify the line within
+argument to newly installed kernels, add <tt>audit=1</tt> to the
+default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit=1 ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit=1"</pre>
@@ -6898,7 +6974,7 @@ network, data link, and physical layers, based on virtual circuits
 and virtual paths.
 
 To configure the system to prevent the <code>atm</code>
-kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/atm.conf</code>:
 <pre>install atm /bin/true</pre>
   </td>
   <td xml:lang="en-US">
@@ -6935,7 +7011,7 @@ protocol which was initially developed for automotive and
 is now also used in marine, industrial, and medical applications.
 
 To configure the system to prevent the <code>can</code>
-kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/can.conf</code>:
 <pre>install can /bin/true</pre>
   </td>
   <td xml:lang="en-US">
@@ -6953,7 +7029,7 @@ The IEEE 1394 (FireWire) is a serial bus standard for
 high-speed real-time communication.
 
 To configure the system to prevent the <code>firewire-core</code>
-kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/firewire-core.conf</code>:
 <pre>install firewire-core /bin/true</pre>
   </td>
   <td xml:lang="en-US">
@@ -6967,13 +7043,12 @@ flaws in its implementation.
   <td>CCE-83501-7</td>
   <td>Deactivate Wireless Network Interfaces</td>
   <td xml:lang="en-US">
-Deactivating wireless network interfaces should prevent
-normal usage of the wireless capability.
+Deactivating wireless network interfaces should prevent normal usage of the wireless
+capability.
 <br /><br />
 
-Configure the system to disable all wireless network interfaces with the
-following command:
-<pre>$ sudo nmcli radio wifi off</pre>
+Configure the system to disable all wireless network interfaces with the following command:
+<pre>$ sudo nmcli radio all off</pre>
   </td>
   <td xml:lang="en-US">
 The use of wireless networking can introduce many different attack vectors into
@@ -6991,6 +7066,19 @@ service to valid network resources.
   <td>CCE-84049-6</td>
   <td>Configure Multiple DNS Servers in /etc/resolv.conf</td>
   <td xml:lang="en-US">
+
+Determine whether the system is using local or DNS name resolution with the
+following command:
+<pre>$ sudo grep hosts /etc/nsswitch.conf
+hosts: files dns</pre>
+If the DNS entry is missing from the host's line in the "/etc/nsswitch.conf"
+file, the "/etc/resolv.conf" file must be empty.
+Verify the "/etc/resolv.conf" file is empty with the following command:
+<pre>$ sudo ls -al /etc/resolv.conf
+-rw-r--r-- 1 root root 0 Aug 19 08:31 resolv.conf</pre>
+If the DNS entry is found on the host's line of the "/etc/nsswitch.conf" file,
+then verify the following:<br/>
+
 Multiple Domain Name System (DNS) Servers should be configured
 in <tt>/etc/resolv.conf</tt>. This provides redundant name resolution services
 in the event that a domain server crashes. To configure the system to contain
@@ -7019,11 +7107,11 @@ To set the runtime status of the <code>kernel.kptr_restrict</code> kernel parame
 To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>kernel.kptr_restrict = <tt>1</tt></pre>
   </td>
   <td xml:lang="en-US">
-Exposing kernel pointers (through procfs or <tt>seq_printf()</tt>) exposes
-kernel writeable structures that can contain functions pointers. If a write vulnereability occurs
-in the kernel allowing a write access to any of this structure, the kernel can be compromise. This
-option disallow any program withtout the CAP_SYSLOG capability from getting the kernel pointers addresses,
-replacing them with 0.
+Exposing kernel pointers (through procfs or <tt>seq_printf()</tt>) exposes kernel
+writeable structures which may contain functions pointers. If a write vulnerability
+occurs in the kernel, allowing write access to any of this structure, the kernel can
+be compromised. This option disallow any program without the CAP_SYSLOG capability
+to get the addresses of kernel pointers by replacing them with 0.
   </td>
   <td>sysctl_kernel_kptr_restrict_value=1</td>
 </tr>
@@ -7038,7 +7126,7 @@ To make sure that the setting is persistent, add the following line to a file in
   <td xml:lang="en-US">
 Address space layout randomization (ASLR) makes it more difficult for an
 attacker to predict the location of attack code they have introduced into a
-process's address space during an attempt at exploitation.  Additionally,
+process's address space during an attempt at exploitation. Additionally,
 ASLR makes it more difficult for an attacker to know the location of
 existing code in order to re-purpose it using return oriented programming
 (ROP) techniques.
@@ -7168,42 +7256,6 @@ Enabling PAM password complexity permits to enforce strong passwords and consequ
 makes the system less prone to dictionary attacks.
   </td>
   <td></td>
-</tr>
-<tr>
-  <td></td>
-  <td>CCE-83403-6</td>
-  <td>Set number of Password Hashing Rounds - password-auth</td>
-  <td xml:lang="en-US">
-Configure the number or rounds for the password hashing algorithm. This can be
-accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
-<br /><br />
-In file <tt>/etc/pam.d/password-auth</tt> append <tt>rounds=<tt>5000</tt></tt>
-to the <tt>pam_unix.so</tt> file, as shown below:
-<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<tt>5000</tt></pre>
-The system's default number of rounds is 5000.
-  </td>
-  <td xml:lang="en-US">
-Using a higher number of rounds makes password cracking attacks more difficult.
-  </td>
-  <td>var_password_pam_unix_rounds=5000</td>
-</tr>
-<tr>
-  <td></td>
-  <td>CCE-83386-3</td>
-  <td>Set number of Password Hashing Rounds - system-auth</td>
-  <td xml:lang="en-US">
-Configure the number or rounds for the password hashing algorithm. This can be
-accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
-<br /><br />
-In file <tt>/etc/pam.d/system-auth</tt> append <tt>rounds=<tt>5000</tt></tt>
-to the <tt>pam_unix.so</tt> file, as shown below:
-<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<tt>5000</tt></pre>
-The system's default number of rounds is 5000.
-  </td>
-  <td xml:lang="en-US">
-Using a higher number of rounds makes password cracking attacks more difficult.
-  </td>
-  <td>var_password_pam_unix_rounds=5000</td>
 </tr>
 <tr>
   <td></td>
@@ -7547,6 +7599,9 @@ automatic session locking. It should be started from
   <td xml:lang="en-US">
 Unlike <tt>bash</tt> itself, the <tt>tmux</tt> terminal multiplexer
 provides a mechanism to lock sessions after period of inactivity.
+A session lock is a temporary action taken when a user stops work and moves away from the
+immediate physical vicinity of the information system but does not want to
+log out because of the temporary nature of the absence.
   </td>
   <td></td>
 </tr>
@@ -8147,6 +8202,30 @@ The <code>rngd</code> service can be enabled with the following command:
   <td xml:lang="en-US">
 The <tt>rngd</tt> service
 feeds random data from hardware device to kernel random device.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td>CCE-89707-4</td>
+  <td>Set Password Hashing Rounds in /etc/login.defs</td>
+  <td xml:lang="en-US">
+In <tt>/etc/login.defs</tt>, ensure <tt>SHA_CRYPT_MIN_ROUNDS</tt> and
+<tt>SHA_CRYPT_MAX_ROUNDS</tt> has the minimum value of <tt>5000</tt>.
+For example:
+<pre>SHA_CRYPT_MIN_ROUNDS 5000
+SHA_CRYPT_MAX_ROUNDS 5000</pre>
+Notice that if neither are set, they already have the default value of 5000.
+If either is set, they must have the minimum value of 5000.
+  </td>
+  <td xml:lang="en-US">
+Passwords need to be protected at all times, and encryption is the standard
+method for protecting passwords. If passwords are not encrypted, they can
+be plainly read (i.e., clear text) and easily compromised. Passwords
+that are encrypted with a weak algorithm are no more protected than if
+they are kept in plain text.
+<br /><br />
+Using more hashing rounds makes password cracking attacks more difficult.
   </td>
   <td></td>
 </tr>
