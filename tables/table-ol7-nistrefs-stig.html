@@ -1,5 +1,6 @@
+<!DOCTYPE html>
 <html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-<head>
+<head lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>DISA STIG for Oracle Linux 7</title>
 </head>
@@ -457,11 +458,11 @@ of the <tt>chcon</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -487,11 +488,11 @@ of the <tt>setfiles</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/setfiles -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/setfiles -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -517,11 +518,11 @@ of the <tt>setsebool</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/setsebool -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/setsebool -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -670,7 +671,7 @@ malicious processes that attempt to delete log files to conceal their presence.
 To capture kernel module unloading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
 
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
@@ -697,13 +698,13 @@ to read audit rules during daemon startup (the default), add the following lines
 with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
 loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
     If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
 rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
 in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
 b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
   </td>
   <td xml:lang="en-US">
 The addition/removal of kernel modules can be used to alter the behavior of
@@ -720,7 +721,7 @@ to have an audit trail of modules that have been introduced into the kernel.
 To capture kernel module loading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
 
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
@@ -821,11 +822,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/crontab -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/crontab -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -851,11 +852,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -882,12 +883,12 @@ configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
--F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+-F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
--F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+-F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -913,11 +914,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postdrop -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postdrop -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -943,11 +944,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postqueue -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postqueue -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -973,11 +974,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -1003,11 +1004,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/su -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/su -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -1033,11 +1034,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -1063,11 +1064,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/umount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/umount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -1093,11 +1094,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/userhelper -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/userhelper -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -1357,8 +1358,7 @@ by configuring the bootloader password.
   <td xml:lang="en-US">
 Single-user mode is intended as a system recovery
 method, providing a single user root access to the system by
-providing a boot option at startup. By default, no authentication
-is performed if single-user mode is selected.
+providing a boot option at startup.
 <br /><br />
 By default, single-user mode is protected by requiring a password and is set
 in <tt>/usr/lib/systemd/system/rescue.service</tt>.
@@ -1403,7 +1403,7 @@ To enable smart card authentication, consult the documentation at:
 <ul>
 
 <li><b>
-    <a xmlns='http://www.w3.org/1999/xhtml' href='https://docs.oracle.com/en/operating-systems/oracle-linux/7/userauth/ol7-auth.html#ol7-s4-auth'>https://docs.oracle.com/en/operating-systems/oracle-linux/7/userauth/ol7-auth.html#ol7-s4-auth</a></b></li>
+    <a xmlns='http://www.w3.org/1999/xhtml' href='https://docs.oracle.com/en/operating-systems/oracle-linux/7/userauth/userauth-AuthenticationConfiguration.html#ol7-s4-auth'>https://docs.oracle.com/en/operating-systems/oracle-linux/7/userauth/userauth-AuthenticationConfiguration.html#ol7-s4-auth</a></b></li>
 
 </ul>
   </td>
@@ -1505,11 +1505,11 @@ of the <tt>semanage</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/semanage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/semanage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -1535,11 +1535,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/chage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -1565,11 +1565,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chsh -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/chsh -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -1595,11 +1595,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/gpasswd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/gpasswd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -1625,11 +1625,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/newgrp -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/newgrp -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -1655,11 +1655,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/passwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/passwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -1685,11 +1685,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -2462,11 +2462,17 @@ more difficult by ensuring a larger search space.
   <td xml:lang="en-US">
 Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
+<br /><br />
+In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter
+<tt>remember</tt> is present and it has a value equal to or greater than
+<tt>5</tt>. For example:
+<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<tt>5</tt> use_authtok</pre>
+<i>control_flag</i> should be one of the next values: <tt><tt>required</tt></tt><br />
   </td>
   <td xml:lang="en-US">
 Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
   </td>
-  <td></td>
+  <td>var_password_pam_remember_control_flag=required<br/>var_password_pam_remember=5</td>
 </tr>
 <tr>
   <td>IA-5(f)<br/>IA-5(1)(e)</td>
@@ -2475,11 +2481,18 @@ Preventing re-use of previous passwords helps ensure that a compromised password
   <td xml:lang="en-US">
 Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
+<br /><br />
+In the file <tt>/etc/pam.d/system-auth</tt>, make sure the parameter
+<tt>remember</tt> is present and it has a value equal to or greater than
+<tt>5</tt>
+For example:
+<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<tt>5</tt> use_authtok</pre>
+<i>control_flag</i> should be one of the next values: <tt><tt>required</tt></tt><br />
   </td>
   <td xml:lang="en-US">
 Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
   </td>
-  <td></td>
+  <td>var_password_pam_remember_control_flag=required<br/>var_password_pam_remember=5</td>
 </tr>
 <tr>
   <td>IA-5(c)<br/>IA-5(1)(a)<br/>CM-6(a)<br/>IA-5(4)</td>
@@ -2779,7 +2792,7 @@ default authenticators, then anyone can gather data about the system and the net
 and use the information to potentially compromise the integrity of the system and
 network(s).
   </td>
-  <td>var_snmpd_rw_string=changemerw<br/>var_snmpd_ro_string=changemero</td>
+  <td>var_snmpd_ro_string=changemero<br/>var_snmpd_rw_string=changemerw</td>
 </tr>
 <tr>
   <td>CM-5(1)<br/>AU-7(a)<br/>AU-7(b)<br/>AU-8(b)<br/>AU-12(3)<br/>AC-6(9)</td>
@@ -2843,7 +2856,8 @@ but does not have an assigned password, it may be possible to log
 into the account without authentication. Remove any instances of the
 <tt>nullok</tt> in
 
-<tt>/etc/pam.d/system-auth</tt>
+<tt>/etc/pam.d/system-auth</tt> and
+<tt>/etc/pam.d/password-auth</tt>
 
 to prevent logins with empty passwords.
   </td>
@@ -2938,9 +2952,9 @@ recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>aut
 depending on the OS version.
   </td>
   <td xml:lang="en-US">
-Locking out user accounts after a number of incorrect attempts prevents direct password
-guessing attacks. In combination with the <tt>silent</tt> option, user enumeration attacks
-are also mitigated.
+By limiting the number of failed logon attempts, the risk of unauthorized system access via
+user password guessing, also known as brute-forcing, is reduced. Limits are imposed by locking
+the account.
   </td>
   <td></td>
 </tr>
@@ -2992,11 +3006,14 @@ pam_faillock.so module requires multiple entries in pam files. These entries mus
 defined to work as expected. In order to avoid any errors when manually editing these files,
 it is recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.
+
+If <tt>unlock_time</tt> is set to <tt>0</tt>, manual intervention by an administrator is required
+to unlock a user. This should be done using the <tt>faillock</tt> tool.
   </td>
   <td xml:lang="en-US">
-Locking out user accounts after a number of incorrect attempts prevents direct password
-guessing attacks. Ensuring that an administrator is involved in unlocking locked accounts
-draws appropriate attention to such situations.
+By limiting the number of failed logon attempts the risk of unauthorized system
+access via user password guessing, otherwise known as brute-forcing, is reduced.
+Limits are imposed by locking the account.
   </td>
   <td></td>
 </tr>
@@ -3061,11 +3078,9 @@ If no <tt>server</tt> or <tt>pool</tt> directives are configured, the rule evalu
 to pass.
   </td>
   <td xml:lang="en-US">
-Inaccurate time stamps make it more difficult to correlate
-events and can lead to an inaccurate analysis. Determining the correct
-time a particular event occurred on a system is critical when conducting
-forensic analysis and investigating system events. Sources outside the
-configured acceptable allowance (drift) may be inaccurate.
+Inaccurate time stamps make it more difficult to correlate events and can lead to an inaccurate analysis. Determining the correct time a particular event occurred on a system is critical when conducting forensic analysis and investigating system events. Sources outside the configured acceptable allowance (drift) may be inaccurate.
+Synchronizing internal information system clocks provides uniformity of time stamps for information systems with multiple system clocks and systems connected over a network.
+Organizations should consider endpoints that may not have regular access to the authoritative time server (e.g., mobile, teleworking, and tactical endpoints).
   </td>
   <td>var_time_service_set_maxpoll=18_hours</td>
 </tr>
@@ -4098,7 +4113,12 @@ on the system can initiate privileged actions on the target system.
 The sudoers security policy requires that users authenticate themselves before they can use sudo.
 When sudoers requires authentication, it validates the invoking user's credentials.
 The expected output for:
-<pre>sudo egrep -i '(!rootpw|!targetpw|!runaspw)' /etc/sudoers /etc/sudoers.d/* | grep -v '#'</pre>
+<pre> sudo cvtsudoers -f sudoers /etc/sudoers | grep -E '^Defaults !?(rootpw|targetpw|runaspw)$' </pre>
+<pre> Defaults !targetpw
+      Defaults !rootpw
+      Defaults !runaspw </pre>
+or if cvtsudoers not supported:
+<pre> sudo find /etc/sudoers /etc/sudoers.d \( \! -name '*~' -a \! -name '*.*' \) -exec grep -E --with-filename '^[[:blank:]]*Defaults[[:blank:]](.*[[:blank:]])?!?\b(rootpw|targetpw|runaspw)' -- {} \; </pre>
 <pre> /etc/sudoers:Defaults !targetpw
       /etc/sudoers:Defaults !rootpw
       /etc/sudoers:Defaults !runaspw </pre>
@@ -5357,7 +5377,7 @@ The timestamp_timeout should be configured by making sure that the
 <tt>timestamp_timeout</tt> tag exists in
 <tt>/etc/sudoers</tt> configuration file or any sudo configuration snippets
 in <tt>/etc/sudoers.d/</tt>.
-If the value is set to an integer less than 0, the user's time stamp will not expire 
+If the value is set to an integer less than 0, the user's time stamp will not expire
 and the user will not have to re-authenticate for privileged actions until the user's session is terminated.
   </td>
   <td xml:lang="en-US">
@@ -6301,9 +6321,12 @@ functions. The only SSHv2 hash algorithms meeting this requirement is SHA2.
 Administrators can configure authorized <tt>sudo</tt> users via drop-in files, and it is possible to include
 other directories and configuration files from the file currently being parsed.
 
-Make sure that <tt>/etc/sudoers</tt> only includes drop-in configuration files from <tt>/etc/sudoers.d</tt>.
-The <tt>/etc/sudoers</tt> should contain only one <tt>#includedir</tt> directive pointing to
-<tt>/etc/sudoers.d</tt>, and no file in <tt>/etc/sudoers.d/</tt> should include other files or directories.
+Make sure that <tt>/etc/sudoers</tt> only includes drop-in configuration files from <tt>/etc/sudoers.d</tt>,
+or that no drop-in file is included.
+Either the <tt>/etc/sudoers</tt> should contain only one <tt>#includedir</tt> directive pointing to
+<tt>/etc/sudoers.d</tt>, and no file in <tt>/etc/sudoers.d/</tt> should include other files or directories;
+Or the <tt>/etc/sudoers</tt> should not contain any <tt>#include</tt>,
+<tt>@include</tt>, <tt>#includedir</tt> or <tt>@includedir</tt> directives.
 Note that the '#' character doesn't denote a comment in the configuration file.
   </td>
   <td xml:lang="en-US">

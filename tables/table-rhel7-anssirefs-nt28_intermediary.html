@@ -1,5 +1,6 @@
+<!DOCTYPE html>
 <html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-<head>
+<head lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>ANSSI-BP-028 (intermediary)</title>
 </head>
@@ -547,7 +548,7 @@ should not be able to execute SUID or SGID binaries from boot partitions.
   <td>Add noexec Option to /home</td>
   <td xml:lang="en-US">
 The <tt>noexec</tt> mount option can be used to prevent binaries from being
-executed out of <tt>/home</tt>. 
+executed out of <tt>/home</tt>.
 Add the <code>noexec</code> option to the fourth column of
 <tt>/etc/fstab</tt> for the line which controls mounting of
 <code>/home</code>.
@@ -1206,9 +1207,9 @@ recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>aut
 depending on the OS version.
   </td>
   <td xml:lang="en-US">
-Locking out user accounts after a number of incorrect attempts prevents direct password
-guessing attacks. In combination with the <tt>silent</tt> option, user enumeration attacks
-are also mitigated.
+By limiting the number of failed logon attempts, the risk of unauthorized system access via
+user password guessing, also known as brute-forcing, is reduced. Limits are imposed by locking
+the account.
   </td>
   <td></td>
 </tr>
@@ -1260,11 +1261,14 @@ pam_faillock.so module requires multiple entries in pam files. These entries mus
 defined to work as expected. In order to avoid any errors when manually editing these files,
 it is recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.
+
+If <tt>unlock_time</tt> is set to <tt>0</tt>, manual intervention by an administrator is required
+to unlock a user. This should be done using the <tt>faillock</tt> tool.
   </td>
   <td xml:lang="en-US">
-Locking out user accounts after a number of incorrect attempts prevents direct password
-guessing attacks. Ensuring that an administrator is involved in unlocking locked accounts
-draws appropriate attention to such situations.
+By limiting the number of failed logon attempts the risk of unauthorized system
+access via user password guessing, otherwise known as brute-forcing, is reduced.
+Limits are imposed by locking the account.
   </td>
   <td></td>
 </tr>
@@ -1278,11 +1282,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -2356,18 +2360,18 @@ can be used to dedicate separate temporary directories to each account.
 <tr>
   <td>BP28(R39)</td>
   <td>CCE-82305-4</td>
-  <td>Disable the polyinstantiation_enabled SELinux Boolean</td>
+  <td>Configure the polyinstantiation_enabled SELinux Boolean</td>
   <td xml:lang="en-US">
 By default, the SELinux boolean <tt>polyinstantiation_enabled</tt> is disabled.
-If this setting is enabled, it should be disabled.
-
-To disable the <code>polyinstantiation_enabled</code> SELinux boolean, run the following command:
-<pre>$ sudo setsebool -P polyinstantiation_enabled off</pre>
+This setting should be configured to <tt>on</tt>.
+<br/>
+To set the <code>polyinstantiation_enabled</code> SELinux boolean, run the following command:
+<pre>$ sudo setsebool -P polyinstantiation_enabled <tt>on</tt></pre>
   </td>
   <td xml:lang="en-US">
 
   </td>
-  <td></td>
+  <td>var_polyinstantiation_enabled=on</td>
 </tr>
 <tr>
   <td>BP28(R40)</td>
@@ -2777,14 +2781,14 @@ The sudo <tt>passwd_timeout</tt> tag sets the amount of time sudo password promp
 On Red Hat Enterprise Linux 7, the default <tt>passwd_timeout</tt> value is 5 minutes.
 
 The passwd_timeout should be configured by making sure that the
-<tt>passwd_timeout=sub_var_value("var_sudo_passwd_timeout")</tt> tag exists in
+<tt>passwd_timeout=<tt>1_minute</tt></tt> tag exists in
 <tt>/etc/sudoers</tt> configuration file or any sudo configuration snippets
 in <tt>/etc/sudoers.d/</tt>.
   </td>
   <td xml:lang="en-US">
 Reducing the time <tt>sudo</tt> waits for a a password reduces the time the process is exposed.
   </td>
-  <td></td>
+  <td>var_sudo_passwd_timeout=1_minute</td>
 </tr>
 <tr>
   <td>BP28(R58)</td>
@@ -2812,7 +2816,7 @@ The sudo <tt>umask</tt> tag, when specified, will be added the to the user's uma
 command environment.
 On Red Hat Enterprise Linux 7, the default <tt>umask</tt> value is 0022.
 
-The umask should be configured by making sure that the <tt>umask=sub_var_value("var_sudo_umask")</tt> tag exists in
+The umask should be configured by making sure that the <tt>umask=<tt>0027</tt></tt> tag exists in
 <tt>/etc/sudoers</tt> configuration file or any sudo configuration snippets
 in <tt>/etc/sudoers.d/</tt>.
   </td>
@@ -2821,7 +2825,7 @@ The umask value influences the permissions assigned to files when they are creat
 A misconfigured umask value could result in files with excessive permissions that can be read or
 written to by unauthorized users.
   </td>
-  <td></td>
+  <td>var_sudo_umask=0027</td>
 </tr>
 <tr>
   <td>BP28(R58)</td>

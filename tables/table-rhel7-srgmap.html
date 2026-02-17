@@ -1,5 +1,6 @@
+<!DOCTYPE html>
 <html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-<head>
+<head lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>SRGs from General Purpose Operating System Security Requirements Guide Mapped to DISA STIG for Red Hat Enterprise Linux 7</title>
 </head>
@@ -265,7 +266,10 @@ number of incorrect login attempts using <tt>pam_faillock.so</tt>.
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
 it is recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
-depending on the OS version.</td>
+depending on the OS version.
+
+If <tt>unlock_time</tt> is set to <tt>0</tt>, manual intervention by an administrator is required
+to unlock a user. This should be done using the <tt>faillock</tt> tool.</td>
         </tr>
       </table>
 
@@ -1077,11 +1081,11 @@ of the <tt>chcon</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -1093,11 +1097,11 @@ of the <tt>semanage</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/semanage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/semanage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -1109,11 +1113,11 @@ of the <tt>setfiles</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/setfiles -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/setfiles -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -1125,11 +1129,11 @@ of the <tt>setsebool</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/setsebool -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/setsebool -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -1229,7 +1233,7 @@ appropriate for your system:
           <td>To capture kernel module unloading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
 
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
@@ -1249,13 +1253,13 @@ to read audit rules during daemon startup (the default), add the following lines
 with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
 loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
     If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
 rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
 in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
 b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre></td>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
         </tr>
       </table>
 
@@ -1265,7 +1269,7 @@ b64 as appropriate for your system:
           <td>To capture kernel module loading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
 
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
@@ -1321,11 +1325,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/chage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -1337,11 +1341,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chsh -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/chsh -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -1353,11 +1357,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/crontab -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/crontab -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -1369,11 +1373,27 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/gpasswd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/gpasswd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure auditd Collects Information on the Use of Privileged Commands - kmod</td>
+          <td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <tt>auditd</tt> daemon is
+configured to use the <tt>augenrules</tt> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add a line of the following
+form to <tt>/etc/audit/audit.rules</tt>:
+<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
         </tr>
       </table>
 
@@ -1385,11 +1405,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -1401,11 +1421,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/newgrp -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/newgrp -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -1418,12 +1438,12 @@ configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
--F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+-F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
--F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+-F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -1435,11 +1455,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/passwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/passwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -1451,11 +1471,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postdrop -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postdrop -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -1467,11 +1487,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postqueue -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postqueue -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -1483,11 +1503,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -1499,11 +1519,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/su -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/su -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -1515,11 +1535,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -1531,11 +1551,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/umount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/umount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -1547,11 +1567,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -1563,11 +1583,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/userhelper -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/userhelper -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -2293,11 +2313,11 @@ of the <tt>chcon</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -2309,11 +2329,11 @@ of the <tt>semanage</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/semanage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/semanage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -2325,11 +2345,11 @@ of the <tt>setfiles</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/setfiles -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/setfiles -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -2341,11 +2361,11 @@ of the <tt>setsebool</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/setsebool -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/setsebool -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -2445,7 +2465,7 @@ appropriate for your system:
           <td>To capture kernel module unloading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
 
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
@@ -2465,13 +2485,13 @@ to read audit rules during daemon startup (the default), add the following lines
 with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
 loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
     If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
 rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
 in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
 b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre></td>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
         </tr>
       </table>
 
@@ -2481,7 +2501,7 @@ b64 as appropriate for your system:
           <td>To capture kernel module loading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
 
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
@@ -2537,11 +2557,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/chage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -2553,11 +2573,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chsh -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/chsh -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -2569,11 +2589,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/crontab -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/crontab -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -2585,11 +2605,27 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/gpasswd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/gpasswd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure auditd Collects Information on the Use of Privileged Commands - kmod</td>
+          <td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <tt>auditd</tt> daemon is
+configured to use the <tt>augenrules</tt> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add a line of the following
+form to <tt>/etc/audit/audit.rules</tt>:
+<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
         </tr>
       </table>
 
@@ -2601,11 +2637,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -2617,11 +2653,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/newgrp -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/newgrp -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -2634,12 +2670,12 @@ configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
--F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+-F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
--F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+-F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -2651,11 +2687,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/passwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/passwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -2667,11 +2703,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postdrop -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postdrop -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -2683,11 +2719,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postqueue -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postqueue -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -2699,11 +2735,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -2715,11 +2751,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/su -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/su -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -2731,11 +2767,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -2747,11 +2783,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/umount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/umount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -2763,11 +2799,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -2779,11 +2815,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/userhelper -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/userhelper -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -3690,11 +3726,11 @@ of the <tt>chcon</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -3706,11 +3742,11 @@ of the <tt>semanage</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/semanage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/semanage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -3722,11 +3758,11 @@ of the <tt>setfiles</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/setfiles -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/setfiles -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -3738,11 +3774,11 @@ of the <tt>setsebool</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/setsebool -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/setsebool -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -3842,7 +3878,7 @@ appropriate for your system:
           <td>To capture kernel module unloading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
 
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
@@ -3862,13 +3898,13 @@ to read audit rules during daemon startup (the default), add the following lines
 with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
 loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
     If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
 rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
 in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
 b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre></td>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
         </tr>
       </table>
 
@@ -3878,7 +3914,7 @@ b64 as appropriate for your system:
           <td>To capture kernel module loading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
 
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
@@ -3934,11 +3970,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/chage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -3950,11 +3986,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chsh -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/chsh -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -3966,11 +4002,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/crontab -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/crontab -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -3982,11 +4018,27 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/gpasswd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/gpasswd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure auditd Collects Information on the Use of Privileged Commands - kmod</td>
+          <td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <tt>auditd</tt> daemon is
+configured to use the <tt>augenrules</tt> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add a line of the following
+form to <tt>/etc/audit/audit.rules</tt>:
+<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
         </tr>
       </table>
 
@@ -3998,11 +4050,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -4014,11 +4066,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/newgrp -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/newgrp -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -4031,12 +4083,12 @@ configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
--F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+-F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
--F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+-F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -4048,11 +4100,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/passwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/passwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -4064,11 +4116,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postdrop -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postdrop -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -4080,11 +4132,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postqueue -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postqueue -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -4096,11 +4148,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -4112,11 +4164,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/su -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/su -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -4128,11 +4180,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -4144,11 +4196,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/umount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/umount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -4160,11 +4212,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -4176,11 +4228,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/userhelper -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/userhelper -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -5367,7 +5419,13 @@ restriction by running the following command:
         <tr>
           <td>Limit Password Reuse: password-auth</td>
           <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
-<tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.</td>
+<tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
+<br /><br />
+In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter
+<tt>remember</tt> is present and it has a value equal to or greater than
+<sub idref="var_password_pam_remember" />. For example:
+<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<sub idref="var_password_pam_remember" /> use_authtok</pre>
+<i>control_flag</i> should be one of the next values: <tt><sub idref="var_password_pam_remember_control_flag" /></tt><br /></td>
         </tr>
       </table>
 
@@ -5375,7 +5433,14 @@ restriction by running the following command:
         <tr>
           <td>Limit Password Reuse: system-auth</td>
           <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
-<tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.</td>
+<tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
+<br /><br />
+In the file <tt>/etc/pam.d/system-auth</tt>, make sure the parameter
+<tt>remember</tt> is present and it has a value equal to or greater than
+<sub idref="var_password_pam_remember" />
+For example:
+<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<sub idref="var_password_pam_remember" /> use_authtok</pre>
+<i>control_flag</i> should be one of the next values: <tt><sub idref="var_password_pam_remember_control_flag" /></tt><br /></td>
         </tr>
       </table>
 
@@ -5514,8 +5579,7 @@ When prompted, enter the password that was selected.
           <td>Require Authentication for Single User Mode</td>
           <td>Single-user mode is intended as a system recovery
 method, providing a single user root access to the system by
-providing a boot option at startup. By default, no authentication
-is performed if single-user mode is selected.
+providing a boot option at startup.
 <br /><br />
 By default, single-user mode is protected by requiring a password and is set
 in <tt>/usr/lib/systemd/system/rescue.service</tt>.</td>
@@ -8253,6 +8317,20 @@ To disable the <code>ssh_sysadm_login</code> SELinux boolean, run the following 
 
       <table>
         <tr>
+          <td>Elevate The SELinux Context When An Administrator Calls The Sudo Command</td>
+          <td>Configure the operating system to elevate the SELinux context when an administrator calls
+the sudo command.
+Edit a file in the /etc/sudoers.d directory with the following command:
+<pre>sudo visudo -f /etc/sudoers.d/<i>CUSTOM_FILE</i></pre>
+Use the following example to build the <i>CUSTOM_FILE</i> in the /etc/sudoers.d directory
+to allow any administrator belonging to a designated sudoers admin group to elevate their
+SELinux context with the use of the sudo command:
+<pre>%wheel ALL=(ALL) TYPE=sysadm_t ROLE=sysadm_r ALL</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Map System Users To The Appropriate SELinux Role</td>
           <td>Configure the operating system to prevent non-privileged users from executing
 privileged functions to include disabling, circumventing, or altering
@@ -8404,7 +8482,10 @@ number of incorrect login attempts using <tt>pam_faillock.so</tt>.
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
 it is recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
-depending on the OS version.</td>
+depending on the OS version.
+
+If <tt>unlock_time</tt> is set to <tt>0</tt>, manual intervention by an administrator is required
+to unlock a user. This should be done using the <tt>faillock</tt> tool.</td>
         </tr>
       </table>
 
@@ -9322,7 +9403,7 @@ The timestamp_timeout should be configured by making sure that the
 <tt>timestamp_timeout</tt> tag exists in
 <tt>/etc/sudoers</tt> configuration file or any sudo configuration snippets
 in <tt>/etc/sudoers.d/</tt>.
-If the value is set to an integer less than 0, the user's time stamp will not expire 
+If the value is set to an integer less than 0, the user's time stamp will not expire
 and the user will not have to re-authenticate for privileged actions until the user's session is terminated.</td>
         </tr>
       </table>
@@ -9372,7 +9453,7 @@ The timestamp_timeout should be configured by making sure that the
 <tt>timestamp_timeout</tt> tag exists in
 <tt>/etc/sudoers</tt> configuration file or any sudo configuration snippets
 in <tt>/etc/sudoers.d/</tt>.
-If the value is set to an integer less than 0, the user's time stamp will not expire 
+If the value is set to an integer less than 0, the user's time stamp will not expire
 and the user will not have to re-authenticate for privileged actions until the user's session is terminated.</td>
         </tr>
       </table>
@@ -9422,7 +9503,7 @@ The timestamp_timeout should be configured by making sure that the
 <tt>timestamp_timeout</tt> tag exists in
 <tt>/etc/sudoers</tt> configuration file or any sudo configuration snippets
 in <tt>/etc/sudoers.d/</tt>.
-If the value is set to an integer less than 0, the user's time stamp will not expire 
+If the value is set to an integer less than 0, the user's time stamp will not expire
 and the user will not have to re-authenticate for privileged actions until the user's session is terminated.</td>
         </tr>
       </table>
@@ -10174,11 +10255,11 @@ of the <tt>chcon</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -10190,11 +10271,11 @@ of the <tt>semanage</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/semanage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/semanage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -10206,11 +10287,11 @@ of the <tt>setfiles</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/setfiles -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/setfiles -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -10222,11 +10303,11 @@ of the <tt>setsebool</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/setsebool -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/setsebool -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -10326,7 +10407,7 @@ appropriate for your system:
           <td>To capture kernel module unloading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
 
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
@@ -10346,13 +10427,13 @@ to read audit rules during daemon startup (the default), add the following lines
 with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
 loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
     If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
 rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
 in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
 b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre></td>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
         </tr>
       </table>
 
@@ -10362,7 +10443,7 @@ b64 as appropriate for your system:
           <td>To capture kernel module loading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
 
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
@@ -10436,11 +10517,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/chage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -10452,11 +10533,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chsh -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/chsh -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -10468,11 +10549,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/crontab -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/crontab -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -10484,11 +10565,27 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/gpasswd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/gpasswd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure auditd Collects Information on the Use of Privileged Commands - kmod</td>
+          <td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <tt>auditd</tt> daemon is
+configured to use the <tt>augenrules</tt> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add a line of the following
+form to <tt>/etc/audit/audit.rules</tt>:
+<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
         </tr>
       </table>
 
@@ -10500,11 +10597,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -10516,11 +10613,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/newgrp -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/newgrp -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -10533,12 +10630,12 @@ configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
--F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+-F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
--F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+-F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -10550,11 +10647,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/passwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/passwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -10566,11 +10663,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postdrop -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postdrop -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -10582,11 +10679,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postqueue -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postqueue -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -10598,11 +10695,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -10614,11 +10711,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/su -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/su -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -10630,11 +10727,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -10646,11 +10743,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/umount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/umount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -10662,11 +10759,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -10678,11 +10775,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/userhelper -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/userhelper -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -12515,11 +12612,11 @@ of the <tt>chcon</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -12531,11 +12628,11 @@ of the <tt>semanage</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/semanage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/semanage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -12547,11 +12644,11 @@ of the <tt>setfiles</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/setfiles -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/setfiles -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -12563,11 +12660,11 @@ of the <tt>setsebool</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/setsebool -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/setsebool -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -12667,7 +12764,7 @@ appropriate for your system:
           <td>To capture kernel module unloading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
 
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
@@ -12687,13 +12784,13 @@ to read audit rules during daemon startup (the default), add the following lines
 with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
 loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
     If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
 rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
 in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
 b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre></td>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
         </tr>
       </table>
 
@@ -12703,7 +12800,7 @@ b64 as appropriate for your system:
           <td>To capture kernel module loading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
 
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
@@ -12759,11 +12856,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/chage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -12775,11 +12872,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chsh -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/chsh -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -12791,11 +12888,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/crontab -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/crontab -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -12807,11 +12904,27 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/gpasswd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/gpasswd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure auditd Collects Information on the Use of Privileged Commands - kmod</td>
+          <td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <tt>auditd</tt> daemon is
+configured to use the <tt>augenrules</tt> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add a line of the following
+form to <tt>/etc/audit/audit.rules</tt>:
+<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
         </tr>
       </table>
 
@@ -12823,11 +12936,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -12839,11 +12952,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/newgrp -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/newgrp -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -12856,12 +12969,12 @@ configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
--F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+-F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
--F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+-F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -12873,11 +12986,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/passwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/passwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -12889,11 +13002,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postdrop -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postdrop -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -12905,11 +13018,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postqueue -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postqueue -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -12921,11 +13034,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -12937,11 +13050,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/su -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/su -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -12953,11 +13066,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -12969,11 +13082,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/umount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/umount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -12985,11 +13098,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -13001,11 +13114,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/userhelper -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/userhelper -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -13432,11 +13545,11 @@ of the <tt>chcon</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -13448,11 +13561,11 @@ of the <tt>semanage</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/semanage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/semanage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -13464,11 +13577,11 @@ of the <tt>setfiles</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/setfiles -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/setfiles -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -13480,11 +13593,11 @@ of the <tt>setsebool</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/setsebool -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/setsebool -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -13511,11 +13624,11 @@ of the <tt>chcon</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -13527,11 +13640,11 @@ of the <tt>semanage</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/semanage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/semanage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -13543,11 +13656,11 @@ of the <tt>setfiles</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/setfiles -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/setfiles -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -13559,11 +13672,11 @@ of the <tt>setsebool</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/setsebool -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/setsebool -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -13957,11 +14070,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/su -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/su -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -13973,11 +14086,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -14341,11 +14454,11 @@ of the <tt>chcon</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -14447,11 +14560,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/chage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -14924,11 +15037,11 @@ of the <tt>chcon</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -14940,11 +15053,11 @@ of the <tt>semanage</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/semanage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/semanage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -14956,11 +15069,11 @@ of the <tt>setfiles</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/setfiles -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/setfiles -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -14972,11 +15085,11 @@ of the <tt>setsebool</tt> command for all users and root. If the <tt>auditd</tt>
 daemon is configured to use the <tt>augenrules</tt> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/setsebool -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/setsebool -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -15076,7 +15189,7 @@ appropriate for your system:
           <td>To capture kernel module unloading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
 
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
@@ -15096,13 +15209,13 @@ to read audit rules during daemon startup (the default), add the following lines
 with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
 loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
     If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
 rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
 in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
 b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre></td>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
         </tr>
       </table>
 
@@ -15112,7 +15225,7 @@ b64 as appropriate for your system:
           <td>To capture kernel module loading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
 
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
@@ -15168,11 +15281,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/chage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -15184,11 +15297,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/chsh -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/chsh -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -15200,11 +15313,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/crontab -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/crontab -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -15216,11 +15329,27 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/gpasswd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/gpasswd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure auditd Collects Information on the Use of Privileged Commands - kmod</td>
+          <td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <tt>auditd</tt> daemon is
+configured to use the <tt>augenrules</tt> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add a line of the following
+form to <tt>/etc/audit/audit.rules</tt>:
+<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
         </tr>
       </table>
 
@@ -15232,11 +15361,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -15248,11 +15377,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/newgrp -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/newgrp -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -15265,12 +15394,12 @@ configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
--F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+-F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
 <pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
--F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+-F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -15282,11 +15411,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/passwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/passwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -15298,11 +15427,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postdrop -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postdrop -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -15314,11 +15443,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postqueue -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/postqueue -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -15330,11 +15459,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -15346,11 +15475,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/su -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/su -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -15362,11 +15491,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -15378,11 +15507,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/bin/umount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/bin/umount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -15394,11 +15523,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -15410,11 +15539,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/userhelper -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/userhelper -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -15721,11 +15850,27 @@ Audit records can be generated from various components within the information sy
 
       <table>
         <tr>
+          <td>Ensure auditd Collects Information on Kernel Module Unloading - create_module</td>
+          <td>To capture kernel module unloading events, use following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
+<pre>-a always,exit -F arch=<i>ARCH</i> -S create_module -F key=module-change</pre>
+
+Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
+to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
+add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Ensure auditd Collects Information on Kernel Module Unloading - delete_module</td>
           <td>To capture kernel module unloading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
 
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
@@ -15745,13 +15890,13 @@ to read audit rules during daemon startup (the default), add the following lines
 with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
 loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
     If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
 rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
 in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
 b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre></td>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
         </tr>
       </table>
 
@@ -15761,7 +15906,7 @@ b64 as appropriate for your system:
           <td>To capture kernel module loading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
 
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
@@ -15770,6 +15915,22 @@ to use the <tt>augenrules</tt> program (the default), add the line to a file wit
 
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
 add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure auditd Collects Information on the Use of Privileged Commands - kmod</td>
+          <td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <tt>auditd</tt> daemon is
+configured to use the <tt>augenrules</tt> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add a line of the following
+form to <tt>/etc/audit/audit.rules</tt>:
+<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
         </tr>
       </table>
 
@@ -16226,11 +16387,27 @@ Audit records can be generated from various components within the information sy
 
       <table>
         <tr>
+          <td>Ensure auditd Collects Information on Kernel Module Unloading - create_module</td>
+          <td>To capture kernel module unloading events, use following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
+<pre>-a always,exit -F arch=<i>ARCH</i> -S create_module -F key=module-change</pre>
+
+Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
+to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>.
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
+add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Ensure auditd Collects Information on Kernel Module Unloading - delete_module</td>
           <td>To capture kernel module unloading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
 
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
@@ -16250,13 +16427,13 @@ to read audit rules during daemon startup (the default), add the following lines
 with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
 loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
     If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
 rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
 in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
 b64 as appropriate for your system:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre></td>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F auid>=1000 -F auid!=unset -F key=modules</pre></td>
         </tr>
       </table>
 
@@ -16266,7 +16443,7 @@ b64 as appropriate for your system:
           <td>To capture kernel module loading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 
-<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F auid>=1000 -F auid!=unset -F key=modules</pre>
 
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
@@ -16275,6 +16452,22 @@ to use the <tt>augenrules</tt> program (the default), add the line to a file wit
 
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
 add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure auditd Collects Information on the Use of Privileged Commands - kmod</td>
+          <td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <tt>auditd</tt> daemon is
+configured to use the <tt>augenrules</tt> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add a line of the following
+form to <tt>/etc/audit/audit.rules</tt>:
+<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
         </tr>
       </table>
 
@@ -17077,7 +17270,8 @@ but does not have an assigned password, it may be possible to log
 into the account without authentication. Remove any instances of the
 <tt>nullok</tt> in
 
-<tt>/etc/pam.d/system-auth</tt>
+<tt>/etc/pam.d/system-auth</tt> and
+<tt>/etc/pam.d/password-auth</tt>
 
 to prevent logins with empty passwords.</td>
         </tr>
@@ -17602,9 +17796,12 @@ Restrict privileged actions by removing the following entries from the sudoers f
           <td>Administrators can configure authorized <tt>sudo</tt> users via drop-in files, and it is possible to include
 other directories and configuration files from the file currently being parsed.
 
-Make sure that <tt>/etc/sudoers</tt> only includes drop-in configuration files from <tt>/etc/sudoers.d</tt>.
-The <tt>/etc/sudoers</tt> should contain only one <tt>#includedir</tt> directive pointing to
-<tt>/etc/sudoers.d</tt>, and no file in <tt>/etc/sudoers.d/</tt> should include other files or directories.
+Make sure that <tt>/etc/sudoers</tt> only includes drop-in configuration files from <tt>/etc/sudoers.d</tt>,
+or that no drop-in file is included.
+Either the <tt>/etc/sudoers</tt> should contain only one <tt>#includedir</tt> directive pointing to
+<tt>/etc/sudoers.d</tt>, and no file in <tt>/etc/sudoers.d/</tt> should include other files or directories;
+Or the <tt>/etc/sudoers</tt> should not contain any <tt>#include</tt>,
+<tt>@include</tt>, <tt>#includedir</tt> or <tt>@includedir</tt> directives.
 Note that the '#' character doesn't denote a comment in the configuration file.</td>
         </tr>
       </table>
@@ -17615,7 +17812,12 @@ Note that the '#' character doesn't denote a comment in the configuration file.<
           <td>The sudoers security policy requires that users authenticate themselves before they can use sudo.
 When sudoers requires authentication, it validates the invoking user's credentials.
 The expected output for:
-<pre>sudo egrep -i '(!rootpw|!targetpw|!runaspw)' /etc/sudoers /etc/sudoers.d/* | grep -v '#'</pre>
+<pre> sudo cvtsudoers -f sudoers /etc/sudoers | grep -E '^Defaults !?(rootpw|targetpw|runaspw)$' </pre>
+<pre> Defaults !targetpw
+      Defaults !rootpw
+      Defaults !runaspw </pre>
+or if cvtsudoers not supported:
+<pre> sudo find /etc/sudoers /etc/sudoers.d \( \! -name '*~' -a \! -name '*.*' \) -exec grep -E --with-filename '^[[:blank:]]*Defaults[[:blank:]](.*[[:blank:]])?!?\b(rootpw|targetpw|runaspw)' -- {} \; </pre>
 <pre> /etc/sudoers:Defaults !targetpw
       /etc/sudoers:Defaults !rootpw
       /etc/sudoers:Defaults !runaspw </pre></td>

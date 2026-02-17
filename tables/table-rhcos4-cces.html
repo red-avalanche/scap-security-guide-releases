@@ -1,4 +1,4 @@
-<html xmlns:cce="http://cce.mitre.org" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<html xmlns:cce="http://cce.mitre.org" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.2" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:ds="http://scap.nist.gov/schema/scap/source/1.2">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title> CCE Identifiers in Guide to the Secure Configuration of Red Hat Enterprise Linux CoreOS 4</title>
@@ -161,7 +161,7 @@ FIPS mode by automatically configuring the following:
 </li>
 <li>Creating <code>/etc/system-fips</code>
 </li>
-<li>Setting the system crypto policy in <code>/etc/crypto-policies/config</code> to <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_system_crypto_policy"></xccdf-1.1:sub></code>
+<li>Setting the system crypto policy in <code>/etc/crypto-policies/config</code> to <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_system_crypto_policy" use="legacy"></xccdf-1.2:sub></code>
 </li>
 <li>Loading the Dracut <code>fips</code> module</li>
 </ul>
@@ -204,7 +204,10 @@ Finally, rebuild the <code>grub.cfg</code> file by using the
 <code>'crypto.fips_enabled'</code>. This parameter should be set to <code>1</code> in FIPS mode.
 To enable FIPS mode, run the following command:
 <pre>fips-mode-setup --enable</pre>
-</td>
+
+To enable strict FIPS compliance, the fips=1 kernel option needs to be added to the kernel boot
+parameters during system installation so key generation is done with FIPS-approved algorithms
+and continuous monitoring tests in place.</td>
 </tr>
 <tr>
 <td>CCE-82544-8</td>
@@ -223,7 +226,7 @@ is not commented out or superseded by later includes:
 <tr>
 <td>CCE-82541-4</td>
 <td>Configure System Cryptography Policy</td>
-<td>To configure the system cryptography policy to use ciphers only from the <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_system_crypto_policy"></xccdf-1.1:sub></code>
+<td>To configure the system cryptography policy to use ciphers only from the <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_system_crypto_policy" use="legacy"></xccdf-1.2:sub></code>
 policy, create a <code>MachineConfig</code> as follows:
 <pre>
 ---
@@ -246,7 +249,7 @@ spec:
             Before=kubelet.service
             [Service]
             Type=oneshot
-            ExecStart=update-crypto-policies --set <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_system_crypto_policy"></xccdf-1.1:sub>
+            ExecStart=update-crypto-policies --set <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_system_crypto_policy" use="legacy"></xccdf-1.2:sub>
             RemainAfterExit=yes
             [Install]
             WantedBy=multi-user.target
@@ -761,7 +764,7 @@ And make sure that the <code>silent</code> option is not set for
 </tr>
 <tr>
 <td></td>
-<td>Account lockouts must be logged</td>
+<td>Account Lockouts Must Be Logged</td>
 <td>PAM faillock locks an account due to excessive password failures, this event must be logged.</td>
 </tr>
 <tr>
@@ -930,8 +933,7 @@ It is also required to change the runtime configuration, run:
 <td>Require Authentication for Single User Mode</td>
 <td>Single-user mode is intended as a system recovery
 method, providing a single user root access to the system by
-providing a boot option at startup. By default, no authentication
-is performed if single-user mode is selected.
+providing a boot option at startup.
 <br><br>
 By default, single-user mode is protected by requiring a password and is set
 in <code>/usr/lib/systemd/system/rescue.service</code>.</td>
@@ -989,12 +991,12 @@ automatic session locking. It should not be listed in
 <td>To specify the number of days after a password expires (which
 signifies inactivity) until an account is permanently disabled, add or correct
 the following line in <code>/etc/default/useradd</code>:
-<pre>INACTIVE=<i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></i></pre>
+<pre>INACTIVE=<i><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_account_disable_post_pw_expiration" use="legacy"></xccdf-1.2:sub></i></pre>
 If a password is currently on the verge of expiration, then
-<code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></code>
+<code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_account_disable_post_pw_expiration" use="legacy"></xccdf-1.2:sub></code>
 day(s) remain(s) until the account is automatically
 disabled. However, if the password will not expire for another 60 days, then 60
-days plus <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></code> day(s) could
+days plus <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_account_disable_post_pw_expiration" use="legacy"></xccdf-1.2:sub></code> day(s) could
 elapse until the account would be automatically disabled. See the
 <code>useradd</code> man page for more information.</td>
 </tr>
@@ -1022,10 +1024,10 @@ Directory Server, etc.</td>
 <td>To specify password maximum age for new accounts,
 edit the file <code>/etc/login.defs</code>
 and add or correct the following line:
-<pre>PASS_MAX_DAYS <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_maximum_age_login_defs"></xccdf-1.1:sub></pre>
+<pre>PASS_MAX_DAYS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></xccdf-1.2:sub></pre>
 A value of 180 days is sufficient for many environments.
 The DoD requirement is 60.
-The profile requirement is <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_maximum_age_login_defs"></xccdf-1.1:sub></code>.</td>
+The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
 <td></td>
@@ -1033,22 +1035,22 @@ The profile requirement is <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklis
 <td>To specify password minimum age for new accounts,
 edit the file <code>/etc/login.defs</code>
 and add or correct the following line:
-<pre>PASS_MIN_DAYS <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_minimum_age_login_defs"></xccdf-1.1:sub></pre>
+<pre>PASS_MIN_DAYS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_minimum_age_login_defs" use="legacy"></xccdf-1.2:sub></pre>
 A value of 1 day is considered sufficient for many
 environments. The DoD requirement is 1.
-The profile requirement is <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_minimum_age_login_defs"></xccdf-1.1:sub></code>.</td>
+The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_minimum_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
 <td></td>
 <td>Set Password Minimum Length in login.defs</td>
 <td>To specify password length requirements for new accounts, edit the file
 <code>/etc/login.defs</code> and add or correct the following line:
-<pre>PASS_MIN_LEN <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_password_minlen_login_defs"></xccdf-1.1:sub></pre>
+<pre>PASS_MIN_LEN <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_minlen_login_defs" use="legacy"></xccdf-1.2:sub></pre>
 <br><br>
 The DoD requirement is <code>15</code>.
 The FISMA requirement is <code>12</code>.
 The profile requirement is
-<code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_password_minlen_login_defs"></xccdf-1.1:sub></code>.
+<code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_minlen_login_defs" use="legacy"></xccdf-1.2:sub></code>.
 If a program consults <code>/etc/login.defs</code> and also another PAM module
 (such as <code>pam_pwquality</code>) during a password change operation, then
 the most restrictive must be satisfied. See PAM section for more
@@ -1061,9 +1063,9 @@ information about enforcing password quality requirements.</td>
 expiration that a warning will be issued to users,
 edit the file <code>/etc/login.defs</code> and add or correct
  the following line:
-<pre>PASS_WARN_AGE <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_password_warn_age_login_defs"></xccdf-1.1:sub></pre>
+<pre>PASS_WARN_AGE <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub></pre>
 The DoD requirement is 7.
-The profile requirement is <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_password_warn_age_login_defs"></xccdf-1.1:sub></code>.</td>
+The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
 <td></td>
@@ -1086,7 +1088,8 @@ but does not have an assigned password, it may be possible to log
 into the account without authentication. Remove any instances of the
 <code>nullok</code> in
 
-<code>/etc/pam.d/system-auth</code>
+<code>/etc/pam.d/system-auth</code> and
+<code>/etc/pam.d/password-auth</code>
 
 to prevent logins with empty passwords.</td>
 </tr>
@@ -1226,7 +1229,7 @@ vc/4</pre>
 <td>Ensure the Logon Failure Delay is Set Correctly in login.defs</td>
 <td>To ensure the logon failure delay controlled by <code>/etc/login.defs</code> is set properly,
 add or correct the <code>FAIL_DELAY</code> setting in <code>/etc/login.defs</code> to read as follows:
-<pre>FAIL_DELAY <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_fail_delay"></xccdf-1.1:sub></pre>
+<pre>FAIL_DELAY <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_fail_delay" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -1237,7 +1240,7 @@ Service attacks. This addresses concurrent sessions for a single account and doe
 concurrent sessions by a single user via multiple accounts. To set the number of concurrent
 sessions per user add the following line in <code>/etc/security/limits.conf</code> or
 a file under <code>/etc/security/limits.d/</code>:
-<pre>* hard maxlogins <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_max_concurrent_login_sessions"></xccdf-1.1:sub></pre>
+<pre>* hard maxlogins <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_max_concurrent_login_sessions" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -1270,7 +1273,7 @@ The <code>TMOUT</code>
 
 setting in a file loaded by <code>/etc/profile</code>, e.g.
 <code>/etc/profile.d/tmout.sh</code> should read as follows:
-<pre>declare -xr TMOUT=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></xccdf-1.1:sub></pre>
+<pre>declare -xr TMOUT=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_tmout" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -1312,7 +1315,7 @@ These empty elements have the same effect as a single <code>.</code> character.<
 <td>To ensure the default umask for users of the Bash shell is set properly,
 add or correct the <code>umask</code> setting in <code>/etc/bashrc</code> to read
 as follows:
-<pre>umask <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_user_umask"></xccdf-1.1:sub></pre>
+<pre>umask <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_user_umask" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -1320,7 +1323,7 @@ as follows:
 <td>Ensure the Default C Shell Umask is Set Correctly</td>
 <td>To ensure the default umask for users of the C shell is set properly,
 add or correct the <code>umask</code> setting in <code>/etc/csh.cshrc</code> to read as follows:
-<pre>umask <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_user_umask"></xccdf-1.1:sub></pre>
+<pre>umask <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_user_umask" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -1328,7 +1331,7 @@ add or correct the <code>umask</code> setting in <code>/etc/csh.cshrc</code> to 
 <td>Ensure the Default Umask is Set Correctly in login.defs</td>
 <td>To ensure the default umask controlled by <code>/etc/login.defs</code> is set properly,
 add or correct the <code>UMASK</code> setting in <code>/etc/login.defs</code> to read as follows:
-<pre>UMASK <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_user_umask"></xccdf-1.1:sub></pre>
+<pre>UMASK <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_user_umask" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -1336,7 +1339,7 @@ add or correct the <code>UMASK</code> setting in <code>/etc/login.defs</code> to
 <td>Ensure the Default Umask is Set Correctly in /etc/profile</td>
 <td>To ensure the default umask controlled by <code>/etc/profile</code> is set properly,
 add or correct the <code>umask</code> setting in <code>/etc/profile</code> to read as follows:
-<pre>umask <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_user_umask"></xccdf-1.1:sub></pre>
+<pre>umask <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_user_umask" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -3886,7 +3889,7 @@ system or media from the system being audited.
 Set the <code>remote_server</code> option in <pre>/etc/audit/audisp-remote.conf</pre>
 with an IP address or hostname of the system that the audispd plugin should
 send audit records to. For example
-<pre>remote_server = <i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_audispd_remote_server"></xccdf-1.1:sub></i></pre>
+<pre>remote_server = <i><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_audispd_remote_server" use="legacy"></xccdf-1.2:sub></i></pre>
 </td>
 </tr>
 <tr>
@@ -3925,7 +3928,7 @@ mode for corrective action. Acceptable values also include <code>syslog</code> a
 <code>halt</code>. For certain systems, the need for availability
 outweighs the need to log all actions, and a different setting should be
 determined.
-This profile configures the <i>action</i> to be <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_audispd_network_failure_action"></xccdf-1.1:sub></code>.</td>
+This profile configures the <i>action</i> to be <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_audispd_network_failure_action" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
 <td></td>
@@ -4007,7 +4010,7 @@ determined. Details regarding all possible values for <i>ACTION</i> are describe
 a designated account in certain situations. Add or correct the following line
 in <code>/etc/audit/auditd.conf</code> to ensure that administrators are notified
 via email for those situations:
-<pre>action_mail_acct = <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_auditd_action_mail_acct"></xccdf-1.1:sub></pre>
+<pre>action_mail_acct = <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_auditd_action_mail_acct" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -4032,7 +4035,7 @@ determined. Details regarding all possible values for <i>ACTION</i> are describe
 synchronously write audit event data to disk. Add or correct the following
 line in <code>/etc/audit/auditd.conf</code> to ensure that audit event data is
 fully synchronized with the log files on the disk:
-<pre>flush = <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_auditd_flush"></xccdf-1.1:sub></pre>
+<pre>flush = <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_auditd_flush" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -4041,7 +4044,7 @@ fully synchronized with the log files on the disk:
 <td>Determine the amount of audit data (in megabytes)
 which should be retained in each log file. Edit the file
 <code>/etc/audit/auditd.conf</code>. Add or modify the following line, substituting
-the correct value of <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_auditd_max_log_file"></xccdf-1.1:sub> for <i>STOREMB</i>:
+the correct value of <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_auditd_max_log_file" use="legacy"></xccdf-1.2:sub> for <i>STOREMB</i>:
 <pre>max_log_file = <i>STOREMB</i></pre>
 Set the value to <code>6</code> (MB) or higher for general-purpose systems.
 Larger values, of course,
@@ -4091,7 +4094,7 @@ occurs. This is the default. The setting is case-insensitive.</td>
 <td>Determine how many log files
 <code>auditd</code> should retain when it rotates logs.
 Edit the file <code>/etc/audit/auditd.conf</code>. Add or modify the following
-line, substituting <i>NUMLOGS</i> with the correct value of <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_auditd_num_logs"></xccdf-1.1:sub>:
+line, substituting <i>NUMLOGS</i> with the correct value of <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_auditd_num_logs" use="legacy"></xccdf-1.2:sub>:
 <pre>num_logs = <i>NUMLOGS</i></pre>
 Set the value to 5 for general-purpose systems.
 Note that values less than 2 result in no log rotation.</td>
@@ -4133,7 +4136,7 @@ also include <code>suspend</code>, <code>single</code>, and <code>halt</code>.</
 <td>CCE-82512-5</td>
 <td>Set number of records to cause an explicit flush to audit logs</td>
 <td>To configure Audit daemon to issue an explicit flush to disk command
-after writing 50 records, set <code>freq</code> to <code>50</code>
+after writing <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_auditd_freq" use="legacy"></xccdf-1.2:sub> records, set <code>freq</code> to <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_auditd_freq" use="legacy"></xccdf-1.2:sub></code>
 in <code>/etc/audit/auditd.conf</code>.</td>
 </tr>
 <tr>
@@ -4606,10 +4609,10 @@ speculative access to data which is available in the Level 1 Data Cache when
 the page table entry isn't present.
 
 Select the appropriate mitigation by adding the argument
-<code>l1tf=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref=""></xccdf-1.1:sub></code> to the default
+<code>l1tf=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_l1tf_options" use="legacy"></xccdf-1.2:sub></code> to the default
 GRUB 2 command line for the Linux operating system.
-Configure the default Grub2 kernel command line to contain l1tf=xccdf_value(var_l1tf_options) as follows:
-<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) l1tf=xccdf_value(var_l1tf_options)"</pre>
+Configure the default Grub2 kernel command line to contain l1tf=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_l1tf_options" use="legacy"></xccdf-1.2:sub> as follows:
+<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) l1tf=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_l1tf_options" use="legacy"></xccdf-1.2:sub>"</pre>
 
 Since Linux Kernel 4.19 you can check the L1TF vulnerability state with the
 following command:
@@ -4680,10 +4683,10 @@ Note that the value of <code>rng_core.default_quality</code> is global, affectin
 on all hardware random number generators.
 
 Select the appropriate confidence by adding the argument
-<code>rng_core.default_quality=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref=""></xccdf-1.1:sub></code> to the default
+<code>rng_core.default_quality=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_rng_core_default_quality" use="legacy"></xccdf-1.2:sub></code> to the default
 GRUB 2 command line for the Linux operating system.
-Configure the default Grub2 kernel command line to contain rng_core.default_quality=xccdf_value(var_rng_core_default_quality) as follows:
-<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) rng_core.default_quality=xccdf_value(var_rng_core_default_quality)"</pre>
+Configure the default Grub2 kernel command line to contain rng_core.default_quality=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_rng_core_default_quality" use="legacy"></xccdf-1.2:sub> as follows:
+<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) rng_core.default_quality=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_rng_core_default_quality" use="legacy"></xccdf-1.2:sub>"</pre>
 </td>
 </tr>
 <tr>
@@ -4715,10 +4718,10 @@ Since Linux Kernel 4.17 you can check the SSB mitigation state with the followin
 <code>cat /sys/devices/system/cpu/vulnerabilities/spec_store_bypass</code>
 
 Select the appropriate SSB state by adding the argument
-<code>spec_store_bypass_disable=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref=""></xccdf-1.1:sub></code> to the default
+<code>spec_store_bypass_disable=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_spec_store_bypass_disable_options" use="legacy"></xccdf-1.2:sub></code> to the default
 GRUB 2 command line for the Linux operating system.
-Configure the default Grub2 kernel command line to contain spec_store_bypass_disable=xccdf_value(var_spec_store_bypass_disable_options) as follows:
-<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) spec_store_bypass_disable=xccdf_value(var_spec_store_bypass_disable_options)"</pre>
+Configure the default Grub2 kernel command line to contain spec_store_bypass_disable=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_spec_store_bypass_disable_options" use="legacy"></xccdf-1.2:sub> as follows:
+<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) spec_store_bypass_disable=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_spec_store_bypass_disable_options" use="legacy"></xccdf-1.2:sub>"</pre>
 </td>
 </tr>
 <tr>
@@ -5180,13 +5183,13 @@ The configuration that was used to build kernel is available at <code>/boot/conf
 <td></td>
 <td>Specify the hash to use when signing modules</td>
 <td>This configures the kernel to build and sign modules using
-<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_kernel_config_module_sig_hash"></xccdf-1.1:sub> as the hash function.
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_kernel_config_module_sig_hash" use="legacy"></xccdf-1.2:sub> as the hash function.
 
 The configuration that was used to build kernel is available at <code>/boot/config-*</code>.
     To check the configuration value for <code>CONFIG_MODULE_SIG_HASH</code>, run the following command:
     <code>grep CONFIG_MODULE_SIG_HASH /boot/config-*</code>
     
-    For each kernel installed, a line with value "<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_kernel_config_module_sig_hash"></xccdf-1.1:sub>" should be returned.
+    For each kernel installed, a line with value "<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_kernel_config_module_sig_hash" use="legacy"></xccdf-1.2:sub>" should be returned.
     </td>
 </tr>
 <tr>
@@ -5205,7 +5208,7 @@ The configuration that was used to build kernel is available at <code>/boot/conf
     To check the configuration value for <code>CONFIG_MODULE_SIG_KEY</code>, run the following command:
     <code>grep CONFIG_MODULE_SIG_KEY /boot/config-*</code>
     
-    For each kernel installed, a line with value "<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_kernel_config_module_sig_key"></xccdf-1.1:sub>" should be returned.
+    For each kernel installed, a line with value "<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_kernel_config_module_sig_key" use="legacy"></xccdf-1.2:sub>" should be returned.
     </td>
 </tr>
 <tr>
@@ -5289,7 +5292,7 @@ The configuration that was used to build kernel is available at <code>/boot/conf
     To check the configuration value for <code>CONFIG_PANIC_TIMEOUT</code>, run the following command:
     <code>grep CONFIG_PANIC_TIMEOUT /boot/config-*</code>
     
-    For each kernel installed, a line with value "<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_kernel_config_panic_timeout"></xccdf-1.1:sub>" should be returned.
+    For each kernel installed, a line with value "<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_kernel_config_panic_timeout" use="legacy"></xccdf-1.2:sub>" should be returned.
     </td>
 </tr>
 <tr>
@@ -5570,30 +5573,30 @@ When using <code>rsyslogd</code> to off-load logs off an encryption system must 
 <td></td>
 <td>Ensure Log Files Are Owned By Appropriate Group</td>
 <td>The group-owner of all log files written by
-<code>rsyslog</code> should be <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="file_groupowner_logfiles_value"></xccdf-1.1:sub></code>.
+<code>rsyslog</code> should be <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_groupowner_logfiles_value" use="legacy"></xccdf-1.2:sub></code>.
 These log files are determined by the second part of each Rule line in
 <code>/etc/rsyslog.conf</code> and typically all appear in <code>/var/log</code>.
 For each log file <i>LOGFILE</i> referenced in <code>/etc/rsyslog.conf</code>,
 run the following command to inspect the file's group owner:
 <pre>$ ls -l <i>LOGFILE</i></pre>
-If the owner is not <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="file_groupowner_logfiles_value"></xccdf-1.1:sub></code>, run the following command to
+If the owner is not <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_groupowner_logfiles_value" use="legacy"></xccdf-1.2:sub></code>, run the following command to
 correct this:
-<pre>$ sudo chgrp <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="file_groupowner_logfiles_value"></xccdf-1.1:sub> <i>LOGFILE</i></pre>
+<pre>$ sudo chgrp <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_groupowner_logfiles_value" use="legacy"></xccdf-1.2:sub> <i>LOGFILE</i></pre>
 </td>
 </tr>
 <tr>
 <td></td>
 <td>Ensure Log Files Are Owned By Appropriate User</td>
 <td>The owner of all log files written by
-<code>rsyslog</code> should be <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="file_owner_logfiles_value"></xccdf-1.1:sub></code>.
+<code>rsyslog</code> should be <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_owner_logfiles_value" use="legacy"></xccdf-1.2:sub></code>.
 These log files are determined by the second part of each Rule line in
 <code>/etc/rsyslog.conf</code> and typically all appear in <code>/var/log</code>.
 For each log file <i>LOGFILE</i> referenced in <code>/etc/rsyslog.conf</code>,
 run the following command to inspect the file's owner:
 <pre>$ ls -l <i>LOGFILE</i></pre>
-If the owner is not <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="file_owner_logfiles_value"></xccdf-1.1:sub></code>, run the following command to
+If the owner is not <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_owner_logfiles_value" use="legacy"></xccdf-1.2:sub></code>, run the following command to
 correct this:
-<pre>$ sudo chown <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="file_owner_logfiles_value"></xccdf-1.1:sub> <i>LOGFILE</i></pre>
+<pre>$ sudo chown <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_owner_logfiles_value" use="legacy"></xccdf-1.2:sub> <i>LOGFILE</i></pre>
 </td>
 </tr>
 <tr>
@@ -5736,21 +5739,21 @@ logging.
 Along with these other directives, the system can be configured
 to forward its logs to a particular log server by
 adding or correcting one of the following lines,
-substituting <code><i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub></i></code> appropriately.
+substituting <code><i><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_rsyslog_remote_loghost_address" use="legacy"></xccdf-1.2:sub></i></code> appropriately.
 The choice of protocol depends on the environment of the system;
 although TCP and RELP provide more reliable message delivery,
 they may not be supported in all environments.
 <br>
 To use UDP for log message delivery:
-<pre>*.* @<i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub></i></pre>
+<pre>*.* @<i><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_rsyslog_remote_loghost_address" use="legacy"></xccdf-1.2:sub></i></pre>
 <br>
 To use TCP for log message delivery:
-<pre>*.* @@<i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub></i></pre>
+<pre>*.* @@<i><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_rsyslog_remote_loghost_address" use="legacy"></xccdf-1.2:sub></i></pre>
 <br>
 To use RELP for log message delivery:
-<pre>*.* :omrelp:<i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub></i></pre>
+<pre>*.* :omrelp:<i><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_rsyslog_remote_loghost_address" use="legacy"></xccdf-1.2:sub></i></pre>
 <br>
-There must be a resolvable DNS CNAME or Alias record set to "<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub>" for logs to be sent correctly to the centralized logging utility.</td>
+There must be a resolvable DNS CNAME or Alias record set to "<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_rsyslog_remote_loghost_address" use="legacy"></xccdf-1.2:sub>" for logs to be sent correctly to the centralized logging utility.</td>
 </tr>
 <tr>
 <td>CCE-82696-6</td>
@@ -6040,15 +6043,15 @@ To make sure that the setting is persistent, add the following line to a file in
 <tr>
 <td></td>
 <td>Configure ARP filtering for All IPv4 Interfaces</td>
-<td>To set the runtime status of the <code>net.ipv4.conf.all.arp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.arp_filter=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sysctl_net_ipv4_conf_all_arp_filter_value"></xccdf-1.1:sub></pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.arp_filter = <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sysctl_net_ipv4_conf_all_arp_filter_value"></xccdf-1.1:sub></pre>
+<td>To set the runtime status of the <code>net.ipv4.conf.all.arp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.arp_filter=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sysctl_net_ipv4_conf_all_arp_filter_value" use="legacy"></xccdf-1.2:sub></pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.arp_filter = <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sysctl_net_ipv4_conf_all_arp_filter_value" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
 <td></td>
 <td>Configure Response Mode of ARP Requests for All IPv4 Interfaces</td>
-<td>To set the runtime status of the <code>net.ipv4.conf.all.arp_ignore</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.arp_ignore=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sysctl_net_ipv4_conf_all_arp_ignore_value"></xccdf-1.1:sub></pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.arp_ignore = <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sysctl_net_ipv4_conf_all_arp_ignore_value"></xccdf-1.1:sub></pre>
+<td>To set the runtime status of the <code>net.ipv4.conf.all.arp_ignore</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.arp_ignore=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sysctl_net_ipv4_conf_all_arp_ignore_value" use="legacy"></xccdf-1.2:sub></pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.arp_ignore = <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sysctl_net_ipv4_conf_all_arp_ignore_value" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -6082,8 +6085,8 @@ To make sure that the setting is persistent, add the following line to a file in
 <tr>
 <td></td>
 <td>Configure Sending and Accepting Shared Media Redirects for All IPv4 Interfaces</td>
-<td>To set the runtime status of the <code>net.ipv4.conf.all.shared_media</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.shared_media=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sysctl_net_ipv4_conf_all_shared_media_value"></xccdf-1.1:sub></pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.shared_media = <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sysctl_net_ipv4_conf_all_shared_media_value"></xccdf-1.1:sub></pre>
+<td>To set the runtime status of the <code>net.ipv4.conf.all.shared_media</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.shared_media=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sysctl_net_ipv4_conf_all_shared_media_value" use="legacy"></xccdf-1.2:sub></pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.shared_media = <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sysctl_net_ipv4_conf_all_shared_media_value" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -6124,8 +6127,8 @@ To make sure that the setting is persistent, add the following line to a file in
 <tr>
 <td></td>
 <td>Configure Sending and Accepting Shared Media Redirects by Default</td>
-<td>To set the runtime status of the <code>net.ipv4.conf.default.shared_media</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.shared_media=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sysctl_net_ipv4_conf_default_shared_media_value"></xccdf-1.1:sub></pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.shared_media = <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sysctl_net_ipv4_conf_default_shared_media_value"></xccdf-1.1:sub></pre>
+<td>To set the runtime status of the <code>net.ipv4.conf.default.shared_media</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.shared_media=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sysctl_net_ipv4_conf_default_shared_media_value" use="legacy"></xccdf-1.2:sub></pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.shared_media = <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sysctl_net_ipv4_conf_default_shared_media_value" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -6155,7 +6158,7 @@ This measure protects against or limits effects of DoS attacks against the syste
 Set the system to implement rate-limiting measures by adding the following line to
 <code>/etc/sysctl.conf</code> or a configuration file in the <code>/etc/sysctl.d/</code> directory
 (or modify the line to have the required value):
-<pre>net.ipv4.tcp_invalid_ratelimit = <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sysctl_net_ipv4_tcp_invalid_ratelimit_value"></xccdf-1.1:sub></pre>
+<pre>net.ipv4.tcp_invalid_ratelimit = <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sysctl_net_ipv4_tcp_invalid_ratelimit_value" use="legacy"></xccdf-1.2:sub></pre>
 Issue the following command to make the changes take effect:
 <pre># sysctl --system</pre>
 </td>
@@ -7306,6 +7309,13 @@ To make sure that the setting is persistent, add the following line to a file in
 </td>
 </tr>
 <tr>
+<td></td>
+<td>Configure file name of core dumps</td>
+<td>To set the runtime status of the <code>kernel.core_uses_pid</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.core_uses_pid=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.core_uses_pid = 0</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-82499-5</td>
 <td>Restrict Access to Kernel Message Buffer</td>
 <td>To set the runtime status of the <code>kernel.dmesg_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.dmesg_restrict=1</pre>
@@ -7409,8 +7419,8 @@ To make sure that the setting is persistent, add the following line to a file in
 <tr>
 <td>CCE-82498-7</td>
 <td>Restrict Exposed Kernel Pointer Addresses Access</td>
-<td>To set the runtime status of the <code>kernel.kptr_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.kptr_restrict=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sysctl_kernel_kptr_restrict_value"></xccdf-1.1:sub></pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.kptr_restrict = <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sysctl_kernel_kptr_restrict_value"></xccdf-1.1:sub></pre>
+<td>To set the runtime status of the <code>kernel.kptr_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.kptr_restrict=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sysctl_kernel_kptr_restrict_value" use="legacy"></xccdf-1.2:sub></pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.kptr_restrict = <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sysctl_kernel_kptr_restrict_value" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -7494,7 +7504,7 @@ It should produce no output in a well-configured system.</td>
 general-purpose desktops and servers, as well as systems in many other roles.
 To configure the system to use this policy, add or correct the following line
 in <code>/etc/selinux/config</code>:
-<pre>SELINUXTYPE=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_selinux_policy_name"></xccdf-1.1:sub></pre>
+<pre>SELINUXTYPE=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_selinux_policy_name" use="legacy"></xccdf-1.2:sub></pre>
 Other policies, such as <code>mls</code>, provide additional security labeling
 and greater confinement but are not compatible with many general-purpose
 use cases.</td>
@@ -7502,10 +7512,10 @@ use cases.</td>
 <tr>
 <td>CCE-82531-5</td>
 <td>Ensure SELinux State is Enforcing</td>
-<td>The SELinux state should be set to <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_selinux_state"></xccdf-1.1:sub></code> at
+<td>The SELinux state should be set to <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_selinux_state" use="legacy"></xccdf-1.2:sub></code> at
 system boot time.  In the file <code>/etc/selinux/config</code>, add or correct the
 following line to configure the system to boot into enforcing mode:
-<pre>SELINUX=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_selinux_state"></xccdf-1.1:sub></pre>
+<pre>SELINUX=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_selinux_state" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -7753,10 +7763,10 @@ The <code>sendmail</code> package can be removed with the following command:
 <td>Configure System to Forward All Mail For The Root Account</td>
 <td>Make sure that mails delivered to root user are forwarded to a monitored
 email address. Make sure that the address
-<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_postfix_root_mail_alias"></xccdf-1.1:sub> is a valid email address
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_postfix_root_mail_alias" use="legacy"></xccdf-1.2:sub> is a valid email address
 reachable from the system in question. Use the following command to
 configure the alias:
-<pre>$ sudo echo "root: <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_postfix_root_mail_alias"></xccdf-1.1:sub>" &gt;&gt; /etc/aliases
+<pre>$ sudo echo "root: <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_postfix_root_mail_alias" use="legacy"></xccdf-1.2:sub>" &gt;&gt; /etc/aliases
 $ sudo newaliases</pre>
 </td>
 </tr>
@@ -7776,7 +7786,7 @@ postmaster: root</pre>
 <td>Set up a relay host that will act as a gateway for all outbound email.
 Edit the file <code>/etc/postfix/main.cf</code> to ensure that only the following
 <code>relayhost</code> line appears:
-<pre>relayhost = <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_postfix_relayhost"></xccdf-1.1:sub></pre>
+<pre>relayhost = <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_postfix_relayhost" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -7987,11 +7997,11 @@ for management connections made by chronyc.</td>
 <td>CCE-82684-2</td>
 <td>Configure Time Service Maxpoll Interval</td>
 <td>The <code>maxpoll</code> should be configured to
-<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_time_service_set_maxpoll"></xccdf-1.1:sub> in <code>/etc/ntp.conf</code> or
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_time_service_set_maxpoll" use="legacy"></xccdf-1.2:sub> in <code>/etc/ntp.conf</code> or
 <code>/etc/chrony.conf</code> to continuously poll time servers. To configure
 <code>maxpoll</code> in <code>/etc/ntp.conf</code> or <code>/etc/chrony.conf</code>
 add the following after each `server`, `pool` or `peer` entry:
-<pre>maxpoll <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_time_service_set_maxpoll"></xccdf-1.1:sub></pre>
+<pre>maxpoll <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_time_service_set_maxpoll" use="legacy"></xccdf-1.2:sub></pre>
 to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
 should be configured too.
 If no <code>server</code> or <code>pool</code> directives are configured, the rule evaluates
@@ -8414,7 +8424,7 @@ remote access.</td>
 the session key is renegotiated, both in terms of
 amount of data that may be transmitted and the time
 elapsed. To decrease the default limits, put line
-<code>RekeyLimit <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_ssh_client_rekey_limit_size"></xccdf-1.1:sub> <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_ssh_client_rekey_limit_time"></xccdf-1.1:sub></code> to file <code>/etc/ssh/ssh_config.d/02-rekey-limit.conf</code>.
+<code>RekeyLimit <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_ssh_client_rekey_limit_size" use="legacy"></xccdf-1.2:sub> <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_ssh_client_rekey_limit_time" use="legacy"></xccdf-1.2:sub></code> to file <code>/etc/ssh/ssh_config.d/02-rekey-limit.conf</code>.
 Make sure that there is no other <code>RekeyLimit</code> configuration preceding
 the <code>include</code> directive in the main config file
 <code>/etc/ssh/ssh_config</code>. Check also other files in
@@ -8464,7 +8474,7 @@ has passed, the idle user will be automatically logged out.
 <br><br>
 To set an idle timeout interval, edit the following line in <code>/etc/ssh/sshd_config</code> as
 follows:
-<pre>ClientAliveInterval <b><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sshd_idle_timeout_value"></xccdf-1.1:sub></b></pre>
+<pre>ClientAliveInterval <b><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sshd_idle_timeout_value" use="legacy"></xccdf-1.2:sub></b></pre>
 <br><br>
 The timeout <b>interval</b> is given in seconds. For example, have a timeout
 of 10 minutes, set <b>interval</b> to 600.
@@ -8513,7 +8523,7 @@ is required, it should be enabled only after a user has authenticated; otherwise
 it should be disabled. To disable compression or delay compression until after
 a user has successfully authenticated, add or correct the following line in the
 <code>/etc/ssh/sshd_config</code> file:
-<pre>Compression <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_disable_compression"></xccdf-1.1:sub></pre>
+<pre>Compression <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_sshd_disable_compression" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -8836,7 +8846,7 @@ To decrease the default limits, add or correct the following line in
 
 <code>/etc/ssh/sshd_config</code>:
 
-<pre>RekeyLimit <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_rekey_limit_size"></xccdf-1.1:sub> <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_rekey_limit_time"></xccdf-1.1:sub></pre>
+<pre>RekeyLimit <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_rekey_limit_size" use="legacy"></xccdf-1.2:sub> <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_rekey_limit_time" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -8882,7 +8892,7 @@ SSH, add or correct the following line in
 <td>The <code>MaxAuthTries</code> parameter specifies the maximum number of authentication attempts
 permitted per connection. Once the number of failures reaches half this value, additional failures are logged.
 to set MaxAUthTries edit <code>/etc/ssh/sshd_config</code> as follows:
-<pre>MaxAuthTries <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sshd_max_auth_tries_value"></xccdf-1.1:sub></pre>
+<pre>MaxAuthTries <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sshd_max_auth_tries_value" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -8890,7 +8900,7 @@ to set MaxAUthTries edit <code>/etc/ssh/sshd_config</code> as follows:
 <td>Set SSH MaxSessions limit</td>
 <td>The <code>MaxSessions</code> parameter specifies the maximum number of open sessions permitted
 from a given connection. To set MaxSessions edit
-<code>/etc/ssh/sshd_config</code> as follows: <pre>MaxSessions <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_max_sessions"></xccdf-1.1:sub></pre>
+<code>/etc/ssh/sshd_config</code> as follows: <pre>MaxSessions <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_sshd_max_sessions" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -8902,7 +8912,7 @@ dropped until authentication succeeds or the LoginGraceTime expires for a
 connection. To confgure MaxStartups, you should add or correct the following
 line in the
 <code>/etc/ssh/sshd_config</code> file:
-<pre>MaxStartups <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_set_maxstartups"></xccdf-1.1:sub></pre>
+<pre>MaxStartups <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_sshd_set_maxstartups" use="legacy"></xccdf-1.2:sub></pre>
 CIS recommends a MaxStartups value of '10:30:60', or more restrictive where
 dictated by site policy.</td>
 </tr>
@@ -8912,7 +8922,7 @@ dictated by site policy.</td>
 <td>When enabled, SSH will create an unprivileged child process that
 has the privilege of the authenticated user. To enable privilege separation in
 SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
-<pre>UsePrivilegeSeparation <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_priv_separation"></xccdf-1.1:sub></pre>
+<pre>UsePrivilegeSeparation <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_sshd_priv_separation" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>

@@ -1,5 +1,6 @@
+<!DOCTYPE html>
 <html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-<head>
+<head lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>[DRAFT] Protection Profile for General Purpose Operating Systems</title>
 </head>
@@ -546,8 +547,7 @@ of events.
   <td xml:lang="en-US">
 Single-user mode is intended as a system recovery
 method, providing a single user root access to the system by
-providing a boot option at startup. By default, no authentication
-is performed if single-user mode is selected.
+providing a boot option at startup.
 <br /><br />
 By default, single-user mode is protected by requiring a password and is set
 in <tt>/usr/lib/systemd/system/rescue.service</tt>.
@@ -1042,7 +1042,8 @@ but does not have an assigned password, it may be possible to log
 into the account without authentication. Remove any instances of the
 <tt>nullok</tt> in
 
-<tt>/etc/pam.d/system-auth</tt>
+<tt>/etc/pam.d/system-auth</tt> and
+<tt>/etc/pam.d/password-auth</tt>
 
 to prevent logins with empty passwords.
   </td>
@@ -1146,9 +1147,9 @@ recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>aut
 depending on the OS version.
   </td>
   <td xml:lang="en-US">
-Locking out user accounts after a number of incorrect attempts prevents direct password
-guessing attacks. In combination with the <tt>silent</tt> option, user enumeration attacks
-are also mitigated.
+By limiting the number of failed logon attempts, the risk of unauthorized system access via
+user password guessing, also known as brute-forcing, is reduced. Limits are imposed by locking
+the account.
   </td>
   <td></td>
 </tr>
@@ -1180,11 +1181,14 @@ pam_faillock.so module requires multiple entries in pam files. These entries mus
 defined to work as expected. In order to avoid any errors when manually editing these files,
 it is recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.
+
+If <tt>unlock_time</tt> is set to <tt>0</tt>, manual intervention by an administrator is required
+to unlock a user. This should be done using the <tt>faillock</tt> tool.
   </td>
   <td xml:lang="en-US">
-Locking out user accounts after a number of incorrect attempts prevents direct password
-guessing attacks. Ensuring that an administrator is involved in unlocking locked accounts
-draws appropriate attention to such situations.
+By limiting the number of failed logon attempts the risk of unauthorized system
+access via user password guessing, otherwise known as brute-forcing, is reduced.
+Limits are imposed by locking the account.
   </td>
   <td></td>
 </tr>
@@ -1194,15 +1198,15 @@ draws appropriate attention to such situations.
   <td>Set number of records to cause an explicit flush to audit logs</td>
   <td xml:lang="en-US">
 To configure Audit daemon to issue an explicit flush to disk command
-after writing 50 records, set <tt>freq</tt> to <tt>50</tt>
+after writing <tt>50</tt> records, set <tt>freq</tt> to <tt><tt>50</tt></tt>
 in <tt>/etc/audit/auditd.conf</tt>.
   </td>
   <td xml:lang="en-US">
-If option <tt>freq</tt> isn't set to <tt>50</tt>, the flush to disk
+If option <tt>freq</tt> isn't set to <tt><sub idref="var_auditd_freq" /></tt>, the flush to disk
 may happen after higher number of records, increasing the danger
 of audit loss.
   </td>
-  <td></td>
+  <td>var_auditd_freq=50</td>
 </tr>
 <tr>
   <td>CM-6</td>
@@ -1450,14 +1454,14 @@ Also prevents leak of data and detection of corrupted memory.
   <td>Enable SLUB/SLAB allocator poisoning</td>
   <td xml:lang="en-US">
 To enable poisoning of SLUB/SLAB objects,
-add the argument <tt>slub_debug=P</tt> to the default
+add the argument <tt>slub_debug=<tt>P</tt></tt> to the default
 GRUB 2 command line for the Linux operating system.
-To ensure that <tt>slub_debug=P</tt> is added as a kernel command line
-argument to newly installed kernels, add <tt>slub_debug=P</tt> to the
+To ensure that <tt>slub_debug=<tt>P</tt></tt> is added as a kernel command line
+argument to newly installed kernels, add <tt>slub_debug=<tt>P</tt></tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... slub_debug=P ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="slub_debug=P"</pre>
+<pre>GRUB_CMDLINE_LINUX="... slub_debug=<tt>P</tt> ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="slub_debug=<tt>P</tt>"</pre>
   </td>
   <td xml:lang="en-US">
 Poisoning writes an arbitrary value to freed objects, so any modification or
@@ -1466,7 +1470,7 @@ detected and prevented.
 This prevents many types of use-after-free vulnerabilities at little performance cost.
 Also prevents leak of data and detection of corrupted memory.
   </td>
-  <td></td>
+  <td>var_slub_debug_options=P</td>
 </tr>
 <tr>
   <td>CM-6(a)</td>
