@@ -1204,9 +1204,7 @@ rather than relying on the automounter.
 <br><br>
 
 The <code>autofs</code> service can be disabled with the following command:
-<pre>$ sudo systemctl disable autofs.service</pre>
-The <code>autofs</code> service can be masked with the following command:
-<pre>$ sudo systemctl mask autofs.service</pre>
+<pre>$ sudo systemctl mask --now autofs.service</pre>
 </td>
 <td xml:lang="en-US">Disabling the automounter permits the administrator to
 statically control filesystem mounting through <code>/etc/fstab</code>.
@@ -1230,9 +1228,7 @@ for SystemD related issues and should otherwise be disabled.
 By default, the <code>debug-shell</code> SystemD service is already disabled.
 
 The <code>debug-shell</code> service can be disabled with the following command:
-<pre>$ sudo systemctl disable debug-shell.service</pre>
-The <code>debug-shell</code> service can be masked with the following command:
-<pre>$ sudo systemctl mask debug-shell.service</pre>
+<pre>$ sudo systemctl mask --now debug-shell.service</pre>
 </td>
 <td xml:lang="en-US">This prevents attackers with physical access from trivially bypassing security
 on the machine through valid troubleshooting configurations and gaining root
@@ -1260,9 +1256,7 @@ system call to boot a secondary kernel ("capture" kernel) following a system
 crash, which can load information from the crashed kernel for analysis.
 
 The <code>kdump</code> service can be disabled with the following command:
-<pre>$ sudo systemctl disable kdump.service</pre>
-The <code>kdump</code> service can be masked with the following command:
-<pre>$ sudo systemctl mask kdump.service</pre>
+<pre>$ sudo systemctl mask --now kdump.service</pre>
 </td>
 <td xml:lang="en-US">Kernel core dumps may contain the full contents of system memory at the
 time of the crash. Kernel core dumps consume a considerable amount of disk
@@ -1284,9 +1278,7 @@ communicate with the requested service. If the system does not require RPC
 (such as for NFS servers) then this service should be disabled.
 
 The <code>rpcbind</code> service can be disabled with the following command:
-<pre>$ sudo systemctl disable rpcbind.service</pre>
-The <code>rpcbind</code> service can be masked with the following command:
-<pre>$ sudo systemctl mask rpcbind.service</pre>
+<pre>$ sudo systemctl mask --now rpcbind.service</pre>
 </td>
 <td xml:lang="en-US">If the system does not require rpc based services, it is recommended that
 rpcbind be disabled to reduce the attack surface.</td>
@@ -1432,11 +1424,17 @@ enabled on the console or console port that has been let unattended.</td>
 </tr>
 <tr>
 <td>CCE-27082-7</td>
-<td>Set SSH Client Alive Max Count</td>
-<td xml:lang="en-US">To ensure the SSH idle timeout occurs precisely when the <code>ClientAliveInterval</code> is set,
-edit <code>/etc/ssh/sshd_config</code> as follows:
-<pre>ClientAliveCountMax <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_set_keepalive"></xccdf-1.1:sub></pre>
-</td>
+<td>Set SSH Client Alive Count Max</td>
+<td xml:lang="en-US">The SSH server sends at most <code>ClientAliveCountMax</code> messages
+during a SSH session and waits for a response from the SSH client.
+The option <code>ClientAliveInterval</code> configures timeout after
+each <code>ClientAliveCountMax</code> message. If the SSH server does not
+receive a response from the client, then the connection is considered idle
+and terminated.
+
+To ensure the SSH idle timeout occurs precisely when the
+<code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
+value of <code>0</code>.</td>
 <td xml:lang="en-US">This ensures a user login will be terminated as soon as the <code>ClientAliveInterval</code>
 is reached.</td>
 <td></td>
@@ -1634,7 +1632,7 @@ forwarding is enabled and the system is functioning as a router.
 Accepting source-routed packets in the IPv4 protocol has few legitimate
 uses. It should be disabled unless it is absolutely required.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>SC-5CM-6(a)<br>SC-7(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>SC-5<br>CM-6(a)<br>SC-7(a)<br>
 </td>
 </tr>
 <tr>
@@ -1691,7 +1689,7 @@ from the system's route table possibly revealing portions of the network topolog
 <br>
 The ability to send ICMP redirects is only appropriate for systems acting as routers.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>SC-5CM-6(a)<br>SC-7(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>SC-5<br>CM-6(a)<br>SC-7(a)<br>
 </td>
 </tr>
 <tr>
@@ -1782,7 +1780,7 @@ from the system's route table possibly revealing portions of the network topolog
 <br>
 The ability to send ICMP redirects is only appropriate for systems acting as routers.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>SC-5CM-6(a)<br>SC-7(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>SC-5<br>CM-6(a)<br>SC-7(a)<br>
 </td>
 </tr>
 <tr>
@@ -1823,7 +1821,7 @@ network topology information with other routers. If this capability is used when
 not required, system network information may be unnecessarily transmitted across
 the network.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>SC-5CM-6(a)<br>SC-7(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>SC-5<br>CM-6(a)<br>SC-7(a)<br>
 </td>
 </tr>
 <tr>

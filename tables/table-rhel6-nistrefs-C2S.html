@@ -47,20 +47,15 @@
 <td>Set Account Expiration Following Inactivity</td>
 <td xml:lang="en-US">To specify the number of days after a password expires (which
 signifies inactivity) until an account is permanently disabled, add or correct
-the following lines in <code>/etc/default/useradd</code>, substituting
-<code><i>NUM_DAYS</i></code> appropriately:
+the following line in <code>/etc/default/useradd</code>:
 <pre>INACTIVE=<i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></i></pre>
-A value of 35 is recommended; however, this profile expects that the value is set to
-<code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></code>.
-If a password is currently on the
-verge of expiration, then 35 days remain until the account is automatically
-disabled. However, if the password will not expire for another 60 days, then 95
-days could elapse until the account would be automatically disabled. See the
-<code>useradd</code> man page for more information.  Determining the inactivity
-timeout must be done with careful consideration of the length of a "normal"
-period of inactivity for users in the particular environment. Setting
-the timeout too low incurs support costs and also has the potential to impact
-availability of the system to legitimate users.</td>
+If a password is currently on the verge of expiration, then
+<code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></code>
+day(s) remain(s) until the account is automatically
+disabled. However, if the password will not expire for another 60 days, then 60
+days plus <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></code> day(s) could
+elapse until the account would be automatically disabled. See the
+<code>useradd</code> man page for more information.</td>
 <td xml:lang="en-US">Disabling inactive accounts ensures that accounts which may not
 have been responsibly removed are not available to attackers
 who may have compromised their credentials.</td>
@@ -458,8 +453,8 @@ audited.</td>
 <tr>
 <td>CCE-26457-2</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands</td>
-<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. To find the relevant setuid /
+<td xml:lang="en-US">The audit system should collect information about usage of privileged
+commands for all users and root. To find the relevant setuid /
 setgid programs, run the following command for each local partition
 <i>PART</i>:
 <pre>$ sudo find <i>PART</i> -xdev -type f -perm -4000 -o -type f -perm -2000 2&gt;/dev/null</pre>
@@ -469,13 +464,13 @@ the following form to a file with suffix <code>.rules</code> in the directory
 <code>/etc/audit/rules.d</code> for each setuid / setgid program on the system,
 replacing the <i>SETUID_PROG_PATH</i> part with the full path of that setuid /
 setgid program in the list:
-<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F perm=x -F auid&gt;=500 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F auid&gt;=500 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code> for each setuid / setgid program on the
 system, replacing the <i>SETUID_PROG_PATH</i> part with the full path of that
 setuid / setgid program in the list:
-<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F perm=x -F auid&gt;=500 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F auid&gt;=500 -F auid!=unset -F key=privileged</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -3345,7 +3340,7 @@ of such data.</td>
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-27007-4</td>
 <td>Enable ExecShield via sysctl</td>
 <td xml:lang="en-US">By default on Red Hat Enterprise Linux 7 64-bit systems, ExecShield is
 enabled and can only be disabled if the hardware does not support
@@ -3411,7 +3406,7 @@ forwarding is enabled and the system is functioning as a router.
 Accepting source-routed packets in the IPv4 protocol has few legitimate
 uses. It should be disabled unless it is absolutely required.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>SC-5CM-6(a)<br>SC-7(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>SC-5<br>CM-6(a)<br>SC-7(a)<br>
 </td>
 </tr>
 <tr>
@@ -3468,7 +3463,7 @@ from the system's route table possibly revealing portions of the network topolog
 <br>
 The ability to send ICMP redirects is only appropriate for systems acting as routers.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>SC-5CM-6(a)<br>SC-7(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>SC-5<br>CM-6(a)<br>SC-7(a)<br>
 </td>
 </tr>
 <tr>
@@ -3545,7 +3540,7 @@ from the system's route table possibly revealing portions of the network topolog
 <br>
 The ability to send ICMP redirects is only appropriate for systems acting as routers.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>SC-5CM-6(a)<br>SC-7(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>SC-5<br>CM-6(a)<br>SC-7(a)<br>
 </td>
 </tr>
 <tr>
@@ -3586,7 +3581,7 @@ network topology information with other routers. If this capability is used when
 not required, system network information may be unnecessarily transmitted across
 the network.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>SC-5CM-6(a)<br>SC-7(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>SC-5<br>CM-6(a)<br>SC-7(a)<br>
 </td>
 </tr>
 <tr>

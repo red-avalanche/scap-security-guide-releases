@@ -47,20 +47,15 @@
 <td>Set Account Expiration Following Inactivity</td>
 <td xml:lang="en-US">To specify the number of days after a password expires (which
 signifies inactivity) until an account is permanently disabled, add or correct
-the following lines in <code>/etc/default/useradd</code>, substituting
-<code><i>NUM_DAYS</i></code> appropriately:
+the following line in <code>/etc/default/useradd</code>:
 <pre>INACTIVE=<i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></i></pre>
-A value of 35 is recommended; however, this profile expects that the value is set to
-<code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></code>.
-If a password is currently on the
-verge of expiration, then 35 days remain until the account is automatically
-disabled. However, if the password will not expire for another 60 days, then 95
-days could elapse until the account would be automatically disabled. See the
-<code>useradd</code> man page for more information.  Determining the inactivity
-timeout must be done with careful consideration of the length of a "normal"
-period of inactivity for users in the particular environment. Setting
-the timeout too low incurs support costs and also has the potential to impact
-availability of the system to legitimate users.</td>
+If a password is currently on the verge of expiration, then
+<code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></code>
+day(s) remain(s) until the account is automatically
+disabled. However, if the password will not expire for another 60 days, then 60
+days plus <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></code> day(s) could
+elapse until the account would be automatically disabled. See the
+<code>useradd</code> man page for more information.</td>
 <td xml:lang="en-US">Disabling inactive accounts ensures that accounts which may not
 have been responsibly removed are not available to attackers
 who may have compromised their credentials.</td>
@@ -663,16 +658,6 @@ an empty entry, such as a leading or trailing colon or two consecutive colons,
 this is interpreted as the current working directory. If deviations from the
 default system search path for the local interactive user are required, they
 must be documented with the Information System Security Officer (ISSO).</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>CCE-80528-3</td>
-<td>All Interactive Users Must Have A Home Directory Defined</td>
-<td xml:lang="en-US">Assign home directories to all interactive users that currently do not
-have a home directory assigned.</td>
-<td xml:lang="en-US">If local interactive users are not assigned a valid home directory, there is no
-place for the storage and control of files they should own.</td>
 <td></td>
 <td></td>
 </tr>
@@ -1567,8 +1552,8 @@ loss.</td>
 <tr>
 <td>CCE-27437-3</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands</td>
-<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. To find the relevant setuid /
+<td xml:lang="en-US">The audit system should collect information about usage of privileged
+commands for all users and root. To find the relevant setuid /
 setgid programs, run the following command for each local partition
 <i>PART</i>:
 <pre>$ sudo find <i>PART</i> -xdev -type f -perm -4000 -o -type f -perm -2000 2&gt;/dev/null</pre>
@@ -1578,13 +1563,13 @@ the following form to a file with suffix <code>.rules</code> in the directory
 <code>/etc/audit/rules.d</code> for each setuid / setgid program on the system,
 replacing the <i>SETUID_PROG_PATH</i> part with the full path of that setuid /
 setgid program in the list:
-<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code> for each setuid / setgid program on the
 system, replacing the <i>SETUID_PROG_PATH</i> part with the full path of that
 setuid / setgid program in the list:
-<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -2502,7 +2487,8 @@ Set this value to <code>single</code> to cause the system to switch to single us
 mode for corrective action. Acceptable values also include <code>syslog</code> and
 <code>halt</code>. For certain systems, the need for availability
 outweighs the need to log all actions, and a different setting should be
-determined.</td>
+determined.
+This profile configures the <i>action</i> to be <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_audispd_network_failure_action"></xccdf-1.1:sub></code>.</td>
 <td xml:lang="en-US">Taking appropriate action when there is an error sending audit records to a
 remote system will minimize the possibility of losing audit records.</td>
 <td></td>
@@ -3385,10 +3371,10 @@ computer viruses, as well as to limit their spread to other systems.</td>
 <td>CCE-80519-2</td>
 <td>Install Smart Card Packages For Multifactor Authentication</td>
 <td xml:lang="en-US">Configure the operating system to implement multifactor authentication by
-installing the required packages with the following command:
-The <code>esc pam_pkcs11</code> package can be installed with the following command:
+installing the required package with the following command:
+The <code>pam_pkcs11</code> package can be installed with the following command:
 <pre>
-$ sudo yum install esc pam_pkcs11</pre>
+$ sudo yum install pam_pkcs11</pre>
 </td>
 <td xml:lang="en-US">Using an authentication device, such as a CAC or token that is separate from
 the information system, ensures that even if the information system is
@@ -3697,6 +3683,19 @@ or for the use of two-factor authentication.</td>
 <td></td>
 </tr>
 <tr>
+<td>CCE-80368-4</td>
+<td>Install the Host Intrusion Prevention System (HIPS) Module</td>
+<td xml:lang="en-US">Install the McAfee Host Intrusion Prevention System (HIPS) Module if it is absolutely
+necessary. If SELinux is enabled, do not install or enable this module.</td>
+<td xml:lang="en-US">Without a host-based intrusion detection tool, there is no system-level defense
+when an intruder gains access to a system or network. Additionally, a host-based
+intrusion prevention tool can provide methods to immediately lock out detected
+intrusion attempts.</td>
+<td></td>
+<td>CM-6(a)<br>
+</td>
+</tr>
+<tr>
 <td>CCE-27096-7</td>
 <td>Install AIDE</td>
 <td xml:lang="en-US">The <code>aide</code> package can be installed with the following command:
@@ -3738,29 +3737,6 @@ network services. Removing it decreases the risk of those services' accidental (
 activation.</td>
 <td></td>
 <td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>IA-5(1)(c)<br>
-</td>
-</tr>
-<tr>
-<td>CCE-27351-6</td>
-<td>Install the screen Package</td>
-<td xml:lang="en-US">To enable console screen locking, install the <code>screen</code> package.
-The <code>screen</code> package can be installed with the following command:
-<pre>
-$ sudo yum install screen</pre>
-Instruct users to begin new terminal sessions with the following command:
-<pre>$ screen</pre>
-The console can now be locked with the following key combination:
-<pre>ctrl+a x</pre>
-</td>
-<td xml:lang="en-US">A session time-out lock is a temporary action taken when a user stops work and moves away from the immediate
-physical vicinity of the information system but does not logout because of the temporary nature of the absence.
-Rather than relying on the user to manually lock their operation system session prior to vacating the vicinity,
-operating systems need to be able to identify when a user's session has idled and take action to initiate the
-session lock.
-<br><br>
-The <code>screen</code> package allows for a session lock to be implemented and configured.</td>
-<td></td>
-<td>CM-6(a)<br>
 </td>
 </tr>
 <tr>
@@ -4234,9 +4210,7 @@ rather than relying on the automounter.
 <br><br>
 
 The <code>autofs</code> service can be disabled with the following command:
-<pre>$ sudo systemctl disable autofs.service</pre>
-The <code>autofs</code> service can be masked with the following command:
-<pre>$ sudo systemctl mask autofs.service</pre>
+<pre>$ sudo systemctl mask --now autofs.service</pre>
 </td>
 <td xml:lang="en-US">Disabling the automounter permits the administrator to
 statically control filesystem mounting through <code>/etc/fstab</code>.
@@ -4267,9 +4241,7 @@ system call to boot a secondary kernel ("capture" kernel) following a system
 crash, which can load information from the crashed kernel for analysis.
 
 The <code>kdump</code> service can be disabled with the following command:
-<pre>$ sudo systemctl disable kdump.service</pre>
-The <code>kdump</code> service can be masked with the following command:
-<pre>$ sudo systemctl mask kdump.service</pre>
+<pre>$ sudo systemctl mask --now kdump.service</pre>
 </td>
 <td xml:lang="en-US">Kernel core dumps may contain the full contents of system memory at the
 time of the crash. Kernel core dumps consume a considerable amount of disk
@@ -4431,6 +4403,7 @@ Access Card.</td>
 <td>Ensure Default SNMP Password Is Not Used</td>
 <td xml:lang="en-US">Edit <code>/etc/snmp/snmpd.conf</code>, remove or change the default community strings of
 <code>public</code> and <code>private</code>.
+This profile configures new read-only community string to <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_snmpd_ro_string"></xccdf-1.1:sub></code> and read-write community string to <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_snmpd_rw_string"></xccdf-1.1:sub></code>.
 Once the default community strings have been changed, restart the SNMP service:
 <pre>$ sudo service snmpd restart</pre>
 </td>
@@ -4696,11 +4669,17 @@ enabled on the console or console port that has been let unattended.</td>
 </tr>
 <tr>
 <td>CCE-27082-7</td>
-<td>Set SSH Client Alive Max Count</td>
-<td xml:lang="en-US">To ensure the SSH idle timeout occurs precisely when the <code>ClientAliveInterval</code> is set,
-edit <code>/etc/ssh/sshd_config</code> as follows:
-<pre>ClientAliveCountMax <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_set_keepalive"></xccdf-1.1:sub></pre>
-</td>
+<td>Set SSH Client Alive Count Max</td>
+<td xml:lang="en-US">The SSH server sends at most <code>ClientAliveCountMax</code> messages
+during a SSH session and waits for a response from the SSH client.
+The option <code>ClientAliveInterval</code> configures timeout after
+each <code>ClientAliveCountMax</code> message. If the SSH server does not
+receive a response from the client, then the connection is considered idle
+and terminated.
+
+To ensure the SSH idle timeout occurs precisely when the
+<code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
+value of <code>0</code>.</td>
 <td xml:lang="en-US">This ensures a user login will be terminated as soon as the <code>ClientAliveInterval</code>
 is reached.</td>
 <td></td>
@@ -4860,17 +4839,29 @@ used to generate the hash.</td>
 </td>
 </tr>
 <tr>
+<td>CCE-84061-1</td>
+<td>Configure SSSD LDAP Backend Client to Demand a Valid Certificate from the Server</td>
+<td xml:lang="en-US">Configure SSSD to demand a valid certificate from the server to
+protect the integrity of LDAP remote access sessions by setting
+the <pre>ldap_tls_reqcert</pre> option in <pre>/etc/sssd/sssd.conf</pre>
+to <code>demand</code>.</td>
+<td xml:lang="en-US">Without a valid certificate presented to the LDAP client backend, the identity of a
+server can be forged compromising LDAP remote access sessions.</td>
+<td></td>
+<td>SC-12(3)<br>CM-6(a)<br>
+</td>
+</tr>
+<tr>
 <td>CCE-80546-5</td>
 <td>Configure SSSD LDAP Backend to Use TLS For All Transactions</td>
-<td xml:lang="en-US">This check verifies that Red Hat Enterprise Linux 7 implements cryptography
-to protect the integrity of remote LDAP authentication sessions.
+<td xml:lang="en-US">The LDAP client should be configured to implement TLS for the integrity
+of all remote LDAP authentication sessions. If the <code>id_provider</code> is
+set to <code>ldap</code> or <code>ipa</code> in <code>/etc/sssd/sssd.conf</code> or any of the
+<code>/etc/sssd/sssd.conf.d</code> configuration files, <code>ldap_id_use_start_tls</code>
+must be set to <code>true</code>.
 <br><br>
-To determine if LDAP is being used for authentication, use the following
-command:
-<pre>$ sudo grep -i useldapauth /etc/sysconfig/authconfig</pre>
-<br><br>
-If <code>USELDAPAUTH=yes</code>, then LDAP is being used. To check if LDAP is
-configured to use TLS, use the following command:
+To check if LDAP is configured to use TLS when <code>id_provider</code> is
+set to <code>ldap</code> or <code>ipa</code>, use the following command:
 <pre>$ sudo grep -i ldap_id_use_start_tls /etc/sssd/sssd.conf</pre>
 </td>
 <td xml:lang="en-US">Without cryptographic integrity protections, information can be
@@ -4962,7 +4953,7 @@ forwarding is enabled and the system is functioning as a router.
 Accepting source-routed packets in the IPv4 protocol has few legitimate
 uses. It should be disabled unless it is absolutely required.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>SC-5CM-6(a)<br>SC-7(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>SC-5<br>CM-6(a)<br>SC-7(a)<br>
 </td>
 </tr>
 <tr>
@@ -4977,7 +4968,7 @@ from the system's route table possibly revealing portions of the network topolog
 <br>
 The ability to send ICMP redirects is only appropriate for systems acting as routers.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>SC-5CM-6(a)<br>SC-7(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>SC-5<br>CM-6(a)<br>SC-7(a)<br>
 </td>
 </tr>
 <tr>
@@ -5026,7 +5017,7 @@ from the system's route table possibly revealing portions of the network topolog
 <br>
 The ability to send ICMP redirects is only appropriate for systems acting as routers.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>SC-5CM-6(a)<br>SC-7(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>SC-5<br>CM-6(a)<br>SC-7(a)<br>
 </td>
 </tr>
 <tr>
@@ -5055,7 +5046,7 @@ network topology information with other routers. If this capability is used when
 not required, system network information may be unnecessarily transmitted across
 the network.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>SC-5CM-6(a)<br>SC-7(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>SC-5<br>CM-6(a)<br>SC-7(a)<br>
 </td>
 </tr>
 <tr>
@@ -5082,8 +5073,8 @@ uses. It should be disabled unless it is absolutely required.</td>
 <td xml:lang="en-US">If running the <code>tftp</code> service is necessary, it should be configured
 to change its root directory at startup. To do so, ensure
 <code>/etc/xinetd.d/tftp</code> includes <code>-s</code> as a command line argument, as shown in
-the following example (which is also the default):
-<pre>server_args = -s /var/lib/tftpboot</pre>
+the following example:
+<pre>server_args = -s <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_tftpd_secure_directory"></xccdf-1.1:sub></pre>
 </td>
 <td xml:lang="en-US">Using the <code>-s</code> option causes the TFTP service to only serve files from the
 given directory. Serving files from an intentionally-specified directory

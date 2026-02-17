@@ -62,20 +62,15 @@ have been responsibly removed are not available to attackers
 who may have compromised their credentials.</td>
 <td xml:lang="en-US">To specify the number of days after a password expires (which
 signifies inactivity) until an account is permanently disabled, add or correct
-the following lines in <code>/etc/default/useradd</code>, substituting
-<code><i>NUM_DAYS</i></code> appropriately:
+the following line in <code>/etc/default/useradd</code>:
 <pre>INACTIVE=<i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></i></pre>
-A value of 35 is recommended; however, this profile expects that the value is set to
-<code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></code>.
-If a password is currently on the
-verge of expiration, then 35 days remain until the account is automatically
-disabled. However, if the password will not expire for another 60 days, then 95
-days could elapse until the account would be automatically disabled. See the
-<code>useradd</code> man page for more information.  Determining the inactivity
-timeout must be done with careful consideration of the length of a "normal"
-period of inactivity for users in the particular environment. Setting
-the timeout too low incurs support costs and also has the potential to impact
-availability of the system to legitimate users.</td>
+If a password is currently on the verge of expiration, then
+<code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></code>
+day(s) remain(s) until the account is automatically
+disabled. However, if the password will not expire for another 60 days, then 60
+days plus <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></code> day(s) could
+elapse until the account would be automatically disabled. See the
+<code>useradd</code> man page for more information.</td>
 <td></td>
 <td>SRG-OS-000002-GPOS-00002<br>
 </td>
@@ -464,9 +459,9 @@ setting in <code>/etc/profile</code> should read as follows:
 <pre>TMOUT=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></xccdf-1.1:sub></pre>
 </td>
 <td></td>
-<td>SRG-OS-000163-GPOS-00072<br>
+<td>SRG-OS-000279-GPOS-00109<br>SRG-OS-000163-GPOS-00072<br>
 </td>
-<td>CCI-000361<br>CCI-001133<br>
+<td>CCI-002361<br>CCI-001133<br>
 </td>
 <td></td>
 </tr>
@@ -1126,8 +1121,8 @@ Privileged programs are subject to escalation-of-privilege attacks,
 which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
 unusual activity.</td>
-<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. To find the relevant setuid /
+<td xml:lang="en-US">The audit system should collect information about usage of privileged
+commands for all users and root. To find the relevant setuid /
 setgid programs, run the following command for each local partition
 <i>PART</i>:
 <pre>$ sudo find <i>PART</i> -xdev -type f -perm -4000 -o -type f -perm -2000 2&gt;/dev/null</pre>
@@ -1137,13 +1132,13 @@ the following form to a file with suffix <code>.rules</code> in the directory
 <code>/etc/audit/rules.d</code> for each setuid / setgid program on the system,
 replacing the <i>SETUID_PROG_PATH</i> part with the full path of that setuid /
 setgid program in the list:
-<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F perm=x -F auid&gt;=500 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F auid&gt;=500 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code> for each setuid / setgid program on the
 system, replacing the <i>SETUID_PROG_PATH</i> part with the full path of that
 setuid / setgid program in the list:
-<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F perm=x -F auid&gt;=500 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F auid&gt;=500 -F auid!=unset -F key=privileged</pre>
 </td>
 <td></td>
 <td></td>
@@ -2902,8 +2897,9 @@ the chances that it will remain off during system operation.</td>
 Remove any instances of <code>selinux=0</code> from the kernel arguments in that
 file to prevent SELinux from being disabled at boot.</td>
 <td></td>
-<td></td>
-<td>CCI-000022<br>CCI-000032<br>
+<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
+</td>
+<td>CCI-000022<br>CCI-000032<br>CCI-000366<br>
 </td>
 <td></td>
 </tr>
@@ -3163,7 +3159,7 @@ Then review the LDAP server and ensure TLS has been configured.</td>
 </tr>
 <tr>
 <td>mount_option_dev_shm_nodev</td>
-<td>medium</td>
+<td>low</td>
 <td>Add nodev Option to /dev/shm</td>
 <td xml:lang="en-US">The only legitimate location for device files is the <code>/dev</code> directory
 located on the root partition. The only exception to this is chroot jails.</td>
@@ -3182,7 +3178,7 @@ Add the <code>nodev</code> option to the fourth column of
 </tr>
 <tr>
 <td>mount_option_dev_shm_noexec</td>
-<td>medium</td>
+<td>low</td>
 <td>Add noexec Option to /dev/shm</td>
 <td xml:lang="en-US">Allowing users to execute binaries from world-writable directories
 such as <code>/dev/shm</code> can expose the system to potential compromise.</td>
@@ -3202,7 +3198,7 @@ Add the <code>noexec</code> option to the fourth column of
 </tr>
 <tr>
 <td>mount_option_dev_shm_nosuid</td>
-<td>medium</td>
+<td>low</td>
 <td>Add nosuid Option to /dev/shm</td>
 <td xml:lang="en-US">The presence of SUID and SGID executables should be tightly controlled. Users
 should not be able to execute SUID or SGID binaries from temporary storage partitions.</td>
@@ -4986,6 +4982,7 @@ and use the information to potentially compromise the integrity of the system an
 network(s).</td>
 <td xml:lang="en-US">Edit <code>/etc/snmp/snmpd.conf</code>, remove or change the default community strings of
 <code>public</code> and <code>private</code>.
+This profile configures new read-only community string to <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_snmpd_ro_string"></xccdf-1.1:sub></code> and read-write community string to <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_snmpd_rw_string"></xccdf-1.1:sub></code>.
 Once the default community strings have been changed, restart the SNMP service:
 <pre>$ sudo service snmpd restart</pre>
 </td>
@@ -5158,13 +5155,19 @@ some processes may stop SSH  from correctly detecting that the user is idle.</td
 <tr>
 <td>sshd_set_keepalive</td>
 <td>medium</td>
-<td>Set SSH Client Alive Max Count</td>
+<td>Set SSH Client Alive Count Max</td>
 <td xml:lang="en-US">This ensures a user login will be terminated as soon as the <code>ClientAliveInterval</code>
 is reached.</td>
-<td xml:lang="en-US">To ensure the SSH idle timeout occurs precisely when the <code>ClientAliveInterval</code> is set,
-edit <code>/etc/ssh/sshd_config</code> as follows:
-<pre>ClientAliveCountMax <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_set_keepalive"></xccdf-1.1:sub></pre>
-</td>
+<td xml:lang="en-US">The SSH server sends at most <code>ClientAliveCountMax</code> messages
+during a SSH session and waits for a response from the SSH client.
+The option <code>ClientAliveInterval</code> configures timeout after
+each <code>ClientAliveCountMax</code> message. If the SSH server does not
+receive a response from the client, then the connection is considered idle
+and terminated.
+
+To ensure the SSH idle timeout occurs precisely when the
+<code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
+value of <code>0</code>.</td>
 <td></td>
 <td>SRG-OS-000126-GPOS-00066<br>
 </td>
@@ -5572,8 +5575,8 @@ reduces the risk of sharing files which should remain private.</td>
 <td xml:lang="en-US">If running the <code>tftp</code> service is necessary, it should be configured
 to change its root directory at startup. To do so, ensure
 <code>/etc/xinetd.d/tftp</code> includes <code>-s</code> as a command line argument, as shown in
-the following example (which is also the default):
-<pre>server_args = -s /var/lib/tftpboot</pre>
+the following example:
+<pre>server_args = -s <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_tftpd_secure_directory"></xccdf-1.1:sub></pre>
 </td>
 <td></td>
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>

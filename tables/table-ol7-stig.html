@@ -1111,20 +1111,15 @@ INACTIVE=
       </td>
 <td>To specify the number of days after a password expires (which
 signifies inactivity) until an account is permanently disabled, add or correct
-the following lines in <code>/etc/default/useradd</code>, substituting
-<code><i>NUM_DAYS</i></code> appropriately:
+the following line in <code>/etc/default/useradd</code>:
 <pre>INACTIVE=<i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></i></pre>
-A value of 35 is recommended; however, this profile expects that the value is set to
-<code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></code>.
-If a password is currently on the
-verge of expiration, then 35 days remain until the account is automatically
-disabled. However, if the password will not expire for another 60 days, then 95
-days could elapse until the account would be automatically disabled. See the
-<code>useradd</code> man page for more information.  Determining the inactivity
-timeout must be done with careful consideration of the length of a "normal"
-period of inactivity for users in the particular environment. Setting
-the timeout too low incurs support costs and also has the potential to impact
-availability of the system to legitimate users.</td>
+If a password is currently on the verge of expiration, then
+<code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></code>
+day(s) remain(s) until the account is automatically
+disabled. However, if the password will not expire for another 60 days, then 60
+days plus <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></code> day(s) could
+elapse until the account would be automatically disabled. See the
+<code>useradd</code> man page for more information.</td>
 <td>OL07-00-010310</td>
 </tr>
 <tr>
@@ -1222,7 +1217,7 @@ running the following command:
 $ sudo grep -i "FAIL_DELAY" /etc/login.defs
 All output must show the value of FAIL_DELAY set as shown in the below:
 $ sudo grep -i "FAIL_DELAY" /etc/login.defs
-fail_delay 
+FAIL_DELAY 
       Is it the case that the above command returns no output, or FAIL_DELAY is configured less than the expected value?
       </td>
 <td>To ensure the logon failure delay controlled by <code>/etc/login.defs</code> is set properly,
@@ -1727,7 +1722,7 @@ unknown devices, thereby facilitating malicious activity.</td>
 <td> To check that the autofs service is disabled in system boot configuration, run the following command: $ systemctl is-enabled autofs Output should indicate the autofs service has either not been installed, or has been disabled at all runlevels, as shown in the example below: $ systemctl is-enabled autofs disabled
 Run the following command to verify autofs is not active (i.e. not running) through current runtime configuration: $ systemctl is-active autofs
 If the service is not running the command will return the following output: inactive
-By default the service will also be masked, to check that the autofs is masked, run the following command: $ systemctl show autofs | grep "LoadState\|UnitFileState"
+The service will also be masked, to check that the autofs is masked, run the following command: $ systemctl show autofs | grep "LoadState\|UnitFileState"
 If the service is masked the command will return the following outputs:
 LoadState=masked
 UnitFileState=masked
@@ -1743,9 +1738,7 @@ rather than relying on the automounter.
 <br><br>
 
 The <code>autofs</code> service can be disabled with the following command:
-<pre>$ sudo systemctl disable autofs.service</pre>
-The <code>autofs</code> service can be masked with the following command:
-<pre>$ sudo systemctl mask autofs.service</pre>
+<pre>$ sudo systemctl mask --now autofs.service</pre>
 </td>
 <td>OL07-00-020110</td>
 </tr>
@@ -1800,11 +1793,15 @@ can reboot the system. If accidentally pressed, as could happen in
 the case of mixed OS environment, this can create the risk of short-term
 loss of availability of systems due to unintentional reboot.</td>
 <td>
-To ensure the system is configured to mask the Ctrl-Alt-Del sequence,
-enter the following command:
-$ sudo ln -sf /dev/null /etc/systemd/system/ctrl-alt-del.target
-or
-$ sudo systemctl mask ctrl-alt-del.target
+To ensure the system is configured to mask the Ctrl-Alt-Del sequence, Check
+that the ctrl-alt-del.target is masked and not active with the following
+command:
+sudo systemctl status ctrl-alt-del.target
+The output should indicate that the target is masked and not active. It
+might resemble following output:
+ctrl-alt-del.target
+Loaded: masked (/dev/null; bad)
+Active: inactive (dead)
       Is it the case that the system is configured to reboot when Ctrl-Alt-Del is pressed?
       </td>
 <td>
@@ -2590,7 +2587,7 @@ development or testing, there is little need to run the kdump service.</td>
 <td> To check that the kdump service is disabled in system boot configuration, run the following command: $ systemctl is-enabled kdump Output should indicate the kdump service has either not been installed, or has been disabled at all runlevels, as shown in the example below: $ systemctl is-enabled kdump disabled
 Run the following command to verify kdump is not active (i.e. not running) through current runtime configuration: $ systemctl is-active kdump
 If the service is not running the command will return the following output: inactive
-By default the service will also be masked, to check that the kdump is masked, run the following command: $ systemctl show kdump | grep "LoadState\|UnitFileState"
+The service will also be masked, to check that the kdump is masked, run the following command: $ systemctl show kdump | grep "LoadState\|UnitFileState"
 If the service is masked the command will return the following outputs:
 LoadState=masked
 UnitFileState=masked
@@ -2601,9 +2598,7 @@ system call to boot a secondary kernel ("capture" kernel) following a system
 crash, which can load information from the crashed kernel for analysis.
 
 The <code>kdump</code> service can be disabled with the following command:
-<pre>$ sudo systemctl disable kdump.service</pre>
-The <code>kdump</code> service can be masked with the following command:
-<pre>$ sudo systemctl mask kdump.service</pre>
+<pre>$ sudo systemctl mask --now kdump.service</pre>
 </td>
 <td>OL07-00-021300</td>
 </tr>
@@ -3073,13 +3068,10 @@ determined.</td>
 <td>Taking appropriate action when there is an error sending audit records to a
 remote system will minimize the possibility of losing audit records.</td>
 <td>Inspect /etc/audisp/audisp-remote.conf and locate the following line to
-determine if the system is configured to either send to syslog, switch to single user mode,
-or halt when there is a network failure with audispd:
+determine if the system is configured to perform a correct action according to the policy:
 grep -i network_failure_action /etc/audisp/audisp-remote.conf
-The output should return something similar to:
-network_failure_action = single
-Acceptable values also include syslog and
-halt.
+The output should return:
+network_failure_action = 
       Is it the case that the system is not configured to switch to single user mode for corrective action?
       </td>
 <td>Configure the action the operating system takes if there is an error sending
@@ -3090,7 +3082,8 @@ Set this value to <code>single</code> to cause the system to switch to single us
 mode for corrective action. Acceptable values also include <code>syslog</code> and
 <code>halt</code>. For certain systems, the need for availability
 outweighs the need to log all actions, and a different setting should be
-determined.</td>
+determined.
+This profile configures the <i>action</i> to be <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_audispd_network_failure_action"></xccdf-1.1:sub></code>.</td>
 <td>OL07-00-030321</td>
 </tr>
 <tr>
@@ -3196,8 +3189,8 @@ It should be the case that all relevant setuid / setgid programs have a line
 in the audit rules.
       Is it the case that it is not the case?
       </td>
-<td>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. To find the relevant setuid /
+<td>The audit system should collect information about usage of privileged
+commands for all users and root. To find the relevant setuid /
 setgid programs, run the following command for each local partition
 <i>PART</i>:
 <pre>$ sudo find <i>PART</i> -xdev -type f -perm -4000 -o -type f -perm -2000 2&gt;/dev/null</pre>
@@ -3207,13 +3200,13 @@ the following form to a file with suffix <code>.rules</code> in the directory
 <code>/etc/audit/rules.d</code> for each setuid / setgid program on the system,
 replacing the <i>SETUID_PROG_PATH</i> part with the full path of that setuid /
 setgid program in the list:
-<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code> for each setuid / setgid program on the
 system, replacing the <i>SETUID_PROG_PATH</i> part with the full path of that
 setuid / setgid program in the list:
-<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>OL07-00-030360</td>
 </tr>
@@ -5157,7 +5150,17 @@ There must be a resolvable DNS CNAME or Alias record set to "<xccdf-1.1:sub xmln
 <td>Any process which receives messages from the network incurs some risk
 of receiving malicious messages. This risk can be eliminated for
 rsyslog by configuring it not to listen on the network.</td>
-<td></td>
+<td>Display the contents of the configuration file:
+cat /etc/rsyslog.conf
+Make sure that the following lines are not present in the output:
+$ModLoad imtcp
+$InputTCPServerRun port
+$ModLoad imudp
+$UDPServerRun port
+$ModLoad imrelp
+$InputRELPServerRun port
+      Is it the case that rsyslog accepts remote messages?
+      </td>
 <td>The <code>rsyslog</code> daemon should not accept remote messages
 unless the system acts as a log server.
 To ensure that it is not listening on the network, ensure the following lines are
@@ -5359,18 +5362,17 @@ altered by unauthorized users without detection. The ssl directive specifies
 whether to use TLS or not. If not specified it will default to no.
 It should be set to start_tls rather than doing LDAP over SSL.</td>
 <td>If the system is not using TLS, set the ldap_id_use_start_tls option
-in /etc/sssd/sssd.conf to True.
-      Is it the case that the 'ldap_id_use_start_tls' option is not set to 'True'?
+in /etc/sssd/sssd.conf to true.
+      Is it the case that the 'ldap_id_use_start_tls' option is not set to 'true'?
       </td>
-<td>This check verifies that Oracle Linux 7 implements cryptography
-to protect the integrity of remote LDAP authentication sessions.
+<td>The LDAP client should be configured to implement TLS for the integrity
+of all remote LDAP authentication sessions. If the <code>id_provider</code> is
+set to <code>ldap</code> or <code>ipa</code> in <code>/etc/sssd/sssd.conf</code> or any of the
+<code>/etc/sssd/sssd.conf.d</code> configuration files, <code>ldap_id_use_start_tls</code>
+must be set to <code>true</code>.
 <br><br>
-To determine if LDAP is being used for authentication, use the following
-command:
-<pre>$ sudo grep -i useldapauth /etc/sysconfig/authconfig</pre>
-<br><br>
-If <code>USELDAPAUTH=yes</code>, then LDAP is being used. To check if LDAP is
-configured to use TLS, use the following command:
+To check if LDAP is configured to use TLS when <code>id_provider</code> is
+set to <code>ldap</code> or <code>ipa</code>, use the following command:
 <pre>$ sudo grep -i ldap_id_use_start_tls /etc/sssd/sssd.conf</pre>
 </td>
 <td>OL07-00-040180</td>
@@ -5575,16 +5577,25 @@ following line in <code>/etc/ssh/sshd_config</code>:
 <td>The Oracle Linux operating system must be configured so that all network connections associated with SSH traffic terminate after a period of inactivity.</td>
 <td>This ensures a user login will be terminated as soon as the <code>ClientAliveInterval</code>
 is reached.</td>
-<td>To ensure the SSH idle timeout will occur when the ClientAliveInterval is set, run the following command:
+<td>To ensure ClientAliveInterval is set correctly, run the following command:
 $ sudo grep ClientAliveCountMax /etc/ssh/sshd_config
-If properly configured, output should be:
-ClientAliveCountMax 
+If properly configured, the output should be:
+ClientAliveCountMax 0
+
+In this case, the SSH idle timeout occurs precisely when
+the ClientAliveInterval is set.
       Is it the case that it is commented out or not configured properly?
       </td>
-<td>To ensure the SSH idle timeout occurs precisely when the <code>ClientAliveInterval</code> is set,
-edit <code>/etc/ssh/sshd_config</code> as follows:
-<pre>ClientAliveCountMax <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_set_keepalive"></xccdf-1.1:sub></pre>
-</td>
+<td>The SSH server sends at most <code>ClientAliveCountMax</code> messages
+during a SSH session and waits for a response from the SSH client.
+The option <code>ClientAliveInterval</code> configures timeout after
+each <code>ClientAliveCountMax</code> message. If the SSH server does not
+receive a response from the client, then the connection is considered idle
+and terminated.
+
+To ensure the SSH idle timeout occurs precisely when the
+<code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
+value of <code>0</code>.</td>
 <td>OL07-00-040340</td>
 </tr>
 <tr>
@@ -6535,14 +6546,14 @@ grep "server_args" /etc/xinetd.d/tftp
 The output should indicate the server_args variable is configured
 with the -s flag, matching the example below:
 $ grep "server_args" /etc/xinetd.d/tftp
-server_args = -s /var/lib/tftpboot
+server_args = -s 
       Is it the case that this flag is missing?
       </td>
 <td>If running the <code>tftp</code> service is necessary, it should be configured
 to change its root directory at startup. To do so, ensure
 <code>/etc/xinetd.d/tftp</code> includes <code>-s</code> as a command line argument, as shown in
-the following example (which is also the default):
-<pre>server_args = -s /var/lib/tftpboot</pre>
+the following example:
+<pre>server_args = -s <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_tftpd_secure_directory"></xccdf-1.1:sub></pre>
 </td>
 <td>OL07-00-040720</td>
 </tr>
@@ -6640,6 +6651,7 @@ There should be no output.
       </td>
 <td>Edit <code>/etc/snmp/snmpd.conf</code>, remove or change the default community strings of
 <code>public</code> and <code>private</code>.
+This profile configures new read-only community string to <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_snmpd_ro_string"></xccdf-1.1:sub></code> and read-write community string to <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_snmpd_rw_string"></xccdf-1.1:sub></code>.
 Once the default community strings have been changed, restart the SNMP service:
 <pre>$ sudo service snmpd restart</pre>
 </td>
@@ -6742,16 +6754,14 @@ information systems gaining access include, for example, hardware tokens
 providing time-based or challenge-response authenticators and smart cards such
 as the U.S. Government Personal Identity Verification card and the DoD Common
 Access Card.</td>
-<td>To verify the operating system has the packages required for multifactor
-authentication installed, run the following command:
-$ sudo yum list installed esc pam_pkcs11
+<td>Run the following command to determine if the pam_pkcs11 package is installed: $ rpm -q pam_pkcs11
       Is it the case that smartcard software is not installed?
       </td>
 <td>Configure the operating system to implement multifactor authentication by
-installing the required packages with the following command:
-The <code>esc pam_pkcs11</code> package can be installed with the following command:
+installing the required package with the following command:
+The <code>pam_pkcs11</code> package can be installed with the following command:
 <pre>
-$ sudo yum install esc pam_pkcs11</pre>
+$ sudo yum install pam_pkcs11</pre>
 </td>
 <td>OL07-00-041001</td>
 </tr>
