@@ -6,7 +6,7 @@
 <body>
 <br><br><div style="text-align: center; font-size: x-large; font-weight:bold">DISA STIG for Oracle Linux 7</div>
 <div style="text-align: center; font-size: normal ">This profile contains configuration checks that align to the
-DISA STIG for Oracle Linux V1R1.</div>
+DISA STIG for Oracle Linux V2R2.</div>
 <br><br><style type="text/css">
 		table
 		{
@@ -560,7 +560,7 @@ attempts using <code>pam_faillock.so</code>, modify the content of both
 <td></td>
 <td>SRG-OS-000021-GPOS-00005<br>SRG-OS-000329-GPOS-00128<br>
 </td>
-<td>CCI-000044<br>CCI-002238<br>
+<td>CCI-000044<br>CCI-002236<br>CCI-002237<br>CCI-002238<br>
 </td>
 <td></td>
 </tr>
@@ -625,7 +625,7 @@ as follows:
 <td></td>
 <td>SRG-OS-000021-GPOS-00005<br>SRG-OS-000329-GPOS-00128<br>
 </td>
-<td>CCI-000044<br>CCI-002238<br>
+<td>CCI-000044<br>CCI-002236<br>CCI-002237<br>CCI-002238<br>
 </td>
 <td></td>
 </tr>
@@ -656,7 +656,7 @@ If <code>unlock_time</code> is set to <code>0</code>, manual intervention by an 
 <td></td>
 <td>SRG-OS-000021-GPOS-00005<br>SRG-OS-000329-GPOS-00128<br>
 </td>
-<td>CCI-000044<br>CCI-002238<br>
+<td>CCI-000044<br>CCI-002236<br>CCI-002237<br>CCI-002238<br>
 </td>
 <td></td>
 </tr>
@@ -670,6 +670,7 @@ management session enabled on the console or console port that has been
 left unattended.</td>
 <td xml:lang="en-US">Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
 all user sessions will terminate based on inactivity. The <code>TMOUT</code>
+
 setting in <code>/etc/profile</code> should read as follows:
 <pre>TMOUT=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></xccdf-1.1:sub></pre>
 </td>
@@ -789,21 +790,6 @@ must be documented with the Information System Security Officer (ISSO).</td>
 <td xml:lang="en-US">Ensure that all interactive user initialization files executable search
 path statements do not contain statements that will reference a working
 directory other than the users home directory.</td>
-<td></td>
-<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
-</td>
-<td>CCI-000366<br>
-</td>
-<td></td>
-</tr>
-<tr>
-<td>accounts_user_interactive_home_directory_defined</td>
-<td>medium</td>
-<td>All Interactive Users Must Have A Home Directory Defined</td>
-<td xml:lang="en-US">If local interactive users are not assigned a valid home directory, there is no
-place for the storage and control of files they should own.</td>
-<td xml:lang="en-US">Assign home directories to all interactive users that currently do not
-have a home directory assigned.</td>
 <td></td>
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
@@ -1432,10 +1418,13 @@ of the <code>chcon</code> command for all users and root. If the <code>auditd</c
 daemon is configured to use the <code>augenrules</code> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+
 <pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file:
+
 <pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td></td>
@@ -1998,6 +1987,38 @@ form to <code>/etc/audit/audit.rules</code>:
 <td></td>
 </tr>
 <tr>
+<td>audit_rules_privileged_commands_mount</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - mount</td>
+<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br><br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+<td></td>
+<td>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000135<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>audit_rules_privileged_commands_newgrp</td>
 <td>medium</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - newgrp</td>
@@ -2048,11 +2069,13 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
+-F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
+-F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td></td>
 <td>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000392-GPOS-00172<br>
@@ -2176,11 +2199,13 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 
+-F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign
+-F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td></td>
 <td>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000392-GPOS-00172<br>
@@ -3022,7 +3047,9 @@ system after updates have been installed may be exploited by some adversaries.</
 <td xml:lang="en-US">
 <code>yum</code> should be configured to remove previous software components after
 new versions have been installed. To configure <code>yum</code> to remove the
+
 previous software components after updating, set the <code>clean_requirements_on_remove</code>
+
 to <code>1</code> in <code>/etc/yum.conf</code>.</td>
 <td></td>
 <td>SRG-OS-000437-GPOS-00194<br>
@@ -3142,6 +3169,114 @@ The banner text must also be set.</td>
 <td>SRG-OS-000023-GPOS-00006<br>SRG-OS-000024-GPOS-00007<br>SRG-OS-000228-GPOS-00088<br>SRG-OS-000228-GPOS-00088<br>SRG-OS-000228-GPOS-00088<br>SRG-OS-000228-GPOS-00088<br>SRG-OS-000228-GPOS-00088<br>
 </td>
 <td>CCI-000048<br>CCI-000050<br>CCI-001384<br>CCI-001385<br>CCI-001386<br>CCI-001387<br>CCI-001388<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>dconf_gnome_disable_automount</td>
+<td>unknown</td>
+<td>Disable GNOME3 Automounting</td>
+<td xml:lang="en-US">Disabling automatic mounting in GNOME3 can prevent
+the introduction of malware via removable media.
+It will, however, also prevent desktop users from legitimate use
+of removable media.</td>
+<td xml:lang="en-US">The system's default desktop environment, GNOME3, will mount
+devices and removable media (such as DVDs, CDs and USB flash drives) whenever
+they are inserted into the system. To disable automount within GNOME3, add or set
+<code>automount</code> to <code>false</code> in <code>/etc/dconf/db/local.d/00-security-settings</code>.
+For example:
+<pre>[org/gnome/desktop/media-handling]
+automount=false</pre>
+Once the settings have been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/media-handling/automount</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>dconf_gnome_disable_automount_open</td>
+<td>medium</td>
+<td>Disable GNOME3 Automount Opening</td>
+<td xml:lang="en-US">Disabling automatic mounting in GNOME3 can prevent
+the introduction of malware via removable media.
+It will, however, also prevent desktop users from legitimate use
+of removable media.</td>
+<td xml:lang="en-US">The system's default desktop environment, GNOME3, will mount
+devices and removable media (such as DVDs, CDs and USB flash drives) whenever
+they are inserted into the system. To disable automount-open within GNOME3, add or set
+<code>automount-open</code> to <code>false</code> in <code>/etc/dconf/db/local.d/00-security-settings</code>.
+For example:
+<pre>[org/gnome/desktop/media-handling]
+automount-open=false</pre>
+Once the settings have been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/media-handling/automount-open</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td></td>
+<td>SRG-OS-000378-GPOS-00163<br>
+</td>
+<td>CCI-001958<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>dconf_gnome_disable_autorun</td>
+<td>medium</td>
+<td>Disable GNOME3 Automount running</td>
+<td xml:lang="en-US">Disabling automatic mount running in GNOME3 can prevent
+the introduction of malware via removable media.
+It will, however, also prevent desktop users from legitimate use
+of removable media.</td>
+<td xml:lang="en-US">The system's default desktop environment, GNOME3, will mount
+devices and removable media (such as DVDs, CDs and USB flash drives) whenever
+they are inserted into the system. To disable autorun-never within GNOME3, add or set
+<code>autorun-never</code> to <code>true</code> in <code>/etc/dconf/db/local.d/00-security-settings</code>.
+For example:
+<pre>[org/gnome/desktop/media-handling]
+autorun-never=true</pre>
+Once the settings have been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/media-handling/autorun-never</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td></td>
+<td>SRG-OS-000378-GPOS-00163<br>
+</td>
+<td>CCI-001958<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>dconf_gnome_disable_ctrlaltdel_reboot</td>
+<td>high</td>
+<td>Disable Ctrl-Alt-Del Reboot Key Sequence in GNOME3</td>
+<td xml:lang="en-US">A locally logged-in user who presses Ctrl-Alt-Del, when at the console,
+can reboot the system. If accidentally pressed, as could happen in
+the case of mixed OS environment, this can create the risk of short-term
+loss of availability of systems due to unintentional reboot.</td>
+<td xml:lang="en-US">By default, <code>GNOME</code> will reboot the system if the
+<code>Ctrl-Alt-Del</code> key sequence is pressed.
+<br><br>
+To configure the system to ignore the <code>Ctrl-Alt-Del</code> key sequence
+from the Graphical User Interface (GUI) instead of rebooting the system,
+add or set <code>logout</code> to <code>''</code> in
+<code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
+<pre>[org/gnome/settings-daemon/plugins/media-keys]
+logout=''</pre>
+Once the settings have been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent
+user modification. For example:
+<pre>/org/gnome/settings-daemon/plugins/media-keys/logout</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td></td>
+<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
+</td>
+<td>CCI-000366<br>
 </td>
 <td></td>
 </tr>
@@ -3414,6 +3549,27 @@ appropriate owner.</td>
 <td></td>
 </tr>
 <tr>
+<td>dir_perms_world_writable_system_owned_group</td>
+<td>medium</td>
+<td>Ensure All World-Writable Directories Are Group Owned by a System Account</td>
+<td xml:lang="en-US">Allowing a user account to group own a world-writable directory is
+undesirable because it allows the owner of that directory to remove
+or replace any files that may be placed in the directory by other
+users.</td>
+<td xml:lang="en-US">All directories in local partitions which are
+world-writable should be group owned by root or another
+system account. If any world-writable directories are not
+group owned by a system account, this should be investigated.
+Following this, the files should be deleted or assigned to an
+appropriate group.</td>
+<td></td>
+<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>disable_ctrlaltdel_reboot</td>
 <td>high</td>
 <td>Disable Ctrl-Alt-Del Reboot Activation</td>
@@ -3471,7 +3627,9 @@ of unsuccessful attempts that were made to login to their account
 allows the user to determine if any unauthorized activity has occurred
 and gives them an opportunity to notify administrators.</td>
 <td xml:lang="en-US">To configure the system to notify users of last logon/access
-using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code> settings in
+using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code>
+settings in
+
 <code>/etc/pam.d/postlogin</code> to read as follows:
 <pre>session     [success=1 default=ignore] pam_succeed_if.so service !~ gdm* service !~ su* quiet
 session     [default=1]   pam_lastlog.so nowtmp showfailed
@@ -3801,6 +3959,35 @@ TimedLoginEnable=false</pre>
 <td></td>
 </tr>
 <tr>
+<td>grub2_admin_username</td>
+<td>low</td>
+<td>Set the Boot Loader Admin Username to a Non-Default Value</td>
+<td xml:lang="en-US">Having a non-default grub superuser username makes password-guessing attacks less effective.</td>
+<td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
+<br><br>
+To maximize the protection, select a password-protected superuser account with unique name, and modify the
+<code>/etc/grub.d/01_users</code> configuration file to reflect the account name change.
+<br><br>
+Do not to use common administrator account names like root,
+admin, or administrator for the grub2 superuser account.
+<br><br>
+Change the superuser to a different username (The default is 'root').
+<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<br><br>
+Once the superuser account has been added,
+update the
+<code>grub.cfg</code> file by running:
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
+</td>
+<td></td>
+<td>SRG-OS-000080-GPOS-00048<br>
+</td>
+<td>CCI-000213<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>grub2_enable_fips_mode</td>
 <td>high</td>
 <td>Enable FIPS Mode in GRUB2</td>
@@ -3886,6 +4073,35 @@ update the
 <td></td>
 </tr>
 <tr>
+<td>grub2_uefi_admin_username</td>
+<td>low</td>
+<td>Set the UEFI Boot Loader Admin Username to a Non-Default Value</td>
+<td xml:lang="en-US">Having a non-default grub superuser username makes password-guessing attacks less effective.</td>
+<td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
+<br><br>
+To maximize the protection, select a password-protected superuser account with unique name, and modify the
+<code>/etc/grub.d/01_users</code> configuration file to reflect the account name change.
+<br><br>
+It is highly suggested not to use common administrator account names like root,
+admin, or administrator for the grub2 superuser account.
+<br><br>
+Change the superuser to a different username (The default is 'root').
+<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<br><br>
+Once the superuser account has been added,
+update the
+<code>grub.cfg</code> file by running:
+<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
+</td>
+<td></td>
+<td>SRG-OS-000080-GPOS-00048<br>
+</td>
+<td>CCI-000213<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>grub2_uefi_password</td>
 <td>high</td>
 <td>Set the UEFI Boot Loader Password</td>
@@ -3956,6 +4172,7 @@ as the U.S. Government Personal Identity Verification card and the DoD Common
 Access Card.</td>
 <td xml:lang="en-US">Configure the operating system to implement multifactor authentication by
 installing the required package with the following command:
+
 The <code>pam_pkcs11</code> package can be installed with the following command:
 <pre>
 $ sudo yum install pam_pkcs11</pre>
@@ -4336,6 +4553,23 @@ to delete them from any location:
 <td></td>
 </tr>
 <tr>
+<td>package_MFEhiplsm_installed</td>
+<td>medium</td>
+<td>Install the Host Intrusion Prevention System (HIPS) Module</td>
+<td xml:lang="en-US">Without a host-based intrusion detection tool, there is no system-level defense
+when an intruder gains access to a system or network. Additionally, a host-based
+intrusion prevention tool can provide methods to immediately lock out detected
+intrusion attempts.</td>
+<td xml:lang="en-US">Install the McAfee Host Intrusion Prevention System (HIPS) Module if it is absolutely
+necessary. If SELinux is enabled, do not install or enable this module.</td>
+<td></td>
+<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>SRG-OS-000191-GPOS-00080<br>
+</td>
+<td>CCI-000366<br>CCI-001233<br>CCI-001263<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>package_aide_installed</td>
 <td>medium</td>
 <td>Install AIDE</td>
@@ -4386,33 +4620,6 @@ $ sudo yum erase rsh-server</pre>
 <td>SRG-OS-000095-GPOS-00049<br>
 </td>
 <td>CCI-000381<br>
-</td>
-<td></td>
-</tr>
-<tr>
-<td>package_screen_installed</td>
-<td>medium</td>
-<td>Install the screen Package</td>
-<td xml:lang="en-US">A session time-out lock is a temporary action taken when a user stops work and moves away from the immediate
-physical vicinity of the information system but does not logout because of the temporary nature of the absence.
-Rather than relying on the user to manually lock their operation system session prior to vacating the vicinity,
-operating systems need to be able to identify when a user's session has idled and take action to initiate the
-session lock.
-<br><br>
-The <code>screen</code> package allows for a session lock to be implemented and configured.</td>
-<td xml:lang="en-US">To enable console screen locking, install the <code>screen</code> package.
-The <code>screen</code> package can be installed with the following command:
-<pre>
-$ sudo yum install screen</pre>
-Instruct users to begin new terminal sessions with the following command:
-<pre>$ screen</pre>
-The console can now be locked with the following key combination:
-<pre>ctrl+a x</pre>
-</td>
-<td></td>
-<td>SRG-OS-000029-GPOS-00010<br>SRG-OS-000030-GPOS-00011<br>
-</td>
-<td>CCI-000057<br>CCI-000058<br>
 </td>
 <td></td>
 </tr>
@@ -4610,6 +4817,26 @@ to the local network with the following command:
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
 <td>CCI-000366<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>require_emergency_target_auth</td>
+<td>medium</td>
+<td>Require Authentication for Emergency Systemd Target</td>
+<td xml:lang="en-US">This prevents attackers with physical access from trivially bypassing security
+on the machine and gaining root access. Such accesses are further prevented
+by configuring the bootloader password.</td>
+<td xml:lang="en-US">Emergency mode is intended as a system recovery
+method, providing a single user root access to the system
+during a failed boot sequence.
+<br><br>
+By default, Emergency mode is protected by requiring a password and is set
+in <code>/usr/lib/systemd/system/emergency.service</code>.</td>
+<td></td>
+<td>SRG-OS-000080-GPOS-00048<br>
+</td>
+<td>CCI-000213<br>
 </td>
 <td></td>
 </tr>
@@ -4860,6 +5087,34 @@ It should produce no output in a well-configured system.</td>
 <td></td>
 </tr>
 <tr>
+<td>selinux_policytype</td>
+<td>medium</td>
+<td>Configure SELinux Policy</td>
+<td xml:lang="en-US">Setting the SELinux policy to <code>targeted</code> or a more specialized policy
+ensures the system will confine processes that are likely to be
+targeted for exploitation, such as network or system services.
+<br><br>
+Note: During the development or debugging of SELinux modules, it is common to
+temporarily place non-production systems in <code>permissive</code> mode. In such
+temporary cases, SELinux policies should be developed, and once work
+is completed, the system should be reconfigured to
+<code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_selinux_policy_name"></xccdf-1.1:sub></code>.</td>
+<td xml:lang="en-US">The SELinux <code>targeted</code> policy is appropriate for
+general-purpose desktops and servers, as well as systems in many other roles.
+To configure the system to use this policy, add or correct the following line
+in <code>/etc/selinux/config</code>:
+<pre>SELINUXTYPE=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_selinux_policy_name"></xccdf-1.1:sub></pre>
+Other policies, such as <code>mls</code>, provide additional security labeling
+and greater confinement but are not compatible with many general-purpose
+use cases.</td>
+<td></td>
+<td>SRG-OS-000312-GPOS-00122<br>SRG-OS-000312-GPOS-00123<br>SRG-OS-000312-GPOS-00124<br>SRG-OS-000445-GPOS-00199<br>
+</td>
+<td>CCI-002165<br>CCI-002696<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>selinux_state</td>
 <td>medium</td>
 <td>Ensure SELinux State is Enforcing</td>
@@ -4907,9 +5162,9 @@ users must be mapped to the <code>user_u</code> role or the appropriate domain
 <pre>$ sudo semanage login -m -s user_u <i>USER</i></pre>
 </td>
 <td></td>
-<td>SRG-OS-000324-GPOS-00125<br>
+<td>SRG-OS-000312-GPOS-00122<br>SRG-OS-000312-GPOS-00123<br>SRG-OS-000312-GPOS-00124<br>SRG-OS-000324-GPOS-00125<br>
 </td>
-<td>CCI-002235<br>
+<td>CCI-002165<br>CCI-002235<br>
 </td>
 <td></td>
 </tr>
@@ -5116,13 +5371,19 @@ Additionally, the <code>crypt_style</code> configuration option ensures the use
 of a strong hashing algorithm that makes password cracking attacks more
 difficult.</td>
 <td xml:lang="en-US">The PAM system service can be configured to only store encrypted
-representations of passwords. In <code>/etc/pam.d/system-auth</code>, the
+representations of passwords. In
+
+<code>/etc/pam.d/system-auth</code>,
+
+the
 <code>password</code> section of the file controls which PAM modules execute
 during a password change. Set the <code>pam_unix.so</code> module in the
 <code>password</code> section to include the argument <code>sha512</code>, as shown
 below:
 <br>
+
 <pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i></pre>
+
 <br>
 This will help ensure when local users change their passwords, hashes for
 the new passwords will be generated using the SHA-512 algorithm. This is
@@ -5388,6 +5649,31 @@ following line in <code>/etc/ssh/sshd_config</code>:
 <td></td>
 </tr>
 <tr>
+<td>sshd_disable_x11_forwarding</td>
+<td>medium</td>
+<td>Disable X11 Forwarding</td>
+<td xml:lang="en-US">Disable X11 forwarding unless there is an operational requirement to use X11
+applications directly. There is a small risk that the remote X11 servers of
+users who are logged in via SSH with X11 forwarding could be compromised by
+other users on the X11 server. Note that even if X11 forwarding is disabled,
+users can always install their own forwarders.</td>
+<td xml:lang="en-US">The X11Forwarding parameter provides the ability to tunnel X11 traffic
+through the connection to enable remote graphic connections.
+SSH has the capability to encrypt remote X11 connections when SSH's
+<code>X11Forwarding</code> option is enabled.
+<br><br>
+To disable X11 Forwarding, add or correct the
+following line in <code>/etc/ssh/sshd_config</code>:
+<pre>X11Forwarding no</pre>
+</td>
+<td></td>
+<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>sshd_do_not_permit_user_env</td>
 <td>medium</td>
 <td>Do Not Allow SSH Environment Options</td>
@@ -5441,27 +5727,6 @@ appropriate system-wide warning banner.</td>
 <td>SRG-OS-000023-GPOS-00006<br>SRG-OS-000024-GPOS-00007<br>SRG-OS-000228-GPOS-00088<br>SRG-OS-000228-GPOS-00088<br>SRG-OS-000228-GPOS-00088<br>SRG-OS-000228-GPOS-00088<br>SRG-OS-000228-GPOS-00088<br>
 </td>
 <td>CCI-000048<br>CCI-000050<br>CCI-001384<br>CCI-001385<br>CCI-001386<br>CCI-001387<br>CCI-001388<br>
-</td>
-<td></td>
-</tr>
-<tr>
-<td>sshd_enable_x11_forwarding</td>
-<td>high</td>
-<td>Enable Encrypted X11 Forwarding</td>
-<td xml:lang="en-US">Non-encrypted X displays allow an attacker to capture keystrokes and to execute commands
-remotely.</td>
-<td xml:lang="en-US">By default, remote X11 connections are not encrypted when initiated
-by users. SSH has the capability to encrypt remote X11 connections when SSH's
-<code>X11Forwarding</code> option is enabled.
-<br><br>
-To enable X11 Forwarding, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
-<pre>X11Forwarding yes</pre>
-</td>
-<td></td>
-<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
-</td>
-<td>CCI-000366<br>
 </td>
 <td></td>
 </tr>
@@ -5534,7 +5799,7 @@ value of <code>0</code>.</td>
 <td></td>
 </tr>
 <tr>
-<td>sshd_use_approved_ciphers</td>
+<td>sshd_use_approved_ciphers_ordered_stig</td>
 <td>medium</td>
 <td>Use Only FIPS 140-2 Validated Ciphers</td>
 <td xml:lang="en-US">Unapproved mechanisms that are used for authentication to the cryptographic module are not verified and therefore
@@ -5547,31 +5812,11 @@ FIPS 140-2 is the current standard for validating that mechanisms used to access
 utilize authentication that meets industry and government requirements. For government systems, this allows
 Security Levels 1, 2, 3, or 4 for use on Oracle Linux 7.</td>
 <td xml:lang="en-US">Limit the ciphers to those algorithms which are FIPS-approved.
-Counter (CTR) mode is also preferred over cipher-block chaining (CBC) mode.
 The following line in <code>/etc/ssh/sshd_config</code>
 demonstrates use of FIPS-approved ciphers:
-<pre>Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc</pre>
-The man page <code>sshd_config(5)</code> contains a list of supported ciphers.
-
-<br><br>
-Only the following ciphers are FIPS 140-2 certified on Oracle Linux 7:
-<br>- aes128-ctr
-<br>- aes192-ctr
-<br>- aes256-ctr
-<br>- aes128-cbc
-<br>- aes192-cbc
-<br>- aes256-cbc
-<br>- 3des-cbc
-<br>- rijndael-cbc@lysator.liu.se
-<br><br>
-Any combination of the above ciphers will pass this check.
-Official FIPS 140-2 paperwork for Oracle Linux 7 can be found at
-
-
-    <a href="https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp3028.pdf">https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp3028.pdf</a>
-
-
-The rule is parametrized to use the following ciphers: <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sshd_approved_ciphers"></xccdf-1.1:sub></code>.</td>
+<pre>Ciphers aes256-ctr,aes192-ctr,aes128-ctr</pre>
+This rule ensures that there are configured ciphers mentioned
+above (or their subset), keeping the given order of algorithms.</td>
 <td></td>
 <td>SRG-OS-000033-GPOS-00014<br>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>SRG-OS-000120-GPOS-00061<br>SRG-OS-000125-GPOS-00065<br>SRG-OS-000393-GPOS-00173<br>SRG-OS-000394-GPOS-00174<br>
 </td>
@@ -5580,7 +5825,7 @@ The rule is parametrized to use the following ciphers: <code><xccdf-1.1:sub xmln
 <td></td>
 </tr>
 <tr>
-<td>sshd_use_approved_macs</td>
+<td>sshd_use_approved_macs_ordered_stig</td>
 <td>medium</td>
 <td>Use Only FIPS 140-2 Validated MACs</td>
 <td xml:lang="en-US">DoD Information Systems are required to use FIPS-approved cryptographic hash
@@ -5588,28 +5833,9 @@ functions. The only SSHv2 hash algorithms meeting this requirement is SHA2.</td>
 <td xml:lang="en-US">Limit the MACs to those hash algorithms which are FIPS-approved.
 The following line in <code>/etc/ssh/sshd_config</code>
 demonstrates use of FIPS-approved MACs:
-
-<pre>MACs hmac-sha2-512,hmac-sha2-256,hmac-sha1</pre>
-
-The man page <code>sshd_config(5)</code> contains a list of supported MACs.
-
-<br><br>
-Only the following message authentication codes are FIPS 140-2 certified on Oracle Linux 7:
-<br>- hmac-sha1
-<br>- hmac-sha2-256
-<br>- hmac-sha2-512
-<br>- hmac-sha1-etm@openssh.com
-<br>- hmac-sha2-256-etm@openssh.com
-<br>- hmac-sha2-512-etm@openssh.com
-<br><br>
-Any combination of the above MACs will pass this check. Official FIPS 140-2 paperwork for
-Oracle Linux 7 can be found at
-
-
-    <a href="https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp3028.pdf">https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp3028.pdf</a>
-
-
-The rule is parametrized to use the following MACs: <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sshd_approved_macs"></xccdf-1.1:sub></code>.</td>
+<pre>MACs hmac-sha2-512,hmac-sha2-256</pre>
+This rule ensures that there are configured MACs mentioned
+above (or their subset), keeping the given order of algorithms.</td>
 <td></td>
 <td>SRG-OS-000033-GPOS-00014<br>SRG-OS-000120-GPOS-00061<br>SRG-OS-000125-GPOS-00065<br>SRG-OS-000250-GPOS-00093<br>SRG-OS-000394-GPOS-00174<br>
 </td>
@@ -5629,6 +5855,26 @@ has the privilege of the authenticated user. To enable privilege separation in
 SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <pre>UsePrivilegeSeparation <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_priv_separation"></xccdf-1.1:sub></pre>
 </td>
+<td></td>
+<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>sshd_x11_use_localhost</td>
+<td>medium</td>
+<td>Prevent remote hosts from connecting to the proxy display</td>
+<td xml:lang="en-US">When X11 forwarding is enabled, there may be additional exposure to the
+server and client displays if the sshd proxy display is configured to listen
+on the wildcard address. By default, sshd binds the forwarding server to the
+loopback address and sets the hostname part of the <code>DISPLAY</code>
+environment variable to localhost. This prevents remote hosts from
+connecting to the proxy display.  </td>
+<td xml:lang="en-US">The SSH daemon should prevent remote hosts from connecting to the proxy
+display. Make sure that the option <code>X11UseLocalhost</code> is set to
+<code>yes</code> within the SSH server configuration file.</td>
 <td></td>
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
@@ -5710,6 +5956,23 @@ to point to the path for the X.509 certificates used for peer authentication.
 <td></td>
 </tr>
 <tr>
+<td>sssd_ldap_configure_tls_reqcert</td>
+<td>medium</td>
+<td>Configure SSSD LDAP Backend Client to Demand a Valid Certificate from the Server</td>
+<td xml:lang="en-US">Without a valid certificate presented to the LDAP client backend, the identity of a
+server can be forged compromising LDAP remote access sessions.</td>
+<td xml:lang="en-US">Configure SSSD to demand a valid certificate from the server to
+protect the integrity of LDAP remote access sessions by setting
+the <pre>ldap_tls_reqcert</pre> option in <pre>/etc/sssd/sssd.conf</pre>
+to <code>demand</code>.</td>
+<td></td>
+<td>SRG-OS-000250-GPOS-00093<br>
+</td>
+<td>CCI-001453<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>sssd_ldap_start_tls</td>
 <td>high</td>
 <td>Configure SSSD LDAP Backend to Use TLS For All Transactions</td>
@@ -5731,6 +5994,26 @@ set to <code>ldap</code> or <code>ipa</code>, use the following command:
 <td>SRG-OS-000250-GPOS-00093<br>
 </td>
 <td>CCI-001453<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>sudo_remove_no_authenticate</td>
+<td>medium</td>
+<td>Ensure Users Re-Authenticate for Privilege Escalation - sudo !authenticate</td>
+<td xml:lang="en-US">Without re-authentication, users may access resources or perform tasks for which they
+do not have authorization.
+<br><br>
+When operating systems provide the capability to escalate a functional capability, it
+is critical that the user re-authenticate.</td>
+<td xml:lang="en-US">The sudo <code>!authenticate</code> option, when specified, allows a user to execute commands using
+sudo without having to authenticate. This should be disabled by making sure that the
+<code>!authenticate</code> option does not exist in <code>/etc/sudoers</code> configuration file or
+any sudo configuration snippets in <code>/etc/sudoers.d/</code>.</td>
+<td></td>
+<td>SRG-OS-000373-GPOS-00158<br>SRG-OS-000373-GPOS-00157<br>SRG-OS-000373-GPOS-00156<br>
+</td>
+<td>CCI-002038<br>
 </td>
 <td></td>
 </tr>
@@ -6016,6 +6299,25 @@ the following example:
 <td></td>
 </tr>
 <tr>
+<td>uefi_no_removeable_media</td>
+<td>medium</td>
+<td>UEFI Boot Loader Is Not Installed On Removeable Media</td>
+<td xml:lang="en-US">Malicious users with removable boot media can gain access to a system
+configured to use removable media as the boot loader.</td>
+<td xml:lang="en-US">The system must not allow removable media to be used as the boot loader.
+Remove alternate methods of booting the system from removable media.
+<code>usb0</code>, <code>cd</code>, <code>fd0</code>, etc. are some examples of removeable
+media which should not exist in the line:
+<pre>set root='hd0,msdos1'</pre>
+</td>
+<td></td>
+<td>SRG-OS-000364-GPOS-00151<br>SRG-OS-000365-GPOS-00152<br>
+</td>
+<td>CCI-001813<br>CCI-001814<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>wireless_disable_interfaces</td>
 <td>medium</td>
 <td>Deactivate Wireless Network Interfaces</td>
@@ -6029,6 +6331,7 @@ service to valid network resources.</td>
 <td xml:lang="en-US">Deactivating wireless network interfaces should prevent
 normal usage of the wireless capability.
 <br><br>
+
 Configure the system to disable all wireless network interfaces with the
 following command:
 <pre>$ sudo nmcli radio wifi off</pre>
@@ -6037,6 +6340,30 @@ following command:
 <td>SRG-OS-000423-GPOS-00187<br>SRG-OS-000481-GPOS-000481<br>SRG-OS-000424-GPOS-00188<br>
 </td>
 <td>CCI-000085<br>CCI-002418<br>CCI-002421<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>xwindows_runlevel_target</td>
+<td>medium</td>
+<td>Disable X Windows Startup By Setting Default Target</td>
+<td xml:lang="en-US">Services that are not required for system and application processes
+must not be active to decrease the attack surface of the system. X windows has a
+long history of security vulnerabilities and should not be used unless approved
+and documented.</td>
+<td xml:lang="en-US">Systems that do not require a graphical user interface should only boot by
+default into <code>multi-user.target</code> mode. This prevents accidental booting of the system
+into a <code>graphical.target</code> mode. Setting the system's default target to
+<code>multi-user.target</code> will prevent automatic startup of the X server. To do so, run:
+<pre>$ systemctl set-default multi-user.target</pre>
+You should see the following output:
+<pre>Removed symlink /etc/systemd/system/default.target.
+Created symlink from /etc/systemd/system/default.target to /usr/lib/systemd/system/multi-user.target.</pre>
+</td>
+<td></td>
+<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
+</td>
+<td>CCI-000366<br>
 </td>
 <td></td>
 </tr>

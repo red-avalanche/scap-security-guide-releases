@@ -1,10 +1,10 @@
 <html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
 <head>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>ANSSI BP-028 (enhanced)</title>
+<title>ANSSI-BP-028 (enhanced)</title>
 </head>
 <body>
-<br><br><div style="text-align: center; font-size: x-large; font-weight:bold">ANSSI BP-028 (enhanced)</div>
+<br><br><div style="text-align: center; font-size: x-large; font-weight:bold">ANSSI-BP-028 (enhanced)</div>
 <br><br><style type="text/css">
 		table
 		{
@@ -42,6 +42,174 @@
 <td>Variable Setting</td>
 </thead>
 <tr>
+<td>BP28(R18)<br>
+</td>
+<td>Set Password Maximum Age</td>
+<td xml:lang="en-US">To specify password maximum age for new accounts,
+edit the file <code>/etc/login.defs</code>
+and add or correct the following line:
+<pre>PASS_MAX_DAYS <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_maximum_age_login_defs"></xccdf-1.1:sub></pre>
+A value of 180 days is sufficient for many environments.
+The DoD requirement is 60.
+The profile requirement is <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_maximum_age_login_defs"></xccdf-1.1:sub></code>.</td>
+<td xml:lang="en-US">Any password, no matter how complex, can eventually be cracked. Therefore, passwords
+need to be changed periodically. If the operating system does not limit the lifetime
+of passwords and force users to change their passwords, there is the risk that the
+operating system passwords could be compromised.
+<br><br>
+Setting the password maximum age ensures users are required to
+periodically change their passwords. Requiring shorter password lifetimes
+increases the risk of users writing down the password in a convenient
+location subject to physical compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R18)<br>
+</td>
+<td>Set Password Minimum Length in login.defs</td>
+<td xml:lang="en-US">To specify password length requirements for new accounts, edit the file
+<code>/etc/login.defs</code> and add or correct the following line:
+<pre>PASS_MIN_LEN <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_password_minlen_login_defs"></xccdf-1.1:sub></pre>
+<br><br>
+The DoD requirement is <code>15</code>. 
+The FISMA requirement is <code>12</code>.
+The profile requirement is
+<code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_password_minlen_login_defs"></xccdf-1.1:sub></code>.
+If a program consults <code>/etc/login.defs</code> and also another PAM module
+(such as <code>pam_pwquality</code>) during a password change operation, then
+the most restrictive must be satisfied. See PAM section for more
+information about enforcing password quality requirements.</td>
+<td xml:lang="en-US">Requiring a minimum password length makes password
+cracking attacks more difficult by ensuring a larger
+search space. However, any security benefit from an onerous requirement
+must be carefully weighed against usability problems, support costs, or counterproductive
+behavior that may result.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R18)<br>
+</td>
+<td>Ensure PAM Enforces Password Requirements - Minimum Digit Characters</td>
+<td xml:lang="en-US">The pam_pwquality module's <code>dcredit</code> parameter controls requirements for
+usage of digits in a password. When set to a negative number, any password will be required to
+contain that many digits. When set to a positive number, pam_pwquality will grant +1 additional
+length credit for each digit. Modify the <code>dcredit</code> setting in
+<code>/etc/security/pwquality.conf</code> to require the use of a digit in passwords.</td>
+<td xml:lang="en-US">Use of a complex password helps to increase the time and resources required
+to compromise the password. Password complexity, or strength, is a measure of
+the effectiveness of a password in resisting attempts at guessing and brute-force
+attacks.
+<br><br>
+Password complexity is one factor of several that determines how long it takes
+to crack a password. The more complex the password, the greater the number of
+possible combinations that need to be tested before the password is compromised.
+Requiring digits makes password guessing attacks more difficult by ensuring a larger
+search space.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R18)<br>
+</td>
+<td>Ensure PAM Enforces Password Requirements - Minimum Lowercase Characters</td>
+<td xml:lang="en-US">The pam_pwquality module's <code>lcredit</code> parameter controls requirements for
+usage of lowercase letters in a password. When set to a negative number, any password will be required to
+contain that many lowercase characters. When set to a positive number, pam_pwquality will grant +1 additional
+length credit for each lowercase character. Modify the <code>lcredit</code> setting in
+<code>/etc/security/pwquality.conf</code> to require the use of a lowercase character in passwords.</td>
+<td xml:lang="en-US">Use of a complex password helps to increase the time and resources required
+to compromise the password. Password complexity, or strength, is a measure of
+the effectiveness of a password in resisting attempts at guessing and brute-force
+attacks.
+<br><br>
+Password complexity is one factor of several that determines how long it takes
+to crack a password. The more complex the password, the greater the number of
+possble combinations that need to be tested before the password is compromised.
+Requiring a minimum number of lowercase characters makes password guessing attacks
+more difficult by ensuring a larger search space.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R18)<br>
+</td>
+<td>Ensure PAM Enforces Password Requirements - Minimum Length</td>
+<td xml:lang="en-US">The pam_pwquality module's <code>minlen</code> parameter controls requirements for
+minimum characters required in a password. Add <code>minlen=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_minlen"></xccdf-1.1:sub></code>
+after pam_pwquality to set minimum password length requirements.</td>
+<td xml:lang="en-US">The shorter the password, the lower the number of possible combinations
+that need to be tested before the password is compromised.
+<br>
+Password complexity, or strength, is a measure of the effectiveness of a
+password in resisting attempts at guessing and brute-force attacks.
+Password length is one factor of several that helps to determine strength
+and how long it takes to crack a password. Use of more characters in a password
+helps to exponentially increase the time and/or resources required to
+compromose the password.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R18)<br>
+</td>
+<td>Ensure PAM Enforces Password Requirements - Minimum Special Characters</td>
+<td xml:lang="en-US">The pam_pwquality module's <code>ocredit=</code> parameter controls requirements for
+usage of special (or "other") characters in a password. When set to a negative number,
+any password will be required to contain that many special characters.
+When set to a positive number, pam_pwquality will grant +1
+additional length credit for each special character. Modify the <code>ocredit</code> setting
+in <code>/etc/security/pwquality.conf</code> to equal <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_ocredit"></xccdf-1.1:sub>
+to require use of a special character in passwords.</td>
+<td xml:lang="en-US">Use of a complex password helps to increase the time and resources required
+to compromise the password. Password complexity, or strength, is a measure of
+the effectiveness of a password in resisting attempts at guessing and brute-force
+attacks.
+<br><br>
+Password complexity is one factor of several that determines how long it takes
+to crack a password. The more complex the password, the greater the number of
+possble combinations that need to be tested before the password is compromised.
+Requiring a minimum number of special characters makes password guessing attacks
+more difficult by ensuring a larger search space.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R18)<br>
+</td>
+<td>Ensure PAM Enforces Password Requirements - Minimum Uppercase Characters</td>
+<td xml:lang="en-US">The pam_pwquality module's <code>ucredit=</code> parameter controls requirements for
+usage of uppercase letters in a password. When set to a negative number, any password will be required to
+contain that many uppercase characters. When set to a positive number, pam_pwquality will grant +1 additional
+length credit for each uppercase character. Modify the <code>ucredit</code> setting in
+<code>/etc/security/pwquality.conf</code> to require the use of an uppercase character in passwords.</td>
+<td xml:lang="en-US">Use of a complex password helps to increase the time and resources reuiqred to compromise the password.
+Password complexity, or strength, is a measure of the effectiveness of a password in resisting attempts
+at guessing and brute-force attacks.
+<br><br>
+Password complexity is one factor of several that determines how long it takes to crack a password. The more
+complex the password, the greater the number of possible combinations that need to be tested before
+the password is compromised.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R18)<br>
+</td>
+<td>Limit Password Reuse</td>
+<td xml:lang="en-US">Do not allow users to reuse recent passwords. This can be
+accomplished by using the <code>remember</code> option for the <code>pam_unix</code>
+or <code>pam_pwhistory</code> PAM modules.
+<br><br>
+In the file <code>/etc/pam.d/system-auth</code>, append <code>remember=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_remember"></xccdf-1.1:sub></code>
+to the line which refers to the <code>pam_unix.so</code> or <code>pam_pwhistory.so</code>module, as shown below:
+<ul>
+<li>for the <code>pam_unix.so</code> case:
+<pre>password sufficient pam_unix.so <i>...existing_options...</i> remember=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_remember"></xccdf-1.1:sub></pre>
+</li>
+<li>for the <code>pam_pwhistory.so</code> case:
+<pre>password requisite pam_pwhistory.so <i>...existing_options...</i> remember=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_remember"></xccdf-1.1:sub></pre>
+</li>
+</ul>
+The DoD STIG requirement is 5 passwords.</td>
+<td xml:lang="en-US">Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.</td>
+<td></td>
+</tr>
+<tr>
 <td>BP28(R32)<br>
 </td>
 <td>Set number of Password Hashing Rounds - password-auth</td>
@@ -67,6 +235,111 @@ to the <code>pam_unix.so</code> file, as shown below:
 <pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_rounds"></xccdf-1.1:sub></pre>
 The system's default number of rounds is 5000.</td>
 <td xml:lang="en-US">Using a higher number of rounds makes password cracking attacks more difficult.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R18)<br>
+</td>
+<td>Set Deny For Failed Password Attempts</td>
+<td xml:lang="en-US">To configure the system to lock out accounts after a number of incorrect login
+attempts using <code>pam_faillock.so</code>, modify the content of both
+<code>/etc/pam.d/system-auth</code> and <code>/etc/pam.d/password-auth</code> as follows:
+<br><br>
+<ul>
+<li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
+<pre>auth required pam_faillock.so preauth silent deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
+</li>
+<li> add the following line immediately <code>after</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
+<pre>auth [default=die] pam_faillock.so authfail deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
+</li>
+<li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>ACCOUNT</code> section:
+<pre>account required pam_faillock.so</pre>
+</li>
+</ul>
+</td>
+<td xml:lang="en-US">Locking out user accounts after a number of incorrect attempts
+prevents direct password guessing attacks.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R18)<br>
+</td>
+<td>Configure the root Account for Failed Password Attempts</td>
+<td xml:lang="en-US">To configure the system to lock out the <code>root</code> account after a
+number of incorrect login attempts using <code>pam_faillock.so</code>, modify
+the content of both <code>/etc/pam.d/system-auth</code> and
+<code>/etc/pam.d/password-auth</code> as follows:
+<br><br>
+<ul>
+<li>Modify the following line in the <code>AUTH</code> section to add
+<code>even_deny_root</code>:
+<pre>auth required pam_faillock.so preauth silent <b>even_deny_root</b> deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
+</li>
+<li>Modify the following line in the <code>AUTH</code> section to add
+<code>even_deny_root</code>:
+<pre>auth [default=die] pam_faillock.so authfail <b>even_deny_root</b> deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
+</li>
+</ul>
+</td>
+<td xml:lang="en-US">By limiting the number of failed logon attempts, the risk of unauthorized system access via user password
+guessing, otherwise known as brute-forcing, is reduced. Limits are imposed by locking the account.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R18)<br>
+</td>
+<td>Set Interval For Counting Failed Password Attempts</td>
+<td xml:lang="en-US">Utilizing <code>pam_faillock.so</code>, the <code>fail_interval</code> directive
+configures the system to lock out an account after a number of incorrect
+login attempts within a specified time period. Modify the content of both
+<code>/etc/pam.d/system-auth</code> and <code>/etc/pam.d/password-auth</code>
+as follows:
+<br><br>
+<ul>
+<li>Add the following line immediately <code>before</code> the
+    <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
+<pre>auth required pam_faillock.so preauth silent deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
+</li>
+<li>Add the following line immediately <code>after</code> the
+    <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
+<pre>auth [default=die] pam_faillock.so authfail deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub>
+</pre>
+</li>
+<li>Add the following line immediately <code>before</code> the
+    <code>pam_unix.so</code> statement in the <code>ACCOUNT</code> section:
+<pre>account required pam_faillock.so</pre>
+</li>
+</ul>
+</td>
+<td xml:lang="en-US">By limiting the number of failed logon attempts the risk of unauthorized system
+access via user password guessing, otherwise known as brute-forcing, is reduced.
+Limits are imposed by locking the account.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R18)<br>
+</td>
+<td>Set Lockout Time for Failed Password Attempts</td>
+<td xml:lang="en-US">To configure the system to lock out accounts after a number of incorrect login
+attempts and require an administrator to unlock the account using <code>pam_faillock.so</code>,
+modify the content of both <code>/etc/pam.d/system-auth</code> and <code>/etc/pam.d/password-auth</code> as follows:
+<br><br>
+<ul>
+<li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
+<pre>auth required pam_faillock.so preauth silent deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
+</li>
+<li> add the following line immediately <code>after</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
+<pre>auth [default=die] pam_faillock.so authfail deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
+</li>
+<li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>ACCOUNT</code> section:
+<pre>account required pam_faillock.so</pre>
+</li>
+</ul>
+If <code>unlock_time</code> is set to <code>0</code>, manual intervention by an administrator is required to unlock a user.</td>
+<td xml:lang="en-US">Locking out user accounts after a number of incorrect attempts
+prevents direct password guessing attacks. Ensuring that an administrator is
+involved in unlocking locked accounts draws appropriate attention to such
+situations.</td>
 <td></td>
 </tr>
 <tr>
@@ -105,6 +378,7 @@ directories being world-writable.</td>
 <td>Set Interactive Session Timeout</td>
 <td xml:lang="en-US">Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
 all user sessions will terminate based on inactivity. The <code>TMOUT</code>
+
 setting in <code>/etc/profile</code> should read as follows:
 <pre>TMOUT=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></xccdf-1.1:sub></pre>
 </td>
@@ -112,6 +386,20 @@ setting in <code>/etc/profile</code> should read as follows:
 the window of opportunity for unauthorized personnel to take control of a
 management session enabled on the console or console port that has been
 left unattended.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R35)<br>
+</td>
+<td>Ensure the Default Bash Umask is Set Correctly</td>
+<td xml:lang="en-US">To ensure the default umask for users of the Bash shell is set properly,
+add or correct the <code>umask</code> setting in <code>/etc/bashrc</code> to read
+as follows:
+<pre>umask <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_user_umask"></xccdf-1.1:sub></pre>
+</td>
+<td xml:lang="en-US">The umask value influences the permissions assigned to files when they are created.
+A misconfigured umask value could result in files with excessive permissions that can be read or
+written to by unauthorized users.</td>
 <td></td>
 </tr>
 <tr>
@@ -141,7 +429,8 @@ written to by unauthorized users.</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>BP28(R19)<br>
+</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - sudo</td>
 <td xml:lang="en-US">At a minimum, the audit system should collect the execution of
 privileged commands for all users and root. If the <code>auditd</code> daemon is
@@ -167,7 +456,8 @@ unusual activity.</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>BP28(R9)<br>
+</td>
 <td>Enable NX or XD Support in the BIOS</td>
 <td xml:lang="en-US">Reboot the system and enter the BIOS or Setup configuration menu.
 Navigate the BIOS configuration menu and make sure that the option is enabled. The setting may be located
@@ -178,7 +468,8 @@ allow users to turn the feature on or off at will.</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>BP28(R43)<br>
+</td>
 <td>A remote time server for Chrony is configured</td>
 <td xml:lang="en-US">
 <code>Chrony</code> is a daemon which implements the Network Time Protocol (NTP). It is designed to
@@ -209,7 +500,8 @@ users.</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>BP28(R40)<br>
+</td>
 <td>Verify that All World-Writable Directories Have Sticky Bits Set</td>
 <td xml:lang="en-US">When the so-called 'sticky bit' is set on a directory,
 only the owner of a given file may remove that file from the
@@ -237,7 +529,8 @@ for directories requiring global read/write access.</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>BP28(R8)<br>
+</td>
 <td>Configure dnf-automatic to Install Available Updates Automatically</td>
 <td xml:lang="en-US">To ensure that the packages comprising the available updates will be automatically installed by <code>dnf-automatic</code>, set <code>apply_updates</code> to <code>yes</code> under <code>[commands]</code> section in <code>/etc/dnf/automatic.conf</code>.</td>
 <td xml:lang="en-US">Installing software updates is a fundamental mitigation against
@@ -250,7 +543,8 @@ are applied in a timely manner.</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>BP28(R8)<br>
+</td>
 <td>Configure dnf-automatic to Install Only Security Updates</td>
 <td xml:lang="en-US">To configure <code>dnf-automatic</code> to install only security updates
 automatically, set <code>upgrade_type</code> to <code>security</code> under
@@ -454,7 +748,8 @@ which could weaken the system security posture.</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>BP28(R36)<br>
+</td>
 <td>Verify Permissions on SSH Server Private *_key Key Files</td>
 <td xml:lang="en-US">
 
@@ -506,7 +801,8 @@ strictly controlled on the system.</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>BP28(R40)<br>
+</td>
 <td>Ensure No World-Writable Files Exist</td>
 <td xml:lang="en-US">It is generally a good idea to remove global (other) write
 access to a file when it is discovered. However, check with
@@ -577,7 +873,8 @@ and whether to enter single-user mode.</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>BP28(R9)<br>
+</td>
 <td>Install PAE Kernel on Supported 32-bit x86 Systems</td>
 <td xml:lang="en-US">Systems that are using the 64-bit x86 kernel package
 do not need to install the kernel-PAE package because the 64-bit
@@ -837,7 +1134,8 @@ and FISMA Moderate systems.</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>BP28(R43)<br>
+</td>
 <td>The Chrony package is installed</td>
 <td xml:lang="en-US">System time should be synchronized between all systems in an environment. This is
 typically done by establishing an authoritative time server or set of servers and having all
@@ -866,7 +1164,8 @@ accidentally reactivated and disrupt network operation.</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>BP28(R8)<br>
+</td>
 <td>Install dnf-automatic Package</td>
 <td xml:lang="en-US">The <code>dnf-automatic</code> package can be installed with the following command:
 <pre>
@@ -878,7 +1177,8 @@ to <code>dnf upgrade</code> suitable for automatic, regular execution.</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>BP28(R43)<br>
+</td>
 <td>Ensure rsyslog-gnutls is installed</td>
 <td xml:lang="en-US">TLS protocol support for rsyslog is installed.
 The <code>rsyslog-gnutls</code> package can be installed with the following command:
@@ -915,7 +1215,8 @@ should be used instead.</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>BP28(R19)<br>
+</td>
 <td>Install sudo Package</td>
 <td xml:lang="en-US">The <code>sudo</code> package can be installed with the following command:
 <pre>
@@ -1043,7 +1344,8 @@ and other files in <code>/var/</code>.</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>BP28(R43)<br>
+</td>
 <td>Ensure /var/log/audit Located On Separate Partition</td>
 <td xml:lang="en-US">Audit logs are stored in the <code>/var/log/audit</code> directory.  Ensure that it
 has its own partition or logical volume at installation time, or migrate it
@@ -1200,7 +1502,8 @@ place to view the status of multiple hosts within the enterprise.</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>BP28(R43)<br>
+</td>
 <td>Configure TLS for rsyslog remote logging</td>
 <td xml:lang="en-US">Configure <code>rsyslog</code> to use Transport Layer
 Security (TLS) support for logging to remote server
@@ -1215,7 +1518,8 @@ remote logging server needs to be authenticated and encrypted.</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>BP28(R43)<br>
+</td>
 <td>Configure CA certificate for rsyslog remote logging</td>
 <td xml:lang="en-US">Configure CA certificate for <code>rsyslog</code> logging
 to remote server using Transport Layer Security (TLS)
@@ -1230,7 +1534,8 @@ fails to start with
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>BP28(R39)<br>
+</td>
 <td>Disable the polyinstantiation_enabled SELinux Boolean</td>
 <td xml:lang="en-US">By default, the SELinux boolean <code>polyinstantiation_enabled</code> is disabled.
 If this setting is enabled, it should be disabled.
@@ -1276,16 +1581,23 @@ logging services, which are essential to system administration.</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>BP28(R32)<br>
+</td>
 <td>Set PAM's Password Hashing Algorithm</td>
 <td xml:lang="en-US">The PAM system service can be configured to only store encrypted
-representations of passwords. In <code>/etc/pam.d/system-auth</code>, the
+representations of passwords. In
+
+<code>/etc/pam.d/system-auth</code>,
+
+the
 <code>password</code> section of the file controls which PAM modules execute
 during a password change. Set the <code>pam_unix.so</code> module in the
 <code>password</code> section to include the argument <code>sha512</code>, as shown
 below:
 <br>
+
 <pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i></pre>
+
 <br>
 This will help ensure when local users change their passwords, hashes for
 the new passwords will be generated using the SHA-512 algorithm. This is
@@ -1343,7 +1655,8 @@ enabled on the console or console port that has been let unattended.</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>BP28(R29)<br>
+</td>
 <td>Set SSH Client Alive Count Max</td>
 <td xml:lang="en-US">The SSH server sends at most <code>ClientAliveCountMax</code> messages
 during a SSH session and waits for a response from the SSH client.
@@ -1483,6 +1796,26 @@ is critical that the user re-authenticate.</td>
 <td></td>
 </tr>
 <tr>
+<td>BP28(R63)<br>
+</td>
+<td>Explicit arguments in sudo specifications</td>
+<td xml:lang="en-US">All commands in the sudoers file must strictly specify the arguments allowed to be used for a given user.
+If the command is supposed to be executed only without arguments, pass "" as an argument in the corresponding user specification.</td>
+<td xml:lang="en-US">Any argument can modify quite significantly the behavior of a program, whether regarding the
+realized operation (read, write, delete, etc.) or accessed resources (path in a file system tree). To
+avoid any possibility of misuse of a command by a user, the ambiguities must be removed at the
+level of its specification.
+
+For example, on some systems, the kernel messages are only accessible by root.
+If a user nevertheless must have the privileges to read them, the argument of the dmesg command has to be restricted
+in order to prevent the user from flushing the buffer through the -c option:
+<pre>
+user ALL = dmesg ""
+</pre>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>BP28(R61)<br>
 </td>
 <td>Don't define allowed commands in sudoers by means of exclusion</td>
@@ -1566,7 +1899,8 @@ address information.</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>BP28(R9)<br>
+</td>
 <td>Enable ExecShield via sysctl</td>
 <td xml:lang="en-US">By default on Red Hat Enterprise Linux 7 64-bit systems, ExecShield is
 enabled and can only be disabled if the hardware does not support
@@ -1594,6 +1928,20 @@ kernel writeable structures that can contain functions pointers. If a write vuln
 in the kernel allowing a write access to any of this structure, the kernel can be compromise. This
 option disallow any program withtout the CAP_SYSLOG capability from getting the kernel pointers addresses,
 replacing them with 0.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R24)<br>
+</td>
+<td>Disable loading and unloading of kernel modules</td>
+<td xml:lang="en-US">To set the runtime status of the <code>kernel.modules_disabled</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.modules_disabled=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.modules_disabled = 1</pre>
+</td>
+<td xml:lang="en-US">Malicious kernel modules can have a significant impact on system security and
+availability. Disabling loading of kernel modules prevents this threat. Note
+that once this option has been set, it cannot be reverted without doing a
+system reboot. Make sure that all needed kernel modules are loaded before
+setting this option.</td>
 <td></td>
 </tr>
 <tr>
@@ -2095,7 +2443,8 @@ heightened risk of kernel null pointer dereference defects.</td>
 <td></td>
 </tr>
 <tr>
-<td></td>
+<td>BP28(R8)<br>
+</td>
 <td>Enable dnf-automatic Timer</td>
 <td xml:lang="en-US">
 The <code>dnf-automatic</code> timer can be enabled with the following command:

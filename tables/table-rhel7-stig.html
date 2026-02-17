@@ -748,20 +748,29 @@ configured to store only encrypted representations of passwords.
 Additionally, the <code>crypt_style</code> configuration option ensures the use
 of a strong hashing algorithm that makes password cracking attacks more
 difficult.</td>
-<td>Inspect the password section of /etc/pam.d/system-auth and
-ensure that the pam_unix.so module includes the argument
+<td>
+Inspect the password section of /etc/pam.d/system-auth
+
+and ensure that the pam_unix.so module includes the argument
 sha512:
+
 $ grep sha512 /etc/pam.d/system-auth
       Is it the case that it does not?
       </td>
 <td>The PAM system service can be configured to only store encrypted
-representations of passwords. In <code>/etc/pam.d/system-auth</code>, the
+representations of passwords. In
+
+<code>/etc/pam.d/system-auth</code>,
+
+the
 <code>password</code> section of the file controls which PAM modules execute
 during a password change. Set the <code>pam_unix.so</code> module in the
 <code>password</code> section to include the argument <code>sha512</code>, as shown
 below:
 <br>
+
 <pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i></pre>
+
 <br>
 This will help ensure when local users change their passwords, hashes for
 the new passwords will be generated using the SHA-512 algorithm. This is
@@ -1055,31 +1064,39 @@ elapse until the account would be automatically disabled. See the
 <td>2238</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must be configured to lock accounts for a minimum of 15 minutes after three unsuccessful logon attempts within a 15-minute timeframe.</td>
-<td>Locking out user accounts after a number of incorrect attempts
-prevents direct password guessing attacks. Ensuring that an administrator is
-involved in unlocking locked accounts draws appropriate attention to such
-situations.</td>
-<td>To ensure the failed password attempt policy is configured correctly, run the following command:
-$ grep pam_faillock /etc/pam.d/system-auth
-The output should show unlock_time=&lt;some-large-number&gt; or 0 for never.
-      Is it the case that unlock_time is less than the expected value?
+<td>By limiting the number of failed logon attempts the risk of unauthorized system
+access via user password guessing, otherwise known as brute-forcing, is reduced.
+Limits are imposed by locking the account.</td>
+<td>To ensure the failed password attempt policy is configured correctly,
+run the following command:
+$ grep pam_faillock /etc/pam.d/system-auth /etc/pam.d/password-auth
+For each file, the output should show fail_interval=&lt;interval-in-seconds&gt; where interval-in-seconds is  or greater.
+If the fail_interval parameter is not set, the default setting
+of 900 seconds is acceptable.
+      Is it the case that fail_interval is less than the required value?
       </td>
-<td>To configure the system to lock out accounts after a number of incorrect login
-attempts and require an administrator to unlock the account using <code>pam_faillock.so</code>,
-modify the content of both <code>/etc/pam.d/system-auth</code> and <code>/etc/pam.d/password-auth</code> as follows:
+<td>Utilizing <code>pam_faillock.so</code>, the <code>fail_interval</code> directive
+configures the system to lock out an account after a number of incorrect
+login attempts within a specified time period. Modify the content of both
+<code>/etc/pam.d/system-auth</code> and <code>/etc/pam.d/password-auth</code>
+as follows:
 <br><br>
 <ul>
-<li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
+<li>Add the following line immediately <code>before</code> the
+    <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
 <pre>auth required pam_faillock.so preauth silent deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
 </li>
-<li> add the following line immediately <code>after</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth [default=die] pam_faillock.so authfail deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
+<li>Add the following line immediately <code>after</code> the
+    <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
+<pre>auth [default=die] pam_faillock.so authfail deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub>
+</pre>
 </li>
-<li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>ACCOUNT</code> section:
+<li>Add the following line immediately <code>before</code> the
+    <code>pam_unix.so</code> statement in the <code>ACCOUNT</code> section:
 <pre>account required pam_faillock.so</pre>
 </li>
 </ul>
-If <code>unlock_time</code> is set to <code>0</code>, manual intervention by an administrator is required to unlock a user.</td>
+</td>
 <td>RHEL-07-010320</td>
 </tr>
 <tr>
@@ -1312,19 +1329,20 @@ update the
 <td>This prevents attackers with physical access from trivially bypassing security
 on the machine and gaining root access. Such accesses are further prevented
 by configuring the bootloader password.</td>
-<td>To check if authentication is required for emergency mode, run the following command:
-$ grep sulogin /usr/lib/systemd/system/emergency.service
+<td>To check if authentication is required for single-user mode, run the following command:
+$ grep sulogin /usr/lib/systemd/system/rescue.service
 The output should be similar to the following, and the line must begin with
 ExecStart and /sbin/sulogin.
     ExecStart=-/bin/sh -c "/sbin/sulogin; /usr/bin/systemctl --fail --no-block default"
       Is it the case that the output is different?
       </td>
-<td>Emergency mode is intended as a system recovery
-method, providing a single user root access to the system
-during a failed boot sequence.
+<td>Single-user mode is intended as a system recovery
+method, providing a single user root access to the system by
+providing a boot option at startup. By default, no authentication
+is performed if single-user mode is selected.
 <br><br>
-By default, Emergency mode is protected by requiring a password and is set
-in <code>/usr/lib/systemd/system/emergency.service</code>.</td>
+By default, single-user mode is protected by requiring a password and is set
+in <code>/usr/lib/systemd/system/rescue.service</code>.</td>
 <td>RHEL-07-010481</td>
 </tr>
 <tr>
@@ -1338,7 +1356,7 @@ important bootloader settings. These include which kernel to use,
 and whether to enter single-user mode.</td>
 <td>To verify the boot loader superuser password has been set, run the following
 command:
- 
+
 sudo grep "superusers" /etc/grub2.cfg
 
 The output should show the following:
@@ -1550,7 +1568,7 @@ necessary. If SELinux is enabled, do not install or enable this module.</td>
 </tr>
 <tr>
 <td>RHEL-07-020020</td>
-<td>2235</td>
+<td>2165</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must prevent non-privileged users from executing privileged functions to include disabling, circumventing, or altering implemented security safeguards/countermeasures.</td>
 <td>Preventing non-privileged users from executing privileged functions mitigates
@@ -1720,7 +1738,7 @@ packages, set the <code>localpkg_gpgcheck</code> to <code>1</code> in <code>/etc
 </tr>
 <tr>
 <td>RHEL-07-020100</td>
-<td>1958</td>
+<td>366</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must be configured to disable USB mass storage.</td>
 <td>USB storage devices such as thumb drives can be used to introduce
@@ -1771,7 +1789,7 @@ kernel module from being loaded, add the following line to a file in the directo
 </tr>
 <tr>
 <td>RHEL-07-020110</td>
-<td>1958</td>
+<td>778</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must disable the file system automounter unless required.</td>
 <td>Disabling the automounter permits the administrator to
@@ -1804,7 +1822,7 @@ The <code>autofs</code> service can be disabled with the following command:
 </tr>
 <tr>
 <td>RHEL-07-020111</td>
-<td>1958</td>
+<td>366</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must disable the graphical user interface automounter unless required.</td>
 <td>USB storage devices such as thumb drives can be used to introduce
@@ -1835,17 +1853,21 @@ module, but will not prevent an administrator (or another program) from using th
 <td>The Red Hat Enterprise Linux operating system must remove all software components after updated versions have been installed.</td>
 <td>Previous versions of software components that are not removed from the information
 system after updates have been installed may be exploited by some adversaries.</td>
-<td>To verify that clean_requirements_on_remove is configured properly, run the
+<td>
+To verify that clean_requirements_on_remove is configured properly, run the
 following command:
 $ grep clean_requirements_on_remove /etc/yum.conf
 The output should return something similar to:
 clean_requirements_on_remove=1
-      Is it the case that clean_requirements_on_remove is not enabled or configured correctly?
+      Is it the case that 
+'clean_requirements_on_remove is not enabled or configured correctly'?
       </td>
 <td>
 <code>yum</code> should be configured to remove previous software components after
 new versions have been installed. To configure <code>yum</code> to remove the
+
 previous software components after updating, set the <code>clean_requirements_on_remove</code>
+
 to <code>1</code> in <code>/etc/yum.conf</code>.</td>
 <td>RHEL-07-020200</td>
 </tr>
@@ -1871,7 +1893,7 @@ following line to configure the system to boot into enforcing mode:
 </tr>
 <tr>
 <td>RHEL-07-020220</td>
-<td>2165</td>
+<td>2696</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must enable the SELinux targeted policy.</td>
 <td>Setting the SELinux policy to <code>targeted</code> or a more specialized policy
@@ -2039,23 +2061,25 @@ dictates.</td>
 <td>366</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must not have unnecessary accounts.</td>
-<td>Even though the communications channel may be encrypted, an additional layer of
-security is gained by extending the policy of not logging directly on as root.
-In addition, logging in with a user-specific account provides individual
-accountability of actions performed on the system and also helps to minimize
-direct attack attempts on root's password.</td>
-<td>To determine how the SSH daemon's PermitRootLogin option is set, run the following command:
-$ sudo grep -i PermitRootLogin /etc/ssh/sshd_config
+<td>SSH protocol version 1 is an insecure implementation of the SSH protocol and
+has many well-known vulnerability exploits. Exploits of the SSH daemon could provide
+immediate root access to the system.</td>
+<td>To check which SSH protocol version is allowed, check version of openssh-server with following command:
 
-If a line indicating no is returned, then the required value is set.
+$ rpm -qi openssh-server | grep Version
 
-      Is it the case that the required value is not set?
+Versions equal to or higher than 7.4 only allow Protocol 2.
+If version is lower than 7.4, run the following command to check configuration:
+$ sudo grep Protocol /etc/ssh/sshd_config
+If configured properly, output should be Protocol 2
+      Is it the case that it is commented out or is not set correctly to Protocol 2?
       </td>
-<td>The root user should never be allowed to login to a
-system directly over a network.
-To disable root login via SSH, add or correct the following line
-in <code>/etc/ssh/sshd_config</code>:
-<pre>PermitRootLogin no</pre>
+<td>Only SSH protocol version 2 connections should be
+permitted. The default setting in
+<code>/etc/ssh/sshd_config</code> is correct, and can be
+verified by ensuring that the following
+line appears:
+<pre>Protocol 2</pre>
 </td>
 <td>RHEL-07-020270</td>
 </tr>
@@ -2237,7 +2261,7 @@ following command:
 users could access or modify the user's files, and the users may not be able to
 access their own files.</td>
 <td>To verify the home directory ownership, run the following command:
-$ sudo ls -ld $(egrep ':[0-9]{4}' /etc/passwd | cut -d: -f6)
+# ls -ld $(awk -F: '($3&gt;=1000)&amp;&amp;($7 !~ /nologin/){print $6}' /etc/passwd)
       Is it the case that the user ownership is incorrect?
       </td>
 <td>Change the owner of interactive users home directories to that correct
@@ -2258,7 +2282,7 @@ access to the users files, and users that share the same group may not be
 able to access files that they legitimately should.</td>
 <td>To verify the assigned home directory of all interactive users is group-
 owned by that users primary GID, run the following command:
-$ sudo ls -ld $(egrep ':[0-9]{4}' /etc/passwd | cut -d: -f6)
+# ls -ld $(awk -F: '($3&gt;=1000)&amp;&amp;($7 !~ /nologin/){print $6}' /etc/passwd)
       Is it the case that the group ownership is incorrect?
       </td>
 <td>Change the group owner of interactive users home directory to the
@@ -2427,7 +2451,7 @@ compromised at the user level, it is easier to elevate privileges to eventually
 compromise the system at the root and network level.</td>
 <td>To verify that local initialization files do not execute world-writable programs,
 execute the following command:
-$ sudo find /home -perm -002 -type f -exec ls -ld {} -name ".[^.]*" \;
+$ sudo find /home -perm -002 -type f -name ".[^.]*" -exec ls -ld {} \;
 There should be no output.
       Is it the case that files are executing world-writable programs?
       </td>
@@ -2439,7 +2463,7 @@ following command:
 </tr>
 <tr>
 <td>RHEL-07-020900</td>
-<td>1812</td>
+<td>318</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must be configured so that all system device files are correctly labeled to prevent unauthorized modification.</td>
 <td>If a device file carries the SELinux type <code>device_t</code> or
@@ -2574,8 +2598,8 @@ or replace any files that may be placed in the directory by other
 users.</td>
 <td>The following command will discover and print world-writable directories that
 are not group owned by a system account, given the assumption that only system
-accounts have a gid lower than 500.  Run it once for each local partition PART:
-$ sudo find PART -xdev -type d -perm -0002 -gid +499 -print
+accounts have a gid lower than 1000.  Run it once for each local partition PART:
+$ sudo find PART -xdev -type d -perm -0002 -gid +999 -print
       Is it the case that there is output?
       </td>
 <td>All directories in local partitions which are
@@ -2611,7 +2635,7 @@ appropriate owner.</td>
 </tr>
 <tr>
 <td>RHEL-07-021040</td>
-<td>1814</td>
+<td>1812</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must set the umask value to 077 for all local interactive user accounts.</td>
 <td>The umask controls the default access mode assigned to newly created files. A
@@ -2901,14 +2925,14 @@ configured by default.</td>
 </tr>
 <tr>
 <td>RHEL-07-021700</td>
-<td>1812</td>
+<td>318</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must not allow removable media to be used as the boot loader unless approved.</td>
 <td>Malicious users with removable boot media can gain access to a system
 configured to use removable media as the boot loader.</td>
 <td>To verify the system is not configured to use a boot loader on removable media,
 run the following command:
-$ sudo grep "set root='hd0" /boot/efi/EFI/redhat/grub.cfg
+$ sudo grep "set root='hd0" /boot/grub2/grub.cfg
 The output should return something similar to:
 set root='hd0,msdos1'
 usb0, cd, fd0, etc. are some examples of removeable
@@ -2954,7 +2978,7 @@ $ sudo yum erase telnet-server</pre>
 </tr>
 <tr>
 <td>RHEL-07-030000</td>
-<td>126</td>
+<td>131</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must be configured so that auditing is configured to produce records containing information to establish what type of events occurred, where the events occurred, the source of the events, and the outcome of the events. These audit records must also identify individual identities of group account users.</td>
 <td>Without establishing what type of events occurred, it would be difficult
@@ -3014,23 +3038,24 @@ top of the <code>/etc/audit/audit.rules</code> file:
 <td>1851</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must be configured to off-load audit logs onto a different system or storage media from the system being audited.</td>
-<td>Information stored in one location is vulnerable to accidental or incidental deletion
-or alteration. Off-loading is a common process in information systems with limited
-audit storage capacity.</td>
-<td>To verify the audispd plugin encrypts audit records off-loaded onto a different
-system or media from the system being audited, run the following command:
+<td>Information stored in one location is vulnerable to accidental or incidental
+deletion or alteration.Off-loading is a common process in information systems
+with limited audit storage capacity.</td>
+<td>To verify the audispd plugin off-loads audit records onto a different system or
+media from the system being audited, run the following command:
 
-$ sudo grep -i enable_krb5 /etc/audisp/audisp-remote.conf
-The output should return the following:
-enable_krb5 = yes
-      Is it the case that audispd is not encrypting audit records when sent over the network?
+$ sudo grep -i remote_server /etc/audisp/audisp-remote.conf
+
+The output should return something similar to
+remote_server = 
+      Is it the case that audispd is not sending logs to a remote system?
       </td>
-<td>Configure the operating system to encrypt the transfer of off-loaded audit
-records onto a different system or media from the system being audited.
-
-Uncomment the <code>enable_krb5</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>,
-and set it with the following line:
-<pre>enable_krb5 = yes</pre>
+<td>Configure the audispd plugin to off-load audit records onto a different
+system or media from the system being audited.
+Set the <code>remote_server</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>
+with an IP address or hostname of the system that the audispd plugin should
+send audit records to. For example
+<pre>remote_server = <i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_audispd_remote_server"></xccdf-1.1:sub></i></pre>
 </td>
 <td>RHEL-07-030201</td>
 </tr>
@@ -3039,23 +3064,24 @@ and set it with the following line:
 <td>1851</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must take appropriate action when the remote logging buffer is full.</td>
-<td>Information stored in one location is vulnerable to accidental or incidental deletion
-or alteration. Off-loading is a common process in information systems with limited
-audit storage capacity.</td>
-<td>To verify the audispd plugin encrypts audit records off-loaded onto a different
-system or media from the system being audited, run the following command:
+<td>Information stored in one location is vulnerable to accidental or incidental
+deletion or alteration.Off-loading is a common process in information systems
+with limited audit storage capacity.</td>
+<td>To verify the audispd plugin off-loads audit records onto a different system or
+media from the system being audited, run the following command:
 
-$ sudo grep -i enable_krb5 /etc/audisp/audisp-remote.conf
-The output should return the following:
-enable_krb5 = yes
-      Is it the case that audispd is not encrypting audit records when sent over the network?
+$ sudo grep -i remote_server /etc/audisp/audisp-remote.conf
+
+The output should return something similar to
+remote_server = 
+      Is it the case that audispd is not sending logs to a remote system?
       </td>
-<td>Configure the operating system to encrypt the transfer of off-loaded audit
-records onto a different system or media from the system being audited.
-
-Uncomment the <code>enable_krb5</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>,
-and set it with the following line:
-<pre>enable_krb5 = yes</pre>
+<td>Configure the audispd plugin to off-load audit records onto a different
+system or media from the system being audited.
+Set the <code>remote_server</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>
+with an IP address or hostname of the system that the audispd plugin should
+send audit records to. For example
+<pre>remote_server = <i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_audispd_remote_server"></xccdf-1.1:sub></i></pre>
 </td>
 <td>RHEL-07-030210</td>
 </tr>
@@ -3064,23 +3090,24 @@ and set it with the following line:
 <td>1851</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must label all off-loaded audit logs before sending them to the central log server.</td>
-<td>Information stored in one location is vulnerable to accidental or incidental deletion
-or alteration. Off-loading is a common process in information systems with limited
-audit storage capacity.</td>
-<td>To verify the audispd plugin encrypts audit records off-loaded onto a different
-system or media from the system being audited, run the following command:
+<td>Information stored in one location is vulnerable to accidental or incidental
+deletion or alteration.Off-loading is a common process in information systems
+with limited audit storage capacity.</td>
+<td>To verify the audispd plugin off-loads audit records onto a different system or
+media from the system being audited, run the following command:
 
-$ sudo grep -i enable_krb5 /etc/audisp/audisp-remote.conf
-The output should return the following:
-enable_krb5 = yes
-      Is it the case that audispd is not encrypting audit records when sent over the network?
+$ sudo grep -i remote_server /etc/audisp/audisp-remote.conf
+
+The output should return something similar to
+remote_server = 
+      Is it the case that audispd is not sending logs to a remote system?
       </td>
-<td>Configure the operating system to encrypt the transfer of off-loaded audit
-records onto a different system or media from the system being audited.
-
-Uncomment the <code>enable_krb5</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>,
-and set it with the following line:
-<pre>enable_krb5 = yes</pre>
+<td>Configure the audispd plugin to off-load audit records onto a different
+system or media from the system being audited.
+Set the <code>remote_server</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>
+with an IP address or hostname of the system that the audispd plugin should
+send audit records to. For example
+<pre>remote_server = <i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_audispd_remote_server"></xccdf-1.1:sub></i></pre>
 </td>
 <td>RHEL-07-030211</td>
 </tr>
@@ -3384,7 +3411,7 @@ If the system is 64 bit then also add the following line:
 </tr>
 <tr>
 <td>RHEL-07-030390</td>
-<td>126</td>
+<td>172</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must audit all uses of the lchown syscall.</td>
 <td>The changing of file permissions could indicate that a user is attempting to
@@ -4079,6 +4106,7 @@ unusual activity.</td>
 <td>To verify that execution of the command is being audited, run the following command:
 $ sudo grep "path=/usr/bin/chcon" /etc/audit/audit.rules /etc/audit/rules.d/*
 The output should return something similar to:
+
 -a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged
       Is it the case that ?
       </td>
@@ -4087,10 +4115,13 @@ of the <code>chcon</code> command for all users and root. If the <code>auditd</c
 daemon is configured to use the <code>augenrules</code> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+
 <pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file:
+
 <pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>RHEL-07-030580</td>
@@ -4675,11 +4706,13 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 
+-F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign
+-F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>RHEL-07-030780</td>
 </tr>
@@ -4743,11 +4776,13 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
+-F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
+-F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>RHEL-07-030810</td>
 </tr>
@@ -4756,26 +4791,27 @@ form to <code>/etc/audit/audit.rules</code>:
 <td>172</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must audit all uses of the create_module syscall.</td>
-<td>The removal of kernel modules can be used to alter the behavior of
+<td>The addition/removal of kernel modules can be used to alter the behavior of
 the kernel and potentially introduce malicious code into kernel space. It is important
 to have an audit trail of modules that have been introduced into the kernel.</td>
 <td>To determine if the system is configured to audit calls to the
-delete_module system call, run the following command:
-preserve$ sudo grep "delete_module" /etc/audit/audit.*
+finit_module system call, run the following command:
+preserve$ sudo grep "finit_module" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
       </td>
-<td>To capture kernel module unloading events, use following line, setting ARCH to
-either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
-<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
-
-Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
-to use the <code>augenrules</code> program (the default), add the line to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
-add the line to file <code>/etc/audit/audit.rules</code>.</td>
+<td>If the <code>auditd</code> daemon is configured to use the <code>augenrules</code> program
+to read audit rules during daemon startup (the default), add the following lines to a file
+with suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code> to capture kernel module
+loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility to read audit
+rules during daemon startup, add the following lines to <code>/etc/audit/audit.rules</code> file
+in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
+b64 as appropriate for your system:
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
+</td>
 <td>RHEL-07-030819</td>
 </tr>
 <tr>
@@ -4865,31 +4901,32 @@ add the line to file <code>/etc/audit/audit.rules</code>.</td>
 <td>172</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must audit all uses of the kmod command.</td>
-<td>The removal of kernel modules can be used to alter the behavior of
+<td>The addition/removal of kernel modules can be used to alter the behavior of
 the kernel and potentially introduce malicious code into kernel space. It is important
 to have an audit trail of modules that have been introduced into the kernel.</td>
 <td>To determine if the system is configured to audit calls to the
-delete_module system call, run the following command:
-preserve$ sudo grep "delete_module" /etc/audit/audit.*
+finit_module system call, run the following command:
+preserve$ sudo grep "finit_module" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
       </td>
-<td>To capture kernel module unloading events, use following line, setting ARCH to
-either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
-<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
-
-Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
-to use the <code>augenrules</code> program (the default), add the line to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
-add the line to file <code>/etc/audit/audit.rules</code>.</td>
+<td>If the <code>auditd</code> daemon is configured to use the <code>augenrules</code> program
+to read audit rules during daemon startup (the default), add the following lines to a file
+with suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code> to capture kernel module
+loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility to read audit
+rules during daemon startup, add the following lines to <code>/etc/audit/audit.rules</code> file
+in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
+b64 as appropriate for your system:
+<pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
+</td>
 <td>RHEL-07-030840</td>
 </tr>
 <tr>
 <td>RHEL-07-030870</td>
-<td>1403</td>
+<td>2130</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/passwd.</td>
 <td>In addition to auditing new user and group accounts, these watches
@@ -4957,7 +4994,7 @@ account changes:
 </tr>
 <tr>
 <td>RHEL-07-030872</td>
-<td>1403</td>
+<td>2130</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/gshadow.</td>
 <td>In addition to auditing new user and group accounts, these watches
@@ -5025,7 +5062,7 @@ account changes:
 </tr>
 <tr>
 <td>RHEL-07-030874</td>
-<td>1403</td>
+<td>2130</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/opasswd.</td>
 <td>In addition to auditing new user and group accounts, these watches
@@ -5371,7 +5408,7 @@ To configure <code>firewalld</code> to allow access, run the following command(s
 <td>RHEL-07-040110</td>
 <td>68</td>
 <td>medium</td>
-<td>The Red Hat Enterprise Linux operating system must use a FIPS 140-2 approved cryptographic algorithm for SSH communications.</td>
+<td>The Red Hat Enterprise Linux 7 operating system must implement DoD-approved encryption to protect the confidentiality of SSH connections.</td>
 <td>Unapproved mechanisms that are used for authentication to the cryptographic module are not verified and therefore
 cannot be relied upon to provide confidentiality or integrity, and system data may be compromised.
 <br>
@@ -5384,35 +5421,16 @@ Security Levels 1, 2, 3, or 4 for use on Red Hat Enterprise Linux 7.</td>
 <td>Only FIPS ciphers should be used. To verify that only FIPS-approved
 ciphers are in use, run the following command:
 $ sudo grep Ciphers /etc/ssh/sshd_config
-The output should contain only those ciphers which are FIPS-approved.
+The output should contain only following ciphers (or a subset) in the exact order:
+aes256-ctr,aes192-ctr,aes128-ctr
       Is it the case that FIPS ciphers are not configured or the enabled ciphers are not FIPS-approved?
       </td>
 <td>Limit the ciphers to those algorithms which are FIPS-approved.
-Counter (CTR) mode is also preferred over cipher-block chaining (CBC) mode.
 The following line in <code>/etc/ssh/sshd_config</code>
 demonstrates use of FIPS-approved ciphers:
-<pre>Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc</pre>
-The man page <code>sshd_config(5)</code> contains a list of supported ciphers.
-
-<br><br>
-Only the following ciphers are FIPS 140-2 certified on Red Hat Enterprise Linux 7:
-<br>- aes128-ctr
-<br>- aes192-ctr
-<br>- aes256-ctr
-<br>- aes128-cbc
-<br>- aes192-cbc
-<br>- aes256-cbc
-<br>- 3des-cbc
-<br>- rijndael-cbc@lysator.liu.se
-<br><br>
-Any combination of the above ciphers will pass this check.
-Official FIPS 140-2 paperwork for Red Hat Enterprise Linux 7 can be found at
-
-
-    <a href="http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf">http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf</a>
-
-
-The rule is parametrized to use the following ciphers: <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sshd_approved_ciphers"></xccdf-1.1:sub></code>.</td>
+<pre>Ciphers aes256-ctr,aes192-ctr,aes128-ctr</pre>
+This rule ensures that there are configured ciphers mentioned
+above (or their subset), keeping the given order of algorithms.</td>
 <td>RHEL-07-040110</td>
 </tr>
 <tr>
@@ -5426,13 +5444,16 @@ management session enabled on the console or console port that has been
 left unattended.</td>
 <td>Run the following command to ensure the TMOUT value is configured for all users
 on the system:
+
 $ sudo grep TMOUT /etc/profile
+
 The output should return the following:
 TMOUT=
       Is it the case that value of TMOUT is not less than or equal to expected setting?
       </td>
 <td>Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
 all user sessions will terminate based on inactivity. The <code>TMOUT</code>
+
 setting in <code>/etc/profile</code> should read as follows:
 <pre>TMOUT=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></xccdf-1.1:sub></pre>
 </td>
@@ -5440,7 +5461,7 @@ setting in <code>/etc/profile</code> should read as follows:
 </tr>
 <tr>
 <td>RHEL-07-040170</td>
-<td>1388</td>
+<td>50</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must display the Standard Mandatory DoD Notice and Consent Banner immediately prior to, or as part of, remote access logon prompts.</td>
 <td>The warning message reinforces policy awareness during the logon process and
@@ -5574,7 +5595,7 @@ To make sure that the setting is persistent, add the following line to a file in
 </tr>
 <tr>
 <td>RHEL-07-040300</td>
-<td>2422</td>
+<td>2421</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must be configured so that all networked systems have SSH installed.</td>
 <td>Without protection of the transmitted information, confidentiality, and
@@ -5793,7 +5814,7 @@ following line in <code>/etc/ssh/sshd_config</code>:
 </tr>
 <tr>
 <td>RHEL-07-040390</td>
-<td>366</td>
+<td>197</td>
 <td>high</td>
 <td>The Red Hat Enterprise Linux operating system must be configured so that the SSH daemon is configured to only use the SSHv2 protocol.</td>
 <td>SSH protocol version 1 is an insecure implementation of the SSH protocol and
@@ -5828,36 +5849,16 @@ functions. The only SSHv2 hash algorithms meeting this requirement is SHA2.</td>
 <td>Only FIPS-approved MACs should be used. To verify that only FIPS-approved
 MACs are in use, run the following command:
 $ sudo grep -i macs /etc/ssh/sshd_config
-The output should contain only those MACs which are FIPS-approved. Any use of other
-ciphers or algorithms will result in the module entering the non-FIPS mode of
-operation.
+The output should contain only following MACs (or a subset) in the exact order:
+hmac-sha2-512,hmac-sha2-256
       Is it the case that MACs option is commented out or not using FIPS-approved hash algorithms?
       </td>
 <td>Limit the MACs to those hash algorithms which are FIPS-approved.
 The following line in <code>/etc/ssh/sshd_config</code>
 demonstrates use of FIPS-approved MACs:
-
-<pre>MACs hmac-sha2-512,hmac-sha2-256,hmac-sha1</pre>
-
-The man page <code>sshd_config(5)</code> contains a list of supported MACs.
-
-<br><br>
-Only the following message authentication codes are FIPS 140-2 certified on Red Hat Enterprise Linux 7:
-<br>- hmac-sha1
-<br>- hmac-sha2-256
-<br>- hmac-sha2-512
-<br>- hmac-sha1-etm@openssh.com
-<br>- hmac-sha2-256-etm@openssh.com
-<br>- hmac-sha2-512-etm@openssh.com
-<br><br>
-Any combination of the above MACs will pass this check. Official FIPS 140-2 paperwork for
-Red Hat Enterprise Linux 7 can be found at
-
-
-    <a href="http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf">http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf</a>
-
-
-The rule is parametrized to use the following MACs: <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sshd_approved_macs"></xccdf-1.1:sub></code>.</td>
+<pre>MACs hmac-sha2-512,hmac-sha2-256</pre>
+This rule ensures that there are configured MACs mentioned
+above (or their subset), keeping the given order of algorithms.</td>
 <td>RHEL-07-040400</td>
 </tr>
 <tr>
@@ -5893,7 +5894,7 @@ To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
 </tr>
 <tr>
 <td>RHEL-07-040430</td>
-<td>1813</td>
+<td>1814</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must be configured so that the SSH daemon does not permit Generic Security Service Application Program Interface (GSSAPI) authentication unless needed.</td>
 <td>GSSAPI authentication is used to provide additional authentication mechanisms to
@@ -5914,7 +5915,7 @@ correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 </tr>
 <tr>
 <td>RHEL-07-040440</td>
-<td>1812</td>
+<td>318</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must be configured so that the SSH daemon does not permit Kerberos authentication unless needed.</td>
 <td>Kerberos authentication for SSH is often implemented using GSSAPI. If Kerberos
@@ -6002,7 +6003,7 @@ a user has successfully authenticated, add or correct the following line in the
 </tr>
 <tr>
 <td>RHEL-07-040500</td>
-<td>1891</td>
+<td>2046</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must, for networked systems, synchronize clocks with a server that is synchronized to one of the redundant United States Naval Observatory (USNO) time servers, a time server designated for the appropriate DoD network (NIPRNet/SIPRNet), and/or the Global Positioning System (GPS).</td>
 <td>Inaccurate time stamps make it more difficult to correlate
@@ -6052,12 +6053,15 @@ allows the user to determine if any unauthorized activity has occurred
 and gives them an opportunity to notify administrators.</td>
 <td>To ensure that last logon/access notification is configured correctly, run
 the following command:
+
 $ grep pam_lastlog.so /etc/pam.d/postlogin
 The output should show output showfailed.
       Is it the case that that is not the case?
       </td>
 <td>To configure the system to notify users of last logon/access
-using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code> settings in
+using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code>
+settings in
+
 <code>/etc/pam.d/postlogin</code> to read as follows:
 <pre>session     [success=1 default=ignore] pam_succeed_if.so service !~ gdm* service !~ su* quiet
 session     [default=1]   pam_lastlog.so nowtmp showfailed
@@ -6547,7 +6551,7 @@ $ rpm -q vsftpd
 </tr>
 <tr>
 <td>RHEL-07-040700</td>
-<td>368</td>
+<td>318</td>
 <td>high</td>
 <td>The Red Hat Enterprise Linux operating system must not have the Trivial File Transfer Protocol (TFTP) server package installed if not required for operational support.</td>
 <td>Removing the <code>tftp-server</code> package decreases the risk of the accidental
@@ -6568,26 +6572,56 @@ $ rpm -q tftp-server
 <tr>
 <td>RHEL-07-040710</td>
 <td>366</td>
-<td>high</td>
-<td>The Red Hat Enterprise Linux operating system must be configured so that remote X connections for interactive users are encrypted.</td>
-<td>Non-encrypted X displays allow an attacker to capture keystrokes and to execute commands
-remotely.</td>
+<td>medium</td>
+<td>The Red Hat Enterprise Linux operating system must be configured so that remote X connections are disabled except to fulfill documented and validated mission requirements.</td>
+<td>Disable X11 forwarding unless there is an operational requirement to use X11
+applications directly. There is a small risk that the remote X11 servers of
+users who are logged in via SSH with X11 forwarding could be compromised by
+other users on the X11 server. Note that even if X11 forwarding is disabled,
+users can always install their own forwarders.</td>
 <td>To determine how the SSH daemon's X11Forwarding option is set, run the following command:
 $ sudo grep -i X11Forwarding /etc/ssh/sshd_config
-
-If a line indicating yes is returned, then the required value is set.
+If no line, a commented line, or a line indicating the value no is returned, then the required value is set.
 
       Is it the case that the required value is not set?
       </td>
-<td>By default, remote X11 connections are not encrypted when initiated
-by users. SSH has the capability to encrypt remote X11 connections when SSH's
+<td>The X11Forwarding parameter provides the ability to tunnel X11 traffic
+through the connection to enable remote graphic connections.
+SSH has the capability to encrypt remote X11 connections when SSH's
 <code>X11Forwarding</code> option is enabled.
 <br><br>
-To enable X11 Forwarding, add or correct the
+To disable X11 Forwarding, add or correct the
 following line in <code>/etc/ssh/sshd_config</code>:
-<pre>X11Forwarding yes</pre>
+<pre>X11Forwarding no</pre>
 </td>
 <td>RHEL-07-040710</td>
+</tr>
+<tr>
+<td>RHEL-07-040711</td>
+<td>366</td>
+<td>medium</td>
+<td>The Red Hat Enterprise Linux operating system SSH daemon must prevent remote hosts from connecting to the proxy display.</td>
+<td>SSH protocol version 1 is an insecure implementation of the SSH protocol and
+has many well-known vulnerability exploits. Exploits of the SSH daemon could provide
+immediate root access to the system.</td>
+<td>To check which SSH protocol version is allowed, check version of openssh-server with following command:
+
+$ rpm -qi openssh-server | grep Version
+
+Versions equal to or higher than 7.4 only allow Protocol 2.
+If version is lower than 7.4, run the following command to check configuration:
+$ sudo grep Protocol /etc/ssh/sshd_config
+If configured properly, output should be Protocol 2
+      Is it the case that it is commented out or is not set correctly to Protocol 2?
+      </td>
+<td>Only SSH protocol version 2 connections should be
+permitted. The default setting in
+<code>/etc/ssh/sshd_config</code> is correct, and can be
+verified by ensuring that the following
+line appears:
+<pre>Protocol 2</pre>
+</td>
+<td>RHEL-07-040711</td>
 </tr>
 <tr>
 <td>RHEL-07-040720</td>
@@ -6802,7 +6836,7 @@ To make sure that the setting is persistent, add the following line to a file in
 </tr>
 <tr>
 <td>RHEL-07-041001</td>
-<td>1954</td>
+<td>1948</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must have the required packages for multifactor authentication installed.</td>
 <td>Using an authentication device, such as a CAC or token that is separate from
@@ -6815,11 +6849,14 @@ information systems gaining access include, for example, hardware tokens
 providing time-based or challenge-response authenticators and smart cards such
 as the U.S. Government Personal Identity Verification card and the DoD Common
 Access Card.</td>
-<td>Run the following command to determine if the pam_pkcs11 package is installed: $ rpm -q pam_pkcs11
+<td>
+'Run the following command to determine if the pam_pkcs11 package is installed:
+$ rpm -q pam_pkcs11'
       Is it the case that smartcard software is not installed?
       </td>
 <td>Configure the operating system to implement multifactor authentication by
 installing the required package with the following command:
+
 The <code>pam_pkcs11</code> package can be installed with the following command:
 <pre>
 $ sudo yum install pam_pkcs11</pre>
@@ -6828,7 +6865,7 @@ $ sudo yum install pam_pkcs11</pre>
 </tr>
 <tr>
 <td>RHEL-07-041002</td>
-<td>1954</td>
+<td>1953</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must implement multifactor authentication for access to privileged accounts via pluggable authentication modules (PAM).</td>
 <td>Using an authentication device, such as a CAC or token that is separate from
@@ -6853,7 +6890,7 @@ services = sudo, autofs, pam
 </tr>
 <tr>
 <td>RHEL-07-041003</td>
-<td>1953</td>
+<td>1948</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must implement certificate status checking for PKI authentication.</td>
 <td>Using an authentication device, such as a CAC or token that is separate from
@@ -6896,6 +6933,7 @@ serve to create a man-in-the-middle attack or be used to create a denial of
 service to valid network resources.</td>
 <td>Verify that there are no wireless interfaces configured on the system
 with the following command:
+
 $ sudo nmcli device
 The output should contain the following:
 wifi disconnected
@@ -6904,6 +6942,7 @@ wifi disconnected
 <td>Deactivating wireless network interfaces should prevent
 normal usage of the wireless capability.
 <br><br>
+
 Configure the system to disable all wireless network interfaces with the
 following command:
 <pre>$ sudo nmcli radio wifi off</pre>
@@ -6912,26 +6951,21 @@ following command:
 </tr>
 <tr>
 <td>RHEL-07-910055</td>
-<td>1314</td>
+<td>164</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must protect audit information from unauthorized read, modification, or deletion.</td>
-<td>Unauthorized disclosure of audit records can reveal system and configuration data to
-attackers, thus compromising its confidentiality.</td>
-<td>
-To properly set the owner of /var/log/audit, run the command:
-$ sudo chown root /var/log/audit 
-
-To properly set the owner of /var/log/audit/*, run the command:
-$ sudo chown root /var/log/audit/* 
-      Is it the case that ?
+<td>If users can write to audit logs, audit trails can be modified or destroyed.</td>
+<td>Run the following command to check the mode of the system audit logs:
+$ sudo ls -l /var/log/audit
+Audit logs must be mode 0640 or less permissive.
+      Is it the case that any are more permissive?
       </td>
-<td>All audit logs must be owned by root user and group. By default, the path for audit log is <pre>/var/log/audit/</pre>.
-
-To properly set the owner of <code>/var/log/audit</code>, run the command:
-<pre>$ sudo chown root /var/log/audit </pre>
-
-To properly set the owner of <code>/var/log/audit/*</code>, run the command:
-<pre>$ sudo chown root /var/log/audit/* </pre>
+<td>If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other than the <code>root</code>
+group account, change the mode of the audit log files with the following command:
+<pre>$ sudo chmod 0640 <i>audit_file</i></pre>
+<br>
+Otherwise, change the mode of the audit log files with the following command:
+<pre>$ sudo chmod 0600 <i>audit_file</i></pre>
 </td>
 <td>RHEL-07-910055</td>
 </tr>

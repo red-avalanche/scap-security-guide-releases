@@ -3389,13 +3389,13 @@ lack of prompt attention to patching could result in a system compromise.</td>
 <td>Ensure No Daemons are Unconfined by SELinux</td>
 <td xml:lang="en-US">Daemons for which the SELinux policy does not contain rules will inherit the
 context of the parent process. Because daemons are launched during
-startup and descend from the <code>init</code> process, they inherit the <code>initrc_t</code> context.
+startup and descend from the <code>init</code> process, they inherit the <code>unconfined_service_t</code> context.
 <br>
 <br>
 To check for unconfined daemons, run the following command:
-<pre>$ sudo ps -eZ | egrep "initrc" | egrep -vw "tr|ps|egrep|bash|awk" | tr ':' ' ' | awk '{ print $NF }'</pre>
+<pre>$ sudo ps -eZ | grep "unconfined_service_t"</pre>
 It should produce no output in a well-configured system.</td>
-<td xml:lang="en-US">Daemons which run with the <code>initrc_t</code> context may cause AVC denials,
+<td xml:lang="en-US">Daemons which run with the <code>unconfined_service_t</code> context may cause AVC denials,
 or allow privileges that the daemon does not require.</td>
 <td></td>
 <td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>AC-3(3)(a)<br>AC-6<br>
@@ -3849,13 +3849,19 @@ attacks against xinetd itself.</td>
 <td>CCE-82043-1</td>
 <td>Set PAM's Password Hashing Algorithm</td>
 <td xml:lang="en-US">The PAM system service can be configured to only store encrypted
-representations of passwords. In <code>/etc/pam.d/system-auth</code>, the
+representations of passwords. In
+
+<code>/etc/pam.d/system-auth</code>,
+
+the
 <code>password</code> section of the file controls which PAM modules execute
 during a password change. Set the <code>pam_unix.so</code> module in the
 <code>password</code> section to include the argument <code>sha512</code>, as shown
 below:
 <br>
+
 <pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i></pre>
+
 <br>
 This will help ensure when local users change their passwords, hashes for
 the new passwords will be generated using the SHA-512 algorithm. This is

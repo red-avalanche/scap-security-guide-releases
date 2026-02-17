@@ -563,6 +563,7 @@ situations.</td>
 <td>Set Interactive Session Timeout</td>
 <td xml:lang="en-US">Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
 all user sessions will terminate based on inactivity. The <code>TMOUT</code>
+
 setting in <code>/etc/profile</code> should read as follows:
 <pre>TMOUT=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></xccdf-1.1:sub></pre>
 </td>
@@ -658,16 +659,6 @@ an empty entry, such as a leading or trailing colon or two consecutive colons,
 this is interpreted as the current working directory. If deviations from the
 default system search path for the local interactive user are required, they
 must be documented with the Information System Security Officer (ISSO).</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
-<td>All Interactive Users Must Have A Home Directory Defined</td>
-<td xml:lang="en-US">Assign home directories to all interactive users that currently do not
-have a home directory assigned.</td>
-<td xml:lang="en-US">If local interactive users are not assigned a valid home directory, there is no
-place for the storage and control of files they should own.</td>
 <td></td>
 <td></td>
 </tr>
@@ -1189,10 +1180,13 @@ of the <code>chcon</code> command for all users and root. If the <code>auditd</c
 daemon is configured to use the <code>augenrules</code> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+
 <pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file:
+
 <pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
@@ -1687,6 +1681,34 @@ unusual activity.</td>
 </tr>
 <tr>
 <td></td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - mount</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br><br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td></td>
+<td>AU-2(d)<br>AU-12(c)<br>AC-6(9)<br>CM-6(a)<br>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - newgrp</td>
 <td xml:lang="en-US">At a minimum, the audit system should collect the execution of
 privileged commands for all users and root. If the <code>auditd</code> daemon is
@@ -1721,11 +1743,13 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
+-F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
+-F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -1833,11 +1857,13 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 
+-F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign
+-F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -2569,7 +2595,9 @@ configured acceptable allowance (drift) may be inaccurate.</td>
 <td xml:lang="en-US">
 <code>yum</code> should be configured to remove previous software components after
 new versions have been installed. To configure <code>yum</code> to remove the
+
 previous software components after updating, set the <code>clean_requirements_on_remove</code>
+
 to <code>1</code> in <code>/etc/yum.conf</code>.</td>
 <td xml:lang="en-US">Previous versions of software components that are not removed from the information
 system after updates have been installed may be exploited by some adversaries.</td>
@@ -2674,6 +2702,100 @@ For U.S. Government systems, system use notifications are required only for acce
 with human users and are not required when such human interfaces do not exist.</td>
 <td></td>
 <td>AC-8(a)<br>AC-8(b)<br>AC-8(c)<br>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Disable GNOME3 Automounting</td>
+<td xml:lang="en-US">The system's default desktop environment, GNOME3, will mount
+devices and removable media (such as DVDs, CDs and USB flash drives) whenever
+they are inserted into the system. To disable automount within GNOME3, add or set
+<code>automount</code> to <code>false</code> in <code>/etc/dconf/db/local.d/00-security-settings</code>.
+For example:
+<pre>[org/gnome/desktop/media-handling]
+automount=false</pre>
+Once the settings have been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/media-handling/automount</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td xml:lang="en-US">Disabling automatic mounting in GNOME3 can prevent
+the introduction of malware via removable media.
+It will, however, also prevent desktop users from legitimate use
+of removable media.</td>
+<td></td>
+<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Disable GNOME3 Automount Opening</td>
+<td xml:lang="en-US">The system's default desktop environment, GNOME3, will mount
+devices and removable media (such as DVDs, CDs and USB flash drives) whenever
+they are inserted into the system. To disable automount-open within GNOME3, add or set
+<code>automount-open</code> to <code>false</code> in <code>/etc/dconf/db/local.d/00-security-settings</code>.
+For example:
+<pre>[org/gnome/desktop/media-handling]
+automount-open=false</pre>
+Once the settings have been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/media-handling/automount-open</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td xml:lang="en-US">Disabling automatic mounting in GNOME3 can prevent
+the introduction of malware via removable media.
+It will, however, also prevent desktop users from legitimate use
+of removable media.</td>
+<td></td>
+<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Disable GNOME3 Automount running</td>
+<td xml:lang="en-US">The system's default desktop environment, GNOME3, will mount
+devices and removable media (such as DVDs, CDs and USB flash drives) whenever
+they are inserted into the system. To disable autorun-never within GNOME3, add or set
+<code>autorun-never</code> to <code>true</code> in <code>/etc/dconf/db/local.d/00-security-settings</code>.
+For example:
+<pre>[org/gnome/desktop/media-handling]
+autorun-never=true</pre>
+Once the settings have been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/media-handling/autorun-never</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td xml:lang="en-US">Disabling automatic mount running in GNOME3 can prevent
+the introduction of malware via removable media.
+It will, however, also prevent desktop users from legitimate use
+of removable media.</td>
+<td></td>
+<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Disable Ctrl-Alt-Del Reboot Key Sequence in GNOME3</td>
+<td xml:lang="en-US">By default, <code>GNOME</code> will reboot the system if the
+<code>Ctrl-Alt-Del</code> key sequence is pressed.
+<br><br>
+To configure the system to ignore the <code>Ctrl-Alt-Del</code> key sequence
+from the Graphical User Interface (GUI) instead of rebooting the system,
+add or set <code>logout</code> to <code>''</code> in
+<code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
+<pre>[org/gnome/settings-daemon/plugins/media-keys]
+logout=''</pre>
+Once the settings have been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent
+user modification. For example:
+<pre>/org/gnome/settings-daemon/plugins/media-keys/logout</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td xml:lang="en-US">A locally logged-in user who presses Ctrl-Alt-Del, when at the console,
+can reboot the system. If accidentally pressed, as could happen in
+the case of mixed OS environment, this can create the risk of short-term
+loss of availability of systems due to unintentional reboot.</td>
+<td></td>
+<td>CM-6(a)<br>AC-6(1)<br>CM-7(b)<br>
 </td>
 </tr>
 <tr>
@@ -2902,6 +3024,23 @@ users.</td>
 </tr>
 <tr>
 <td></td>
+<td>Ensure All World-Writable Directories Are Group Owned by a System Account</td>
+<td xml:lang="en-US">All directories in local partitions which are
+world-writable should be group owned by root or another
+system account. If any world-writable directories are not
+group owned by a system account, this should be investigated.
+Following this, the files should be deleted or assigned to an
+appropriate group.</td>
+<td xml:lang="en-US">Allowing a user account to group own a world-writable directory is
+undesirable because it allows the owner of that directory to remove
+or replace any files that may be placed in the directory by other
+users.</td>
+<td></td>
+<td>CM-6(a)<br>AC-6(1)<br>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>Disable Ctrl-Alt-Del Reboot Activation</td>
 <td xml:lang="en-US">By default, <code>SystemD</code> will reboot the system if the <code>Ctrl-Alt-Del</code>
 key sequence is pressed.
@@ -2944,7 +3083,9 @@ can allow an attacker to move trivially to other hosts.</td>
 <td></td>
 <td>Ensure PAM Displays Last Logon/Access Notification</td>
 <td xml:lang="en-US">To configure the system to notify users of last logon/access
-using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code> settings in
+using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code>
+settings in
+
 <code>/etc/pam.d/postlogin</code> to read as follows:
 <pre>session     [success=1 default=ignore] pam_succeed_if.so service !~ gdm* service !~ su* quiet
 session     [default=1]   pam_lastlog.so nowtmp showfailed
@@ -3209,6 +3350,31 @@ system security.</td>
 </tr>
 <tr>
 <td></td>
+<td>Set the Boot Loader Admin Username to a Non-Default Value</td>
+<td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
+<br><br>
+To maximize the protection, select a password-protected superuser account with unique name, and modify the
+<code>/etc/grub.d/01_users</code> configuration file to reflect the account name change.
+<br><br>
+Do not to use common administrator account names like root,
+admin, or administrator for the grub2 superuser account.
+<br><br>
+Change the superuser to a different username (The default is 'root').
+<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<br><br>
+Once the superuser account has been added,
+update the
+<code>grub.cfg</code> file by running:
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
+</td>
+<td xml:lang="en-US">Having a non-default grub superuser username makes password-guessing attacks less effective.</td>
+<td></td>
+<td>CM-6(a)<br>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>Enable FIPS Mode in GRUB2</td>
 <td xml:lang="en-US">To ensure FIPS mode is enabled, install package <code>dracut-fips</code>, and rebuild <code>initramfs</code> by running the following commands:
 <pre>
@@ -3281,6 +3447,31 @@ and whether to enter single-user mode.</td>
 </tr>
 <tr>
 <td></td>
+<td>Set the UEFI Boot Loader Admin Username to a Non-Default Value</td>
+<td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
+<br><br>
+To maximize the protection, select a password-protected superuser account with unique name, and modify the
+<code>/etc/grub.d/01_users</code> configuration file to reflect the account name change.
+<br><br>
+It is highly suggested not to use common administrator account names like root,
+admin, or administrator for the grub2 superuser account.
+<br><br>
+Change the superuser to a different username (The default is 'root').
+<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<br><br>
+Once the superuser account has been added,
+update the
+<code>grub.cfg</code> file by running:
+<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
+</td>
+<td xml:lang="en-US">Having a non-default grub superuser username makes password-guessing attacks less effective.</td>
+<td></td>
+<td>CM-6(a)<br>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>Set the UEFI Boot Loader Password</td>
 <td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
 protection enabled to protect boot-time settings.
@@ -3331,6 +3522,7 @@ computer viruses, as well as to limit their spread to other systems.</td>
 <td>Install Smart Card Packages For Multifactor Authentication</td>
 <td xml:lang="en-US">Configure the operating system to implement multifactor authentication by
 installing the required package with the following command:
+
 The <code>pam_pkcs11</code> package can be installed with the following command:
 <pre>
 $ sudo yum install pam_pkcs11</pre>
@@ -3646,6 +3838,19 @@ or for the use of two-factor authentication.</td>
 </tr>
 <tr>
 <td></td>
+<td>Install the Host Intrusion Prevention System (HIPS) Module</td>
+<td xml:lang="en-US">Install the McAfee Host Intrusion Prevention System (HIPS) Module if it is absolutely
+necessary. If SELinux is enabled, do not install or enable this module.</td>
+<td xml:lang="en-US">Without a host-based intrusion detection tool, there is no system-level defense
+when an intruder gains access to a system or network. Additionally, a host-based
+intrusion prevention tool can provide methods to immediately lock out detected
+intrusion attempts.</td>
+<td></td>
+<td>CM-6(a)<br>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>Install AIDE</td>
 <td xml:lang="en-US">The <code>aide</code> package can be installed with the following command:
 <pre>
@@ -3686,29 +3891,6 @@ network services. Removing it decreases the risk of those services' accidental (
 activation.</td>
 <td></td>
 <td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>IA-5(1)(c)<br>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>Install the screen Package</td>
-<td xml:lang="en-US">To enable console screen locking, install the <code>screen</code> package.
-The <code>screen</code> package can be installed with the following command:
-<pre>
-$ sudo yum install screen</pre>
-Instruct users to begin new terminal sessions with the following command:
-<pre>$ screen</pre>
-The console can now be locked with the following key combination:
-<pre>ctrl+a x</pre>
-</td>
-<td xml:lang="en-US">A session time-out lock is a temporary action taken when a user stops work and moves away from the immediate
-physical vicinity of the information system but does not logout because of the temporary nature of the absence.
-Rather than relying on the user to manually lock their operation system session prior to vacating the vicinity,
-operating systems need to be able to identify when a user's session has idled and take action to initiate the
-session lock.
-<br><br>
-The <code>screen</code> package allows for a session lock to be implemented and configured.</td>
-<td></td>
-<td>CM-6(a)<br>
 </td>
 </tr>
 <tr>
@@ -3866,6 +4048,22 @@ host as a mail relay for the purpose of sending spam or other unauthorized
 activity.</td>
 <td></td>
 <td></td>
+</tr>
+<tr>
+<td></td>
+<td>Require Authentication for Emergency Systemd Target</td>
+<td xml:lang="en-US">Emergency mode is intended as a system recovery
+method, providing a single user root access to the system
+during a failed boot sequence.
+<br><br>
+By default, Emergency mode is protected by requiring a password and is set
+in <code>/usr/lib/systemd/system/emergency.service</code>.</td>
+<td xml:lang="en-US">This prevents attackers with physical access from trivially bypassing security
+on the machine and gaining root access. Such accesses are further prevented
+by configuring the bootloader password.</td>
+<td></td>
+<td>IA-2<br>AC-3<br>CM-6(a)<br>
+</td>
 </tr>
 <tr>
 <td></td>
@@ -4079,6 +4277,30 @@ device file.</td>
 </tr>
 <tr>
 <td></td>
+<td>Configure SELinux Policy</td>
+<td xml:lang="en-US">The SELinux <code>targeted</code> policy is appropriate for
+general-purpose desktops and servers, as well as systems in many other roles.
+To configure the system to use this policy, add or correct the following line
+in <code>/etc/selinux/config</code>:
+<pre>SELINUXTYPE=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_selinux_policy_name"></xccdf-1.1:sub></pre>
+Other policies, such as <code>mls</code>, provide additional security labeling
+and greater confinement but are not compatible with many general-purpose
+use cases.</td>
+<td xml:lang="en-US">Setting the SELinux policy to <code>targeted</code> or a more specialized policy
+ensures the system will confine processes that are likely to be
+targeted for exploitation, such as network or system services.
+<br><br>
+Note: During the development or debugging of SELinux modules, it is common to
+temporarily place non-production systems in <code>permissive</code> mode. In such
+temporary cases, SELinux policies should be developed, and once work
+is completed, the system should be reconfigured to
+<code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_selinux_policy_name"></xccdf-1.1:sub></code>.</td>
+<td></td>
+<td>AC-3<br>AC-3(3)(a)<br>AU-9<br>SC-7(21)<br>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>Ensure SELinux State is Enforcing</td>
 <td xml:lang="en-US">The SELinux state should be set to <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_selinux_state"></xccdf-1.1:sub></code> at
 system boot time.  In the file <code>/etc/selinux/config</code>, add or correct the
@@ -4281,13 +4503,19 @@ Using a stronger hashing algorithm makes password cracking attacks more difficul
 <td></td>
 <td>Set PAM's Password Hashing Algorithm</td>
 <td xml:lang="en-US">The PAM system service can be configured to only store encrypted
-representations of passwords. In <code>/etc/pam.d/system-auth</code>, the
+representations of passwords. In
+
+<code>/etc/pam.d/system-auth</code>,
+
+the
 <code>password</code> section of the file controls which PAM modules execute
 during a password change. Set the <code>pam_unix.so</code> module in the
 <code>password</code> section to include the argument <code>sha512</code>, as shown
 below:
 <br>
+
 <pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i></pre>
+
 <br>
 This will help ensure when local users change their passwords, hashes for
 the new passwords will be generated using the SHA-512 algorithm. This is
@@ -4513,6 +4741,27 @@ in the event of misconfiguration elsewhere.</td>
 </tr>
 <tr>
 <td></td>
+<td>Disable X11 Forwarding</td>
+<td xml:lang="en-US">The X11Forwarding parameter provides the ability to tunnel X11 traffic
+through the connection to enable remote graphic connections.
+SSH has the capability to encrypt remote X11 connections when SSH's
+<code>X11Forwarding</code> option is enabled.
+<br><br>
+To disable X11 Forwarding, add or correct the
+following line in <code>/etc/ssh/sshd_config</code>:
+<pre>X11Forwarding no</pre>
+</td>
+<td xml:lang="en-US">Disable X11 forwarding unless there is an operational requirement to use X11
+applications directly. There is a small risk that the remote X11 servers of
+users who are logged in via SSH with X11 forwarding could be compromised by
+other users on the X11 server. Note that even if X11 forwarding is disabled,
+users can always install their own forwarders.</td>
+<td></td>
+<td>CM-6(b)<br>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>Do Not Allow SSH Environment Options</td>
 <td xml:lang="en-US">To ensure users are not able to override environment
 variables of the SSH daemon, add or correct the following line
@@ -4554,23 +4803,6 @@ whose ownership should not be obvious should ensure usage of a banner that does
 not provide easy attribution.</td>
 <td></td>
 <td>AC-8(a)<br>AC-8(c)<br>AC-17(a)<br>CM-6(a)<br>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>Enable Encrypted X11 Forwarding</td>
-<td xml:lang="en-US">By default, remote X11 connections are not encrypted when initiated
-by users. SSH has the capability to encrypt remote X11 connections when SSH's
-<code>X11Forwarding</code> option is enabled.
-<br><br>
-To enable X11 Forwarding, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
-<pre>X11Forwarding yes</pre>
-</td>
-<td xml:lang="en-US">Non-encrypted X displays allow an attacker to capture keystrokes and to execute commands
-remotely.</td>
-<td></td>
-<td>CM-6(a)<br>AC-17(a)<br>AC-17(2)<br>
 </td>
 </tr>
 <tr>
@@ -4633,31 +4865,11 @@ is reached.</td>
 <td></td>
 <td>Use Only FIPS 140-2 Validated Ciphers</td>
 <td xml:lang="en-US">Limit the ciphers to those algorithms which are FIPS-approved.
-Counter (CTR) mode is also preferred over cipher-block chaining (CBC) mode.
 The following line in <code>/etc/ssh/sshd_config</code>
 demonstrates use of FIPS-approved ciphers:
-<pre>Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc</pre>
-The man page <code>sshd_config(5)</code> contains a list of supported ciphers.
-
-<br><br>
-Only the following ciphers are FIPS 140-2 certified on Oracle Linux 7:
-<br>- aes128-ctr
-<br>- aes192-ctr
-<br>- aes256-ctr
-<br>- aes128-cbc
-<br>- aes192-cbc
-<br>- aes256-cbc
-<br>- 3des-cbc
-<br>- rijndael-cbc@lysator.liu.se
-<br><br>
-Any combination of the above ciphers will pass this check.
-Official FIPS 140-2 paperwork for Oracle Linux 7 can be found at
-
-
-    <a href="https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp3028.pdf">https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp3028.pdf</a>
-
-
-The rule is parametrized to use the following ciphers: <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sshd_approved_ciphers"></xccdf-1.1:sub></code>.</td>
+<pre>Ciphers aes256-ctr,aes192-ctr,aes128-ctr</pre>
+This rule ensures that there are configured ciphers mentioned
+above (or their subset), keeping the given order of algorithms.</td>
 <td xml:lang="en-US">Unapproved mechanisms that are used for authentication to the cryptographic module are not verified and therefore
 cannot be relied upon to provide confidentiality or integrity, and system data may be compromised.
 <br>
@@ -4668,8 +4880,7 @@ FIPS 140-2 is the current standard for validating that mechanisms used to access
 utilize authentication that meets industry and government requirements. For government systems, this allows
 Security Levels 1, 2, 3, or 4 for use on Oracle Linux 7.</td>
 <td></td>
-<td>CM-6(a)<br>AC-17(a)<br>AC-17(2)<br>SC-13<br>MA-4(6)<br>IA-5(1)(c)<br>SC-12(2)<br>SC-12(3)<br>
-</td>
+<td></td>
 </tr>
 <tr>
 <td></td>
@@ -4677,33 +4888,13 @@ Security Levels 1, 2, 3, or 4 for use on Oracle Linux 7.</td>
 <td xml:lang="en-US">Limit the MACs to those hash algorithms which are FIPS-approved.
 The following line in <code>/etc/ssh/sshd_config</code>
 demonstrates use of FIPS-approved MACs:
-
-<pre>MACs hmac-sha2-512,hmac-sha2-256,hmac-sha1</pre>
-
-The man page <code>sshd_config(5)</code> contains a list of supported MACs.
-
-<br><br>
-Only the following message authentication codes are FIPS 140-2 certified on Oracle Linux 7:
-<br>- hmac-sha1
-<br>- hmac-sha2-256
-<br>- hmac-sha2-512
-<br>- hmac-sha1-etm@openssh.com
-<br>- hmac-sha2-256-etm@openssh.com
-<br>- hmac-sha2-512-etm@openssh.com
-<br><br>
-Any combination of the above MACs will pass this check. Official FIPS 140-2 paperwork for
-Oracle Linux 7 can be found at
-
-
-    <a href="https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp3028.pdf">https://csrc.nist.gov/CSRC/media/projects/cryptographic-module-validation-program/documents/security-policies/140sp3028.pdf</a>
-
-
-The rule is parametrized to use the following MACs: <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sshd_approved_macs"></xccdf-1.1:sub></code>.</td>
+<pre>MACs hmac-sha2-512,hmac-sha2-256</pre>
+This rule ensures that there are configured MACs mentioned
+above (or their subset), keeping the given order of algorithms.</td>
 <td xml:lang="en-US">DoD Information Systems are required to use FIPS-approved cryptographic hash
 functions. The only SSHv2 hash algorithms meeting this requirement is SHA2.</td>
 <td></td>
-<td>CM-6(a)<br>AC-17(a)<br>AC-17(2)<br>SC-13<br>MA-4(6)<br>SC-12(2)<br>SC-12(3)<br>
-</td>
+<td></td>
 </tr>
 <tr>
 <td></td>
@@ -4718,6 +4909,22 @@ when not needed which would decrease the impact of software vulnerabilities in
 the unprivileged section.</td>
 <td></td>
 <td>CM-6(a)<br>AC-17(a)<br>AC-6<br>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Prevent remote hosts from connecting to the proxy display</td>
+<td xml:lang="en-US">The SSH daemon should prevent remote hosts from connecting to the proxy
+display. Make sure that the option <code>X11UseLocalhost</code> is set to
+<code>yes</code> within the SSH server configuration file.</td>
+<td xml:lang="en-US">When X11 forwarding is enabled, there may be additional exposure to the
+server and client displays if the sshd proxy display is configured to listen
+on the wildcard address. By default, sshd binds the forwarding server to the
+loopback address and sets the hostname part of the <code>DISPLAY</code>
+environment variable to localhost. This prevents remote hosts from
+connecting to the proxy display.  </td>
+<td></td>
+<td>CM-6(b)<br>
 </td>
 </tr>
 <tr>
@@ -4783,6 +4990,19 @@ used to generate the hash.</td>
 </tr>
 <tr>
 <td></td>
+<td>Configure SSSD LDAP Backend Client to Demand a Valid Certificate from the Server</td>
+<td xml:lang="en-US">Configure SSSD to demand a valid certificate from the server to
+protect the integrity of LDAP remote access sessions by setting
+the <pre>ldap_tls_reqcert</pre> option in <pre>/etc/sssd/sssd.conf</pre>
+to <code>demand</code>.</td>
+<td xml:lang="en-US">Without a valid certificate presented to the LDAP client backend, the identity of a
+server can be forged compromising LDAP remote access sessions.</td>
+<td></td>
+<td>SC-12(3)<br>CM-6(a)<br>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>Configure SSSD LDAP Backend to Use TLS For All Transactions</td>
 <td xml:lang="en-US">The LDAP client should be configured to implement TLS for the integrity
 of all remote LDAP authentication sessions. If the <code>id_provider</code> is
@@ -4800,6 +5020,22 @@ whether to use TLS or not. If not specified it will default to no.
 It should be set to start_tls rather than doing LDAP over SSL.</td>
 <td></td>
 <td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure Users Re-Authenticate for Privilege Escalation - sudo !authenticate</td>
+<td xml:lang="en-US">The sudo <code>!authenticate</code> option, when specified, allows a user to execute commands using
+sudo without having to authenticate. This should be disabled by making sure that the
+<code>!authenticate</code> option does not exist in <code>/etc/sudoers</code> configuration file or
+any sudo configuration snippets in <code>/etc/sudoers.d/</code>.</td>
+<td xml:lang="en-US">Without re-authentication, users may access resources or perform tasks for which they
+do not have authorization.
+<br><br>
+When operating systems provide the capability to escalate a functional capability, it
+is critical that the user re-authenticate.</td>
+<td></td>
+<td>IA-11<br>CM-6(a)<br>
 </td>
 </tr>
 <tr>
@@ -5029,10 +5265,25 @@ reduces the risk of sharing files which should remain private.</td>
 </tr>
 <tr>
 <td></td>
+<td>UEFI Boot Loader Is Not Installed On Removeable Media</td>
+<td xml:lang="en-US">The system must not allow removable media to be used as the boot loader.
+Remove alternate methods of booting the system from removable media.
+<code>usb0</code>, <code>cd</code>, <code>fd0</code>, etc. are some examples of removeable
+media which should not exist in the line:
+<pre>set root='hd0,msdos1'</pre>
+</td>
+<td xml:lang="en-US">Malicious users with removable boot media can gain access to a system
+configured to use removable media as the boot loader.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
 <td>Deactivate Wireless Network Interfaces</td>
 <td xml:lang="en-US">Deactivating wireless network interfaces should prevent
 normal usage of the wireless capability.
 <br><br>
+
 Configure the system to disable all wireless network interfaces with the
 following command:
 <pre>$ sudo nmcli radio wifi off</pre>
@@ -5046,6 +5297,26 @@ serve to create a man-in-the-middle attack or be used to create a denial of
 service to valid network resources.</td>
 <td></td>
 <td>AC-18(a)<br>AC-18(3)<br>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>MP-7<br>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Disable X Windows Startup By Setting Default Target</td>
+<td xml:lang="en-US">Systems that do not require a graphical user interface should only boot by
+default into <code>multi-user.target</code> mode. This prevents accidental booting of the system
+into a <code>graphical.target</code> mode. Setting the system's default target to
+<code>multi-user.target</code> will prevent automatic startup of the X server. To do so, run:
+<pre>$ systemctl set-default multi-user.target</pre>
+You should see the following output:
+<pre>Removed symlink /etc/systemd/system/default.target.
+Created symlink from /etc/systemd/system/default.target to /usr/lib/systemd/system/multi-user.target.</pre>
+</td>
+<td xml:lang="en-US">Services that are not required for system and application processes
+must not be active to decrease the attack surface of the system. X windows has a
+long history of security vulnerabilities and should not be used unless approved
+and documented.</td>
+<td></td>
+<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
 </td>
 </tr>
 </table>
