@@ -22,13 +22,13 @@
       <ds:component-ref id="scap_org.open-scap_cref_ssg-fedora-cpe-oval.xml" xlink:href="#scap_org.open-scap_comp_ssg-fedora-cpe-oval.xml"/>
     </ds:checks>
   </ds:data-stream>
-  <ds:component id="scap_org.open-scap_comp_ssg-fedora-oval.xml" timestamp="2017-10-31T16:12:36">
+  <ds:component id="scap_org.open-scap_comp_ssg-fedora-oval.xml" timestamp="2018-01-03T14:19:51">
     <ns0:oval_definitions xmlns:ns0="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ns2="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ns3="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:ns4="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:ns5="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
       <ns0:generator>
         <ns2:product_name>combine-ovals.py from SCAP Security Guide</ns2:product_name>
-        <ns2:product_version>ssg: 0.1.36, python: 2.7.13</ns2:product_version>
+        <ns2:product_version>ssg: 0.1.37, python: 2.7.14</ns2:product_version>
         <ns2:schema_version>5.11</ns2:schema_version>
-        <ns2:timestamp>2017-10-31T16:12:32</ns2:timestamp>
+        <ns2:timestamp>2018-01-03T14:19:46</ns2:timestamp>
       </ns0:generator>
       <ns0:definitions>
         <ns0:definition class="compliance" id="oval:ssg-service_sshd_disabled:def:1" version="1">
@@ -3318,10 +3318,14 @@
       be disabled (and dependencies are met)</ns0:description>
             <reference ref_id="sshd_disable_empty_passwords" source="ssg"/>
           </ns0:metadata>
-          <ns0:criteria comment="SSH is not installed or conditions are met" operator="OR">
-            <ns0:extend_definition comment="sshd is not required and not installed, or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+          <ns0:criteria comment="SSH is configured correctly or is not installed" operator="OR">
+            <ns0:criteria comment="sshd is not installed" operator="AND">
+              <ns0:extend_definition comment="sshd is not required or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server removed" definition_ref="oval:ssg-package_openssh-server_removed:def:1"/>
+            </ns0:criteria>
             <ns0:criteria comment="sshd is installed and configured" operator="AND">
-              <ns0:extend_definition comment="sshd is required and installed, or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="sshd is required or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server installed" definition_ref="oval:ssg-package_openssh-server_installed:def:1"/>
               <ns0:criterion comment="Check PermitEmptyPasswords in /etc/ssh/sshd_config" negate="true" test_ref="oval:ssg-test_sshd_permitemptypasswords_no:tst:1"/>
             </ns0:criteria>
           </ns0:criteria>
@@ -3335,11 +3339,18 @@
       through the use of the authenticating user's SSH keys. This should be disabled.</ns0:description>
             <reference ref_id="sshd_disable_rhosts_rsa" source="ssg"/>
           </ns0:metadata>
-          <ns0:criteria comment="SSH is not installed or conditions are met" operator="OR">
-            <ns0:extend_definition comment="sshd is not required and not installed, or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+          <ns0:criteria comment="SSH is configured correctly or is not installed" operator="OR">
+            <ns0:criteria comment="sshd is not installed" operator="AND">
+              <ns0:extend_definition comment="sshd is not required or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server removed" definition_ref="oval:ssg-package_openssh-server_removed:def:1"/>
+            </ns0:criteria>
             <ns0:criteria comment="sshd is installed and configured" operator="AND">
-              <ns0:extend_definition comment="sshd is required and installed, or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
-              <ns0:criterion comment="Check RhostsRSAAuthentication in /etc/ssh/sshd_config" negate="true" test_ref="oval:ssg-test_sshd_disable_rhosts_rsa:tst:1"/>
+              <ns0:extend_definition comment="sshd is required or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server installed" definition_ref="oval:ssg-package_openssh-server_installed:def:1"/>
+              <ns0:criteria comment="SSH version is equal or higher than 7.4 has deprecated RhostsRSAAuthentication" operator="OR">
+                <ns0:extend_definition comment="OpenSSH version 7.4 or higher has deprecated RhostsRSAAuthentication" definition_ref="oval:ssg-sshd_version_equal_or_higher_than_74:def:1"/>
+                <ns0:criterion comment="Check RhostsRSAAuthentication in /etc/ssh/sshd_config" negate="true" test_ref="oval:ssg-test_sshd_disable_rhosts_rsa:tst:1"/>
+              </ns0:criteria>
             </ns0:criteria>
           </ns0:criteria>
         </ns0:definition>
@@ -3352,10 +3363,14 @@
       met)</ns0:description>
             <reference ref_id="sshd_disable_root_login" source="ssg"/>
           </ns0:metadata>
-          <ns0:criteria comment="SSH is not installed or conditions are met" operator="OR">
-            <ns0:extend_definition comment="sshd is not required and not installed, or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+          <ns0:criteria comment="SSH is configured correctly or is not installed" operator="OR">
+            <ns0:criteria comment="sshd is not installed" operator="AND">
+              <ns0:extend_definition comment="sshd is not required or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server removed" definition_ref="oval:ssg-package_openssh-server_removed:def:1"/>
+            </ns0:criteria>
             <ns0:criteria comment="sshd is installed and configured" operator="AND">
-              <ns0:extend_definition comment="sshd is required and installed, or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="sshd is required or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server installed" definition_ref="oval:ssg-package_openssh-server_installed:def:1"/>
               <ns0:criterion comment="Check PermitRootLogin in /etc/ssh/sshd_config" negate="true" test_ref="oval:ssg-test_sshd_permitrootlogin_no:tst:1"/>
             </ns0:criteria>
           </ns0:criteria>
@@ -3370,10 +3385,14 @@ to connect to systems if a cache of the remote systems public keys are available
 This should be disabled.</ns0:description>
             <reference ref_id="sshd_disable_user_known_hosts" source="ssg"/>
           </ns0:metadata>
-          <ns0:criteria comment="SSH is not installed or conditions are met" operator="OR">
-            <ns0:extend_definition comment="sshd is not required and not installed, or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+          <ns0:criteria comment="SSH is configured correctly or is not installed" operator="OR">
+            <ns0:criteria comment="sshd is not installed" operator="AND">
+              <ns0:extend_definition comment="sshd is not required or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server removed" definition_ref="oval:ssg-package_openssh-server_removed:def:1"/>
+            </ns0:criteria>
             <ns0:criteria comment="sshd is installed and configured" operator="AND">
-              <ns0:extend_definition comment="sshd is required and installed, or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="sshd is required or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server installed" definition_ref="oval:ssg-package_openssh-server_installed:def:1"/>
               <ns0:criterion comment="Check IgnoreUserKnownHosts in /etc/ssh/sshd_config" test_ref="oval:ssg-test_sshd_disable_user_known_hosts:tst:1"/>
             </ns0:criteria>
           </ns0:criteria>
@@ -3386,10 +3405,14 @@ This should be disabled.</ns0:description>
             <ns0:description>Enable X11Forwarding to encrypt X11 remote connections over SSH.</ns0:description>
             <reference ref_id="sshd_enable_x11_forwarding" source="ssg"/>
           </ns0:metadata>
-          <ns0:criteria comment="SSH is not installed or conditions are met" operator="OR">
-            <ns0:extend_definition comment="sshd is not required and not installed, or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+          <ns0:criteria comment="SSH is configured correctly or is not installed" operator="OR">
+            <ns0:criteria comment="sshd is not installed" operator="AND">
+              <ns0:extend_definition comment="sshd is not required or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server removed" definition_ref="oval:ssg-package_openssh-server_removed:def:1"/>
+            </ns0:criteria>
             <ns0:criteria comment="sshd is installed and configured" operator="AND">
-              <ns0:extend_definition comment="sshd is required and installed, or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="sshd is required or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server installed" definition_ref="oval:ssg-package_openssh-server_installed:def:1"/>
               <ns0:criterion comment="Check X11Forwarding in /etc/ssh/sshd_config" test_ref="oval:ssg-test_sshd_enable_x11_forwarding:tst:1"/>
             </ns0:criteria>
           </ns0:criteria>
@@ -3403,10 +3426,7 @@ This should be disabled.</ns0:description>
             <reference ref_id="sshd_not_required_or_unset" source="ssg"/>
           </ns0:metadata>
           <ns0:criteria comment="SSH not required or not set" operator="OR">
-            <ns0:criteria comment="SSH is not required and not installed" operator="AND">
-              <ns0:criterion test_ref="oval:ssg-test_sshd_not_required:tst:1"/>
-              <ns0:extend_definition comment="rpm package openssh-server removed" definition_ref="oval:ssg-package_openssh-server_removed:def:1"/>
-            </ns0:criteria>
+            <ns0:criterion test_ref="oval:ssg-test_sshd_not_required:tst:1"/>
             <ns0:extend_definition comment="SSH requirement is unset" definition_ref="oval:ssg-sshd_requirement_unset:def:1"/>
           </ns0:criteria>
         </ns0:definition>
@@ -3419,10 +3439,7 @@ This should be disabled.</ns0:description>
             <reference ref_id="sshd_required_or_unset" source="ssg"/>
           </ns0:metadata>
           <ns0:criteria comment="SSH required or not set" operator="OR">
-            <ns0:criteria comment="SSH is required and installed" operator="AND">
-              <ns0:criterion test_ref="oval:ssg-test_sshd_required:tst:1"/>
-              <ns0:extend_definition comment="rpm package openssh-server installed" definition_ref="oval:ssg-package_openssh-server_installed:def:1"/>
-            </ns0:criteria>
+            <ns0:criterion test_ref="oval:ssg-test_sshd_required:tst:1"/>
             <ns0:extend_definition comment="SSH requirement is unset" definition_ref="oval:ssg-sshd_requirement_unset:def:1"/>
           </ns0:criteria>
         </ns0:definition>
@@ -3447,10 +3464,14 @@ This should be disabled.</ns0:description>
       appropriate value.</ns0:description>
             <reference ref_id="sshd_set_idle_timeout" source="ssg"/>
           </ns0:metadata>
-          <ns0:criteria comment="SSH is not installed or conditions are met" operator="OR">
-            <ns0:extend_definition comment="sshd is not required and not installed, or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+          <ns0:criteria comment="SSH is configured correctly or is not installed" operator="OR">
+            <ns0:criteria comment="sshd is not installed" operator="AND">
+              <ns0:extend_definition comment="sshd is not required or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server removed" definition_ref="oval:ssg-package_openssh-server_removed:def:1"/>
+            </ns0:criteria>
             <ns0:criteria comment="sshd is installed and configured" operator="AND">
-              <ns0:extend_definition comment="sshd is required and installed, or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="sshd is required or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server installed" definition_ref="oval:ssg-package_openssh-server_installed:def:1"/>
               <ns0:criterion comment="Check ClientAliveInterval in /etc/ssh/sshd_config" test_ref="oval:ssg-test_sshd_idle_timeout:tst:1"/>
             </ns0:criteria>
           </ns0:criteria>
@@ -3464,10 +3485,14 @@ This should be disabled.</ns0:description>
       value (and dependencies are met)</ns0:description>
             <reference ref_id="sshd_set_keepalive" source="ssg"/>
           </ns0:metadata>
-          <ns0:criteria comment="SSH is not installed or conditions are met" operator="OR">
-            <ns0:extend_definition comment="sshd is not required and not installed, or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+          <ns0:criteria comment="SSH is configured correctly or is not installed" operator="OR">
+            <ns0:criteria comment="sshd is not installed" operator="AND">
+              <ns0:extend_definition comment="sshd is not required or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server removed" definition_ref="oval:ssg-package_openssh-server_removed:def:1"/>
+            </ns0:criteria>
             <ns0:criteria comment="sshd is installed and configured" operator="AND">
-              <ns0:extend_definition comment="sshd is required and installed, or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="sshd is required or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server installed" definition_ref="oval:ssg-package_openssh-server_installed:def:1"/>
               <ns0:criterion comment="Check ClientAliveCountMax in /etc/ssh/sshd_config" test_ref="oval:ssg-test_sshd_clientalivecountmax:tst:1"/>
             </ns0:criteria>
           </ns0:criteria>
@@ -13639,7 +13664,7 @@ This should be disabled.</ns0:description>
           <ns0:filter action="include">oval:ssg-state_owner_libraries_not_root:ste:1</ns0:filter>
         </ns3:file_object>
         <ns3:file_object comment="library files" id="oval:ssg-object_file_ownership_lib_files:obj:1" version="1">
-          <ns3:path operation="pattern match">^\/lib(|64)|^\/usr\/lib(|64)</ns3:path>
+          <ns3:path operation="pattern match">^\/lib(|64)\/|^\/usr\/lib(|64)\/</ns3:path>
           <ns3:filename operation="pattern match">^.*$</ns3:filename>
           <ns0:filter action="include">oval:ssg-state_owner_libraries_not_root:ste:1</ns0:filter>
         </ns3:file_object>
@@ -17891,10 +17916,10 @@ This should be disabled.</ns0:description>
         <ns0:external_variable comment="audit disk_full_action setting" datatype="string" id="oval:ssg-var_auditd_disk_full_action:var:1" version="1"/>
         <ns0:external_variable comment="audit action_mail_acct setting" datatype="string" id="oval:ssg-var_auditd_action_mail_acct:var:1" version="1"/>
         <ns0:external_variable comment="audit admin_space_left_action setting" datatype="string" id="oval:ssg-var_auditd_admin_space_left_action:var:1" version="1"/>
-        <ns0:external_variable comment="audit max_log_file settting" datatype="int" id="oval:ssg-var_auditd_max_log_file:var:1" version="1"/>
+        <ns0:external_variable comment="audit max_log_file setting" datatype="int" id="oval:ssg-var_auditd_max_log_file:var:1" version="1"/>
         <ns0:external_variable comment="audit max_log_file_action setting" datatype="string" id="oval:ssg-var_auditd_max_log_file_action:var:1" version="1"/>
-        <ns0:external_variable comment="audit num_logs settting" datatype="int" id="oval:ssg-var_auditd_num_logs:var:1" version="1"/>
-        <ns0:external_variable comment="audit space_left settting" datatype="int" id="oval:ssg-var_auditd_space_left:var:1" version="1"/>
+        <ns0:external_variable comment="audit num_logs setting" datatype="int" id="oval:ssg-var_auditd_num_logs:var:1" version="1"/>
+        <ns0:external_variable comment="audit space_left setting" datatype="int" id="oval:ssg-var_auditd_space_left:var:1" version="1"/>
         <ns0:external_variable comment="audit space_left_action setting" datatype="string" id="oval:ssg-var_auditd_space_left_action:var:1" version="2"/>
         <ns0:external_variable comment="warning banner text variable" datatype="string" id="oval:ssg-login_banner_text:var:1" version="1"/>
         <ns0:external_variable comment="inactivity timeout variable" datatype="int" id="oval:ssg-inactivity_timeout_value:var:1" version="1"/>
@@ -18344,13 +18369,13 @@ This should be disabled.</ns0:description>
       </ns0:variables>
     </ns0:oval_definitions>
   </ds:component>
-  <ds:component id="scap_org.open-scap_comp_ssg-fedora-ocil.xml" timestamp="2017-10-31T16:12:36">
+  <ds:component id="scap_org.open-scap_comp_ssg-fedora-ocil.xml" timestamp="2018-01-03T14:19:51">
     <ns0:ocil xmlns:ns0="http://scap.nist.gov/schema/ocil/2.0">
       <ns0:generator>
         <ns0:product_name>xccdf-create-ocil.xslt from SCAP Security Guide</ns0:product_name>
-        <ns0:product_version>ssg: 0.1.36</ns0:product_version>
+        <ns0:product_version>ssg: 0.1.37</ns0:product_version>
         <ns0:schema_version>2.0</ns0:schema_version>
-        <ns0:timestamp>2017-10-31T16:12:31Z</ns0:timestamp>
+        <ns0:timestamp>2018-01-03T14:19:46Z</ns0:timestamp>
       </ns0:generator>
       <ns0:questionnaires>
         <ns0:questionnaire id="ocil:ssg-ensure_gpgcheck_globally_activated_ocil:questionnaire:1">
@@ -23943,9 +23968,9 @@ package xorg-x11-server-common is not installed
       </ns0:questions>
     </ns0:ocil>
   </ds:component>
-  <ds:component id="scap_org.open-scap_comp_ssg-fedora-xccdf-1.2.xml" timestamp="2017-10-31T16:12:35">
+  <ds:component id="scap_org.open-scap_comp_ssg-fedora-xccdf-1.2.xml" timestamp="2018-01-03T14:19:51">
     <Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_org.ssgproject.content_benchmark_FEDORA" resolved="1" xml:lang="en-US" style="SCAP_1.2">
-      <status date="2017-10-31">draft</status>
+      <status date="2018-01-03">draft</status>
       <title xml:lang="en-US">Guide to the Secure Configuration of Fedora</title>
       <description xml:lang="en-US">This guide presents a catalog of security-relevant
 configuration settings for Fedora. It is a rendering of
@@ -24019,7 +24044,7 @@ respective companies.</rear-matter>
       <platform idref="cpe:/o:fedoraproject:fedora:27"/>
       <platform idref="cpe:/o:fedoraproject:fedora:26"/>
       <platform idref="cpe:/o:fedoraproject:fedora:25"/>
-      <version update="https://github.com/OpenSCAP/scap-security-guide/releases/latest">0.1.36</version>
+      <version update="https://github.com/OpenSCAP/scap-security-guide/releases/latest">0.1.37</version>
       <metadata>
         <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">SCAP Security Guide Project</dc:publisher>
         <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">SCAP Security Guide Project</dc:creator>
@@ -24033,6 +24058,7 @@ respective companies.</rear-matter>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Jose Luis BG &lt;bgjoseluis@gmail.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Joseph Bisch &lt;joseph.bisch@gmail.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Jeffrey Blank &lt;blank@eclipse.ncsc.mil&gt;</dc:contributor>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Olivier Bonhomme &lt;ptitoliv@ptitoliv.net&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Ted Brunell &lt;tbrunell@redhat.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Blake Burkhart &lt;blake.burkhart@us.af.mil&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Patrick Callahan &lt;pmc@patrickcallahan.com&gt;</dc:contributor>
@@ -24058,6 +24084,7 @@ respective companies.</rear-matter>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Robin Price II &lt;robin@redhat.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Jeremiah Jahn &lt;jeremiah@goodinassociates.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Stephan Joerrens &lt;Stephan.Joerrens@fiduciagad.de&gt;</dc:contributor>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Charles Kernstock &lt;charles.kernstock@ultra-ats.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Yuli Khodorkovskiy &lt;ykhodorkovskiy@tresys.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Luke Kordell &lt;luke.t.kordell@lmco.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">kspargur &lt;kspargur@kspargur.csb&gt;</dc:contributor>
@@ -24065,6 +24092,7 @@ respective companies.</rear-matter>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Ian Lee &lt;lee1001@llnl.gov&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Jan Lieskovsky &lt;jlieskov@redhat.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Šimon Lukašík &lt;slukasik@redhat.com&gt;</dc:contributor>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Matus Marhefka &lt;mmarhefk@redhat.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Jamie Lorwey Martin &lt;jlmartin@redhat.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Michael McConachie &lt;michael@redhat.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Khary Mendez &lt;kharyam@gmail.com&gt;</dc:contributor>
@@ -24082,6 +24110,7 @@ respective companies.</rear-matter>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Max R.D. Parmer &lt;maxp@trystero.is&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">pcactr &lt;paul.c.arnold4.ctr@mail.mil&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Kenneth Peeples &lt;kennethwpeeples@gmail.com&gt;</dc:contributor>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Nathan Peters &lt;petna01@ca.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Frank Lin PIAT &lt;fpiat@klabs.be&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Stefan Pietsch &lt;mail.ipv4v6+gh@gmail.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Martin Preisler &lt;mpreisle@redhat.com&gt;</dc:contributor>
@@ -24110,7 +24139,7 @@ respective companies.</rear-matter>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Philippe Thierry &lt;phil@reseau-libre.net&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Paul Tittle &lt;ptittle@cmf.nrl.navy.mil&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Jeb Trayer &lt;jeb.d.trayer@uscg.mil&gt;</dc:contributor>
-        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Matěj Týč &lt;matej.tyc@gmail.com&gt;</dc:contributor>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Matěj Týč &lt;matyc@redhat.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">VadimDor &lt;29509093+VadimDor@users.noreply.github.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Shawn Wells &lt;shawn@redhat.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Roy Williams &lt;roywilli@roywilli.redhat.com&gt;</dc:contributor>
@@ -24816,7 +24845,229 @@ done
         <Value id="xccdf_org.ssgproject.content_value_function_rhel7_fedora_perform_audit_adjtimex_settimeofday_stime_remediation" hidden="true" prohibitChanges="true" operator="equals" type="string">
           <title xml:lang="en-US">Remediation function rhel7_fedora_perform_audit_adjtimex_settimeofday_stime_remediation</title>
           <description xml:lang="en-US">Shared bash remediation function. Not intended to be changed by tailoring.</description>
-          <value># Perform the remediation for the 'adjtimex', 'settimeofday', and 'stime' audit
+          <value># Function to fix syscall audit rule for given system call. It is
+# based on example audit syscall rule definitions as outlined in
+# /usr/share/doc/audit-2.3.7/stig.rules file provided with the audit
+# package. It will combine multiple system calls belonging to the same
+# syscall group into one audit rule (rather than to create audit rule per
+# different system call) to avoid audit infrastructure performance penalty
+# in the case of 'one-audit-rule-definition-per-one-system-call'. See:
+#
+#   https://www.redhat.com/archives/linux-audit/2014-November/msg00009.html
+#
+# for further details.
+#
+# Expects five arguments (each of them is required) in the form of:
+# * audit tool				tool used to load audit rules,
+# 					either 'auditctl', or 'augenrules
+# * audit rules' pattern		audit rule skeleton for same syscall
+# * syscall group			greatest common string this rule shares
+# 					with other rules from the same group
+# * architecture			architecture this rule is intended for
+# * full form of new rule to add	expected full form of audit rule as to be
+# 					added into audit.rules file
+#
+# Note: The 2-th up to 4-th arguments are used to determine how many existing
+# audit rules will be inspected for resemblance with the new audit rule
+# (5-th argument) the function is going to add. The rule's similarity check
+# is performed to optimize audit.rules definition (merge syscalls of the same
+# group into one rule) to avoid the "single-syscall-per-audit-rule" performance
+# penalty.
+#
+# Example call:
+#
+#	See e.g. 'audit_rules_file_deletion_events.sh' remediation script
+#
+function fix_audit_syscall_rule {
+
+# Load function arguments into local variables
+local tool="$1"
+local pattern="$2"
+local group="$3"
+local arch="$4"
+local full_rule="$5"
+
+# Check sanity of the input
+if [ $# -ne "5" ]
+then
+	echo "Usage: fix_audit_syscall_rule 'tool' 'pattern' 'group' 'arch' 'full rule'"
+	echo "Aborting."
+	exit 1
+fi
+
+# Create a list of audit *.rules files that should be inspected for presence and correctness
+# of a particular audit rule. The scheme is as follows:
+# 
+# -----------------------------------------------------------------------------------------
+#  Tool used to load audit rules | Rule already defined  |  Audit rules file to inspect    |
+# -----------------------------------------------------------------------------------------
+#        auditctl                |     Doesn't matter    |  /etc/audit/audit.rules         |
+# -----------------------------------------------------------------------------------------
+#        augenrules              |          Yes          |  /etc/audit/rules.d/*.rules     |
+#        augenrules              |          No           |  /etc/audit/rules.d/$key.rules  |
+# -----------------------------------------------------------------------------------------
+#
+declare -a files_to_inspect
+
+retval=0
+
+# First check sanity of the specified audit tool
+if [ "$tool" != 'auditctl' ] &amp;&amp; [ "$tool" != 'augenrules' ]
+then
+	echo "Unknown audit rules loading tool: $1. Aborting."
+	echo "Use either 'auditctl' or 'augenrules'!"
+	return 1
+# If audit tool is 'auditctl', then add '/etc/audit/audit.rules'
+# file to the list of files to be inspected
+elif [ "$tool" == 'auditctl' ]
+then
+	files_to_inspect=("${files_to_inspect[@]}" '/etc/audit/audit.rules' )
+# If audit tool is 'augenrules', then check if the audit rule is defined
+# If rule is defined, add '/etc/audit/rules.d/*.rules' to the list for inspection
+# If rule isn't defined yet, add '/etc/audit/rules.d/$key.rules' to the list for inspection
+elif [ "$tool" == 'augenrules' ]
+then
+	# Extract audit $key from audit rule so we can use it later
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	# Check if particular audit rule is already defined
+	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	if [ $? -ne 0 ]
+	then
+		retval=1
+	fi
+	# Reset IFS back to default
+	unset IFS
+	for match in "${matches[@]}"
+	do
+		files_to_inspect=("${files_to_inspect[@]}" "${match}")
+	done
+	# Case when particular rule isn't defined in /etc/audit/rules.d/*.rules yet
+	if [ ${#files_to_inspect[@]} -eq "0" ]
+	then
+		files_to_inspect="/etc/audit/rules.d/$key.rules"
+		if [ ! -e "$files_to_inspect" ]
+		then
+			touch "$files_to_inspect"
+			chmod 0640 "$files_to_inspect"
+		fi
+	fi
+fi
+
+#
+# Indicator that we want to append $full_rule into $audit_file by default
+local append_expected_rule=0
+
+for audit_file in "${files_to_inspect[@]}"
+do
+
+	# Filter existing $audit_file rules' definitions to select those that:
+	# * follow the rule pattern, and
+	# * meet the hardware architecture requirement, and
+	# * are current syscall group specific
+	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	if [ $? -ne 0 ]
+	then
+		retval=1
+	fi
+	# Reset IFS back to default
+	unset IFS
+
+	# Process rules found case-by-case
+	for rule in "${existing_rules[@]}"
+	do
+		# Found rule is for same arch &amp; key, but differs (e.g. in count of -S arguments)
+		if [ "${rule}" != "${full_rule}" ]
+		then
+			# If so, isolate just '(-S \w)+' substring of that rule
+			rule_syscalls=$(echo $rule | grep -o -P '(-S \w+ )+')
+			# Check if list of '-S syscall' arguments of that rule is subset
+			# of '-S syscall' list of expected $full_rule
+			if grep -q -- "$rule_syscalls" &lt;&lt;&lt; "$full_rule"
+			then
+				# Rule is covered (i.e. the list of -S syscalls for this rule is
+				# subset of -S syscalls of $full_rule =&gt; existing rule can be deleted
+				# Thus delete the rule from audit.rules &amp; our array
+				sed -i -e "\;${rule};d" "$audit_file"
+				if [ $? -ne 0 ]
+				then
+					retval=1
+				fi
+				existing_rules=("${existing_rules[@]//$rule/}")
+			else
+				# Rule isn't covered by $full_rule - it besides -S syscall arguments
+				# for this group contains also -S syscall arguments for other syscall
+				# group. Example: '-S lchown -S fchmod -S fchownat' =&gt; group='chown'
+				# since 'lchown' &amp; 'fchownat' share 'chown' substring
+				# Therefore:
+				# * 1) delete the original rule from audit.rules
+				# (original '-S lchown -S fchmod -S fchownat' rule would be deleted)
+				# * 2) delete the -S syscall arguments for this syscall group, but
+				# keep those not belonging to this syscall group
+				# (original '-S lchown -S fchmod -S fchownat' would become '-S fchmod'
+				# * 3) append the modified (filtered) rule again into audit.rules
+				# if the same rule not already present
+				#
+				# 1) Delete the original rule
+				sed -i -e "\;${rule};d" "$audit_file"
+				if [ $? -ne 0 ]
+				then
+					retval=1
+				fi
+				# 2) Delete syscalls for this group, but keep those from other groups
+				# Convert current rule syscall's string into array splitting by '-S' delimiter
+				IFS=$'-S' read -a rule_syscalls_as_array &lt;&lt;&lt; "$rule_syscalls"
+				# Reset IFS back to default
+				unset IFS
+				# Declare new empty string to hold '-S syscall' arguments from other groups
+				new_syscalls_for_rule=''
+				# Walk through existing '-S syscall' arguments
+				for syscall_arg in "${rule_syscalls_as_array[@]}"
+				do
+					# Skip empty $syscall_arg values
+					if [ "$syscall_arg" == '' ]
+					then
+						continue
+					fi
+					# If the '-S syscall' doesn't belong to current group add it to the new list
+					# (together with adding '-S' delimiter back for each of such item found)
+					if grep -q -v -- "$group" &lt;&lt;&lt; "$syscall_arg"
+					then
+						new_syscalls_for_rule="$new_syscalls_for_rule -S $syscall_arg"
+					fi
+				done
+				# Replace original '-S syscall' list with the new one for this rule
+				updated_rule=${rule//$rule_syscalls/$new_syscalls_for_rule}
+				# Squeeze repeated whitespace characters in rule definition (if any) into one
+				updated_rule=$(echo "$updated_rule" | tr -s '[:space:]')
+				# 3) Append the modified / filtered rule again into audit.rules
+				#    (but only in case it's not present yet to prevent duplicate definitions)
+				if ! grep -q -- "$updated_rule" "$audit_file"
+				then
+					echo "$updated_rule" &gt;&gt; "$audit_file"
+				fi
+			fi
+		else
+			# $audit_file already contains the expected rule form for this
+			# architecture &amp; key =&gt; don't insert it second time
+			append_expected_rule=1
+		fi
+	done
+
+	# We deleted all rules that were subset of the expected one for this arch &amp; key.
+	# Also isolated rules containing system calls not from this system calls group.
+	# Now append the expected rule if it's not present in $audit_file yet
+	if [[ ${append_expected_rule} -eq "0" ]]
+	then
+		echo "$full_rule" &gt;&gt; "$audit_file"
+	fi
+done
+
+return $retval
+
+}
+
+
+# Perform the remediation for the 'adjtimex', 'settimeofday', and 'stime' audit
 # system calls on Red Hat Enterprise Linux 7 or Fedora OSes
 function rhel7_fedora_perform_audit_adjtimex_settimeofday_stime_remediation {
 
@@ -26437,6 +26688,7 @@ system security.
     section: daemon
     option: AutomaticLoginEnable
     value: false
+    no_extra_spaces: yes
     create: yes
   tags:
     - gnome_gdm_disable_automatic_login
@@ -26475,6 +26727,7 @@ system security.
     section: daemon
     option: TimedLoginEnable
     value: false
+    no_extra_spaces: yes
     create: yes
   tags:
     - gnome_gdm_disable_guest_login
@@ -26532,6 +26785,7 @@ without logging in.</rationale>
     path: /etc/dconf/db/gdm.d/locks/00-security-settings-lock
     regexp: '^/org/gnome/login-screen/disable-user-list'
     line: '/org/gnome/login-screen/disable-user-list'
+    create: yes
   tags:
     - dconf_gnome_disable_user_list
     - medium_severity
@@ -26592,6 +26846,7 @@ due to reboot.
     path: /etc/dconf/db/gdm.d/locks/00-security-settings-lock
     regexp: '^/org/gnome/login-screen/disable-restart-buttons'
     line: '/org/gnome/login-screen/disable-restart-buttons'
+    create: yes
   tags:
     - dconf_gnome_disable_restart_shutdown
     - high_severity
@@ -26738,7 +26993,7 @@ a user's session has idled and take action to initiate a session lock.
 
 - name: "Set GNOME3 Screensaver Inactivity Timeout"
   ini_file:
-    dest: "/etc/dconf/db/local/d/00-security-settings"
+    dest: "/etc/dconf/db/local.d/00-security-settings"
     section: "org/gnome/desktop/screensaver"
     option: idle-delay
     value: "{{ inactivity_timeout_value }}"
@@ -26757,6 +27012,7 @@ a user's session has idled and take action to initiate a session lock.
     path: /etc/dconf/db/local.d/locks/00-security-settings-lock
     regexp: '^/org/gnome/desktop/screensaver/idle-delay'
     line: '/org/gnome/desktop/screensaver/idle-delay'
+    create: yes
   tags:
     - dconf_gnome_screensaver_idle_delay
     - medium_severity
@@ -26806,7 +27062,7 @@ controlled-access area.
 </rationale>
                 <fix id="dconf_gnome_screensaver_idle_activation_enabled" system="urn:xccdf:fix:script:ansible" complexity="low" disruption="medium">- name: "Enable GNOME3 Screensaver Idle Activation"
   ini_file:
-    dest: "/etc/dconf/db/local/d/00-security-settings"
+    dest: "/etc/dconf/db/local.d/00-security-settings"
     section: "org/gnome/desktop/screensaver"
     option: idle_activation_enabled
     value: true
@@ -26825,6 +27081,7 @@ controlled-access area.
     path: /etc/dconf/db/local.d/locks/00-security-settings-lock
     regexp: '^/org/gnome/desktop/screensaver/idle-activation-enabled'
     line: '/org/gnome/desktop/screensaver/idle-activation-enabled'
+    create: yes
   tags:
     - dconf_gnome_screensaver_idle_activation_enabled
     - medium_severity
@@ -26867,7 +27124,7 @@ of the information system but does not want to logout because of the temporary n
 </rationale>
                 <fix id="dconf_gnome_screensaver_lock_enabled" system="urn:xccdf:fix:script:ansible" complexity="low" disruption="medium">- name: "Enable GNOME3 Screensaver Lock After Idle Period"
   ini_file:
-    dest: "/etc/dconf/db/local/d/00-security-settings"
+    dest: "/etc/dconf/db/local.d/00-security-settings"
     section: "org/gnome/desktop/screensaver"
     option: lock-enabled
     value: true
@@ -26886,6 +27143,7 @@ of the information system but does not want to logout because of the temporary n
     path: /etc/dconf/db/local.d/locks/00-security-settings-lock
     regexp: '^/org/gnome/desktop/screensaver/lock-enabled'
     line: '/org/gnome/desktop/screensaver/lock-enabled'
+    create: yes
   tags:
     - dconf_gnome_screensaver_lock_enabled
     - medium_severity
@@ -26926,7 +27184,7 @@ contents of the display from passersby.
 </rationale>
                 <fix id="dconf_gnome_screensaver_mode_blank" system="urn:xccdf:fix:script:ansible" complexity="low" disruption="medium">- name: "Implement Blank Screensaver"
   ini_file:
-    dest: "/etc/dconf/db/local/d/00-security-settings"
+    dest: "/etc/dconf/db/local.d/00-security-settings"
     section: "org/gnome/desktop/screensaver"
     option: picture-uri
     value: string ''
@@ -26945,6 +27203,7 @@ contents of the display from passersby.
     path: /etc/dconf/db/local.d/locks/00-security-settings-lock
     regexp: '^/org/gnome/desktop/screensaver/picture-uri'
     line: '/org/gnome/desktop/screensaver/picture-uri'
+    create: yes
   tags:
     - dconf_gnome_screensaver_mode_blank
     - low_severity
@@ -26984,7 +27243,7 @@ conceals who has access to the system from passersby.
 </rationale>
                 <fix id="dconf_gnome_screensaver_user_info" system="urn:xccdf:fix:script:ansible" complexity="low" disruption="medium">- name: "Disable Full Username on Splash Screen"
   ini_file:
-    dest: "/etc/dconf/db/local/d/00-security-settings"
+    dest: "/etc/dconf/db/local.d/00-security-settings"
     section: "org/gnome/desktop/screensaver"
     option: show-full-name-in-top-bar
     value: false
@@ -27001,6 +27260,7 @@ conceals who has access to the system from passersby.
     path: /etc/dconf/db/local.d/locks/00-security-settings-lock
     regexp: '^/org/gnome/desktop/screensaver/show-full-name-in-top-bar'
     line: '/org/gnome/desktop/screensaver/show-full-name-in-top-bar'
+    create: yes
   tags:
     - dconf_gnome_screensaver_user_info
     - low_severity
@@ -27073,6 +27333,7 @@ loss of availability of systems due to unintentional reboot.
     path: /etc/dconf/db/local.d/locks/00-security-settings-lock
     regexp: '^/org/gnome/settings-daemon/plugins/media-keys/logout'
     line: '/org/gnome/settings-daemon/plugins/media-keys/logout'
+    create: yes
   tags:
     - dconf_gnome_disable_ctrlaltdel_reboot
     - high_severity
@@ -27131,6 +27392,7 @@ changes such as adding new accounts, etc.
     path: /etc/dconf/db/local.d/locks/00-security-settings-lock
     regexp: '^/org/gnome/desktop/lockdown/user-administration-disabled'
     line: '/org/gnome/desktop/lockdown/user-administration-disabled'
+    create: yes
   tags:
     - dconf_gnome_disable_user_admin
     - high_severity
@@ -27229,6 +27491,7 @@ consequences on standard systems.
     path: /etc/dconf/db/local.d/locks/00-security-settings-lock
     regexp: '^/org/gnome/system/location/enabled'
     line: '/org/gnome/system/location/enabled'
+    create: yes
   tags:
     - dconf_gnome_disable_geolocation
     - medium_severity
@@ -27241,6 +27504,7 @@ consequences on standard systems.
     path: /etc/dconf/db/local.d/locks/00-security-settings-lock
     regexp: '^/org/gnome/clocks/geolocation'
     line: '/org/gnome/clocks/geolocation'
+    create: yes
   tags:
     - dconf_gnome_disable_geolocation
     - medium_severity
@@ -27299,6 +27563,7 @@ users on a given system as it could open the system to backdoor attacks.
     path: /etc/dconf/db/local.d/locks/00-security-settings-lock
     regexp: '^/org/gnome/nm-applet/disable-wifi-create'
     line: '/org/gnome/nm-applet/disable-wifi-create'
+    create: yes
   tags:
     - dconf_gnome_disable_wifi_create
     - medium_severity
@@ -27354,6 +27619,7 @@ users on a given system as it could open the system to backdoor attacks.
     path: /etc/dconf/db/local.d/locks/00-security-settings-lock
     regexp: '^/org/gnome/nm-applet/suppress-wireless-networks-available'
     line: '/org/gnome/nm-applet/suppress-wireless-networks-available'
+    create: yes
   tags:
     - dconf_gnome_disable_wifi_notification
     - medium_severity
@@ -27486,6 +27752,7 @@ of removable media.
     path: /etc/dconf/db/local.d/locks/00-security-settings-lock
     regexp: '^/org/gnome/desktop/media-handling/automount'
     line: '/org/gnome/desktop/media-handling/automount'
+    create: yes
   tags:
     - dconf_gnome_disable_automount
     - low_severity
@@ -27518,6 +27785,7 @@ of removable media.
     path: /etc/dconf/db/local.d/locks/00-security-settings-lock
     regexp: '^/org/gnome/desktop/media-handling/automount-open'
     line: '/org/gnome/desktop/media-handling/automount-open'
+    create: yes
   tags:
     - dconf_gnome_disable_automount
     - low_severity
@@ -27550,6 +27818,7 @@ of removable media.
     path: /etc/dconf/db/local.d/locks/00-security-settings-lock
     regexp: '^/org/gnome/desktop/media-handling/autorun-never'
     line: '/org/gnome/desktop/media-handling/autorun-never'
+    create: yes
   tags:
     - dconf_gnome_disable_automount
     - low_severity
@@ -27612,6 +27881,7 @@ is best to disable these thumbnailer applications unless they are explicitly req
     path: /etc/dconf/db/local.d/locks/00-security-settings-lock
     regexp: '^/org/gnome/desktop/thumbnailers/disable-all'
     line: '/org/gnome/desktop/thumbnailers/disable-all'
+    create: yes
   tags:
     - dconf_gnome_disable_thumbnailers
     - low_severity
@@ -29079,8 +29349,11 @@ privileges.
     - always
 
 - name: "Ensure SELinux State is Enforcing"
-  selinux:
-    state: "{{ var_selinux_state }}"
+  lineinfile:
+    path: /etc/sysconfig/selinux
+    regexp: '^SELINUX='
+    line: "SELINUX={{ var_selinux_state }}"
+    create: yes
   tags:
     - selinux_state
     - medium_severity
@@ -29131,8 +29404,11 @@ is completed, the system should be reconfigured to
     - always
 
 - name: "Configure SELinux Policy"
-  selinux:
-    policy: "{{ var_selinux_policy_name }}"
+  lineinfile:
+    path: /etc/sysconfig/selinux
+    regexp: '^SELINUXTYPE='
+    line: "SELINUXTYPE={{ var_selinux_policy_name }}"
+    create: yes
   tags:
     - selinux_policytype
     - low_severity
@@ -30317,6 +30593,40 @@ requires some software, such as SSH, to re-connect. This can slow down and
 draw additional attention to some types of password-guessing attacks. Note that this
 is different from account lockout, which is provided by the pam_faillock module.
 </rationale>
+                  <fix id="accounts_password_pam_retry" system="urn:xccdf:fix:script:ansible" complexity="low" disruption="medium" strategy="configure">- name: XCCDF Value var_password_pam_retry # promote to variable
+  set_fact:
+    var_password_pam_retry: <sub idref="xccdf_org.ssgproject.content_value_var_password_pam_retry" use="legacy"/>
+  tags:
+    - always
+
+- name: "Set Password Retry Prompts Permitted Per-Session - system-auth (change)"
+  replace:
+    dest: /etc/pam.d/system-auth
+    follow: yes
+    regexp: '(^.*\spam_pwquality.so\s.*retry\s*=\s*)(\S+)(.*$)'
+    replace: '\g&lt;1&gt;{{ var_password_pam_retry }}\g&lt;3&gt;'
+  tags:
+    - accounts_password_pam_retry
+    - low_severity
+    - configure_strategy
+    - low_complexity
+    - medium_disruption
+    - NIST-800-53-IA-5(c)
+
+- name: "Set Password Retry Prompts Permitted Per-Session - system-auth (add)"
+  replace:
+    dest: /etc/pam.d/system-auth
+    follow: yes
+    regexp: '^.*\spam_pwquality.so\s(?!.*retry\s*=\s*).*$'
+    replace: '\g&lt;0&gt; retry={{ var_password_pam_retry }}'
+  tags:
+    - accounts_password_pam_retry
+    - low_severity
+    - configure_strategy
+    - low_complexity
+    - medium_disruption
+    - NIST-800-53-IA-5(c)
+</fix>
                   <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                     <check-export export-name="oval:ssg-var_password_pam_retry:var:1" value-id="xccdf_org.ssgproject.content_value_var_password_pam_retry"/>
                     <check-content-ref name="oval:ssg-accounts_password_pam_retry:def:1" href="ssg-fedora-oval.xml"/>
@@ -30704,6 +31014,42 @@ to the line which refers to the <html:code xmlns:html="http://www.w3.org/1999/xh
                 <rationale xml:lang="en-US">
 Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
 </rationale>
+                <fix id="accounts_password_pam_unix_remember" system="urn:xccdf:fix:script:ansible" complexity="low" disruption="medium" strategy="configure">- name: XCCDF Value var_password_pam_unix_remember # promote to variable
+  set_fact:
+    var_password_pam_unix_remember: <sub idref="xccdf_org.ssgproject.content_value_var_password_pam_unix_remember" use="legacy"/>
+  tags:
+    - always
+
+- name: "Do not allow users to reuse recent passwords - system-auth (change)"
+  replace:
+    dest: /etc/pam.d/system-auth
+    follow: yes
+    regexp: '^(password\s+sufficient\s+pam_unix\.so\s.*remember\s*=\s*)(\S+)(.*)$'
+    replace: '\g&lt;1&gt;{{ var_password_pam_unix_remember }}\g&lt;3&gt;'
+  tags:
+    - accounts_password_pam_unix_remember
+    - medium_severity
+    - configure_strategy
+    - low_complexity
+    - medium_disruption
+    - NIST-800-53-IA-5(f)
+    - NIST-800-53-IA-5(1)(e)
+
+- name: "Do not allow users to reuse recent passwords - system-auth (add)"
+  replace:
+    dest: /etc/pam.d/system-auth
+    follow: yes
+    regexp: '^password\s+sufficient\s+pam_unix\.so\s(?!.*remember\s*=\s*).*$'
+    replace: '\g&lt;0&gt; remember={{ var_password_pam_unix_remember }}'
+  tags:
+    - accounts_password_pam_unix_remember
+    - medium_severity
+    - configure_strategy
+    - low_complexity
+    - medium_disruption
+    - NIST-800-53-IA-5(f)
+    - NIST-800-53-IA-5(1)(e)
+</fix>
                 <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                   <check-export export-name="oval:ssg-var_password_pam_unix_remember:var:1" value-id="xccdf_org.ssgproject.content_value_var_password_pam_unix_remember"/>
                   <check-content-ref name="oval:ssg-accounts_password_pam_unix_remember:def:1" href="ssg-fedora-oval.xml"/>
@@ -31641,7 +31987,7 @@ process and facilitates possible legal action against attackers.
 </rationale>
                 <fix id="dconf_gnome_banner_enabled" system="urn:xccdf:fix:script:ansible" complexity="low" disruption="medium">- name: "Enable GNOME3 Login Warning Banner"
   ini_file:
-    dest: "/etc/dconf/db/local/d/00-security-settings"
+    dest: "/etc/dconf/db/local.d/00-security-settings"
     section: "org/gnome/login-screen"
     option: banner-message-enabled
     value: true
@@ -31661,6 +32007,7 @@ process and facilitates possible legal action against attackers.
     path: /etc/dconf/db/local.d/locks/00-security-settings-lock
     regexp: '^/org/gnome/login-screen/banner-message-enable'
     line: '/org/gnome/login-screen/banner-message-enable'
+    create: yes
   tags:
     - dconf_gnome_banner_enabled
     - medium_severity
@@ -37429,7 +37776,7 @@ else
     fi
 fi
 </fix>
-              <fix id="sshd_disable_empty_passwords" system="urn:xccdf:fix:script:ansible" complexity="low" disruption="low" strategy="restrict">- name: Diable SSH Access via Empty Passwords
+              <fix id="sshd_disable_empty_passwords" system="urn:xccdf:fix:script:ansible" complexity="low" disruption="low" strategy="restrict">- name: Disable SSH Access via Empty Passwords
   lineinfile:
     create: yes
     dest: /etc/ssh/sshd_config
@@ -38552,13 +38899,13 @@ To do so, run the following command:
       </Group>
     </Benchmark>
   </ds:component>
-  <ds:component id="scap_org.open-scap_comp_ssg-fedora-cpe-oval.xml" timestamp="2017-10-31T16:12:36">
+  <ds:component id="scap_org.open-scap_comp_ssg-fedora-cpe-oval.xml" timestamp="2018-01-03T14:19:51">
     <ns0:oval_definitions xmlns:ns0="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ns2="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ns3="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:ns4="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:ns5="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
       <ns0:generator>
         <ns2:product_name>combine-ovals.py from SCAP Security Guide</ns2:product_name>
-        <ns2:product_version>ssg: 0.1.36, python: 2.7.13</ns2:product_version>
+        <ns2:product_version>ssg: 0.1.37, python: 2.7.14</ns2:product_version>
         <ns2:schema_version>5.11</ns2:schema_version>
-        <ns2:timestamp>2017-10-31T16:12:32</ns2:timestamp>
+        <ns2:timestamp>2018-01-03T14:19:46</ns2:timestamp>
       </ns0:generator>
       <ns0:definitions>
         <ns0:definition class="inventory" id="oval:ssg-installed_OS_is_centos6:def:1" version="2">
@@ -39144,7 +39491,7 @@ To do so, run the following command:
       </ns0:states>
     </ns0:oval_definitions>
   </ds:component>
-  <ds:component id="scap_org.open-scap_comp_ssg-fedora-cpe-dictionary.xml" timestamp="2017-10-31T16:12:36">
+  <ds:component id="scap_org.open-scap_comp_ssg-fedora-cpe-dictionary.xml" timestamp="2018-01-03T14:19:51">
     <ns0:cpe-list xmlns:ns0="http://cpe.mitre.org/dictionary/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd">
       <ns0:cpe-item name="cpe:/o:fedoraproject:fedora:28">
         <ns0:title xml:lang="en-us">Fedora 28</ns0:title>
