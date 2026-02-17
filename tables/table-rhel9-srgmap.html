@@ -309,7 +309,9 @@ records is stored. The configured directory must have the correct SELinux contex
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.</td>
         </tr>
@@ -622,7 +624,7 @@ After the settings have been set, run <tt>dconf update</tt>.</td>
           <td>Ensure Users Cannot Change GNOME3 Screensaver Lock After Idle Period</td>
           <td>If not already configured, ensure that users cannot change GNOME3 screensaver lock settings
 by adding <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
-to <tt>/etc/dconf/db/local.d/00-security-settings</tt>.
+to <tt>/etc/dconf/db/local.d/locks/00-security-settings</tt>.
 For example:
 <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
 After the settings have been set, run <tt>dconf update</tt>.</td>
@@ -821,7 +823,7 @@ After the settings have been set, run <tt>dconf update</tt>.</td>
           <td>Ensure Users Cannot Change GNOME3 Screensaver Lock After Idle Period</td>
           <td>If not already configured, ensure that users cannot change GNOME3 screensaver lock settings
 by adding <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
-to <tt>/etc/dconf/db/local.d/00-security-settings</tt>.
+to <tt>/etc/dconf/db/local.d/locks/00-security-settings</tt>.
 For example:
 <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
 After the settings have been set, run <tt>dconf update</tt>.</td>
@@ -3888,11 +3890,11 @@ This requirement applies to each audit data storage repository (i.e., distinct i
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
 default), add the following line to to the bottom of a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-f 2</pre>
+<pre>-f <sub idref="var_audit_failure_mode" /></pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to the
 bottom of the <tt>/etc/audit/audit.rules</tt> file:
-<pre>-f 2</pre></td>
+<pre>-f <sub idref="var_audit_failure_mode" /></pre></td>
         </tr>
       </table>
 
@@ -3957,11 +3959,11 @@ When availability is an overriding concern, other approved actions in response t
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
 default), add the following line to to the bottom of a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-f 2</pre>
+<pre>-f <sub idref="var_audit_failure_mode" /></pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to the
 bottom of the <tt>/etc/audit/audit.rules</tt> file:
-<pre>-f 2</pre></td>
+<pre>-f <sub idref="var_audit_failure_mode" /></pre></td>
         </tr>
       </table>
 
@@ -6986,12 +6988,20 @@ restriction by running the following command:
           <td>Limit Password Reuse: password-auth</td>
           <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
-<br /><br />
-In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter
-<tt>remember</tt> is present and it has a value equal to or greater than
-<sub idref="var_password_pam_remember" />. For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<sub idref="var_password_pam_remember" /> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <tt><sub idref="var_password_pam_remember_control_flag" /></tt><br /></td>
+<br/><br/>
+
+On systems with newer versions of <tt>authselect</tt>, the <tt>pam_pwhistory</tt> PAM module
+can be enabled via authselect feature:
+<pre>authselect enable-feature with-pwhistory</pre>
+
+Otherwise, it should be enabled using an authselect custom profile.
+<br/><br/>
+Newer systems also have the <tt>/etc/security/pwhistory.conf</tt> file for setting
+<tt>pam_pwhistory</tt> module options. This file should be used whenever available.
+Otherwise, the <tt>pam_pwhistory</tt> module options can be set in PAM files.
+<br/><br/>
+The value for <tt>remember</tt> option must be equal or greater than
+<sub idref="var_password_pam_remember" /></td>
         </tr>
       </table>
 
@@ -7000,13 +7010,20 @@ In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter
           <td>Limit Password Reuse: system-auth</td>
           <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
-<br /><br />
-In the file <tt>/etc/pam.d/system-auth</tt>, make sure the parameter
-<tt>remember</tt> is present and it has a value equal to or greater than
-<sub idref="var_password_pam_remember" />
-For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<sub idref="var_password_pam_remember" /> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <tt><sub idref="var_password_pam_remember_control_flag" /></tt><br /></td>
+<br/><br/>
+
+On systems with newer versions of <tt>authselect</tt>, the <tt>pam_pwhistory</tt> PAM module
+can be enabled via authselect feature:
+<pre>authselect enable-feature with-pwhistory</pre>
+
+Otherwise, it should be enabled using an authselect custom profile.
+<br/><br/>
+Newer systems also have the <tt>/etc/security/pwhistory.conf</tt> file for setting
+<tt>pam_pwhistory</tt> module options. This file should be used whenever available.
+Otherwise, the <tt>pam_pwhistory</tt> module options can be set in PAM files.
+<br/><br/>
+The value for <tt>remember</tt> option must be equal or greater than
+<sub idref="var_password_pam_remember" /></td>
         </tr>
       </table>
 
@@ -8086,18 +8103,6 @@ this is a finding.</td>
 
       <table>
         <tr>
-          <td>Configure Kerberos to use System Crypto Policy</td>
-          <td>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
-Kerberos is supported by crypto policy, but it's configuration may be
-set up to ignore it.
-To check that Crypto Policies settings for Kerberos are configured correctly, examine that there is a symlink at
-/etc/krb5.conf.d/crypto-policies targeting /etc/cypto-policies/back-ends/krb5.config.
-If the symlink exists, Kerberos is configured to use the system-wide crypto policy settings.</td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Install libreswan Package</td>
           <td>The Libreswan package provides an implementation of IPsec
 and IKE, which permits the creation of secure tunnels over
@@ -8371,6 +8376,20 @@ line and is not commented out:
 
       <table>
         <tr>
+          <td>Configure SSH Server to Use FIPS 140-2 Validated MACs: opensshserver.config</td>
+          <td>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
+OpenSSH is supported by system crypto policy, but the OpenSSH configuration may be
+set up incorrectly.
+
+To check that Crypto Policies settings are configured correctly, ensure that
+<tt>/etc/crypto-policies/back-ends/opensshserver.config</tt> contains the following
+text and is not commented out:
+<tt>-oMACS=hmac-sha2-512,hmac-sha2-256</tt></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Enable PAM</td>
           <td>UsePAM Enables the Pluggable Authentication Module interface. If set to “yes” this will
 enable PAM authentication using ChallengeResponseAuthentication and
@@ -8433,25 +8452,6 @@ of 10 minutes, set <b>interval</b> to 600.
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
 some processes may stop SSH from correctly detecting that the user is idle.</td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
-          <td>Set SSH Client Alive Count Max to zero</td>
-          <td>The SSH server sends at most <tt>ClientAliveCountMax</tt> messages
-during a SSH session and waits for a response from the SSH client.
-The option <tt>ClientAliveInterval</tt> configures timeout after
-each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered unresponsive
-and terminated.
-
-To ensure the SSH timeout occurs precisely when the
-<tt>ClientAliveInterval</tt> is set, set the <tt>ClientAliveCountMax</tt> to
-value of <tt>0</tt> in
-
-
-<tt>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</tt>:</td>
         </tr>
       </table>
 
@@ -8745,25 +8745,6 @@ completely. If the option is set to a number greater than <tt>0</tt>, then
 the session will be disconnected after
 <tt>ClientAliveInterval * ClientAliveCountMax</tt> seconds without receiving
 a keep alive message.</td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
-          <td>Set SSH Client Alive Count Max to zero</td>
-          <td>The SSH server sends at most <tt>ClientAliveCountMax</tt> messages
-during a SSH session and waits for a response from the SSH client.
-The option <tt>ClientAliveInterval</tt> configures timeout after
-each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered unresponsive
-and terminated.
-
-To ensure the SSH timeout occurs precisely when the
-<tt>ClientAliveInterval</tt> is set, set the <tt>ClientAliveCountMax</tt> to
-value of <tt>0</tt> in
-
-
-<tt>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</tt>:</td>
         </tr>
       </table>
 
@@ -9682,6 +9663,20 @@ line and is not commented out:
 
       <table>
         <tr>
+          <td>Configure SSH Server to Use FIPS 140-2 Validated MACs: opensshserver.config</td>
+          <td>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
+OpenSSH is supported by system crypto policy, but the OpenSSH configuration may be
+set up incorrectly.
+
+To check that Crypto Policies settings are configured correctly, ensure that
+<tt>/etc/crypto-policies/back-ends/opensshserver.config</tt> contains the following
+text and is not commented out:
+<tt>-oMACS=hmac-sha2-512,hmac-sha2-256</tt></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Set kernel parameter 'crypto.fips_enabled' to 1</td>
           <td>System running in FIPS mode is indicated by kernel parameter
 <tt>'crypto.fips_enabled'</tt>. This parameter should be set to <tt>1</tt> in FIPS mode.
@@ -10440,25 +10435,6 @@ a keep alive message.</td>
         </tr>
       </table>
 
-      <table>
-        <tr>
-          <td>Set SSH Client Alive Count Max to zero</td>
-          <td>The SSH server sends at most <tt>ClientAliveCountMax</tt> messages
-during a SSH session and waits for a response from the SSH client.
-The option <tt>ClientAliveInterval</tt> configures timeout after
-each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered unresponsive
-and terminated.
-
-To ensure the SSH timeout occurs precisely when the
-<tt>ClientAliveInterval</tt> is set, set the <tt>ClientAliveCountMax</tt> to
-value of <tt>0</tt> in
-
-
-<tt>/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf</tt>:</td>
-        </tr>
-      </table>
-
     </td>
 </tr>
 
@@ -11020,7 +10996,7 @@ To make sure that the setting is persistent, add the following line to a file in
           <td>To ensure that only users who are members of the <tt>wheel</tt> group can
 run commands with altered privileges through the <tt>su</tt> command, make
 sure that the following line exists in the file <tt>/etc/pam.d/su</tt>:
-<pre>auth             required        pam_wheel.so use_uid</pre></td>
+<pre>auth required pam_wheel.so use_uid</pre></td>
         </tr>
       </table>
 
@@ -11232,7 +11208,9 @@ If both the "b32" and "b64" audit rules for "SGID" files are not defined, this i
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.</td>
         </tr>
@@ -11343,6 +11321,33 @@ The task of allocating audit record storage capacity is usually performed during
 
       <table>
         <tr>
+          <td>Configure a Sufficiently Large Partition for Audit Logs</td>
+          <td>The Red Hat Enterprise Linux 9 operating system must allocate audit record storage
+capacity to store at least one weeks worth of audit records when audit
+records are not immediately sent to a central audit record storage
+facility.
+
+The partition size needed to capture a week's worth of audit records is
+based on the activity level of the system and the total storage capacity
+available. In normal circumstances, 10.0 GB of storage space for audit
+records will be sufficient.
+
+Determine which partition the audit records are being written to with the
+following command:
+
+<pre>$ sudo grep log_file /etc/audit/auditd.conf
+log_file = /var/log/audit/audit.log</pre>
+
+Check the size of the partition that audit records are written to with the
+following command:
+
+<pre>$ sudo df -h /var/log/audit/
+/dev/sda2 24G 10.4G 13.6G 43% /var/log/audit</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Extend Audit Backlog Limit for the Audit Daemon</td>
           <td>To improve the kernel capacity to queue all log events, even those which occurred
 prior to the audit daemon, add the argument <tt>audit_backlog_limit=8192</tt> to the default
@@ -11382,6 +11387,33 @@ Off-loading is a common process in information systems with limited audit storag
 
 
     <td>
+
+      <table>
+        <tr>
+          <td>Configure a Sufficiently Large Partition for Audit Logs</td>
+          <td>The Red Hat Enterprise Linux 9 operating system must allocate audit record storage
+capacity to store at least one weeks worth of audit records when audit
+records are not immediately sent to a central audit record storage
+facility.
+
+The partition size needed to capture a week's worth of audit records is
+based on the activity level of the system and the total storage capacity
+available. In normal circumstances, 10.0 GB of storage space for audit
+records will be sufficient.
+
+Determine which partition the audit records are being written to with the
+following command:
+
+<pre>$ sudo grep log_file /etc/audit/auditd.conf
+log_file = /var/log/audit/audit.log</pre>
+
+Check the size of the partition that audit records are written to with the
+following command:
+
+<pre>$ sudo df -h /var/log/audit/
+/dev/sda2 24G 10.4G 13.6G 43% /var/log/audit</pre></td>
+        </tr>
+      </table>
 
       <table>
         <tr>
@@ -12066,15 +12098,6 @@ AIDE can be executed periodically through other means; this is merely one exampl
         </tr>
       </table>
 
-      <table>
-        <tr>
-          <td>Install AIDE</td>
-          <td>The <code>aide</code> package can be installed with the following command:
-<pre>
-$ sudo dnf install aide</pre></td>
-        </tr>
-      </table>
-
     </td>
 </tr>
 
@@ -12651,7 +12674,7 @@ and the user will not have to re-authenticate for privileged actions until the u
           <td>To ensure that only users who are members of the <tt>wheel</tt> group can
 run commands with altered privileges through the <tt>su</tt> command, make
 sure that the following line exists in the file <tt>/etc/pam.d/su</tt>:
-<pre>auth             required        pam_wheel.so use_uid</pre></td>
+<pre>auth required pam_wheel.so use_uid</pre></td>
         </tr>
       </table>
 
@@ -21937,6 +21960,27 @@ After the settings have been set, run <tt>dconf update</tt>.</td>
 
       <table>
         <tr>
+          <td>Disable the GNOME3 Login Restart and Shutdown Buttons</td>
+          <td>In the default graphical environment, users logging directly into the
+system are greeted with a login screen that allows any user, known or
+unknown, the ability the ability to shutdown or restart the system. This
+functionality should be disabled by setting
+<tt>disable-restart-buttons</tt> to <tt>true</tt>.
+<br /><br />
+To disable, add or edit <tt>disable-restart-buttons</tt> to
+<tt>/etc/dconf/db/distro.d/00-security-settings</tt>. For example:
+<pre>[org/gnome/login-screen]
+disable-restart-buttons=true</pre>
+Once the setting has been added, add a lock to
+<tt>/etc/dconf/db/distro.d/locks/00-security-settings-lock</tt> to prevent
+user modification. For example:
+<pre>/org/gnome/login-screen/disable-restart-buttons</pre>
+After the settings have been set, run <tt>dconf update</tt>.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Disable the GNOME3 Login User List</td>
           <td>In the default graphical environment, users logging directly into the
 system are greeted with a login screen that displays all known users.
@@ -22525,25 +22569,6 @@ It is also required to change the runtime configuration, run:
 <pre>/sbin/grubby --update-kernel=ALL --remove-args="systemd.confirm_spawn"</pre>
 
 <pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
-          <td>Configure kernel to trust the CPU random number generator</td>
-          <td>There exist two ways how to ensure that the Linux kernel trusts the CPU
-hardware random number generator. If the option is configured during kernel
-compilation, e.g. the option <tt>CONFIG_RANDOM_TRUST_CPU</tt> is set to
-<tt>Y</tt>, make sure that it is not overridden with the boot parameter.
-There must not exist the boot parameter <tt>random.trust_cpu=off</tt>. If
-the option is not compiled in, make sure that <tt>random.trust_cpu=on</tt>
-is configured as a boot parameter.
-To ensure that <tt>random.trust_cpu=on</tt> is added as a kernel command line
-argument to newly installed kernels, add <tt>random.trust_cpu=on</tt> to the
-default Grub2 command line for Linux operating systems. Modify the line within
-<tt>/etc/default/grub</tt> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... random.trust_cpu=on ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="random.trust_cpu=on"</pre></td>
         </tr>
       </table>
 
@@ -23270,16 +23295,6 @@ The <code>kdump</code> service can be disabled with the following command:
 
       <table>
         <tr>
-          <td>Enable the Hardware RNG Entropy Gatherer Service</td>
-          <td>The Hardware RNG Entropy Gatherer service should be enabled.
-
-The <code>rngd</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable rngd.service</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Enable rsyslog Service</td>
           <td>The <tt>rsyslog</tt> service provides syslog-style logging by default on Red Hat Enterprise Linux 9.
 
@@ -23499,16 +23514,6 @@ To decrease the default limits, add or correct the following line in
 
       <table>
         <tr>
-          <td>SSH server uses strong entropy to seed</td>
-          <td>To set up SSH server to use entropy from a high-quality source, edit the <tt>/etc/sysconfig/sshd</tt> file.
-The <tt>SSH_USE_STRONG_RNG</tt> configuration value determines how many bytes of entropy to use, so
-make sure that the file contains line
-<pre>SSH_USE_STRONG_RNG=32</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Prevent remote hosts from connecting to the proxy display</td>
           <td>The SSH daemon should prevent remote hosts from connecting to the proxy
 display.
@@ -23631,14 +23636,6 @@ To make sure that the setting is persistent, add the following line to a file in
 
       <table>
         <tr>
-          <td>Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces</td>
-          <td>To set the runtime status of the <code>net.ipv4.conf.all.log_martians</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.log_martians=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>net.ipv4.conf.all.log_martians = 1</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces</td>
           <td>To set the runtime status of the <code>net.ipv4.conf.all.rp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.rp_filter=1</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>net.ipv4.conf.all.rp_filter = 1</pre></td>
@@ -23666,6 +23663,22 @@ To make sure that the setting is persistent, add the following line to a file in
           <td>Disable Kernel Parameter for Accepting ICMP Redirects by Default on IPv4 Interfaces</td>
           <td>To set the runtime status of the <code>net.ipv4.conf.default.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.accept_redirects=0</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>net.ipv4.conf.default.accept_redirects = 0</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Disable Kernel Parameter for Accepting Source-Routed Packets on IPv4 Interfaces by Default</td>
+          <td>To set the runtime status of the <code>net.ipv4.conf.default.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.accept_source_route=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>net.ipv4.conf.default.accept_source_route = 0</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces by Default</td>
+          <td>To set the runtime status of the <code>net.ipv4.conf.default.rp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.rp_filter=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>net.ipv4.conf.default.rp_filter = 1</pre></td>
         </tr>
       </table>
 
@@ -24033,16 +24046,6 @@ $ sudo dnf install firewalld</pre></td>
           <td>
 The <code>firewalld</code> service can be enabled with the following command:
 <pre>$ sudo systemctl enable firewalld.service</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
-          <td>SSH server uses strong entropy to seed</td>
-          <td>To set up SSH server to use entropy from a high-quality source, edit the <tt>/etc/sysconfig/sshd</tt> file.
-The <tt>SSH_USE_STRONG_RNG</tt> configuration value determines how many bytes of entropy to use, so
-make sure that the file contains line
-<pre>SSH_USE_STRONG_RNG=32</pre></td>
         </tr>
       </table>
 

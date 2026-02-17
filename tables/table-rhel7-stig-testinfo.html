@@ -6,7 +6,7 @@
 <body>
 <br><br><div style="text-align: center; font-size: x-large; font-weight:bold">DISA STIG for Red Hat Enterprise Linux 7</div>
 <div style="text-align: center; font-size: normal ">This profile contains configuration checks that align to the
-DISA STIG for Red Hat Enterprise Linux V3R9.
+DISA STIG for Red Hat Enterprise Linux V3R10.
 
 In addition to being applicable to Red Hat Enterprise Linux 7, DISA recognizes this
 configuration baseline as applicable to the operating system tier of
@@ -625,24 +625,30 @@ ocredit =
 <td>xccdf_org.ssgproject.content_rule_accounts_password_pam_pwhistory_remember_password_auth</td>
 <td>medium</td>
 <td>Limit Password Reuse: password-auth</td>
-<td>Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.</td>
+<td>Preventing re-use of previous passwords helps ensure that a compromised password is not
+re-used by a user.</td>
 <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <code>remember</code> option for the <code>pam_pwhistory</code> PAM module.
 <br><br>
-In the file <code>/etc/pam.d/password-auth</code>, make sure the parameter
-<code>remember</code> is present and it has a value equal to or greater than
-<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>. For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember_control_flag" use="legacy"></xccdf-1.2:sub></code><br>
-</td>
-<td><pre>Verify Red Hat Enterprise Linux 7 is configured in the password-auth file to prohibit password reuse
-for a minimum of  generations with the following command:
 
-$ grep -i remember /etc/pam.d/password-auth
-password  pam_pwhistory.so use_authtok remember= retry=3
-      Is it the case that the line containing "pam_pwhistory.so" does not have the "remember" module argument set,
-is commented out, or the value of the "remember" module argument is set to less than
-"&lt;sub idref="var_password_pam_remember" /&gt;"?
+In the file <code>/etc/pam.d/password-auth</code>, make sure the parameter <code>remember</code> is
+present and it has a value equal to or greater than
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>
+<br><br>
+For example:
+<pre>password <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember_control_flag" use="legacy"></xccdf-1.2:sub> pam_pwhistory.so use_authtok remember=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub></pre>
+</td>
+<td><pre>Verify Red Hat Enterprise Linux 7 use the "pam_pwhistory.so" module in the /etc/pam.d/password-auth file
+and is configured to prohibit password reuse for a minimum of 
+generations.
+
+Verify the "/etc/pam.d/password-auth" file with the following command:
+
+$ grep pam_pwhistory.so /etc/pam.d/password-auth
+password  pam_pwhistory.so use_authtok remember=
+      Is it the case that the pam_pwhistory.so module is not used, the "remember" module option is not set in
+/etc/pam.d/password-auth or in /etc/security/pwhistory.conf, or is set in both files, or is set
+with a value less than "&lt;sub idref="var_password_pam_remember" /&gt;"?
       </pre></td>
 <td>SRG-OS-000077-GPOS-00045<br>
 </td>
@@ -655,25 +661,30 @@ is commented out, or the value of the "remember" module argument is set to less 
 <td>xccdf_org.ssgproject.content_rule_accounts_password_pam_pwhistory_remember_system_auth</td>
 <td>medium</td>
 <td>Limit Password Reuse: system-auth</td>
-<td>Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.</td>
+<td>Preventing re-use of previous passwords helps ensure that a compromised password is not
+re-used by a user.</td>
 <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <code>remember</code> option for the <code>pam_pwhistory</code> PAM module.
 <br><br>
-In the file <code>/etc/pam.d/system-auth</code>, make sure the parameter
-<code>remember</code> is present and it has a value equal to or greater than
-<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>
-For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember_control_flag" use="legacy"></xccdf-1.2:sub></code><br>
-</td>
-<td><pre>Verify Red Hat Enterprise Linux 7 is configured in the system-auth file to prohibit password reuse
-for a minimum of  generations with the following command:
 
-$ grep -i remember /etc/pam.d/system-auth
-password  pam_pwhistory.so use_authtok remember= retry=3
-      Is it the case that the line containing "pam_pwhistory.so" does not have the "remember" module argument set,
-is commented out, or the value of the "remember" module argument is set to less than
-"&lt;sub idref="var_password_pam_remember" /&gt;"?
+In the file <code>/etc/pam.d/system-auth</code>, make sure the parameter <code>remember</code> is
+present and it has a value equal to or greater than
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>
+<br><br>
+For example:
+<pre>password <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember_control_flag" use="legacy"></xccdf-1.2:sub> pam_pwhistory.so use_authtok remember=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub></pre>
+</td>
+<td><pre>Verify Red Hat Enterprise Linux 7 use the "pam_pwhistory.so" module in the /etc/pam.d/system-auth file
+and is configured to prohibit password reuse for a minimum of 
+generations.
+
+Verify the "/etc/pam.d/system-auth" file with the following command:
+
+$ grep pam_pwhistory.so /etc/pam.d/system-auth
+password  pam_pwhistory.so use_authtok remember=
+      Is it the case that the pam_pwhistory.so module is not used, the "remember" module option is not set in
+/etc/pam.d/system-auth or in /etc/security/pwhistory.conf, or is set in both files, or is set
+with a value less than "&lt;sub idref="var_password_pam_remember" /&gt;"?
       </pre></td>
 <td>SRG-OS-000077-GPOS-00045<br>
 </td>
@@ -813,7 +824,9 @@ the account.</td>
 using <code>pam_faillock.so</code>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
 depending on the OS version.</td>
 <td><pre>Verify Red Hat Enterprise Linux 7 is configured to lock an account after 
@@ -932,7 +945,7 @@ all user sessions will terminate based on inactivity.
 The value of TMOUT should be exported and read only.
 The <code>TMOUT</code>
 
-setting in a file loaded by <code>/etc/profile</code>, e.g.
+setting in a file loaded by <code>/etc/profile</code>or <code>/etc/bashrc</code>, e.g.
 <code>/etc/profile.d/tmout.sh</code> should read as follows:
 <pre>declare -xr TMOUT=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_tmout" use="legacy"></xccdf-1.2:sub></pre>
 </td>
@@ -1246,6 +1259,38 @@ $ sudo ps -ef | grep -i mfetpd
 </td>
 <td>SI-4 (5)<br>CM-6 b<br>
 </td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_aide_build_database</td>
+<td>medium</td>
+<td>Build and Test AIDE Database</td>
+<td>For AIDE to be effective, an initial database of "known-good" information about files
+must be captured and it should be able to be verified against the installed files.</td>
+<td>Run the following command to generate a new database:
+
+<pre>$ sudo /usr/sbin/aide --init</pre>
+
+By default, the database will be written to the file
+
+<code>/var/lib/aide/aide.db.new.gz</code>.
+
+Storing the database, the configuration file <code>/etc/aide.conf</code>, and the binary
+<code>/usr/sbin/aide</code>
+(or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
+The newly-generated database can be installed as follows:
+
+<pre>$ sudo cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz</pre>
+
+To initiate a manual check, run the following command:
+<pre>$ sudo /usr/sbin/aide --check</pre>
+If this check produces any unexpected output, investigate.</td>
+<td><pre>To find the location of the AIDE database file, run the following command:
+$ sudo ls -l DBDIR/database_file_name
+      Is it the case that there is no database file?
+      </pre></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>xccdf_org.ssgproject.content_rule_aide_periodic_cron_checking</td>
@@ -3220,17 +3265,17 @@ exceeded.</td>
 <code>augenrules</code> program to read audit rules during daemon startup (the
 default), add the following line to to the bottom of a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-f 2</pre>
+<pre>-f <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_audit_failure_mode" use="legacy"></xccdf-1.2:sub></pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to the
 bottom of the <code>/etc/audit/audit.rules</code> file:
-<pre>-f 2</pre>
+<pre>-f <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_audit_failure_mode" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 <td><pre>To verify that the system will shutdown when auditd fails,
 run the following command:
-$ sudo grep "\-f 2" /etc/audit/audit.rules
+$ sudo grep "\-f " /etc/audit/audit.rules
 The output should contain:
--f 2
+-f 
       Is it the case that the system is not configured to shutdown on auditd failures?
       </pre></td>
 <td>SRG-OS-000046-GPOS-00022<br>SRG-OS-000047-GPOS-00023<br>
@@ -3854,6 +3899,113 @@ $ sudo grep -i network_failure_action /etc/audisp/audisp-remote.conf
 The output should return:
 network_failure_action = 
       Is it the case that the system is not configured to switch to single user mode for corrective action?
+      </pre></td>
+<td>SRG-OS-000342-GPOS-00133<br>SRG-OS-000479-GPOS-00224<br>
+</td>
+<td>CCI-001851<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_auditd_audispd_remote_daemon_activated</td>
+<td>medium</td>
+<td>Configure auditd to use audispd's remote logging daemon</td>
+<td>The auditd service does not include the ability to send audit
+records to a centralized server for management directly. It does, however,
+include a plug-in for audit event multiplexor (audispd) to pass audit records
+to a remote server.</td>
+<td>To configure the <code>auditd</code> service to use the
+<code>audisp-remote</code> plug-in of the <code>audispd</code> audit event multiplexor, set
+the <code>active</code> directive in <code>/etc/audisp/plugins.d/au-remote.conf</code>
+to <code>yes</code>.
+Restart the <code>auditd</code> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre>
+</td>
+<td><pre>To verify if audispd's au-remote plugin is active, run the following command:
+$ sudo grep active /etc/audisp/plugins.d/au-remote.conf
+If the plugin is active, the output will show yes.
+      Is it the case that it is not activated?
+      </pre></td>
+<td>SRG-OS-000342-GPOS-00133<br>SRG-OS-000479-GPOS-00224<br>
+</td>
+<td>CCI-001851<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_auditd_audispd_remote_daemon_direction</td>
+<td>medium</td>
+<td>Ensure the audispd's remote logging daemon direction is correct</td>
+<td>The auditd service does not include the ability to send audit
+records to a centralized server for management directly. It does, however,
+include a plug-in for audit event multiplexor (audispd) to pass audit records
+to a remote server.
+
+The direction is dictated by the plugin, and this parameter is used by the multiplexor
+to understand the direction of events.</td>
+<td>Ensure the direction of logs in <code>audisp-remote</code>
+plug-in of the <code>audispd</code> audit event multiplexor is correct.
+Check that the <code>direction</code> directive in
+<code>/etc/audisp/plugins.d/au-remote.conf</code> is <code>out</code>.
+Restart the <code>auditd</code> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre>
+</td>
+<td><pre>To verify if audispd's au-remote plugin is configured, run the following command:
+$ sudo grep direction /etc/audisp/plugins.d/au-remote.conf
+If the plugin is configured correctly, the output will show out.
+      Is it the case that it is not configured?
+      </pre></td>
+<td>SRG-OS-000342-GPOS-00133<br>SRG-OS-000479-GPOS-00224<br>
+</td>
+<td>CCI-001851<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_auditd_audispd_remote_daemon_path</td>
+<td>medium</td>
+<td>Ensure the audispd's remote logging daemon executable is correct</td>
+<td>The auditd service does not include the ability to send audit
+records to a centralized server for management directly. It does, however,
+include a plug-in for audit event multiplexor (audispd) to pass audit records
+to a remote server.</td>
+<td>Ensure the executable used by <code>audisp-remote</code>
+plug-in of the <code>audispd</code> audit event multiplexor is correct.
+Check that the <code>path</code> directive in
+<code>/etc/audisp/plugins.d/au-remote.conf</code> is <code>/sbin/audisp-remote</code>.
+Restart the <code>auditd</code> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre>
+</td>
+<td><pre>To verify if audispd's au-remote plugin is configured, run the following command:
+$ sudo grep path /etc/audisp/plugins.d/au-remote.conf
+If the plugin is configured correctly, the output will show /sbin/audisp-remote.
+      Is it the case that it is not configured?
+      </pre></td>
+<td>SRG-OS-000342-GPOS-00133<br>SRG-OS-000479-GPOS-00224<br>
+</td>
+<td>CCI-001851<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_auditd_audispd_remote_daemon_type</td>
+<td>medium</td>
+<td>Ensure the audispd's remote logging daemon type is correct</td>
+<td>The auditd service does not include the ability to send audit
+records to a centralized server for management directly. It does, however,
+include a plug-in for audit event multiplexor (audispd) to pass audit records
+to a remote server.</td>
+<td>Ensure the type used by <code>audisp-remote</code>
+plug-in of the <code>audispd</code> audit event multiplexor is correct.
+Check that the <code>type</code> directive in
+<code>/etc/audisp/plugins.d/au-remote.conf</code> is <code>always</code>.
+Restart the <code>auditd</code> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre>
+</td>
+<td><pre>To verify if audispd's au-remote plugin is configured, run the following command:
+$ sudo grep type /etc/audisp/plugins.d/au-remote.conf
+If the plugin is configured correctly, the output will show always.
+      Is it the case that it is not configured?
       </pre></td>
 <td>SRG-OS-000342-GPOS-00133<br>SRG-OS-000479-GPOS-00224<br>
 </td>
@@ -4601,7 +4753,7 @@ If properly configured, the output for lock-enabled should be /org/gnome/desktop
 of the information system but does not want to logout because of the temporary nature of the absense.</td>
 <td>If not already configured, ensure that users cannot change GNOME3 screensaver lock settings
 by adding <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
-to <code>/etc/dconf/db/local.d/00-security-settings</code>.
+to <code>/etc/dconf/db/local.d/locks/00-security-settings</code>.
 For example:
 <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
 After the settings have been set, run <code>dconf update</code>.</td>
@@ -5355,16 +5507,21 @@ configured to use removable media as the boot loader.</td>
 <td>The system must not allow removable media to be used as the boot loader.
 Remove alternate methods of booting the system from removable media.
 <code>usb0</code>, <code>cd</code>, <code>fd0</code>, etc. are some examples of removeable
-media which should not exist in the line:
+media which should not exist in the lines:
 <pre>set root='hd0,msdos1'</pre>
 </td>
 <td><pre>To verify the system is not configured to use a boot loader on removable media,
-run the following command:
+check that the grub configuration file has the set root command in each menu
+entry with the following commands:
+$ sudo grep -cw menuentry /boot/grub2/grub.cfg
+Note that the -c option for the grep command will print
+only the count of menuentry occurrences. This number should match
+the number of occurrences reported by the following command:
 $ sudo grep "set root='hd0" /boot/grub2/grub.cfg
 The output should return something similar to:
 set root='hd0,msdos1'
 usb0, cd, fd0, etc. are some examples of removeable
-media which should not exist in the line:
+media which should not exist in the lines:
 set root='hd0,msdos1'
       Is it the case that it is not?
       </pre></td>
@@ -6173,6 +6330,36 @@ $ rpm -q rsh-server
 <td>CCI-000381<br>
 </td>
 <td>CM-7<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_package_screen_installed</td>
+<td>medium</td>
+<td>Install the screen Package</td>
+<td>A session time-out lock is a temporary action taken when a user stops work and moves away from the immediate
+physical vicinity of the information system but does not logout because of the temporary nature of the absence.
+Rather than relying on the user to manually lock their operation system session prior to vacating the vicinity,
+operating systems need to be able to identify when a user's session has idled and take action to initiate the
+session lock.
+<br><br>
+The <code>screen</code> package allows for a session lock to be implemented and configured.</td>
+<td>To enable console screen locking, install the <code>screen</code> package.
+The <code>screen</code> package can be installed with the following command:
+<pre>
+$ sudo yum install screen</pre>
+Instruct users to begin new terminal sessions with the following command:
+<pre>$ screen</pre>
+The console can now be locked with the following key combination:
+<pre>ctrl+a x</pre>
+</td>
+<td><pre>Run the following command to determine if the screen package is installed: $ rpm -q screen
+      Is it the case that the package is not installed?
+      </pre></td>
+<td>SRG-OS-000029-GPOS-00010<br>SRG-OS-000030-GPOS-00011<br>
+</td>
+<td>CCI-000057<br>CCI-000058<br>
+</td>
+<td>AC-11 a<br>AC-11 a<br>
 </td>
 </tr>
 <tr>
@@ -8351,6 +8538,29 @@ If "Defaults !runaspw" is not defined, this is a finding.
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_sysctl_kernel_dmesg_restrict</td>
+<td>low</td>
+<td>Restrict Access to Kernel Message Buffer</td>
+<td>Unprivileged access to the kernel syslog can expose sensitive kernel
+address information.</td>
+<td>To set the runtime status of the <code>kernel.dmesg_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.dmesg_restrict=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.dmesg_restrict = 1</pre>
+</td>
+<td><pre>The runtime status of the kernel.dmesg_restrict kernel parameter can be queried
+by running the following command:
+$ sysctl kernel.dmesg_restrict
+1.
+
+      Is it the case that the correct value is not returned?
+      </pre></td>
+<td>SRG-OS-000138-GPOS-00069<br>SRG-OS-000206-GPOS-00084<br>
+</td>
+<td>CCI-001090<br>CCI-001314<br>
+</td>
+<td>SC-4<br>SI-11 c<br>
+</td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_sysctl_kernel_randomize_va_space</td>
 <td>medium</td>
 <td>Enable Randomized Layout of Virtual Address Space</td>
@@ -8738,16 +8948,21 @@ configured to use removable media as the boot loader.</td>
 <td>The system must not allow removable media to be used as the boot loader.
 Remove alternate methods of booting the system from removable media.
 <code>usb0</code>, <code>cd</code>, <code>fd0</code>, etc. are some examples of removeable
-media which should not exist in the line:
+media which should not exist in the lines:
 <pre>set root='hd0,msdos1'</pre>
 </td>
 <td><pre>To verify the system is not configured to use a boot loader on removable media,
-run the following command:
+check that the grub configuration file has the set root command in each menu
+entry with the following commands:
+$ sudo grep -cw menuentry /boot/efi/EFI/redhat/grub.cfg
+Note that the -c option for the grep command will print
+only the count of menuentry occurrences. This number should match
+the number of occurrences reported by the following command:
 $ sudo grep "set root='hd0" /boot/efi/EFI/redhat/grub.cfg
 The output should return something similar to:
 set root='hd0,msdos1'
 usb0, cd, fd0, etc. are some examples of removeable
-media which should not exist in the line:
+media which should not exist in the lines:
 set root='hd0,msdos1'
       Is it the case that it is not?
       </pre></td>

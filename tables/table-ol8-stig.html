@@ -1813,15 +1813,32 @@ $ sudo chgrp root DIR</pre></td>
 	<td>medium</td>
 	<td>The OL 8 operating system must use a file integrity tool to verify correct operation of all security functions.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>The AIDE package must be installed if it is to be available for integrity checking.</pre></td>
-	<td><pre>Run the following command to determine if the aide package is installed: $ rpm -q aide
-      Is it the case that the package is not installed?
+	<td><pre>For AIDE to be effective, an initial database of "known-good" information about files
+must be captured and it should be able to be verified against the installed files.</pre></td>
+	<td><pre>To find the location of the AIDE database file, run the following command:
+$ sudo ls -l DBDIR/database_file_name
+      Is it the case that there is no database file?
       </pre></td>
-	<td><pre>The aide package can be installed with the following command:
+	<td><pre>Run the following command to generate a new database:
 
-$ sudo yum install aide</pre></td>
+$ sudo /usr/sbin/aide --init
+
+By default, the database will be written to the file
+
+/var/lib/aide/aide.db.new.gz.
+
+Storing the database, the configuration file /etc/aide.conf, and the binary
+/usr/sbin/aide
+(or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
+The newly-generated database can be installed as follows:
+
+$ sudo cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
+
+To initiate a manual check, run the following command:
+$ sudo /usr/sbin/aide --check
+If this check produces any unexpected output, investigate.</pre></td>
 	<td>OL08-00-010359</td>
-	<td>package_aide_installed</td>
+	<td>aide_build_database</td>
 </tr>
 
 <tr>
@@ -4040,7 +4057,9 @@ or less (but not "0"), is missing or commented out?
 using pam_faillock.so.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as authselect or authconfig,
 depending on the OS version.</pre></td>
 	<td>OL08-00-020010</td>
@@ -5210,7 +5229,7 @@ $ sudo chage -m 1 USER</pre></td>
 	<td>V-248695</td>
 	<td>198</td>
 	<td>medium</td>
-	<td>OL 8 passwords for new users or password changes must have a 24 hours/1 day minimum password lifetime restriction in "/etc/logins.def".</td>
+	<td>OL 8 passwords for new users or password changes must have a 24 hours/1 day minimum password lifetime restriction in "/etc/login.defs".</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Enforcing a minimum password lifetime helps to prevent repeated password
 changes to defeat the password reuse or history enforcement requirement. If
@@ -5304,24 +5323,44 @@ $ sudo chage -M  USER</pre></td>
 	<td>low</td>
 	<td>OL 8 must be configured in the password-auth file to prohibit password reuse for a minimum of five generations.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.</pre></td>
-	<td><pre>Verify Oracle Linux 8 is configured in the password-auth file to prohibit password reuse
-for a minimum of  generations with the following command:
+	<td><pre>Preventing re-use of previous passwords helps ensure that a compromised password is not
+re-used by a user.</pre></td>
+	<td><pre>Verify Oracle Linux 8 use the "pam_pwhistory.so" module in the /etc/pam.d/password-auth file
+and is configured to prohibit password reuse for a minimum of 
+generations.
 
-$ grep -i remember /etc/pam.d/password-auth
-password  pam_pwhistory.so use_authtok remember= retry=3
-      Is it the case that the line containing "pam_pwhistory.so" does not have the "remember" module argument set,
-is commented out, or the value of the "remember" module argument is set to less than
-"<sub idref="var_password_pam_remember" />"?
+Verify the "/etc/pam.d/password-auth" file with the following command:
+
+$ grep pam_pwhistory.so /etc/pam.d/password-auth
+password  pam_pwhistory.so use_authtok remember=
+
+
+Verify the "/etc/security/pwhistory.conf" file using the following command:
+
+$ grep remember /etc/security/pwhistory.conf
+remember = 
+
+The pam_pwhistory.so "remember" option must be configured only in one file.
+      Is it the case that the pam_pwhistory.so module is not used, the "remember" module option is not set in
+/etc/pam.d/password-auth or in /etc/security/pwhistory.conf, or is set in both files, or is set
+with a value less than "<sub idref="var_password_pam_remember" />"?
       </pre></td>
 	<td><pre>Do not allow users to reuse recent passwords. This can be accomplished by using the
 remember option for the pam_pwhistory PAM module.
 
-In the file /etc/pam.d/password-auth, make sure the parameter
-remember is present and it has a value equal to or greater than
-. For example:
-password control_flag pam_pwhistory.so ...existing_options... remember= use_authtok
-control_flag should be one of the next values: </pre></td>
+
+On systems with newer versions of authselect, the pam_pwhistory PAM module
+can be enabled via authselect feature:
+authselect enable-feature with-pwhistory
+
+Otherwise, it should be enabled using an authselect custom profile.
+
+Newer systems also have the /etc/security/pwhistory.conf file for setting
+pam_pwhistory module options. This file should be used whenever available.
+Otherwise, the pam_pwhistory module options can be set in PAM files.
+
+The value for remember option must be equal or greater than
+</pre></td>
 	<td>OL08-00-020220</td>
 	<td>accounts_password_pam_pwhistory_remember_password_auth</td>
 </tr>
@@ -5332,25 +5371,44 @@ control_flag should be one of the next values: </pre></td>
 	<td>medium</td>
 	<td>OL 8 must be configured in the system-auth file to prohibit password reuse for a minimum of five generations.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.</pre></td>
-	<td><pre>Verify Oracle Linux 8 is configured in the system-auth file to prohibit password reuse
-for a minimum of  generations with the following command:
+	<td><pre>Preventing re-use of previous passwords helps ensure that a compromised password is not
+re-used by a user.</pre></td>
+	<td><pre>Verify Oracle Linux 8 use the "pam_pwhistory.so" module in the /etc/pam.d/system-auth file
+and is configured to prohibit password reuse for a minimum of 
+generations.
 
-$ grep -i remember /etc/pam.d/system-auth
-password  pam_pwhistory.so use_authtok remember= retry=3
-      Is it the case that the line containing "pam_pwhistory.so" does not have the "remember" module argument set,
-is commented out, or the value of the "remember" module argument is set to less than
-"<sub idref="var_password_pam_remember" />"?
+Verify the "/etc/pam.d/system-auth" file with the following command:
+
+$ grep pam_pwhistory.so /etc/pam.d/system-auth
+password  pam_pwhistory.so use_authtok remember=
+
+
+Verify the "/etc/security/pwhistory.conf" file using the following command:
+
+$ grep remember /etc/security/pwhistory.conf
+remember = 
+
+The pam_pwhistory.so "remember" option must be configured only in one file.
+      Is it the case that the pam_pwhistory.so module is not used, the "remember" module option is not set in
+/etc/pam.d/system-auth or in /etc/security/pwhistory.conf, or is set in both files, or is set
+with a value less than "<sub idref="var_password_pam_remember" />"?
       </pre></td>
 	<td><pre>Do not allow users to reuse recent passwords. This can be accomplished by using the
 remember option for the pam_pwhistory PAM module.
 
-In the file /etc/pam.d/system-auth, make sure the parameter
-remember is present and it has a value equal to or greater than
 
-For example:
-password control_flag pam_pwhistory.so ...existing_options... remember= use_authtok
-control_flag should be one of the next values: </pre></td>
+On systems with newer versions of authselect, the pam_pwhistory PAM module
+can be enabled via authselect feature:
+authselect enable-feature with-pwhistory
+
+Otherwise, it should be enabled using an authselect custom profile.
+
+Newer systems also have the /etc/security/pwhistory.conf file for setting
+pam_pwhistory module options. This file should be used whenever available.
+Otherwise, the pam_pwhistory module options can be set in PAM files.
+
+The value for remember option must be equal or greater than
+</pre></td>
 	<td>OL08-00-020221</td>
 	<td>accounts_password_pam_pwhistory_remember_system_auth</td>
 </tr>
@@ -5889,7 +5947,7 @@ to prevent logins with empty passwords.</pre></td>
 
 <tr>
 	<td>V-248717</td>
-	<td>366</td>
+	<td>52</td>
 	<td>low</td>
 	<td>OL 8 must display the date and time of the last successful account logon upon logon.</td>
 	<td>SRG-OS-ID</td>
@@ -5918,7 +5976,7 @@ pam_lastlog module.</pre></td>
 
 <tr>
 	<td>V-248718</td>
-	<td>366</td>
+	<td>52</td>
 	<td>medium</td>
 	<td>OL 8 must display the date and time of the last successful account logon upon an SSH logon.</td>
 	<td>SRG-OS-ID</td>
@@ -6767,7 +6825,7 @@ of what was executed on the system, as well as, for accountability purposes.
 Editing the sudoers file may be sign of an attacker trying to
 establish persistent methods to a system, auditing the editing of the sudoers
 files mitigates this risk.</pre></td>
-	<td><pre>Verify RHEL 9 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
+	<td><pre>Verify Oracle Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
 
 $ sudo auditctl -l | grep/etc/sudoers.d
 
@@ -9801,6 +9859,11 @@ $ sudo grep permissive /etc/fapolicyd/fapolicyd.conf
 permissive = 0
 
 Check that fapolicyd employs a deny-all policy on system mounts with the following commands:
+
+For OL 8.5 systems and older:
+$ sudo tail /etc/fapolicyd/fapolicyd.rules
+
+For OL 8.6 systems and newer:
 $ sudo tail /etc/fapolicyd/compiled.rules
 
 allow exe=/usr/bin/python3.7 : ftype=text/x-python

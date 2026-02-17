@@ -1160,6 +1160,50 @@ more difficult by ensuring a larger search space.
 </tr>
 <tr>
   <td>BP28(R18)</td>
+  <td>CCE-83476-2</td>
+  <td>Limit Password Reuse: password-auth</td>
+  <td xml:lang="en-US">
+Do not allow users to reuse recent passwords. This can be accomplished by using the
+<tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
+<br/><br/>
+
+In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter <tt>remember</tt> is
+present and it has a value equal to or greater than
+<tt>2</tt>
+<br/><br/>
+For example:
+<pre>password <tt>requisite</tt> pam_pwhistory.so use_authtok remember=<tt>2</tt></pre>
+  </td>
+  <td xml:lang="en-US">
+Preventing re-use of previous passwords helps ensure that a compromised password is not
+re-used by a user.
+  </td>
+  <td>var_password_pam_remember=2<br/>var_password_pam_remember_control_flag=requisite</td>
+</tr>
+<tr>
+  <td>BP28(R18)</td>
+  <td>CCE-83479-6</td>
+  <td>Limit Password Reuse: system-auth</td>
+  <td xml:lang="en-US">
+Do not allow users to reuse recent passwords. This can be accomplished by using the
+<tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
+<br/><br/>
+
+In the file <tt>/etc/pam.d/system-auth</tt>, make sure the parameter <tt>remember</tt> is
+present and it has a value equal to or greater than
+<tt>2</tt>
+<br/><br/>
+For example:
+<pre>password <tt>requisite</tt> pam_pwhistory.so use_authtok remember=<tt>2</tt></pre>
+  </td>
+  <td xml:lang="en-US">
+Preventing re-use of previous passwords helps ensure that a compromised password is not
+re-used by a user.
+  </td>
+  <td>var_password_pam_remember=2<br/>var_password_pam_remember_control_flag=requisite</td>
+</tr>
+<tr>
+  <td>BP28(R18)</td>
   <td>CCE-27200-5</td>
   <td>Ensure PAM Enforces Password Requirements - Minimum Uppercase Characters</td>
   <td xml:lang="en-US">
@@ -1182,19 +1226,6 @@ the password is compromised.
 </tr>
 <tr>
   <td>BP28(R18)</td>
-  <td>CCE-82030-8</td>
-  <td>Limit Password Reuse</td>
-  <td xml:lang="en-US">
-Do not allow users to reuse recent passwords. This can be accomplished by using the
-<tt>remember</tt> option for the <tt>pam_unix</tt> or <tt>pam_pwhistory</tt> PAM modules.
-  </td>
-  <td xml:lang="en-US">
-Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>BP28(R18)</td>
   <td>CCE-27350-8</td>
   <td>Lock Accounts After Failed Password Attempts</td>
   <td xml:lang="en-US">
@@ -1202,7 +1233,9 @@ This rule configures the system to lock out accounts after a number of incorrect
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.
   </td>

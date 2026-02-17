@@ -265,7 +265,7 @@ utility to read audit rules during daemon startup, add the following line to
 <pre>-w /etc/sudoers.d/ -p wa -k actions</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system automatically audits account creation. If it does not, this is a finding.</td>
-    <td>Verify RHEL 9 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
+    <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
 
 $ sudo auditctl -l | grep/etc/sudoers.d
 
@@ -565,6 +565,43 @@ account changes:
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must enforce the limit of three consecutive invalid logon attempts by a user during a 15-minute time period.</td>
 
+    <td>CCE-86248-2: An SELinux Context must be configured for the pam_faillock.so records directory</td>
+
+    <td>By limiting the number of failed logon attempts, the risk of unauthorized system access via user password guessing, otherwise known as brute-force attacks, is reduced. Limits are imposed by locking the account.</td>
+    <td>The <tt>dir</tt> configuration option in PAM pam_faillock.so module defines where the lockout
+records is stored. The configured directory must have the correct SELinux context.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify that the operating system enforces the limit of three consecutive invalid logon attempts by a user during a 15-minute time period. If it does not, this is a finding.</td>
+    <td>If the system does not have SELinux enabled and enforcing a targeted policy, or if the
+pam_faillock.so module is not configured for use, this requirement is not applicable.
+
+Verify the location of the non-default tally directory for the pam_faillock.so module with
+the following command:
+
+$ sudo grep -w dir /etc/security/faillock.conf
+
+dir = /var/log/faillock
+
+Check the security context type of the non-default tally directory with the following command:
+
+$ sudo ls -Zd /var/log/faillock
+
+unconfined_u:object_r:faillog_t:s0 /var/log/faillock Is it the case that the security context type of the non-default tally directory is not "faillog_t"?</td>
+    <td>Configure the operating system to enforce the limit of three consecutive invalid logon attempts by a user during a 15-minute time period.</td>
+    <td>The <tt>dir</tt> configuration option in PAM pam_faillock.so module defines where the lockout
+records is stored. The configured directory must have the correct SELinux context.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-000044</td>
+    <td>SRG-OS-000021-GPOS-00005</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must enforce the limit of three consecutive invalid logon attempts by a user during a 15-minute time period.</td>
+
     <td>CCE-86099-9: Account Lockouts Must Be Logged</td>
 
     <td>By limiting the number of failed logon attempts, the risk of unauthorized system access via user password guessing, otherwise known as brute-force attacks, is reduced. Limits are imposed by locking the account.</td>
@@ -597,7 +634,9 @@ audit Is it the case that the "audit" option is not set, is missing or commented
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.</td>
     <td>Applicable - Configurable</td>
@@ -614,7 +653,9 @@ or less (but not "0"), is missing or commented out?</td>
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.</td>
     <td>medium</td>
@@ -667,6 +708,47 @@ depending on the OS version.</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must enforce the limit of three consecutive invalid logon attempts by a user during a 15-minute time period.</td>
 
+    <td>CCE-86067-6: Lock Accounts Must Persist</td>
+
+    <td>By limiting the number of failed logon attempts, the risk of unauthorized system access via user password guessing, otherwise known as brute-force attacks, is reduced. Limits are imposed by locking the account.</td>
+    <td>This rule ensures that the system lock out accounts using <tt>pam_faillock.so</tt> persist
+after system reboot. From "pam_faillock" man pages:
+<pre>Note that the default directory that "pam_faillock" uses is usually cleared on system
+boot so the access will be reenabled after system reboot. If that is undesirable, a different
+tally directory must be set with the "dir" option.</pre>
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify that the operating system enforces the limit of three consecutive invalid logon attempts by a user during a 15-minute time period. If it does not, this is a finding.</td>
+    <td>To ensure the tally directory is configured correctly, run the following command:
+<pre>$ sudo grep 'dir =' /etc/security/faillock.conf</pre>
+The output should show that dir is set to something other than "/var/run/faillock" Is it the case that the "dir" option is not set to a non-default documented tally log directory, is missing or commented out?</td>
+    <td>Configure the operating system to enforce the limit of three consecutive invalid logon attempts by a user during a 15-minute time period.</td>
+    <td>This rule ensures that the system lock out accounts using <tt>pam_faillock.so</tt> persist
+after system reboot. From "pam_faillock" man pages:
+<pre>Note that the default directory that "pam_faillock" uses is usually cleared on system
+boot so the access will be reenabled after system reboot. If that is undesirable, a different
+tally directory must be set with the "dir" option.</pre>
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-000044</td>
+    <td>SRG-OS-000021-GPOS-00005</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must enforce the limit of three consecutive invalid logon attempts by a user during a 15-minute time period.</td>
+
     <td>CCE-80669-5: Set Interval For Counting Failed Password Attempts</td>
 
     <td>By limiting the number of failed logon attempts, the risk of unauthorized system access via user password guessing, otherwise known as brute-force attacks, is reduced. Limits are imposed by locking the account.</td>
@@ -684,6 +766,44 @@ or less (but not "0"), the line is commented out, or the line is missing?</td>
     <td>Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
 period.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-000044</td>
+    <td>SRG-OS-000021-GPOS-00005</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must enforce the limit of three consecutive invalid logon attempts by a user during a 15-minute time period.</td>
+
+    <td>CCE-87096-4: Do Not Show System Messages When Unsuccessful Logon Attempts Occur</td>
+
+    <td>By limiting the number of failed logon attempts, the risk of unauthorized system access via user password guessing, otherwise known as brute-force attacks, is reduced. Limits are imposed by locking the account.</td>
+    <td>This rule ensures the system prevents informative messages from being presented to the user
+pertaining to logon information after a number of incorrect login attempts using
+<tt>pam_faillock.so</tt>.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify that the operating system enforces the limit of three consecutive invalid logon attempts by a user during a 15-minute time period. If it does not, this is a finding.</td>
+    <td>To ensure that the system prevents messages from being shown when three unsuccessful logon
+attempts occur, run the following command:
+<pre>$ grep silent /etc/security/faillock.conf</pre>
+The output should show <tt>silent</tt>. Is it the case that the system shows messages when three unsuccessful logon attempts occur?</td>
+    <td>Configure the operating system to enforce the limit of three consecutive invalid logon attempts by a user during a 15-minute time period.</td>
+    <td>This rule ensures the system prevents informative messages from being presented to the user
+pertaining to logon information after a number of incorrect login attempts using
+<tt>pam_faillock.so</tt>.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -1327,7 +1447,7 @@ a file under <tt>/etc/security/limits.d/</tt>:
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must retain a users session lock until that user reestablishes access using established identification and authentication procedures.</td>
 
-    <td>CCE-82266-8: Support session locking with tmux</td>
+    <td>CCE-90782-4: Support session locking with tmux (not enforcing)</td>
 
     <td>A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not want to log out because of the temporary nature of the absence.
 
@@ -1345,7 +1465,7 @@ Determine the location of the tmux script with the following command:
 
 <pre>$ sudo grep tmux /etc/bashrc /etc/profile.d/*
 
-/etc/profile.d/tmux.sh:  case "$name" in (sshd|login) exec tmux ;; esac</pre>
+/etc/profile.d/tmux.sh:  case "$name" in (sshd|login) tmux ;; esac</pre>
 
 Review the tmux script by using the following example:
 
@@ -1354,7 +1474,7 @@ Review the tmux script by using the following example:
 if [ "$PS1" ]; then
 parent=$(ps -o ppid= -p $$)
 name=$(ps -o comm= -p $parent)
-case "$name" in (sshd|login) exec tmux ;; esac
+case "$name" in (sshd|login) tmux ;; esac
 fi</pre>
 
 If the shell file is not configured as the example above, is commented out, or is missing, this is a finding.
@@ -1412,6 +1532,49 @@ Add the following line to <tt>/etc/tmux.conf</tt>:
 The console can now be locked with the following key combination:
 <pre>ctrl+b :lock-session</pre></td>
     <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-000056</td>
+    <td>SRG-OS-000028-GPOS-00009</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must retain a users session lock until that user reestablishes access using established identification and authentication procedures.</td>
+
+    <td>CCE-86135-1: Configure the tmux lock session key binding</td>
+
+    <td>A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not want to log out because of the temporary nature of the absence.
+
+The session lock is implemented at the point where session activity can be determined.
+
+Regardless of where the session lock is determined and implemented, once invoked, the session lock shall remain in place until the user re-authenticates. No other activity aside from re-authentication shall unlock the system.</td>
+    <td>To set a key binding for the screen locking in <tt>tmux</tt> terminal multiplexer,
+the <tt>session-lock</tt> command must be bound to a key.
+Add the following line to <tt>/etc/tmux.conf</tt>:
+<pre>bind X lock-session</pre>.
+The console can now be locked with the following key combination:
+<pre>Ctrl+b Shift+x</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system retains a user's session lock until that user reestablishes access using established identification and authentication procedures. If it does not, this is a finding.</td>
+    <td>Verify Red Hat Enterprise Linux 8 enables the user to initiate a session lock trhough key bindings with the following commands:
+
+<pre>$ grep "bind X lock-session" /etc/tmux.conf</pre>
+
+<pre>bind X lock-session</pre>
+
+Then, verify that the /etc/tmux.conf file can be read by other users than root:
+
+<pre>$ sudo ls -al /etc/tmux.conf</pre> Is it the case that the "lock-session" is not bound to the X key?</td>
+    <td>Configure the operating system to retain a user's session lock until that user reestablishes access using established identification and authentication procedures.</td>
+    <td>To set a key binding for the screen locking in <tt>tmux</tt> terminal multiplexer,
+the <tt>session-lock</tt> command must be bound to a key.
+Add the following line to <tt>/etc/tmux.conf</tt>:
+<pre>bind X lock-session</pre>.
+The console can now be locked with the following key combination:
+<pre>Ctrl+b Shift+x</pre></td>
+    <td>low</td>
     <td></td>
     <td></td>
     <td></td>
@@ -1801,7 +1964,7 @@ After the settings have been set, run <tt>dconf update</tt>.</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must provide the capability for users to directly initiate a session lock for all connection types.</td>
 
-    <td>CCE-82266-8: Support session locking with tmux</td>
+    <td>CCE-90782-4: Support session locking with tmux (not enforcing)</td>
 
     <td>A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not want to log out because of the temporary nature of the absence.
 
@@ -1817,7 +1980,7 @@ Determine the location of the tmux script with the following command:
 
 <pre>$ sudo grep tmux /etc/bashrc /etc/profile.d/*
 
-/etc/profile.d/tmux.sh:  case "$name" in (sshd|login) exec tmux ;; esac</pre>
+/etc/profile.d/tmux.sh:  case "$name" in (sshd|login) tmux ;; esac</pre>
 
 Review the tmux script by using the following example:
 
@@ -1826,7 +1989,7 @@ Review the tmux script by using the following example:
 if [ "$PS1" ]; then
 parent=$(ps -o ppid= -p $$)
 name=$(ps -o comm= -p $parent)
-case "$name" in (sshd|login) exec tmux ;; esac
+case "$name" in (sshd|login) tmux ;; esac
 fi</pre>
 
 If the shell file is not configured as the example above, is commented out, or is missing, this is a finding.
@@ -1882,6 +2045,47 @@ Add the following line to <tt>/etc/tmux.conf</tt>:
 The console can now be locked with the following key combination:
 <pre>ctrl+b :lock-session</pre></td>
     <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-000058</td>
+    <td>SRG-OS-000030-GPOS-00011</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must provide the capability for users to directly initiate a session lock for all connection types.</td>
+
+    <td>CCE-86135-1: Configure the tmux lock session key binding</td>
+
+    <td>A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not want to log out because of the temporary nature of the absence.
+
+The session lock is implemented at the point where session activity can be determined. Rather than be forced to wait for a period of time to expire before the user session can be locked, operating systems need to provide users with the ability to manually invoke a session lock so users may secure their session should the need arise for them to temporarily vacate the immediate physical vicinity.</td>
+    <td>To set a key binding for the screen locking in <tt>tmux</tt> terminal multiplexer,
+the <tt>session-lock</tt> command must be bound to a key.
+Add the following line to <tt>/etc/tmux.conf</tt>:
+<pre>bind X lock-session</pre>.
+The console can now be locked with the following key combination:
+<pre>Ctrl+b Shift+x</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system provides the capability for users to directly initiate a session lock for all connection types. If it does not, this is a finding.</td>
+    <td>Verify Red Hat Enterprise Linux 8 enables the user to initiate a session lock trhough key bindings with the following commands:
+
+<pre>$ grep "bind X lock-session" /etc/tmux.conf</pre>
+
+<pre>bind X lock-session</pre>
+
+Then, verify that the /etc/tmux.conf file can be read by other users than root:
+
+<pre>$ sudo ls -al /etc/tmux.conf</pre> Is it the case that the "lock-session" is not bound to the X key?</td>
+    <td>Configure the operating system to provide the capability for users to directly initiate a session lock for all connection types.</td>
+    <td>To set a key binding for the screen locking in <tt>tmux</tt> terminal multiplexer,
+the <tt>session-lock</tt> command must be bound to a key.
+Add the following line to <tt>/etc/tmux.conf</tt>:
+<pre>bind X lock-session</pre>.
+The console can now be locked with the following key combination:
+<pre>Ctrl+b Shift+x</pre></td>
+    <td>low</td>
     <td></td>
     <td></td>
     <td></td>
@@ -2068,7 +2272,7 @@ The console can now be locked with the following key combination:
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must conceal, via the session lock, information previously visible on the display with a publicly viewable image.</td>
 
-    <td>CCE-82266-8: Support session locking with tmux</td>
+    <td>CCE-90782-4: Support session locking with tmux (not enforcing)</td>
 
     <td>A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not log out because of the temporary nature of the absence.
 
@@ -2086,7 +2290,7 @@ Determine the location of the tmux script with the following command:
 
 <pre>$ sudo grep tmux /etc/bashrc /etc/profile.d/*
 
-/etc/profile.d/tmux.sh:  case "$name" in (sshd|login) exec tmux ;; esac</pre>
+/etc/profile.d/tmux.sh:  case "$name" in (sshd|login) tmux ;; esac</pre>
 
 Review the tmux script by using the following example:
 
@@ -2095,7 +2299,7 @@ Review the tmux script by using the following example:
 if [ "$PS1" ]; then
 parent=$(ps -o ppid= -p $$)
 name=$(ps -o comm= -p $parent)
-case "$name" in (sshd|login) exec tmux ;; esac
+case "$name" in (sshd|login) tmux ;; esac
 fi</pre>
 
 If the shell file is not configured as the example above, is commented out, or is missing, this is a finding.
@@ -5168,7 +5372,7 @@ utility to read audit rules during daemon startup, add the following line to
 <pre>-w /etc/sudoers.d/ -p wa -k actions</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system produces audit records containing information to establish what type of events occurred. If it does not, this is a finding.</td>
-    <td>Verify RHEL 9 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
+    <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
 
 $ sudo auditctl -l | grep/etc/sudoers.d
 
@@ -8974,7 +9178,7 @@ utility to read audit rules during daemon startup, add the following line to
 <pre>-w /etc/sudoers.d/ -p wa -k actions</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system generates audit records containing the full-text recording of privileged commands. If it does not, this is a finding.</td>
-    <td>Verify RHEL 9 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
+    <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
 
 $ sudo auditctl -l | grep/etc/sudoers.d
 
@@ -10340,51 +10544,6 @@ If the internal clock is not used, the system may not be able to provide time st
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must protect audit information from unauthorized read access.</td>
 
-    <td>CCE-82828-5: Configure immutable Audit login UIDs</td>
-
-    <td>Unauthorized disclosure of audit records can reveal system and configuration data to attackers, thus compromising its confidentiality.
-
-Audit information includes all information (e.g., audit records, audit settings, audit reports) needed to successfully audit operating system activity.</td>
-    <td>Configure kernel to prevent modification of login UIDs once they are set.
-Changing login UIDs while this configuration is enforced requires special capabilities which
-are not available to unprivileged users.
-
-The following rules configure audit as described above:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre>
-
-Load new Audit rules into kernel by running:
-<pre>augenrules --load</pre></td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system protects audit information from unauthorized read access. If it does not, this is a finding.</td>
-    <td>To verify that the <tt>Audit</tt> is correctly configured according to recommended rules, check the content of the file with the following command:
-<pre>$ sudo cat /etc/audit/rules.d/11-loginuid.rules</pre>
-The output has to be exactly as follows:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre> Is it the case that the file does not exist or the content differs?</td>
-    <td>Configure the operating system to protect audit information from unauthorized read access.</td>
-    <td>Configure kernel to prevent modification of login UIDs once they are set.
-Changing login UIDs while this configuration is enforced requires special capabilities which
-are not available to unprivileged users.
-
-The following rules configure audit as described above:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre>
-
-Load new Audit rules into kernel by running:
-<pre>augenrules --load</pre></td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
-  <tr>
-    <td>CCI-000162</td>
-    <td>SRG-OS-000057-GPOS-00027</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must protect audit information from unauthorized read access.</td>
-
     <td>CCE-80708-1: Make the auditd Configuration Immutable</td>
 
     <td>Unauthorized disclosure of audit records can reveal system and configuration data to attackers, thus compromising its confidentiality.
@@ -10422,6 +10581,65 @@ utility to read audit rules during daemon startup, add the following line to
 immutable:
 <pre>-e 2</pre>
 With this setting, a reboot will be required to change any audit rules.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-000162</td>
+    <td>SRG-OS-000057-GPOS-00027</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must protect audit information from unauthorized read access.</td>
+
+    <td>CCE-90783-2: Configure immutable Audit login UIDs</td>
+
+    <td>Unauthorized disclosure of audit records can reveal system and configuration data to attackers, thus compromising its confidentiality.
+
+Audit information includes all information (e.g., audit records, audit settings, audit reports) needed to successfully audit operating system activity.</td>
+    <td>Configure kernel to prevent modification of login UIDs once they are set.
+Changing login UIDs while this configuration is enforced requires special capabilities which
+are not available to unprivileged users.
+If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following line to
+<tt>/etc/audit/audit.rules</tt> file in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system protects audit information from unauthorized read access. If it does not, this is a finding.</td>
+    <td>To determine if the system is configured to make login UIDs immutable, run
+one of the following commands.
+If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), run the following:
+<pre>sudo grep immutable /etc/audit/rules.d/*.rules</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, run the following command:
+<pre>sudo grep immutable /etc/audit/audit.rules</pre>
+The following line should be returned:
+<pre>--loginuid-immutable</pre> Is it the case that the system is not configured to make login UIDs immutable?</td>
+    <td>Configure the operating system to protect audit information from unauthorized read access.</td>
+    <td>Configure kernel to prevent modification of login UIDs once they are set.
+Changing login UIDs while this configuration is enforced requires special capabilities which
+are not available to unprivileged users.
+If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following line to
+<tt>/etc/audit/audit.rules</tt> file in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -10726,53 +10944,6 @@ By default, <i>audit_log_file</i> is "/var/log/audit/audit.log".</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must protect audit information from unauthorized modification.</td>
 
-    <td>CCE-82828-5: Configure immutable Audit login UIDs</td>
-
-    <td>If audit information were to become compromised, then forensic analysis and discovery of the true source of potentially malicious system activity is impossible to achieve.
-
-To ensure the veracity of audit information, the operating system must protect audit information from unauthorized modification.
-
-Audit information includes all information (e.g., audit records, audit settings, audit reports) needed to successfully audit information system activity.</td>
-    <td>Configure kernel to prevent modification of login UIDs once they are set.
-Changing login UIDs while this configuration is enforced requires special capabilities which
-are not available to unprivileged users.
-
-The following rules configure audit as described above:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre>
-
-Load new Audit rules into kernel by running:
-<pre>augenrules --load</pre></td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system protects audit information from unauthorized modification. If it does not, this is a finding.</td>
-    <td>To verify that the <tt>Audit</tt> is correctly configured according to recommended rules, check the content of the file with the following command:
-<pre>$ sudo cat /etc/audit/rules.d/11-loginuid.rules</pre>
-The output has to be exactly as follows:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre> Is it the case that the file does not exist or the content differs?</td>
-    <td>Configure the operating system to protect audit information from unauthorized modification.</td>
-    <td>Configure kernel to prevent modification of login UIDs once they are set.
-Changing login UIDs while this configuration is enforced requires special capabilities which
-are not available to unprivileged users.
-
-The following rules configure audit as described above:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre>
-
-Load new Audit rules into kernel by running:
-<pre>augenrules --load</pre></td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
-  <tr>
-    <td>CCI-000163</td>
-    <td>SRG-OS-000058-GPOS-00028</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must protect audit information from unauthorized modification.</td>
-
     <td>CCE-80708-1: Make the auditd Configuration Immutable</td>
 
     <td>If audit information were to become compromised, then forensic analysis and discovery of the true source of potentially malicious system activity is impossible to achieve.
@@ -10812,6 +10983,67 @@ utility to read audit rules during daemon startup, add the following line to
 immutable:
 <pre>-e 2</pre>
 With this setting, a reboot will be required to change any audit rules.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-000163</td>
+    <td>SRG-OS-000058-GPOS-00028</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must protect audit information from unauthorized modification.</td>
+
+    <td>CCE-90783-2: Configure immutable Audit login UIDs</td>
+
+    <td>If audit information were to become compromised, then forensic analysis and discovery of the true source of potentially malicious system activity is impossible to achieve.
+
+To ensure the veracity of audit information, the operating system must protect audit information from unauthorized modification.
+
+Audit information includes all information (e.g., audit records, audit settings, audit reports) needed to successfully audit information system activity.</td>
+    <td>Configure kernel to prevent modification of login UIDs once they are set.
+Changing login UIDs while this configuration is enforced requires special capabilities which
+are not available to unprivileged users.
+If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following line to
+<tt>/etc/audit/audit.rules</tt> file in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system protects audit information from unauthorized modification. If it does not, this is a finding.</td>
+    <td>To determine if the system is configured to make login UIDs immutable, run
+one of the following commands.
+If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), run the following:
+<pre>sudo grep immutable /etc/audit/rules.d/*.rules</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, run the following command:
+<pre>sudo grep immutable /etc/audit/audit.rules</pre>
+The following line should be returned:
+<pre>--loginuid-immutable</pre> Is it the case that the system is not configured to make login UIDs immutable?</td>
+    <td>Configure the operating system to protect audit information from unauthorized modification.</td>
+    <td>Configure kernel to prevent modification of login UIDs once they are set.
+Changing login UIDs while this configuration is enforced requires special capabilities which
+are not available to unprivileged users.
+If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following line to
+<tt>/etc/audit/audit.rules</tt> file in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -11128,53 +11360,6 @@ By default, <i>audit_log_file</i> is "/var/log/audit/audit.log".</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must protect audit information from unauthorized deletion.</td>
 
-    <td>CCE-82828-5: Configure immutable Audit login UIDs</td>
-
-    <td>If audit information were to become compromised, then forensic analysis and discovery of the true source of potentially malicious system activity is impossible to achieve.
-
-To ensure the veracity of audit information, the operating system must protect audit information from unauthorized deletion. This requirement can be achieved through multiple methods, which will depend upon system architecture and design.
-
-Audit information includes all information (e.g., audit records, audit settings, audit reports) needed to successfully audit information system activity.</td>
-    <td>Configure kernel to prevent modification of login UIDs once they are set.
-Changing login UIDs while this configuration is enforced requires special capabilities which
-are not available to unprivileged users.
-
-The following rules configure audit as described above:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre>
-
-Load new Audit rules into kernel by running:
-<pre>augenrules --load</pre></td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system protects audit information from unauthorized deletion. If it does not, this is a finding.</td>
-    <td>To verify that the <tt>Audit</tt> is correctly configured according to recommended rules, check the content of the file with the following command:
-<pre>$ sudo cat /etc/audit/rules.d/11-loginuid.rules</pre>
-The output has to be exactly as follows:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre> Is it the case that the file does not exist or the content differs?</td>
-    <td>Configure the operating system to protect audit information from unauthorized deletion.</td>
-    <td>Configure kernel to prevent modification of login UIDs once they are set.
-Changing login UIDs while this configuration is enforced requires special capabilities which
-are not available to unprivileged users.
-
-The following rules configure audit as described above:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre>
-
-Load new Audit rules into kernel by running:
-<pre>augenrules --load</pre></td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
-  <tr>
-    <td>CCI-000164</td>
-    <td>SRG-OS-000059-GPOS-00029</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must protect audit information from unauthorized deletion.</td>
-
     <td>CCE-80708-1: Make the auditd Configuration Immutable</td>
 
     <td>If audit information were to become compromised, then forensic analysis and discovery of the true source of potentially malicious system activity is impossible to achieve.
@@ -11214,6 +11399,67 @@ utility to read audit rules during daemon startup, add the following line to
 immutable:
 <pre>-e 2</pre>
 With this setting, a reboot will be required to change any audit rules.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-000164</td>
+    <td>SRG-OS-000059-GPOS-00029</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must protect audit information from unauthorized deletion.</td>
+
+    <td>CCE-90783-2: Configure immutable Audit login UIDs</td>
+
+    <td>If audit information were to become compromised, then forensic analysis and discovery of the true source of potentially malicious system activity is impossible to achieve.
+
+To ensure the veracity of audit information, the operating system must protect audit information from unauthorized deletion. This requirement can be achieved through multiple methods, which will depend upon system architecture and design.
+
+Audit information includes all information (e.g., audit records, audit settings, audit reports) needed to successfully audit information system activity.</td>
+    <td>Configure kernel to prevent modification of login UIDs once they are set.
+Changing login UIDs while this configuration is enforced requires special capabilities which
+are not available to unprivileged users.
+If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following line to
+<tt>/etc/audit/audit.rules</tt> file in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system protects audit information from unauthorized deletion. If it does not, this is a finding.</td>
+    <td>To determine if the system is configured to make login UIDs immutable, run
+one of the following commands.
+If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), run the following:
+<pre>sudo grep immutable /etc/audit/rules.d/*.rules</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, run the following command:
+<pre>sudo grep immutable /etc/audit/audit.rules</pre>
+The following line should be returned:
+<pre>--loginuid-immutable</pre> Is it the case that the system is not configured to make login UIDs immutable?</td>
+    <td>Configure the operating system to protect audit information from unauthorized deletion.</td>
+    <td>Configure kernel to prevent modification of login UIDs once they are set.
+Changing login UIDs while this configuration is enforced requires special capabilities which
+are not available to unprivileged users.
+If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following line to
+<tt>/etc/audit/audit.rules</tt> file in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -15751,7 +15997,7 @@ DoD has defined the list of events for which the operating system will provide a
 4) All kernel module load, unload, and restart actions.
 
 If it does not, this is a finding.</td>
-    <td>Verify RHEL 9 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
+    <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
 
 $ sudo auditctl -l | grep/etc/sudoers.d
 
@@ -17030,7 +17276,7 @@ DoD has defined the list of events for which the operating system will provide a
 (as opposed directly to a file),
 <tt>AuditBackend</tt> option in <tt>/etc/usbguard/usbguard-daemon.conf</tt>
 needs to be set to <tt>LinuxAudit</tt>.</td>
-    <td>medium</td>
+    <td>low</td>
     <td></td>
     <td></td>
     <td></td>
@@ -19655,30 +19901,57 @@ restriction by running the following command:
     <td>Password complexity, or strength, is a measure of the effectiveness of a password in resisting attempts at guessing and brute-force attacks. If the information system or application allows the user to consecutively reuse their password when that password has exceeded its defined lifetime, the end result is a password that is not changed as per policy requirements.</td>
     <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
-<br /><br />
-In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter
-<tt>remember</tt> is present and it has a value equal to or greater than
-<sub idref="var_password_pam_remember" />. For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<sub idref="var_password_pam_remember" /> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <tt><sub idref="var_password_pam_remember_control_flag" /></tt><br /></td>
+<br/><br/>
+
+On systems with newer versions of <tt>authselect</tt>, the <tt>pam_pwhistory</tt> PAM module
+can be enabled via authselect feature:
+<pre>authselect enable-feature with-pwhistory</pre>
+
+Otherwise, it should be enabled using an authselect custom profile.
+<br/><br/>
+Newer systems also have the <tt>/etc/security/pwhistory.conf</tt> file for setting
+<tt>pam_pwhistory</tt> module options. This file should be used whenever available.
+Otherwise, the <tt>pam_pwhistory</tt> module options can be set in PAM files.
+<br/><br/>
+The value for <tt>remember</tt> option must be equal or greater than
+<sub idref="var_password_pam_remember" /></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system prohibits password reuse for a minimum of five generations. If it does not, this is a finding.</td>
-    <td>Verify Red Hat Enterprise Linux 8 is configured in the password-auth file to prohibit password reuse
-for a minimum of <sub idref="var_password_pam_remember" /> generations with the following command:
+    <td>Verify Red Hat Enterprise Linux 8 use the "pam_pwhistory.so" module in the /etc/pam.d/password-auth file
+and is configured to prohibit password reuse for a minimum of <sub idref="var_password_pam_remember" />
+generations.
 
-<pre>$ grep -i remember /etc/pam.d/password-auth
-password <sub idref="var_password_pam_remember_control_flag" /> pam_pwhistory.so use_authtok remember=<sub idref="var_password_pam_remember" /> retry=3</pre> Is it the case that the line containing "pam_pwhistory.so" does not have the "remember" module argument set,
-is commented out, or the value of the "remember" module argument is set to less than
-"<sub idref="var_password_pam_remember" />"?</td>
+Verify the "/etc/pam.d/password-auth" file with the following command:
+
+<pre>$ grep pam_pwhistory.so /etc/pam.d/password-auth
+password <sub idref="var_password_pam_remember_control_flag" /> pam_pwhistory.so use_authtok remember=<sub idref="var_password_pam_remember" /></pre>
+
+
+Verify the "/etc/security/pwhistory.conf" file using the following command:
+
+<pre>$ grep remember /etc/security/pwhistory.conf
+remember = <sub idref="var_password_pam_remember" /></pre>
+
+The pam_pwhistory.so "remember" option must be configured only in one file. Is it the case that the pam_pwhistory.so module is not used, the "remember" module option is not set in
+/etc/pam.d/password-auth or in /etc/security/pwhistory.conf, or is set in both files, or is set
+with a value less than "<sub idref="var_password_pam_remember" />"?</td>
     <td>Configure the operating system to prohibit password reuse for a minimum of five generations.</td>
     <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
-<br /><br />
-In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter
-<tt>remember</tt> is present and it has a value equal to or greater than
-<sub idref="var_password_pam_remember" />. For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<sub idref="var_password_pam_remember" /> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <tt><sub idref="var_password_pam_remember_control_flag" /></tt><br /></td>
+<br/><br/>
+
+On systems with newer versions of <tt>authselect</tt>, the <tt>pam_pwhistory</tt> PAM module
+can be enabled via authselect feature:
+<pre>authselect enable-feature with-pwhistory</pre>
+
+Otherwise, it should be enabled using an authselect custom profile.
+<br/><br/>
+Newer systems also have the <tt>/etc/security/pwhistory.conf</tt> file for setting
+<tt>pam_pwhistory</tt> module options. This file should be used whenever available.
+Otherwise, the <tt>pam_pwhistory</tt> module options can be set in PAM files.
+<br/><br/>
+The value for <tt>remember</tt> option must be equal or greater than
+<sub idref="var_password_pam_remember" /></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -19696,32 +19969,57 @@ In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter
     <td>Password complexity, or strength, is a measure of the effectiveness of a password in resisting attempts at guessing and brute-force attacks. If the information system or application allows the user to consecutively reuse their password when that password has exceeded its defined lifetime, the end result is a password that is not changed as per policy requirements.</td>
     <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
-<br /><br />
-In the file <tt>/etc/pam.d/system-auth</tt>, make sure the parameter
-<tt>remember</tt> is present and it has a value equal to or greater than
-<sub idref="var_password_pam_remember" />
-For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<sub idref="var_password_pam_remember" /> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <tt><sub idref="var_password_pam_remember_control_flag" /></tt><br /></td>
+<br/><br/>
+
+On systems with newer versions of <tt>authselect</tt>, the <tt>pam_pwhistory</tt> PAM module
+can be enabled via authselect feature:
+<pre>authselect enable-feature with-pwhistory</pre>
+
+Otherwise, it should be enabled using an authselect custom profile.
+<br/><br/>
+Newer systems also have the <tt>/etc/security/pwhistory.conf</tt> file for setting
+<tt>pam_pwhistory</tt> module options. This file should be used whenever available.
+Otherwise, the <tt>pam_pwhistory</tt> module options can be set in PAM files.
+<br/><br/>
+The value for <tt>remember</tt> option must be equal or greater than
+<sub idref="var_password_pam_remember" /></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system prohibits password reuse for a minimum of five generations. If it does not, this is a finding.</td>
-    <td>Verify Red Hat Enterprise Linux 8 is configured in the system-auth file to prohibit password reuse
-for a minimum of <sub idref="var_password_pam_remember" /> generations with the following command:
+    <td>Verify Red Hat Enterprise Linux 8 use the "pam_pwhistory.so" module in the /etc/pam.d/system-auth file
+and is configured to prohibit password reuse for a minimum of <sub idref="var_password_pam_remember" />
+generations.
 
-<pre>$ grep -i remember /etc/pam.d/system-auth
-password <sub idref="var_password_pam_remember_control_flag" /> pam_pwhistory.so use_authtok remember=<sub idref="var_password_pam_remember" /> retry=3</pre> Is it the case that the line containing "pam_pwhistory.so" does not have the "remember" module argument set,
-is commented out, or the value of the "remember" module argument is set to less than
-"<sub idref="var_password_pam_remember" />"?</td>
+Verify the "/etc/pam.d/system-auth" file with the following command:
+
+<pre>$ grep pam_pwhistory.so /etc/pam.d/system-auth
+password <sub idref="var_password_pam_remember_control_flag" /> pam_pwhistory.so use_authtok remember=<sub idref="var_password_pam_remember" /></pre>
+
+
+Verify the "/etc/security/pwhistory.conf" file using the following command:
+
+<pre>$ grep remember /etc/security/pwhistory.conf
+remember = <sub idref="var_password_pam_remember" /></pre>
+
+The pam_pwhistory.so "remember" option must be configured only in one file. Is it the case that the pam_pwhistory.so module is not used, the "remember" module option is not set in
+/etc/pam.d/system-auth or in /etc/security/pwhistory.conf, or is set in both files, or is set
+with a value less than "<sub idref="var_password_pam_remember" />"?</td>
     <td>Configure the operating system to prohibit password reuse for a minimum of five generations.</td>
     <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
-<br /><br />
-In the file <tt>/etc/pam.d/system-auth</tt>, make sure the parameter
-<tt>remember</tt> is present and it has a value equal to or greater than
-<sub idref="var_password_pam_remember" />
-For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<sub idref="var_password_pam_remember" /> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <tt><sub idref="var_password_pam_remember_control_flag" /></tt><br /></td>
+<br/><br/>
+
+On systems with newer versions of <tt>authselect</tt>, the <tt>pam_pwhistory</tt> PAM module
+can be enabled via authselect feature:
+<pre>authselect enable-feature with-pwhistory</pre>
+
+Otherwise, it should be enabled using an authselect custom profile.
+<br/><br/>
+Newer systems also have the <tt>/etc/security/pwhistory.conf</tt> file for setting
+<tt>pam_pwhistory</tt> module options. This file should be used whenever available.
+Otherwise, the <tt>pam_pwhistory</tt> module options can be set in PAM files.
+<br/><br/>
+The value for <tt>remember</tt> option must be equal or greater than
+<sub idref="var_password_pam_remember" /></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -23618,7 +23916,7 @@ For SSH earlier than v8.2, a <tt>ClientAliveCountMax</tt> value of <tt>0</tt> ca
 the <tt>ClientAliveInterval</tt> is set.  Starting with v8.2, a value of <tt>0</tt> disables the timeout
 functionality completely.
 If the option is set to a number greater than <tt>0</tt>, then the session will be disconnected after
-<tt>ClientAliveInterval * ClientAliveCountMax</tt> seconds witout receiving a keep alive message. Is it the case that it is commented out or not configured properly?</td>
+<tt>ClientAliveInterval * ClientAliveCountMax</tt> seconds without receiving a keep alive message. Is it the case that it is commented out or not configured properly?</td>
     <td>Configure the operating system to terminate all network connections associated with a communications session at the end of the session, or as follows: for in-band management sessions (privileged sessions), the session must be terminated after 10 minutes of inactivity; and for user sessions (non-privileged session), the session must be terminated after 15 minutes of inactivity, except to fulfill documented and validated mission requirements.</td>
     <td>The SSH server sends at most <tt>ClientAliveCountMax</tt> messages
 during a SSH session and waits for a response from the SSH client.
@@ -24836,7 +25134,7 @@ utility to read audit rules during daemon startup, add the following line to
 <pre>-w /etc/sudoers.d/ -p wa -k actions</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system automatically audits account modification. If it does not, this is a finding.</td>
-    <td>Verify RHEL 9 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
+    <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
 
 $ sudo auditctl -l | grep/etc/sudoers.d
 
@@ -25198,7 +25496,7 @@ utility to read audit rules during daemon startup, add the following line to
 <pre>-w /etc/sudoers.d/ -p wa -k actions</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system automatically audits account disabling actions. If it does not, this is a finding.</td>
-    <td>Verify RHEL 9 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
+    <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
 
 $ sudo auditctl -l | grep/etc/sudoers.d
 
@@ -25560,7 +25858,7 @@ utility to read audit rules during daemon startup, add the following line to
 <pre>-w /etc/sudoers.d/ -p wa -k actions</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system automatically audits account removal actions. If it does not, this is a finding.</td>
-    <td>Verify RHEL 9 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
+    <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
 
 $ sudo auditctl -l | grep/etc/sudoers.d
 
@@ -27865,7 +28163,7 @@ For SSH earlier than v8.2, a <tt>ClientAliveCountMax</tt> value of <tt>0</tt> ca
 the <tt>ClientAliveInterval</tt> is set.  Starting with v8.2, a value of <tt>0</tt> disables the timeout
 functionality completely.
 If the option is set to a number greater than <tt>0</tt>, then the session will be disconnected after
-<tt>ClientAliveInterval * ClientAliveCountMax</tt> seconds witout receiving a keep alive message. Is it the case that it is commented out or not configured properly?</td>
+<tt>ClientAliveInterval * ClientAliveCountMax</tt> seconds without receiving a keep alive message. Is it the case that it is commented out or not configured properly?</td>
     <td>Configure the operating system to automatically terminate a user session after inactivity time-outs have expired or at shutdown.</td>
     <td>The SSH server sends at most <tt>ClientAliveCountMax</tt> messages
 during a SSH session and waits for a response from the SSH client.
@@ -28294,7 +28592,7 @@ utility to read audit rules during daemon startup, add the following line to
 <pre>-w /etc/sudoers.d/ -p wa -k actions</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system automatically audits account enabling actions. If it does not, this is a finding.</td>
-    <td>Verify RHEL 9 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
+    <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
 
 $ sudo auditctl -l | grep/etc/sudoers.d
 
@@ -28660,7 +28958,7 @@ utility to read audit rules during daemon startup, add the following line to
 <pre>-w /etc/sudoers.d/ -p wa -k actions</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system notifies the System Administrator and Information System Security Officer(s) when accounts are created, or enabled when previously disabled. If it does not, this is a finding.</td>
-    <td>Verify RHEL 9 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
+    <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
 
 $ sudo auditctl -l | grep/etc/sudoers.d
 
@@ -29297,6 +29595,61 @@ automatic session locking. It should not be listed in
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must prevent non-privileged users from executing privileged functions to include disabling, circumventing, or altering implemented security safeguards/countermeasures.</td>
 
+    <td>CCE-86353-0: Map System Users To The Appropriate SELinux Role</td>
+
+    <td>Preventing non-privileged users from executing privileged functions mitigates the risk that unauthorized individuals or processes may gain unnecessary access to information or privileges.
+
+Privileged functions include, for example, establishing accounts, performing system integrity checks, or administering cryptographic key management activities. Non-privileged users are individuals that do not possess appropriate authorizations. Circumventing intrusion detection and prevention mechanisms or malicious code protection mechanisms are examples of privileged functions that require protection from non-privileged users.</td>
+    <td>Configure the operating system to prevent non-privileged users from executing
+privileged functions to include disabling, circumventing, or altering
+implemented security safeguards/countermeasures. All administrators must be
+mapped to the <tt>sysadm_u</tt> or <tt>staff_u</tt> users with the
+appropriate domains (<tt>sysadm_t</tt> and <tt>staff_t</tt>).
+<pre>$ sudo semanage login -m -s sysadm_u <i>USER</i></pre> or
+<pre>$ sudo semanage login -m -s staff_u <i>USER</i></pre>
+<br /><br />
+All authorized non-administrative
+users must be mapped to the <tt>user_u</tt> role or the appropriate domain
+(user_t).
+<pre>$ sudo semanage login -m -s user_u <i>USER</i></pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify that the operating system prevents non-privileged users from executing privileged functions to include disabling, circumventing, or altering implemented security safeguards/countermeasures. If it does not, this is a finding.</td>
+    <td>To verify the operating system prevents non-privileged users from executing
+privileged functions to include disabling, circumventing, or altering
+implemented security safeguards/countermeasures, run the following
+command:
+<pre>$ sudo semanage login -l</pre>
+All administrators must be mapped to the <tt>sysadm_u</tt> or <tt>staff_u</tt>
+users with the appropriate domains (<tt>sysadm_t</tt> and <tt>staff_t</tt>).
+<br /><br />
+All authorized non-administrative
+users must be mapped to the <tt>user_u</tt> role or the appropriate domain
+(user_t). Is it the case that non-admin users are not confined correctly?</td>
+    <td>Configure the operating system to prevent non-privileged users from executing privileged functions to include disabling, circumventing, or altering implemented security safeguards/countermeasures.</td>
+    <td>Configure the operating system to prevent non-privileged users from executing
+privileged functions to include disabling, circumventing, or altering
+implemented security safeguards/countermeasures. All administrators must be
+mapped to the <tt>sysadm_u</tt> or <tt>staff_u</tt> users with the
+appropriate domains (<tt>sysadm_t</tt> and <tt>staff_t</tt>).
+<pre>$ sudo semanage login -m -s sysadm_u <i>USER</i></pre> or
+<pre>$ sudo semanage login -m -s staff_u <i>USER</i></pre>
+<br /><br />
+All authorized non-administrative
+users must be mapped to the <tt>user_u</tt> role or the appropriate domain
+(user_t).
+<pre>$ sudo semanage login -m -s user_u <i>USER</i></pre></td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-002235</td>
+    <td>SRG-OS-000324-GPOS-00125</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must prevent non-privileged users from executing privileged functions to include disabling, circumventing, or altering implemented security safeguards/countermeasures.</td>
+
     <td>CCE-80876-6: Disable debug-shell SystemD Service</td>
 
     <td>Preventing non-privileged users from executing privileged functions mitigates the risk that unauthorized individuals or processes may gain unnecessary access to information or privileges.
@@ -29580,7 +29933,9 @@ If both the "b32" and "b64" audit rules for "SGID" files are not defined, this i
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.</td>
     <td>Applicable - Configurable</td>
@@ -29597,7 +29952,9 @@ or less (but not "0"), is missing or commented out?</td>
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.</td>
     <td>medium</td>
@@ -29650,6 +30007,47 @@ depending on the OS version.</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must automatically lock an account until the locked account is released by an administrator when three unsuccessful logon attempts in 15 minutes occur.</td>
 
+    <td>CCE-86067-6: Lock Accounts Must Persist</td>
+
+    <td>By limiting the number of failed logon attempts, the risk of unauthorized system access via user password guessing, otherwise known as brute-forcing, is reduced. Limits are imposed by locking the account.</td>
+    <td>This rule ensures that the system lock out accounts using <tt>pam_faillock.so</tt> persist
+after system reboot. From "pam_faillock" man pages:
+<pre>Note that the default directory that "pam_faillock" uses is usually cleared on system
+boot so the access will be reenabled after system reboot. If that is undesirable, a different
+tally directory must be set with the "dir" option.</pre>
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system automatically locks an account until the locked account is released by an administrator when three unsuccessful logon attempts in 15 minutes are made. If it does not, this is a finding.</td>
+    <td>To ensure the tally directory is configured correctly, run the following command:
+<pre>$ sudo grep 'dir =' /etc/security/faillock.conf</pre>
+The output should show that dir is set to something other than "/var/run/faillock" Is it the case that the "dir" option is not set to a non-default documented tally log directory, is missing or commented out?</td>
+    <td>Configure the operating system to automatically lock an account until the locked account is released by an administrator when three unsuccessful logon attempts in 15 minutes are made.</td>
+    <td>This rule ensures that the system lock out accounts using <tt>pam_faillock.so</tt> persist
+after system reboot. From "pam_faillock" man pages:
+<pre>Note that the default directory that "pam_faillock" uses is usually cleared on system
+boot so the access will be reenabled after system reboot. If that is undesirable, a different
+tally directory must be set with the "dir" option.</pre>
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-002238</td>
+    <td>SRG-OS-000329-GPOS-00128</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must automatically lock an account until the locked account is released by an administrator when three unsuccessful logon attempts in 15 minutes occur.</td>
+
     <td>CCE-80669-5: Set Interval For Counting Failed Password Attempts</td>
 
     <td>By limiting the number of failed logon attempts, the risk of unauthorized system access via user password guessing, otherwise known as brute-forcing, is reduced. Limits are imposed by locking the account.</td>
@@ -29667,6 +30065,44 @@ or less (but not "0"), the line is commented out, or the line is missing?</td>
     <td>Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
 period.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-002238</td>
+    <td>SRG-OS-000329-GPOS-00128</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must automatically lock an account until the locked account is released by an administrator when three unsuccessful logon attempts in 15 minutes occur.</td>
+
+    <td>CCE-87096-4: Do Not Show System Messages When Unsuccessful Logon Attempts Occur</td>
+
+    <td>By limiting the number of failed logon attempts, the risk of unauthorized system access via user password guessing, otherwise known as brute-forcing, is reduced. Limits are imposed by locking the account.</td>
+    <td>This rule ensures the system prevents informative messages from being presented to the user
+pertaining to logon information after a number of incorrect login attempts using
+<tt>pam_faillock.so</tt>.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system automatically locks an account until the locked account is released by an administrator when three unsuccessful logon attempts in 15 minutes are made. If it does not, this is a finding.</td>
+    <td>To ensure that the system prevents messages from being shown when three unsuccessful logon
+attempts occur, run the following command:
+<pre>$ grep silent /etc/security/faillock.conf</pre>
+The output should show <tt>silent</tt>. Is it the case that the system shows messages when three unsuccessful logon attempts occur?</td>
+    <td>Configure the operating system to automatically lock an account until the locked account is released by an administrator when three unsuccessful logon attempts in 15 minutes are made.</td>
+    <td>This rule ensures the system prevents informative messages from being presented to the user
+pertaining to logon information after a number of incorrect login attempts using
+<tt>pam_faillock.so</tt>.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -31329,33 +31765,6 @@ AIDE can be executed periodically through other means; this is merely one exampl
     <td></td>
   </tr>
 
-  <tr>
-    <td>CCI-001744</td>
-    <td>SRG-OS-000363-GPOS-00150</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must notify designated personnel if baseline configurations are changed in an unauthorized manner.</td>
-
-    <td>CCE-80844-4: Install AIDE</td>
-
-    <td>Unauthorized changes to the baseline configuration could make the system vulnerable to various attacks or allow unauthorized access to the operating system. Changes to operating system configurations can have unintended side effects, some of which may be relevant to security.
-
-Detecting such changes and providing an automated response can help avoid unintended, negative consequences that could ultimately affect the security state of the operating system. The operating system's IMO/ISSO and SAs must be notified via email and/or monitoring system trap when there is an unauthorized modification of a configuration item.</td>
-    <td>The <code>aide</code> package can be installed with the following command:
-<pre>
-$ sudo yum install aide</pre></td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system notifies designated personnel if baseline configurations are changed in an unauthorized manner. If it does not, this is a finding.</td>
-    <td>Run the following command to determine if the <code>aide</code> package is installed: <pre>$ rpm -q aide</pre> Is it the case that the package is not installed?</td>
-    <td>Configure the operating system to notify designated personnel if baseline configurations are changed in an unauthorized manner.</td>
-    <td>The <code>aide</code> package can be installed with the following command:
-<pre>
-$ sudo yum install aide</pre></td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
 
 
 
@@ -31743,6 +32152,49 @@ To make sure that the setting is persistent, add the following line to a file in
 
 
 
+
+  <tr>
+    <td>CCI-001764</td>
+    <td>SRG-OS-000368-GPOS-00154</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must prevent program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage.</td>
+
+    <td>CCE-86478-5: Configure Fapolicy Module to Employ a Deny-all, Permit-by-exception Policy to Allow the Execution of Authorized Software Programs.</td>
+
+    <td>Control of program execution is a mechanism used to prevent execution of unauthorized programs. Some operating systems may provide a capability that runs counter to the mission or provides users with functionality that exceeds mission requirements. This includes functions and services installed at the operating system-level.
+
+Some of the programs, installed by default, may be harmful or may not be necessary to support essential organizational operations (e.g., key missions, functions). Removal of executable programs is not always possible; therefore, establishing a method of preventing program execution is critical to maintaining a secure system baseline.
+
+Methods for complying with this requirement include restricting execution of programs in certain environments, while preventing execution in other environments; or limiting execution of certain program functionality based on organization-defined criteria (e.g., privileges, subnets, sandboxed environments, or roles).</td>
+    <td>The Fapolicy module must be configured to employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs and to prevent unauthorized software from running.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system prevents program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage. If it does not, this is a finding.</td>
+    <td>Verify the Red Hat Enterprise Linux 8 "fapolicyd" employs a deny-all, permit-by-exception policy.
+
+Check that "fapolicyd" is in enforcement mode with the following command:
+
+$ sudo grep permissive /etc/fapolicyd/fapolicyd.conf
+
+permissive = 0
+
+Check that fapolicyd employs a deny-all policy on system mounts with the following commands:
+
+For RHEL 8.5 systems and older:
+$ sudo tail /etc/fapolicyd/fapolicyd.rules
+
+For RHEL 8.6 systems and newer:
+$ sudo tail /etc/fapolicyd/compiled.rules
+
+allow exe=/usr/bin/python3.7 : ftype=text/x-python
+deny_audit perm=any pattern=ld_so : all
+deny perm=any all : all Is it the case that fapolicyd is not running in enforcement mode with a deny-all, permit-by-exception policy?</td>
+    <td>Configure the operating system to prevent program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage.</td>
+    <td>The Fapolicy module must be configured to employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs and to prevent unauthorized software from running.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
 
   <tr>
     <td>CCI-001764</td>
@@ -32520,6 +32972,51 @@ The <code>fapolicyd</code> service can be enabled with the following command:
 
 
 
+
+  <tr>
+    <td>CCI-001774</td>
+    <td>SRG-OS-000370-GPOS-00155</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs.</td>
+
+    <td>CCE-86478-5: Configure Fapolicy Module to Employ a Deny-all, Permit-by-exception Policy to Allow the Execution of Authorized Software Programs.</td>
+
+    <td>Utilizing a whitelist provides a configuration management method for allowing the execution of only authorized software. Using only authorized software decreases risk by limiting the number of potential vulnerabilities.
+
+The organization must identify authorized software programs and permit execution of authorized software. The process used to identify software programs that are authorized to execute on organizational information systems is commonly referred to as whitelisting.
+
+Verification of white-listed software occurs prior to execution or at system startup.
+
+This requirement applies to operating system programs, functions, and services designed to manage system processes and configurations (e.g., group policies).</td>
+    <td>The Fapolicy module must be configured to employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs and to prevent unauthorized software from running.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system employs a deny-all, permit-by-exception policy to allow the execution of authorized software programs. If it does not, this is a finding.</td>
+    <td>Verify the Red Hat Enterprise Linux 8 "fapolicyd" employs a deny-all, permit-by-exception policy.
+
+Check that "fapolicyd" is in enforcement mode with the following command:
+
+$ sudo grep permissive /etc/fapolicyd/fapolicyd.conf
+
+permissive = 0
+
+Check that fapolicyd employs a deny-all policy on system mounts with the following commands:
+
+For RHEL 8.5 systems and older:
+$ sudo tail /etc/fapolicyd/fapolicyd.rules
+
+For RHEL 8.6 systems and newer:
+$ sudo tail /etc/fapolicyd/compiled.rules
+
+allow exe=/usr/bin/python3.7 : ftype=text/x-python
+deny_audit perm=any pattern=ld_so : all
+deny perm=any all : all Is it the case that fapolicyd is not running in enforcement mode with a deny-all, permit-by-exception policy?</td>
+    <td>Configure the operating system to employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs.</td>
+    <td>The Fapolicy module must be configured to employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs and to prevent unauthorized software from running.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
 
   <tr>
     <td>CCI-001774</td>
@@ -36331,7 +36828,7 @@ utility to read audit rules during daemon startup, add the following line to
 <pre>-w /etc/sudoers.d/ -p wa -k actions</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system audits all activities performed during nonlocal maintenance and diagnostic sessions. If it does not, this is a finding.</td>
-    <td>Verify RHEL 9 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
+    <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
 
 $ sudo auditctl -l | grep/etc/sudoers.d
 
@@ -39042,6 +39539,64 @@ to <tt>1</tt> in <tt>/etc/yum.conf</tt>.</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must verify correct operation of all security functions.</td>
 
+    <td>CCE-80675-2: Build and Test AIDE Database</td>
+
+    <td>Without verification of the security functions, security functions may not operate correctly and the failure may go unnoticed. Security function is defined as the hardware, software, and/or firmware of the information system responsible for enforcing the system security policy and supporting the isolation of code and data on which the protection is based. Security functionality includes, but is not limited to, establishing system accounts, configuring access authorizations (i.e., permissions, privileges), setting events to be audited, and setting intrusion detection parameters.
+
+This requirement applies to operating systems performing security function verification/testing and/or systems and environments that require this functionality.</td>
+    <td>Run the following command to generate a new database:
+
+<pre>$ sudo /usr/sbin/aide --init</pre>
+
+By default, the database will be written to the file
+
+<tt>/var/lib/aide/aide.db.new.gz</tt>.
+
+Storing the database, the configuration file <tt>/etc/aide.conf</tt>, and the binary
+<tt>/usr/sbin/aide</tt>
+(or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
+The newly-generated database can be installed as follows:
+
+<pre>$ sudo cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz</pre>
+
+To initiate a manual check, run the following command:
+<pre>$ sudo /usr/sbin/aide --check</pre>
+If this check produces any unexpected output, investigate.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system verifies correct operation of all security functions. If it does not, this is a finding.</td>
+    <td>To find the location of the AIDE database file, run the following command:
+<pre>$ sudo ls -l <i>DBDIR</i>/<i>database_file_name</i></pre> Is it the case that there is no database file?</td>
+    <td>Configure the operating system to verify correct operation of all security functions.</td>
+    <td>Run the following command to generate a new database:
+
+<pre>$ sudo /usr/sbin/aide --init</pre>
+
+By default, the database will be written to the file
+
+<tt>/var/lib/aide/aide.db.new.gz</tt>.
+
+Storing the database, the configuration file <tt>/etc/aide.conf</tt>, and the binary
+<tt>/usr/sbin/aide</tt>
+(or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
+The newly-generated database can be installed as follows:
+
+<pre>$ sudo cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz</pre>
+
+To initiate a manual check, run the following command:
+<pre>$ sudo /usr/sbin/aide --check</pre>
+If this check produces any unexpected output, investigate.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-002696</td>
+    <td>SRG-OS-000445-GPOS-00199</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must verify correct operation of all security functions.</td>
+
     <td>CCE-80844-4: Install AIDE</td>
 
     <td>Without verification of the security functions, security functions may not operate correctly and the failure may go unnoticed. Security function is defined as the hardware, software, and/or firmware of the information system responsible for enforcing the system security policy and supporting the isolation of code and data on which the protection is based. Security functionality includes, but is not limited to, establishing system accounts, configuring access authorizations (i.e., permissions, privileges), setting events to be audited, and setting intrusion detection parameters.
@@ -40986,51 +41541,6 @@ If the system is 64 bit then also add the following lines:
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must generate audit records when successful/unsuccessful attempts to modify privileges occur.</td>
 
-    <td>CCE-82828-5: Configure immutable Audit login UIDs</td>
-
-    <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
-
-Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
-    <td>Configure kernel to prevent modification of login UIDs once they are set.
-Changing login UIDs while this configuration is enforced requires special capabilities which
-are not available to unprivileged users.
-
-The following rules configure audit as described above:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre>
-
-Load new Audit rules into kernel by running:
-<pre>augenrules --load</pre></td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system generates audit records when successful/unsuccessful attempts to modify privileges occur. If it does not, this is a finding.</td>
-    <td>To verify that the <tt>Audit</tt> is correctly configured according to recommended rules, check the content of the file with the following command:
-<pre>$ sudo cat /etc/audit/rules.d/11-loginuid.rules</pre>
-The output has to be exactly as follows:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre> Is it the case that the file does not exist or the content differs?</td>
-    <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to modify privileges occur.</td>
-    <td>Configure kernel to prevent modification of login UIDs once they are set.
-Changing login UIDs while this configuration is enforced requires special capabilities which
-are not available to unprivileged users.
-
-The following rules configure audit as described above:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre>
-
-Load new Audit rules into kernel by running:
-<pre>augenrules --load</pre></td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
-  <tr>
-    <td>CCI-000172</td>
-    <td>SRG-OS-000462-GPOS-00206</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must generate audit records when successful/unsuccessful attempts to modify privileges occur.</td>
-
     <td>CCE-80685-1: Record Events that Modify the System's Discretionary Access Controls - chmod</td>
 
     <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -42317,6 +42827,65 @@ appropriate for your system:
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must generate audit records when successful/unsuccessful attempts to modify privileges occur.</td>
 
+    <td>CCE-90783-2: Configure immutable Audit login UIDs</td>
+
+    <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
+
+Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
+    <td>Configure kernel to prevent modification of login UIDs once they are set.
+Changing login UIDs while this configuration is enforced requires special capabilities which
+are not available to unprivileged users.
+If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following line to
+<tt>/etc/audit/audit.rules</tt> file in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system generates audit records when successful/unsuccessful attempts to modify privileges occur. If it does not, this is a finding.</td>
+    <td>To determine if the system is configured to make login UIDs immutable, run
+one of the following commands.
+If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), run the following:
+<pre>sudo grep immutable /etc/audit/rules.d/*.rules</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, run the following command:
+<pre>sudo grep immutable /etc/audit/audit.rules</pre>
+The following line should be returned:
+<pre>--loginuid-immutable</pre> Is it the case that the system is not configured to make login UIDs immutable?</td>
+    <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to modify privileges occur.</td>
+    <td>Configure kernel to prevent modification of login UIDs once they are set.
+Changing login UIDs while this configuration is enforced requires special capabilities which
+are not available to unprivileged users.
+If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following line to
+<tt>/etc/audit/audit.rules</tt> file in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre></td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-000172</td>
+    <td>SRG-OS-000462-GPOS-00206</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must generate audit records when successful/unsuccessful attempts to modify privileges occur.</td>
+
     <td>CCE-80711-5: Ensure auditd Collects Information on Kernel Module Unloading - delete_module</td>
 
     <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -43528,7 +44097,7 @@ utility to read audit rules during daemon startup, add the following line to
 <pre>-w /etc/sudoers.d/ -p wa -k actions</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system generates audit records when successful/unsuccessful attempts to modify privileges occur. If it does not, this is a finding.</td>
-    <td>Verify RHEL 9 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
+    <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
 
 $ sudo auditctl -l | grep/etc/sudoers.d
 
@@ -46369,7 +46938,7 @@ utility to read audit rules during daemon startup, add the following line to
 <pre>-w /etc/sudoers.d/ -p wa -k actions</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system generates audit records when successful/unsuccessful attempts to delete privileges occur. If it does not, this is a finding.</td>
-    <td>Verify RHEL 9 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
+    <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
 
 $ sudo auditctl -l | grep/etc/sudoers.d
 
@@ -47703,7 +48272,7 @@ utility to read audit rules during daemon startup, add the following line to
 <pre>-w /etc/sudoers.d/ -p wa -k actions</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system generates audit records when successful/unsuccessful logon attempts occur. If it does not, this is a finding.</td>
-    <td>Verify RHEL 9 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
+    <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
 
 $ sudo auditctl -l | grep/etc/sudoers.d
 
@@ -50500,7 +51069,7 @@ utility to read audit rules during daemon startup, add the following line to
 <pre>-w /etc/sudoers.d/ -p wa -k actions</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system generates audit records for privileged activities or other system-level access. If it does not, this is a finding.</td>
-    <td>Verify RHEL 9 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
+    <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
 
 $ sudo auditctl -l | grep/etc/sudoers.d
 
@@ -51296,7 +51865,7 @@ The output should be
 (as opposed directly to a file),
 <tt>AuditBackend</tt> option in <tt>/etc/usbguard/usbguard-daemon.conf</tt>
 needs to be set to <tt>LinuxAudit</tt>.</td>
-    <td>medium</td>
+    <td>low</td>
     <td></td>
     <td></td>
     <td></td>
@@ -52294,7 +52863,7 @@ If the system is 64 bit then also add the following line:
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must generate audit records for all direct access to the information system.</td>
 
-    <td>CCE-82828-5: Configure immutable Audit login UIDs</td>
+    <td>CCE-90783-2: Configure immutable Audit login UIDs</td>
 
     <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
 
@@ -52302,31 +52871,45 @@ Audit records can be generated from various components within the information sy
     <td>Configure kernel to prevent modification of login UIDs once they are set.
 Changing login UIDs while this configuration is enforced requires special capabilities which
 are not available to unprivileged users.
-
-The following rules configure audit as described above:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre>
-
-Load new Audit rules into kernel by running:
-<pre>augenrules --load</pre></td>
+If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following line to
+<tt>/etc/audit/audit.rules</tt> file in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system generates audit records for all direct access to the information system. If it does not, this is a finding.</td>
-    <td>To verify that the <tt>Audit</tt> is correctly configured according to recommended rules, check the content of the file with the following command:
-<pre>$ sudo cat /etc/audit/rules.d/11-loginuid.rules</pre>
-The output has to be exactly as follows:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre> Is it the case that the file does not exist or the content differs?</td>
+    <td>To determine if the system is configured to make login UIDs immutable, run
+one of the following commands.
+If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), run the following:
+<pre>sudo grep immutable /etc/audit/rules.d/*.rules</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, run the following command:
+<pre>sudo grep immutable /etc/audit/audit.rules</pre>
+The following line should be returned:
+<pre>--loginuid-immutable</pre> Is it the case that the system is not configured to make login UIDs immutable?</td>
     <td>Configure the operating system to generate audit records for all direct access to the information system.</td>
     <td>Configure kernel to prevent modification of login UIDs once they are set.
 Changing login UIDs while this configuration is enforced requires special capabilities which
 are not available to unprivileged users.
-
-The following rules configure audit as described above:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre>
-
-Load new Audit rules into kernel by running:
-<pre>augenrules --load</pre></td>
+If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following line to
+<tt>/etc/audit/audit.rules</tt> file in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -52467,7 +53050,7 @@ utility to read audit rules during daemon startup, add the following line to
 <pre>-w /etc/sudoers.d/ -p wa -k actions</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system generates audit records for all account creations, modifications, disabling, and termination events. If it does not, this is a finding.</td>
-    <td>Verify RHEL 9 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
+    <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
 
 $ sudo auditctl -l | grep/etc/sudoers.d
 
@@ -56687,40 +57270,6 @@ The <code>kdump</code> service can be disabled with the following command:
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
 
-    <td>CCE-82831-9: Enable the Hardware RNG Entropy Gatherer Service</td>
-
-    <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
-
-Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
-    <td>The Hardware RNG Entropy Gatherer service should be enabled.
-
-The <code>rngd</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable rngd.service</pre></td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
-    <td>
-
-Run the following command to determine the current status of the
-<code>rngd</code> service:
-<pre>$ sudo systemctl is-active rngd</pre>
-If the service is running, it should return the following: <pre>active</pre> Is it the case that the "rngd" service is disabled, masked, or not started.?</td>
-    <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-    <td>The Hardware RNG Entropy Gatherer service should be enabled.
-
-The <code>rngd</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable rngd.service</pre></td>
-    <td>low</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
-  <tr>
-    <td>CCI-000366</td>
-    <td>SRG-OS-000480-GPOS-00227</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-
     <td>CCE-80886-5: Enable rsyslog Service</td>
 
     <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
@@ -56777,44 +57326,6 @@ The output should be similar to:
     <td>The <tt>systemd-coredump.socket</tt> unit is a socket activation of
 the <tt>systemd-coredump@.service</tt> which processes core dumps.
 By masking the unit, core dump processing is disabled.</td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
-  <tr>
-    <td>CCI-000366</td>
-    <td>SRG-OS-000480-GPOS-00227</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-
-    <td>CCE-80895-6: Disable Compression Or Set Compression to delayed</td>
-
-    <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
-
-Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
-    <td>Compression is useful for slow network connections over long
-distances but can cause performance issues on local LANs. If use of compression
-is required, it should be enabled only after a user has authenticated; otherwise,
-it should be disabled. To disable compression or delay compression until after
-a user has successfully authenticated, add or correct the following line in the
-<tt>/etc/ssh/sshd_config</tt> file:
-<pre>Compression <sub idref="var_sshd_disable_compression" /></pre></td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
-    <td>To check if compression is enabled or set correctly, run the
-following command:
-<pre>$ sudo grep Compression /etc/ssh/sshd_config</pre>
-If configured properly, output should be <pre>no</pre> or <pre>delayed</pre>. Is it the case that it is commented out, or is not set to no or delayed?</td>
-    <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-    <td>Compression is useful for slow network connections over long
-distances but can cause performance issues on local LANs. If use of compression
-is required, it should be enabled only after a user has authenticated; otherwise,
-it should be disabled. To disable compression or delay compression until after
-a user has successfully authenticated, add or correct the following line in the
-<tt>/etc/ssh/sshd_config</tt> file:
-<pre>Compression <sub idref="var_sshd_disable_compression" /></pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -58722,6 +59233,45 @@ The <code>fapolicyd</code> service can be enabled with the following command:
 
 
 
+
+  <tr>
+    <td>CCI-000366</td>
+    <td>SRG-OS-000480-GPOS-00232</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must enable an application firewall, if available.</td>
+
+    <td>CCE-86478-5: Configure Fapolicy Module to Employ a Deny-all, Permit-by-exception Policy to Allow the Execution of Authorized Software Programs.</td>
+
+    <td>Firewalls protect computers from network attacks by blocking or limiting access to open network ports. Application firewalls limit which applications are allowed to communicate over the network.</td>
+    <td>The Fapolicy module must be configured to employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs and to prevent unauthorized software from running.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system enabled an application firewall, if available. If it does not, this is a finding. If the operating system does not support an application firewall, this may be downgraded to a CAT III finding.</td>
+    <td>Verify the Red Hat Enterprise Linux 8 "fapolicyd" employs a deny-all, permit-by-exception policy.
+
+Check that "fapolicyd" is in enforcement mode with the following command:
+
+$ sudo grep permissive /etc/fapolicyd/fapolicyd.conf
+
+permissive = 0
+
+Check that fapolicyd employs a deny-all policy on system mounts with the following commands:
+
+For RHEL 8.5 systems and older:
+$ sudo tail /etc/fapolicyd/fapolicyd.rules
+
+For RHEL 8.6 systems and newer:
+$ sudo tail /etc/fapolicyd/compiled.rules
+
+allow exe=/usr/bin/python3.7 : ftype=text/x-python
+deny_audit perm=any pattern=ld_so : all
+deny perm=any all : all Is it the case that fapolicyd is not running in enforcement mode with a deny-all, permit-by-exception policy?</td>
+    <td>Ensure the operating system's application firewall is enabled, if available.</td>
+    <td>The Fapolicy module must be configured to employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs and to prevent unauthorized software from running.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
 
   <tr>
     <td>CCI-000366</td>

@@ -2563,17 +2563,26 @@ more difficult by ensuring a larger search space.
   <td xml:lang="en-US">
 Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
-<br /><br />
-In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter
-<tt>remember</tt> is present and it has a value equal to or greater than
-<tt>5</tt>. For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<tt>5</tt> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <tt><tt>ol8</tt></tt><br />
+<br/><br/>
+
+On systems with newer versions of <tt>authselect</tt>, the <tt>pam_pwhistory</tt> PAM module
+can be enabled via authselect feature:
+<pre>authselect enable-feature with-pwhistory</pre>
+
+Otherwise, it should be enabled using an authselect custom profile.
+<br/><br/>
+Newer systems also have the <tt>/etc/security/pwhistory.conf</tt> file for setting
+<tt>pam_pwhistory</tt> module options. This file should be used whenever available.
+Otherwise, the <tt>pam_pwhistory</tt> module options can be set in PAM files.
+<br/><br/>
+The value for <tt>remember</tt> option must be equal or greater than
+<tt>5</tt>
   </td>
   <td xml:lang="en-US">
-Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
+Preventing re-use of previous passwords helps ensure that a compromised password is not
+re-used by a user.
   </td>
-  <td>var_password_pam_remember=5<br/>var_password_pam_remember_control_flag=ol8</td>
+  <td>var_password_pam_remember=5</td>
 </tr>
 <tr>
   <td>IA-5(f)<br/>IA-5(1)(e)</td>
@@ -2582,18 +2591,26 @@ Preventing re-use of previous passwords helps ensure that a compromised password
   <td xml:lang="en-US">
 Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
-<br /><br />
-In the file <tt>/etc/pam.d/system-auth</tt>, make sure the parameter
-<tt>remember</tt> is present and it has a value equal to or greater than
+<br/><br/>
+
+On systems with newer versions of <tt>authselect</tt>, the <tt>pam_pwhistory</tt> PAM module
+can be enabled via authselect feature:
+<pre>authselect enable-feature with-pwhistory</pre>
+
+Otherwise, it should be enabled using an authselect custom profile.
+<br/><br/>
+Newer systems also have the <tt>/etc/security/pwhistory.conf</tt> file for setting
+<tt>pam_pwhistory</tt> module options. This file should be used whenever available.
+Otherwise, the <tt>pam_pwhistory</tt> module options can be set in PAM files.
+<br/><br/>
+The value for <tt>remember</tt> option must be equal or greater than
 <tt>5</tt>
-For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<tt>5</tt> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <tt><tt>ol8</tt></tt><br />
   </td>
   <td xml:lang="en-US">
-Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
+Preventing re-use of previous passwords helps ensure that a compromised password is not
+re-used by a user.
   </td>
-  <td>var_password_pam_remember=5<br/>var_password_pam_remember_control_flag=ol8</td>
+  <td>var_password_pam_remember=5</td>
 </tr>
 <tr>
   <td>IA-5(c)<br/>IA-5(1)(a)<br/>CM-6(a)<br/>IA-5(4)</td>
@@ -3355,7 +3372,9 @@ This rule configures the system to lock out accounts after a number of incorrect
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.
   </td>
@@ -3422,6 +3441,36 @@ to unlock a user. This should be done using the <tt>faillock</tt> tool.
 By limiting the number of failed logon attempts the risk of unauthorized system
 access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>CM-6(a)</td>
+  <td>N/A</td>
+  <td>Build and Test AIDE Database</td>
+  <td xml:lang="en-US">
+Run the following command to generate a new database:
+
+<pre>$ sudo /usr/sbin/aide --init</pre>
+
+By default, the database will be written to the file
+
+<tt>/var/lib/aide/aide.db.new.gz</tt>.
+
+Storing the database, the configuration file <tt>/etc/aide.conf</tt>, and the binary
+<tt>/usr/sbin/aide</tt>
+(or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
+The newly-generated database can be installed as follows:
+
+<pre>$ sudo cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz</pre>
+
+To initiate a manual check, run the following command:
+<pre>$ sudo /usr/sbin/aide --check</pre>
+If this check produces any unexpected output, investigate.
+  </td>
+  <td xml:lang="en-US">
+For AIDE to be effective, an initial database of "known-good" information about files
+must be captured and it should be able to be verified against the installed files.
   </td>
   <td></td>
 </tr>
@@ -8819,7 +8868,7 @@ By decreasing the limit based on the amount of data and enabling
 time-based limit, effects of potential attacks against
 encryption keys are limited.
   </td>
-  <td>var_rekey_limit_time=1hour<br/>var_rekey_limit_size=1G</td>
+  <td>var_rekey_limit_size=1G<br/>var_rekey_limit_time=1hour</td>
 </tr>
 <tr>
   <td></td>

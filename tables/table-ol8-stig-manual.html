@@ -100,7 +100,7 @@ Install the audit service (if the audit service is not already installed) with t
 
 $ sudo yum install audit</pre></td>
 	<td>OL08-00-030180</td>
-	<td>SV-248519r779123_rule</td>
+	<td>SV-248519r853745_rule</td>
 </tr>
 
 <tr>
@@ -131,7 +131,7 @@ $ sudo systemctl enable auditd.service
 
 $ sudo systemctl start auditd.service</pre></td>
 	<td>OL08-00-030181</td>
-	<td>SV-248520r818594_rule</td>
+	<td>SV-248520r853746_rule</td>
 </tr>
 
 <tr>
@@ -263,7 +263,7 @@ $ sudo fips-mode-setup --enable
 
 Reboot the system for the changes to take effect.</pre></td>
 	<td>OL08-00-010020</td>
-	<td>SV-248524r818787_rule</td>
+	<td>SV-248524r853747_rule</td>
 </tr>
 
 <tr>
@@ -296,7 +296,7 @@ Encrypting a partition in an already-installed system is more difficult because 
  
 To encrypt an entire partition, dedicate a partition for encryption in the partition layout.</pre></td>
 	<td>OL08-00-010030</td>
-	<td>SV-248525r818596_rule</td>
+	<td>SV-248525r853748_rule</td>
 </tr>
 
 <tr>
@@ -330,34 +330,35 @@ Use the following verbiage for operating systems that have severe limitations on
 "I've read & consent to terms in IS user agreem't."
 
 Satisfies: SRG-OS-000023-GPOS-00006, SRG-OS-000228-GPOS-00088</pre></td>
-	<td><pre>Verify any publicly accessible connection to the operating system displays the Standard Mandatory DoD Notice and Consent Banner before granting access to the system. 
- 
-Check for the location of the banner file being used with the following command: 
- 
-$ sudo grep -i banner /etc/ssh/sshd_config 
- 
-banner /etc/issue 
- 
-This command will return the banner keyword and the name of the file that contains the SSH banner (in this case "/etc/issue"). 
- 
-If the line is commented out, this is a finding. 
- 
-View the file specified by the banner keyword to check that it matches the text of the Standard Mandatory DoD Notice and Consent Banner: 
- 
-"You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only. By using this IS (which includes any device attached to this IS), you consent to the following conditions: 
- 
--The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations. 
- 
--At any time, the USG may inspect and seize data stored on this IS. 
- 
--Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose. 
- 
--This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy. 
- 
--Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details." 
- 
-If the system does not display a graphical logon banner or the banner does not match the Standard Mandatory DoD Notice and Consent Banner, this is a finding. 
- 
+	<td><pre>Verify any publicly accessible connection to the operating system displays the Standard Mandatory DoD Notice and Consent Banner before granting access to the system.
+
+Check for the location of the banner file being used with the following command:
+
+$ sudo grep -ir banner /etc/ssh/sshd_config*
+
+banner /etc/issue
+
+This command will return the banner keyword and the name of the file that contains the SSH banner (in this case "/etc/issue").
+
+If the line is commented out, this is a finding.
+If conflicting results are returned, this is a finding.
+
+View the file specified by the banner keyword to check that it matches the text of the Standard Mandatory DoD Notice and Consent Banner:
+
+"You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only. By using this IS (which includes any device attached to this IS), you consent to the following conditions:
+
+-The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.
+
+-At any time, the USG may inspect and seize data stored on this IS.
+
+-Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose.
+
+-This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.
+
+-Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details."
+
+If the system does not display a graphical logon banner or the banner does not match the Standard Mandatory DoD Notice and Consent Banner, this is a finding.
+
 If the text in the file does not match the Standard Mandatory DoD Notice and Consent Banner, this is a finding.</pre></td>
 	<td><pre>Configure OL 8 to display the Standard Mandatory DoD Notice and Consent Banner before granting access to the system via the SSH. 
  
@@ -381,7 +382,7 @@ Either create the file containing the banner or replace the text in the file wit
  
 The SSH service must be restarted for changes to take effect.</pre></td>
 	<td>OL08-00-010040</td>
-	<td>SV-248526r779144_rule</td>
+	<td>SV-248526r858561_rule</td>
 </tr>
 
 <tr>
@@ -606,25 +607,27 @@ When there is a chain of trust, usually the top entity to be trusted becomes the
 This requirement verifies that a certification path to an accepted trust anchor is used for certificate validation and that the path includes status information. Path validation is necessary for a relying party to make an informed trust decision when presented with any certificate not already explicitly trusted. Status information for certification paths includes certificate revocation lists or online certificate status protocol responses. Validation of the certificate status information is out of scope for this requirement.
 
 Satisfies: SRG-OS-000066-GPOS-00034, SRG-OS-000384-GPOS-00167</pre></td>
-	<td><pre>Verify OL 8, for PKI-based authentication, has valid certificates by constructing a certification path (which includes status information) to an accepted trust anchor. 
- 
-Check that the system has a valid DoD root CA installed with the following command: 
- 
-$ sudo openssl x509 -text -in /etc/sssd/pki/sssd_auth_ca_db.pem 
- 
-Certificate: 
-Data: 
-Version: 3 (0x2) 
-Serial Number: 1 (0x1) 
-Signature Algorithm: sha256WithRSAEncryption 
-Issuer: C = US, O = U.S. Government, OU = DoD, OU = PKI, CN = DoD Root CA 3 
-Validity 
-Not Before: Mar 20 18:46:41 2012 GMT 
-Not After : Dec 30 18:46:41 2029 GMT 
-Subject: C = US, O = U.S. Government, OU = DoD, OU = PKI, CN = DoD Root CA 3 
-Subject Public Key Info: 
-Public Key Algorithm: rsaEncryption 
- 
+	<td><pre>Verify OL 8, for PKI-based authentication, has valid certificates by constructing a certification path (which includes status information) to an accepted trust anchor.
+
+Note: If the System Administrator demonstrates the use of an approved alternate multifactor authentication method, this requirement is not applicable.
+
+Check that the system has a valid DoD root CA installed with the following command:
+
+$ sudo openssl x509 -text -in /etc/sssd/pki/sssd_auth_ca_db.pem
+
+Certificate:
+Data:
+Version: 3 (0x2)
+Serial Number: 1 (0x1)
+Signature Algorithm: sha256WithRSAEncryption
+Issuer: C = US, O = U.S. Government, OU = DoD, OU = PKI, CN = DoD Root CA 3
+Validity
+Not Before: Mar 20 18:46:41 2012 GMT
+Not After : Dec 30 18:46:41 2029 GMT
+Subject: C = US, O = U.S. Government, OU = DoD, OU = PKI, CN = DoD Root CA 3
+Subject Public Key Info:
+Public Key Algorithm: rsaEncryption
+
 If the root ca file is not a DoD-issued certificate with a valid date installed in the "/etc/sssd/pki/sssd_auth_ca_db.pem" location, this is a finding.</pre></td>
 	<td><pre>Configure OL 8, for PKI-based authentication, to validate certificates by constructing a certification path (which includes status information) to an accepted trust anchor. 
  
@@ -632,7 +635,7 @@ Obtain a valid copy of the DoD root CA file from the PKI CA certificate bundle a
  
 /etc/sssd/pki/sssd_auth_ca_db.pem</pre></td>
 	<td>OL08-00-010090</td>
-	<td>SV-248531r818598_rule</td>
+	<td>SV-248531r860907_rule</td>
 </tr>
 
 <tr>
@@ -1129,26 +1132,27 @@ Terminating network connections associated with communications sessions includes
 OL 8 uses "/etc/ssh/sshd_config" for configurations of OpenSSH. Within the "sshd_config", the product of the values of "ClientAliveInterval" and "ClientAliveCountMax" are used to establish the inactivity threshold. The "ClientAliveInterval" is a timeout interval in seconds after which if no data has been received from the client, sshd will send a message through the encrypted channel to request a response from the client. The "ClientAliveCountMax" is the number of client alive messages that may be sent without sshd receiving any messages back from the client. If this threshold is met, sshd will disconnect the client. For more information on these settings and others, refer to the sshd_config man pages.
 
 Satisfies: SRG-OS-000126-GPOS-00066, SRG-OS-000163-GPOS-00072, SRG-OS-000279-GPOS-00109</pre></td>
-	<td><pre>Verify all network connections associated with SSH traffic are automatically terminated at the end of the session. 
- 
-Check that the "ClientAliveCountMax" is set to "0" by running the following command: 
- 
-$ sudo grep -i ClientAliveCountMax /etc/ssh/sshd_config
+	<td><pre>Verify all network connections associated with SSH traffic are automatically terminated at the end of the session.
 
-ClientAliveCountMax 0 
- 
-If "ClientAliveCountMax" does not exist, does not have a product value of "0" in "/etc/ssh/sshd_config", or is commented out, this is a finding.</pre></td>
+Check that the "ClientAliveCountMax" is set to "1" by running the following command:
+
+$ sudo grep -ir ClientAliveCountMax /etc/ssh/sshd_config*
+
+ClientAliveCountMax 1
+
+If "ClientAliveCountMax" does not exist, does not have a product value of "1" in "/etc/ssh/sshd_config", or is commented out, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure OL 8 to automatically terminate all network connections associated with SSH traffic at the end of a session.
 
 Modify or append the following line in the "/etc/ssh/sshd_config" file:
 
-ClientAliveCountMax 0
+ClientAliveCountMax 1
 
 In order for the changes to take effect, the SSH daemon must be restarted.
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-010200</td>
-	<td>SV-248552r779222_rule</td>
+	<td>SV-248552r860908_rule</td>
 </tr>
 
 <tr>
@@ -1164,15 +1168,16 @@ Terminating network connections associated with communications sessions includes
 OL 8 uses "/etc/ssh/sshd_config" for configurations of OpenSSH. Within the "sshd_config", the product of the values of "ClientAliveInterval" and "ClientAliveCountMax" are used to establish the inactivity threshold. The "ClientAliveInterval" is a timeout interval in seconds after which if no data has been received from the client, sshd will send a message through the encrypted channel to request a response from the client. The "ClientAliveCountMax" is the number of client alive messages that may be sent without sshd receiving any messages back from the client. If this threshold is met, sshd will disconnect the client. For more information on these settings and others, refer to the sshd_config man pages.
 
 Satisfies: SRG-OS-000126-GPOS-00066, SRG-OS-000163-GPOS-00072, SRG-OS-000279-GPOS-00109</pre></td>
-	<td><pre>Verify all network connections associated with SSH traffic are automatically terminated after 10 minutes of inactivity. 
- 
-Check that the "ClientAliveInterval" variable is set to a value of "600" or less by running the following command: 
- 
-$ sudo grep -i ClientAliveInterval /etc/ssh/sshd_config 
- 
-ClientAliveInterval 600 
- 
-If "ClientAliveInterval" does not exist, does not have a product value of "600" or less in "/etc/ssh/sshd_config", or is commented out, this is a finding.</pre></td>
+	<td><pre>Verify all network connections associated with SSH traffic are automatically terminated after 10 minutes of inactivity.
+
+Check that the "ClientAliveInterval" variable is set to a value of "600" or less by running the following command:
+
+$ sudo grep -ir ClientAliveInterval /etc/ssh/sshd_config*
+
+ClientAliveInterval 600
+
+If "ClientAliveInterval" does not exist, does not have a product value of "600" or less in "/etc/ssh/sshd_config", or is commented out, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure OL 8 to automatically terminate all network connections associated with SSH traffic after 10 minutes of inactivity. 
  
 Modify or append the following lines in the "/etc/ssh/sshd_config" file to have a product value of "600" or less: 
@@ -1183,7 +1188,7 @@ The SSH daemon must be restarted for changes to take effect.
  
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-010201</td>
-	<td>SV-248553r779225_rule</td>
+	<td>SV-248553r860909_rule</td>
 </tr>
 
 <tr>
@@ -1750,7 +1755,7 @@ $ sudo more /etc/cron.daily/aide
 
 /usr/sbin/aide --check | /bin/mail -s "$HOSTNAME - Daily aide integrity check run" root@sysname.mil</pre></td>
 	<td>OL08-00-010360</td>
-	<td>SV-248573r779285_rule</td>
+	<td>SV-248573r853752_rule</td>
 </tr>
 
 <tr>
@@ -1777,7 +1782,7 @@ If there is no process to validate certificates that is approved by the organiza
 
 gpgcheck=1</pre></td>
 	<td>OL08-00-010370</td>
-	<td>SV-248574r779288_rule</td>
+	<td>SV-248574r853753_rule</td>
 </tr>
 
 <tr>
@@ -1806,7 +1811,7 @@ Set the "localpkg_gpgcheck" option to "True" in the "/etc/dnf/dnf.conf" file:
 
 localpkg_gpgcheck=True</pre></td>
 	<td>OL08-00-010371</td>
-	<td>SV-248575r779291_rule</td>
+	<td>SV-248575r853754_rule</td>
 </tr>
 
 <tr>
@@ -1851,11 +1856,19 @@ Add or edit the following line in a system configuration file in the "/etc/sysct
 
 kernel.kexec_load_disabled = 1
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>OL08-00-010372</td>
-	<td>SV-248576r833195_rule</td>
+	<td>SV-248576r860910_rule</td>
 </tr>
 
 <tr>
@@ -1902,11 +1915,19 @@ Add or edit the following line in a system configuration file in the "/etc/sysct
 
 fs.protected_symlinks = 1
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>OL08-00-010373</td>
-	<td>SV-248577r833197_rule</td>
+	<td>SV-248577r860911_rule</td>
 </tr>
 
 <tr>
@@ -1953,11 +1974,19 @@ Add or edit the following line in a system configuration file in the "/etc/sysct
 
 fs.protected_hardlinks = 1
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>OL08-00-010374</td>
-	<td>SV-248578r833199_rule</td>
+	<td>SV-248578r860912_rule</td>
 </tr>
 
 <tr>
@@ -2006,11 +2035,19 @@ Add or edit the following line in a system configuration file in the "/etc/sysct
 
 kernel.dmesg_restrict = 1
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>OL08-00-010375</td>
-	<td>SV-248579r833201_rule</td>
+	<td>SV-248579r858617_rule</td>
 </tr>
 
 <tr>
@@ -2059,11 +2096,19 @@ Add or edit the following line in a system configuration file in the "/etc/sysct
 
 kernel.perf_event_paranoid = 2
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>OL08-00-010376</td>
-	<td>SV-248580r833203_rule</td>
+	<td>SV-248580r858619_rule</td>
 </tr>
 
 <tr>
@@ -2098,7 +2143,7 @@ $ sudo grep -ir nopasswd /etc/sudoers.d
 
 Remove any occurrences of "NOPASSWD" tags in the file.</pre></td>
 	<td>OL08-00-010380</td>
-	<td>SV-248581r833208_rule</td>
+	<td>SV-248581r860915_rule</td>
 </tr>
 
 <tr>
@@ -2119,7 +2164,7 @@ $ sudo egrep -i !authenticate /etc/sudoers /etc/sudoers.d/*
 If any occurrences of "!authenticate" return from the command, this is a finding.</pre></td>
 	<td><pre>Remove any occurrence of "!authenticate" found in the "/etc/sudoers" file or files in the "/etc/sudoers.d" directory.</pre></td>
 	<td>OL08-00-010381</td>
-	<td>SV-248582r779312_rule</td>
+	<td>SV-248582r853764_rule</td>
 </tr>
 
 <tr>
@@ -2165,9 +2210,13 @@ If "Defaults !runaspw" is not defined, this is a finding.</pre></td>
 	<td><pre>Define the following in the Defaults section of the /etc/sudoers file or a configuration file in the /etc/sudoers.d/ directory:
 Defaults !targetpw
 Defaults !rootpw
-Defaults !runaspw</pre></td>
+Defaults !runaspw
+
+Remove any configurations that conflict with the above from the following locations: 
+/etc/sudoers
+/etc/sudoers.d/</pre></td>
 	<td>OL08-00-010383</td>
-	<td>SV-248584r833210_rule</td>
+	<td>SV-248584r858621_rule</td>
 </tr>
 
 <tr>
@@ -2197,9 +2246,11 @@ $ sudo visudo
 
 Add or modify the following line:
 Defaults timestamp_timeout=[value]
-Note: The "[value]" must be a number that is greater than or equal to "0".</pre></td>
+Note: The "[value]" must be a number that is greater than or equal to "0".
+
+Remove any duplicate or conflicting lines from /etc/sudoers and /etc/sudoers.d/ files.</pre></td>
 	<td>OL08-00-010384</td>
-	<td>SV-248585r833212_rule</td>
+	<td>SV-248585r860916_rule</td>
 </tr>
 
 <tr>
@@ -2230,7 +2281,7 @@ If there is no evidence of multifactor authentication being used, this is a find
  
 $ sudo yum install  openssl-pkcs11</pre></td>
 	<td>OL08-00-010390</td>
-	<td>SV-248586r779324_rule</td>
+	<td>SV-248586r853767_rule</td>
 </tr>
 
 <tr>
@@ -2246,14 +2297,16 @@ Multifactor solutions that require devices separate from information systems gai
 OL 8 includes multiple options for configuring certificate status checking but for this requirement focuses on the system security services daemon (sssd). By default, sssd performs Online Certificate Status Protocol (OCSP) checking and certificate verification using a sha256 digest function.
 
 Satisfies: SRG-OS-000375-GPOS-00160, SRG-OS-000377-GPOS-00162</pre></td>
-	<td><pre>Verify the operating system implements certificate status checking for multifactor authentication. 
- 
+	<td><pre>Verify the operating system implements certificate status checking for multifactor authentication.
+
+Note: If the System Administrator demonstrates the use of an approved alternate multifactor authentication method, this requirement is not applicable.
+
 Determine if Online Certificate Status Protocol (OCSP) is enabled and using the proper digest value on the system with the following command:
- 
-$ sudo grep certificate_verification /etc/sssd/sssd.conf /etc/sssd/conf.d/*.conf | grep -v "^#" 
- 
+
+$ sudo grep certificate_verification /etc/sssd/sssd.conf /etc/sssd/conf.d/*.conf | grep -v "^#"
+
 certificate_verification = ocsp_dgst=sha1
- 
+
 If the certificate_verification line is missing from the [sssd] section, or is missing "ocsp_dgst=sha1", ask the administrator to indicate what type of multifactor authentication is being used and how the system implements certificate status checking. If there is no evidence of certificate status checking being used, this is a finding.</pre></td>
 	<td><pre>Configure OL 8 to implement certificate status checking for multifactor authentication. 
  
@@ -2267,7 +2320,7 @@ The "sssd" service must be restarted for the changes to take effect. To restart 
 
 $ sudo systemctl restart sssd.service</pre></td>
 	<td>OL08-00-010400</td>
-	<td>SV-248587r818644_rule</td>
+	<td>SV-248587r860917_rule</td>
 </tr>
 
 <tr>
@@ -2300,7 +2353,7 @@ Install the "opensc" package using the following command:
  
 $ sudo yum install opensc</pre></td>
 	<td>OL08-00-010410</td>
-	<td>SV-248588r779330_rule</td>
+	<td>SV-248588r853769_rule</td>
 </tr>
 
 <tr>
@@ -2326,7 +2379,7 @@ flags : fpu vme de pse tsc ms nx rdtscp lm constant_tsc
 If "flags" does not contain the "nx" flag, this is a finding.</pre></td>
 	<td><pre>Enable the NX bit execute protection in the system BIOS.</pre></td>
 	<td>OL08-00-010420</td>
-	<td>SV-248589r779333_rule</td>
+	<td>SV-248589r853770_rule</td>
 </tr>
 
 <tr>
@@ -2510,11 +2563,19 @@ Set the system to the required kernel parameter by adding the following line to 
  
 kernel.randomize_va_space=2 
  
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Issue the following command to make the changes take effect: 
  
 $ sudo sysctl --system</pre></td>
 	<td>OL08-00-010430</td>
-	<td>SV-248594r833214_rule</td>
+	<td>SV-248594r860918_rule</td>
 </tr>
 
 <tr>
@@ -2539,7 +2600,7 @@ Set the "clean_requirements_on_remove" option to "True" in the "/etc/yum.conf" f
  
 clean_requirements_on_remove=True</pre></td>
 	<td>OL08-00-010440</td>
-	<td>SV-248595r779351_rule</td>
+	<td>SV-248595r853773_rule</td>
 </tr>
 
 <tr>
@@ -2585,7 +2646,7 @@ SELINUXTYPE=targeted
  
 A reboot is required for the changes to take effect.</pre></td>
 	<td>OL08-00-010450</td>
-	<td>SV-248596r779354_rule</td>
+	<td>SV-248596r853774_rule</td>
 </tr>
 
 <tr>
@@ -2741,13 +2802,14 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td>The OL 8 SSH daemon must perform strict mode checking of home directory configuration files.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>If other users have access to modify user-specific SSH configuration files, they may be able to log on to the system as another user.</pre></td>
-	<td><pre>Verify the SSH daemon performs strict mode checking of home directory configuration files with the following command: 
- 
-$ sudo grep -i strictmodes /etc/ssh/sshd_config 
- 
-StrictModes yes 
- 
-If "StrictModes" is set to "no" or is missing, or if the returned line is commented out, this is a finding.</pre></td>
+	<td><pre>Verify the SSH daemon performs strict mode checking of home directory configuration files with the following command:
+
+$ sudo grep -ir strictmodes /etc/ssh/sshd_config*
+
+StrictModes yes
+
+If "StrictModes" is set to "no" or is missing, or if the returned line is commented out, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure SSH to perform strict mode checking of home directory configuration files.  
  
 Uncomment the "StrictModes" keyword in "/etc/ssh/sshd_config" and set the value to "yes": 
@@ -2758,7 +2820,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
  
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-010500</td>
-	<td>SV-248603r779375_rule</td>
+	<td>SV-248603r858568_rule</td>
 </tr>
 
 <tr>
@@ -2768,20 +2830,21 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td>The OL 8 SSH daemon must not allow compression or must only allow compression after successful authentication.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>If compression is allowed in an SSH connection prior to authentication, vulnerabilities in the compression software could result in compromise of the system from an unauthenticated connection, potentially with root privileges.</pre></td>
-	<td><pre>Verify the SSH daemon performs compression after a user successfully authenticates with the following command: 
- 
-$ sudo grep -i compression /etc/ssh/sshd_config 
- 
-Compression delayed 
- 
-If the "Compression" keyword is set to "yes" or is missing, or if the returned line is commented out, this is a finding.</pre></td>
+	<td><pre>Verify the SSH daemon performs compression after a user successfully authenticates with the following command:
+
+$ sudo grep -ir compression /etc/ssh/sshd_config*
+
+Compression delayed
+
+If the "Compression" keyword is set to "yes" or is missing, or if the returned line is commented out, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Uncomment the "Compression" keyword in "/etc/ssh/sshd_config" on the system (this file may be named differently or be in a different location if using a version of SSH that is provided by a third-party vendor) and set the value to "delayed" or "no": 
  
 Compression no 
  
 The SSH service must be restarted for changes to take effect.</pre></td>
 	<td>OL08-00-010510</td>
-	<td>SV-248604r779378_rule</td>
+	<td>SV-248604r858570_rule</td>
 </tr>
 
 <tr>
@@ -2791,13 +2854,14 @@ The SSH service must be restarted for changes to take effect.</pre></td>
 	<td>The OL 8 SSH daemon must not allow authentication using known host's authentication.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>Configuring this setting for the SSH daemon provides additional assurance that remote logon via SSH will require a password, even in the event of misconfiguration elsewhere.</pre></td>
-	<td><pre>Verify the SSH daemon does not allow authentication using known host’s authentication with the following command: 
- 
-$ sudo grep -i IgnoreUserKnownHosts /etc/ssh/sshd_config 
- 
-IgnoreUserKnownHosts yes 
- 
-If the value is returned as "no", the returned line is commented out, or no output is returned, this is a finding.</pre></td>
+	<td><pre>Verify the SSH daemon does not allow authentication using known host’s authentication with the following command:
+
+$ sudo grep -ir IgnoreUserKnownHosts /etc/ssh/sshd_config*
+
+IgnoreUserKnownHosts yes
+
+If the value is returned as "no", the returned line is commented out, or no output is returned, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure the SSH daemon to not allow authentication using known host’s authentication. 
  
 Add the following line in "/etc/ssh/sshd_config", or uncomment the line and set the value to "yes": 
@@ -2808,7 +2872,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
  
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-010520</td>
-	<td>SV-248605r779381_rule</td>
+	<td>SV-248605r858572_rule</td>
 </tr>
 
 <tr>
@@ -2818,13 +2882,14 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td>The OL 8 SSH daemon must not allow Kerberos authentication, except to fulfill documented and validated mission requirements.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>Configuring this setting for the SSH daemon provides additional assurance that remote logon via SSH will require a password, even in the event of misconfiguration elsewhere.</pre></td>
-	<td><pre>Verify the SSH daemon does not allow Kerberos authentication with the following command: 
- 
-$ sudo grep -i "KerberosAuthentication" /etc/ssh/sshd_config 
- 
-KerberosAuthentication no 
- 
-If the value is returned as "yes", the returned line is commented out, or no output is returned, or has not been documented with the ISSO, this is a finding.</pre></td>
+	<td><pre>Verify the SSH daemon does not allow Kerberos authentication with the following command:
+
+$ sudo grep -ir "KerberosAuthentication" /etc/ssh/sshd_config*
+
+KerberosAuthentication no
+
+If the value is returned as "yes", the returned line is commented out, or no output is returned, or has not been documented with the ISSO, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure the SSH daemon to not allow Kerberos authentication. 
  
 Add the following line in "/etc/ssh/sshd_config", or uncomment the line and set the value to "no": 
@@ -2835,7 +2900,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
  
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-010521</td>
-	<td>SV-248606r779384_rule</td>
+	<td>SV-248606r858574_rule</td>
 </tr>
 
 <tr>
@@ -2847,11 +2912,12 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td><pre>Configuring this setting for the SSH daemon provides additional assurance that remote logon via SSH will require a password, even in the event of misconfiguration elsewhere.</pre></td>
 	<td><pre>Verify the SSH daemon does not allow GSSAPI authentication with the following command:
 
-$ sudo grep -i GSSAPIAuthentication  /etc/ssh/sshd_config
+$ sudo grep -ir GSSAPIAuthentication  /etc/ssh/sshd_config*
 
 GSSAPIAuthentication no
 
-If the value is returned as "yes", the returned line is commented out, no output is returned, or has not been documented with the ISSO, this is a finding.</pre></td>
+If the value is returned as "yes", the returned line is commented out, no output is returned, or has not been documented with the ISSO, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure the SSH daemon to not allow GSSAPI authentication.
 
 Add the following line in "/etc/ssh/sshd_config", or uncomment the line and set the value to "no":
@@ -2862,7 +2928,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-010522</td>
-	<td>SV-248607r779387_rule</td>
+	<td>SV-248607r858576_rule</td>
 </tr>
 
 <tr>
@@ -2977,13 +3043,14 @@ If a separate entry for "/var/tmp" is not in use, this is a finding.</pre></td>
 	<td>OL 8 must not permit direct logons to the root account using remote access via SSH.</td>
 	<td>SRG-OS-000109-GPOS-00056</td>
 	<td><pre>Although the communications channel may be encrypted, an additional layer of security is gained by extending the policy of not logging on directly as root. In addition, logging on with a user-specific account provides individual accountability of actions performed on the system.</pre></td>
-	<td><pre>Verify remote access using SSH prevents users from logging on directly as "root" with the following command: 
- 
-$ sudo grep -i PermitRootLogin /etc/ssh/sshd_config 
- 
-PermitRootLogin no 
- 
-If the "PermitRootLogin" keyword is set to "yes", is missing, or is commented out, this is a finding.</pre></td>
+	<td><pre>Verify remote access using SSH prevents users from logging on directly as "root" with the following command:
+
+$ sudo grep -ir PermitRootLogin /etc/ssh/sshd_config*
+
+PermitRootLogin no
+
+If the "PermitRootLogin" keyword is set to "yes", is missing, or is commented out, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure OL 8 to stop users from logging on remotely as the "root" user via SSH. 
  
 Edit the appropriate "/etc/ssh/sshd_config" file to uncomment or add the line for the "PermitRootLogin" keyword and set its value to "no": 
@@ -2994,7 +3061,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
  
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-010550</td>
-	<td>SV-248613r779405_rule</td>
+	<td>SV-248613r858578_rule</td>
 </tr>
 
 <tr>
@@ -3346,15 +3413,23 @@ $ sudo grep -r kernel.core_pattern /run/sysctl.d/*.conf /usr/local/lib/sysctl.d/
 If "kernel.core_pattern" is not set to "|/bin/false", is missing or commented out, this is a finding.
 
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to disable storing core dumps by adding the following line to a file in the "/etc/sysctl.d" directory: 
- 
-kernel.core_pattern = |/bin/false 
- 
-The system configuration files must be reloaded for the changes to take effect. To reload the contents of the files, run the following command: 
- 
+	<td><pre>Configure OL 8 to disable storing core dumps by adding the following line to a file in the "/etc/sysctl.d" directory:
+
+kernel.core_pattern = |/bin/false
+
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
+The system configuration files must be reloaded for the changes to take effect. To reload the contents of the files, run the following command:
+
 $ sudo sysctl --system</pre></td>
 	<td>OL08-00-010671</td>
-	<td>SV-248629r833216_rule</td>
+	<td>SV-248629r858629_rule</td>
 </tr>
 
 <tr>
@@ -3909,13 +3984,14 @@ AutomaticLoginEnable=false</pre></td>
 	<td>OL 8 must not allow users to override SSH environment variables.</td>
 	<td>SRG-OS-000480-GPOS-00229</td>
 	<td><pre>SSH environment options potentially allow users to bypass access restriction in some configurations.</pre></td>
-	<td><pre>Verify that unattended or automatic login via SSH is disabled with the following command: 
- 
-$ sudo grep -i PermitUserEnvironment /etc/ssh/sshd_config 
- 
-PermitUserEnvironment no 
- 
-If "PermitUserEnvironment" is set to "yes", is missing completely, or is commented out, this is a finding.</pre></td>
+	<td><pre>Verify that unattended or automatic login via SSH is disabled with the following command:
+
+$ sudo grep -ir PermitUserEnvironment /etc/ssh/sshd_config*
+
+PermitUserEnvironment no
+
+If "PermitUserEnvironment" is set to "yes", is missing completely, or is commented out, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure OL 8 to allow the SSH daemon to not allow unattended or automatic login to the system. 
  
 Add or edit the following line in the "/etc/ssh/sshd_config" file: 
@@ -3926,7 +4002,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
  
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-010830</td>
-	<td>SV-248650r779516_rule</td>
+	<td>SV-248650r858580_rule</td>
 </tr>
 
 <tr>
@@ -4008,7 +4084,7 @@ The "sssd" service must be restarted for the changes to take effect. To restart 
  
 $ sudo systemctl restart sssd.service</pre></td>
 	<td>OL08-00-020010</td>
-	<td>SV-248652r779522_rule</td>
+	<td>SV-248652r853775_rule</td>
 </tr>
 
 <tr>
@@ -4039,7 +4115,7 @@ Add/modify the "/etc/security/faillock.conf" file to match the following line:
  
 deny = 3</pre></td>
 	<td>OL08-00-020011</td>
-	<td>SV-248653r779525_rule</td>
+	<td>SV-248653r853776_rule</td>
 </tr>
 
 <tr>
@@ -4088,7 +4164,7 @@ The "sssd" service must be restarted for the changes to take effect. To restart 
  
 $ sudo systemctl restart sssd.service</pre></td>
 	<td>OL08-00-020012</td>
-	<td>SV-248654r779528_rule</td>
+	<td>SV-248654r853777_rule</td>
 </tr>
 
 <tr>
@@ -4119,7 +4195,7 @@ Add/modify the "/etc/security/faillock.conf" file to match the following line:
  
 fail_interval = 900</pre></td>
 	<td>OL08-00-020013</td>
-	<td>SV-248655r779531_rule</td>
+	<td>SV-248655r853778_rule</td>
 </tr>
 
 <tr>
@@ -4168,7 +4244,7 @@ The "sssd" service must be restarted for the changes to take effect. To restart 
  
 $ sudo systemctl restart sssd.service</pre></td>
 	<td>OL08-00-020014</td>
-	<td>SV-248656r779534_rule</td>
+	<td>SV-248656r853779_rule</td>
 </tr>
 
 <tr>
@@ -4199,7 +4275,7 @@ Add/modify the "/etc/security/faillock.conf" file to match the following line:
  
 unlock_time = 0</pre></td>
 	<td>OL08-00-020015</td>
-	<td>SV-248657r779537_rule</td>
+	<td>SV-248657r853780_rule</td>
 </tr>
 
 <tr>
@@ -4250,7 +4326,7 @@ The "sssd" service must be restarted for the changes to take effect. To restart 
  
 $ sudo systemctl restart sssd.service</pre></td>
 	<td>OL08-00-020016</td>
-	<td>SV-248658r779540_rule</td>
+	<td>SV-248658r853781_rule</td>
 </tr>
 
 <tr>
@@ -4281,7 +4357,7 @@ Add/modify the "/etc/security/faillock.conf" file to match the following line:
  
 dir = /var/log/faillock</pre></td>
 	<td>OL08-00-020017</td>
-	<td>SV-248659r779543_rule</td>
+	<td>SV-248659r853782_rule</td>
 </tr>
 
 <tr>
@@ -4330,7 +4406,7 @@ The "sssd" service must be restarted for the changes to take effect. To restart 
  
 $ sudo systemctl restart sssd.service</pre></td>
 	<td>OL08-00-020018</td>
-	<td>SV-248660r779546_rule</td>
+	<td>SV-248660r853783_rule</td>
 </tr>
 
 <tr>
@@ -4361,7 +4437,7 @@ Add/modify the "/etc/security/faillock.conf" file to match the following line:
  
 silent</pre></td>
 	<td>OL08-00-020019</td>
-	<td>SV-248661r779549_rule</td>
+	<td>SV-248661r853784_rule</td>
 </tr>
 
 <tr>
@@ -4410,7 +4486,7 @@ The "sssd" service must be restarted for the changes to take effect. To restart 
  
 $ sudo systemctl restart sssd.service</pre></td>
 	<td>OL08-00-020020</td>
-	<td>SV-248662r779552_rule</td>
+	<td>SV-248662r853785_rule</td>
 </tr>
 
 <tr>
@@ -4441,7 +4517,7 @@ Add/modify the "/etc/security/faillock.conf" file to match the following line:
  
 audit</pre></td>
 	<td>OL08-00-020021</td>
-	<td>SV-248663r779555_rule</td>
+	<td>SV-248663r853786_rule</td>
 </tr>
 
 <tr>
@@ -4490,7 +4566,7 @@ The "sssd" service must be restarted for the changes to take effect. To restart 
  
 $ sudo systemctl restart sssd.service</pre></td>
 	<td>OL08-00-020022</td>
-	<td>SV-248664r779558_rule</td>
+	<td>SV-248664r853787_rule</td>
 </tr>
 
 <tr>
@@ -4521,7 +4597,7 @@ Add/modify the "/etc/security/faillock.conf" file to match the following line:
  
 even_deny_root</pre></td>
 	<td>OL08-00-020023</td>
-	<td>SV-248665r779561_rule</td>
+	<td>SV-248665r853788_rule</td>
 </tr>
 
 <tr>
@@ -4586,7 +4662,7 @@ auth required pam_faillock.so preauth
 auth required pam_faillock.so authfail
 account required pam_faillock.so</pre></td>
 	<td>OL08-00-020025</td>
-	<td>SV-248667r779567_rule</td>
+	<td>SV-248667r853789_rule</td>
 </tr>
 
 <tr>
@@ -4624,7 +4700,7 @@ auth required pam_faillock.so preauth
 auth required pam_faillock.so authfail
 account required pam_faillock.so</pre></td>
 	<td>OL08-00-020026</td>
-	<td>SV-248668r779570_rule</td>
+	<td>SV-248668r853790_rule</td>
 </tr>
 
 <tr>
@@ -4671,7 +4747,7 @@ Next, update the context type of the non-default faillock directory/subdirectori
 
 $ sudo restorecon -R -v /var/log/faillock</pre></td>
 	<td>OL08-00-020027</td>
-	<td>SV-248669r779573_rule</td>
+	<td>SV-248669r853791_rule</td>
 </tr>
 
 <tr>
@@ -4715,7 +4791,7 @@ Next, update the context type of the non-default faillock directory/subdirectori
 
 $ sudo restorecon -R -v /var/log/faillock</pre></td>
 	<td>OL08-00-020028</td>
-	<td>SV-248670r779576_rule</td>
+	<td>SV-248670r853792_rule</td>
 </tr>
 
 <tr>
@@ -5246,26 +5322,28 @@ Add the following setting to prevent non-privileged users from modifying it:
 	<td><pre>Without mapping the certificate used to authenticate to the user account, the ability to determine the identity of the individual user or group will not be available for forensic analysis. 
  
 There are various methods of mapping certificates to user/group accounts for OL 8. For the purposes of this requirement, the check and fix will account for Active Directory mapping. Some of the other possible methods include joining the system to a domain and using an idM server, or a local system mapping, where the system is not part of a domain.</pre></td>
-	<td><pre>Verify the certificate of the user or group is mapped to the corresponding user or group in the "sssd.conf" file with the following command: 
- 
-$ sudo cat /etc/sssd/sssd.conf 
- 
-[sssd] 
-config_file_version = 2 
-services = pam, sudo, ssh 
-domains = testing.test 
- 
-[pam] 
-pam_cert_auth = True 
- 
-[domain/testing.test] 
-id_provider = ldap 
- 
-[certmap/testing.test/rule_name] 
-matchrule =<SAN>.*EDIPI@mil 
-maprule = (userCertificate;binary={cert!bin}) 
-domains = testing.test 
- 
+	<td><pre>Verify the certificate of the user or group is mapped to the corresponding user or group in the "sssd.conf" file with the following command:
+
+Note: If the System Administrator demonstrates the use of an approved alternate multifactor authentication method, this requirement is not applicable.
+
+$ sudo cat /etc/sssd/sssd.conf
+
+[sssd]
+config_file_version = 2
+services = pam, sudo, ssh
+domains = testing.test
+
+[pam]
+pam_cert_auth = True
+
+[domain/testing.test]
+id_provider = ldap
+
+[certmap/testing.test/rule_name]
+matchrule =<SAN>.*EDIPI@mil
+maprule = (userCertificate;binary={cert!bin})
+domains = testing.test
+
 If the "certmap" section does not exist, this is a finding.</pre></td>
 	<td><pre>Configure OL 8 to map the authenticated identity to the user or group account by adding or modifying the "certmap" section of the "/etc/sssd/sssd.conf" file based on the following example: 
  
@@ -5278,7 +5356,7 @@ The "sssd" service must be restarted for the changes to take effect. To restart 
  
 $ sudo systemctl restart sssd.service</pre></td>
 	<td>OL08-00-020090</td>
-	<td>SV-248685r779621_rule</td>
+	<td>SV-248685r858606_rule</td>
 </tr>
 
 <tr>
@@ -5333,13 +5411,15 @@ $ sudo grep -r ucredit /etc/security/pwquality.conf*
  
 If the value of "ucredit" is a positive number or is commented out, this is a finding.
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to enforce password complexity by requiring that at least one uppercase character be used by setting the "ucredit" option. 
- 
-Add or update the following line in the "/etc/security/pwquality.conf" file or a configuration file in the "/etc/security/pwquality.conf.d/" directory: 
- 
-ucredit = -1</pre></td>
+	<td><pre>Configure OL 8 to enforce password complexity by requiring that at least one uppercase character be used by setting the "ucredit" option.
+
+Add or update the following line in the "/etc/security/pwquality.conf" file or a configuration file in the "/etc/security/pwquality.conf.d/" directory:
+
+ucredit = -1
+
+Remove any configurations that conflict with the above value.</pre></td>
 	<td>OL08-00-020110</td>
-	<td>SV-248687r833220_rule</td>
+	<td>SV-248687r858631_rule</td>
 </tr>
 
 <tr>
@@ -5361,13 +5441,15 @@ $ sudo grep -r lcredit /etc/security/pwquality.conf*
  
 If the value of "lcredit" is a positive number or is commented out, this is a finding.
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to enforce password complexity by requiring that at least one lowercase character be used by setting the "lcredit" option. 
- 
-Add or update the following line in the "/etc/security/pwquality.conf" file or a configuration file in the "/etc/security/pwquality.conf.d/" directory: 
- 
-lcredit = -1</pre></td>
+	<td><pre>Configure OL 8 to enforce password complexity by requiring that at least one lowercase character be used by setting the "lcredit" option.
+
+Add or update the following line in the "/etc/security/pwquality.conf" file or a configuration file in the "/etc/security/pwquality.conf.d/" directory:
+
+lcredit = -1
+
+Remove any configurations that conflict with the above value.</pre></td>
 	<td>OL08-00-020120</td>
-	<td>SV-248688r833222_rule</td>
+	<td>SV-248688r858633_rule</td>
 </tr>
 
 <tr>
@@ -5389,13 +5471,15 @@ $ sudo grep -r dcredit /etc/security/pwquality.conf*
  
 If the value of "dcredit" is a positive number or is commented out, this is a finding.
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to enforce password complexity by requiring that at least one numeric character be used by setting the "dcredit" option. 
- 
-Add or update the following line in the "/etc/security/pwquality.conf" file or a configuration file in the "/etc/security/pwquality.conf.d/" directory: 
- 
-dcredit = -1</pre></td>
+	<td><pre>Configure OL 8 to enforce password complexity by requiring that at least one numeric character be used by setting the "dcredit" option.
+
+Add or update the following line in the "/etc/security/pwquality.conf" file or a configuration file in the "/etc/security/pwquality.conf.d/" directory:
+
+dcredit = -1
+
+Remove any configurations that conflict with the above value.</pre></td>
 	<td>OL08-00-020130</td>
-	<td>SV-248689r833224_rule</td>
+	<td>SV-248689r858635_rule</td>
 </tr>
 
 <tr>
@@ -5417,13 +5501,15 @@ $ sudo grep -r maxclassrepeat /etc/security/pwquality.conf*
  
 If the value of "maxclassrepeat" is set to "0", more than "4" or is commented out, this is a finding.
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to require the change of the number of repeating characters of the same character class when passwords are changed by setting the "maxclassrepeat" option. 
- 
-Add or update the following line in the "/etc/security/pwquality.conf" file or a configuration file in the "/etc/security/pwquality.conf.d/" directory: 
- 
-maxclassrepeat = 4</pre></td>
+	<td><pre>Configure OL 8 to require the change of the number of repeating characters of the same character class when passwords are changed by setting the "maxclassrepeat" option.
+
+Add or update the following line in the "/etc/security/pwquality.conf" file or a configuration file in the "/etc/security/pwquality.conf.d/" directory:
+
+maxclassrepeat = 4
+
+Remove any configurations that conflict with the above value.</pre></td>
 	<td>OL08-00-020140</td>
-	<td>SV-248690r833226_rule</td>
+	<td>SV-248690r858637_rule</td>
 </tr>
 
 <tr>
@@ -5445,13 +5531,15 @@ $ sudo grep -r maxrepeat /etc/security/pwquality.conf*
  
 If the value of "maxrepeat" is set to more than "3" or is commented out, this is a finding.
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to require the change of the number of repeating consecutive characters when passwords are changed by setting the "maxrepeat" option. 
- 
-Add or update the following line in the "/etc/security/pwquality.conf" file or a configuration file in the "/etc/security/pwquality.conf.d/" directory: 
- 
-maxrepeat = 3</pre></td>
+	<td><pre>Configure OL 8 to require the change of the number of repeating consecutive characters when passwords are changed by setting the "maxrepeat" option.
+
+Add or update the following line in the "/etc/security/pwquality.conf" file or a configuration file in the "/etc/security/pwquality.conf.d/" directory:
+
+maxrepeat = 3
+
+Remove any configurations that conflict with the above value.</pre></td>
 	<td>OL08-00-020150</td>
-	<td>SV-248691r833228_rule</td>
+	<td>SV-248691r858639_rule</td>
 </tr>
 
 <tr>
@@ -5473,13 +5561,15 @@ $ sudo grep -r minclass /etc/security/pwquality.conf*
  
 If the value of "minclass" is set to less than "4" or is commented out, this is a finding.
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to require the change of at least four character classes when passwords are changed by setting the "minclass" option. 
- 
-Add or update the following line in the "/etc/security/pwquality.conf" file or a configuration file in the "/etc/security/pwquality.conf.d/" directory: 
- 
-minclass = 4</pre></td>
+	<td><pre>Configure OL 8 to require the change of at least four character classes when passwords are changed by setting the "minclass" option.
+
+Add or update the following line in the "/etc/security/pwquality.conf" file or a configuration file in the "/etc/security/pwquality.conf.d/" directory:
+
+minclass = 4
+
+Remove any configurations that conflict with the above value.</pre></td>
 	<td>OL08-00-020160</td>
-	<td>SV-248692r833230_rule</td>
+	<td>SV-248692r858641_rule</td>
 </tr>
 
 <tr>
@@ -5501,13 +5591,15 @@ $ sudo grep -r difok /etc/security/pwquality.conf*
  
 If the value of "difok" is set to less than "8" or is commented out, this is a finding.
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to require the change of at least eight of the total number of characters when passwords are changed by setting the "difok" option. 
- 
-Add or update the following line in the "/etc/security/pwquality.conf" file or a configuration file in the "/etc/security/pwquality.conf.d/" directory: 
- 
-difok = 8</pre></td>
+	<td><pre>Configure OL 8 to require the change of at least eight of the total number of characters when passwords are changed by setting the "difok" option.
+
+Add or update the following line in the "/etc/security/pwquality.conf" file or a configuration file in the "/etc/security/pwquality.conf.d/" directory:
+
+difok = 8
+
+Remove any configurations that conflict with the above value.</pre></td>
 	<td>OL08-00-020170</td>
-	<td>SV-248693r833232_rule</td>
+	<td>SV-248693r858643_rule</td>
 </tr>
 
 <tr>
@@ -5533,7 +5625,7 @@ $ sudo chage -m 1 [user]</pre></td>
 	<td>V-248695</td>
 	<td>CCI-000198</td>
 	<td>medium</td>
-	<td>OL 8 passwords for new users or password changes must have a 24 hours/1 day minimum password lifetime restriction in "/etc/logins.def".</td>
+	<td>OL 8 passwords for new users or password changes must have a 24 hours/1 day minimum password lifetime restriction in "/etc/login.defs".</td>
 	<td>SRG-OS-000075-GPOS-00043</td>
 	<td><pre>Enforcing a minimum password lifetime helps to prevent repeated password changes to defeat the password reuse or history enforcement requirement. If users are allowed to immediately and continually change their password, the password could be repeatedly changed in a short period of time to defeat the organization's policy regarding password reuse.</pre></td>
 	<td><pre>Verify the operating system enforces 24 hours/1 day as the minimum password lifetime for new user accounts. 
@@ -5550,7 +5642,7 @@ Add the following line in "/etc/login.defs" (or modify the line to have the requ
  
 PASS_MIN_DAYS 1</pre></td>
 	<td>OL08-00-020190</td>
-	<td>SV-248695r779651_rule</td>
+	<td>SV-248695r858592_rule</td>
 </tr>
 
 <tr>
@@ -5648,13 +5740,15 @@ $ sudo grep -r minlen /etc/security/pwquality.conf*
  
 If the command does not return a "minlen" value of 15 or greater or is commented out, this is a finding.
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to enforce a minimum 15-character password length. 
- 
-Add or update the following line in the "/etc/security/pwquality.conf" file or a configuration file in the "/etc/security/pwquality.conf.d/" directory: 
- 
-minlen = 15</pre></td>
+	<td><pre>Configure OL 8 to enforce a minimum 15-character password length.
+
+Add or update the following line in the "/etc/security/pwquality.conf" file or a configuration file in the "/etc/security/pwquality.conf.d/" directory:
+
+minlen = 15
+
+Remove any configurations that conflict with the above value.</pre></td>
 	<td>OL08-00-020230</td>
-	<td>SV-248699r833234_rule</td>
+	<td>SV-248699r858645_rule</td>
 </tr>
 
 <tr>
@@ -5934,13 +6028,15 @@ $ sudo grep -r ocredit /etc/security/pwquality.conf*
  
 If the value of "ocredit" is a positive number or is commented out, this is a finding.
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to enforce password complexity by requiring that at least one special character be used by setting the "ocredit" option. 
- 
-Add or update the following line in the "/etc/security/pwquality.conf" file or a configuration file in the "/etc/security/pwquality.conf.d/" directory: 
- 
-ocredit = -1</pre></td>
+	<td><pre>Configure OL 8 to enforce password complexity by requiring that at least one special character be used by setting the "ocredit" option.
+
+Add or update the following line in the "/etc/security/pwquality.conf" file or a configuration file in the "/etc/security/pwquality.conf.d/" directory:
+
+ocredit = -1
+
+Remove any configurations that conflict with the above value.</pre></td>
 	<td>OL08-00-020280</td>
-	<td>SV-248709r833236_rule</td>
+	<td>SV-248709r858647_rule</td>
 </tr>
 
 <tr>
@@ -5977,7 +6073,7 @@ Add or change the following line in "/etc/sssd/sssd.conf" just below the line "[
  
 offline_credentials_expiration = 1</pre></td>
 	<td>OL08-00-020290</td>
-	<td>SV-248710r779696_rule</td>
+	<td>SV-248710r853793_rule</td>
 </tr>
 
 <tr>
@@ -5997,13 +6093,15 @@ $ sudo grep -r dictcheck /etc/security/pwquality.conf*
  
 If the "dictcheck" parameter is not set to "1" or is commented out, this is a finding.
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to prevent the use of dictionary words for passwords. 
- 
-Add or update the following line in the "/etc/security/pwquality.conf" file or a configuration file in the "/etc/security/pwquality.conf.d/" directory: 
- 
-dictcheck=1</pre></td>
+	<td><pre>Configure OL 8 to prevent the use of dictionary words for passwords.
+
+Add or update the following line in the "/etc/security/pwquality.conf" file or a configuration file in the "/etc/security/pwquality.conf.d/" directory:
+
+dictcheck=1
+
+Remove any configurations that conflict with the above value.</pre></td>
 	<td>OL08-00-020300</td>
-	<td>SV-248711r833238_rule</td>
+	<td>SV-248711r858649_rule</td>
 </tr>
 
 <tr>
@@ -6075,12 +6173,13 @@ Document all authorized accounts on the system.</pre></td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>If an account has an empty password, anyone could log on and run commands with the privileges of that account. Accounts with empty passwords should never be used in operational environments.</pre></td>
 	<td><pre>To verify that null passwords cannot be used, run the following command:
- 
-$ sudo grep -i permitemptypasswords /etc/ssh/sshd_config 
- 
-PermitEmptyPasswords no 
- 
-If "PermitEmptyPasswords" is set to "yes", this is a finding.</pre></td>
+
+$ sudo grep -ir permitemptypasswords /etc/ssh/sshd_config*
+
+PermitEmptyPasswords no
+
+If "PermitEmptyPasswords" is set to "yes", this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Edit the following line in "etc/ssh/sshd_config" to prevent logons with empty passwords. 
  
 PermitEmptyPasswords no 
@@ -6089,7 +6188,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
  
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-020330</td>
-	<td>SV-248714r779708_rule</td>
+	<td>SV-248714r858582_rule</td>
 </tr>
 
 <tr>
@@ -6132,7 +6231,7 @@ Note: Manual changes to the listed file may be overwritten by the "authselect" p
 
 <tr>
 	<td>V-248717</td>
-	<td>CCI-000366</td>
+	<td>CCI-000052</td>
 	<td>low</td>
 	<td>OL 8 must display the date and time of the last successful account logon upon logon.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
@@ -6150,23 +6249,24 @@ Add the following line to the top of "/etc/pam.d/postlogin":
  
 session required pam_lastlog.so showfailed</pre></td>
 	<td>OL08-00-020340</td>
-	<td>SV-248717r779717_rule</td>
+	<td>SV-248717r858591_rule</td>
 </tr>
 
 <tr>
 	<td>V-248718</td>
-	<td>CCI-000366</td>
+	<td>CCI-000052</td>
 	<td>medium</td>
 	<td>OL 8 must display the date and time of the last successful account logon upon an SSH logon.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>Providing users with feedback on when account accesses via SSH last occurred facilitates user recognition and reporting of unauthorized account use.</pre></td>
-	<td><pre>Verify SSH provides users with feedback on when account accesses last occurred with the following command: 
- 
-$ sudo grep -i printlastlog /etc/ssh/sshd_config 
- 
-PrintLastLog yes 
- 
-If the "PrintLastLog" keyword is set to "no", is missing, or is commented out, this is a finding.</pre></td>
+	<td><pre>Verify SSH provides users with feedback on when account accesses last occurred with the following command:
+
+$ sudo grep -ir printlastlog /etc/ssh/sshd_config*
+
+PrintLastLog yes
+
+If the "PrintLastLog" keyword is set to "no", is missing, or is commented out, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure SSH to provide users with feedback on when account accesses last occurred by setting the required configuration options in "/etc/pam.d/sshd" or in the "sshd_config" file used by the system ("/etc/ssh/sshd_config" will be used in the example). Note that this file may be named differently or be in a different location if using a version of SSH that is provided by a third-party vendor. 
  
 Modify the "PrintLastLog" line in "/etc/ssh/sshd_config" to match the following: 
@@ -6175,7 +6275,7 @@ PrintLastLog yes
  
 The SSH service must be restarted for changes to "sshd_config" to take effect.</pre></td>
 	<td>OL08-00-020350</td>
-	<td>SV-248718r779720_rule</td>
+	<td>SV-248718r858584_rule</td>
 </tr>
 
 <tr>
@@ -6218,14 +6318,14 @@ Check all local interactive user initialization files for interactive users with
 
 Note: The example is for a system that is configured to create users home directories in the "/home" directory.
 
-$ sudo grep -i umask /home/*/.*
+$ sudo grep -ir ^umask /home | grep -v '.bash_history'
 
 If any local interactive user initialization files are found to have a umask statement that has a value less restrictive than "077", this is a finding.</pre></td>
 	<td><pre>Remove the umask statement from all local interactive user's initialization files. 
 
 If the account is for an application, the requirement for a umask less restrictive than "077" can be documented with the Information System Security Officer, but the user agreement for access to the account must specify that the local interactive user must log on to their account first and then switch the user to the application account with the correct option to gain the account's environment variables.</pre></td>
 	<td>OL08-00-020352</td>
-	<td>SV-248720r779726_rule</td>
+	<td>SV-248720r858597_rule</td>
 </tr>
 
 <tr>
@@ -6296,7 +6396,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030000</td>
-	<td>SV-248722r779732_rule</td>
+	<td>SV-248722r853794_rule</td>
 </tr>
 
 <tr>
@@ -6501,7 +6601,7 @@ name_format = hostname
  
 The audit daemon must be restarted for changes to take effect.</pre></td>
 	<td>OL08-00-030062</td>
-	<td>SV-248730r779756_rule</td>
+	<td>SV-248730r853795_rule</td>
 </tr>
 
 <tr>
@@ -6827,7 +6927,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030130</td>
-	<td>SV-248740r779786_rule</td>
+	<td>SV-248740r853796_rule</td>
 </tr>
 
 <tr>
@@ -6862,7 +6962,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030140</td>
-	<td>SV-248741r779789_rule</td>
+	<td>SV-248741r853797_rule</td>
 </tr>
 
 <tr>
@@ -6897,7 +6997,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030150</td>
-	<td>SV-248742r779792_rule</td>
+	<td>SV-248742r853798_rule</td>
 </tr>
 
 <tr>
@@ -6932,7 +7032,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030160</td>
-	<td>SV-248743r779795_rule</td>
+	<td>SV-248743r853799_rule</td>
 </tr>
 
 <tr>
@@ -6967,7 +7067,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030170</td>
-	<td>SV-248744r779798_rule</td>
+	<td>SV-248744r853800_rule</td>
 </tr>
 
 <tr>
@@ -7002,7 +7102,7 @@ The audit daemon must be restarted for the changes to take effect.
 
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030171</td>
-	<td>SV-248745r779801_rule</td>
+	<td>SV-248745r853801_rule</td>
 </tr>
 
 <tr>
@@ -7037,7 +7137,7 @@ The audit daemon must be restarted for the changes to take effect.
 
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030172</td>
-	<td>SV-248746r779804_rule</td>
+	<td>SV-248746r853802_rule</td>
 </tr>
 
 <tr>
@@ -7070,7 +7170,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030190</td>
-	<td>SV-248747r779807_rule</td>
+	<td>SV-248747r853803_rule</td>
 </tr>
 
 <tr>
@@ -7119,7 +7219,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030200</td>
-	<td>SV-248748r818669_rule</td>
+	<td>SV-248748r853804_rule</td>
 </tr>
 
 <tr>
@@ -7152,7 +7252,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030250</td>
-	<td>SV-248753r779825_rule</td>
+	<td>SV-248753r853805_rule</td>
 </tr>
 
 <tr>
@@ -7185,7 +7285,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030260</td>
-	<td>SV-248754r779828_rule</td>
+	<td>SV-248754r853806_rule</td>
 </tr>
 
 <tr>
@@ -7218,7 +7318,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030280</td>
-	<td>SV-248756r779834_rule</td>
+	<td>SV-248756r853807_rule</td>
 </tr>
 
 <tr>
@@ -7251,7 +7351,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030290</td>
-	<td>SV-248757r779837_rule</td>
+	<td>SV-248757r853808_rule</td>
 </tr>
 
 <tr>
@@ -7284,7 +7384,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030300</td>
-	<td>SV-248758r779840_rule</td>
+	<td>SV-248758r853809_rule</td>
 </tr>
 
 <tr>
@@ -7317,7 +7417,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030301</td>
-	<td>SV-248759r779843_rule</td>
+	<td>SV-248759r853810_rule</td>
 </tr>
 
 <tr>
@@ -7352,7 +7452,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030302</td>
-	<td>SV-248760r779846_rule</td>
+	<td>SV-248760r853811_rule</td>
 </tr>
 
 <tr>
@@ -7385,7 +7485,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030310</td>
-	<td>SV-248761r779849_rule</td>
+	<td>SV-248761r853812_rule</td>
 </tr>
 
 <tr>
@@ -7418,7 +7518,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030311</td>
-	<td>SV-248762r779852_rule</td>
+	<td>SV-248762r853813_rule</td>
 </tr>
 
 <tr>
@@ -7451,7 +7551,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030312</td>
-	<td>SV-248763r779855_rule</td>
+	<td>SV-248763r853814_rule</td>
 </tr>
 
 <tr>
@@ -7577,7 +7677,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030316</td>
-	<td>SV-248767r779867_rule</td>
+	<td>SV-248767r853815_rule</td>
 </tr>
 
 <tr>
@@ -7610,7 +7710,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030317</td>
-	<td>SV-248768r779870_rule</td>
+	<td>SV-248768r853816_rule</td>
 </tr>
 
 <tr>
@@ -7643,7 +7743,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030320</td>
-	<td>SV-248769r779873_rule</td>
+	<td>SV-248769r853817_rule</td>
 </tr>
 
 <tr>
@@ -7676,7 +7776,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030330</td>
-	<td>SV-248770r779876_rule</td>
+	<td>SV-248770r853818_rule</td>
 </tr>
 
 <tr>
@@ -7709,7 +7809,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030340</td>
-	<td>SV-248771r779879_rule</td>
+	<td>SV-248771r853819_rule</td>
 </tr>
 
 <tr>
@@ -7742,7 +7842,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030350</td>
-	<td>SV-248772r779882_rule</td>
+	<td>SV-248772r853820_rule</td>
 </tr>
 
 <tr>
@@ -7779,7 +7879,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030360</td>
-	<td>SV-248773r818672_rule</td>
+	<td>SV-248773r853821_rule</td>
 </tr>
 
 <tr>
@@ -7822,7 +7922,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030361</td>
-	<td>SV-248774r818675_rule</td>
+	<td>SV-248774r853822_rule</td>
 </tr>
 
 <tr>
@@ -7855,7 +7955,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030370</td>
-	<td>SV-248779r779903_rule</td>
+	<td>SV-248779r853823_rule</td>
 </tr>
 
 <tr>
@@ -7890,7 +7990,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030390</td>
-	<td>SV-248781r779909_rule</td>
+	<td>SV-248781r853824_rule</td>
 </tr>
 
 <tr>
@@ -7923,7 +8023,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030400</td>
-	<td>SV-248782r779912_rule</td>
+	<td>SV-248782r853825_rule</td>
 </tr>
 
 <tr>
@@ -7956,7 +8056,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030410</td>
-	<td>SV-248783r779915_rule</td>
+	<td>SV-248783r853826_rule</td>
 </tr>
 
 <tr>
@@ -8005,7 +8105,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030420</td>
-	<td>SV-248784r818678_rule</td>
+	<td>SV-248784r853827_rule</td>
 </tr>
 
 <tr>
@@ -8046,7 +8146,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030480</td>
-	<td>SV-248790r818681_rule</td>
+	<td>SV-248790r853828_rule</td>
 </tr>
 
 <tr>
@@ -8085,7 +8185,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030490</td>
-	<td>SV-248791r818684_rule</td>
+	<td>SV-248791r853829_rule</td>
 </tr>
 
 <tr>
@@ -8118,7 +8218,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030550</td>
-	<td>SV-248797r779957_rule</td>
+	<td>SV-248797r853830_rule</td>
 </tr>
 
 <tr>
@@ -8151,7 +8251,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030560</td>
-	<td>SV-248798r779960_rule</td>
+	<td>SV-248798r853831_rule</td>
 </tr>
 
 <tr>
@@ -8184,7 +8284,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030570</td>
-	<td>SV-248799r779963_rule</td>
+	<td>SV-248799r853832_rule</td>
 </tr>
 
 <tr>
@@ -8227,7 +8327,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030580</td>
-	<td>SV-248800r779966_rule</td>
+	<td>SV-248800r853833_rule</td>
 </tr>
 
 <tr>
@@ -8286,7 +8386,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030590</td>
-	<td>SV-248801r779969_rule</td>
+	<td>SV-248801r853834_rule</td>
 </tr>
 
 <tr>
@@ -8329,7 +8429,7 @@ The audit daemon must be restarted for the changes to take effect. To restart th
  
 $ sudo service auditd restart</pre></td>
 	<td>OL08-00-030600</td>
-	<td>SV-248802r779972_rule</td>
+	<td>SV-248802r853835_rule</td>
 </tr>
 
 <tr>
@@ -8378,7 +8478,7 @@ Add or modify the following line in "/etc/default/grub" to ensure the configurat
 
 GRUB_CMDLINE_LINUX="audit=1"</pre></td>
 	<td>OL08-00-030601</td>
-	<td>SV-248803r779975_rule</td>
+	<td>SV-248803r853836_rule</td>
 </tr>
 
 <tr>
@@ -8421,7 +8521,7 @@ GRUB_CMDLINE_LINUX="audit_backlog_limit=8192"
  
 If audit records are not stored on a partition made specifically for audit records, a new partition with sufficient space will need be to be created.</pre></td>
 	<td>OL08-00-030602</td>
-	<td>SV-248804r779978_rule</td>
+	<td>SV-248804r853837_rule</td>
 </tr>
 
 <tr>
@@ -8661,7 +8761,7 @@ If audit records are stored on a partition made specifically for audit records, 
  
 If audit records are not stored on a partition made specifically for audit records, a new partition with sufficient space will need be to be created.</pre></td>
 	<td>OL08-00-030660</td>
-	<td>SV-248811r818686_rule</td>
+	<td>SV-248811r853838_rule</td>
 </tr>
 
 <tr>
@@ -8771,7 +8871,7 @@ If there is no evidence that the audit logs are being offloaded to another syste
  
 *.* @@[remoteloggingserver]:[port]</pre></td>
 	<td>OL08-00-030690</td>
-	<td>SV-248814r780008_rule</td>
+	<td>SV-248814r853839_rule</td>
 </tr>
 
 <tr>
@@ -8802,7 +8902,7 @@ overflow_action = syslog
  
 The audit daemon must be restarted for changes to take effect.</pre></td>
 	<td>OL08-00-030700</td>
-	<td>SV-248815r780011_rule</td>
+	<td>SV-248815r853840_rule</td>
 </tr>
 
 <tr>
@@ -8840,7 +8940,7 @@ If there is no evidence that the transfer of the audit logs being offloaded to a
 $DefaultNetstreamDriver gtls 
 $ActionSendStreamDriverMode 1</pre></td>
 	<td>OL08-00-030710</td>
-	<td>SV-248816r818688_rule</td>
+	<td>SV-248816r853841_rule</td>
 </tr>
 
 <tr>
@@ -8875,7 +8975,7 @@ If there is no evidence that the transfer of the audit logs being offloaded to a
  
 $ActionSendStreamDriverAuthMode x509/name</pre></td>
 	<td>OL08-00-030720</td>
-	<td>SV-248817r780017_rule</td>
+	<td>SV-248817r853842_rule</td>
 </tr>
 
 <tr>
@@ -8898,7 +8998,7 @@ If there is no evidence that real-time alerts are configured on the system, this
  
 space_left = 25%</pre></td>
 	<td>OL08-00-030730</td>
-	<td>SV-248818r780020_rule</td>
+	<td>SV-248818r853843_rule</td>
 </tr>
 
 <tr>
@@ -8923,7 +9023,7 @@ space_left_action = email
 
 Note: Option names and values in the auditd.conf file are case insensitive.</pre></td>
 	<td>OL08-00-030731</td>
-	<td>SV-248819r780023_rule</td>
+	<td>SV-248819r853844_rule</td>
 </tr>
 
 <tr>
@@ -8958,7 +9058,7 @@ If the "maxpoll" option is set to a number greater than "16" or the line is comm
  
 server [ntp.server.name] iburst maxpoll 16</pre></td>
 	<td>OL08-00-030740</td>
-	<td>SV-248820r780026_rule</td>
+	<td>SV-248820r853845_rule</td>
 </tr>
 
 <tr>
@@ -9615,7 +9715,7 @@ $ sudo firewall-cmd --permanent --zone=[custom] --change-interface=ens33
 Reload the firewall rules for changes to take effect:
 $ sudo firewall-cmd --reload</pre></td>
 	<td>OL08-00-040090</td>
-	<td>SV-248839r818699_rule</td>
+	<td>SV-248839r853846_rule</td>
 </tr>
 
 <tr>
@@ -9642,7 +9742,7 @@ If the "firewalld" package is not installed, ask the System Administrator if ano
 
 $ sudo yum install firewalld.noarch</pre></td>
 	<td>OL08-00-040100</td>
-	<td>SV-248840r780086_rule</td>
+	<td>SV-248840r853847_rule</td>
 </tr>
 
 <tr>
@@ -9671,7 +9771,7 @@ $ sudo systemctl enable firewalld
 
 $ sudo systemctl start firewalld</pre></td>
 	<td>OL08-00-040101</td>
-	<td>SV-248841r780089_rule</td>
+	<td>SV-248841r853848_rule</td>
 </tr>
 
 <tr>
@@ -9706,7 +9806,7 @@ If a wireless interface is configured and has not been documented and approved b
  
 $ sudo nmcli radio all off</pre></td>
 	<td>OL08-00-040110</td>
-	<td>SV-248842r780092_rule</td>
+	<td>SV-248842r853849_rule</td>
 </tr>
 
 <tr>
@@ -9755,7 +9855,7 @@ blacklist bluetooth
 
 Reboot the system for the settings to take effect.</pre></td>
 	<td>OL08-00-040111</td>
-	<td>SV-248843r833244_rule</td>
+	<td>SV-248843r860921_rule</td>
 </tr>
 
 <tr>
@@ -9788,7 +9888,7 @@ If results are returned and the "nodev" option is missing, or if "/dev/shm" is m
  
 tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>OL08-00-040120</td>
-	<td>SV-248844r780098_rule</td>
+	<td>SV-248844r853853_rule</td>
 </tr>
 
 <tr>
@@ -9821,7 +9921,7 @@ If results are returned and the "nosuid" option is missing, or if "/dev/shm" is 
  
 tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>OL08-00-040121</td>
-	<td>SV-248845r780101_rule</td>
+	<td>SV-248845r853854_rule</td>
 </tr>
 
 <tr>
@@ -9854,7 +9954,7 @@ If results are returned and the "noexec" option is missing, or if "/dev/shm" is 
  
 tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>OL08-00-040122</td>
-	<td>SV-248846r780104_rule</td>
+	<td>SV-248846r853855_rule</td>
 </tr>
 
 <tr>
@@ -9887,7 +9987,7 @@ If results are returned and the "nodev" option is missing, or if /tmp is mounted
 
 /dev/mapper/ol-tmp /tmp xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>OL08-00-040123</td>
-	<td>SV-248847r780107_rule</td>
+	<td>SV-248847r853856_rule</td>
 </tr>
 
 <tr>
@@ -9920,7 +10020,7 @@ If results are returned and the "nosuid" option is missing, or if /tmp is mounte
 
 /dev/mapper/ol-tmp /tmp xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>OL08-00-040124</td>
-	<td>SV-248848r780110_rule</td>
+	<td>SV-248848r853857_rule</td>
 </tr>
 
 <tr>
@@ -9953,7 +10053,7 @@ If results are returned and the "noexec" option is missing, or if /tmp is mounte
 
 /dev/mapper/ol-tmp /tmp xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>OL08-00-040125</td>
-	<td>SV-248849r780113_rule</td>
+	<td>SV-248849r853858_rule</td>
 </tr>
 
 <tr>
@@ -9986,7 +10086,7 @@ If results are returned and the "nodev" option is missing, or if /var/log is mou
 
 /dev/mapper/ol-var_log /var/log xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>OL08-00-040126</td>
-	<td>SV-248850r780116_rule</td>
+	<td>SV-248850r853859_rule</td>
 </tr>
 
 <tr>
@@ -10019,7 +10119,7 @@ If results are returned and the "nosuid" option is missing, or if /var/log is mo
 
 /dev/mapper/ol-var_log /var/log xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>OL08-00-040127</td>
-	<td>SV-248851r780119_rule</td>
+	<td>SV-248851r853860_rule</td>
 </tr>
 
 <tr>
@@ -10052,7 +10152,7 @@ If results are returned and the "noexec" option is missing, or if /var/log is mo
 
 /dev/mapper/ol-var_log /var/log xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>OL08-00-040128</td>
-	<td>SV-248852r780122_rule</td>
+	<td>SV-248852r853861_rule</td>
 </tr>
 
 <tr>
@@ -10085,7 +10185,7 @@ If results are returned and the "nodev" option is missing, or if /var/log/audit 
 
 /dev/mapper/ol-var_log_audit /var/log/audit xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>OL08-00-040129</td>
-	<td>SV-248853r780125_rule</td>
+	<td>SV-248853r853862_rule</td>
 </tr>
 
 <tr>
@@ -10118,7 +10218,7 @@ If results are returned and the "nosuid" option is missing, or if /var/log/audit
 
 /dev/mapper/ol-var_log_audit /var/log/audit xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>OL08-00-040130</td>
-	<td>SV-248854r780128_rule</td>
+	<td>SV-248854r853863_rule</td>
 </tr>
 
 <tr>
@@ -10151,7 +10251,7 @@ If results are returned and the "noexec" option is missing, or if /var/log/audit
 
 /dev/mapper/ol-var_log_audit /var/log/audit xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>OL08-00-040131</td>
-	<td>SV-248855r780131_rule</td>
+	<td>SV-248855r853864_rule</td>
 </tr>
 
 <tr>
@@ -10184,7 +10284,7 @@ If results are returned and the "nodev" option is missing, or if /var/tmp is mou
 
 /dev/mapper/ol-var_tmp /var/tmp xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>OL08-00-040132</td>
-	<td>SV-248856r780134_rule</td>
+	<td>SV-248856r853865_rule</td>
 </tr>
 
 <tr>
@@ -10217,7 +10317,7 @@ If results are returned and the "nosuid" option is missing, or if /var/tmp is mo
 
 /dev/mapper/ol-var_tmp /var/tmp xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>OL08-00-040133</td>
-	<td>SV-248857r780137_rule</td>
+	<td>SV-248857r853866_rule</td>
 </tr>
 
 <tr>
@@ -10250,7 +10350,7 @@ If results are returned and the "noexec" option is missing, or if /var/tmp is mo
 
 /dev/mapper/ol-var_tmp /var/tmp xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>OL08-00-040134</td>
-	<td>SV-248858r780140_rule</td>
+	<td>SV-248858r853867_rule</td>
 </tr>
 
 <tr>
@@ -10284,7 +10384,7 @@ If "fapolicyd" is not installed, this is a finding.</pre></td>
  
 $ sudo yum install fapolicyd.x86_64</pre></td>
 	<td>OL08-00-040135</td>
-	<td>SV-248859r780143_rule</td>
+	<td>SV-248859r853868_rule</td>
 </tr>
 
 <tr>
@@ -10317,7 +10417,7 @@ If fapolicyd is not enabled and running, this is a finding.</pre></td>
 
 $ sudo systemctl enable --now fapolicyd</pre></td>
 	<td>OL08-00-040136</td>
-	<td>SV-248860r780146_rule</td>
+	<td>SV-248860r853869_rule</td>
 </tr>
 
 <tr>
@@ -10345,9 +10445,13 @@ $ sudo grep permissive /etc/fapolicyd/fapolicyd.conf
 
 permissive = 0
 
-Check that fapolicyd employs a deny-all policy on system mounts with the following command:
+Check that fapolicyd employs a deny-all policy on system mounts with the following commands:
 
+For OL 8.4 systems and older:
 $ sudo tail /etc/fapolicyd/fapolicyd.rules
+
+For OL 8.5 systems and newer:
+$ sudo tail /etc/fapolicyd/compiled.rules
 
 allow exe=/usr/bin/python3.7 : ftype=text/x-python
 deny_audit perm=any pattern=ld_so : all
@@ -10360,13 +10464,17 @@ With the "fapolicyd" installed and enabled, configure the daemon to function in 
 
 permissive = 1
 
+For OL 8.4 systems and older:
 Build the whitelist in the "/etc/fapolicyd/fapolicyd.rules" file ensuring the last rule is "deny perm=any all : all".
+
+For OL 8.5 systems and newer:
+Build the whitelist in a file within the "/etc/fapolicyd/rules.d" directory ensuring the last rule is "deny perm=any all : all".
 
 Once it is determined the whitelist is built correctly, set the fapolicyd to enforcing mode by editing the "permissive" line in the /etc/fapolicyd/fapolicyd.conf file.
 
 permissive = 0</pre></td>
 	<td>OL08-00-040137</td>
-	<td>SV-248861r818702_rule</td>
+	<td>SV-248861r860922_rule</td>
 </tr>
 
 <tr>
@@ -10395,7 +10503,7 @@ If there is no evidence that unauthorized peripherals are being blocked before e
 
 $ sudo yum install usbguard.x86_64</pre></td>
 	<td>OL08-00-040139</td>
-	<td>SV-248862r780152_rule</td>
+	<td>SV-248862r853871_rule</td>
 </tr>
 
 <tr>
@@ -10425,7 +10533,7 @@ This command must be run from a root shell and will create an allow list for any
 
 Note: Enabling and starting usbguard without properly configuring it for an individual system will immediately prevent any access over a usb device such as a keyboard or mouse.</pre></td>
 	<td>OL08-00-040140</td>
-	<td>SV-248863r780155_rule</td>
+	<td>SV-248863r853872_rule</td>
 </tr>
 
 <tr>
@@ -10460,7 +10568,7 @@ $ sudo systemctl start usbguard.service
 
 Note: Enabling and starting usbguard without properly configuring it for an individual system will immediately prevent any access over a usb device such as a keyboard or mouse.</pre></td>
 	<td>OL08-00-040141</td>
-	<td>SV-248864r780158_rule</td>
+	<td>SV-248864r853873_rule</td>
 </tr>
 
 <tr>
@@ -10492,7 +10600,7 @@ FirewallBackend=nftables
  
 Establish rate-limiting rules based on organization-defined types of DoS attacks on impacted network interfaces.</pre></td>
 	<td>OL08-00-040150</td>
-	<td>SV-248865r780161_rule</td>
+	<td>SV-248865r853874_rule</td>
 </tr>
 
 <tr>
@@ -10519,7 +10627,7 @@ If the "SSH server" package is not installed, this is a finding.</pre></td>
 
 $ sudo yum install openssh-server.x86_64</pre></td>
 	<td>OL08-00-040159</td>
-	<td>SV-248866r780164_rule</td>
+	<td>SV-248866r853875_rule</td>
 </tr>
 
 <tr>
@@ -10551,7 +10659,7 @@ If "sshd" does not show a status of "active" and "running", this is a finding.</
  
 $ sudo systemctl enable sshd.service</pre></td>
 	<td>OL08-00-040160</td>
-	<td>SV-248867r780167_rule</td>
+	<td>SV-248867r853876_rule</td>
 </tr>
 
 <tr>
@@ -10565,13 +10673,14 @@ $ sudo systemctl enable sshd.service</pre></td>
 Operating systems using encryption are required to use FIPS-compliant mechanisms for authenticating to cryptographic modules. 
  
 Session key regeneration limits the chances of a session key becoming compromised.</pre></td>
-	<td><pre>Verify the SSH server is configured to force frequent session key renegotiation with the following command: 
- 
-$ sudo grep -i RekeyLimit /etc/ssh/sshd_config 
- 
-RekeyLimit 1G 1h 
- 
-If "RekeyLimit" does not have a maximum data amount and maximum time defined or is missing or commented out, this is a finding.</pre></td>
+	<td><pre>Verify the SSH server is configured to force frequent session key renegotiation with the following command:
+
+$ sudo grep -ir RekeyLimit /etc/ssh/sshd_config*
+
+RekeyLimit 1G 1h
+
+If "RekeyLimit" does not have a maximum data amount and maximum time defined or is missing or commented out, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure the system to force a frequent session key renegotiation for SSH connections to the server by adding or modifying the following line in the "/etc/ssh/sshd_config" file: 
  
 RekeyLimit 1G 1h 
@@ -10580,7 +10689,7 @@ The SSH daemon must be restarted for the settings to take effect.
  
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-040161</td>
-	<td>SV-248868r780170_rule</td>
+	<td>SV-248868r858586_rule</td>
 </tr>
 
 <tr>
@@ -10772,11 +10881,19 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 $ sudo sysctl -w net.ipv4.conf.default.accept_redirects=0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 If "0" is not the system's default value then add or update the following line in the appropriate file under "/etc/sysctl.d":
 
 net.ipv4.conf.default.accept_redirects=0</pre></td>
 	<td>OL08-00-040209</td>
-	<td>SV-248875r833248_rule</td>
+	<td>SV-248875r858651_rule</td>
 </tr>
 
 <tr>
@@ -10815,15 +10932,23 @@ $ sudo grep -r net.ipv6.conf.default.accept_redirects /run/sysctl.d/*.conf /usr/
 If "net.ipv6.conf.default.accept_redirects" is not set to "0", is missing or commented out, this is a finding.
 
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to prevent IPv6 ICMP redirect messages from being accepted with the following command: 
- 
-$ sudo sysctl -w net.ipv6.conf.default.accept_redirects=0 
- 
-If "0" is not the system's default value, add or update the following line in "/etc/sysctl.conf" or in the appropriate file under "/etc/sysctl.d": 
+	<td><pre>Configure OL 8 to prevent IPv6 ICMP redirect messages from being accepted with the following command:
+
+$ sudo sysctl -w net.ipv6.conf.default.accept_redirects=0
+
+Remove any configurations that conflict with the above from the following locations:
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
+If "0" is not the system's default value, add or update the following line in "/etc/sysctl.conf" or in the appropriate file under "/etc/sysctl.d":
 
 net.ipv6.conf.default.accept_redirects=0</pre></td>
 	<td>OL08-00-040210</td>
-	<td>SV-248876r833250_rule</td>
+	<td>SV-248876r858653_rule</td>
 </tr>
 
 <tr>
@@ -10862,15 +10987,23 @@ $ sudo grep -r net.ipv4.conf.all.send_redirects /run/sysctl.d/*.conf /usr/local/
 If "net.ipv4.conf.all.send_redirects" is not set to "0", is missing or commented out, this is a finding.
 
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to not allow interfaces to perform IPv4 ICMP redirects with the following command: 
- 
-$ sudo sysctl -w net.ipv4.conf.all.send_redirects=0 
- 
-If "0" is not the system's default value, add or update the following line in "/etc/sysctl.conf" or in the appropriate file under "/etc/sysctl.d": 
- 
+	<td><pre>Configure OL 8 to not allow interfaces to perform IPv4 ICMP redirects with the following command:
+
+$ sudo sysctl -w net.ipv4.conf.all.send_redirects=0
+
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
+If "0" is not the system's default value, add or update the following line in "/etc/sysctl.conf" or in the appropriate file under "/etc/sysctl.d":
+
 net.ipv4.conf.all.send_redirects=0</pre></td>
 	<td>OL08-00-040220</td>
-	<td>SV-248877r833252_rule</td>
+	<td>SV-248877r858655_rule</td>
 </tr>
 
 <tr>
@@ -10909,15 +11042,23 @@ $ sudo grep -r net.ipv4.icmp_echo_ignore_broadcasts /run/sysctl.d/*.conf /usr/lo
 If "net.ipv4.icmp_echo_ignore_broadcasts" is not set to "1", is missing or commented out, this is a finding.
 
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to not respond to IPv4 ICMP echoes sent to a broadcast address with the following command: 
- 
-$ sudo sysctl -w net.ipv4.icmp_echo_ignore_broadcasts=1 
- 
-If "1" is not the system's default value, add or update the following line in "/etc/sysctl.conf" or in the appropriate file under "/etc/sysctl.d": 
- 
+	<td><pre>Configure OL 8 to not respond to IPv4 ICMP echoes sent to a broadcast address with the following command:
+
+$ sudo sysctl -w net.ipv4.icmp_echo_ignore_broadcasts=1
+
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
+If "1" is not the system's default value, add or update the following line in "/etc/sysctl.conf" or in the appropriate file under "/etc/sysctl.d":
+
 net.ipv4.icmp_echo_ignore_broadcasts=1</pre></td>
 	<td>OL08-00-040230</td>
-	<td>SV-248878r833254_rule</td>
+	<td>SV-248878r858657_rule</td>
 </tr>
 
 <tr>
@@ -10958,11 +11099,19 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 $ sudo sysctl -w net.ipv4.conf.all.accept_source_route=0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 If "0" is not the system's all value then add or update the following line in the appropriate file under "/etc/sysctl.d":
 
 net.ipv4.conf.all.accept_source_route=0</pre></td>
 	<td>OL08-00-040239</td>
-	<td>SV-248879r833256_rule</td>
+	<td>SV-248879r858659_rule</td>
 </tr>
 
 <tr>
@@ -11005,11 +11154,19 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 $ sudo sysctl -w net.ipv6.conf.all.accept_source_route=0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 If "0" is not the system's all value then add or update the following line in the appropriate file under "/etc/sysctl.d":
 
 net.ipv6.conf.all.accept_source_route=0</pre></td>
 	<td>OL08-00-040240</td>
-	<td>SV-248880r833258_rule</td>
+	<td>SV-248880r858661_rule</td>
 </tr>
 
 <tr>
@@ -11050,11 +11207,19 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 $ sudo sysctl -w net.ipv4.conf.default.accept_source_route=0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 If "0" is not the system's default value then add or update the following line in the appropriate file under "/etc/sysctl.d":
 
 net.ipv4.conf.default.accept_source_route=0</pre></td>
 	<td>OL08-00-040249</td>
-	<td>SV-248881r833260_rule</td>
+	<td>SV-248881r858663_rule</td>
 </tr>
 
 <tr>
@@ -11097,11 +11262,19 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 $ sudo sysctl -w net.ipv6.conf.default.accept_source_route=0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 If "0" is not the system's default value then add or update the following line in the appropriate file under "/etc/sysctl.d":
 
 net.ipv6.conf.default.accept_source_route=0</pre></td>
 	<td>OL08-00-040250</td>
-	<td>SV-248882r833262_rule</td>
+	<td>SV-248882r858665_rule</td>
 </tr>
 
 <tr>
@@ -11144,11 +11317,19 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 $ sudo sysctl -w net.ipv6.conf.all.forwarding=0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 If "0" is not the system's default value, add or update the following lines in "/etc/sysctl.conf" or in the appropriate file under "/etc/sysctl.d":
 
 net.ipv6.conf.all.forwarding=0</pre></td>
 	<td>OL08-00-040260</td>
-	<td>SV-248883r833266_rule</td>
+	<td>SV-248883r858669_rule</td>
 </tr>
 
 <tr>
@@ -11189,15 +11370,23 @@ $ sudo grep -r net.ipv6.conf.all.accept_ra /run/sysctl.d/*.conf /usr/local/lib/s
 If "net.ipv6.conf.all.accept_ra" is not set to "0", is missing or commented out, this is a finding.
 
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure the system to not accept router advertisements on all IPv6 interfaces unless the system is a router with the following commands: 
- 
-$ sudo sysctl -w net.ipv6.conf.all.accept_ra=0 
- 
-If "0" is not the system's default value, add or update the following lines in the appropriate file under "/etc/sysctl.d": 
- 
+	<td><pre>Configure the system to not accept router advertisements on all IPv6 interfaces unless the system is a router with the following commands:
+
+$ sudo sysctl -w net.ipv6.conf.all.accept_ra=0
+
+Remove any configurations that conflict with the above from the following locations:
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
+If "0" is not the system's default value, add or update the following lines in the appropriate file under "/etc/sysctl.d":
+
 net.ipv6.conf.all.accept_ra=0</pre></td>
 	<td>OL08-00-040261</td>
-	<td>SV-248884r833268_rule</td>
+	<td>SV-248884r858671_rule</td>
 </tr>
 
 <tr>
@@ -11238,15 +11427,23 @@ $ sudo grep -r net.ipv6.conf.default.accept_ra /run/sysctl.d/*.conf /usr/local/l
 If "net.ipv6.conf.default.accept_ra" is not set to "0", is missing or commented out, this is a finding.
 
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure the system to not accept router advertisements on all IPv6 interfaces by default, unless the system is a router, with the following commands: 
- 
-$ sudo sysctl -w net.ipv6.conf.default.accept_ra=0 
- 
-If "0" is not the system's default value, add or update the following lines in the appropriate file under "/etc/sysctl.d": 
- 
+	<td><pre>Configure the system to not accept router advertisements on all IPv6 interfaces by default, unless the system is a router, with the following commands:
+
+$ sudo sysctl -w net.ipv6.conf.default.accept_ra=0
+
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
+If "0" is not the system's default value, add or update the following lines in the appropriate file under "/etc/sysctl.d":
+
 net.ipv6.conf.default.accept_ra=0</pre></td>
 	<td>OL08-00-040262</td>
-	<td>SV-248885r833270_rule</td>
+	<td>SV-248885r858673_rule</td>
 </tr>
 
 <tr>
@@ -11285,15 +11482,23 @@ $ sudo grep -r net.ipv4.conf.default.send_redirects /run/sysctl.d/*.conf /usr/lo
 If "net.ipv4.conf.default.send_redirects" is not set to "0", is missing or commented out, this is a finding.
 
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to not allow interfaces to perform Internet Protocol version 4 (IPv4) ICMP redirects by default with the following command: 
- 
-$ sudo sysctl -w net.ipv4.conf.default.send_redirects=0 
- 
-If "0" is not the system's default value, add or update the following line in "/etc/sysctl.conf" or in the appropriate file under "/etc/sysctl.d": 
- 
+	<td><pre>Configure OL 8 to not allow interfaces to perform Internet Protocol version 4 (IPv4) ICMP redirects by default with the following command:
+
+$ sudo sysctl -w net.ipv4.conf.default.send_redirects=0
+
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
+If "0" is not the system's default value, add or update the following line in "/etc/sysctl.conf" or in the appropriate file under "/etc/sysctl.d":
+
 net.ipv4.conf.default.send_redirects=0</pre></td>
 	<td>OL08-00-040270</td>
-	<td>SV-248886r833272_rule</td>
+	<td>SV-248886r858675_rule</td>
 </tr>
 
 <tr>
@@ -11334,11 +11539,19 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 $ sudo sysctl -w net.ipv4.conf.all.accept_redirects=0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 If "0" is not the system's default value then add or update the following line in the appropriate file under "/etc/sysctl.d":
 
 net.ipv4.conf.all.accept_redirects = 0</pre></td>
 	<td>OL08-00-040279</td>
-	<td>SV-248887r833274_rule</td>
+	<td>SV-248887r858677_rule</td>
 </tr>
 
 <tr>
@@ -11381,11 +11594,19 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 $ sudo sysctl -w net.ipv6.conf.all.accept_redirects=0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 If "0" is not the system's default value then add or update the following line in the appropriate file under "/etc/sysctl.d":
 
 net.ipv6.conf.all.accept_redirects = 0</pre></td>
 	<td>OL08-00-040280</td>
-	<td>SV-248888r833276_rule</td>
+	<td>SV-248888r858679_rule</td>
 </tr>
 
 <tr>
@@ -11420,15 +11641,23 @@ $ sudo grep -r kernel.unprivileged_bpf_disabled /run/sysctl.d/*.conf /usr/local/
 If "kernel.unprivileged_bpf_disabled" is not set to "1", is missing or commented out, this is a finding.
 
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure the system to prevent privilege escalation through the kernel by disabling access to the "bpf" syscall by adding the following line to a file in the "/etc/sysctl.d" directory: 
- 
-kernel.unprivileged_bpf_disabled = 1 
- 
-The system configuration files must be reloaded for the changes to take effect. To reload the contents of the files, run the following command: 
- 
+	<td><pre>Configure the system to prevent privilege escalation through the kernel by disabling access to the "bpf" syscall by adding the following line to a file in the "/etc/sysctl.d" directory:
+
+kernel.unprivileged_bpf_disabled = 1
+
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
+The system configuration files must be reloaded for the changes to take effect. To reload the contents of the files, run the following command:
+
 $ sudo sysctl --system</pre></td>
 	<td>OL08-00-040281</td>
-	<td>SV-248889r833278_rule</td>
+	<td>SV-248889r858681_rule</td>
 </tr>
 
 <tr>
@@ -11463,15 +11692,23 @@ $ sudo grep -r kernel.yama.ptrace_scope /run/sysctl.d/*.conf /usr/local/lib/sysc
 If "kernel.yama.ptrace_scope" is not set to "1", is missing or commented out, this is a finding.
 
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure the system to restrict the use of "ptrace" to descendant processes by adding the following line to a file in the "/etc/sysctl.d" directory: 
- 
-kernel.yama.ptrace_scope = 1 
- 
-The system configuration files must be reloaded for the changes to take effect. To reload the contents of the files, run the following command: 
- 
+	<td><pre>Configure the system to restrict the use of "ptrace" to descendant processes by adding the following line to a file in the "/etc/sysctl.d" directory:
+
+kernel.yama.ptrace_scope = 1
+
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
+The system configuration files must be reloaded for the changes to take effect. To reload the contents of the files, run the following command:
+
 $ sudo sysctl --system</pre></td>
 	<td>OL08-00-040282</td>
-	<td>SV-248890r833280_rule</td>
+	<td>SV-248890r858683_rule</td>
 </tr>
 
 <tr>
@@ -11506,15 +11743,23 @@ $ sudo grep -r kernel.kptr_restrict /run/sysctl.d/*.conf /usr/local/lib/sysctl.d
 If "kernel.kptr_restrict" is not set to "1" or "2", is missing or commented out, this is a finding.
 
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure the system to restrict exposed kernel pointer addresses access by adding the following line to a file in the "/etc/sysctl.d" directory: 
- 
-kernel.kptr_restrict = 1 
- 
-The system configuration files must be reloaded for the changes to take effect. To reload the contents of the files, run the following command: 
- 
+	<td><pre>Configure the system to restrict exposed kernel pointer addresses access by adding the following line to a file in the "/etc/sysctl.d" directory:
+
+kernel.kptr_restrict = 1
+
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
+The system configuration files must be reloaded for the changes to take effect. To reload the contents of the files, run the following command:
+
 $ sudo sysctl --system</pre></td>
 	<td>OL08-00-040283</td>
-	<td>SV-248891r833282_rule</td>
+	<td>SV-248891r858685_rule</td>
 </tr>
 
 <tr>
@@ -11553,15 +11798,23 @@ $ sudo grep -r user.max_user_namespaces /run/sysctl.d/*.conf /usr/local/lib/sysc
 If "user.max_user_namespaces" is not set to "0", is missing or commented out, this is a finding.
 
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure the system to disable the use of user namespaces by adding the following line to a file in the "/etc/sysctl.d" directory: 
- 
-user.max_user_namespaces = 0 
- 
-The system configuration files must be reloaded for the changes to take effect. To reload the contents of the files, run the following command: 
- 
+	<td><pre>Configure the system to disable the use of user namespaces by adding the following line to a file in the "/etc/sysctl.d" directory:
+
+user.max_user_namespaces = 0
+
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
+The system configuration files must be reloaded for the changes to take effect. To reload the contents of the files, run the following command:
+
 $ sudo sysctl --system</pre></td>
 	<td>OL08-00-040284</td>
-	<td>SV-248892r833284_rule</td>
+	<td>SV-248892r858687_rule</td>
 </tr>
 
 <tr>
@@ -11597,15 +11850,23 @@ $ sudo grep -r net.ipv4.conf.all.rp_filter /run/sysctl.d/*.conf /usr/local/lib/s
 If "net.ipv4.conf.all.rp_filter" is not set to "1" or "2", is missing or commented out, this is a finding.
 
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure the system to use reverse path filtering on all IPv4 interfaces by adding the following line to a file in the "/etc/sysctl.d" directory: 
- 
-net.ipv4.conf.all.rp_filter = 1 
- 
-The system configuration files must be reloaded for the changes to take effect. To reload the contents of the files, run the following command: 
- 
+	<td><pre>Configure the system to use reverse path filtering on all IPv4 interfaces by adding the following line to a file in the "/etc/sysctl.d" directory:
+
+net.ipv4.conf.all.rp_filter = 1
+
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
+The system configuration files must be reloaded for the changes to take effect. To reload the contents of the files, run the following command:
+
 $ sudo sysctl --system</pre></td>
 	<td>OL08-00-040285</td>
-	<td>SV-248893r833286_rule</td>
+	<td>SV-248893r858689_rule</td>
 </tr>
 
 <tr>
@@ -11646,11 +11907,19 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 net.core.bpf_jit_harden = 2
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 The system configuration files need to be reloaded for the changes to take effect. To reload the contents of the files, run the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>OL08-00-040286</td>
-	<td>SV-248894r833288_rule</td>
+	<td>SV-248894r858691_rule</td>
 </tr>
 
 <tr>
@@ -11811,13 +12080,14 @@ $ sudo ip link set dev <devicename> multicast off promisc off</pre></td>
 X11 forwarding should be enabled with caution. Users with the ability to bypass file permissions on the remote host (for the user's X11 authorization database) can access the local X11 display through the forwarded connection. An attacker may then be able to perform activities such as keystroke monitoring if the "ForwardX11Trusted" option is also enabled. 
  
 If X11 services are not required for the system's intended function, they should be disabled or restricted as appropriate to the system’s needs.</pre></td>
-	<td><pre>Verify "X11Forwarding" is disabled with the following command: 
- 
-$ sudo grep -i x11forwarding /etc/ssh/sshd_config | grep -v "^#" 
- 
-X11Forwarding no 
- 
-If the "X11Forwarding" keyword is set to "yes" and is not documented with the Information System Security Officer (ISSO) as an operational requirement or is missing, this is a finding.</pre></td>
+	<td><pre>Verify "X11Forwarding" is disabled with the following command:
+
+$ sudo grep -ir x11forwarding /etc/ssh/sshd_config* | grep -v "^#"
+
+X11Forwarding no
+
+If the "X11Forwarding" keyword is set to "yes" and is not documented with the Information System Security Officer (ISSO) as an operational requirement or is missing, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Edit the "/etc/ssh/sshd_config" file to uncomment or add the line for the "X11Forwarding" keyword and set its value to "no" (this file may be named differently or be in a different location if using a version of SSH that is provided by a third-party vendor): 
  
 X11Forwarding no 
@@ -11826,7 +12096,7 @@ The SSH service must be restarted for changes to take effect:
  
 $ sudo systemctl restart sshd</pre></td>
 	<td>OL08-00-040340</td>
-	<td>SV-248900r780266_rule</td>
+	<td>SV-248900r858588_rule</td>
 </tr>
 
 <tr>
@@ -11836,21 +12106,22 @@ $ sudo systemctl restart sshd</pre></td>
 	<td>The OL 8 SSH daemon must prevent remote hosts from connecting to the proxy display.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>When X11 forwarding is enabled, there may be additional exposure to the server and client displays if the sshd proxy display is configured to listen on the wildcard address. By default, sshd binds the forwarding server to the loopback address and sets the hostname part of the DISPLAY environment variable to localhost. This prevents remote hosts from connecting to the proxy display.</pre></td>
-	<td><pre>Verify the OL 8 SSH daemon prevents remote hosts from connecting to the proxy display. 
- 
-Check the SSH "X11UseLocalhost" setting with the following command: 
- 
-$ sudo grep -i x11uselocalhost /etc/ssh/sshd_config 
-X11UseLocalhost yes 
- 
-If the "X11UseLocalhost" keyword is set to "no", is missing, or is commented out, this is a finding.</pre></td>
+	<td><pre>Verify the OL 8 SSH daemon prevents remote hosts from connecting to the proxy display.
+
+Check the SSH "X11UseLocalhost" setting with the following command:
+
+$ sudo grep -ir x11uselocalhost /etc/ssh/sshd_config*
+X11UseLocalhost yes
+
+If the "X11UseLocalhost" keyword is set to "no", is missing, or is commented out, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure the OL 8 SSH daemon to prevent remote hosts from connecting to the proxy display. 
  
 Edit the "/etc/ssh/sshd_config" file to uncomment or add the line for the "X11UseLocalhost" keyword and set its value to "yes" (this file may be named differently or be in a different location if using a version of SSH that is provided by a third-party vendor): 
  
 X11UseLocalhost yes</pre></td>
 	<td>OL08-00-040341</td>
-	<td>SV-248901r780269_rule</td>
+	<td>SV-248901r858590_rule</td>
 </tr>
 
 <tr>
@@ -12015,7 +12286,7 @@ Use the following command to map an existing user to the "user_u" role:
  
 $ sudo semanage login -m -s user_u <username></pre></td>
 	<td>OL08-00-040400</td>
-	<td>SV-248907r780287_rule</td>
+	<td>SV-248907r853877_rule</td>
 </tr>
 
 <tr>
@@ -12131,7 +12402,7 @@ If there is no application installed to perform integrity checks, this is a find
 
 $ sudo yum install aide</pre></td>
 	<td>OL08-00-010359</td>
-	<td>SV-252654r818758_rule</td>
+	<td>SV-252654r854183_rule</td>
 </tr>
 
 <tr>
@@ -12195,7 +12466,7 @@ $ sudo vi /etc/pam.d/sudo
 
 Remove any occurrences of " pam_succeed_if " in the file.</pre></td>
 	<td>OL08-00-010385</td>
-	<td>SV-252656r818764_rule</td>
+	<td>SV-252656r854184_rule</td>
 </tr>
 
 <tr>
@@ -12319,16 +12590,18 @@ If conflicting results are returned, this is a finding.
 
 Check for the use of the "pwquality" retry option in the system-auth and password-auth files with the following command:
 
-$ sudo grep retry /etc/pam.d/system-auth /etc/pam.d/password-auth
+$ sudo grep pwquality /etc/pam.d/system-auth /etc/pam.d/password-auth | grep retry
 
 If the command returns any results, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to limit the "pwquality" retry option to 3.
 
 Add the following line to the "/etc/security/pwquality.conf" file(or modify the line to have the required value):
 
-retry = 3</pre></td>
+retry = 3
+
+Remove any configurations that conflict with the above value.</pre></td>
 	<td>OL08-00-020104</td>
-	<td>SV-252660r833218_rule</td>
+	<td>SV-252660r858600_rule</td>
 </tr>
 
 <tr>
@@ -12396,17 +12669,25 @@ $ sudo grep -r net.ipv4.conf.all.forwarding /run/sysctl.d/*.conf /usr/local/lib/
 If "net.ipv4.conf.all.forwarding" is not set to "0", is missing or commented out, this is a finding.
 
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to not allow IPv4 packet forwarding, unless the system is a router.
+	<td><pre>Configure OL 8 to not allow IPv4 packet forwarding unless the system is a router.
 
 Add or edit the following line in a system configuration file, in the "/etc/sysctl.d/" directory:
 
 net.ipv4.conf.all.forwarding=0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>OL08-00-040259</td>
-	<td>SV-252662r833264_rule</td>
+	<td>SV-252662r858667_rule</td>
 </tr>
 
 <tr>

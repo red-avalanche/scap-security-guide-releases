@@ -963,7 +963,7 @@ After the settings have been set, run <code>dconf update</code>.</td>
 <td>Ensure Users Cannot Change GNOME3 Screensaver Lock After Idle Period</td>
 <td>If not already configured, ensure that users cannot change GNOME3 screensaver lock settings
 by adding <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
-to <code>/etc/dconf/db/local.d/00-security-settings</code>.
+to <code>/etc/dconf/db/local.d/locks/00-security-settings</code>.
 For example:
 <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
 After the settings have been set, run <code>dconf update</code>.</td>
@@ -1564,6 +1564,14 @@ OR:
 </td>
 </tr>
 <tr>
+<td>CCE-86699-6</td>
+<td>Verify Group Ownership of System Login Banner</td>
+<td>
+To properly set the group owner of <code>/etc/issue</code>, run the command:
+<pre>$ sudo chgrp root /etc/issue</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-86052-8</td>
 <td>Verify Group Ownership of System Login Banner for Remote Connections</td>
 <td>
@@ -1572,11 +1580,35 @@ To properly set the group owner of <code>/etc/issue.net</code>, run the command:
 </td>
 </tr>
 <tr>
+<td>CCE-86697-0</td>
+<td>Verify Group Ownership of Message of the Day Banner</td>
+<td>
+To properly set the group owner of <code>/etc/motd</code>, run the command:
+<pre>$ sudo chgrp root /etc/motd</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86700-2</td>
+<td>Verify ownership of System Login Banner</td>
+<td>
+To properly set the owner of <code>/etc/issue</code>, run the command:
+<pre>$ sudo chown root /etc/issue </pre>
+</td>
+</tr>
+<tr>
 <td>CCE-86057-7</td>
 <td>Verify ownership of System Login Banner for Remote Connections</td>
 <td>
 To properly set the owner of <code>/etc/issue.net</code>, run the command:
 <pre>$ sudo chown root /etc/issue.net </pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86698-8</td>
+<td>Verify ownership of Message of the Day Banner</td>
+<td>
+To properly set the owner of <code>/etc/motd</code>, run the command:
+<pre>$ sudo chown root /etc/motd </pre>
 </td>
 </tr>
 <tr>
@@ -1703,11 +1735,19 @@ records is stored. The configured directory must have the correct SELinux contex
 <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <code>remember</code> option for the <code>pam_pwhistory</code> PAM module.
 <br><br>
-In the file <code>/etc/pam.d/password-auth</code>, make sure the parameter
-<code>remember</code> is present and it has a value equal to or greater than
-<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>. For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember_control_flag" use="legacy"></xccdf-1.2:sub></code><br>
+
+On systems with newer versions of <code>authselect</code>, the <code>pam_pwhistory</code> PAM module
+can be enabled via authselect feature:
+<pre>authselect enable-feature with-pwhistory</pre>
+
+Otherwise, it should be enabled using an authselect custom profile.
+<br><br>
+Newer systems also have the <code>/etc/security/pwhistory.conf</code> file for setting
+<code>pam_pwhistory</code> module options. This file should be used whenever available.
+Otherwise, the <code>pam_pwhistory</code> module options can be set in PAM files.
+<br><br>
+The value for <code>remember</code> option must be equal or greater than
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>
 </td>
 </tr>
 <tr>
@@ -1716,12 +1756,19 @@ In the file <code>/etc/pam.d/password-auth</code>, make sure the parameter
 <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <code>remember</code> option for the <code>pam_pwhistory</code> PAM module.
 <br><br>
-In the file <code>/etc/pam.d/system-auth</code>, make sure the parameter
-<code>remember</code> is present and it has a value equal to or greater than
+
+On systems with newer versions of <code>authselect</code>, the <code>pam_pwhistory</code> PAM module
+can be enabled via authselect feature:
+<pre>authselect enable-feature with-pwhistory</pre>
+
+Otherwise, it should be enabled using an authselect custom profile.
+<br><br>
+Newer systems also have the <code>/etc/security/pwhistory.conf</code> file for setting
+<code>pam_pwhistory</code> module options. This file should be used whenever available.
+Otherwise, the <code>pam_pwhistory</code> module options can be set in PAM files.
+<br><br>
+The value for <code>remember</code> option must be equal or greater than
 <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>
-For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember_control_flag" use="legacy"></xccdf-1.2:sub></code><br>
 </td>
 </tr>
 <tr>
@@ -1742,7 +1789,9 @@ For example:
 using <code>pam_faillock.so</code>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
 depending on the OS version.</td>
 </tr>
@@ -1784,6 +1833,18 @@ account management failed attempt configurations.</td>
 <td>Utilizing <code>pam_faillock.so</code>, the <code>fail_interval</code> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
 period.</td>
+</tr>
+<tr>
+<td>CCE-87097-2</td>
+<td>Do Not Show System Messages When Unsuccessful Logon Attempts Occur</td>
+<td>This rule ensures the system prevents informative messages from being presented to the user
+pertaining to logon information after a number of incorrect login attempts using
+<code>pam_faillock.so</code>.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
+depending on the OS version.</td>
 </tr>
 <tr>
 <td>CCE-83588-4</td>
@@ -2570,7 +2631,7 @@ vc/4</pre>
 <td>To ensure that only users who are members of the <code>wheel</code> group can
 run commands with altered privileges through the <code>su</code> command, make
 sure that the following line exists in the file <code>/etc/pam.d/su</code>:
-<pre>auth             required        pam_wheel.so use_uid</pre>
+<pre>auth required pam_wheel.so use_uid</pre>
 </td>
 </tr>
 <tr>
@@ -3201,11 +3262,11 @@ utility to read audit rules during daemon startup, add the following line to
 <code>augenrules</code> program to read audit rules during daemon startup (the
 default), add the following line to to the bottom of a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-f 2</pre>
+<pre>-f <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_audit_failure_mode" use="legacy"></xccdf-1.2:sub></pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to the
 bottom of the <code>/etc/audit/audit.rules</code> file:
-<pre>-f 2</pre>
+<pre>-f <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_audit_failure_mode" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -3329,6 +3390,19 @@ account changes:
 </td>
 </tr>
 <tr>
+<td>CCE-86433-0</td>
+<td>Record Attempts to perform maintenance activities</td>
+<td>The Red Hat Enterprise Linux 9 operating system must generate audit records for
+privileged activities, nonlocal maintenance, diagnostic sessions and
+other system-level access.
+
+Verify the operating system audits activities performed during nonlocal
+maintenance and diagnostic sessions. Run the following command:
+<pre>$ sudo auditctl -l | grep sudo.log
+-w /var/log/sudo.log -p wa -k maintenance</pre>
+</td>
+</tr>
+<tr>
 <td></td>
 <td>Record Access Events to Audit Log Directory</td>
 <td>The audit system should collect access events to read audit log directory.
@@ -3390,14 +3464,14 @@ than the <code>root</code> group account, change the group ownership of the audi
 to this specific group.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86446-2</td>
 <td>Audit Configuration Files Must Be Owned By Group root</td>
 <td>All audit configuration files must be owned by group root.
 <pre>chown :root /etc/audit/audit*.{rules,conf} /etc/audit/rules.d/*</pre>
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86445-4</td>
 <td>Audit Configuration Files Must Be Owned By Root</td>
 <td>All audit configuration files must be owned by root user.
 
@@ -7963,6 +8037,17 @@ When prompted, enter the password that was selected.
 </td>
 </tr>
 <tr>
+<td>CCE-86696-2</td>
+<td>Verify the UEFI Boot Loader grub.cfg Group Ownership</td>
+<td>The file <code>/boot/grub2/grub.cfg</code> should
+be group-owned by the <code>root</code> group to prevent
+destruction or modification of the file.
+
+To properly set the group owner of <code>/boot/grub2/grub.cfg</code>, run the command:
+<pre>$ sudo chgrp root /boot/grub2/grub.cfg</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-86013-0</td>
 <td>Verify /boot/grub2/user.cfg Group Ownership</td>
 <td>The file <code>/boot/grub2/user.cfg</code> should be group-owned by the
@@ -7970,6 +8055,17 @@ When prompted, enter the password that was selected.
 
 To properly set the group owner of <code>/boot/grub2/user.cfg</code>, run the command:
 <pre>$ sudo chgrp root /boot/grub2/user.cfg</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86695-4</td>
+<td>Verify the UEFI Boot Loader grub.cfg User Ownership</td>
+<td>The file <code>/boot/grub2/grub.cfg</code> should
+be owned by the <code>root</code> user to prevent destruction
+or modification of the file.
+
+To properly set the owner of <code>/boot/grub2/grub.cfg</code>, run the command:
+<pre>$ sudo chown root /boot/grub2/grub.cfg </pre>
 </td>
 </tr>
 <tr>
@@ -9819,6 +9915,13 @@ To make sure that the setting is persistent, add the following line to a file in
 </td>
 </tr>
 <tr>
+<td>CCE-87181-4</td>
+<td>Disable Kernel Parameter for IPv4 Forwarding on all IPv4 Interfaces</td>
+<td>To set the runtime status of the <code>net.ipv4.conf.all.forwarding</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.forwarding=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.forwarding = 0</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-84000-9</td>
 <td>Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces</td>
 <td>To set the runtime status of the <code>net.ipv4.conf.all.log_martians</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.log_martians=1</pre>
@@ -9967,6 +10070,18 @@ To make sure that the setting is persistent, add the following line to a file in
 <td>Disable Kernel Parameter for IP Forwarding on IPv4 Interfaces</td>
 <td>To set the runtime status of the <code>net.ipv4.ip_forward</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.ip_forward=0</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.ip_forward = 0</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86378-7</td>
+<td>Install nftables Package</td>
+<td>nftables provides a new in-kernel packet classification framework that is based on a
+network-specific Virtual Machine (VM) and a new nft userspace command line tool.
+nftables reuses the existing Netfilter subsystems such as the existing hook infrastructure,
+the connection tracking system, NAT, userspace queuing and logging subsystem.
+The <code>nftables</code> package can be installed with the following command:
+<pre>
+$ sudo dnf install nftables</pre>
 </td>
 </tr>
 <tr>
@@ -10578,6 +10693,28 @@ its permission with the following command:
 </td>
 </tr>
 <tr>
+<td>CCE-86457-9</td>
+<td>Verify that audit tools are owned by group root</td>
+<td>The Red Hat Enterprise Linux 9 operating system audit tools must have the proper
+ownership configured to protected against unauthorized access.
+
+Verify it by running the following command:
+<pre>$ stat -c "%n %G" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
+
+/sbin/auditctl root
+/sbin/aureport root
+/sbin/ausearch root
+/sbin/autrace root
+/sbin/auditd root
+/sbin/audispd root
+/sbin/augenrules root
+</pre>
+
+Audit tools needed to successfully view and manipulate audit information
+system activity and records. Audit tools include custom queries and report
+generators</td>
+</tr>
+<tr>
 <td>CCE-89442-8</td>
 <td>Verify that system commands files are group owned by root or a system account</td>
 <td>System commands files are stored in the following directories by default:
@@ -10595,6 +10732,28 @@ by a group other than root or a a system account correct its ownership
 with the following command:
 <pre>$ sudo chgrp root <i>FILE</i></pre>
 </td>
+</tr>
+<tr>
+<td>CCE-86454-6</td>
+<td>Verify that audit tools are owned by root</td>
+<td>The Red Hat Enterprise Linux 9 operating system audit tools must have the proper
+ownership configured to protected against unauthorized access.
+
+Verify it by running the following command:
+<pre>$ stat -c "%n %U" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
+
+/sbin/auditctl root
+/sbin/aureport root
+/sbin/ausearch root
+/sbin/autrace root
+/sbin/auditd root
+/sbin/audispd root
+/sbin/augenrules root
+</pre>
+
+Audit tools needed to successfully view and manipulate audit information
+system activity and records. Audit tools include custom queries and report
+generators</td>
 </tr>
 <tr>
 <td>CCE-83908-4</td>
@@ -10632,6 +10791,28 @@ directories, is found to be owned by a user other than root correct its
 ownership with the following command:
 <pre>$ sudo chown root <i>FILE</i></pre>
 </td>
+</tr>
+<tr>
+<td>CCE-86448-8</td>
+<td>Verify that audit tools Have Mode 0755 or less</td>
+<td>The Red Hat Enterprise Linux 9 operating system audit tools must have the proper
+permissions configured to protected against unauthorized access.
+
+Verify it by running the following command:
+<pre>$ stat -c "%n %a" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
+
+/sbin/auditctl 755
+/sbin/aureport 755
+/sbin/ausearch 755
+/sbin/autrace 755
+/sbin/auditd 755
+/sbin/audispd 755
+/sbin/augenrules 755
+</pre>
+
+Audit tools needed to successfully view and manipulate audit information
+system activity and records. Audit tools include custom queries and report
+generators</td>
 </tr>
 <tr>
 <td>CCE-83911-8</td>
@@ -15002,7 +15183,7 @@ The <code>dhcpd</code> service can be disabled with the following command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86505-5</td>
 <td>Uninstall bind Package</td>
 <td>The <code>named</code> service is provided by the <code>bind</code> package.
 The <code>bind</code> package can be removed with the following command:
@@ -15288,6 +15469,20 @@ The <code>netfs</code> service can be disabled with the following command:
 </td>
 </tr>
 <tr>
+<td>CCE-86646-7</td>
+<td>Uninstall rpcbind Package</td>
+<td>The rpcbind utility maps RPC services to the ports on which they listen.
+RPC processes notify rpcbind when they start, registering the ports they
+are listening on and the RPC program numbers they expect to serve. The
+rpcbind service redirects the client to the proper port number so it can
+communicate with the requested service. If the system does not require RPC
+(such as for NFS servers) then this service should be disabled.
+The <code>rpcbind</code> package can be removed with the following command:
+<pre>
+$ sudo dnf erase rpcbind</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-84245-0</td>
 <td>Disable rpcbind Service</td>
 <td>The rpcbind utility maps RPC services to the ports on which they listen.
@@ -15477,6 +15672,15 @@ This instructs the NTP software to contact that remote server to obtain time
 data.</td>
 </tr>
 <tr>
+<td>CCE-86336-5</td>
+<td>Uninstall rsync Package</td>
+<td>The rsyncd service can be used to synchronize files between systems over network links.
+The <code>rsync-daemon</code> package can be removed with the following command:
+<pre>
+$ sudo dnf erase rsync-daemon</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-84140-3</td>
 <td>Ensure rsyncd service is disabled</td>
 <td>
@@ -15621,31 +15825,10 @@ the telnet protocol.</td>
 <tr>
 <td>CCE-84150-2</td>
 <td>Disable telnet Service</td>
-<td>The <code>telnet</code> service configuration file <code>/etc/xinetd.d/telnet</code>
-is not created automatically. If it was created manually, check the
-<code>/etc/xinetd.d/telnet</code> file and ensure that <code>disable = no</code>
-is changed to read <code>disable = yes</code> as follows below:
-<pre>
-# description: The telnet server serves telnet sessions; it uses \\
-#       unencrypted username/password pairs for authentication.
-service telnet
-{
-        flags           = REUSE
-        socket_type     = stream
+<td>Make sure that the activation of the <code>telnet</code> service on system boot is disabled.
 
-        wait            = no
-        user            = root
-        server          = /usr/sbin/in.telnetd
-        log_on_failure  += USERID
-        disable         = yes
-}
-</pre>
-If the <code>/etc/xinetd.d/telnet</code> file does not exist, make sure that
-the activation of the <code>telnet</code> service on system boot is disabled
-via the following command:
-
-The <code>rexec</code> socket can be disabled with the following command:
-<pre>$ sudo systemctl mask --now rexec.socket</pre>
+The <code>telnet</code> socket can be disabled with the following command:
+<pre>$ sudo systemctl mask --now telnet.socket</pre>
 </td>
 </tr>
 <tr>
@@ -15673,6 +15856,14 @@ FragmentPath=/etc/systemd/system/tftp.service</pre>
 
 and ensure the <code>ExecStart</code> line on that file includes the <code>-s</code> option with a subdirectory:
 <pre>ExecStart=/usr/sbin/in.tftpd -s <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_tftpd_secure_directory" use="legacy"></xccdf-1.2:sub></pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86300-1</td>
+<td>Uninstall CUPS Package</td>
+<td>The <code>cups</code> package can be removed with the following command:
+<pre>
+$ sudo dnf erase cups</pre>
 </td>
 </tr>
 <tr>

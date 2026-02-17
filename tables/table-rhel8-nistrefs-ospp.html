@@ -993,7 +993,8 @@ Do not allow users to reuse recent passwords. This can be accomplished by using 
 <tt>remember</tt> option for the <tt>pam_unix</tt> or <tt>pam_pwhistory</tt> PAM modules.
   </td>
   <td xml:lang="en-US">
-Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
+Preventing re-use of previous passwords helps ensure that a compromised password is not
+re-used by a user.
   </td>
   <td></td>
 </tr>
@@ -1108,7 +1109,9 @@ This rule configures the system to lock out accounts after a number of incorrect
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.
   </td>
@@ -1461,6 +1464,24 @@ important bootloader settings. These include which kernel to use,
 and whether to enter single-user mode.
   </td>
   <td></td>
+</tr>
+<tr>
+  <td>CM-6(a)<br/>AC-17(a)<br/>AC-2(5)<br/>AC-12<br/>AC-17(a)<br/>SC-10<br/>CM-6(a)</td>
+  <td>CCE-90784-0</td>
+  <td>Configure Logind to terminate idle sessions after certain time of inactivity</td>
+  <td xml:lang="en-US">
+To configure <tt>logind</tt> service to terminate inactive user sessions
+after <tt>14_minutes</tt> seconds, edit the file
+<tt>/etc/systemd/logind.conf</tt>. Ensure that there is a section
+<pre>[Login]</pre> which contains the configuration
+<pre>StopIdleSessionSec=<tt>14_minutes</tt></pre>.
+  </td>
+  <td xml:lang="en-US">
+Terminating an idle session within a short time period reduces the window of
+opportunity for unauthorized personnel to take control of a management
+session enabled on the console or console port that has been let unattended.
+  </td>
+  <td>var_logind_session_timeout=14_minutes</td>
 </tr>
 <tr>
   <td>CM-6</td>
@@ -4116,7 +4137,7 @@ would be known to potential attackers.
 To ensure that only users who are members of the <tt>wheel</tt> group can
 run commands with altered privileges through the <tt>su</tt> command, make
 sure that the following line exists in the file <tt>/etc/pam.d/su</tt>:
-<pre>auth             required        pam_wheel.so use_uid</pre>
+<pre>auth required pam_wheel.so use_uid</pre>
   </td>
   <td xml:lang="en-US">
 The <tt>su</tt> program allows to run commands with a substitute user and

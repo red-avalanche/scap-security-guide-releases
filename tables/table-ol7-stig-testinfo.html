@@ -6,7 +6,7 @@
 <body>
 <br><br><div style="text-align: center; font-size: x-large; font-weight:bold">DISA STIG for Oracle Linux 7</div>
 <div style="text-align: center; font-size: normal ">This profile contains configuration checks that align to the
-DISA STIG for Oracle Linux V2R8.</div>
+DISA STIG for Oracle Linux V2R9.</div>
 <br><br><style type="text/css">
 		table
 		{
@@ -78,6 +78,44 @@ INACTIVE=
 <td>CCI-000017<br>CCI-000795<br>
 </td>
 <td>AC-2 (3)<br>IA-4 e<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_account_emergency_expire_date</td>
+<td>medium</td>
+<td>Assign Expiration Date to Emergency Accounts</td>
+<td>If emergency user accounts remain active when no longer needed or for
+an excessive period, these accounts may be used to gain unauthorized access.
+To mitigate this risk, automated termination of all emergency accounts
+must be set upon account creation.
+<br>
+</td>
+<td>Emergency accounts are privileged accounts established in response to
+crisis situations where the need for rapid account activation is required.
+In the event emergency accounts are required, configure the system to
+terminate them after a documented time period. For every emergency account,
+run the following command to set an expiration date on it, substituting
+<code><i>ACCOUNT_NAME</i></code> and <code><i>YYYY-MM-DD</i></code>
+appropriately:
+<pre>$ sudo chage -E <i>YYYY-MM-DD ACCOUNT_NAME</i></pre>
+<code><i>YYYY-MM-DD</i></code> indicates the documented expiration date for the
+account. For U.S. Government systems, the operating system must be
+configured to automatically terminate these types of accounts after a
+period of 72 hours.</td>
+<td><pre>Verify emergency accounts have been provisioned with an expiration date of 72 hours.
+
+For every emergency account, run the following command to obtain its account aging and expiration information:
+
+$ sudo chage -l emergency_account_name
+
+Verify each of these accounts has an expiration date set within 72 hours or as documented.
+      Is it the case that any emergency accounts have no expiration date set or do not expire within 72 hours?
+      </pre></td>
+<td>SRG-OS-000002-GPOS-00002<br>SRG-OS-000123-GPOS-00064<br>
+</td>
+<td>CCI-000016<br>CCI-001682<br>
+</td>
+<td>AC-2 (2)<br>AC-2 (2)<br>
 </td>
 </tr>
 <tr>
@@ -577,24 +615,30 @@ ocredit =
 <td>xccdf_org.ssgproject.content_rule_accounts_password_pam_pwhistory_remember_password_auth</td>
 <td>medium</td>
 <td>Limit Password Reuse: password-auth</td>
-<td>Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.</td>
+<td>Preventing re-use of previous passwords helps ensure that a compromised password is not
+re-used by a user.</td>
 <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <code>remember</code> option for the <code>pam_pwhistory</code> PAM module.
 <br><br>
-In the file <code>/etc/pam.d/password-auth</code>, make sure the parameter
-<code>remember</code> is present and it has a value equal to or greater than
-<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>. For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember_control_flag" use="legacy"></xccdf-1.2:sub></code><br>
-</td>
-<td><pre>Verify Oracle Linux 7 is configured in the password-auth file to prohibit password reuse
-for a minimum of  generations with the following command:
 
-$ grep -i remember /etc/pam.d/password-auth
-password  pam_pwhistory.so use_authtok remember= retry=3
-      Is it the case that the line containing "pam_pwhistory.so" does not have the "remember" module argument set,
-is commented out, or the value of the "remember" module argument is set to less than
-"&lt;sub idref="var_password_pam_remember" /&gt;"?
+In the file <code>/etc/pam.d/password-auth</code>, make sure the parameter <code>remember</code> is
+present and it has a value equal to or greater than
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>
+<br><br>
+For example:
+<pre>password <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember_control_flag" use="legacy"></xccdf-1.2:sub> pam_pwhistory.so use_authtok remember=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub></pre>
+</td>
+<td><pre>Verify Oracle Linux 7 use the "pam_pwhistory.so" module in the /etc/pam.d/password-auth file
+and is configured to prohibit password reuse for a minimum of 
+generations.
+
+Verify the "/etc/pam.d/password-auth" file with the following command:
+
+$ grep pam_pwhistory.so /etc/pam.d/password-auth
+password  pam_pwhistory.so use_authtok remember=
+      Is it the case that the pam_pwhistory.so module is not used, the "remember" module option is not set in
+/etc/pam.d/password-auth or in /etc/security/pwhistory.conf, or is set in both files, or is set
+with a value less than "&lt;sub idref="var_password_pam_remember" /&gt;"?
       </pre></td>
 <td>SRG-OS-000077-GPOS-00045<br>
 </td>
@@ -607,25 +651,30 @@ is commented out, or the value of the "remember" module argument is set to less 
 <td>xccdf_org.ssgproject.content_rule_accounts_password_pam_pwhistory_remember_system_auth</td>
 <td>medium</td>
 <td>Limit Password Reuse: system-auth</td>
-<td>Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.</td>
+<td>Preventing re-use of previous passwords helps ensure that a compromised password is not
+re-used by a user.</td>
 <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <code>remember</code> option for the <code>pam_pwhistory</code> PAM module.
 <br><br>
-In the file <code>/etc/pam.d/system-auth</code>, make sure the parameter
-<code>remember</code> is present and it has a value equal to or greater than
-<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>
-For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember_control_flag" use="legacy"></xccdf-1.2:sub></code><br>
-</td>
-<td><pre>Verify Oracle Linux 7 is configured in the system-auth file to prohibit password reuse
-for a minimum of  generations with the following command:
 
-$ grep -i remember /etc/pam.d/system-auth
-password  pam_pwhistory.so use_authtok remember= retry=3
-      Is it the case that the line containing "pam_pwhistory.so" does not have the "remember" module argument set,
-is commented out, or the value of the "remember" module argument is set to less than
-"&lt;sub idref="var_password_pam_remember" /&gt;"?
+In the file <code>/etc/pam.d/system-auth</code>, make sure the parameter <code>remember</code> is
+present and it has a value equal to or greater than
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>
+<br><br>
+For example:
+<pre>password <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember_control_flag" use="legacy"></xccdf-1.2:sub> pam_pwhistory.so use_authtok remember=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub></pre>
+</td>
+<td><pre>Verify Oracle Linux 7 use the "pam_pwhistory.so" module in the /etc/pam.d/system-auth file
+and is configured to prohibit password reuse for a minimum of 
+generations.
+
+Verify the "/etc/pam.d/system-auth" file with the following command:
+
+$ grep pam_pwhistory.so /etc/pam.d/system-auth
+password  pam_pwhistory.so use_authtok remember=
+      Is it the case that the pam_pwhistory.so module is not used, the "remember" module option is not set in
+/etc/pam.d/system-auth or in /etc/security/pwhistory.conf, or is set in both files, or is set
+with a value less than "&lt;sub idref="var_password_pam_remember" /&gt;"?
       </pre></td>
 <td>SRG-OS-000077-GPOS-00045<br>
 </td>
@@ -765,7 +814,9 @@ the account.</td>
 using <code>pam_faillock.so</code>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
 depending on the OS version.</td>
 <td><pre>Verify Oracle Linux 7 is configured to lock an account after 
@@ -884,7 +935,7 @@ all user sessions will terminate based on inactivity.
 The value of TMOUT should be exported and read only.
 The <code>TMOUT</code>
 
-setting in a file loaded by <code>/etc/profile</code>, e.g.
+setting in a file loaded by <code>/etc/profile</code>or <code>/etc/bashrc</code>, e.g.
 <code>/etc/profile.d/tmout.sh</code> should read as follows:
 <pre>declare -xr TMOUT=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_tmout" use="legacy"></xccdf-1.2:sub></pre>
 </td>
@@ -1198,6 +1249,38 @@ $ sudo ps -ef | grep -i mfetpd
 </td>
 <td>SI-4 (5)<br>CM-6 b<br>
 </td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_aide_build_database</td>
+<td>medium</td>
+<td>Build and Test AIDE Database</td>
+<td>For AIDE to be effective, an initial database of "known-good" information about files
+must be captured and it should be able to be verified against the installed files.</td>
+<td>Run the following command to generate a new database:
+
+<pre>$ sudo /usr/sbin/aide --init</pre>
+
+By default, the database will be written to the file
+
+<code>/var/lib/aide/aide.db.new.gz</code>.
+
+Storing the database, the configuration file <code>/etc/aide.conf</code>, and the binary
+<code>/usr/sbin/aide</code>
+(or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
+The newly-generated database can be installed as follows:
+
+<pre>$ sudo cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz</pre>
+
+To initiate a manual check, run the following command:
+<pre>$ sudo /usr/sbin/aide --check</pre>
+If this check produces any unexpected output, investigate.</td>
+<td><pre>To find the location of the AIDE database file, run the following command:
+$ sudo ls -l DBDIR/database_file_name
+      Is it the case that there is no database file?
+      </pre></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>xccdf_org.ssgproject.content_rule_aide_periodic_cron_checking</td>
@@ -2183,6 +2266,37 @@ If the system is configured to audit this activity, it will return a line.
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_kernel_module_loading_create</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on Kernel Module Unloading - create_module</td>
+<td>The removal of kernel modules can be used to alter the behavior of
+the kernel and potentially introduce malicious code into kernel space. It is important
+to have an audit trail of modules that have been introduced into the kernel.</td>
+<td>To capture kernel module unloading events, use following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
+<pre>-a always,exit -F arch=<i>ARCH</i> -S create_module -F key=module-change</pre>
+
+Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
+to use the <code>augenrules</code> program (the default), add the line to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
+add the line to file <code>/etc/audit/audit.rules</code>.</td>
+<td><pre>To determine if the system is configured to audit calls to the
+create_module system call, run the following command:
+$ sudo grep "create_module" /etc/audit/audit.*
+If the system is configured to audit this activity, it will return a line.
+
+      Is it the case that no line is returned?
+      </pre></td>
+<td>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>
+</td>
+<td>CCI-000172<br>
+</td>
+<td>AU-12 c<br>
+</td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_audit_rules_kernel_module_loading_delete</td>
 <td>medium</td>
 <td>Ensure auditd Collects Information on Kernel Module Unloading - delete_module</td>
@@ -2555,11 +2669,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k modules</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k modules</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td><pre>Verify that Oracle Linux 7 is configured to audit the execution of the "kmod" command with the following command:
 
@@ -3141,17 +3255,17 @@ exceeded.</td>
 <code>augenrules</code> program to read audit rules during daemon startup (the
 default), add the following line to to the bottom of a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-f 2</pre>
+<pre>-f <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_audit_failure_mode" use="legacy"></xccdf-1.2:sub></pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to the
 bottom of the <code>/etc/audit/audit.rules</code> file:
-<pre>-f 2</pre>
+<pre>-f <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_audit_failure_mode" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 <td><pre>To verify that the system will shutdown when auditd fails,
 run the following command:
-$ sudo grep "\-f 2" /etc/audit/audit.rules
+$ sudo grep "\-f " /etc/audit/audit.rules
 The output should contain:
--f 2
+-f 
       Is it the case that the system is not configured to shutdown on auditd failures?
       </pre></td>
 <td>SRG-OS-000046-GPOS-00022<br>SRG-OS-000047-GPOS-00023<br>
@@ -3783,6 +3897,113 @@ network_failure_action =
 <td></td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_auditd_audispd_remote_daemon_activated</td>
+<td>medium</td>
+<td>Configure auditd to use audispd's remote logging daemon</td>
+<td>The auditd service does not include the ability to send audit
+records to a centralized server for management directly. It does, however,
+include a plug-in for audit event multiplexor (audispd) to pass audit records
+to a remote server.</td>
+<td>To configure the <code>auditd</code> service to use the
+<code>audisp-remote</code> plug-in of the <code>audispd</code> audit event multiplexor, set
+the <code>active</code> directive in <code>/etc/audisp/plugins.d/au-remote.conf</code>
+to <code>yes</code>.
+Restart the <code>auditd</code> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre>
+</td>
+<td><pre>To verify if audispd's au-remote plugin is active, run the following command:
+$ sudo grep active /etc/audisp/plugins.d/au-remote.conf
+If the plugin is active, the output will show yes.
+      Is it the case that it is not activated?
+      </pre></td>
+<td>SRG-OS-000342-GPOS-00133<br>SRG-OS-000479-GPOS-00224<br>
+</td>
+<td>CCI-001851<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_auditd_audispd_remote_daemon_direction</td>
+<td>medium</td>
+<td>Ensure the audispd's remote logging daemon direction is correct</td>
+<td>The auditd service does not include the ability to send audit
+records to a centralized server for management directly. It does, however,
+include a plug-in for audit event multiplexor (audispd) to pass audit records
+to a remote server.
+
+The direction is dictated by the plugin, and this parameter is used by the multiplexor
+to understand the direction of events.</td>
+<td>Ensure the direction of logs in <code>audisp-remote</code>
+plug-in of the <code>audispd</code> audit event multiplexor is correct.
+Check that the <code>direction</code> directive in
+<code>/etc/audisp/plugins.d/au-remote.conf</code> is <code>out</code>.
+Restart the <code>auditd</code> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre>
+</td>
+<td><pre>To verify if audispd's au-remote plugin is configured, run the following command:
+$ sudo grep direction /etc/audisp/plugins.d/au-remote.conf
+If the plugin is configured correctly, the output will show out.
+      Is it the case that it is not configured?
+      </pre></td>
+<td>SRG-OS-000342-GPOS-00133<br>SRG-OS-000479-GPOS-00224<br>
+</td>
+<td>CCI-001851<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_auditd_audispd_remote_daemon_path</td>
+<td>medium</td>
+<td>Ensure the audispd's remote logging daemon executable is correct</td>
+<td>The auditd service does not include the ability to send audit
+records to a centralized server for management directly. It does, however,
+include a plug-in for audit event multiplexor (audispd) to pass audit records
+to a remote server.</td>
+<td>Ensure the executable used by <code>audisp-remote</code>
+plug-in of the <code>audispd</code> audit event multiplexor is correct.
+Check that the <code>path</code> directive in
+<code>/etc/audisp/plugins.d/au-remote.conf</code> is <code>/sbin/audisp-remote</code>.
+Restart the <code>auditd</code> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre>
+</td>
+<td><pre>To verify if audispd's au-remote plugin is configured, run the following command:
+$ sudo grep path /etc/audisp/plugins.d/au-remote.conf
+If the plugin is configured correctly, the output will show /sbin/audisp-remote.
+      Is it the case that it is not configured?
+      </pre></td>
+<td>SRG-OS-000342-GPOS-00133<br>SRG-OS-000479-GPOS-00224<br>
+</td>
+<td>CCI-001851<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_auditd_audispd_remote_daemon_type</td>
+<td>medium</td>
+<td>Ensure the audispd's remote logging daemon type is correct</td>
+<td>The auditd service does not include the ability to send audit
+records to a centralized server for management directly. It does, however,
+include a plug-in for audit event multiplexor (audispd) to pass audit records
+to a remote server.</td>
+<td>Ensure the type used by <code>audisp-remote</code>
+plug-in of the <code>audispd</code> audit event multiplexor is correct.
+Check that the <code>type</code> directive in
+<code>/etc/audisp/plugins.d/au-remote.conf</code> is <code>always</code>.
+Restart the <code>auditd</code> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre>
+</td>
+<td><pre>To verify if audispd's au-remote plugin is configured, run the following command:
+$ sudo grep type /etc/audisp/plugins.d/au-remote.conf
+If the plugin is configured correctly, the output will show always.
+      Is it the case that it is not configured?
+      </pre></td>
+<td>SRG-OS-000342-GPOS-00133<br>SRG-OS-000479-GPOS-00224<br>
+</td>
+<td>CCI-001851<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_auditd_data_retention_action_mail_acct</td>
 <td>medium</td>
 <td>Configure auditd mail_acct Action on Low Disk Space</td>
@@ -3807,30 +4028,6 @@ action_mail_acct =
 </td>
 <td>AU-5 a<br>
 </td>
-</tr>
-<tr>
-<td>xccdf_org.ssgproject.content_rule_auditd_data_retention_space_left</td>
-<td>medium</td>
-<td>Configure auditd space_left on Low Disk Space</td>
-<td>Notifying administrators of an impending disk space problem may allow them to
-take corrective action prior to any disruption.</td>
-<td>The <code>auditd</code> service can be configured to take an action
-when disk space is running low but prior to running out of space completely.
-Edit the file <code>/etc/audit/auditd.conf</code>. Add or modify the following line,
-substituting <i>SIZE_in_MB</i> appropriately:
-<pre>space_left = <i>SIZE_in_MB</i></pre>
-Set this value to the appropriate size in Megabytes cause the system to
-notify the user of an issue.</td>
-<td><pre>Inspect /etc/audit/auditd.conf and locate the following line to
-determine if the system is configured correctly:
-space_left SIZE_in_MB
-      Is it the case that the system is not configured a specfic size in MB to notify administrators of an issue?
-      </pre></td>
-<td>SRG-OS-000343-GPOS-00134<br>
-</td>
-<td>CCI-001855<br>
-</td>
-<td></td>
 </tr>
 <tr>
 <td>xccdf_org.ssgproject.content_rule_auditd_data_retention_space_left_action</td>
@@ -3864,6 +4061,32 @@ space_left_action =
 
 If the value of the "space_left_action" is not set to "", or if the line is commented out, ask the System Administrator to indicate how the system is providing real-time alerts to the SA and ISSO.
       Is it the case that there is no evidence that real-time alerts are configured on the system?
+      </pre></td>
+<td>SRG-OS-000343-GPOS-00134<br>
+</td>
+<td>CCI-001855<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_auditd_data_retention_space_left_percentage</td>
+<td>medium</td>
+<td>Configure auditd space_left on Low Disk Space</td>
+<td>Notifying administrators of an impending disk space problem may allow them to
+take corrective action prior to any disruption.</td>
+<td>The <code>auditd</code> service can be configured to take an action
+when disk space is running low but prior to running out of space completely.
+Edit the file <code>/etc/audit/auditd.conf</code>. Add or modify the following line,
+substituting <i>PERCENTAGE</i> appropriately:
+<pre>space_left = <i>PERCENTAGE</i>%</pre>
+Set this value to at least 25 to cause the system to
+notify the user of an issue.</td>
+<td><pre>Verify Oracle Linux 7 takes action when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity with the following command:
+
+$ sudo grep -w space_left /etc/audit/auditd.conf
+
+space_left = %
+      Is it the case that the value of the "space_left" keyword is not set to &lt;sub idref="var_auditd_space_left_percentage" /&gt;% of the storage volume allocated to audit logs, or if the line is commented out, ask the System Administrator to indicate how the system is providing real-time alerts to the SA and ISSO. If the "space_left" value is not configured to the correct value?
       </pre></td>
 <td>SRG-OS-000343-GPOS-00134<br>
 </td>
@@ -4073,40 +4296,6 @@ Ask the System Administrator for the site or program Ports, Protocols, and Servi
 </td>
 <td>CM-7<br>
 </td>
-</tr>
-<tr>
-<td>xccdf_org.ssgproject.content_rule_configure_firewalld_rate_limiting</td>
-<td>medium</td>
-<td>Configure firewalld To Rate Limit Connections</td>
-<td>DoS is a condition when a resource is not available for legitimate users. When
-this occurs, the organization either cannot accomplish its mission or must
-operate at degraded capacity.
-<br><br>
-This requirement addresses the configuration of
-the operating system to mitigate the impact of DoS attacks that have occurred or
-are ongoing on system availability. For each system, known and potential DoS
-attacks must be identified and solutions for each type implemented. A variety of
-technologies exist to limit or, in some cases, eliminate the effects of DoS
-attacks (e.g., limiting processes or establishing memory partitions). Employing
-increased capacity and bandwidth, combined with service redundancy, may reduce
-the susceptibility to some DoS attacks.</td>
-<td>Create a direct firewall rule to protect against DoS attacks with the following
-command:
-<pre>$ sudo firewall-cmd --permanent --direct --add-rule ipv4 filter INPUT_direct 0 -p tcp -m limit --limit 25/minute --limit-burst 100  -j INPUT_ZONES</pre>
-</td>
-<td><pre>To verify the operating system protects against or limits the effects of DoS
-attacks by ensuring the operating system is implementing rate-limiting measures
-on impacted network interfaces, run the following command:
-$ sudo firewall-cmd --permanent --direct --get-rules ipv4 filter INPUT_direct
-The output should return:
-0 -p tcp -m limit --limit 25/minute --limit-burst 100 -j INPUT_ZONES
-      Is it the case that firewalld is not rate limiting connections?
-      </pre></td>
-<td>SRG-OS-000420-GPOS-00186<br>
-</td>
-<td>CCI-002385<br>
-</td>
-<td></td>
 </tr>
 <tr>
 <td>xccdf_org.ssgproject.content_rule_dconf_db_up_to_date</td>
@@ -4554,7 +4743,7 @@ If properly configured, the output for lock-enabled should be /org/gnome/desktop
 of the information system but does not want to logout because of the temporary nature of the absense.</td>
 <td>If not already configured, ensure that users cannot change GNOME3 screensaver lock settings
 by adding <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
-to <code>/etc/dconf/db/local.d/00-security-settings</code>.
+to <code>/etc/dconf/db/local.d/locks/00-security-settings</code>.
 For example:
 <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
 After the settings have been set, run <code>dconf update</code>.</td>
@@ -5331,16 +5520,21 @@ configured to use removable media as the boot loader.</td>
 <td>The system must not allow removable media to be used as the boot loader.
 Remove alternate methods of booting the system from removable media.
 <code>usb0</code>, <code>cd</code>, <code>fd0</code>, etc. are some examples of removeable
-media which should not exist in the line:
+media which should not exist in the lines:
 <pre>set root='hd0,msdos1'</pre>
 </td>
 <td><pre>To verify the system is not configured to use a boot loader on removable media,
-run the following command:
+check that the grub configuration file has the set root command in each menu
+entry with the following commands:
+$ sudo grep -cw menuentry /boot/grub2/grub.cfg
+Note that the -c option for the grep command will print
+only the count of menuentry occurrences. This number should match
+the number of occurrences reported by the following command:
 $ sudo grep "set root='hd0" /boot/grub2/grub.cfg
 The output should return something similar to:
 set root='hd0,msdos1'
 usb0, cd, fd0, etc. are some examples of removeable
-media which should not exist in the line:
+media which should not exist in the lines:
 set root='hd0,msdos1'
       Is it the case that it is not?
       </pre></td>
@@ -6099,6 +6293,31 @@ $ sudo yum install aide</pre>
 <td>SRG-OS-000445-GPOS-00199<br>SRG-OS-000446-GPOS-00200<br>SRG-OS-000363-GPOS-00150<br>
 </td>
 <td>CCI-002696<br>CCI-002699<br>CCI-001744<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_package_firewalld_installed</td>
+<td>medium</td>
+<td>Install firewalld Package</td>
+<td>"Firewalld" provides an easy and effective way to block/limit remote access to the system via ports, services, and protocols.
+
+Remote access services, such as those providing remote access to network devices and information systems, which lack automated control capabilities, increase risk and make remote user access management difficult at best.
+
+Remote access is access to DoD nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
+
+Oracle Linux 7 functionality (e.g., SSH) must be capable of taking enforcement action if the audit reveals unauthorized activity.
+Automated control of remote access sessions allows organizations to ensure ongoing compliance with remote access policies by enforcing connection rules of remote access applications on a variety of information system components (e.g., servers, workstations, notebook computers, smartphones, and tablets)."</td>
+<td>The <code>firewalld</code> package can be installed with the following command:
+<pre>
+$ sudo yum install firewalld</pre>
+</td>
+<td><pre>Run the following command to determine if the firewalld package is installed: $ rpm -q firewalld
+      Is it the case that the package is not installed?
+      </pre></td>
+<td>SRG-OS-000297-GPOS-00115<br>
+</td>
+<td>CCI-002314<br>
 </td>
 <td></td>
 </tr>
@@ -7288,6 +7507,48 @@ ENCRYPT_METHOD SHA512
 <td>CCI-000196<br>
 </td>
 <td>IA-5 (1) (c)<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_passwordauth</td>
+<td>medium</td>
+<td>Set PAM''s Password Hashing Algorithm - password-auth</td>
+<td>Passwords need to be protected at all times, and encryption is the standard
+method for protecting passwords. If passwords are not encrypted, they can
+be plainly read (i.e., clear text) and easily compromised. Passwords that
+are encrypted with a weak algorithm are no more protected than if they are
+kepy in plain text.
+<br><br>
+This setting ensures user and group account administration utilities are
+configured to store only encrypted representations of passwords.
+Additionally, the <code>crypt_style</code> configuration option ensures the use
+of a strong hashing algorithm that makes password cracking attacks more
+difficult.</td>
+<td>The PAM system service can be configured to only store encrypted
+representations of passwords. In
+<code>/etc/pam.d/password-auth</code>,
+the
+<code>password</code> section of the file controls which PAM modules execute
+during a password change. Set the <code>pam_unix.so</code> module in the
+<code>password</code> section to include the argument <code>sha512</code>, as shown
+below:
+<br>
+<pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i></pre>
+<br>
+This will help ensure when local users change their passwords, hashes for
+the new passwords will be generated using the SHA-512 algorithm. This is
+the default.</td>
+<td><pre>Inspect the password section of /etc/pam.d/password-auth
+and ensure that the pam_unix.so module includes the argument
+sha512:
+$ grep sha512 /etc/pam.d/password-auth
+      Is it the case that it does not?
+      </pre></td>
+<td>SRG-OS-000073-GPOS-00041<br>SRG-OS-000120-GPOS-00061<br>
+</td>
+<td>CCI-000196<br>CCI-000803<br>
+</td>
+<td>IA-5 (1) (c)<br>IA-7<br>
 </td>
 </tr>
 <tr>
@@ -8727,6 +8988,49 @@ The ability to forward packets is only appropriate for routers.
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_sysctl_net_ipv4_tcp_invalid_ratelimit</td>
+<td>medium</td>
+<td>Configure Kernel to Rate Limit Sending of Duplicate TCP Acknowledgments</td>
+<td>Denial of Service (DoS) is a condition when a resource is not available for legitimate users. When
+this occurs, the organization either cannot accomplish its mission or must
+operate at degraded capacity.
+<br><br>
+This can help mitigate simple “ack loop” DoS attacks, wherein a buggy or
+malicious middlebox or man-in-the-middle can rewrite TCP header fields in
+manner that causes each endpoint to think that the other is sending invalid
+TCP segments, thus causing each side to send an unterminating stream of
+duplicate acknowledgments for invalid segments.</td>
+<td>Make sure that the system is configured to limit the maximal rate for sending
+duplicate acknowledgments in response to incoming TCP packets that are for
+an existing connection but that are invalid due to any of these reasons:
+
+(a) out-of-window sequence number, (b) out-of-window acknowledgment number,
+or (c) PAWS (Protection Against Wrapped Sequence numbers) check failure
+This measure protects against or limits effects of DoS attacks against the system.
+Set the system to implement rate-limiting measures by adding the following line to
+<code>/etc/sysctl.conf</code> or a configuration file in the <code>/etc/sysctl.d/</code> directory
+(or modify the line to have the required value):
+<pre>net.ipv4.tcp_invalid_ratelimit = <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sysctl_net_ipv4_tcp_invalid_ratelimit_value" use="legacy"></xccdf-1.2:sub></pre>
+Issue the following command to make the changes take effect:
+<pre># sysctl --system</pre>
+</td>
+<td><pre>To verify that the operating system protects against or limits the effects of DoS
+attacks by ensuring implementation of rate-limiting measures
+on impacted network interfaces, run the following command:
+# grep 'net.ipv4.tcp_invalid_ratelimit' /etc/sysctl.conf /etc/sysctl.d/*
+The command should output the following line:
+/etc/sysctl.conf:net.ipv4.tcp_invalid_ratelimit = 
+The file where the line has been found can differ, but it must be either /etc/sysctl.conf
+or a file located under the /etc/sysctl.d/ directory.
+      Is it the case that rate limiting of duplicate TCP acknowledgments is not configured?
+      </pre></td>
+<td>SRG-OS-000420-GPOS-00186<br>
+</td>
+<td>CCI-002385<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_sysctl_net_ipv6_conf_all_accept_source_route</td>
 <td>medium</td>
 <td>Disable Kernel Parameter for Accepting Source-Routed Packets on all IPv6 Interfaces</td>
@@ -8801,16 +9105,21 @@ configured to use removable media as the boot loader.</td>
 <td>The system must not allow removable media to be used as the boot loader.
 Remove alternate methods of booting the system from removable media.
 <code>usb0</code>, <code>cd</code>, <code>fd0</code>, etc. are some examples of removeable
-media which should not exist in the line:
+media which should not exist in the lines:
 <pre>set root='hd0,msdos1'</pre>
 </td>
 <td><pre>To verify the system is not configured to use a boot loader on removable media,
-run the following command:
+check that the grub configuration file has the set root command in each menu
+entry with the following commands:
+$ sudo grep -cw menuentry /boot/efi/EFI/redhat/grub.cfg
+Note that the -c option for the grep command will print
+only the count of menuentry occurrences. This number should match
+the number of occurrences reported by the following command:
 $ sudo grep "set root='hd0" /boot/efi/EFI/redhat/grub.cfg
 The output should return something similar to:
 set root='hd0,msdos1'
 usb0, cd, fd0, etc. are some examples of removeable
-media which should not exist in the line:
+media which should not exist in the lines:
 set root='hd0,msdos1'
       Is it the case that it is not?
       </pre></td>

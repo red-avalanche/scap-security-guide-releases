@@ -62,7 +62,9 @@
 				
 					RHEL-08-010385
 				
-					RHEL-08-020011
+					RHEL-08-010471
+				
+					RHEL-08-020010
 				
 					RHEL-08-020013
 				
@@ -71,8 +73,6 @@
 					RHEL-08-020015
 				
 					RHEL-08-020018
-				
-					RHEL-08-020019
 				
 					RHEL-08-020020
 				
@@ -88,7 +88,7 @@
 				
 					RHEL-08-020332
 				
-					RHEL-08-040400
+					RHEL-08-040342
 				
 			</td>
 		</tr>
@@ -1056,7 +1056,7 @@ For SSH earlier than v8.2, a ClientAliveCountMax value of 0 causes a timeout pre
 the ClientAliveInterval is set.  Starting with v8.2, a value of 0 disables the timeout
 functionality completely.
 If the option is set to a number greater than 0, then the session will be disconnected after
-ClientAliveInterval * ClientAliveCountMax seconds witout receiving a keep alive message.
+ClientAliveInterval * ClientAliveCountMax seconds without receiving a keep alive message.
       Is it the case that it is commented out or not configured properly?
       </pre></td>
 	<td><pre>The SSH server sends at most ClientAliveCountMax messages
@@ -1758,15 +1758,32 @@ $ sudo chgrp root DIR</pre></td>
 	<td>medium</td>
 	<td>The RHEL 8 operating system must use a file integrity tool to verify correct operation of all security functions.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>The AIDE package must be installed if it is to be available for integrity checking.</pre></td>
-	<td><pre>Run the following command to determine if the aide package is installed: $ rpm -q aide
-      Is it the case that the package is not installed?
+	<td><pre>For AIDE to be effective, an initial database of "known-good" information about files
+must be captured and it should be able to be verified against the installed files.</pre></td>
+	<td><pre>To find the location of the AIDE database file, run the following command:
+$ sudo ls -l DBDIR/database_file_name
+      Is it the case that there is no database file?
       </pre></td>
-	<td><pre>The aide package can be installed with the following command:
+	<td><pre>Run the following command to generate a new database:
 
-$ sudo yum install aide</pre></td>
+$ sudo /usr/sbin/aide --init
+
+By default, the database will be written to the file
+
+/var/lib/aide/aide.db.new.gz.
+
+Storing the database, the configuration file /etc/aide.conf, and the binary
+/usr/sbin/aide
+(or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
+The newly-generated database can be installed as follows:
+
+$ sudo cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
+
+To initiate a manual check, run the following command:
+$ sudo /usr/sbin/aide --check
+If this check produces any unexpected output, investigate.</pre></td>
 	<td>RHEL-08-010359</td>
-	<td>package_aide_installed</td>
+	<td>aide_build_database</td>
 </tr>
 
 <tr>
@@ -2524,26 +2541,15 @@ $ sudo find / -name '.shosts' -type f -delete</pre></td>
 
 <tr>
 	<td>V-230285</td>
-	<td>366</td>
+	<td></td>
 	<td>low</td>
 	<td>RHEL 8 must enable the hardware random number generator entropy gatherer service.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>The rngd service
-feeds random data from hardware device to kernel random device.</pre></td>
-	<td><pre>
-
-Run the following command to determine the current status of the
-rngd service:
-$ sudo systemctl is-active rngd
-If the service is running, it should return the following: active
-      Is it the case that the "rngd" service is disabled, masked, or not started.?
-      </pre></td>
-	<td><pre>The Hardware RNG Entropy Gatherer service should be enabled.
-
-The rngd service can be enabled with the following command:
-$ sudo systemctl enable rngd.service</pre></td>
+	<td><pre></pre></td>
+	<td><pre></pre></td>
+	<td><pre></pre></td>
 	<td>RHEL-08-010471</td>
-	<td>service_rngd_enabled</td>
+	<td>Missing Rule</td>
 </tr>
 
 <tr>
@@ -2588,7 +2594,7 @@ If properly configured, the output should indicate the following permissions:
 	<td>V-230287</td>
 	<td>366</td>
 	<td>medium</td>
-	<td>The RHEL 8 SSH private host key files must have mode 0600 or less permissive.</td>
+	<td>The RHEL 8 SSH private host key files must have mode 0640 or less permissive.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>If an unauthorized user obtains the private SSH host key file, the host could be
 impersonated.</pre></td>
@@ -2637,32 +2643,6 @@ To explicitly enable StrictModes in SSH, add or correct the following line in
 StrictModes yes</pre></td>
 	<td>RHEL-08-010500</td>
 	<td>sshd_enable_strictmodes</td>
-</tr>
-
-<tr>
-	<td>V-230289</td>
-	<td>366</td>
-	<td>medium</td>
-	<td>The RHEL 8 SSH daemon must not allow compression or must only allow compression after successful authentication.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre>If compression is allowed in an SSH connection prior to authentication,
-vulnerabilities in the compression software could result in compromise of the
-system from an unauthenticated connection, potentially with root privileges.</pre></td>
-	<td><pre>To check if compression is enabled or set correctly, run the
-following command:
-$ sudo grep Compression /etc/ssh/sshd_config
-If configured properly, output should be no or delayed.
-      Is it the case that it is commented out, or is not set to no or delayed?
-      </pre></td>
-	<td><pre>Compression is useful for slow network connections over long
-distances but can cause performance issues on local LANs. If use of compression
-is required, it should be enabled only after a user has authenticated; otherwise,
-it should be disabled. To disable compression or delay compression until after
-a user has successfully authenticated, add or correct the following line in the
-/etc/ssh/sshd_config file:
-Compression </pre></td>
-	<td>RHEL-08-010510</td>
-	<td>sshd_disable_compression</td>
 </tr>
 
 <tr>
@@ -3915,6 +3895,19 @@ period of 72 hours.</pre></td>
 
 <tr>
 	<td>V-230332</td>
+	<td></td>
+	<td>medium</td>
+	<td>RHEL 8 must automatically lock an account when three unsuccessful logon attempts occur.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre></pre></td>
+	<td><pre></pre></td>
+	<td><pre></pre></td>
+	<td>RHEL-08-020010</td>
+	<td>Missing Rule</td>
+</tr>
+
+<tr>
+	<td>V-230333</td>
 	<td>44</td>
 	<td>medium</td>
 	<td>RHEL 8 must automatically lock an account when three unsuccessful logon attempts occur.</td>
@@ -3935,24 +3928,13 @@ or less (but not "0"), is missing or commented out?
 using pam_faillock.so.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as authselect or authconfig,
 depending on the OS version.</pre></td>
-	<td>RHEL-08-020010</td>
-	<td>accounts_passwords_pam_faillock_deny</td>
-</tr>
-
-<tr>
-	<td>V-230333</td>
-	<td></td>
-	<td>medium</td>
-	<td>RHEL 8 must automatically lock an account when three unsuccessful logon attempts occur.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
 	<td>RHEL-08-020011</td>
-	<td>Missing Rule</td>
+	<td>accounts_passwords_pam_faillock_deny</td>
 </tr>
 
 <tr>
@@ -4093,15 +4075,30 @@ depending on the OS version.</pre></td>
 
 <tr>
 	<td>V-230341</td>
-	<td></td>
+	<td>44</td>
 	<td>medium</td>
 	<td>RHEL 8 must prevent system messages from being presented when three unsuccessful logon attempts occur.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>The pam_faillock module without the silent option will leak information about the existence or
+non-existence of a user account in the system because the failures are not recorded for unknown
+users. The message about the user account being locked is never displayed for non-existing user
+accounts allowing the adversary to infer that a particular account exists or not on the system.</pre></td>
+	<td><pre>To ensure that the system prevents messages from being shown when three unsuccessful logon
+attempts occur, run the following command:
+$ grep silent /etc/security/faillock.conf
+The output should show silent.
+      Is it the case that the system shows messages when three unsuccessful logon attempts occur?
+      </pre></td>
+	<td><pre>This rule ensures the system prevents informative messages from being presented to the user
+pertaining to logon information after a number of incorrect login attempts using
+pam_faillock.so.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as authselect or authconfig,
+depending on the OS version.</pre></td>
 	<td>RHEL-08-020019</td>
-	<td>Missing Rule</td>
+	<td>accounts_passwords_pam_faillock_silent</td>
 </tr>
 
 <tr>
@@ -4425,26 +4422,25 @@ ctrl+b :lock-session</pre></td>
 	<td><pre>The tmux package allows for a session lock to be implemented and configured.
 However, the session lock is implemented by an external command. The tmux
 default configuration does not contain an effective session lock.</pre></td>
-	<td><pre>Verify Red Hat Enterprise Linux 8 enables the user to initiate a session lock with the following command:
+	<td><pre>Verify Red Hat Enterprise Linux 8 enables the user to initiate a session lock trhough key bindings with the following commands:
 
-$ grep lock-command /etc/tmux.conf
+$ grep "bind X lock-session" /etc/tmux.conf
 
-set -g lock-command vlock
+bind X lock-session
 
 Then, verify that the /etc/tmux.conf file can be read by other users than root:
 
 $ sudo ls -al /etc/tmux.conf
-      Is it the case that the "lock-command" is not set in the global settings to call "vlock"?
+      Is it the case that the "lock-session" is not bound to the X key?
       </pre></td>
-	<td><pre>To enable console screen locking in tmux terminal multiplexer,
-the vlock command must be configured to be used as a locking
-mechanism.
+	<td><pre>To set a key binding for the screen locking in tmux terminal multiplexer,
+the session-lock command must be bound to a key.
 Add the following line to /etc/tmux.conf:
-set -g lock-command vlock.
+bind X lock-session.
 The console can now be locked with the following key combination:
-ctrl+b :lock-session</pre></td>
+Ctrl+b Shift+x</pre></td>
 	<td>RHEL-08-020040</td>
-	<td>configure_tmux_lock_command</td>
+	<td>configure_tmux_lock_keybinding</td>
 </tr>
 
 <tr>
@@ -4464,7 +4460,7 @@ Determine the location of the tmux script with the following command:
 
 $ sudo grep tmux /etc/bashrc /etc/profile.d/*
 
-/etc/profile.d/tmux.sh:  case "$name" in (sshd|login) exec tmux ;; esac
+/etc/profile.d/tmux.sh:  case "$name" in (sshd|login) tmux ;; esac
 
 Review the tmux script by using the following example:
 
@@ -4473,7 +4469,7 @@ $ cat /etc/profile.d/tmux.sh
 if [ "$PS1" ]; then
 parent=$(ps -o ppid= -p $$)
 name=$(ps -o comm= -p $parent)
-case "$name" in (sshd|login) exec tmux ;; esac
+case "$name" in (sshd|login) tmux ;; esac
 fi
 
 If the shell file is not configured as the example above, is commented out, or is missing, this is a finding.
@@ -4487,7 +4483,7 @@ $ sudo ps all | grep tmux | grep -v grep
 automatic session locking. It should be started from
 /etc/bashrc or drop-in files within /etc/profile.d/.</pre></td>
 	<td>RHEL-08-020041</td>
-	<td>configure_bashrc_exec_tmux</td>
+	<td>configure_bashrc_tmux</td>
 </tr>
 
 <tr>
@@ -4674,7 +4670,7 @@ If properly configured, the output for lock-enabled should be /org/gnome/desktop
       </pre></td>
 	<td><pre>If not already configured, ensure that users cannot change GNOME3 screensaver lock settings
 by adding /org/gnome/desktop/screensaver/lock-enabled
-to /etc/dconf/db/local.d/00-security-settings.
+to /etc/dconf/db/local.d/locks/00-security-settings.
 For example:
 /org/gnome/desktop/screensaver/lock-enabled
 After the settings have been set, run dconf update.</pre></td>
@@ -5172,24 +5168,44 @@ $ sudo chage -M  USER</pre></td>
 	<td>medium</td>
 	<td>RHEL 8 must be configured in the password-auth file to prohibit password reuse for a minimum of five generations.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.</pre></td>
-	<td><pre>Verify Red Hat Enterprise Linux 8 is configured in the password-auth file to prohibit password reuse
-for a minimum of  generations with the following command:
+	<td><pre>Preventing re-use of previous passwords helps ensure that a compromised password is not
+re-used by a user.</pre></td>
+	<td><pre>Verify Red Hat Enterprise Linux 8 use the "pam_pwhistory.so" module in the /etc/pam.d/password-auth file
+and is configured to prohibit password reuse for a minimum of 
+generations.
 
-$ grep -i remember /etc/pam.d/password-auth
-password  pam_pwhistory.so use_authtok remember= retry=3
-      Is it the case that the line containing "pam_pwhistory.so" does not have the "remember" module argument set,
-is commented out, or the value of the "remember" module argument is set to less than
-"<sub idref="var_password_pam_remember" />"?
+Verify the "/etc/pam.d/password-auth" file with the following command:
+
+$ grep pam_pwhistory.so /etc/pam.d/password-auth
+password  pam_pwhistory.so use_authtok remember=
+
+
+Verify the "/etc/security/pwhistory.conf" file using the following command:
+
+$ grep remember /etc/security/pwhistory.conf
+remember = 
+
+The pam_pwhistory.so "remember" option must be configured only in one file.
+      Is it the case that the pam_pwhistory.so module is not used, the "remember" module option is not set in
+/etc/pam.d/password-auth or in /etc/security/pwhistory.conf, or is set in both files, or is set
+with a value less than "<sub idref="var_password_pam_remember" />"?
       </pre></td>
 	<td><pre>Do not allow users to reuse recent passwords. This can be accomplished by using the
 remember option for the pam_pwhistory PAM module.
 
-In the file /etc/pam.d/password-auth, make sure the parameter
-remember is present and it has a value equal to or greater than
-. For example:
-password control_flag pam_pwhistory.so ...existing_options... remember= use_authtok
-control_flag should be one of the next values: </pre></td>
+
+On systems with newer versions of authselect, the pam_pwhistory PAM module
+can be enabled via authselect feature:
+authselect enable-feature with-pwhistory
+
+Otherwise, it should be enabled using an authselect custom profile.
+
+Newer systems also have the /etc/security/pwhistory.conf file for setting
+pam_pwhistory module options. This file should be used whenever available.
+Otherwise, the pam_pwhistory module options can be set in PAM files.
+
+The value for remember option must be equal or greater than
+</pre></td>
 	<td>RHEL-08-020220</td>
 	<td>accounts_password_pam_pwhistory_remember_password_auth</td>
 </tr>
@@ -5200,25 +5216,44 @@ control_flag should be one of the next values: </pre></td>
 	<td>medium</td>
 	<td>RHEL 8 must be configured in the system-auth file to prohibit password reuse for a minimum of five generations.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.</pre></td>
-	<td><pre>Verify Red Hat Enterprise Linux 8 is configured in the system-auth file to prohibit password reuse
-for a minimum of  generations with the following command:
+	<td><pre>Preventing re-use of previous passwords helps ensure that a compromised password is not
+re-used by a user.</pre></td>
+	<td><pre>Verify Red Hat Enterprise Linux 8 use the "pam_pwhistory.so" module in the /etc/pam.d/system-auth file
+and is configured to prohibit password reuse for a minimum of 
+generations.
 
-$ grep -i remember /etc/pam.d/system-auth
-password  pam_pwhistory.so use_authtok remember= retry=3
-      Is it the case that the line containing "pam_pwhistory.so" does not have the "remember" module argument set,
-is commented out, or the value of the "remember" module argument is set to less than
-"<sub idref="var_password_pam_remember" />"?
+Verify the "/etc/pam.d/system-auth" file with the following command:
+
+$ grep pam_pwhistory.so /etc/pam.d/system-auth
+password  pam_pwhistory.so use_authtok remember=
+
+
+Verify the "/etc/security/pwhistory.conf" file using the following command:
+
+$ grep remember /etc/security/pwhistory.conf
+remember = 
+
+The pam_pwhistory.so "remember" option must be configured only in one file.
+      Is it the case that the pam_pwhistory.so module is not used, the "remember" module option is not set in
+/etc/pam.d/system-auth or in /etc/security/pwhistory.conf, or is set in both files, or is set
+with a value less than "<sub idref="var_password_pam_remember" />"?
       </pre></td>
 	<td><pre>Do not allow users to reuse recent passwords. This can be accomplished by using the
 remember option for the pam_pwhistory PAM module.
 
-In the file /etc/pam.d/system-auth, make sure the parameter
-remember is present and it has a value equal to or greater than
 
-For example:
-password control_flag pam_pwhistory.so ...existing_options... remember= use_authtok
-control_flag should be one of the next values: </pre></td>
+On systems with newer versions of authselect, the pam_pwhistory PAM module
+can be enabled via authselect feature:
+authselect enable-feature with-pwhistory
+
+Otherwise, it should be enabled using an authselect custom profile.
+
+Newer systems also have the /etc/security/pwhistory.conf file for setting
+pam_pwhistory module options. This file should be used whenever available.
+Otherwise, the pam_pwhistory module options can be set in PAM files.
+
+The value for remember option must be equal or greater than
+</pre></td>
 	<td>RHEL-08-020221</td>
 	<td>accounts_password_pam_pwhistory_remember_system_auth</td>
 </tr>
@@ -6523,7 +6558,7 @@ of what was executed on the system, as well as, for accountability purposes.
 Editing the sudoers file may be sign of an attacker trying to
 establish persistent methods to a system, auditing the editing of the sudoers
 files mitigates this risk.</pre></td>
-	<td><pre>Verify RHEL 9 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
+	<td><pre>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
 
 $ sudo auditctl -l | grep/etc/sudoers.d
 
@@ -9593,6 +9628,7 @@ $ sudo grep permissive /etc/fapolicyd/fapolicyd.conf
 permissive = 0
 
 Check that fapolicyd employs a deny-all policy on system mounts with the following commands:
+
 For RHEL 8.5 systems and older:
 $ sudo tail /etc/fapolicyd/fapolicyd.rules
 
@@ -10757,6 +10793,19 @@ X11UseLocalhost yes</pre></td>
 </tr>
 
 <tr>
+	<td>V-255924</td>
+	<td></td>
+	<td>medium</td>
+	<td>RHEL 8 SSH server must be configured to use only FIPS-validated key exchange algorithms.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre></pre></td>
+	<td><pre></pre></td>
+	<td><pre></pre></td>
+	<td>RHEL-08-040342</td>
+	<td>Missing Rule</td>
+</tr>
+
+<tr>
 	<td>V-230557</td>
 	<td>366</td>
 	<td>medium</td>
@@ -10868,15 +10917,47 @@ $ sudo yum erase tuned</pre></td>
 
 <tr>
 	<td>V-254520</td>
-	<td></td>
+	<td>2265</td>
 	<td>medium</td>
 	<td>RHEL 8 must prevent non-privileged users from executing privileged functions, including disabling, circumventing, or altering implemented security safeguards/countermeasures.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>Preventing non-privileged users from executing privileged functions mitigates
+the risk that unauthorized individuals or processes may gain unnecessary access
+to information or privileges.
+
+Privileged functions include, for example,
+establishing accounts, performing system integrity checks, or administering
+cryptographic key management activities. Non-privileged users are individuals
+who do not possess appropriate authorizations. Circumventing intrusion detection
+and prevention mechanisms or malicious code protection mechanisms are examples
+of privileged functions that require protection from non-privileged users.</pre></td>
+	<td><pre>To verify the operating system prevents non-privileged users from executing
+privileged functions to include disabling, circumventing, or altering
+implemented security safeguards/countermeasures, run the following
+command:
+$ sudo semanage login -l
+All administrators must be mapped to the sysadm_u or staff_u
+users with the appropriate domains (sysadm_t and staff_t).
+
+All authorized non-administrative
+users must be mapped to the user_u role or the appropriate domain
+(user_t).
+      Is it the case that non-admin users are not confined correctly?
+      </pre></td>
+	<td><pre>Configure the operating system to prevent non-privileged users from executing
+privileged functions to include disabling, circumventing, or altering
+implemented security safeguards/countermeasures. All administrators must be
+mapped to the sysadm_u or staff_u users with the
+appropriate domains (sysadm_t and staff_t).
+$ sudo semanage login -m -s sysadm_u USER or
+$ sudo semanage login -m -s staff_u USER
+
+All authorized non-administrative
+users must be mapped to the user_u role or the appropriate domain
+(user_t).
+$ sudo semanage login -m -s user_u USER</pre></td>
 	<td>RHEL-08-040400</td>
-	<td>Missing Rule</td>
+	<td>selinux_user_login_roles</td>
 </tr>
 
 </table>

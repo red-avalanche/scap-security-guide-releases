@@ -1290,6 +1290,62 @@ more difficult by ensuring a larger search space.
 </tr>
 <tr>
   <td>BP28(R18)</td>
+  <td>CCE-83478-8</td>
+  <td>Limit Password Reuse: password-auth</td>
+  <td xml:lang="en-US">
+Do not allow users to reuse recent passwords. This can be accomplished by using the
+<tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
+<br/><br/>
+
+On systems with newer versions of <tt>authselect</tt>, the <tt>pam_pwhistory</tt> PAM module
+can be enabled via authselect feature:
+<pre>authselect enable-feature with-pwhistory</pre>
+
+Otherwise, it should be enabled using an authselect custom profile.
+<br/><br/>
+Newer systems also have the <tt>/etc/security/pwhistory.conf</tt> file for setting
+<tt>pam_pwhistory</tt> module options. This file should be used whenever available.
+Otherwise, the <tt>pam_pwhistory</tt> module options can be set in PAM files.
+<br/><br/>
+The value for <tt>remember</tt> option must be equal or greater than
+<tt>2</tt>
+  </td>
+  <td xml:lang="en-US">
+Preventing re-use of previous passwords helps ensure that a compromised password is not
+re-used by a user.
+  </td>
+  <td>var_password_pam_remember=2</td>
+</tr>
+<tr>
+  <td>BP28(R18)</td>
+  <td>CCE-83480-4</td>
+  <td>Limit Password Reuse: system-auth</td>
+  <td xml:lang="en-US">
+Do not allow users to reuse recent passwords. This can be accomplished by using the
+<tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
+<br/><br/>
+
+On systems with newer versions of <tt>authselect</tt>, the <tt>pam_pwhistory</tt> PAM module
+can be enabled via authselect feature:
+<pre>authselect enable-feature with-pwhistory</pre>
+
+Otherwise, it should be enabled using an authselect custom profile.
+<br/><br/>
+Newer systems also have the <tt>/etc/security/pwhistory.conf</tt> file for setting
+<tt>pam_pwhistory</tt> module options. This file should be used whenever available.
+Otherwise, the <tt>pam_pwhistory</tt> module options can be set in PAM files.
+<br/><br/>
+The value for <tt>remember</tt> option must be equal or greater than
+<tt>2</tt>
+  </td>
+  <td xml:lang="en-US">
+Preventing re-use of previous passwords helps ensure that a compromised password is not
+re-used by a user.
+  </td>
+  <td>var_password_pam_remember=2</td>
+</tr>
+<tr>
+  <td>BP28(R18)</td>
   <td>CCE-80665-3</td>
   <td>Ensure PAM Enforces Password Requirements - Minimum Uppercase Characters</td>
   <td xml:lang="en-US">
@@ -1312,19 +1368,6 @@ the password is compromised.
 </tr>
 <tr>
   <td>BP28(R18)</td>
-  <td>CCE-80666-1</td>
-  <td>Limit Password Reuse</td>
-  <td xml:lang="en-US">
-Do not allow users to reuse recent passwords. This can be accomplished by using the
-<tt>remember</tt> option for the <tt>pam_unix</tt> or <tt>pam_pwhistory</tt> PAM modules.
-  </td>
-  <td xml:lang="en-US">
-Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>BP28(R18)</td>
   <td>CCE-80667-9</td>
   <td>Lock Accounts After Failed Password Attempts</td>
   <td xml:lang="en-US">
@@ -1332,7 +1375,9 @@ This rule configures the system to lock out accounts after a number of incorrect
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.
   </td>
@@ -2238,6 +2283,24 @@ management session enabled on the console or console port that has been
 left unattended.
   </td>
   <td>var_accounts_tmout=10_min</td>
+</tr>
+<tr>
+  <td>BP28(R29)</td>
+  <td>CCE-90784-0</td>
+  <td>Configure Logind to terminate idle sessions after certain time of inactivity</td>
+  <td xml:lang="en-US">
+To configure <tt>logind</tt> service to terminate inactive user sessions
+after <tt>10_minutes</tt> seconds, edit the file
+<tt>/etc/systemd/logind.conf</tt>. Ensure that there is a section
+<pre>[Login]</pre> which contains the configuration
+<pre>StopIdleSessionSec=<tt>10_minutes</tt></pre>.
+  </td>
+  <td xml:lang="en-US">
+Terminating an idle session within a short time period reduces the window of
+opportunity for unauthorized personnel to take control of a management
+session enabled on the console or console port that has been let unattended.
+  </td>
+  <td>var_logind_session_timeout=10_minutes</td>
 </tr>
 <tr>
   <td>BP28(R29)</td>
