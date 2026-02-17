@@ -268,31 +268,40 @@ Use the following verbiage for operating systems that have severe limitations on
 <td>SRG-OS-000480-GPOS-00227</td>
 <td><i>TBD - Assigned by DISA after STIG release</i></td>
 <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-<td>CCE-26872-2:Ensure All Files Are Owned by a Group</td>
+<td>Disable Ctrl-Alt-Del Reboot Activation</td>
 <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
 
 Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
-<td xml:lang="en-US">If any files are not owned by a group, then the
-cause of their lack of group-ownership should be investigated.
-Following this, the files should be deleted or assigned to an
-appropriate group.</td>
+<td xml:lang="en-US">
+By default, the system includes the following line in
+<code>/etc/init/control-alt-delete.conf</code>
+to reboot the system when the Ctrl-Alt-Del key sequence is pressed:
+<pre>exec /sbin/shutdown -r now "Control-Alt-Delete pressed"</pre>
+<br>
+To configure the system to log a message instead of
+rebooting the system, alter that line to read as follows:
+<pre>exec /usr/bin/logger -p security.info "Control-Alt-Delete pressed"</pre>
+</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
-<td>The following command will discover and print any
-files on local partitions which do not belong to a valid group.
-$ sudo find / -xdev -fstype local -nogroup
-
-Either remove all files and directories from the system that do not have a valid group,
-or assign a valid group with the chgrp command:
-$ sudo chgrp group file
-      Is it the case that there is output?
+<td>
+To ensure the system is configured to log a message instead of rebooting the
+system when Ctrl-Alt-Del is pressed, ensure the following line is in
+/etc/init/control-alt-delete.conf:
+exec /usr/bin/logger -p security.info "Control-Alt-Delete pressed"
+      Is it the case that the system is configured to reboot when Ctrl-Alt-Del is pressed?
       </td>
 <td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-61487r1_fix">Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</fixtext></td>
-<td>If any files are not owned by a group, then the
-cause of their lack of group-ownership should be investigated.
-Following this, the files should be deleted or assigned to an
-appropriate group.</td>
-<td>medium</td>
+<td>
+By default, the system includes the following line in
+/etc/init/control-alt-delete.conf
+to reboot the system when the Ctrl-Alt-Del key sequence is pressed:
+exec /sbin/shutdown -r now "Control-Alt-Delete pressed"
+
+To configure the system to log a message instead of
+rebooting the system, alter that line to read as follows:
+exec /usr/bin/logger -p security.info "Control-Alt-Delete pressed"</td>
+<td>high</td>
 <td></td>
 <td></td>
 <td></td>
@@ -337,6 +346,40 @@ appropriate user.</td>
 <td>SRG-OS-000480-GPOS-00227</td>
 <td><i>TBD - Assigned by DISA after STIG release</i></td>
 <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
+<td>CCE-26872-2:Ensure All Files Are Owned by a Group</td>
+<td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
+
+Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
+<td xml:lang="en-US">If any files are not owned by a group, then the
+cause of their lack of group-ownership should be investigated.
+Following this, the files should be deleted or assigned to an
+appropriate group.</td>
+<td>Applicable - Configurable</td>
+<td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
+<td>The following command will discover and print any
+files on local partitions which do not belong to a valid group.
+$ sudo find / -xdev -fstype local -nogroup
+
+Either remove all files and directories from the system that do not have a valid group,
+or assign a valid group with the chgrp command:
+$ sudo chgrp group file
+      Is it the case that there is output?
+      </td>
+<td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-61487r1_fix">Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</fixtext></td>
+<td>If any files are not owned by a group, then the
+cause of their lack of group-ownership should be investigated.
+Following this, the files should be deleted or assigned to an
+appropriate group.</td>
+<td>medium</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCI-000366</td>
+<td>SRG-OS-000480-GPOS-00227</td>
+<td><i>TBD - Assigned by DISA after STIG release</i></td>
+<td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
 <td>CCE-27056-1:Add nosuid Option to Removable Media Partitions</td>
 <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
 
@@ -363,7 +406,50 @@ Add the nosuid option to the fourth column of
 /etc/fstab for the line which controls mounting of
 
     any removable media partitions.</td>
-<td>unknown</td>
+<td>medium</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCI-000366</td>
+<td>SRG-OS-000480-GPOS-00227</td>
+<td><i>TBD - Assigned by DISA after STIG release</i></td>
+<td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
+<td>Disable Ctrl-Alt-Del Reboot Activation</td>
+<td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
+
+Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
+<td xml:lang="en-US">
+By default, the system includes the following line in
+<code>/etc/init/control-alt-delete.conf</code>
+to reboot the system when the Ctrl-Alt-Del key sequence is pressed:
+<pre>exec /sbin/shutdown -r now "Control-Alt-Delete pressed"</pre>
+<br>
+To configure the system to log a message instead of
+rebooting the system, alter that line to read as follows:
+<pre>exec /usr/bin/logger -p security.info "Control-Alt-Delete pressed"</pre>
+</td>
+<td>Applicable - Configurable</td>
+<td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
+<td>
+To ensure the system is configured to log a message instead of rebooting the
+system when Ctrl-Alt-Del is pressed, ensure the following line is in
+/etc/init/control-alt-delete.conf:
+exec /usr/bin/logger -p security.info "Control-Alt-Delete pressed"
+      Is it the case that the system is configured to reboot when Ctrl-Alt-Del is pressed?
+      </td>
+<td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-61487r1_fix">Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</fixtext></td>
+<td>
+By default, the system includes the following line in
+/etc/init/control-alt-delete.conf
+to reboot the system when the Ctrl-Alt-Del key sequence is pressed:
+exec /sbin/shutdown -r now "Control-Alt-Delete pressed"
+
+To configure the system to log a message instead of
+rebooting the system, alter that line to read as follows:
+exec /usr/bin/logger -p security.info "Control-Alt-Delete pressed"</td>
+<td>high</td>
 <td></td>
 <td></td>
 <td></td>
@@ -3215,6 +3301,43 @@ This requirement is a permanent not a finding. No fix is required.
 <td>SRG-OS-000368-GPOS-00154</td>
 <td><i>TBD - Assigned by DISA after STIG release</i></td>
 <td>The operating system must prevent program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage.</td>
+<td>CCE-26486-1:Add nosuid Option to /dev/shm</td>
+<td>Control of program execution is a mechanism used to prevent execution of unauthorized programs. Some operating systems may provide a capability that runs counter to the mission or provides users with functionality that exceeds mission requirements. This includes functions and services installed at the operating system-level.
+
+Some of the programs, installed by default, may be harmful or may not be necessary to support essential organizational operations (e.g., key missions, functions). Removal of executable programs is not always possible; therefore, establishing a method of preventing program execution is critical to maintaining a secure system baseline.
+
+Methods for complying with this requirement include restricting execution of programs in certain environments, while preventing execution in other environments; or limiting execution of certain program functionality based on organization-defined criteria (e.g., privileges, subnets, sandboxed environments, or roles).</td>
+<td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent execution
+of setuid programs in <code>/dev/shm</code>.  The SUID and SGID permissions should not
+be required in these world-writable directories.
+Add the <code>nosuid</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+<code>/dev/shm</code>.</td>
+<td>Applicable - Configurable</td>
+<td>Verify the operating system prevents program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage. If it does not, this is a finding.</td>
+<td>To verify the nosuid option is configured for the /dev/shm mount point, run the following command:
+    $ mount | grep '\s/dev/shm\s'
+    The output should show the corresponding mount point along with the nosuid setting in parentheses.
+
+      Is it the case that the  is not present in the output line, or there is no output line at all?
+      </td>
+<td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-61741r1_fix">Configure the operating system to prevent program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage.</fixtext></td>
+<td>The nosuid mount option can be used to prevent execution
+of setuid programs in /dev/shm.  The SUID and SGID permissions should not
+be required in these world-writable directories.
+Add the nosuid option to the fourth column of
+/etc/fstab for the line which controls mounting of
+/dev/shm.</td>
+<td>medium</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCI-001764</td>
+<td>SRG-OS-000368-GPOS-00154</td>
+<td><i>TBD - Assigned by DISA after STIG release</i></td>
+<td>The operating system must prevent program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage.</td>
 <td>CCE-26778-1:Add nodev Option to /dev/shm</td>
 <td>Control of program execution is a mechanism used to prevent execution of unauthorized programs. Some operating systems may provide a capability that runs counter to the mission or provides users with functionality that exceeds mission requirements. This includes functions and services installed at the operating system-level.
 
@@ -3279,43 +3402,6 @@ from being executed out of /dev/shm.
 It can be dangerous to allow the execution of binaries
 from world-writable temporary storage directories such as /dev/shm.
 Add the noexec option to the fourth column of
-/etc/fstab for the line which controls mounting of
-/dev/shm.</td>
-<td>medium</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>CCI-001764</td>
-<td>SRG-OS-000368-GPOS-00154</td>
-<td><i>TBD - Assigned by DISA after STIG release</i></td>
-<td>The operating system must prevent program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage.</td>
-<td>CCE-26486-1:Add nosuid Option to /dev/shm</td>
-<td>Control of program execution is a mechanism used to prevent execution of unauthorized programs. Some operating systems may provide a capability that runs counter to the mission or provides users with functionality that exceeds mission requirements. This includes functions and services installed at the operating system-level.
-
-Some of the programs, installed by default, may be harmful or may not be necessary to support essential organizational operations (e.g., key missions, functions). Removal of executable programs is not always possible; therefore, establishing a method of preventing program execution is critical to maintaining a secure system baseline.
-
-Methods for complying with this requirement include restricting execution of programs in certain environments, while preventing execution in other environments; or limiting execution of certain program functionality based on organization-defined criteria (e.g., privileges, subnets, sandboxed environments, or roles).</td>
-<td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent execution
-of setuid programs in <code>/dev/shm</code>.  The SUID and SGID permissions should not
-be required in these world-writable directories.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
-<code>/dev/shm</code>.</td>
-<td>Applicable - Configurable</td>
-<td>Verify the operating system prevents program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage. If it does not, this is a finding.</td>
-<td>To verify the nosuid option is configured for the /dev/shm mount point, run the following command:
-    $ mount | grep '\s/dev/shm\s'
-    The output should show the corresponding mount point along with the nosuid setting in parentheses.
-
-      Is it the case that the  is not present in the output line, or there is no output line at all?
-      </td>
-<td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-61741r1_fix">Configure the operating system to prevent program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage.</fixtext></td>
-<td>The nosuid mount option can be used to prevent execution
-of setuid programs in /dev/shm.  The SUID and SGID permissions should not
-be required in these world-writable directories.
-Add the nosuid option to the fourth column of
 /etc/fstab for the line which controls mounting of
 /dev/shm.</td>
 <td>medium</td>
@@ -3426,7 +3512,7 @@ Terminating network connections associated with communications sessions includes
 <td xml:lang="en-US">Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
 all user sessions will terminate based on inactivity. The <code>TMOUT</code>
 setting in <code>/etc/profile</code> should read as follows:
-<pre>TMOUT=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></ns0:sub></pre>
+<pre>TMOUT=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></xccdf-1.1:sub></pre>
 </td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system terminates all network connections associated with a communications session at the end of the session, or as follows: for in-band management sessions (privileged sessions), the session must be terminated after 10 minutes of inactivity; and for user sessions (non-privileged session), the session must be terminated after 15 minutes of inactivity, except to fulfill documented and validated mission requirements. If it does not, this is a finding.</td>
@@ -4412,6 +4498,49 @@ When discretionary access control policies are implemented, subjects are not con
 <td></td>
 <td></td>
 </td>
+</tr>
+<tr>
+<td>CCI-002235</td>
+<td>SRG-OS-000324-GPOS-00125</td>
+<td><i>TBD - Assigned by DISA after STIG release</i></td>
+<td>The operating system must prevent non-privileged users from executing privileged functions to include disabling, circumventing, or altering implemented security safeguards/countermeasures.</td>
+<td>Disable Ctrl-Alt-Del Reboot Activation</td>
+<td>Preventing non-privileged users from executing privileged functions mitigates the risk that unauthorized individuals or processes may gain unnecessary access to information or privileges.
+
+Privileged functions include, for example, establishing accounts, performing system integrity checks, or administering cryptographic key management activities. Non-privileged users are individuals that do not possess appropriate authorizations. Circumventing intrusion detection and prevention mechanisms or malicious code protection mechanisms are examples of privileged functions that require protection from non-privileged users.</td>
+<td xml:lang="en-US">
+By default, the system includes the following line in
+<code>/etc/init/control-alt-delete.conf</code>
+to reboot the system when the Ctrl-Alt-Del key sequence is pressed:
+<pre>exec /sbin/shutdown -r now "Control-Alt-Delete pressed"</pre>
+<br>
+To configure the system to log a message instead of
+rebooting the system, alter that line to read as follows:
+<pre>exec /usr/bin/logger -p security.info "Control-Alt-Delete pressed"</pre>
+</td>
+<td>Applicable - Configurable</td>
+<td>Verify that the operating system prevents non-privileged users from executing privileged functions to include disabling, circumventing, or altering implemented security safeguards/countermeasures. If it does not, this is a finding.</td>
+<td>
+To ensure the system is configured to log a message instead of rebooting the
+system when Ctrl-Alt-Del is pressed, ensure the following line is in
+/etc/init/control-alt-delete.conf:
+exec /usr/bin/logger -p security.info "Control-Alt-Delete pressed"
+      Is it the case that the system is configured to reboot when Ctrl-Alt-Del is pressed?
+      </td>
+<td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-62159r1_fix">Configure the operating system to prevent non-privileged users from executing privileged functions to include disabling, circumventing, or altering implemented security safeguards/countermeasures.</fixtext></td>
+<td>
+By default, the system includes the following line in
+/etc/init/control-alt-delete.conf
+to reboot the system when the Ctrl-Alt-Del key sequence is pressed:
+exec /sbin/shutdown -r now "Control-Alt-Delete pressed"
+
+To configure the system to log a message instead of
+rebooting the system, alter that line to read as follows:
+exec /usr/bin/logger -p security.info "Control-Alt-Delete pressed"</td>
+<td>high</td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>CCI-002235</td>
