@@ -48,9 +48,9 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>242</td>
+			<td>245</td>
 			<td>0</td>
-			<td>242</td>
+			<td>245</td>
 			<td>100.00%</td>
 			<td>
 				
@@ -106,6 +106,42 @@ the correct values:
 $ sudo rpm --setperms PACKAGENAME</pre></td>
 	<td>OL07-00-010010</td>
 	<td>rpm_verify_permissions</td>
+</tr>
+
+<tr>
+	<td>V-256975</td>
+	<td>1749</td>
+	<td>medium</td>
+	<td>The Oracle Linux operating system must ensure cryptographic verification of vendor software packages.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>Changes to software components can have significant effects on the
+overall security of the operating system. This requirement ensures
+the software has not been tampered with and that it has been provided
+by a trusted vendor. The Oracle GPG key is necessary to
+cryptographically verify packages are from Oracle.</pre></td>
+	<td><pre>To ensure that the GPG key is installed, run:
+$ rpm -q --queryformat "%{SUMMARY}\n" gpg-pubkey
+The command should return the string below:
+gpg(Oracle OSS group (Open Source Software group) <build@oss.oracle.com>
+      Is it the case that the Oracle GPG Key is not installed?
+      </pre></td>
+	<td><pre>To ensure the system can cryptographically verify base software
+packages come from Oracle (and to connect to the Unbreakable Linux Network to
+receive them), the Oracle GPG key must properly be installed.
+To install the Oracle GPG key, run:
+$ sudo uln_register
+If the system is not connected to the Internet,
+then install the Oracle GPG key from trusted media such as
+the Oracle installation CD-ROM or DVD. Assuming the disc is mounted
+in /media/cdrom, use the following command as the root user to import
+it into the keyring:
+$ sudo rpm --import /media/cdrom/RPM-GPG-KEY-oracle
+
+Alternatively, the key may be pre-loaded during the Oracle installation. In
+such cases, the key can be installed by running the following command:
+sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle</pre></td>
+	<td>OL07-00-010019</td>
+	<td>ensure_oracle_gpgkey_installed</td>
 </tr>
 
 <tr>
@@ -369,6 +405,41 @@ After the settings have been set, run dconf update.</pre></td>
 </tr>
 
 <tr>
+	<td>V-256976</td>
+	<td>366</td>
+	<td>medium</td>
+	<td>The Oracle Linux operating system must disable the login screen user list for graphical user interfaces.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>Leaving the user list enabled is a security risk since it allows anyone
+with physical access to the system to quickly enumerate known user accounts
+without logging in.</pre></td>
+	<td><pre>To ensure the user list is disabled, run the following command:
+$ grep disable-user-list /etc/dconf/db/local.d/*
+The output should be true.
+To ensure that users cannot enable displaying the user list, run the following:
+$ grep disable-user-list /etc/dconf/db/local.d/locks/*
+If properly configured, the output should be /org/gnome/login-screen/disable-user-list
+      Is it the case that disable-user-list has not been configured or is not disabled?
+      </pre></td>
+	<td><pre>In the default graphical environment, users logging directly into the
+system are greeted with a login screen that displays all known users.
+This functionality should be disabled by setting disable-user-list
+to true.
+
+To disable, add or edit disable-user-list to
+/etc/dconf/db/local.d/00-security-settings. For example:
+[org/gnome/login-screen]
+disable-user-list=true
+Once the setting has been added, add a lock to
+/etc/dconf/db/local.d/locks/00-security-settings-lock to prevent
+user modification. For example:
+/org/gnome/login-screen/disable-user-list
+After the settings have been set, run dconf update.</pre></td>
+	<td>OL07-00-010063</td>
+	<td>dconf_gnome_disable_user_list</td>
+</tr>
+
+<tr>
 	<td>V-221660</td>
 	<td>57</td>
 	<td>medium</td>
@@ -607,7 +678,7 @@ Check for the use of the "pwquality" retry option in the PAM files with the foll
 $ grep pam_pwquality /etc/pam.d/system-auth
 
 
-password required pam_pwquality.so retry=
+password requisite pam_pwquality.so retry=
       Is it the case that the value of "retry" is set to "0" or greater than "<sub idref="var_password_pam_retry" />", or is missing?
       </pre></td>
 	<td><pre>To configure the number of retry prompts that are permitted per-session:
@@ -1181,36 +1252,34 @@ password  pam_pwhistory.so use_authtok remember=</pre></td>
 	<td>V-254522</td>
 	<td>1682</td>
 	<td>medium</td>
-	<td>Oracle Linux operating system emergency accounts must be automatically removed or disabled after the crisis is resolved or within 72 hours.</td>
+	<td>The Oracle Linux operating system must automatically expire temporary accounts within 72 hours.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>If emergency user accounts remain active when no longer needed or for
+	<td><pre>If temporary user accounts remain active when no longer needed or for
 an excessive period, these accounts may be used to gain unauthorized access.
-To mitigate this risk, automated termination of all emergency accounts
+To mitigate this risk, automated termination of all temporary accounts
 must be set upon account creation.
 </pre></td>
-	<td><pre>Verify emergency accounts have been provisioned with an expiration date of 72 hours.
-
-For every emergency account, run the following command to obtain its account aging and expiration information:
-
-$ sudo chage -l emergency_account_name
-
-Verify each of these accounts has an expiration date set within 72 hours or as documented.
-      Is it the case that any emergency accounts have no expiration date set or do not expire within 72 hours?
+	<td><pre>Verify that temporary accounts have been provisioned with an expiration date
+of 72 hours. For every temporary account, run the following command to
+obtain its account aging and expiration information:
+$ sudo chage -l temporary_account_name
+Verify each of these accounts has an expiration date set within 72 hours or
+as documented.
+      Is it the case that any temporary accounts have no expiration date set or do not expire within 72 hours?
       </pre></td>
-	<td><pre>Emergency accounts are privileged accounts established in response to
-crisis situations where the need for rapid account activation is required.
-In the event emergency accounts are required, configure the system to
-terminate them after a documented time period. For every emergency account,
-run the following command to set an expiration date on it, substituting
-ACCOUNT_NAME and YYYY-MM-DD
+	<td><pre>Temporary accounts are established as part of normal account activation
+procedures when there is a need for short-term accounts. In the event
+temporary accounts are required, configure the system to
+terminate them after a documented time period. For every temporary account, run the following command to set an expiration date on
+it, substituting USER and YYYY-MM-DD
 appropriately:
-$ sudo chage -E YYYY-MM-DD ACCOUNT_NAME
+$ sudo chage -E YYYY-MM-DD USER
 YYYY-MM-DD indicates the documented expiration date for the
 account. For U.S. Government systems, the operating system must be
 configured to automatically terminate these types of accounts after a
 period of 72 hours.</pre></td>
 	<td>OL07-00-010271</td>
-	<td>account_emergency_expire_date</td>
+	<td>account_temp_expire_date</td>
 </tr>
 
 <tr>
@@ -2221,6 +2290,25 @@ SELinux context with the use of the sudo command:
 %wheel ALL=(ALL) TYPE=sysadm_t ROLE=sysadm_r ALL</pre></td>
 	<td>OL07-00-020023</td>
 	<td>selinux_context_elevation_for_sudo</td>
+</tr>
+
+<tr>
+	<td>V-256977</td>
+	<td>1744</td>
+	<td>medium</td>
+	<td>The Oracle Linux operating system must be configured to allow sending email notifications of unauthorized configuration changes to designated personnel.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>Emails can be used to notify designated personnel about important
+system events such as failures or warnings.</pre></td>
+	<td><pre>Run the following command to determine if the mailx package is installed: $ rpm -q mailx
+      Is it the case that the package is not installed?
+      </pre></td>
+	<td><pre>A mail server is required for sending emails.
+The mailx package can be installed with the following command:
+
+$ sudo yum install mailx</pre></td>
+	<td>OL07-00-020028</td>
+	<td>package_mailx_installed</td>
 </tr>
 
 <tr>
@@ -5645,12 +5733,18 @@ There must be a resolvable DNS CNAME or Alias record set to "" for logs to be se
 	<td>medium</td>
 	<td>The Oracle Linux operating system must be configured so that the rsyslog daemon does not accept log messages from other servers unless the server is being used for log aggregation.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Any process which receives messages from the network incurs some risk
-of receiving malicious messages. This risk can be eliminated for
-rsyslog by configuring it not to listen on the network.</pre></td>
-	<td><pre>Verify that the system is not accepting "rsyslog" messages from other systems unless it is documented as a log aggregation server.
-Display the contents of the configuration file:
-cat /etc/rsyslog.conf
+	<td><pre>Any process which receives messages from the network incurs some risk of receiving malicious
+messages. This risk can be eliminated for rsyslog by configuring it not to listen on the
+network.</pre></td>
+	<td><pre>Verify that the system is not accepting "rsyslog" messages from other systems unless it is
+documented as a log aggregation server.
+Display the contents of the rsyslog configuration files:
+find /etc -maxdepth 2 -regex '/etc/rsyslog\(\.conf\|\.d\/.*\.conf\)' -exec cat '{}' \;
+
+If any of the below lines are found, ask to see the documentation for the system being used
+for log aggregation:
+
+If using legacy syntax:
 $ModLoad imtcp
 $InputTCPServerRun port
 $ModLoad imudp
@@ -5658,19 +5752,32 @@ $UDPServerRun port
 $ModLoad imrelp
 $InputRELPServerRun port
 
-If any of the above modules are being loaded in the "/etc/rsyslog.conf" file, ask to see the documentation for the system being used for log aggregation.
+If using RainerScript syntax:
+module(load="imtcp")
+module(load="imudp")
+input(type="imtcp" port="514")
+input(type="imudp" port="514")
+
       Is it the case that rsyslog accepts remote messages and is not documented as a log aggregation system?
       </pre></td>
-	<td><pre>The rsyslog daemon should not accept remote messages
-unless the system acts as a log server.
-To ensure that it is not listening on the network, ensure the following lines are
-not found in /etc/rsyslog.conf:
+	<td><pre>The rsyslog daemon should not accept remote messages unless the system acts as a log
+server. To ensure that it is not listening on the network, ensure any of the following lines
+are not found in rsyslog configuration files.
+
+If using legacy syntax:
 $ModLoad imtcp
 $InputTCPServerRun port
 $ModLoad imudp
 $UDPServerRun port
 $ModLoad imrelp
-$InputRELPServerRun port</pre></td>
+$InputRELPServerRun port
+
+If using RainerScript syntax:
+module(load="imtcp")
+module(load="imudp")
+input(type="imtcp" port="514")
+input(type="imudp" port="514")
+</pre></td>
 	<td>OL07-00-031010</td>
 	<td>rsyslog_nolisten</td>
 </tr>
@@ -5683,17 +5790,22 @@ $InputRELPServerRun port</pre></td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Virus scanning software can be used to detect if a system has been compromised by
 computer viruses, as well as to limit their spread to other systems.</pre></td>
-	<td><pre>To verify that McAfee VirusScan Enterprise for Linux is installed
-and running, run the following command(s):
-$ sudo systemctl status nails
-$ rpm -q McAfeeVSEForLinux
-      Is it the case that virus scanning software is not installed or running?
+	<td><pre>Verify an anti-virus solution is installed on the system. The anti-virus solution may be
+bundled with an approved host-based security solution.
+      Is it the case that there is no anti-virus solution installed on the system?
       </pre></td>
-	<td><pre>Install McAfee VirusScan Enterprise for Linux antivirus software
-which is provided for DoD systems and uses signatures to search for the
-presence of viruses on the filesystem.</pre></td>
+	<td><pre>Virus scanning software can be used to protect a system from penetration from
+computer viruses and to limit their spread through intermediate systems.
+
+The virus scanning software should be configured to perform scans dynamically
+on accessed files. If this capability is not available, the system must be
+configured to scan, at a minimum, all altered files on the system on a daily
+basis.
+
+If the system processes inbound SMTP mail, the virus scanner must be configured
+to scan all received mail.</pre></td>
 	<td>OL07-00-032000</td>
-	<td>install_mcafee_antivirus</td>
+	<td>install_antivirus</td>
 </tr>
 
 <tr>
@@ -6090,14 +6202,14 @@ RhostsRSAAuthentication no</pre></td>
 	<td><pre>This ensures a user login will be terminated as soon as the ClientAliveInterval
 is reached.</pre></td>
 	<td><pre>To ensure ClientAliveInterval is set correctly, run the following command:
+
 $ sudo grep ClientAliveCountMax /etc/ssh/sshd_config
+
 If properly configured, the output should be:
-ClientAliveCountMax 
-For SSH earlier than v8.2, a ClientAliveCountMax value of 0 causes a timeout precisely when
-the ClientAliveInterval is set.  Starting with v8.2, a value of 0 disables the timeout
-functionality completely.
-If the option is set to a number greater than 0, then the session will be disconnected after
-ClientAliveInterval * ClientAliveCountMax seconds without receiving a keep alive message.
+ClientAliveCountMax 0
+
+In this case, the SSH timeout occurs precisely when
+the ClientAliveInterval is set.
       Is it the case that it is commented out or not configured properly?
       </pre></td>
 	<td><pre>The SSH server sends at most ClientAliveCountMax messages
@@ -6106,15 +6218,15 @@ The option ClientAliveInterval configures timeout after
 each ClientAliveCountMax message. If the SSH server does not
 receive a response from the client, then the connection is considered unresponsive
 and terminated.
-For SSH earlier than v8.2, a ClientAliveCountMax value of 0
-causes a timeout precisely when the ClientAliveInterval is set.
-Starting with v8.2, a value of 0 disables the timeout functionality
-completely. If the option is set to a number greater than 0, then
-the session will be disconnected after
-ClientAliveInterval * ClientAliveCountMax seconds without receiving
-a keep alive message.</pre></td>
+
+To ensure the SSH timeout occurs precisely when the
+ClientAliveInterval is set, set the ClientAliveCountMax to
+value of 0 in
+
+
+/etc/ssh/sshd_config:</pre></td>
 	<td>OL07-00-040340</td>
-	<td>sshd_set_keepalive</td>
+	<td>sshd_set_keepalive_0</td>
 </tr>
 
 <tr>
@@ -7301,6 +7413,9 @@ DefaultZone=drop</pre></td>
 	<td><pre>Verify that Oracle Linux 7 does not have unauthorized IP tunnels configured.
 
 
+# yum list installed libreswan
+libreswan.x86-64 3.20-5.el7_4
+
 
 If "libreswan" is installed, check to see if the "IPsec" service is active with the following command:
 
@@ -7498,13 +7613,13 @@ Audit logs must be mode 0640 or less permissive.
       Is it the case that any permissions are more permissive?
       </pre></td>
 	<td><pre>
-If log_group in /etc/audit/auditd.conf is set to a group other than the
-root
-group account, change the mode of the audit log files with the following command:
-$ sudo chmod 0640 audit_file
-
-Otherwise, change the mode of the audit log files with the following command:
-$ sudo chmod 0600 audit_file</pre></td>
+Determine where the audit logs are stored with the following command:
+$ sudo grep -iw log_file /etc/audit/auditd.conf
+log_file = /var/log/audit/audit.log
+Configure the audit log to be protected from unauthorized read access by setting the correct
+permissive mode with the following command:
+$ sudo chmod 0600 audit_log_file
+By default, audit_log_file is "/var/log/audit/audit.log".</pre></td>
 	<td>OL07-00-910055</td>
 	<td>file_permissions_var_log_audit</td>
 </tr>

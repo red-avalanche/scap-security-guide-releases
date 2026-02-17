@@ -717,6 +717,38 @@ The output should not return any interactive users.
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_aide_build_database</td>
+<td>medium</td>
+<td>Build and Test AIDE Database</td>
+<td>For AIDE to be effective, an initial database of "known-good" information about files
+must be captured and it should be able to be verified against the installed files.</td>
+<td>Run the following command to generate a new database:
+
+<pre>$ sudo /usr/bin/aide --init</pre>
+
+By default, the database will be written to the file
+
+<code>/var/lib/aide/aide.db.new</code>.
+
+Storing the database, the configuration file <code>/etc/aide.conf</code>, and the binary
+<code>/usr/bin/aide</code>
+(or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
+The newly-generated database can be installed as follows:
+
+<pre>$ sudo cp /var/lib/aide/aide.db.new /var/lib/aide/aide.db</pre>
+
+To initiate a manual check, run the following command:
+<pre>$ sudo /usr/bin/aide --check</pre>
+If this check produces any unexpected output, investigate.</td>
+<td><pre>To find the location of the AIDE database file, run the following command:
+$ sudo ls -l DBDIR/database_file_name
+      Is it the case that there is no database file?
+      </pre></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_aide_check_audit_tools</td>
 <td>medium</td>
 <td>Configure AIDE to Verify the Audit Tools</td>
@@ -5297,13 +5329,13 @@ Run the following command to correct the permissions after adding the missing en
 <td>If an unauthorized user obtains the private SSH host key file, the host could be
 impersonated.</td>
 <td>SSH server private keys - files that match the <code>/etc/ssh/*_key</code> glob, have to have restricted permissions.
-If those files are owned by the <code>root</code> user and the <code>root</code> group, they have to have the <code>0600</code> permission or stricter.</td>
+If those files are owned by the <code>root</code> user and the <code>root</code> group, they have to have the <code>0640</code> permission or stricter.</td>
 <td><pre>To check the permissions of /etc/ssh/*_key,
 run the command:
 $ ls -l /etc/ssh/*_key
 If properly configured, the output should indicate the following permissions:
--rw-------
-      Is it the case that /etc/ssh/*_key does not have unix mode -rw-------?
+-rw-r-----
+      Is it the case that /etc/ssh/*_key does not have unix mode -rw-r-----?
       </pre></td>
 <td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
 </td>
@@ -6032,28 +6064,23 @@ $ find / -name shosts.equiv
 <td>xccdf_org.ssgproject.content_rule_no_shelllogin_for_systemaccounts</td>
 <td>medium</td>
 <td>Ensure that System Accounts Do Not Run a Shell Upon Login</td>
-<td>Ensuring shells are not given to system accounts upon login makes it more
-difficult for attackers to make use of system accounts.</td>
-<td>Some accounts are not associated with a human user of the system, and exist to
-perform some administrative function. Should an attacker be able to log into
-these accounts, they should not be granted access to a shell.
+<td>Ensuring shells are not given to system accounts upon login makes it more difficult for
+attackers to make use of system accounts.</td>
+<td>Some accounts are not associated with a human user of the system, and exist to perform some
+administrative functions. Should an attacker be able to log into these accounts, they should
+not be granted access to a shell.
 <br><br>
-The login shell for each local account is stored in the last field of each line
-in <code>/etc/passwd</code>. System accounts are those user accounts with a user ID
-less than UID_MIN, where value of UID_MIN directive is set in
-/etc/login.defs configuration file. In the default configuration UID_MIN is set
-to 1000, thus system accounts are those user accounts with a user ID less than
-1000. The user ID is stored in the third field. If any system account
-<i>SYSACCT</i> (other than root) has a login shell, disable it with the
-command: <pre>$ sudo usermod -s /sbin/nologin <i>SYSACCT</i></pre>
+The login shell for each local account is stored in the last field of each line in
+<code>/etc/passwd</code>. System accounts are those user accounts with a user ID less than
+<code>1000</code>. The user ID is stored in the third field. If any system account
+other than <code>root</code> has a login shell, disable it with the command:
+<pre>$ sudo usermod -s /sbin/nologin <i>account</i></pre>
 </td>
-<td><pre>To obtain a listing of all users, their UIDs, and their shells, run the
-command: $ awk -F: '{print $1 ":" $3 ":" $7}' /etc/passwd Identify
-the system accounts from this listing. These will primarily be the accounts
-with UID numbers less than UID_MIN, other than root. Value of the UID_MIN
-directive is set in /etc/login.defs configuration file. In the default
-configuration UID_MIN is set to 1000.
-      Is it the case that any system account (other than root) has a login shell?
+<td><pre>To obtain a listing of all users, their UIDs, and their shells, run the command:
+$ awk -F: '{print $1 ":" $3 ":" $7}' /etc/passwd
+Identify the system accounts from this listing. These will primarily be the accounts with UID
+numbers less than 1000, other than root.
+      Is it the case that any system account other than root has a login shell?
       </pre></td>
 <td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
 </td>
@@ -7051,34 +7078,6 @@ is a finding.
 </td>
 </tr>
 <tr>
-<td>xccdf_org.ssgproject.content_rule_sshd_disable_compression</td>
-<td>medium</td>
-<td>Disable Compression Or Set Compression to delayed</td>
-<td>If compression is allowed in an SSH connection prior to authentication,
-vulnerabilities in the compression software could result in compromise of the
-system from an unauthenticated connection, potentially with root privileges.</td>
-<td>Compression is useful for slow network connections over long
-distances but can cause performance issues on local LANs. If use of compression
-is required, it should be enabled only after a user has authenticated; otherwise,
-it should be disabled. To disable compression or delay compression until after
-a user has successfully authenticated, add or correct the following line in the
-<code>/etc/ssh/sshd_config</code> file:
-<pre>Compression <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_sshd_disable_compression" use="legacy"></xccdf-1.2:sub></pre>
-</td>
-<td><pre>To check if compression is enabled or set correctly, run the
-following command:
-$ sudo grep Compression /etc/ssh/sshd_config
-If configured properly, output should be no or delayed.
-      Is it the case that it is commented out, or is not set to no or delayed?
-      </pre></td>
-<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
-</td>
-<td>CCI-000366<br>
-</td>
-<td>CM-6 b<br>
-</td>
-</tr>
-<tr>
 <td>xccdf_org.ssgproject.content_rule_sshd_disable_empty_passwords</td>
 <td>high</td>
 <td>Disable SSH Access via Empty Passwords</td>
@@ -7769,6 +7768,29 @@ If "Defaults !runaspw" is not defined, this is a finding.
 <td>CCI-000366<br>CCI-002227<br>
 </td>
 <td>CM-6 b<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_sysctl_kernel_dmesg_restrict</td>
+<td>low</td>
+<td>Restrict Access to Kernel Message Buffer</td>
+<td>Unprivileged access to the kernel syslog can expose sensitive kernel
+address information.</td>
+<td>To set the runtime status of the <code>kernel.dmesg_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.dmesg_restrict=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.dmesg_restrict = 1</pre>
+</td>
+<td><pre>The runtime status of the kernel.dmesg_restrict kernel parameter can be queried
+by running the following command:
+$ sysctl kernel.dmesg_restrict
+1.
+
+      Is it the case that the correct value is not returned?
+      </pre></td>
+<td>SRG-OS-000138-GPOS-00069<br>SRG-OS-000206-GPOS-00084<br>
+</td>
+<td>CCI-001090<br>CCI-001314<br>
+</td>
+<td>SC-4<br>SI-11 c<br>
 </td>
 </tr>
 <tr>

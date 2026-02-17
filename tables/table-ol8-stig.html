@@ -48,10 +48,10 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>378</td>
-			<td>16</td>
-			<td>362</td>
-			<td>95.77%</td>
+			<td>380</td>
+			<td>14</td>
+			<td>366</td>
+			<td>96.32%</td>
 			<td>
 				
 					OL08-00-020011
@@ -81,10 +81,6 @@
 					OL08-00-020103
 				
 					OL08-00-020332
-				
-					OL08-00-040020
-				
-					OL08-00-040090
 				
 			</td>
 		</tr>
@@ -176,6 +172,42 @@ NOTE: U.S. Defense systems are required to be patched within 30 days or sooner a
 dictates.</pre></td>
 	<td>OL08-00-010010</td>
 	<td>security_patches_up_to_date</td>
+</tr>
+
+<tr>
+	<td>V-256978</td>
+	<td>1749</td>
+	<td>medium</td>
+	<td>OL 8 must ensure cryptographic verification of vendor software packages.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>Changes to software components can have significant effects on the
+overall security of the operating system. This requirement ensures
+the software has not been tampered with and that it has been provided
+by a trusted vendor. The Oracle GPG key is necessary to
+cryptographically verify packages are from Oracle.</pre></td>
+	<td><pre>To ensure that the GPG key is installed, run:
+$ rpm -q --queryformat "%{SUMMARY}\n" gpg-pubkey
+The command should return the string below:
+gpg(Oracle OSS group (Open Source Software group) <build@oss.oracle.com>
+      Is it the case that the Oracle GPG Key is not installed?
+      </pre></td>
+	<td><pre>To ensure the system can cryptographically verify base software
+packages come from Oracle (and to connect to the Unbreakable Linux Network to
+receive them), the Oracle GPG key must properly be installed.
+To install the Oracle GPG key, run:
+$ sudo uln_register
+If the system is not connected to the Internet,
+then install the Oracle GPG key from trusted media such as
+the Oracle installation CD-ROM or DVD. Assuming the disc is mounted
+in /media/cdrom, use the following command as the root user to import
+it into the keyring:
+$ sudo rpm --import /media/cdrom/RPM-GPG-KEY-oracle
+
+Alternatively, the key may be pre-loaded during the Oracle installation. In
+such cases, the key can be installed by running the following command:
+sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle</pre></td>
+	<td>OL08-00-010019</td>
+	<td>ensure_oracle_gpgkey_installed</td>
 </tr>
 
 <tr>
@@ -626,22 +658,27 @@ $ sudo passwd -l [username]</pre></td>
 	<td>medium</td>
 	<td>The OL 8 shadow password suite must be configured to use a sufficient number of hashing rounds.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Using a higher number of rounds makes password cracking attacks more difficult.</pre></td>
-	<td><pre>To verify the number of rounds for the password hashing algorithm is configured, run the following command:
-$ sudo grep rounds /etc/pam.d/system-auth
-The output should show the following match:
-password sufficient pam_unix.so sha512 rounds=
-      Is it the case that rounds is not set to <sub idref="var_password_pam_unix_rounds" /> or is commented out?
-      </pre></td>
-	<td><pre>Configure the number or rounds for the password hashing algorithm. This can be
-accomplished by using the rounds option for the pam_unix PAM module.
+	<td><pre>Passwords need to be protected at all times, and encryption is the standard
+method for protecting passwords. If passwords are not encrypted, they can
+be plainly read (i.e., clear text) and easily compromised. Passwords
+that are encrypted with a weak algorithm are no more protected than if
+they are kept in plain text.
 
-In file /etc/pam.d/system-auth append rounds=
-to the pam_unix.so entry, as shown below:
-password sufficient pam_unix.so ...existing_options... rounds=
-The system's default number of rounds is 5000.</pre></td>
+Using more hashing rounds makes password cracking attacks more difficult.</pre></td>
+	<td><pre>Inspect /etc/login.defs and ensure that if eihter
+SHA_CRYPT_MIN_ROUNDS or SHA_CRYPT_MAX_ROUNDS
+are set, they must have the minimum value of 5000.
+      Is it the case that it does not?
+      </pre></td>
+	<td><pre>In /etc/login.defs, ensure SHA_CRYPT_MIN_ROUNDS and
+SHA_CRYPT_MAX_ROUNDS has the minimum value of 5000.
+For example:
+SHA_CRYPT_MIN_ROUNDS 5000
+SHA_CRYPT_MAX_ROUNDS 5000
+Notice that if neither are set, they already have the default value of 5000.
+If either is set, they must have the minimum value of 5000.</pre></td>
 	<td>OL08-00-010130</td>
-	<td>accounts_password_pam_unix_rounds_system_auth</td>
+	<td>set_password_hashing_min_rounds_logindefs</td>
 </tr>
 
 <tr>
@@ -1805,6 +1842,25 @@ ownership with the following command:
 $ sudo chgrp root DIR</pre></td>
 	<td>OL08-00-010351</td>
 	<td>dir_group_ownership_library_dirs</td>
+</tr>
+
+<tr>
+	<td>V-256979</td>
+	<td>1744</td>
+	<td>medium</td>
+	<td>OL 8 must be configured to allow sending email notifications of unauthorized configuration changes to designated personnel.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>Emails can be used to notify designated personnel about important
+system events such as failures or warnings.</pre></td>
+	<td><pre>Run the following command to determine if the mailx package is installed: $ rpm -q mailx
+      Is it the case that the package is not installed?
+      </pre></td>
+	<td><pre>A mail server is required for sending emails.
+The mailx package can be installed with the following command:
+
+$ sudo yum install mailx</pre></td>
+	<td>OL08-00-010358</td>
+	<td>package_mailx_installed</td>
 </tr>
 
 <tr>
@@ -4907,20 +4963,13 @@ is different from account lockout, which is provided by the pam_faillock module.
 	<td><pre>Verify Oracle Linux 8 is configured to limit the "pwquality" retry option to .
 
 
-Check for the use of the "pwquality" retry option in the PAM files with the following command:
-
-$ grep pam_pwquality /etc/pam.d/system-auth
-
-
-password required pam_pwquality.so retry=
+Check for the use of the "pwquality" retry option in the pwquality.conf file with the following command:
+$ grep retry /etc/security/pwquality.conf
       Is it the case that the value of "retry" is set to "0" or greater than "<sub idref="var_password_pam_retry" />", or is missing?
       </pre></td>
 	<td><pre>To configure the number of retry prompts that are permitted per-session:
 
-Edit the pam_pwquality.so statement in
-
-/etc/pam.d/system-auth to show
-
+Edit the /etc/security/pwquality.conf to include
 
 retry=, or a lower value if site
 policy is more restrictive. The DoD requirement is a maximum of 3 prompts
@@ -5643,7 +5692,7 @@ $ sudo chgrp root /var/log/lastlog</pre></td>
 	<td>V-248708</td>
 	<td>1682</td>
 	<td>medium</td>
-	<td>OL 8 emergency accounts must be automatically removed or disabled after the crisis is resolved or within 72 hours.</td>
+	<td>OL 8 must automatically expire temporary accounts within 72 hours.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>If emergency user accounts remain active when no longer needed or for
 an excessive period, these accounts may be used to gain unauthorized access.
@@ -6034,15 +6083,19 @@ Note: The example is for a system that is configured to create users home direct
 A misconfigured umask value could result in files with excessive permissions that can be read or
 written to by unauthorized users.</pre></td>
 	<td><pre>Verify the umask setting is configured correctly in the /etc/profile file
-with the following command:
-$ grep "umask" /etc/profile
+or scripts within /etc/profile.d directory with the following command:
+$ grep "umask" /etc/profile*
 umask 
       Is it the case that the value for the "umask" parameter is not "<sub idref="var_accounts_user_umask" />",
 or the "umask" parameter is missing or is commented out?
       </pre></td>
 	<td><pre>To ensure the default umask controlled by /etc/profile is set properly,
 add or correct the umask setting in /etc/profile to read as follows:
-umask </pre></td>
+umask 
+
+Note that /etc/profile also reads scrips within /etc/profile.d directory.
+These scripts are also valid files to set umask value. Therefore, they should also be
+considered during the check and properly remediated, if necessary.</pre></td>
 	<td>OL08-00-020353</td>
 	<td>accounts_umask_etc_profile</td>
 </tr>
@@ -8403,21 +8456,14 @@ audit tools by running the following command:
 # sudo cat /etc/aide.conf | grep /usr/sbin/au
 
 /usr/sbin/auditctl p+i+n+u+g+s+b+acl+xattrs+sha512
-
 /usr/sbin/auditd p+i+n+u+g+s+b+acl+xattrs+sha512
-
 /usr/sbin/ausearch p+i+n+u+g+s+b+acl+xattrs+sha512
-
 /usr/sbin/aureport p+i+n+u+g+s+b+acl+xattrs+sha512
-
 /usr/sbin/autrace p+i+n+u+g+s+b+acl+xattrs+sha512
-
 
 /usr/sbin/rsyslogd p+i+n+u+g+s+b+acl+xattrs+sha512
 
-
 /usr/sbin/augenrules p+i+n+u+g+s+b+acl+xattrs+sha512
-
 
 
 If AIDE is configured properly to protect the integrity of the audit tools,
@@ -8511,10 +8557,12 @@ system logging services.</pre></td>
 	<td>SRG-OS-ID</td>
 	<td><pre>The rsyslog-gnutls package provides Transport Layer Security (TLS) support
 for the rsyslog daemon, which enables secure remote logging.</pre></td>
-	<td><pre>Run the following command to determine if the rsyslog-gnutls package is installed: $ rpm -q rsyslog-gnutls
-      Is it the case that the package is not installed?
+	<td><pre>Run the following command to determine if the rsyslog-gnutls package is installed:
+$ rpm -q rsyslog-gnutls
+      Is it the case that the package is installed?
       </pre></td>
 	<td><pre>TLS protocol support for rsyslog is installed.
+
 The rsyslog-gnutls package can be installed with the following command:
 
 $ sudo yum install rsyslog-gnutls</pre></td>
@@ -8715,8 +8763,8 @@ also include suspend, single, and halt.</pre></td>
 	<td>medium</td>
 	<td>OL 8 must compare internal information system clocks at least every 24 hours with a server synchronized to an authoritative time source, such as the United States Naval Observatory (USNO) time servers, or a time server designated for the appropriate DoD network (NIPRNet/SIPRNet), and/or the Global Positioning System (GPS).</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Depending on the infrastruture being used the pool directive may not be supported.</pre></td>
-	<td><pre>Run the following command and verify that time sources are only configure with server directive:
+	<td><pre>Depending on the infrastructure being used the pool directive may not be supported.</pre></td>
+	<td><pre>Run the following command and verify that time sources are only configured with server directive:
 # grep -E "^(server|pool)" /etc/chrony.conf
 A line with the appropriate server should be returned, any line returned starting with pool is a finding.
       Is it the case that an authoritative remote time server is not configured or configured with pool directive?
@@ -8906,15 +8954,34 @@ $ sudo yum erase rsh-server</pre></td>
 
 <tr>
 	<td>V-248828</td>
-	<td></td>
+	<td>381</td>
 	<td>medium</td>
 	<td>OL 8 must cover or disable the built-in or attached camera when not in use.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>Failing to disconnect from collaborative computing devices (i.e., cameras) can result in subsequent compromises of organizational information.
+Providing easy methods to physically disconnect from such devices after a collaborative computing session helps to ensure participants actually carry out the disconnect activity without having to go through complex and tedious procedures.</pre></td>
+	<td><pre>If the device or Oracle Linux 8 does not have a camera installed, this requirement is not applicable.
+
+This requirement is not applicable to mobile devices (smartphones and tablets), where the use of the camera is a local AO decision.
+
+This requirement is not applicable to dedicated VTC suites located in approved VTC locations that are centrally managed.
+
+For an external camera, if there is not a method for the operator to manually disconnect the camera at the end of collaborative computing sessions, this is a finding.
+
+For a built-in camera, the camera must be protected by a camera cover (e.g., laptop camera cover slide) when not in use. If the built-in camera is not protected with a camera cover, or is not physically disabled, this is a finding.
+
+If the camera is not disconnected, covered, or physically disabled, determine if it is being disabled via software with the following commands:
+
+Verify the operating system disables the ability to load the uvcvideo kernel module.
+
+$ sudo grep -r uvcvideo /etc/modprobe.d/* | grep "/bin/true"
+
+install uvcvideo /bin/true
+      Is it the case that the command does not return any output, or the line is commented out, and the collaborative computing device has not been authorized for use?
+      </pre></td>
+	<td><pre>If the device contains a camera it should be covered or disabled when not in use.</pre></td>
 	<td>OL08-00-040020</td>
-	<td>Missing Rule</td>
+	<td>kernel_module_uvcvideo_disabled</td>
 </tr>
 
 <tr>
@@ -9253,15 +9320,33 @@ insmod program to load the module manually.</pre></td>
 
 <tr>
 	<td>V-248839</td>
-	<td></td>
+	<td>2314</td>
 	<td>medium</td>
 	<td>An OL 8 firewall must employ a deny-all, allow-by-exception policy for allowing connections to other systems.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>Failure to restrict network connectivity only to authorized systems permits inbound connections from malicious systems.
+It also permits outbound connections that may facilitate exfiltration of data.</pre></td>
+	<td><pre>Verify "firewalld" is configured to employ a deny-all, allow-by-exception policy for allowing connections to other systems with the following commands:
+
+$ sudo firewall-cmd --state
+
+running
+
+$ sudo firewall-cmd --get-active-zones
+
+[custom]
+interfaces: ens33
+
+$ sudo firewall-cmd --info-zone=[custom] | grep target
+
+target: DROP
+      Is it the case that no zones are active on the interfaces or if the target is set to a different option other than "DROP"?
+      </pre></td>
+	<td><pre>Oracle Linux 8 incorporates the "firewalld" daemon, which allows for many different configurations. One of these configurations is zones.
+Zones can be utilized to a deny-all, allow-by-exception approach.
+The default "drop" zone will drop all incoming network packets unless it is explicitly allowed by the configuration file or is related to an outgoing network connection.</pre></td>
 	<td>OL08-00-040090</td>
-	<td>Missing Rule</td>
+	<td>configured_firewalld_default_deny</td>
 </tr>
 
 <tr>

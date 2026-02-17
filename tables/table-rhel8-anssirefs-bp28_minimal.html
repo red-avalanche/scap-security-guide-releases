@@ -286,53 +286,6 @@ Removing the <tt>ypserv</tt> package decreases the risk of the accidental
   <td></td>
 </tr>
 <tr>
-  <td>BP28(R5)</td>
-  <td>CCE-88248-0</td>
-  <td>Enable authselect</td>
-  <td xml:lang="en-US">
-Configure user authentication setup to use the <tt>authselect</tt> tool.
-If authselect profile is selected, the rule will enable the <tt>sssd</tt> profile.
-  </td>
-  <td xml:lang="en-US">
-Authselect is a successor to authconfig.
-It is a tool to select system authentication and identity sources from a list of supported
-profiles instead of letting the administrator manually build the PAM stack.
-
-That way, it avoids potential breakage of configuration, as it ships several tested profiles
-that are well tested and supported to solve different use-cases.
-  </td>
-  <td>var_authselect_profile=sssd</td>
-</tr>
-<tr>
-  <td>BP28(R5)<br/>NT28(R46)</td>
-  <td>CCE-80847-7</td>
-  <td>Ensure rsyslog is Installed</td>
-  <td xml:lang="en-US">
-Rsyslog is installed by default. The <code>rsyslog</code> package can be installed with the following command: <pre> $ sudo yum install rsyslog</pre>
-  </td>
-  <td xml:lang="en-US">
-The rsyslog package provides the rsyslog daemon, which provides
-system logging services.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>BP28(R5)<br/>NT28(R46)</td>
-  <td>CCE-80886-5</td>
-  <td>Enable rsyslog Service</td>
-  <td xml:lang="en-US">
-The <tt>rsyslog</tt> service provides syslog-style logging by default on Red Hat Enterprise Linux 8.
-
-The <code>rsyslog</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable rsyslog.service</pre>
-  </td>
-  <td xml:lang="en-US">
-The <tt>rsyslog</tt> service must be running in order to provide
-logging services, which are essential to system administration.
-  </td>
-  <td></td>
-</tr>
-<tr>
   <td>BP28(R5)<br/>BP28(R59)</td>
   <td>CCE-82202-3</td>
   <td>Ensure Users Re-Authenticate for Privilege Escalation - sudo !authenticate</td>
@@ -587,6 +540,33 @@ location subject to physical compromise.
 </tr>
 <tr>
   <td>BP28(R18)</td>
+  <td>CCE-80652-1</td>
+  <td>Set Password Minimum Length in login.defs</td>
+  <td xml:lang="en-US">
+To specify password length requirements for new accounts, edit the file
+<tt>/etc/login.defs</tt> and add or correct the following line:
+<pre>PASS_MIN_LEN <tt>18</tt></pre>
+<br /><br />
+The DoD requirement is <tt>15</tt>.
+The FISMA requirement is <tt>12</tt>.
+The profile requirement is
+<tt><tt>18</tt></tt>.
+If a program consults <tt>/etc/login.defs</tt> and also another PAM module
+(such as <tt>pam_pwquality</tt>) during a password change operation, then
+the most restrictive must be satisfied. See PAM section for more
+information about enforcing password quality requirements.
+  </td>
+  <td xml:lang="en-US">
+Requiring a minimum password length makes password
+cracking attacks more difficult by ensuring a larger
+search space. However, any security benefit from an onerous requirement
+must be carefully weighed against usability problems, support costs, or counterproductive
+behavior that may result.
+  </td>
+  <td>var_accounts_password_minlen_login_defs=18</td>
+</tr>
+<tr>
+  <td>BP28(R18)</td>
   <td>CCE-80653-9</td>
   <td>Ensure PAM Enforces Password Requirements - Minimum Digit Characters</td>
   <td xml:lang="en-US">
@@ -686,62 +666,6 @@ more difficult by ensuring a larger search space.
 </tr>
 <tr>
   <td>BP28(R18)</td>
-  <td>CCE-83478-8</td>
-  <td>Limit Password Reuse: password-auth</td>
-  <td xml:lang="en-US">
-Do not allow users to reuse recent passwords. This can be accomplished by using the
-<tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
-<br/><br/>
-
-On systems with newer versions of <tt>authselect</tt>, the <tt>pam_pwhistory</tt> PAM module
-can be enabled via authselect feature:
-<pre>authselect enable-feature with-pwhistory</pre>
-
-Otherwise, it should be enabled using an authselect custom profile.
-<br/><br/>
-Newer systems also have the <tt>/etc/security/pwhistory.conf</tt> file for setting
-<tt>pam_pwhistory</tt> module options. This file should be used whenever available.
-Otherwise, the <tt>pam_pwhistory</tt> module options can be set in PAM files.
-<br/><br/>
-The value for <tt>remember</tt> option must be equal or greater than
-<tt>2</tt>
-  </td>
-  <td xml:lang="en-US">
-Preventing re-use of previous passwords helps ensure that a compromised password is not
-re-used by a user.
-  </td>
-  <td>var_password_pam_remember=2</td>
-</tr>
-<tr>
-  <td>BP28(R18)</td>
-  <td>CCE-83480-4</td>
-  <td>Limit Password Reuse: system-auth</td>
-  <td xml:lang="en-US">
-Do not allow users to reuse recent passwords. This can be accomplished by using the
-<tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
-<br/><br/>
-
-On systems with newer versions of <tt>authselect</tt>, the <tt>pam_pwhistory</tt> PAM module
-can be enabled via authselect feature:
-<pre>authselect enable-feature with-pwhistory</pre>
-
-Otherwise, it should be enabled using an authselect custom profile.
-<br/><br/>
-Newer systems also have the <tt>/etc/security/pwhistory.conf</tt> file for setting
-<tt>pam_pwhistory</tt> module options. This file should be used whenever available.
-Otherwise, the <tt>pam_pwhistory</tt> module options can be set in PAM files.
-<br/><br/>
-The value for <tt>remember</tt> option must be equal or greater than
-<tt>2</tt>
-  </td>
-  <td xml:lang="en-US">
-Preventing re-use of previous passwords helps ensure that a compromised password is not
-re-used by a user.
-  </td>
-  <td>var_password_pam_remember=2</td>
-</tr>
-<tr>
-  <td>BP28(R18)</td>
   <td>CCE-80665-3</td>
   <td>Ensure PAM Enforces Password Requirements - Minimum Uppercase Characters</td>
   <td xml:lang="en-US">
@@ -759,6 +683,20 @@ at guessing and brute-force attacks.
 Password complexity is one factor of several that determines how long it takes to crack a password. The more
 complex the password, the greater the number of possible combinations that need to be tested before
 the password is compromised.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>BP28(R18)</td>
+  <td>CCE-80666-1</td>
+  <td>Limit Password Reuse</td>
+  <td xml:lang="en-US">
+Do not allow users to reuse recent passwords. This can be accomplished by using the
+<tt>remember</tt> option for the <tt>pam_unix</tt> or <tt>pam_pwhistory</tt> PAM modules.
+  </td>
+  <td xml:lang="en-US">
+Preventing re-use of previous passwords helps ensure that a compromised password is not
+re-used by a user.
   </td>
   <td></td>
 </tr>
@@ -842,6 +780,24 @@ access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.
   </td>
   <td></td>
+</tr>
+<tr>
+  <td>BP28(R31)</td>
+  <td>CCE-88248-0</td>
+  <td>Enable authselect</td>
+  <td xml:lang="en-US">
+Configure user authentication setup to use the <tt>authselect</tt> tool.
+If authselect profile is selected, the rule will enable the <tt>minimal</tt> profile.
+  </td>
+  <td xml:lang="en-US">
+Authselect is a successor to authconfig.
+It is a tool to select system authentication and identity sources from a list of supported
+profiles instead of letting the administrator manually build the PAM stack.
+
+That way, it avoids potential breakage of configuration, as it ships several tested profiles
+that are well tested and supported to solve different use-cases.
+  </td>
+  <td>var_authselect_profile=minimal</td>
 </tr>
 <tr>
   <td>BP28(R32)</td>
@@ -959,6 +915,130 @@ Executable files with the SUID permission run with the privileges of
 the owner of the file. SUID files of uncertain provenance could allow for
 unprivileged users to elevate privileges. The presence of these files should be
 strictly controlled on the system.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>BP28(R40)</td>
+  <td>CCE-83375-6</td>
+  <td>Ensure All World-Writable Directories Are Owned by root user</td>
+  <td xml:lang="en-US">
+All directories in local partitions which are world-writable should be owned
+by root. If any world-writable directories are not owned by root, this
+should be investigated. Following this, the files should be deleted or
+assigned to root user.
+  </td>
+  <td xml:lang="en-US">
+Allowing a user account to own a world-writable directory is
+undesirable because it allows the owner of that directory to remove
+or replace any files that may be placed in the directory by other
+users.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>BP28(R40)</td>
+  <td>CCE-80783-4</td>
+  <td>Verify that All World-Writable Directories Have Sticky Bits Set</td>
+  <td xml:lang="en-US">
+When the so-called 'sticky bit' is set on a directory,
+only the owner of a given file may remove that file from the
+directory. Without the sticky bit, any user with write access to a
+directory may remove any file in the directory. Setting the sticky
+bit prevents users from removing each other's files. In cases where
+there is no reason for a directory to be world-writable, a better
+solution is to remove that permission rather than to set the sticky
+bit. However, if a directory is used by a particular application,
+consult that application's documentation instead of blindly
+changing modes.
+<br />
+To set the sticky bit on a world-writable directory <i>DIR</i>, run the
+following command:
+<pre>$ sudo chmod +t <i>DIR</i></pre>
+  </td>
+  <td xml:lang="en-US">
+Failing to set the sticky bit on public directories allows unauthorized
+users to delete files in the directory structure.
+<br /><br />
+The only authorized public directories are those temporary directories
+supplied with the system, or those designed to be temporary file
+repositories. The setting is normally reserved for directories used by the
+system, by users for temporary file storage (such as <tt>/tmp</tt>), and
+for directories requiring global read/write access.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>BP28(R40)</td>
+  <td>CCE-80818-8</td>
+  <td>Ensure No World-Writable Files Exist</td>
+  <td xml:lang="en-US">
+It is generally a good idea to remove global (other) write
+access to a file when it is discovered. However, check with
+documentation for specific applications before making changes.
+Also, monitor for recurring world-writable files, as these may be
+symptoms of a misconfigured application or user account. Finally,
+this applies to real files and not virtual files that are a part of
+pseudo file systems such as <tt>sysfs</tt> or <tt>procfs</tt>.
+  </td>
+  <td xml:lang="en-US">
+Data in world-writable files can be modified by any
+user on the system. In almost all circumstances, files can be
+configured using a combination of user and group permissions to
+support whatever legitimate access is needed without the risk
+caused by world-writable files.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>BP28(R55)</td>
+  <td>CCE-83497-8</td>
+  <td>Ensure All Files Are Owned by a Group</td>
+  <td xml:lang="en-US">
+If any files are not owned by a group, then the
+cause of their lack of group-ownership should be investigated.
+Following this, the files should be deleted or assigned to an
+appropriate group. The following command will discover and print
+any files on local partitions which do not belong to a valid group:
+<pre>$ df --local -P | awk '{if (NR!=1) print $6}' | sudo xargs -I '{}' find '{}' -xdev -nogroup</pre>
+To search all filesystems on a system including network mounted
+filesystems the following command can be run manually for each partition:
+<pre>$ sudo find PARTITION -xdev -nogroup</pre>
+  </td>
+  <td xml:lang="en-US">
+Unowned files do not directly imply a security problem, but they are generally
+a sign that something is amiss. They may
+be caused by an intruder, by incorrect software installation or
+draft software removal, or by failure to remove all files belonging
+to a deleted account. The files should be repaired so they
+will not cause problems when accounts are created in the future,
+and the cause should be discovered and addressed.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>BP28(R55)</td>
+  <td>CCE-83499-4</td>
+  <td>Ensure All Files Are Owned by a User</td>
+  <td xml:lang="en-US">
+If any files are not owned by a user, then the
+cause of their lack of ownership should be investigated.
+Following this, the files should be deleted or assigned to an
+appropriate user. The following command will discover and print
+any files on local partitions which do not belong to a valid user:
+<pre>$ df --local -P | awk {'if (NR!=1) print $6'} | sudo xargs -I '{}' find '{}' -xdev -nouser</pre>
+To search all filesystems on a system including network mounted
+filesystems the following command can be run manually for each partition:
+<pre>$ sudo find PARTITION -xdev -nouser</pre>
+  </td>
+  <td xml:lang="en-US">
+Unowned files do not directly imply a security problem, but they are generally
+a sign that something is amiss. They may
+be caused by an intruder, by incorrect software installation or
+draft software removal, or by failure to remove all files belonging
+to a deleted account. The files should be repaired so they
+will not cause problems when accounts are created in the future,
+and the cause should be discovered and addressed.
   </td>
   <td></td>
 </tr>

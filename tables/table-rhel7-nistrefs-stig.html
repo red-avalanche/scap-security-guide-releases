@@ -2463,7 +2463,7 @@ For example:
 Preventing re-use of previous passwords helps ensure that a compromised password is not
 re-used by a user.
   </td>
-  <td>var_password_pam_remember_control_flag=requisite<br/>var_password_pam_remember=5</td>
+  <td>var_password_pam_remember=5<br/>var_password_pam_remember_control_flag=requisite</td>
 </tr>
 <tr>
   <td>IA-5(f)<br/>IA-5(1)(e)</td>
@@ -2485,7 +2485,7 @@ For example:
 Preventing re-use of previous passwords helps ensure that a compromised password is not
 re-used by a user.
   </td>
-  <td>var_password_pam_remember_control_flag=requisite<br/>var_password_pam_remember=5</td>
+  <td>var_password_pam_remember=5<br/>var_password_pam_remember_control_flag=requisite</td>
 </tr>
 <tr>
   <td>IA-5(c)<br/>IA-5(1)(a)<br/>CM-6(a)<br/>IA-5(4)</td>
@@ -2795,7 +2795,7 @@ default authenticators, then anyone can gather data about the system and the net
 and use the information to potentially compromise the integrity of the system and
 network(s).
   </td>
-  <td>var_snmpd_ro_string=changemero<br/>var_snmpd_rw_string=changemerw</td>
+  <td>var_snmpd_rw_string=changemerw<br/>var_snmpd_ro_string=changemero</td>
 </tr>
 <tr>
   <td>CM-5(1)<br/>AU-7(a)<br/>AU-7(b)<br/>AU-8(b)<br/>AU-12(3)<br/>AC-6(9)</td>
@@ -4727,21 +4727,29 @@ Removing the <tt>ypserv</tt> package decreases the risk of the accidental
   <td>CCE-80192-8</td>
   <td>Ensure rsyslog Does Not Accept Remote Messages Unless Acting As Log Server</td>
   <td xml:lang="en-US">
-The <tt>rsyslog</tt> daemon should not accept remote messages
-unless the system acts as a log server.
-To ensure that it is not listening on the network, ensure the following lines are
-<i>not</i> found in <tt>/etc/rsyslog.conf</tt>:
+The <tt>rsyslog</tt> daemon should not accept remote messages unless the system acts as a log
+server. To ensure that it is not listening on the network, ensure any of the following lines
+are <i>not</i> found in <tt>rsyslog</tt> configuration files.
+
+If using legacy syntax:
 <pre>$ModLoad imtcp
 $InputTCPServerRun <i>port</i>
 $ModLoad imudp
 $UDPServerRun <i>port</i>
 $ModLoad imrelp
 $InputRELPServerRun <i>port</i></pre>
+
+If using RainerScript syntax:
+<pre>module(load="imtcp")
+module(load="imudp")
+input(type="imtcp" port="514")
+input(type="imudp" port="514")
+</pre>
   </td>
   <td xml:lang="en-US">
-Any process which receives messages from the network incurs some risk
-of receiving malicious messages. This risk can be eliminated for
-rsyslog by configuring it not to listen on the network.
+Any process which receives messages from the network incurs some risk of receiving malicious
+messages. This risk can be eliminated for rsyslog by configuring it not to listen on the
+network.
   </td>
   <td></td>
 </tr>

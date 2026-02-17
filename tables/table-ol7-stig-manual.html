@@ -48,9 +48,9 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>242</td>
+			<td>245</td>
 			<td>0</td>
-			<td>242</td>
+			<td>245</td>
 			<td>100.00%</td>
 			<td>
 				
@@ -758,22 +758,22 @@ Satisfied: SRG-OS-000480-GPOS-00229, SRG-OS-000069-GPOS-00037</pre></td>
 
 Check for the use of "pwquality" with the following command:
 
-# cat /etc/pam.d/system-auth | grep pam_pwquality
+     # cat /etc/pam.d/system-auth | grep pam_pwquality
 
-password required pam_pwquality.so retry=3
+     password requisite pam_pwquality.so retry=3
 
-If the command does not return an uncommented line containing the value "pam_pwquality.so", this is a finding.
+If the command does not return an uncommented line containing the value "pam_pwquality.so" as shown, this is a finding.
 
 If the value of "retry" is set to "0" or greater than "3", this is a finding.</pre></td>
 	<td><pre>Configure the operating system to use "pwquality" to enforce password complexity rules.
 
 Add the following line to "/etc/pam.d/system-auth" (or modify the line to have the required value):
 
-password required pam_pwquality.so retry=3
+     password requisite pam_pwquality.so retry=3
 
 Note: The value of "retry" should be between "1" and "3".</pre></td>
 	<td>OL07-00-010119</td>
-	<td>SV-221668r603260_rule</td>
+	<td>SV-221668r902779_rule</td>
 </tr>
 
 <tr>
@@ -1835,9 +1835,11 @@ If the file integrity application does not exist, or a script file controlling t
      # more /etc/cron.daily/aide
      #!/bin/bash
 
-     /usr/sbin/aide --check | /var/spool/mail -s "$HOSTNAME - Daily aide integrity check run" root@sysname.mil</pre></td>
+     /usr/sbin/aide --check | /bin/mail -s "$HOSTNAME - Daily AIDE integrity check run" root@example_server_name.mil
+
+Note: Per requirement OL07-00-020028, the "mailx" package must be installed on the system to enable email functionality.</pre></td>
 	<td>OL07-00-020030</td>
-	<td>SV-221708r880687_rule</td>
+	<td>SV-221708r902773_rule</td>
 </tr>
 
 <tr>
@@ -1869,7 +1871,7 @@ AIDE does not have a configuration that will send a notification, so the cron jo
      # more /etc/cron.daily/aide
      #!/bin/bash
 
-     /usr/sbin/aide --check | /var/spool/mail -s "$HOSTNAME - Daily aide integrity check run" root@sysname.mil
+     /usr/sbin/aide --check | /bin/mail -s "$HOSTNAME - Daily AIDE integrity check run" root@example_server_name.mil
 
 If the file integrity application does not notify designated personnel of changes, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to notify designated personnel if baseline configurations are changed in an unauthorized manner. The AIDE tool can be configured to email designated personnel with the use of the cron system. 
@@ -1878,9 +1880,11 @@ The following example output is generic. It will set cron to run AIDE daily and 
 
      # more /etc/cron.daily/aide
 
-     /usr/sbin/aide --check | /var/spool/mail -s "$HOSTNAME - Daily aide integrity check run" root@sysname.mil</pre></td>
+     /usr/sbin/aide --check | /bin/mail -s "$HOSTNAME - Daily AIDE integrity check run" root@example_server_name.mil
+
+Note: Per requirement OL07-00-020028, the "mailx" package must be installed on the system to enable email functionality.</pre></td>
 	<td>OL07-00-020040</td>
-	<td>SV-221709r880690_rule</td>
+	<td>SV-221709r902776_rule</td>
 </tr>
 
 <tr>
@@ -7791,28 +7795,26 @@ Done.</pre></td>
 	<td>V-254522</td>
 	<td>CCI-001682</td>
 	<td>medium</td>
-	<td>Oracle Linux operating system emergency accounts must be automatically removed or disabled after the crisis is resolved or within 72 hours.</td>
+	<td>The Oracle Linux operating system must automatically expire temporary accounts within 72 hours.</td>
 	<td>SRG-OS-000123-GPOS-00064</td>
-	<td><pre>Emergency accounts are privileged accounts established in response to crisis situations where the need for rapid account activation is required. Therefore, emergency account activation may bypass normal account authorization processes. If these accounts are automatically disabled, system maintenance during emergencies may not be possible, thus adversely affecting system availability.
+	<td><pre>Temporary accounts are privileged or nonprivileged accounts that are established during pressing circumstances, such as new software or hardware configuration or an incident response, where the need for prompt account activation requires bypassing normal account authorization procedures. If any inactive temporary accounts are left enabled on the system and are not either manually removed or automatically expired within 72 hours, the security posture of the system will be degraded and exposed to expoitation by unauthorized users or insider threat actors.
 
-Emergency accounts are different from infrequently used accounts (i.e., local logon accounts used by the organization's system administrators when network or normal logon/access is not available). Infrequently used accounts are not subject to automatic termination dates. Emergency accounts are accounts created in response to crisis situations, usually for use by maintenance personnel. The automatic expiration or disabling time period may be extended as needed until the crisis is resolved; however, it must not be extended indefinitely. A permanent account should be established for privileged users who need long-term maintenance accounts.
+Temporary accounts are different from emergency accounts. Emergency accounts, also known as "last resort" or "break glass" accounts, are local logon accounts enabled on the system for emergency use by authorized system administrators to manage a system when standard logon methods are failing or not available. Emergency accounts are not subject to manual removal or scheduled expiration requirements.
 
-To address access requirements, many Oracle Linux 7 systems can be integrated with enterprise-level authentication/access mechanisms that meet or exceed access control policy requirements.</pre></td>
-	<td><pre>Verify emergency accounts have been provisioned with an expiration date of 72 hours.
+The automatic expiration of temporary accounts may be extended as needed by the circumstances but it must not be extended indefinitely. A documented permanent account should be established for privileged users who need long-term maintenance accounts.</pre></td>
+	<td><pre>Verify temporary accounts have been provisioned with an expiration date of 72 hours.
 
-For every existing emergency account, run the following command to obtain its account expiration information.
+For every existing temporary account, run the following command to obtain its account expiration information:
 
-$ sudo chage -l system_account_name
+     $ sudo chage -l <temporary_account_name> | grep -i "account expires"
 
 Verify each of these accounts has an expiration date set within 72 hours.
-If any emergency accounts have no expiration date set or do not expire within 72 hours, this is a finding.</pre></td>
-	<td><pre>If an emergency account must be created, configure the system to terminate the account after 72 hours with the following command to set an expiration date for the account. Substitute "system_account_name" with the account to be created.
+If any temporary accounts have no expiration date set or do not expire within 72 hours, this is a finding.</pre></td>
+	<td><pre>Configure the operating system to expire temporary accounts after 72 hours with the following command:
 
-$ sudo chage -E `date -d "+3 days" +%Y-%m-%d` system_account_name
-
-The automatic expiration or disabling time period may be extended as needed until the crisis is resolved.</pre></td>
+     $ sudo chage -E $(date -d +3days +%Y-%m-%d) <temporary_account_name></pre></td>
 	<td>OL07-00-010271</td>
-	<td>SV-254522r858475_rule</td>
+	<td>SV-254522r902768_rule</td>
 </tr>
 
 <tr>
@@ -7956,6 +7958,7 @@ account     required      pam_faillock.so
 account     include       system-auth-ac
 
 password    requisite     pam_pwhistory.so use_authtok remember=5 retry=3
+password    requisite     pam_pwquality.so retry=3
 password    include       system-auth-ac
 password    sufficient    pam_unix.so sha512 shadow try_first_pass use_authtok
 
@@ -7975,6 +7978,7 @@ account     required      pam_faillock.so
 account     include       password-auth-ac
 
 password    requisite     pam_pwhistory.so use_authtok remember=5 retry=3
+password    requisite     pam_pwquality.so retry=3
 password    include       password-auth-ac
 password    sufficient    pam_unix.so sha512 shadow try_first_pass use_authtok
 
@@ -7984,7 +7988,7 @@ Create new or move existing symbolic links to the new custom configuration files
      $ sudo ln -sf /etc/pam.d/system-auth-local /etc/pam.d/system-auth
      $ sudo ln -sf /etc/pam.d/password-auth-local /etc/pam.d/password-auth
 
-Once finished, the file structure should be the following:
+Once finished, the following file structure should be present:
     $ sudo ls -1 /etc/pam.d/{password,system}-auth*
 
     /etc/pam.d/password-auth
@@ -7994,11 +7998,132 @@ Once finished, the file structure should be the following:
     /etc/pam.d/system-auth-ac
     /etc/pam.d/system-auth-local
 
-Done.
-
-Note: With this solution in place any custom settings to "system-auth" and "password-auth" will be retained and not overwritten by the use of the authconfig utility. The authconfig utility will write its settings to "system-auth-ac" and "password-auth-ac" and continue to function as expected.</pre></td>
+Note: With this solution in place, any custom settings to "system-auth" and "password-auth" will be retained and not overwritten by the use of the authconfig utility. The authconfig utility will write its settings to "system-auth-ac" and "password-auth-ac" and continue to function as expected.</pre></td>
 	<td>OL07-00-010199</td>
-	<td>SV-255902r880669_rule</td>
+	<td>SV-255902r902781_rule</td>
+</tr>
+
+<tr>
+	<td>V-256975</td>
+	<td>CCI-001749</td>
+	<td>medium</td>
+	<td>The Oracle Linux operating system must ensure cryptographic verification of vendor software packages.</td>
+	<td>SRG-OS-000366-GPOS-00153</td>
+	<td><pre>Cryptographic verification of vendor software packages ensures that all software packages are obtained from a valid source and protects against spoofing that could lead to installation of malware on the system. Oracle cryptographically signs all software packages, which includes updates, with a GPG key to verify that they are valid.</pre></td>
+	<td><pre>Confirm Oracle package-signing key is installed on the system and verify its fingerprint matches vendor value.
+
+Note: The GPG key is defined in key file "/etc/pki/rpm-gpg/RPM-GPG-KEY-oracle" by default.
+
+List Oracle GPG keys installed on the system:
+
+     $ sudo rpm -q --queryformat "%{SUMMARY}\n" gpg-pubkey | grep -i "oracle"
+
+     gpg(Oracle OSS group (Open Source Software group) <build@oss.oracle.com>)
+
+If Oracle GPG key is not installed, this is a finding.
+
+List key fingerprint of installed Oracle GPG key:
+
+     $ sudo gpg -q --with-fingerprint /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle
+
+If key file "/etc/pki/rpm-gpg/RPM-GPG-KEY-oracle" is missing, this is a finding.
+
+Example output:
+
+     pub  2048R/EC551F03 2010-07-01 Oracle OSS group (Open Source Software group) <build@oss.oracle.com>
+           Key fingerprint = 4214 4123 FECF C55B 9086  313D 72F9 7B74 EC55 1F03
+	   
+Compare key fingerprint of installed Oracle GPG key with fingerprint listed for OL 7 on Oracle verification webpage at https://linux.oracle.com/security/gpg/#gpg.
+
+If key fingerprint does not match, this is a finding.</pre></td>
+	<td><pre>Install Oracle package-signing key on the system and verify its fingerprint matches vendor value.
+
+Insert OL 7 installation disc or attach OL 7 installation image to the system. Mount the disc or image to make the contents accessible inside the system.
+
+Assuming the mounted location is "/media/cdrom", use the following command to copy Oracle GPG key file onto the system:
+
+     $ sudo cp /media/cdrom/RPM-GPG-KEY-oracle /etc/pki/rpm-gpg/
+	 
+Import Oracle GPG keys from key file into system keyring:
+
+     $ sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle
+	 
+Using the steps listed in the Check Text, confirm the newly imported key shows as installed on the system and verify its fingerprint matches vendor value.</pre></td>
+	<td>OL07-00-010019</td>
+	<td>SV-256975r902762_rule</td>
+</tr>
+
+<tr>
+	<td>V-256976</td>
+	<td>CCI-000366</td>
+	<td>medium</td>
+	<td>The Oracle Linux operating system must disable the login screen user list for graphical user interfaces.</td>
+	<td>SRG-OS-000480-GPOS-00227</td>
+	<td><pre>Leaving the user list enabled is a security risk as it allows anyone with physical access to the system to enumerate known user accounts without authenticated access to the system.</pre></td>
+	<td><pre>Verify that the operating system is configured to disable the login screen user list for graphical user interfaces.
+
+Note: If the system does not have the GNOME Desktop installed, this requirement is Not Applicable.
+
+Verify that the login screen user list for the GNOME Desktop is disabled with the following command:
+
+     $ sudo grep -is disable-user-list /etc/dconf/db/gdm.d/*
+	 
+     /etc/dconf/db/gdm.d/00-login-screen:disable-user-list=true
+	 
+If the variable "disable-user-list" is not defined in a file under "/etc/dconf/db/gdm.d/", is not set to "true", is missing or commented out, this is a finding.</pre></td>
+	<td><pre>Configure the operating system to disable the login screen user list for graphical user interfaces.
+
+Create or edit the gdm profile in "/etc/dconf/profile/" to contain the following lines:
+
+     $ sudo vi /etc/dconf/profile/gdm
+	 
+     user-db:user
+     system-db:gdm
+     file-db:/usr/share/gdm/greeter-dconf-defaults
+	 
+Create or edit the gdm database for machine-wide settings in "/etc/dconf/db/gdm.d/" with the following lines:
+
+     $ sudo vi /etc/dconf/db/gdm.d/00-login-screen
+	 
+     [org/gnome/login-screen]
+     disable-user-list=true
+	 
+Update the system databases by updating the dconf utility:
+
+     $ sudo dconf update
+	 
+If the login screen user list persists after updating the system databases, you can restart the GNOME Desktop without rebooting the system:
+
+     $ sudo systemctl restart gdm</pre></td>
+	<td>OL07-00-010063</td>
+	<td>SV-256976r902765_rule</td>
+</tr>
+
+<tr>
+	<td>V-256977</td>
+	<td>CCI-001744</td>
+	<td>medium</td>
+	<td>The Oracle Linux operating system must be configured to allow sending email notifications of unauthorized configuration changes to designated personnel.</td>
+	<td>SRG-OS-000363-GPOS-00150</td>
+	<td><pre>Unauthorized changes to the baseline configuration could make the system vulnerable to various attacks or allow unauthorized access to the operating system. Changes to operating system configurations can have unintended side effects, some of which may be relevant to security.
+
+Detecting such changes and providing an automated response can help avoid unintended, negative consequences that could ultimately affect the security state of the operating system. The operating system's IMO/ISSO and SAs must be notified via email and/or monitoring system trap when there is an unauthorized modification of a configuration item.</pre></td>
+	<td><pre>Verify that the operating system is configured to allow sending email notifications.
+
+Note: The "mailx" package provides the "mail" command that is used to send email messages.
+
+Verify that the "mailx" package is installed on the system:
+
+     $ sudo yum list installed mailx
+	 
+     mailx.x86_64     12.5-19.el7     @ol7_latest
+	 
+If "mailx" package is not installed, this is a finding.</pre></td>
+	<td><pre>Install the "mailx" package on the system:
+
+     $ sudo yum install mailx</pre></td>
+	<td>OL07-00-020028</td>
+	<td>SV-256977r902771_rule</td>
 </tr>
 
 </table>

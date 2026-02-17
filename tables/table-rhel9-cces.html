@@ -243,7 +243,8 @@ Check if <code>/etc/dracut.conf.d/40-fips.conf</code> contain <code>add_dracutmo
 <tr>
 <td>CCE-88742-2</td>
 <td>Enable FIPS Mode</td>
-<td>To enable FIPS mode, run the following command:
+<td>
+To enable FIPS mode, run the following command:
 <pre>fips-mode-setup --enable</pre>
 <br>
 The <code>fips-mode-setup</code> command will configure the system in
@@ -2589,6 +2590,12 @@ assigned.</td>
 <td>The <code>root</code> user should have a primary group of 0.</td>
 </tr>
 <tr>
+<td>CCE-87101-2</td>
+<td>Ensure Authentication Required for Single User Mode</td>
+<td>Single user mode is used for recovery when the system detects an
+issue during boot or by manual selection from the bootloader.</td>
+</tr>
+<tr>
 <td>CCE-83625-4</td>
 <td>Direct root Logins Not Allowed</td>
 <td>To further limit access to the <code>root</code> account, administrators
@@ -2608,36 +2615,29 @@ $ sudo echo &gt; /etc/securetty
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86113-8</td>
 <td>Ensure that System Accounts Are Locked</td>
-<td>Some accounts are not associated with a human user of the system, and exist to
-perform some administrative function. An attacker should not be able to log into
-these accounts.
+<td>Some accounts are not associated with a human user of the system, and exist to perform some
+administrative functions. An attacker should not be able to log into these accounts.
 <br><br>
-System accounts are those user accounts with a user ID
-less than UID_MIN, where value of the UID_MIN directive is set in
-<code>/etc/login.defs</code> configuration file. In the default configuration UID_MIN is set
-to 500, thus system accounts are those user accounts with a user ID less than
-500. If any system account <i>SYSACCT</i> (other than root) has an unlocked password,
-disable it with the command:
-<pre>$ sudo passwd -l <i>SYSACCT</i></pre>
+System accounts are those user accounts with a user ID less than <code>1000</code>.
+If any system account other than <code>root</code>, <code>halt</code>, <code>sync</code>, <code>shutdown</code>
+and <code>nfsnobody</code> has an unlocked password, disable it with the command:
+<pre>$ sudo usermod -L <i>account</i></pre>
 </td>
 </tr>
 <tr>
 <td>CCE-83623-9</td>
 <td>Ensure that System Accounts Do Not Run a Shell Upon Login</td>
-<td>Some accounts are not associated with a human user of the system, and exist to
-perform some administrative function. Should an attacker be able to log into
-these accounts, they should not be granted access to a shell.
+<td>Some accounts are not associated with a human user of the system, and exist to perform some
+administrative functions. Should an attacker be able to log into these accounts, they should
+not be granted access to a shell.
 <br><br>
-The login shell for each local account is stored in the last field of each line
-in <code>/etc/passwd</code>. System accounts are those user accounts with a user ID
-less than UID_MIN, where value of UID_MIN directive is set in
-/etc/login.defs configuration file. In the default configuration UID_MIN is set
-to 1000, thus system accounts are those user accounts with a user ID less than
-1000. The user ID is stored in the third field. If any system account
-<i>SYSACCT</i> (other than root) has a login shell, disable it with the
-command: <pre>$ sudo usermod -s /sbin/nologin <i>SYSACCT</i></pre>
+The login shell for each local account is stored in the last field of each line in
+<code>/etc/passwd</code>. System accounts are those user accounts with a user ID less than
+<code>1000</code>. The user ID is stored in the third field. If any system account
+other than <code>root</code> has a login shell, disable it with the command:
+<pre>$ sudo usermod -s /sbin/nologin <i>account</i></pre>
 </td>
 </tr>
 <tr>
@@ -2860,7 +2860,10 @@ add or correct the <code>UMASK</code> setting in <code>/etc/login.defs</code> to
 <td>To ensure the default umask controlled by <code>/etc/profile</code> is set properly,
 add or correct the <code>umask</code> setting in <code>/etc/profile</code> to read as follows:
 <pre>umask <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_user_umask" use="legacy"></xccdf-1.2:sub></pre>
-</td>
+
+Note that <code>/etc/profile</code> also reads scrips within <code>/etc/profile.d</code> directory.
+These scripts are also valid files to set umask value. Therefore, they should also be
+considered during the check and properly remediated, if necessary.</td>
 </tr>
 <tr>
 <td>CCE-90365-8</td>
@@ -3552,6 +3555,13 @@ or by default, the path for audit log is <pre>/var/log/audit/</pre>.
 
 To properly set the owner of <code>/var/log/audit/*</code>, run the command:
 <pre>$ sudo chown root /var/log/audit/* </pre>
+</td>
+</tr>
+<tr>
+<td>CCE-88002-1</td>
+<td>Audit Configuration Files Permissions are 640 or More Restrictive</td>
+<td>All audit configuration files permissions must be 640 or more restrictive.
+<pre>chmod 0640 /etc/audit/audit*.{rules,conf} /etc/audit/rules.d/*</pre>
 </td>
 </tr>
 <tr>
@@ -5635,6 +5645,20 @@ If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 add the lines to file <code>/etc/audit/audit.rules</code>.</td>
 </tr>
 <tr>
+<td>CCE-88436-1</td>
+<td>Ensure auditd Collects Information on Kernel Module Unloading - create_module</td>
+<td>To capture kernel module unloading events, use following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
+<pre>-a always,exit -F arch=<i>ARCH</i> -S create_module -F key=module-change</pre>
+
+Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
+to use the <code>augenrules</code> program (the default), add the line to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
+add the line to file <code>/etc/audit/audit.rules</code>.</td>
+</tr>
+<tr>
 <td>CCE-83802-9</td>
 <td>Ensure auditd Collects Information on Kernel Module Unloading - delete_module</td>
 <td>To capture kernel module unloading events, use following line, setting ARCH to
@@ -5682,6 +5706,21 @@ to use the <code>augenrules</code> program (the default), add the line to a file
 
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
 add the line to file <code>/etc/audit/audit.rules</code>.</td>
+</tr>
+<tr>
+<td>CCE-88749-7</td>
+<td>Ensure auditd Collects Information on Kernel Module Loading and Unloading - query_module</td>
+<td>If the <code>auditd</code> daemon is configured to use the <code>augenrules</code> program
+to read audit rules during daemon startup (the default), add the following lines to a file
+with suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code> to capture kernel module
+loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+<pre>-a always,exit -F arch=<i>ARCH</i> -S query_module -F auid&gt;=1000 -F auid!=unset -F key=modules</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility to read audit
+rules during daemon startup, add the following lines to <code>/etc/audit/audit.rules</code> file
+in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
+b64 as appropriate for your system:
+<pre>-a always,exit -F arch=<i>ARCH</i> -S query_module -F auid&gt;=1000 -F auid!=unset -F key=modules</pre>
+</td>
 </tr>
 <tr>
 <td>CCE-83784-9</td>
@@ -5818,25 +5857,28 @@ form to <code>/etc/audit/audit.rules</code>:
 <tr>
 <td>CCE-83759-1</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands</td>
-<td>The audit system should collect information about usage of privileged
-commands for all users and root. To find the relevant setuid /
-setgid programs, run the following command for each local partition
-<i>PART</i>:
-<pre>$ sudo find <i>PART</i> -xdev -type f -perm -4000 -o -type f -perm -2000 2&gt;/dev/null</pre>
-If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
-program to read audit rules during daemon startup (the default), add a line of
-the following form to a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code> for each setuid / setgid program on the system,
-replacing the <i>SETUID_PROG_PATH</i> part with the full path of that setuid /
-setgid program in the list:
-<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add a line of the following
-form to <code>/etc/audit/audit.rules</code> for each setuid / setgid program on the
-system, replacing the <i>SETUID_PROG_PATH</i> part with the full path of that
-setuid / setgid program in the list:
-<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
-</td>
+<td>The audit system should collect information about usage of privileged commands for all users.
+These are commands with suid or sgid bits on and they are specially risky in local block
+device partitions not mounted with noexec and nosuid options. Therefore, these partitions
+should be first identified by the following command:
+<pre>findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,) | grep -Pv "noexec|nosuid"</pre>
+
+For all partitions listed by the previous command, it is necessary to search for
+setuid / setgid programs using the following command:
+<pre>$ sudo find <i>PARTITION</i> -xdev -perm /6000 -type f 2&gt;/dev/null</pre>
+
+For each setuid / setgid program identified by the previous command, an audit rule must be
+present in the appropriate place using the following line structure:
+<pre>-a always,exit -F path=<i>PROG_PATH</i> -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code> program to read
+audit rules during daemon startup, add the line to a file with suffix <code>.rules</code> in the
+<code>/etc/audit/rules.d</code> directory, replacing the <i>PROG_PATH</i> part with the full path
+of that setuid / setgid identified program.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility instead, add
+the line to the <code>/etc/audit/audit.rules</code> file, also replacing the <i>PROG_PATH</i> part
+with the full path of that setuid / setgid identified program.</td>
 </tr>
 <tr>
 <td></td>
@@ -9293,6 +9335,7 @@ The configuration that was used to build kernel is available at <code>/boot/conf
 <td>CCE-83987-8</td>
 <td>Ensure rsyslog-gnutls is installed</td>
 <td>TLS protocol support for rsyslog is installed.
+
 The <code>rsyslog-gnutls</code> package can be installed with the following command:
 <pre>
 $ sudo dnf install rsyslog-gnutls</pre>
@@ -9413,15 +9456,15 @@ correct this:
 <td>CCE-83689-0</td>
 <td>Ensure System Log Files Have Correct Permissions</td>
 <td>The file permissions for all log files written by <code>rsyslog</code> should
-be set to 600, or more restrictive. These log files are determined by the
+be set to 640, or more restrictive. These log files are determined by the
 second part of each Rule line in <code>/etc/rsyslog.conf</code> and typically
 all appear in <code>/var/log</code>. For each log file <i>LOGFILE</i>
 referenced in <code>/etc/rsyslog.conf</code>, run the following command to
 inspect the file's permissions:
 <pre>$ ls -l <i>LOGFILE</i></pre>
-If the permissions are not 600 or more restrictive, run the following
+If the permissions are not 640 or more restrictive, run the following
 command to correct this:
-<pre>$ sudo chmod 600 <i>LOGFILE</i></pre>"</td>
+<pre>$ sudo chmod 640 <i>LOGFILE</i></pre>"</td>
 </tr>
 <tr>
 <td></td>
@@ -9551,16 +9594,24 @@ $UDPServerRun 514</pre>
 <tr>
 <td>CCE-83995-1</td>
 <td>Ensure rsyslog Does Not Accept Remote Messages Unless Acting As Log Server</td>
-<td>The <code>rsyslog</code> daemon should not accept remote messages
-unless the system acts as a log server.
-To ensure that it is not listening on the network, ensure the following lines are
-<i>not</i> found in <code>/etc/rsyslog.conf</code>:
+<td>The <code>rsyslog</code> daemon should not accept remote messages unless the system acts as a log
+server. To ensure that it is not listening on the network, ensure any of the following lines
+are <i>not</i> found in <code>rsyslog</code> configuration files.
+
+If using legacy syntax:
 <pre>$ModLoad imtcp
 $InputTCPServerRun <i>port</i>
 $ModLoad imudp
 $UDPServerRun <i>port</i>
 $ModLoad imrelp
 $InputRELPServerRun <i>port</i></pre>
+
+If using RainerScript syntax:
+<pre>module(load="imtcp")
+module(load="imudp")
+input(type="imtcp" port="514")
+input(type="imudp" port="514")
+</pre>
 </td>
 </tr>
 <tr>
@@ -9709,6 +9760,38 @@ Zones can be utilized to a deny-all, allow-by-exception approach.
 The default "drop" zone will drop all incoming network packets unless it is explicitly allowed by the configuration file or is related to an outgoing network connection.</td>
 </tr>
 <tr>
+<td>CCE-86137-7</td>
+<td>Configure Firewalld to Restrict Loopback Traffic</td>
+<td>Configure <code>firewalld</code> to restrict loopback traffic to the <code>lo</code> interface.
+
+The loopback traffic must be trusted by assigning the <code>lo</code> interface to the
+<code>firewalld</code> <code>trusted</code> zone. However, the loopback traffic must be restricted
+to the loopback interface as an anti-spoofing measure.
+
+To configure <code>firewalld</code> to restrict loopback traffic to the <code>lo</code> interface,
+run the following commands:
+<pre>
+sudo firewall-cmd --permanent --zone=trusted --add-rich-rule='rule family=ipv4 source address="127.0.0.1" destination not address="127.0.0.1" drop'
+sudo firewall-cmd --permanent --zone=trusted --add-rich-rule='rule family=ipv6 source address="::1" destination not address="::1" drop'
+</pre>
+
+To ensure <code>firewalld</code> settings are applied in runtime, run the following command:
+<pre>firewall-cmd --reload</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86116-1</td>
+<td>Configure Firewalld to Trust Loopback Traffic</td>
+<td>Assign loopback interface to the <code>firewalld</code> <code>trusted</code> zone in order to
+explicitly allow the loopback traffic in the system.
+
+To configure <code>firewalld</code> to trust loopback traffic, run the following command:
+<pre>sudo firewall-cmd --permanent --zone=trusted --add-interface=lo</pre>
+To ensure <code>firewalld</code> settings are applied in runtime, run the following command:
+<pre>firewall-cmd --reload</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-84023-1</td>
 <td>Set Default firewalld Zone for Incoming Packets</td>
 <td>To set the default zone to <code>drop</code> for
@@ -9827,7 +9910,7 @@ This permits the IPv6 module to be loaded (and thus satisfy other modules that
 depend on it), while disabling support for the IPv6 protocol.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86215-1</td>
 <td>Disable IPv6 Addressing on All IPv6 Interfaces</td>
 <td>To disable support for (<code>ipv6</code>) addressing on all interface add the following line to
 <code>/etc/sysctl.d/ipv6.conf</code> (or another file in <code>/etc/sysctl.d</code>):
@@ -9836,7 +9919,7 @@ This disables IPv6 on all network interfaces as other services and system
 functionality require the IPv6 stack loaded to work.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-90764-2</td>
 <td>Disable IPv6 Addressing on IPv6 Interfaces by Default</td>
 <td>To disable support for (<code>ipv6</code>) addressing on interfaces by default add the following line to
 <code>/etc/sysctl.d/ipv6.conf</code> (or another file in <code>/etc/sysctl.d</code>):
@@ -10188,6 +10271,21 @@ The <code>nftables</code> package can be installed with the following command:
 <pre>
 $ sudo dnf install nftables</pre>
 </td>
+</tr>
+<tr>
+<td>CCE-88429-6</td>
+<td>Verify nftables Service is Disabled</td>
+<td>nftables is a subsystem of the Linux kernel providing filtering and classification of network
+packets/datagrams/frames and is the successor to iptables.
+The <code>nftables</code> service can be disabled with the following command:
+<pre>systemctl disable nftables</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86163-3</td>
+<td>Ensure a Table Exists for Nftables</td>
+<td>Tables in nftables hold chains. Each table only has one address family and only applies
+to packets of this family. Tables can have one of six families.</td>
 </tr>
 <tr>
 <td></td>
@@ -11858,6 +11956,17 @@ startup and descend from the <code>init</code> process, they inherit the <code>u
 To check for unconfined daemons, run the following command:
 <pre>$ sudo ps -eZ | grep "unconfined_service_t"</pre>
 It should produce no output in a well-configured system.</td>
+</tr>
+<tr>
+<td>CCE-86152-6</td>
+<td>Ensure SELinux is Not Disabled</td>
+<td>The SELinux state should be set to <code>enforcing</code> or <code>permissive</code> at system boot
+time. In the file <code>/etc/selinux/config</code>, add or correct the following line to configure
+the system to boot into enforcing or permissive mode:
+<pre>SELINUX=enforcing</pre>
+OR
+<pre>SELINUX=permissive</pre>
+</td>
 </tr>
 <tr>
 <td>CCE-84074-4</td>
@@ -14029,7 +14138,7 @@ To enable the <code>selinuxuser_execmod</code> SELinux boolean, run the followin
 </tr>
 <tr>
 <td>CCE-84089-2</td>
-<td>disable the selinuxuser_execstack SELinux Boolean</td>
+<td>Disable the selinuxuser_execstack SELinux Boolean</td>
 <td>By default, the SELinux boolean <code>selinuxuser_execstack</code> is enabled.
 This setting should be disabled as unconfined executables should not be able
 to make their stack executable.
@@ -14875,7 +14984,7 @@ the avahi-autoipd and avahi packages can be uninstalled.</td>
 <tr>
 <td>CCE-86513-9</td>
 <td>Uninstall avahi Server Package</td>
-<td>If the system does not need to have an Avahi server which implements 
+<td>If the system does not need to have an Avahi server which implements
 the DNS Service Discovery and Multicast DNS protocols,
 the avahi-autoipd and avahi packages can be uninstalled.</td>
 </tr>
@@ -15526,6 +15635,15 @@ intended for use as an LDAP Server it should be removed.</td>
 <td>The Lightweight Directory Access Protocol (LDAP) is a service that provides a method for looking up information from a central database.</td>
 </tr>
 <tr>
+<td></td>
+<td>The mailx Package Is Installed</td>
+<td>A mail server is required for sending emails.
+The <code>mailx</code> package can be installed with the following command:
+<pre>
+$ sudo dnf install mailx</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-85984-3</td>
 <td>The Postfix package is installed</td>
 <td>A mail server is required for sending emails.
@@ -15555,6 +15673,14 @@ recommended to leave this service enabled for local mail delivery.
 The <code>postfix</code> service can be enabled with the following command:
 <pre>$ sudo systemctl enable postfix.service</pre>
 </td>
+</tr>
+<tr>
+<td>CCE-88499-9</td>
+<td>Ensure Mail Transfer Agent is not Listening on any non-loopback Address</td>
+<td>Mail Transfer Agents (MTA), such as sendmail and Postfix, are used to
+listen for incoming mail and transfer the messages to the appropriate
+user or mail server. If the system is not intended to be a mail server,
+it is recommended that the MTA be configured to only process local mail.</td>
 </tr>
 <tr>
 <td>CCE-90826-9</td>
@@ -16206,6 +16332,18 @@ To properly set the owner of <code>/etc/ssh/sshd_config</code>, run the command:
 </td>
 </tr>
 <tr>
+<td>CCE-86119-5</td>
+<td>Verify Ownership on SSH Server Private *_key Key Files</td>
+<td>SSH server private keys, files that match the <code>/etc/ssh/*_key</code> glob, must be owned
+by <code>root</code> user.</td>
+</tr>
+<tr>
+<td>CCE-86130-2</td>
+<td>Verify Ownership on SSH Server Public *.pub Key Files</td>
+<td>SSH server public keys, files that match the <code>/etc/ssh/*.pub</code> glob, must be owned
+by <code>root</code> user.</td>
+</tr>
+<tr>
 <td>CCE-90818-6</td>
 <td>Verify Permissions on SSH Server config file</td>
 <td>
@@ -16669,14 +16807,32 @@ To enable X11 Forwarding, add or correct the following line in
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86817-4</td>
 <td>Limit Users' SSH Access</td>
 <td>By default, the SSH configuration allows any user with an account
-to access the system. In order to specify the users that are allowed to login
-via SSH and deny all other users, add or correct the following line in the
-<code>/etc/ssh/sshd_config</code> file:
-<pre>AllowUsers USER1 USER2</pre>
-Where <code>USER1</code> and <code>USER2</code> are valid user names.</td>
+to access the system. There are several options available to limit
+which users and group can access the system via SSH. It is
+recommended that at least one of the following options be leveraged:
+- AllowUsers variable gives the system administrator the option of
+  allowing specific users to ssh into the system. The list consists of
+  space separated user names. Numeric user IDs are not recognized with
+  this variable. If a system administrator wants to restrict user
+  access further by specifically allowing a user's access only from a
+  particular host, the entry can be specified in the form of user@host.
+- AllowGroups variable gives the system administrator the option of
+  allowing specific groups of users to ssh into the system. The list
+  consists of space separated group names. Numeric group IDs are not
+  recognized with this variable.
+- DenyUsers variable gives the system administrator the option of
+  denying specific users to ssh into the system. The list consists of
+  space separated user names. Numeric user IDs are not recognized with
+  this variable. If a system administrator wants to restrict user
+  access further by specifically denying a user's access from a
+  particular host, the entry can be specified in the form of user@host.
+- DenyGroups variable gives the system administrator the option of
+  denying specific groups of users to ssh into the system. The list
+  consists of space separated group names. Numeric group IDs are not
+  recognized with this variable.</td>
 </tr>
 <tr>
 <td>CCE-90804-6</td>

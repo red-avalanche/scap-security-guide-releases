@@ -5794,15 +5794,19 @@ Note: The example is for a system that is configured to create users home direct
 A misconfigured umask value could result in files with excessive permissions that can be read or
 written to by unauthorized users.</pre></td>
 	<td><pre>Verify the umask setting is configured correctly in the /etc/profile file
-with the following command:
-$ grep "umask" /etc/profile
+or scripts within /etc/profile.d directory with the following command:
+$ grep "umask" /etc/profile*
 umask 
       Is it the case that the value for the "umask" parameter is not "<sub idref="var_accounts_user_umask" />",
 or the "umask" parameter is missing or is commented out?
       </pre></td>
 	<td><pre>To ensure the default umask controlled by /etc/profile is set properly,
 add or correct the umask setting in /etc/profile to read as follows:
-umask </pre></td>
+umask 
+
+Note that /etc/profile also reads scrips within /etc/profile.d directory.
+These scripts are also valid files to set umask value. Therefore, they should also be
+considered during the check and properly remediated, if necessary.</pre></td>
 	<td>RHEL-08-020353</td>
 	<td>accounts_umask_etc_profile</td>
 </tr>
@@ -8169,20 +8173,14 @@ audit tools by running the following command:
 # sudo cat /etc/aide.conf | grep /usr/sbin/au
 
 /usr/sbin/auditctl p+i+n+u+g+s+b+acl+xattrs+sha512
-
 /usr/sbin/auditd p+i+n+u+g+s+b+acl+xattrs+sha512
-
 /usr/sbin/ausearch p+i+n+u+g+s+b+acl+xattrs+sha512
-
 /usr/sbin/aureport p+i+n+u+g+s+b+acl+xattrs+sha512
-
 /usr/sbin/autrace p+i+n+u+g+s+b+acl+xattrs+sha512
 
 
 
-
 /usr/sbin/augenrules p+i+n+u+g+s+b+acl+xattrs+sha512
-
 
 
 If AIDE is configured properly to protect the integrity of the audit tools,
@@ -8276,10 +8274,12 @@ system logging services.</pre></td>
 	<td>SRG-OS-ID</td>
 	<td><pre>The rsyslog-gnutls package provides Transport Layer Security (TLS) support
 for the rsyslog daemon, which enables secure remote logging.</pre></td>
-	<td><pre>Run the following command to determine if the rsyslog-gnutls package is installed: $ rpm -q rsyslog-gnutls
-      Is it the case that the package is not installed?
+	<td><pre>Run the following command to determine if the rsyslog-gnutls package is installed:
+$ rpm -q rsyslog-gnutls
+      Is it the case that the package is installed?
       </pre></td>
 	<td><pre>TLS protocol support for rsyslog is installed.
+
 The rsyslog-gnutls package can be installed with the following command:
 
 $ sudo yum install rsyslog-gnutls</pre></td>
@@ -8480,8 +8480,8 @@ also include suspend, single, and halt.</pre></td>
 	<td>medium</td>
 	<td>RHEL 8 must securely compare internal information system clocks at least every 24 hours with a server synchronized to an authoritative time source, such as the United States Naval Observatory (USNO) time servers, or a time server designated for the appropriate DoD network (NIPRNet/SIPRNet), and/or the Global Positioning System (GPS).</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Depending on the infrastruture being used the pool directive may not be supported.</pre></td>
-	<td><pre>Run the following command and verify that time sources are only configure with server directive:
+	<td><pre>Depending on the infrastructure being used the pool directive may not be supported.</pre></td>
+	<td><pre>Run the following command and verify that time sources are only configured with server directive:
 # grep -E "^(server|pool)" /etc/chrony.conf
 A line with the appropriate server should be returned, any line returned starting with pool is a finding.
       Is it the case that an authoritative remote time server is not configured or configured with pool directive?

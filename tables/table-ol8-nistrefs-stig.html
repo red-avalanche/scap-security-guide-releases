@@ -2032,10 +2032,27 @@ privileges.
   <td>var_selinux_state=enforcing</td>
 </tr>
 <tr>
+  <td>CM-3(5)</td>
+  <td>N/A</td>
+  <td>The mailx Package Is Installed</td>
+  <td xml:lang="en-US">
+A mail server is required for sending emails.
+The <code>mailx</code> package can be installed with the following command:
+<pre>
+$ sudo yum install mailx</pre>
+  </td>
+  <td xml:lang="en-US">
+Emails can be used to notify designated personnel about important
+system events such as failures or warnings.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>CM-3(6)<br/>SC-12(2)<br/>SC-12(3)<br/>IA-7<br/>SC-13<br/>CM-6(a)<br/>SC-12</td>
   <td>N/A</td>
   <td>Enable FIPS Mode</td>
   <td xml:lang="en-US">
+
 To enable FIPS mode, run the following command:
 <pre>fips-mode-setup --enable</pre>
 <br />
@@ -3140,6 +3157,36 @@ approved Certificate Authority (CA)."
   <td></td>
 </tr>
 <tr>
+  <td>CM-5(3)<br/>SI-7<br/>SC-12<br/>SC-12(3)<br/>CM-6(a)<br/>CM-11(a)<br/>CM-11(b)</td>
+  <td>N/A</td>
+  <td>Ensure Oracle Linux GPG Key Installed</td>
+  <td xml:lang="en-US">
+To ensure the system can cryptographically verify base software
+packages come from Oracle (and to connect to the Unbreakable Linux Network to
+receive them), the Oracle GPG key must properly be installed.
+To install the Oracle GPG key, run:
+<pre>$ sudo uln_register</pre>
+If the system is not connected to the Internet,
+then install the Oracle GPG key from trusted media such as
+the Oracle installation CD-ROM or DVD. Assuming the disc is mounted
+in <tt>/media/cdrom</tt>, use the following command as the root user to import
+it into the keyring:
+<pre>$ sudo rpm --import /media/cdrom/RPM-GPG-KEY-oracle</pre>
+
+Alternatively, the key may be pre-loaded during the Oracle installation. In
+such cases, the key can be installed by running the following command:
+<pre>sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle</pre>
+  </td>
+  <td xml:lang="en-US">
+Changes to software components can have significant effects on the
+overall security of the operating system. This requirement ensures
+the software has not been tampered with and that it has been provided
+by a trusted vendor. The Oracle GPG key is necessary to
+cryptographically verify packages are from Oracle.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>CM-5(6)<br/>CM-5(6).1</td>
   <td>N/A</td>
   <td>Verify that Shared Library Directories Have Root Group Ownership</td>
@@ -3346,10 +3393,7 @@ for purposes of initiating changes, including upgrades and modifications.
   <td xml:lang="en-US">
 To configure the number of retry prompts that are permitted per-session:
 
-Edit the <tt>pam_pwquality.so</tt> statement in
-
-<tt>/etc/pam.d/system-auth</tt> to show
-
+Edit the <tt>/etc/security/pwquality.conf</tt> to include
 
 <tt>retry=<tt>3</tt></tt>, or a lower value if site
 policy is more restrictive. The DoD requirement is a maximum of 3 prompts
@@ -5223,6 +5267,10 @@ written to by unauthorized users.
 To ensure the default umask controlled by <tt>/etc/profile</tt> is set properly,
 add or correct the <tt>umask</tt> setting in <tt>/etc/profile</tt> to read as follows:
 <pre>umask <tt>077</tt></pre>
+
+Note that <tt>/etc/profile</tt> also reads scrips within <tt>/etc/profile.d</tt> directory.
+These scripts are also valid files to set umask value. Therefore, they should also be
+considered during the check and properly remediated, if necessary.
   </td>
   <td xml:lang="en-US">
 The umask value influences the permissions assigned to files when they are created.
@@ -7221,6 +7269,21 @@ and makes system configuration more fragmented.
   <td></td>
 </tr>
 <tr>
+  <td>AC-17 (1)</td>
+  <td>N/A</td>
+  <td>Firewalld Must Employ a Deny-all, Allow-by-exception Policy for Allowing Connections to Other Systems</td>
+  <td xml:lang="en-US">
+Oracle Linux 8 incorporates the "firewalld" daemon, which allows for many different configurations. One of these configurations is zones.
+Zones can be utilized to a deny-all, allow-by-exception approach.
+The default "drop" zone will drop all incoming network packets unless it is explicitly allowed by the configuration file or is related to an outgoing network connection.
+  </td>
+  <td xml:lang="en-US">
+Failure to restrict network connectivity only to authorized systems permits inbound connections from malicious systems.
+It also permits outbound connections that may facilitate exfiltration of data.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>AC-17(a)<br/>CM-6(a)<br/>AC-6(1)</td>
   <td>N/A</td>
   <td>Verify Permissions on SSH Server Private *_key Key Files</td>
@@ -7868,24 +7931,6 @@ makes the system less prone to dictionary attacks.
 <tr>
   <td></td>
   <td>N/A</td>
-  <td>Set number of Password Hashing Rounds - system-auth</td>
-  <td xml:lang="en-US">
-Configure the number or rounds for the password hashing algorithm. This can be
-accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
-<br /><br />
-In file <tt>/etc/pam.d/system-auth</tt> append <tt>rounds=<tt>5000</tt></tt>
-to the <tt>pam_unix.so</tt> entry, as shown below:
-<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<tt>5000</tt></pre>
-The system's default number of rounds is 5000.
-  </td>
-  <td xml:lang="en-US">
-Using a higher number of rounds makes password cracking attacks more difficult.
-  </td>
-  <td>var_password_pam_unix_rounds=5000</td>
-</tr>
-<tr>
-  <td></td>
-  <td>N/A</td>
   <td>Do Not Show System Messages When Unsuccessful Logon Attempts Occur</td>
   <td xml:lang="en-US">
 This rule ensures the system prevents informative messages from being presented to the user
@@ -8266,7 +8311,7 @@ systems with limited audit storage capacity.
 Check that Chrony only has time sources configured with the <tt>server</tt> directive.
   </td>
   <td xml:lang="en-US">
-Depending on the infrastruture being used the <tt>pool</tt> directive may not be supported.
+Depending on the infrastructure being used the <tt>pool</tt> directive may not be supported.
   </td>
   <td></td>
 </tr>
@@ -8692,6 +8737,21 @@ Kerberos programs (<tt>kinit</tt>, <tt>klist</tt>, <tt>kdestroy</tt>, <tt>kpassw
 <tr>
   <td></td>
   <td>N/A</td>
+  <td>Uninstall libreport-plugin-logger Package</td>
+  <td xml:lang="en-US">
+The <code>libreport-plugin-logger</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase libreport-plugin-logger</pre>
+  </td>
+  <td xml:lang="en-US">
+<tt>libreport-plugin-logger</tt> is a ABRT plugin to report bugs into the
+Red Hat Support system.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td>N/A</td>
   <td>Install policycoreutils Package</td>
   <td xml:lang="en-US">
 The <code>policycoreutils</code> package can be installed with the following command:
@@ -8735,6 +8795,7 @@ such as those used in the formation of x509/PKI certificates.
   <td>Ensure rsyslog-gnutls is installed</td>
   <td xml:lang="en-US">
 TLS protocol support for rsyslog is installed.
+
 The <code>rsyslog-gnutls</code> package can be installed with the following command:
 <pre>
 $ sudo yum install rsyslog-gnutls</pre>

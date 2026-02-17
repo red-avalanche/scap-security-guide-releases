@@ -613,7 +613,7 @@ Check for the use of the "pwquality" retry option in the PAM files with the foll
 $ grep pam_pwquality /etc/pam.d/system-auth
 
 
-password required pam_pwquality.so retry=
+password requisite pam_pwquality.so retry=
       Is it the case that the value of "retry" is set to "0" or greater than "<sub idref="var_password_pam_retry" />", or is missing?
       </pre></td>
 	<td><pre>To configure the number of retry prompts that are permitted per-session:
@@ -5604,12 +5604,18 @@ There must be a resolvable DNS CNAME or Alias record set to "" for logs to be se
 	<td>medium</td>
 	<td>The Red Hat Enterprise Linux operating system must be configured so that the rsyslog daemon does not accept log messages from other servers unless the server is being used for log aggregation.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Any process which receives messages from the network incurs some risk
-of receiving malicious messages. This risk can be eliminated for
-rsyslog by configuring it not to listen on the network.</pre></td>
-	<td><pre>Verify that the system is not accepting "rsyslog" messages from other systems unless it is documented as a log aggregation server.
-Display the contents of the configuration file:
-cat /etc/rsyslog.conf
+	<td><pre>Any process which receives messages from the network incurs some risk of receiving malicious
+messages. This risk can be eliminated for rsyslog by configuring it not to listen on the
+network.</pre></td>
+	<td><pre>Verify that the system is not accepting "rsyslog" messages from other systems unless it is
+documented as a log aggregation server.
+Display the contents of the rsyslog configuration files:
+find /etc -maxdepth 2 -regex '/etc/rsyslog\(\.conf\|\.d\/.*\.conf\)' -exec cat '{}' \;
+
+If any of the below lines are found, ask to see the documentation for the system being used
+for log aggregation:
+
+If using legacy syntax:
 $ModLoad imtcp
 $InputTCPServerRun port
 $ModLoad imudp
@@ -5617,19 +5623,32 @@ $UDPServerRun port
 $ModLoad imrelp
 $InputRELPServerRun port
 
-If any of the above modules are being loaded in the "/etc/rsyslog.conf" file, ask to see the documentation for the system being used for log aggregation.
+If using RainerScript syntax:
+module(load="imtcp")
+module(load="imudp")
+input(type="imtcp" port="514")
+input(type="imudp" port="514")
+
       Is it the case that rsyslog accepts remote messages and is not documented as a log aggregation system?
       </pre></td>
-	<td><pre>The rsyslog daemon should not accept remote messages
-unless the system acts as a log server.
-To ensure that it is not listening on the network, ensure the following lines are
-not found in /etc/rsyslog.conf:
+	<td><pre>The rsyslog daemon should not accept remote messages unless the system acts as a log
+server. To ensure that it is not listening on the network, ensure any of the following lines
+are not found in rsyslog configuration files.
+
+If using legacy syntax:
 $ModLoad imtcp
 $InputTCPServerRun port
 $ModLoad imudp
 $UDPServerRun port
 $ModLoad imrelp
-$InputRELPServerRun port</pre></td>
+$InputRELPServerRun port
+
+If using RainerScript syntax:
+module(load="imtcp")
+module(load="imudp")
+input(type="imtcp" port="514")
+input(type="imudp" port="514")
+</pre></td>
 	<td>RHEL-07-031010</td>
 	<td>rsyslog_nolisten</td>
 </tr>

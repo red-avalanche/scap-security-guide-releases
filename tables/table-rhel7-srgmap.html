@@ -17635,16 +17635,24 @@ can be implemented by adding the following to the <i>RULES</i> section of
       <table>
         <tr>
           <td>Ensure rsyslog Does Not Accept Remote Messages Unless Acting As Log Server</td>
-          <td>The <tt>rsyslog</tt> daemon should not accept remote messages
-unless the system acts as a log server.
-To ensure that it is not listening on the network, ensure the following lines are
-<i>not</i> found in <tt>/etc/rsyslog.conf</tt>:
+          <td>The <tt>rsyslog</tt> daemon should not accept remote messages unless the system acts as a log
+server. To ensure that it is not listening on the network, ensure any of the following lines
+are <i>not</i> found in <tt>rsyslog</tt> configuration files.
+
+If using legacy syntax:
 <pre>$ModLoad imtcp
 $InputTCPServerRun <i>port</i>
 $ModLoad imudp
 $UDPServerRun <i>port</i>
 $ModLoad imrelp
-$InputRELPServerRun <i>port</i></pre></td>
+$InputRELPServerRun <i>port</i></pre>
+
+If using RainerScript syntax:
+<pre>module(load="imtcp")
+module(load="imudp")
+input(type="imtcp" port="514")
+input(type="imudp" port="514")
+</pre></td>
         </tr>
       </table>
 
