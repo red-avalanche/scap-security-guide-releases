@@ -7,7 +7,23 @@
 <br><br><div style="text-align: center; font-size: x-large; font-weight:bold">
 			Rules In <i>DISA STIG for Oracle Linux 7</i>
 </div>
-<br><br><style type="text/css">
+<br><br><div><table>
+<thead><tr>
+<th>Total</th>
+<th>Missing</th>
+<th>Implemented</th>
+<th>Coverage</th>
+<th>STIG ids missing rule</th>
+</tr></thead>
+<tbody><tr>
+<td>252</td>
+<td>7</td>
+<td>245</td>
+<td>97.22%</td>
+<td>OL07-00-010118OL07-00-010480OL07-00-010490OL07-00-020111OL07-00-030201OL07-00-030819OL07-00-030840</td>
+</tr></tbody>
+</table></div>
+<style type="text/css">
 		table
 		{
 			border-collapse:collapse;
@@ -45,36 +61,43 @@
 <td>Check Procedures</td>
 <td>Fixtext</td>
 <td>Version</td>
+<td>Mapped Rule</td>
 </thead>
 <tr>
-<td>OL07-00-010010</td>
+<td>V-221652</td>
 <td>1496</td>
 <td>high</td>
 <td>The Oracle Linux operating system must be configured so that the file permissions, ownership, and group membership of system files and commands match the vendor values.</td>
-<td>Ownership of binaries and configuration files that is incorrect
-could allow an unauthorized user to gain privileges that they should
-not have. The ownership set by the vendor should be maintained. Any
-deviations from this baseline should be investigated.</td>
-<td>The following command will list which files on the system have ownership different from what
+<td>Permissions on system binaries and configuration files that are too generous
+could allow an unauthorized user to gain privileges that they should not have.
+The permissions set by the vendor should be maintained. Any deviations from
+this baseline should be investigated.</td>
+<td>The following command will list which files on the system have permissions different from what
 is expected by the RPM database:
-$ rpm -Va | rpm -Va --nofiledigest | awk '{ if (substr($0,6,1)=="U" || substr($0,7,1)=="G") print $NF }'
+$ rpm -Va | awk '{ if (substr($0,2,1)=="M") print $NF }'
       Is it the case that there is output?
       </td>
-<td>The RPM package management system can check file ownership
-permissions of installed software packages, including many that are
-important to system security. After locating a file with incorrect
-permissions, which can be found with
-<pre>rpm -Va | awk '{ if (substr($0,6,1)=="U" || substr($0,7,1)=="G") print $NF }'</pre>
+<td>The RPM package management system can check file access permissions
+of installed software packages, including many that are important
+to system security.
+Verify that the file permissions of system files
+and commands match vendor values. Check the file permissions
+with the following command:
+<pre>$ sudo rpm -Va | awk '{ if (substr($0,2,1)=="M") print $NF }'</pre>
+Output indicates files that do not match vendor defaults.
+After locating a file with incorrect permissions,
 run the following command to determine which package owns it:
 <pre>$ rpm -qf <i>FILENAME</i></pre>
+<br>
 Next, run the following command to reset its permissions to
 the correct values:
-<pre>$ sudo rpm --setugids <i>PACKAGENAME</i></pre>
+<pre>$ sudo rpm --setperms <i>PACKAGENAME</i></pre>
 </td>
 <td>OL07-00-010010</td>
+<td>rpm_verify_permissions</td>
 </tr>
 <tr>
-<td>OL07-00-010020</td>
+<td>V-221653</td>
 <td>1749</td>
 <td>high</td>
 <td>The Oracle Linux operating system must be configured so that the cryptographic hash of system files and commands matches vendor values.</td>
@@ -108,10 +131,11 @@ Alternatively, the package can be reinstalled from trusted media using the comma
 <pre>$ sudo rpm -Uvh <i>PACKAGENAME</i></pre>
 </td>
 <td>OL07-00-010020</td>
+<td>rpm_verify_hashes</td>
 </tr>
 <tr>
-<td>OL07-00-010030</td>
-<td>50</td>
+<td>V-221654</td>
+<td>1388</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must display the Standard Mandatory DoD Notice and Consent Banner before granting local or remote access to the system via a graphical user logon.</td>
 <td>Display of a standardized and approved use notification before granting access to the operating system
@@ -143,9 +167,10 @@ For example:
 After the settings have been set, run <code>dconf update</code>.
 The banner text must also be set.</td>
 <td>OL07-00-010030</td>
+<td>dconf_gnome_banner_enabled</td>
 </tr>
 <tr>
-<td>OL07-00-010040</td>
+<td>V-221655</td>
 <td>48</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must display the approved Standard Mandatory DoD Notice and Consent Banner before granting local or remote access to the system via a graphical user logon.</td>
@@ -176,9 +201,10 @@ After the settings have been set, run <code>dconf update</code>.
 When entering a warning banner that spans several lines, remember
 to begin and end the string with <code>'</code> and use <code>\n</code> for new lines.</td>
 <td>OL07-00-010040</td>
+<td>dconf_gnome_login_banner_text</td>
 </tr>
 <tr>
-<td>OL07-00-010050</td>
+<td>V-221656</td>
 <td>48</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must display the Standard Mandatory DoD Notice and Consent Banner before granting local or remote access to the system via a command line user logon.</td>
@@ -227,9 +253,10 @@ OR:
 <code>I've read &amp; consent to terms in IS user agreem't.</code>
 </td>
 <td>OL07-00-010050</td>
+<td>banner_etc_issue</td>
 </tr>
 <tr>
-<td>OL07-00-010060</td>
+<td>V-221657</td>
 <td>58</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must enable a user session lock until that user re-establishes access using established identification and authentication procedures.</td>
@@ -257,9 +284,10 @@ For example:
 <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
 After the settings have been set, run <code>dconf update</code>.</td>
 <td>OL07-00-010060</td>
+<td>dconf_gnome_screensaver_lock_enabled</td>
 </tr>
 <tr>
-<td>OL07-00-010061</td>
+<td>V-221658</td>
 <td>1948</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must uniquely identify and must authenticate users using multifactor authentication via a graphical user logon.</td>
@@ -288,9 +316,10 @@ For example:
 <pre>/org/gnome/login-screen/enable-smartcard-authentication</pre>
 After the settings have been set, run <code>dconf update</code>.</td>
 <td>OL07-00-010061</td>
+<td>dconf_gnome_enable_smartcard_auth</td>
 </tr>
 <tr>
-<td>OL07-00-010062</td>
+<td>V-221659</td>
 <td>57</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must prevent a user from overriding the screensaver lock-enabled setting for the graphical user interface.</td>
@@ -308,9 +337,10 @@ For example:
 <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
 After the settings have been set, run <code>dconf update</code>.</td>
 <td>OL07-00-010062</td>
+<td>dconf_gnome_screensaver_lock_locked</td>
 </tr>
 <tr>
-<td>OL07-00-010070</td>
+<td>V-221660</td>
 <td>57</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must initiate a screensaver after a 15-minute period of inactivity for graphical user interfaces.</td>
@@ -341,9 +371,10 @@ For example:
 <pre>/org/gnome/desktop/session/idle-delay</pre>
 After the settings have been set, run <code>dconf update</code>.</td>
 <td>OL07-00-010070</td>
+<td>dconf_gnome_screensaver_idle_delay</td>
 </tr>
 <tr>
-<td>OL07-00-010081</td>
+<td>V-221661</td>
 <td>57</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must prevent a user from overriding the screensaver lock-delay setting for the graphical user interface.</td>
@@ -365,9 +396,10 @@ For example:
 <pre>/org/gnome/desktop/screensaver/lock-delay</pre>
 After the settings have been set, run <code>dconf update</code>.</td>
 <td>OL07-00-010081</td>
+<td>dconf_gnome_screensaver_user_locks</td>
 </tr>
 <tr>
-<td>OL07-00-010082</td>
+<td>V-221662</td>
 <td>57</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must prevent a user from overriding the session idle-delay setting for the graphical user interface.</td>
@@ -389,9 +421,10 @@ For example:
 <pre>/org/gnome/desktop/session/idle-delay</pre>
 After the settings have been set, run <code>dconf update</code>.</td>
 <td>OL07-00-010082</td>
+<td>dconf_gnome_session_idle_user_locks</td>
 </tr>
 <tr>
-<td>OL07-00-010100</td>
+<td>V-221664</td>
 <td>57</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must initiate a session lock for the screensaver after a period of inactivity for graphical user interfaces.</td>
@@ -425,9 +458,10 @@ For example:
 <pre>/org/gnome/desktop/screensaver/idle-activation-enabled</pre>
 After the settings have been set, run <code>dconf update</code>.</td>
 <td>OL07-00-010100</td>
+<td>dconf_gnome_screensaver_idle_activation_enabled</td>
 </tr>
 <tr>
-<td>OL07-00-010101</td>
+<td>V-221665</td>
 <td>57</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must prevent a user from overriding the screensaver idle-activation-enabled setting for the graphical user interface.</td>
@@ -445,9 +479,10 @@ For example:
 <pre>/org/gnome/desktop/screensaver/idle-activation-enabled</pre>
 After the settings have been set, run <code>dconf update</code>.</td>
 <td>OL07-00-010101</td>
+<td>dconf_gnome_screensaver_idle_activation_locked</td>
 </tr>
 <tr>
-<td>OL07-00-010110</td>
+<td>V-221666</td>
 <td>57</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must initiate a session lock for graphical user interfaces when the screensaver is activated.</td>
@@ -474,33 +509,21 @@ For example:
 <pre>/org/gnome/desktop/screensaver/lock-delay</pre>
 After the settings have been set, run <code>dconf update</code>.</td>
 <td>OL07-00-010110</td>
+<td>dconf_gnome_screensaver_lock_delay</td>
 </tr>
 <tr>
-<td>OL07-00-010118</td>
-<td>192</td>
+<td>V-221667</td>
+<td></td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that /etc/pam.d/passwd implements /etc/pam.d/system-auth when changing passwords.</td>
-<td>Setting the password retry prompts that are permitted on a per-session basis to a low value
-requires some software, such as SSH, to re-connect. This can slow down and
-draw additional attention to some types of password-guessing attacks. Note that this
-is different from account lockout, which is provided by the pam_faillock module.</td>
-<td>To check how many retry attempts are permitted on a per-session basis, run the following command:
-$ grep pam_pwquality /etc/pam.d/system-auth 
-The retry parameter will indicate how many attempts are permitted.
-The DoD required value is less than or equal to 3.
-This would appear as retry=3, or a lower value.
-      Is it the case that it is not the required value?
-      </td>
-<td>To configure the number of retry prompts that are permitted per-session:
-Edit the <code>pam_pwquality.so</code> statement in
-<code>/etc/pam.d/system-auth</code>  to show
-<code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if site
-policy is more restrictive. The DoD requirement is a maximum of 3 prompts
-per session.</td>
+<td></td>
+<td></td>
+<td></td>
 <td>OL07-00-010118</td>
+<td>Missing Rule</td>
 </tr>
 <tr>
-<td>OL07-00-010119</td>
+<td>V-221668</td>
 <td>192</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that when passwords are changed or new passwords are established, pwquality must be used.</td>
@@ -509,7 +532,9 @@ requires some software, such as SSH, to re-connect. This can slow down and
 draw additional attention to some types of password-guessing attacks. Note that this
 is different from account lockout, which is provided by the pam_faillock module.</td>
 <td>To check how many retry attempts are permitted on a per-session basis, run the following command:
+
 $ grep pam_pwquality /etc/pam.d/system-auth 
+
 The retry parameter will indicate how many attempts are permitted.
 The DoD required value is less than or equal to 3.
 This would appear as retry=3, or a lower value.
@@ -517,14 +542,17 @@ This would appear as retry=3, or a lower value.
       </td>
 <td>To configure the number of retry prompts that are permitted per-session:
 Edit the <code>pam_pwquality.so</code> statement in
+
 <code>/etc/pam.d/system-auth</code>  to show
+
 <code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if site
 policy is more restrictive. The DoD requirement is a maximum of 3 prompts
 per session.</td>
 <td>OL07-00-010119</td>
+<td>accounts_password_pam_retry</td>
 </tr>
 <tr>
-<td>OL07-00-010120</td>
+<td>V-221669</td>
 <td>192</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that when passwords are changed or new passwords are established, the new password must contain at least one upper-case character.</td>
@@ -548,9 +576,10 @@ contain that many uppercase characters. When set to a positive number, pam_pwqua
 length credit for each uppercase character. Modify the <code>ucredit</code> setting in
 <code>/etc/security/pwquality.conf</code> to require the use of an uppercase character in passwords.</td>
 <td>OL07-00-010120</td>
+<td>accounts_password_pam_ucredit</td>
 </tr>
 <tr>
-<td>OL07-00-010130</td>
+<td>V-221670</td>
 <td>193</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that when passwords are changed or new passwords are established, the new password must contain at least one lower-case character.</td>
@@ -576,9 +605,10 @@ contain that many lowercase characters. When set to a positive number, pam_pwqua
 length credit for each lowercase character. Modify the <code>lcredit</code> setting in
 <code>/etc/security/pwquality.conf</code> to require the use of a lowercase character in passwords.</td>
 <td>OL07-00-010130</td>
+<td>accounts_password_pam_lcredit</td>
 </tr>
 <tr>
-<td>OL07-00-010140</td>
+<td>V-221671</td>
 <td>194</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that when passwords are changed or new passwords are assigned, the new password must contain at least one numeric character.</td>
@@ -604,9 +634,10 @@ contain that many digits. When set to a positive number, pam_pwquality will gran
 length credit for each digit. Modify the <code>dcredit</code> setting in
 <code>/etc/security/pwquality.conf</code> to require the use of a digit in passwords.</td>
 <td>OL07-00-010140</td>
+<td>accounts_password_pam_dcredit</td>
 </tr>
 <tr>
-<td>OL07-00-010150</td>
+<td>V-221672</td>
 <td>1619</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that when passwords are changed or new passwords are established, the new password must contain at least one special character.</td>
@@ -635,9 +666,10 @@ additional length credit for each special character. Modify the <code>ocredit</c
 in <code>/etc/security/pwquality.conf</code> to equal <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_ocredit"></xccdf-1.1:sub>
 to require use of a special character in passwords.</td>
 <td>OL07-00-010150</td>
+<td>accounts_password_pam_ocredit</td>
 </tr>
 <tr>
-<td>OL07-00-010160</td>
+<td>V-221673</td>
 <td>195</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that when passwords are changed a minimum of eight of the total number of characters must be changed.</td>
@@ -666,9 +698,10 @@ Modify the <code>difok</code> setting in <code>/etc/security/pwquality.conf</cod
 to equal <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_difok"></xccdf-1.1:sub> to require differing characters
 when changing passwords.</td>
 <td>OL07-00-010160</td>
+<td>accounts_password_pam_difok</td>
 </tr>
 <tr>
-<td>OL07-00-010170</td>
+<td>V-221674</td>
 <td>195</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that when passwords are changed a minimum of four character classes must be changed.</td>
@@ -707,9 +740,10 @@ Modify the <code>minclass</code> setting in <code>/etc/security/pwquality.conf</
 to require <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_minclass"></xccdf-1.1:sub>
 differing categories of characters when changing passwords.</td>
 <td>OL07-00-010170</td>
+<td>accounts_password_pam_minclass</td>
 </tr>
 <tr>
-<td>OL07-00-010180</td>
+<td>V-221675</td>
 <td>195</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that when passwords are changed the number of repeating consecutive characters must not be more than three characters.</td>
@@ -734,9 +768,10 @@ which contain more than that number of consecutive characters. Modify the <code>
 in <code>/etc/security/pwquality.conf</code> to equal <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_maxrepeat"></xccdf-1.1:sub> to prevent a
 run of (<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_maxrepeat"></xccdf-1.1:sub> + 1) or more identical characters.</td>
 <td>OL07-00-010180</td>
+<td>accounts_password_pam_maxrepeat</td>
 </tr>
 <tr>
-<td>OL07-00-010190</td>
+<td>V-221676</td>
 <td>195</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that when passwords are changed the number of repeating characters of the same character class must not be more than four characters.</td>
@@ -758,9 +793,10 @@ which contain more than that number of consecutive characters from the same char
 <code>maxclassrepeat</code> setting in <code>/etc/security/pwquality.conf</code> to equal <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_maxclassrepeat"></xccdf-1.1:sub>
 to prevent a run of (<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_maxclassrepeat"></xccdf-1.1:sub> + 1) or more identical characters.</td>
 <td>OL07-00-010190</td>
+<td>accounts_password_pam_maxclassrepeat</td>
 </tr>
 <tr>
-<td>OL07-00-010200</td>
+<td>V-221677</td>
 <td>196</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that the PAM system service is configured to store only encrypted representations of passwords.</td>
@@ -803,9 +839,10 @@ This will help ensure when local users change their passwords, hashes for
 the new passwords will be generated using the SHA-512 algorithm. This is
 the default.</td>
 <td>OL07-00-010200</td>
+<td>set_password_hashing_algorithm_systemauth</td>
 </tr>
 <tr>
-<td>OL07-00-010210</td>
+<td>V-221678</td>
 <td>196</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured to use the shadow file to store only encrypted representations of passwords.</td>
@@ -823,9 +860,10 @@ the system will use SHA-512 as the hashing algorithm:
 <pre>ENCRYPT_METHOD SHA512</pre>
 </td>
 <td>OL07-00-010210</td>
+<td>set_password_hashing_algorithm_logindefs</td>
 </tr>
 <tr>
-<td>OL07-00-010220</td>
+<td>V-221680</td>
 <td>196</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that user and group account administration utilities are configured to store only encrypted representations of passwords.</td>
@@ -851,9 +889,10 @@ algorithm for password hashing:
 <pre>crypt_style = sha512</pre>
 </td>
 <td>OL07-00-010220</td>
+<td>set_password_hashing_algorithm_libuserconf</td>
 </tr>
 <tr>
-<td>OL07-00-010230</td>
+<td>V-221681</td>
 <td>198</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that passwords for new users are restricted to a 24 hours/1 day minimum lifetime.</td>
@@ -877,9 +916,10 @@ A value of 1 day is considered sufficient for many
 environments. The DoD requirement is 1.
 The profile requirement is <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_minimum_age_login_defs"></xccdf-1.1:sub></code>.</td>
 <td>OL07-00-010230</td>
+<td>accounts_minimum_age_login_defs</td>
 </tr>
 <tr>
-<td>OL07-00-010240</td>
+<td>V-221682</td>
 <td>198</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that passwords are restricted to a 24 hours/1 day minimum lifetime.</td>
@@ -901,9 +941,10 @@ lifetime by running the following command:
 <pre>$ sudo chage -m 1 <i>USER</i></pre>
 </td>
 <td>OL07-00-010240</td>
+<td>accounts_password_set_min_life_existing</td>
 </tr>
 <tr>
-<td>OL07-00-010250</td>
+<td>V-221683</td>
 <td>199</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that passwords for new users are restricted to a 60-day maximum lifetime.</td>
@@ -930,9 +971,10 @@ A value of 180 days is sufficient for many environments.
 The DoD requirement is 60.
 The profile requirement is <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_maximum_age_login_defs"></xccdf-1.1:sub></code>.</td>
 <td>OL07-00-010250</td>
+<td>accounts_maximum_age_login_defs</td>
 </tr>
 <tr>
-<td>OL07-00-010260</td>
+<td>V-221684</td>
 <td>199</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that existing passwords are restricted to a 60-day maximum lifetime.</td>
@@ -953,9 +995,10 @@ restriction by running the following command:
 <pre>$ sudo chage -M 60 <i>USER</i></pre>
 </td>
 <td>OL07-00-010260</td>
+<td>accounts_password_set_max_life_existing</td>
 </tr>
 <tr>
-<td>OL07-00-010270</td>
+<td>V-221685</td>
 <td>200</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that passwords are prohibited from reuse for a minimum of five generations.</td>
@@ -982,9 +1025,10 @@ to the line which refers to the <code>pam_unix.so</code> or <code>pam_pwhistory.
 </ul>
 The DoD STIG requirement is 5 passwords.</td>
 <td>OL07-00-010270</td>
+<td>accounts_password_pam_unix_remember</td>
 </tr>
 <tr>
-<td>OL07-00-010280</td>
+<td>V-221686</td>
 <td>205</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that passwords are a minimum of 15 characters in length.</td>
@@ -1006,9 +1050,10 @@ Your output should contain minlen =
 minimum characters required in a password. Add <code>minlen=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_minlen"></xccdf-1.1:sub></code>
 after pam_pwquality to set minimum password length requirements.</td>
 <td>OL07-00-010280</td>
+<td>accounts_password_pam_minlen</td>
 </tr>
 <tr>
-<td>OL07-00-010290</td>
+<td>V-221687</td>
 <td>366</td>
 <td>high</td>
 <td>The Oracle Linux operating system must not have accounts configured with blank or null passwords.</td>
@@ -1037,9 +1082,10 @@ container. Having user with empty password within a container is not
 considered a risk, because it should not be possible to directly login into
 a container anyway.</td>
 <td>OL07-00-010290</td>
+<td>no_empty_passwords</td>
 </tr>
 <tr>
-<td>OL07-00-010300</td>
+<td>V-221688</td>
 <td>766</td>
 <td>high</td>
 <td>The Oracle Linux operating system must be configured so that the SSH daemon does not allow authentication using an empty password.</td>
@@ -1060,9 +1106,10 @@ empty passwords, add or correct the following line in <code>/etc/ssh/sshd_config
 Any accounts with empty passwords should be disabled immediately, and PAM configuration
 should prevent users from being able to assign themselves empty passwords.</td>
 <td>OL07-00-010300</td>
+<td>sshd_disable_empty_passwords</td>
 </tr>
 <tr>
-<td>OL07-00-010310</td>
+<td>V-221689</td>
 <td>795</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must disable account identifiers (individuals, groups, roles, and devices) if the password expires.</td>
@@ -1089,10 +1136,11 @@ days plus <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf
 elapse until the account would be automatically disabled. See the
 <code>useradd</code> man page for more information.</td>
 <td>OL07-00-010310</td>
+<td>account_disable_post_pw_expiration</td>
 </tr>
 <tr>
-<td>OL07-00-010320</td>
-<td>44</td>
+<td>V-221690</td>
+<td>2238</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured to lock accounts for a minimum of 15 minutes after three unsuccessful logon attempts within a 15-minute timeframe.</td>
 <td>Locking out user accounts after a number of incorrect attempts
@@ -1121,9 +1169,10 @@ modify the content of both <code>/etc/pam.d/system-auth</code> and <code>/etc/pa
 </ul>
 If <code>unlock_time</code> is set to <code>0</code>, manual intervention by an administrator is required to unlock a user.</td>
 <td>OL07-00-010320</td>
+<td>accounts_passwords_pam_faillock_unlock_time</td>
 </tr>
 <tr>
-<td>OL07-00-010330</td>
+<td>V-221691</td>
 <td>2238</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must lock the associated account after three unsuccessful root logon attempts are made within a 15-minute period.</td>
@@ -1152,9 +1201,10 @@ the content of both <code>/etc/pam.d/system-auth</code> and
 </ul>
 </td>
 <td>OL07-00-010330</td>
+<td>accounts_passwords_pam_faillock_deny_root</td>
 </tr>
 <tr>
-<td>OL07-00-010340</td>
+<td>V-221692</td>
 <td>2038</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that users must provide a password for privilege escalation.</td>
@@ -1174,9 +1224,10 @@ by making sure that the <code>NOPASSWD</code> tag does not exist in
 <code>/etc/sudoers</code> configuration file or any sudo configuration snippets
 in <code>/etc/sudoers.d/</code>.</td>
 <td>OL07-00-010340</td>
+<td>sudo_remove_nopasswd</td>
 </tr>
 <tr>
-<td>OL07-00-010341</td>
+<td>V-237627</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must restrict privilege elevation to authorized personnel.</td>
@@ -1197,9 +1248,10 @@ Restrict privileged actions by removing the following entries from the sudoers f
 <code>ALL ALL=(ALL:ALL) ALL</code>
 </td>
 <td>OL07-00-010341</td>
+<td>sudo_restrict_privilege_elevation_to_authorized</td>
 </tr>
 <tr>
-<td>OL07-00-010342</td>
+<td>V-237628</td>
 <td>2227</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must use the invoking user's password for privilege escalation when using "sudo".</td>
@@ -1222,9 +1274,10 @@ The expected output for:
       /etc/sudoers:Defaults !runaspw </pre>
 </td>
 <td>OL07-00-010342</td>
+<td>sudoers_validate_passwd</td>
 </tr>
 <tr>
-<td>OL07-00-010343</td>
+<td>V-237629</td>
 <td>2038</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must require re-authentication when using the "sudo" command.</td>
@@ -1233,20 +1286,26 @@ do not have authorization.
 <br><br>
 When operating systems provide the capability to escalate a functional capability, it
 is critical that the user re-authenticate.</td>
-<td>To determine if NOPASSWD has been configured for sudo, run the following command:
-$ sudo grep -ri nopasswd /etc/sudoers /etc/sudoers.d/
-The command should return no output.
-      Is it the case that nopasswd is enabled in sudo?
+<td>Verify the operating system requires re-authentication 
+when using the "sudo" command to elevate privileges, run the following command:
+sudo grep -ri '^Defaults.*timestamp_timeout' /etc/sudoers /etc/sudoers.d
+The output should be:
+/etc/sudoers:Defaults timestamp_timeout=0 or "timestamp_timeout" is set to a positive number.
+      Is it the case that timestamp_timeout is not set with the appropriate value for sudo?
       </td>
-<td>The sudo <code>NOPASSWD</code> tag, when specified, allows a user to execute
-commands using sudo without having to authenticate. This should be disabled
-by making sure that the <code>NOPASSWD</code> tag does not exist in
+<td>The sudo <code>timestamp_timeout</code> tag sets the amount of time sudo password prompt waits.
+The default <code>timestamp_timeout</code> value is 5 minutes.
+The timestamp_timeout should be configured by making sure that the
+<code>timestamp_timeout</code> tag exists in
 <code>/etc/sudoers</code> configuration file or any sudo configuration snippets
-in <code>/etc/sudoers.d/</code>.</td>
+in <code>/etc/sudoers.d/</code>.
+If the value is set to an integer less than 0, the user's time stamp will not expire 
+and the user will not have to re-authenticate for privileged actions until the user's session is terminated.</td>
 <td>OL07-00-010343</td>
+<td>sudo_require_reauthentication</td>
 </tr>
 <tr>
-<td>OL07-00-010350</td>
+<td>V-228569</td>
 <td>2038</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so users must re-authenticate for privilege escalation.</td>
@@ -1265,9 +1324,10 @@ sudo without having to authenticate. This should be disabled by making sure that
 <code>!authenticate</code> option does not exist in <code>/etc/sudoers</code> configuration file or
 any sudo configuration snippets in <code>/etc/sudoers.d/</code>.</td>
 <td>OL07-00-010350</td>
+<td>sudo_remove_no_authenticate</td>
 </tr>
 <tr>
-<td>OL07-00-010430</td>
+<td>V-221693</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that the delay between logon prompts following a failed console logon attempt is at least four seconds.</td>
@@ -1286,9 +1346,10 @@ add or correct the <code>FAIL_DELAY</code> setting in <code>/etc/login.defs</cod
 <pre>FAIL_DELAY <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_fail_delay"></xccdf-1.1:sub></pre>
 </td>
 <td>OL07-00-010430</td>
+<td>accounts_logon_fail_delay</td>
 </tr>
 <tr>
-<td>OL07-00-010440</td>
+<td>V-221694</td>
 <td>366</td>
 <td>high</td>
 <td>The Oracle Linux operating system must not allow an unattended or automatic logon to the system via a graphical user interface.</td>
@@ -1310,9 +1371,10 @@ login to the system, set the <code>AutomaticLoginEnable</code> to <code>false</c
 AutomaticLoginEnable=false</pre>
 </td>
 <td>OL07-00-010440</td>
+<td>gnome_gdm_disable_automatic_login</td>
 </tr>
 <tr>
-<td>OL07-00-010450</td>
+<td>V-221695</td>
 <td>366</td>
 <td>high</td>
 <td>The Oracle Linux operating system must not allow an unrestricted logon to the system.</td>
@@ -1334,9 +1396,10 @@ the <code>[daemon]</code> section in <code>/etc/gdm/custom.conf</code>. For exam
 TimedLoginEnable=false</pre>
 </td>
 <td>OL07-00-010450</td>
+<td>gnome_gdm_disable_guest_login</td>
 </tr>
 <tr>
-<td>OL07-00-010460</td>
+<td>V-221696</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must not allow users to override SSH environment variables.</td>
@@ -1354,9 +1417,10 @@ in <code>/etc/ssh/sshd_config</code>:
 <pre>PermitUserEnvironment no</pre>
 </td>
 <td>OL07-00-010460</td>
+<td>sshd_do_not_permit_user_env</td>
 </tr>
 <tr>
-<td>OL07-00-010470</td>
+<td>V-221697</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must not allow a non-certificate trusted host SSH logon to the system.</td>
@@ -1378,44 +1442,21 @@ following line in <code>/etc/ssh/sshd_config</code>:
 <pre>HostbasedAuthentication no</pre>
 </td>
 <td>OL07-00-010470</td>
+<td>disable_host_auth</td>
 </tr>
 <tr>
-<td>OL07-00-010480</td>
-<td>213</td>
+<td>V-221698</td>
+<td></td>
 <td>high</td>
 <td>Oracle Linux operating systems prior to version 7.2 with a Basic Input/Output System (BIOS) must require authentication upon booting into single-user and maintenance modes.</td>
-<td>Having a non-default grub superuser username makes password-guessing attacks less effective.</td>
-<td>To verify the boot loader superuser account has been set, run the following
-command:
-sudo grep -A1 "superusers" /etc/grub2.cfg
-The output should show the following:
-set superusers="superusers-account"
-export superusers
-where superusers-account is the actual account name different from common names like root,
-admin, or administrator.
-      Is it the case that it does not?
-      </td>
-<td>The grub2 boot loader should have a superuser account and password
-protection enabled to protect boot-time settings.
-<br><br>
-To maximize the protection, select a password-protected superuser account with unique name, and modify the
-<code>/etc/grub.d/01_users</code> configuration file to reflect the account name change.
-<br><br>
-Do not to use common administrator account names like root,
-admin, or administrator for the grub2 superuser account.
-<br><br>
-Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
-<br><br>
-Once the superuser account has been added,
-update the
-<code>grub.cfg</code> file by running:
-<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
-</td>
+<td></td>
+<td></td>
+<td></td>
 <td>OL07-00-010480</td>
+<td>Missing Rule</td>
 </tr>
 <tr>
-<td>OL07-00-010481</td>
+<td>V-221699</td>
 <td>213</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must require authentication upon booting into single-user and maintenance modes.</td>
@@ -1437,9 +1478,10 @@ is performed if single-user mode is selected.
 By default, single-user mode is protected by requiring a password and is set
 in <code>/usr/lib/systemd/system/rescue.service</code>.</td>
 <td>OL07-00-010481</td>
+<td>require_singleuser_auth</td>
 </tr>
 <tr>
-<td>OL07-00-010482</td>
+<td>V-221700</td>
 <td>213</td>
 <td>high</td>
 <td>Oracle Linux operating systems version 7.2 or newer with a Basic Input/Output System (BIOS) must require authentication upon booting into single-user and maintenance modes.</td>
@@ -1483,12 +1525,107 @@ update the
 <pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
 </td>
 <td>OL07-00-010482</td>
+<td>grub2_password</td>
 </tr>
 <tr>
-<td>OL07-00-010490</td>
+<td>V-244555</td>
 <td>213</td>
+<td>medium</td>
+<td>Oracle Linux operating systems version 7.2 or newer booted with a BIOS must have a unique name for the grub superusers account when booting into single-user and maintenance modes.</td>
+<td>Having a non-default grub superuser username makes password-guessing attacks less effective.</td>
+<td>To verify the boot loader superuser account has been set, run the following
+command:
+sudo grep -A1 "superusers" /etc/grub2.cfg
+The output should show the following:
+set superusers="superusers-account"
+export superusers
+where superusers-account is the actual account name different from common names like root,
+admin, or administrator.
+      Is it the case that it does not?
+      </td>
+<td>The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
+<br><br>
+To maximize the protection, select a password-protected superuser account with unique name, and modify the
+<code>/etc/grub.d/01_users</code> configuration file to reflect the account name change.
+<br><br>
+Do not to use common administrator account names like root,
+admin, or administrator for the grub2 superuser account.
+<br><br>
+Change the superuser to a different username (The default is 'root').
+<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<br><br>
+Once the superuser account has been added,
+update the
+<code>grub.cfg</code> file by running:
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
+</td>
+<td>OL07-00-010483</td>
+<td>grub2_admin_username</td>
+</tr>
+<tr>
+<td>V-221701</td>
+<td></td>
 <td>high</td>
 <td>Oracle Linux operating systems prior to version 7.2 using Unified Extensible Firmware Interface (UEFI) must require authentication upon booting into single-user and maintenance modes.</td>
+<td></td>
+<td></td>
+<td></td>
+<td>OL07-00-010490</td>
+<td>Missing Rule</td>
+</tr>
+<tr>
+<td>V-221702</td>
+<td>213</td>
+<td>high</td>
+<td>Oracle Linux operating systems version 7.2 or newer using Unified Extensible Firmware Interface (UEFI) must require authentication upon booting into single-user and maintenance modes.</td>
+<td>Password protection on the boot loader configuration ensures
+users with physical access cannot trivially alter
+important bootloader settings. These include which kernel to use,
+and whether to enter single-user mode.</td>
+<td>To verify the boot loader superuser password has been set, run the following
+command:
+
+sudo grep "password" /etc/grub2-efi.cfg
+
+The output should show the following:
+password_pbkdf2 superusers-account ${GRUB2_PASSWORD}
+To verify the boot loader superuser account password has been set,
+and the password encrypted, run the following command:
+
+sudo cat /boot/grub2/user.cfg
+The output should be similar to:
+GRUB2_PASSWORD=grub.pbkdf2.sha512.10000.C4E08AC72FBFF7E837FD267BFAD7AEB3D42DDC
+2C99F2A94DD5E2E75C2DC331B719FE55D9411745F82D1B6CFD9E927D61925F9BBDD1CFAA0080E0
+916F7AB46E0D.1302284FCCC52CD73BA3671C6C12C26FF50BA873293B24EE2A96EE3B57963E6D7
+0C83964B473EC8F93B07FE749AA6710269E904A9B08A6BBACB00A2D242AD828
+      Is it the case that it does not?
+      </td>
+<td>The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
+<br><br>
+Since plaintext passwords are a security risk, generate a hash for the password
+by running the following command:
+
+<pre>$ grub2-setpassword</pre>
+
+When prompted, enter the password that was selected.
+<br><br>
+
+Once the superuser password has been added,
+update the
+<code>grub.cfg</code> file by running:
+
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
+</td>
+<td>OL07-00-010491</td>
+<td>grub2_uefi_password</td>
+</tr>
+<tr>
+<td>V-244556</td>
+<td>213</td>
+<td>medium</td>
+<td>Oracle Linux operating systems version 7.2 or newer booted with United Extensible Firmware Interface (UEFI) must have a unique name for the grub superusers account when booting into single-user mode and maintenance.</td>
 <td>Having a non-default grub superuser username makes password-guessing attacks less effective.</td>
 <td>To verify the boot loader superuser account has been set, run the following
 command:
@@ -1515,59 +1652,14 @@ Change the superuser to a different username (The default is 'root').
 Once the superuser account has been added,
 update the
 <code>grub.cfg</code> file by running:
-<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
 </td>
-<td>OL07-00-010490</td>
+<td>OL07-00-010492</td>
+<td>grub2_uefi_admin_username</td>
 </tr>
 <tr>
-<td>OL07-00-010491</td>
-<td>213</td>
-<td>high</td>
-<td>Oracle Linux operating systems version 7.2 or newer using Unified Extensible Firmware Interface (UEFI) must require authentication upon booting into single-user and maintenance modes.</td>
-<td>Password protection on the boot loader configuration ensures
-users with physical access cannot trivially alter
-important bootloader settings. These include which kernel to use,
-and whether to enter single-user mode.</td>
-<td>To verify the boot loader superuser password has been set, run the following
-command:
-
-sudo grep "password" /etc/grub2-efi.cfg
-
-The output should show the following:
-password_pbkdf2 superusers-account ${GRUB2_PASSWORD}
-To verify the boot loader superuser account password has been set,
-and the password encrypted, run the following command:
-
-sudo cat /boot/efi/EFI/redhat/user.cfg
-The output should be similar to:
-GRUB2_PASSWORD=grub.pbkdf2.sha512.10000.C4E08AC72FBFF7E837FD267BFAD7AEB3D42DDC
-2C99F2A94DD5E2E75C2DC331B719FE55D9411745F82D1B6CFD9E927D61925F9BBDD1CFAA0080E0
-916F7AB46E0D.1302284FCCC52CD73BA3671C6C12C26FF50BA873293B24EE2A96EE3B57963E6D7
-0C83964B473EC8F93B07FE749AA6710269E904A9B08A6BBACB00A2D242AD828
-      Is it the case that it does not?
-      </td>
-<td>The grub2 boot loader should have a superuser account and password
-protection enabled to protect boot-time settings.
-<br><br>
-Since plaintext passwords are a security risk, generate a hash for the password
-by running the following command:
-
-<pre>$ grub2-setpassword</pre>
-
-When prompted, enter the password that was selected.
-<br><br>
-
-Once the superuser password has been added,
-update the
-<code>grub.cfg</code> file by running:
-
-<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
-</td>
-<td>OL07-00-010491</td>
-</tr>
-<tr>
-<td>OL07-00-010500</td>
-<td>764</td>
+<td>V-221703</td>
+<td>770</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must uniquely identify and must authenticate organizational users (or processes acting on behalf of organizational users) using multifactor authentication.</td>
 <td>Smart card login provides two-factor authentication stronger than
@@ -1588,9 +1680,10 @@ documented in the IATT.
 <ul><li><b><a href="https://docs.oracle.com/en/operating-systems/oracle-linux/7/userauth/ol7-auth.html#ol7-s4-auth">https://docs.oracle.com/en/operating-systems/oracle-linux/7/userauth/ol7-auth.html#ol7-s4-auth</a></b></li></ul>
 </td>
 <td>OL07-00-010500</td>
+<td>smartcard_auth</td>
 </tr>
 <tr>
-<td>OL07-00-020000</td>
+<td>V-221704</td>
 <td>381</td>
 <td>high</td>
 <td>The Oracle Linux operating system must not have the rsh-server package installed.</td>
@@ -1609,9 +1702,10 @@ $ rpm -q rsh-server
 $ sudo yum erase rsh-server</pre>
 </td>
 <td>OL07-00-020000</td>
+<td>package_rsh-server_removed</td>
 </tr>
 <tr>
-<td>OL07-00-020010</td>
+<td>V-221705</td>
 <td>381</td>
 <td>high</td>
 <td>The Oracle Linux operating system must not have the ypserv package installed.</td>
@@ -1630,26 +1724,28 @@ $ rpm -q ypserv
 $ sudo yum erase ypserv</pre>
 </td>
 <td>OL07-00-020010</td>
+<td>package_ypserv_removed</td>
 </tr>
 <tr>
-<td>OL07-00-020019</td>
+<td>V-221706</td>
 <td>1233</td>
 <td>medium</td>
-<td>The Oracle Linux operating system must have a host-based intrusion detection tool installed.</td>
-<td>Without a host-based intrusion detection tool, there is no system-level defense
-when an intruder gains access to a system or network. Additionally, a host-based
-intrusion prevention tool can provide methods to immediately lock out detected
-intrusion attempts.</td>
-<td>To verify that McAfee HIPS is installed, run the following command(s):
-$ rpm -q MFEhiplsm
-      Is it the case that the HBSS HIPS module is not installed?
+<td>The Oracle Linux operating system must implement the Endpoint Security for Linux Threat Prevention tool.</td>
+<td>Virus scanning software can be used to detect if a system has been compromised by
+computer viruses, as well as to limit their spread to other systems.</td>
+<td>To verify that McAfee Endpoint Security for Linux is
+running, run the following command:
+$ sudo ps -ef | grep -i mfetpd
+      Is it the case that virus scanning software is not running?
       </td>
-<td>Install the McAfee Host Intrusion Prevention System (HIPS) Module if it is absolutely
-necessary. If SELinux is enabled, do not install or enable this module.</td>
+<td>Install McAfee Endpoint Security for Linux antivirus software
+which is provided for DoD systems and uses signatures to search for the
+presence of viruses on the filesystem.</td>
 <td>OL07-00-020019</td>
+<td>agent_mfetpd_running</td>
 </tr>
 <tr>
-<td>OL07-00-020020</td>
+<td>V-221707</td>
 <td>2235</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must prevent non-privileged users from executing privileged functions to include disabling, circumventing, or altering implemented security safeguards/countermeasures.</td>
@@ -1690,10 +1786,11 @@ users must be mapped to the <code>user_u</code> role or the appropriate domain
 <pre>$ sudo semanage login -m -s user_u <i>USER</i></pre>
 </td>
 <td>OL07-00-020020</td>
+<td>selinux_user_login_roles</td>
 </tr>
 <tr>
-<td>OL07-00-020030</td>
-<td>1744</td>
+<td>V-221708</td>
+<td>2699</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that a file integrity tool verifies the baseline operating system configuration at least weekly.</td>
 <td>By default, AIDE does not install itself for periodic execution. Periodically
@@ -1713,7 +1810,7 @@ monitoring system trap when there is an unauthorized modification of a configura
 $ grep aide /etc/crontab
 The output should return something similar to the following:
 
-05 4 * * * root /usr/sbin/aide --check
+05 4 * * * root  --check
 
 
 NOTE: The usage of special cron times, such as @daily or @weekly, is acceptable.
@@ -1721,16 +1818,17 @@ NOTE: The usage of special cron times, such as @daily or @weekly, is acceptable.
       </td>
 <td>At a minimum, AIDE should be configured to run a weekly scan.
 To implement a daily execution of AIDE at 4:05am using cron, add the following line to <code>/etc/crontab</code>:
-<pre>05 4 * * * root /usr/sbin/aide --check</pre>
+<pre>05 4 * * * root  --check</pre>
 To implement a weekly execution of AIDE at 4:05am using cron, add the following line to <code>/etc/crontab</code>:
-<pre>05 4 * * 0 root /usr/sbin/aide --check</pre>
+<pre>05 4 * * 0 root  --check</pre>
 AIDE can be executed periodically through other means; this is merely one example.
 The usage of cron's special time codes, such as  <code>@daily</code> and
 <code>@weekly</code> is acceptable.</td>
 <td>OL07-00-020030</td>
+<td>aide_periodic_cron_checking</td>
 </tr>
 <tr>
-<td>OL07-00-020040</td>
+<td>V-221709</td>
 <td>1744</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that designated personnel are notified if baseline configurations are changed in an unauthorized manner.</td>
@@ -1748,6 +1846,8 @@ monitoring system trap when there is an unauthorized modification of a configura
 $ grep aide /etc/crontab
 The output should return something similar to the following:
 05 4 * * * root /usr/sbin/aide --check | /bin/mail -s "$(hostname) - AIDE Integrity Check" root@localhost
+The email address that the notifications are sent to can be changed by overriding
+.
       Is it the case that AIDE has not been configured or has not been configured to notify personnel of scan details?
       </td>
 <td>AIDE should notify appropriate personnel of the details of a scan after the scan has been run.
@@ -1758,9 +1858,10 @@ Otherwise, add the following line to <code>/etc/crontab</code>:
 <pre>05 4 * * * root /usr/sbin/aide --check | /bin/mail -s "$(hostname) - AIDE Integrity Check" root@localhost</pre>
 AIDE can be executed periodically through other means; this is merely one example.</td>
 <td>OL07-00-020040</td>
+<td>aide_scan_notification</td>
 </tr>
 <tr>
-<td>OL07-00-020050</td>
+<td>V-221710</td>
 <td>1749</td>
 <td>high</td>
 <td>The Oracle Linux operating system must prevent the installation of software, patches, service packs, device drivers, or operating system components from a repository without verification they have been digitally signed using a certificate that is issued by a Certificate Authority (CA) that is recognized and approved by the organization.</td>
@@ -1795,9 +1896,10 @@ the <code>[main]</code> section:
 <pre>gpgcheck=1</pre>
 </td>
 <td>OL07-00-020050</td>
+<td>ensure_gpgcheck_globally_activated</td>
 </tr>
 <tr>
-<td>OL07-00-020060</td>
+<td>V-221711</td>
 <td>1749</td>
 <td>high</td>
 <td>The Oracle Linux operating system must prevent the installation of software, patches, service packs, device drivers, or operating system components of local packages without verification they have been digitally signed using a certificate that is issued by a Certificate Authority (CA) that is recognized and approved by the organization.</td>
@@ -1819,9 +1921,10 @@ localpkg_gpgcheck=1
 prior to installation. To configure <code>yum</code> to verify signatures of local
 packages, set the <code>localpkg_gpgcheck</code> to <code>1</code> in <code>/etc/yum.conf</code>.</td>
 <td>OL07-00-020060</td>
+<td>ensure_gpgcheck_local_packages</td>
 </tr>
 <tr>
-<td>OL07-00-020100</td>
+<td>V-221712</td>
 <td>1958</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured to disable USB mass storage.</td>
@@ -1845,9 +1948,10 @@ This will prevent the <code>modprobe</code> program from loading the <code>usb-s
 module, but will not prevent an administrator (or another program) from using the
 <code>insmod</code> program to load the module manually.</td>
 <td>OL07-00-020100</td>
+<td>kernel_module_usb-storage_disabled</td>
 </tr>
 <tr>
-<td>OL07-00-020101</td>
+<td>V-221713</td>
 <td>1958</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that the Datagram Congestion Control Protocol (DCCP) kernel module is disabled unless required.</td>
@@ -1870,9 +1974,10 @@ kernel module from being loaded, add the following line to a file in the directo
 <pre>install dccp /bin/true</pre>
 </td>
 <td>OL07-00-020101</td>
+<td>kernel_module_dccp_disabled</td>
 </tr>
 <tr>
-<td>OL07-00-020110</td>
+<td>V-221714</td>
 <td>778</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must disable the file system automounter unless required.</td>
@@ -1918,35 +2023,21 @@ The <code>autofs</code> service can be disabled with the following command:
 <pre>$ sudo systemctl mask --now autofs.service</pre>
 </td>
 <td>OL07-00-020110</td>
+<td>service_autofs_disabled</td>
 </tr>
 <tr>
-<td>OL07-00-020111</td>
-<td>1958</td>
+<td>V-228567</td>
+<td></td>
 <td>medium</td>
 <td>The Oracle Linux operating system must disable the graphical user interface automounter unless required.</td>
-<td>USB storage devices such as thumb drives can be used to introduce
-malicious software.</td>
-<td>
-If the system is configured to prevent the loading of the usb-storage kernel module,
-it will contain lines inside any file in /etc/modprobe.d or the deprecated/etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
-Run the following command to search for such lines in all files in /etc/modprobe.d and the deprecated /etc/modprobe.conf:
-$ grep -r usb-storage /etc/modprobe.conf /etc/modprobe.d
-      Is it the case that no line is returned?
-      </td>
-<td>To prevent USB storage devices from being used, configure the kernel module loading system
-to prevent automatic loading of the USB storage driver.
-
-To configure the system to prevent the <code>usb-storage</code>
-kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
-<pre>install usb-storage /bin/true</pre>
-This will prevent the <code>modprobe</code> program from loading the <code>usb-storage</code>
-module, but will not prevent an administrator (or another program) from using the
-<code>insmod</code> program to load the module manually.</td>
+<td></td>
+<td></td>
+<td></td>
 <td>OL07-00-020111</td>
+<td>Missing Rule</td>
 </tr>
 <tr>
-<td>OL07-00-020200</td>
+<td>V-221715</td>
 <td>2617</td>
 <td>low</td>
 <td>The Oracle Linux operating system must remove all software components after updated versions have been installed.</td>
@@ -1970,10 +2061,11 @@ previous software components after updating, set the <code>clean_requirements_on
 
 to <code>1</code> in <code>/etc/yum.conf</code>.</td>
 <td>OL07-00-020200</td>
+<td>clean_components_post_updating</td>
 </tr>
 <tr>
-<td>OL07-00-020210</td>
-<td>2165</td>
+<td>V-221716</td>
+<td>2696</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must enable SELinux.</td>
 <td>Setting the SELinux state to enforcing ensures SELinux is able to confine
@@ -1990,9 +2082,10 @@ following line to configure the system to boot into enforcing mode:
 <pre>SELINUX=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_selinux_state"></xccdf-1.1:sub></pre>
 </td>
 <td>OL07-00-020210</td>
+<td>selinux_state</td>
 </tr>
 <tr>
-<td>OL07-00-020220</td>
+<td>V-228570</td>
 <td>2696</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must enable the SELinux targeted policy.</td>
@@ -2018,9 +2111,10 @@ Other policies, such as <code>mls</code>, provide additional security labeling
 and greater confinement but are not compatible with many general-purpose
 use cases.</td>
 <td>OL07-00-020220</td>
+<td>selinux_policytype</td>
 </tr>
 <tr>
-<td>OL07-00-020230</td>
+<td>V-221717</td>
 <td>366</td>
 <td>high</td>
 <td>The Oracle Linux operating system must be configured so that the x86 Ctrl-Alt-Delete key sequence is disabled on the command line.</td>
@@ -2052,9 +2146,10 @@ or
 Do not simply delete the <code>/usr/lib/systemd/system/ctrl-alt-del.service</code> file,
 as this file may be restored during future system updates.</td>
 <td>OL07-00-020230</td>
+<td>disable_ctrlaltdel_reboot</td>
 </tr>
 <tr>
-<td>OL07-00-020231</td>
+<td>V-228565</td>
 <td>366</td>
 <td>high</td>
 <td>The Oracle Linux operating system must be configured so the x86 Ctrl-Alt-Delete key sequence is disabled in the Graphical User Interface.</td>
@@ -2087,9 +2182,10 @@ user modification. For example:
 <pre>/org/gnome/settings-daemon/plugins/media-keys/logout</pre>
 After the settings have been set, run <code>dconf update</code>.</td>
 <td>OL07-00-020231</td>
+<td>dconf_gnome_disable_ctrlaltdel_reboot</td>
 </tr>
 <tr>
-<td>OL07-00-020240</td>
+<td>V-221718</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must define default permissions for all authenticated users in such a way that the user can only read and modify their own files.</td>
@@ -2109,9 +2205,10 @@ add or correct the <code>UMASK</code> setting in <code>/etc/login.defs</code> to
 <pre>UMASK <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_user_umask"></xccdf-1.1:sub></pre>
 </td>
 <td>OL07-00-020240</td>
+<td>accounts_umask_etc_login_defs</td>
 </tr>
 <tr>
-<td>OL07-00-020250</td>
+<td>V-221719</td>
 <td>366</td>
 <td>high</td>
 <td>The Oracle Linux operating system must be a vendor supported release.</td>
@@ -2133,9 +2230,10 @@ Oracle Linux 7
 Oracle Linux is supported by Oracle Corporation. As the Oracle
 Linux vendor, Oracle Corporation is responsible for providing security patches.</td>
 <td>OL07-00-020250</td>
+<td>installed_OS_is_vendor_supported</td>
 </tr>
 <tr>
-<td>OL07-00-020260</td>
+<td>V-221720</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system security patches and updates must be installed and up to date.</td>
@@ -2156,24 +2254,41 @@ can be manually downloaded from the ULN and installed using <code>rpm</code>.
 NOTE: U.S. Defense systems are required to be patched within 30 days or sooner as local policy
 dictates.</td>
 <td>OL07-00-020260</td>
+<td>security_patches_up_to_date</td>
 </tr>
 <tr>
-<td>OL07-00-020270</td>
+<td>V-221721</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must not have unnecessary accounts.</td>
-<td>Removing the <code>vsftpd</code> package decreases the risk of its
-accidental activation.</td>
-<td>Run the following command to determine if the vsftpd package is installed:
-$ rpm -q vsftpd
-      Is it the case that the package is installed?
+<td>Accounts providing no operational purpose provide additional opportunities for
+system compromise. Unnecessary accounts include user accounts for individuals not
+requiring access to the system and application accounts for applications not installed
+on the system.</td>
+<td>To verify that there are no unauthorized local user accounts, run the following command:
+$ less /etc/passwd 
+Inspect the results, and if unauthorized local user accounts exist, remove them by running
+the following command:
+$ sudo userdel unauthorized_user
+      Is it the case that there are unauthorized local user accounts on the system?
       </td>
-<td>The <code>vsftpd</code> package can be removed with the following command: <pre> $ sudo yum erase vsftpd</pre>
+<td>Enterprise Application tends to use the server or virtual machine exclusively.
+Besides the default operating system user, there should be only authorized local
+users required by the installed softoware groups and applications that exist on
+the operating system. The authorized user list can be customized in the refine
+value variable <code>var_accounts_authorized_local_users_regex</code>.
+OVAL regular expression is used for the user list.
+Configure the system so all accounts on the system are assigned to an active system,
+application, or user account. Remove accounts that do not support approved system
+activities or that allow for a normal user to perform administrative-level actions.
+To remove unauthorized system accounts, use the following command:
+<pre>$ sudo userdel <i>unauthorized_user</i></pre>
 </td>
 <td>OL07-00-020270</td>
+<td>accounts_authorized_local_users</td>
 </tr>
 <tr>
-<td>OL07-00-020300</td>
+<td>V-221722</td>
 <td>764</td>
 <td>low</td>
 <td>The Oracle Linux operating system must be configured so that all Group Identifiers (GIDs) referenced in the /etc/passwd file are defined in the /etc/group file.</td>
@@ -2188,9 +2303,10 @@ There should be no output.
       </td>
 <td>Add a group to the system for each GID referenced without a corresponding group.</td>
 <td>OL07-00-020300</td>
+<td>gid_passwd_group_same</td>
 </tr>
 <tr>
-<td>OL07-00-020310</td>
+<td>V-221723</td>
 <td>366</td>
 <td>high</td>
 <td>The Oracle Linux operating system must be configured so that the root account must be the only account having unrestricted access to the system.</td>
@@ -2220,9 +2336,10 @@ should be changed to one greater than "0" but less than "1000."
 Otherwise assign a UID greater than "1000" that has not already been
 assigned.</td>
 <td>OL07-00-020310</td>
+<td>accounts_no_uid_except_zero</td>
 </tr>
 <tr>
-<td>OL07-00-020320</td>
+<td>V-221724</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that all files and directories have a valid owner.</td>
@@ -2254,9 +2371,10 @@ filesystems the following command can be run manually for each partition:
 <pre>$ sudo find PARTITION -xdev -nouser</pre>
 </td>
 <td>OL07-00-020320</td>
+<td>no_files_unowned_by_user</td>
 </tr>
 <tr>
-<td>OL07-00-020330</td>
+<td>V-221725</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that all files and directories have a valid group owner.</td>
@@ -2287,9 +2405,10 @@ filesystems the following command can be run manually for each partition:
 <pre>$ sudo find PARTITION -xdev -nogroup</pre>
 </td>
 <td>OL07-00-020330</td>
+<td>file_permissions_ungroupowned</td>
 </tr>
 <tr>
-<td>OL07-00-020610</td>
+<td>V-221727</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that all local interactive user accounts, upon creation, are assigned a home directory.</td>
@@ -2309,9 +2428,10 @@ parameter in <code>/etc/login.defs</code> to <code>yes</code> as follows:
 <pre>CREATE_HOME yes</pre>
 </td>
 <td>OL07-00-020610</td>
+<td>accounts_have_homedir_login_defs</td>
 </tr>
 <tr>
-<td>OL07-00-020620</td>
+<td>V-221728</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that all local interactive users have a home directory assigned and defined in the /etc/passwd file.</td>
@@ -2332,9 +2452,10 @@ home directory assigned in <code>/etc/passwd</code>:
 <pre>$ sudo mkdir /home/<i>USER</i></pre>
 </td>
 <td>OL07-00-020620</td>
+<td>accounts_user_interactive_home_directory_exists</td>
 </tr>
 <tr>
-<td>OL07-00-020630</td>
+<td>V-221729</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that all local interactive user home directories have mode 0750 or less permissive.</td>
@@ -2352,9 +2473,10 @@ following command:
 <pre>$ sudo chmod 0750 /home/<i>USER</i></pre>
 </td>
 <td>OL07-00-020630</td>
+<td>file_permissions_home_directories</td>
 </tr>
 <tr>
-<td>OL07-00-020640</td>
+<td>V-221730</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that all local interactive user home directories are owned by their respective users.</td>
@@ -2371,9 +2493,10 @@ the following command:
 <pre>$ sudo chown <i>USER</i> /home/<i>USER</i></pre>
 </td>
 <td>OL07-00-020640</td>
+<td>file_ownership_home_directories</td>
 </tr>
 <tr>
-<td>OL07-00-020650</td>
+<td>V-221731</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that all local interactive user home directories are group-owned by the home directory owners primary group.</td>
@@ -2392,29 +2515,32 @@ interactive users home directory, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i></pre>
 </td>
 <td>OL07-00-020650</td>
+<td>file_groupownership_home_directories</td>
 </tr>
 <tr>
-<td>OL07-00-020660</td>
+<td>V-221732</td>
 <td>366</td>
 <td>medium</td>
-<td>The Oracle Linux operating system must be configured so that all files and directories contained in local interactive user home directories are owned by the owner of the home directory.</td>
+<td>The Oracle Linux operating system must be configured so that all files and directories contained in local interactive user home directories have a valid owner.</td>
 <td>If local interactive users do not own the files in their directories,
 unauthorized users may be able to access them. Additionally, if files are not
 owned by the user, this could be an indication of system compromise.</td>
-<td>To verify all files and directories in interactive users home directory
-are owned by the user, run the following command:
+<td>To verify all files and directories in a local interactive user's
+home directory have a valid owner, run the following command:
 $ sudo ls -lLR /home/USER
       Is it the case that the user ownership is incorrect?
       </td>
-<td>Change the owner of a interactive users files and directories to that
-owner. To change the of a local interactive users files and
-directories, use the following command:
+<td>Either remove all files and directories from the system that
+do not have a valid user, or assign a valid user to all unowned
+files and directories. To assign a valid owner to a local
+interactive user's files and directories, use the following command:
 <pre>$ sudo chown -R <i>USER</i> /home/<i>USER</i></pre>
 </td>
 <td>OL07-00-020660</td>
+<td>accounts_users_home_files_ownership</td>
 </tr>
 <tr>
-<td>OL07-00-020670</td>
+<td>V-221733</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that all files and directories contained in local interactive user home directories are group-owned by a group of which the home directory owner is a member.</td>
@@ -2432,9 +2558,10 @@ local interactive users files and directories, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i>/<i>FILE_DIR</i></pre>
 </td>
 <td>OL07-00-020670</td>
+<td>accounts_users_home_files_groupownership</td>
 </tr>
 <tr>
-<td>OL07-00-020680</td>
+<td>V-221734</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that all files and directories contained in local interactive user home directories have a mode of 0750 or less permissive.</td>
@@ -2451,9 +2578,10 @@ directory with the following command:
 <pre>$ sudo chmod 0750 /home/<i>USER</i>/<i>FILE_DIR</i></pre>
 </td>
 <td>OL07-00-020680</td>
+<td>accounts_users_home_files_permissions</td>
 </tr>
 <tr>
-<td>OL07-00-020690</td>
+<td>V-221735</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that all local initialization files for interactive users are owned by the home directory user or root.</td>
@@ -2471,9 +2599,10 @@ the primary owner with the following command:
 <pre>$ sudo chown <i>USER</i> /home/<i>USER</i>/.*</pre>
 </td>
 <td>OL07-00-020690</td>
+<td>accounts_user_dot_user_ownership</td>
 </tr>
 <tr>
-<td>OL07-00-020700</td>
+<td>V-221736</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that all local initialization files for local interactive users are be group-owned by the users primary group or root.</td>
@@ -2493,9 +2622,10 @@ interactive user home directory, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i>/.<i>INIT_FILE</i></pre>
 </td>
 <td>OL07-00-020700</td>
+<td>accounts_user_dot_group_ownership</td>
 </tr>
 <tr>
-<td>OL07-00-020710</td>
+<td>V-221737</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that all local initialization files have mode 0740 or less permissive.</td>
@@ -2513,9 +2643,10 @@ following command:
 <pre>$ sudo chmod 0740 /home/<i>USER</i>/.<i>INIT_FILE</i></pre>
 </td>
 <td>OL07-00-020710</td>
+<td>file_permission_user_init_files</td>
 </tr>
 <tr>
-<td>OL07-00-020720</td>
+<td>V-221738</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that all local interactive user initialization files executable search paths contain only paths that resolve to the users home directory.</td>
@@ -2539,9 +2670,10 @@ Inspect the output for any PATH is references directories outside the home direc
 path statements do not contain statements that will reference a working
 directory other than the users home directory.</td>
 <td>OL07-00-020720</td>
+<td>accounts_user_home_paths_only</td>
 </tr>
 <tr>
-<td>OL07-00-020730</td>
+<td>V-221739</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that local initialization files do not execute world-writable programs.</td>
@@ -2561,9 +2693,10 @@ following command:
 <pre>$ sudo chmod 0755 <i>FILE</i></pre>
 </td>
 <td>OL07-00-020730</td>
+<td>accounts_user_dot_no_world_writable_programs</td>
 </tr>
 <tr>
-<td>OL07-00-020900</td>
+<td>V-221740</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that all system device files are correctly labeled to prevent unauthorized modification.</td>
@@ -2587,15 +2720,17 @@ To check for incorrectly labeled device files, run following commands:
 <pre>$ sudo find /dev -context *:unlabeled_t:* \( -type c -o -type b \) -printf "%p %Z\n"</pre>
 It should produce no output in a well-configured system.</td>
 <td>OL07-00-020900</td>
+<td>selinux_all_devicefiles_labeled</td>
 </tr>
 <tr>
-<td>OL07-00-021000</td>
+<td>V-221741</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that file systems containing user home directories are mounted to prevent files with the setuid and setgid bit set from being executed.</td>
 <td>The presence of SUID and SGID executables should be tightly controlled. Users
 should not be able to execute SUID or SGID binaries from user home directory partitions.</td>
-<td>To verify the nosuid option is configured for the /home mount point, run the following command:
+<td>To verify the nosuid option is configured for the /home mount point,
+    run the following command:
     $ mount | grep '\s/home\s'
     The output should show the corresponding mount point along with the nosuid setting in parentheses.
 
@@ -2608,9 +2743,10 @@ Add the <code>nosuid</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
 <code>/home</code>.</td>
 <td>OL07-00-021000</td>
+<td>mount_option_home_nosuid</td>
 </tr>
 <tr>
-<td>OL07-00-021010</td>
+<td>V-221742</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must prevent files with the setuid and setgid bit set from being executed on file systems that are used with removable media.</td>
@@ -2628,9 +2764,10 @@ Add the <code>nosuid</code> option to the fourth column of
 
     any removable media partitions.</td>
 <td>OL07-00-021010</td>
+<td>mount_option_nosuid_removable_partitions</td>
 </tr>
 <tr>
-<td>OL07-00-021020</td>
+<td>V-221743</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must prevent files with the setuid and setgid bit set from being executed on file systems that are being imported via Network File System (NFS).</td>
@@ -2646,9 +2783,10 @@ is not applicable if NFS is not implemented.
 <td>Add the <code>nosuid</code> option to the fourth column of <code>/etc/fstab</code> for the line which controls mounting of
 any NFS mounts.</td>
 <td>OL07-00-021020</td>
+<td>mount_option_nosuid_remote_filesystems</td>
 </tr>
 <tr>
-<td>OL07-00-021021</td>
+<td>V-221744</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must prevent binary files from being executed on file systems that are being imported via Network File System (NFS).</td>
@@ -2665,15 +2803,17 @@ not implemented.
 <td>Add the <code>noexec</code> option to the fourth column of <code>/etc/fstab</code> for the line which controls mounting of
 any NFS mounts.</td>
 <td>OL07-00-021021</td>
+<td>mount_option_noexec_remote_filesystems</td>
 </tr>
 <tr>
-<td>OL07-00-021024</td>
+<td>V-221747</td>
 <td>1764</td>
 <td>low</td>
 <td>The Oracle Linux operating system must mount /dev/shm with secure options.</td>
 <td>Allowing users to execute binaries from world-writable directories
 such as <code>/dev/shm</code> can expose the system to potential compromise.</td>
-<td>To verify the noexec option is configured for the /dev/shm mount point, run the following command:
+<td>To verify the noexec option is configured for the /dev/shm mount point,
+    run the following command:
     $ mount | grep '\s/dev/shm\s'
     The output should show the corresponding mount point along with the noexec setting in parentheses.
 
@@ -2687,9 +2827,10 @@ Add the <code>noexec</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
 <code>/dev/shm</code>.</td>
 <td>OL07-00-021024</td>
+<td>mount_option_dev_shm_noexec</td>
 </tr>
 <tr>
-<td>OL07-00-021030</td>
+<td>V-221748</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that all world-writable directories are group-owned by root, sys, bin, or an application group.</td>
@@ -2710,9 +2851,10 @@ group owned by a system account, this should be investigated.
 Following this, the files should be deleted or assigned to an
 appropriate group.</td>
 <td>OL07-00-021030</td>
+<td>dir_perms_world_writable_system_owned_group</td>
 </tr>
 <tr>
-<td>OL07-00-021031</td>
+<td>V-228566</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that all world-writable directories are owned by root, sys, bin, or an application user.</td>
@@ -2733,9 +2875,10 @@ owned by a system account, this should be investigated.
 Following this, the files should be deleted or assigned to an
 appropriate owner.</td>
 <td>OL07-00-021031</td>
+<td>dir_perms_world_writable_system_owned</td>
 </tr>
 <tr>
-<td>OL07-00-021040</td>
+<td>V-221749</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must set the umask value to 077 for all local interactive user accounts.</td>
@@ -2753,9 +2896,10 @@ There should be no output.
       </td>
 <td>Remove the <code>UMASK</code> environment variable from all interactive users initialization files.</td>
 <td>OL07-00-021040</td>
+<td>accounts_umask_interactive_users</td>
 </tr>
 <tr>
-<td>OL07-00-021100</td>
+<td>V-221750</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must have cron logging implemented.</td>
@@ -2776,9 +2920,10 @@ can be implemented by adding the following to the <i>RULES</i> section of
 <pre>cron.*                                                  /var/log/cron</pre>
 </td>
 <td>OL07-00-021100</td>
+<td>rsyslog_cron_logging</td>
 </tr>
 <tr>
-<td>OL07-00-021110</td>
+<td>V-221751</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that the cron.allow file, if it exists, is owned by root.</td>
@@ -2797,9 +2942,10 @@ To properly set the owner of <code>/etc/cron.allow</code>, run the command:
 <pre>$ sudo chown root /etc/cron.allow </pre>
 </td>
 <td>OL07-00-021110</td>
+<td>file_owner_cron_allow</td>
 </tr>
 <tr>
-<td>OL07-00-021120</td>
+<td>V-221752</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that the cron.allow file, if it exists, is group-owned by root.</td>
@@ -2818,9 +2964,10 @@ To properly set the group owner of <code>/etc/cron.allow</code>, run the command
 <pre>$ sudo chgrp root /etc/cron.allow</pre>
 </td>
 <td>OL07-00-021120</td>
+<td>file_groupowner_cron_allow</td>
 </tr>
 <tr>
-<td>OL07-00-021300</td>
+<td>V-221753</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must disable Kernel core dumps unless needed.</td>
@@ -2861,9 +3008,10 @@ The <code>kdump</code> service can be disabled with the following command:
 <pre>$ sudo systemctl mask --now kdump.service</pre>
 </td>
 <td>OL07-00-021300</td>
+<td>service_kdump_disabled</td>
 </tr>
 <tr>
-<td>OL07-00-021310</td>
+<td>V-221754</td>
 <td>366</td>
 <td>low</td>
 <td>The Oracle Linux operating system must be configured so that a separate file system is used for user home directories (such as /home or an equivalent).</td>
@@ -2883,9 +3031,10 @@ for <code>/home</code> at installation time (or migrate it later using LVM). If
 creating a separate partition is not necessary at installation time, and the
 mountpoint can instead be configured later.</td>
 <td>OL07-00-021310</td>
+<td>partition_for_home</td>
 </tr>
 <tr>
-<td>OL07-00-021320</td>
+<td>V-221755</td>
 <td>366</td>
 <td>low</td>
 <td>The Oracle Linux operating system must use a separate file system for /var.</td>
@@ -2905,9 +3054,10 @@ If /var has its own partition or volume group, a line will be returned.
 services to store frequently-changing data. Ensure that <code>/var</code> has its own partition
 or logical volume at installation time, or migrate it using LVM.</td>
 <td>OL07-00-021320</td>
+<td>partition_for_var</td>
 </tr>
 <tr>
-<td>OL07-00-021330</td>
+<td>V-221756</td>
 <td>1849</td>
 <td>low</td>
 <td>The Oracle Linux operating system must use a separate file system for the system audit data path large enough to hold at least one week of audit data.</td>
@@ -2923,14 +3073,17 @@ If /var/log/audit has its own partition or volume group, a line will be returned
 
       Is it the case that no line is returned?
       </td>
-<td>Audit logs are stored in the <code>/var/log/audit</code> directory.  Ensure that it
-has its own partition or logical volume at installation time, or migrate it
-later using LVM. Make absolutely certain that it is large enough to store all
+<td>Audit logs are stored in the <code>/var/log/audit</code> directory.
+
+Ensure that <code>/var/log/audit</code> has its own partition or logical
+volume at installation time, or migrate it using LVM.
+Make absolutely certain that it is large enough to store all
 audit logs that will be created by the auditing daemon.</td>
 <td>OL07-00-021330</td>
+<td>partition_for_var_log_audit</td>
 </tr>
 <tr>
-<td>OL07-00-021340</td>
+<td>V-221757</td>
 <td>366</td>
 <td>low</td>
 <td>The Oracle Linux operating system must use a separate file system for /tmp (or equivalent).</td>
@@ -2948,9 +3101,10 @@ If /tmp has its own partition or volume group, a line will be returned.
 for temporary file storage. Ensure it has its own partition or
 logical volume at installation time, or migrate it using LVM.</td>
 <td>OL07-00-021340</td>
+<td>partition_for_tmp</td>
 </tr>
 <tr>
-<td>OL07-00-021350</td>
+<td>V-221758</td>
 <td>2476</td>
 <td>high</td>
 <td>The Oracle Linux operating system must implement NIST FIPS-validated cryptography for the following: to provision digital signatures, to generate cryptographic hashes, and to protect data requiring data-at-rest protections in accordance with applicable federal laws, Executive Orders, directives, policies, regulations, and standards.</td>
@@ -2983,9 +3137,10 @@ Finally, rebuild the <code>grub.cfg</code> file by using the
 </ul>
 </td>
 <td>OL07-00-021350</td>
+<td>grub2_enable_fips_mode</td>
 </tr>
 <tr>
-<td>OL07-00-021600</td>
+<td>V-221759</td>
 <td>366</td>
 <td>low</td>
 <td>The Oracle Linux operating system must be configured so that the file integrity tool is configured to verify Access Control Lists (ACLs).</td>
@@ -3008,9 +3163,10 @@ The remediation provided with this rule adds <code>acl</code> to all rule sets a
 <code>/etc/aide.conf</code>
 </td>
 <td>OL07-00-021600</td>
+<td>aide_verify_acls</td>
 </tr>
 <tr>
-<td>OL07-00-021610</td>
+<td>V-221760</td>
 <td>366</td>
 <td>low</td>
 <td>The Oracle Linux operating system must be configured so that the file integrity tool is configured to verify extended attributes.</td>
@@ -3033,9 +3189,10 @@ The remediation provided with this rule adds <code>xattrs</code> to all rule set
 <code>/etc/aide.conf</code>
 </td>
 <td>OL07-00-021610</td>
+<td>aide_verify_ext_attributes</td>
 </tr>
 <tr>
-<td>OL07-00-021620</td>
+<td>V-221761</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must use a file integrity tool that is configured to use FIPS 140-2 approved cryptographic hashes for validating file contents and directories.</td>
@@ -3054,9 +3211,10 @@ For example, add <code>sha512</code> to the following line in <code>/etc/aide.co
 AIDE rules can be configured in multiple ways; this is merely one example that is already
 configured by default.</td>
 <td>OL07-00-021620</td>
+<td>aide_use_fips_hashes</td>
 </tr>
 <tr>
-<td>OL07-00-021700</td>
+<td>V-221762</td>
 <td>1813</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must not allow removable media to be used as the boot loader unless approved.</td>
@@ -3064,7 +3222,7 @@ configured by default.</td>
 configured to use removable media as the boot loader.</td>
 <td>To verify the system is not configured to use a boot loader on removable media,
 run the following command:
-$ sudo grep "set root='hd0" /boot/grub2/grub.cfg
+$ sudo grep "set root='hd0" /boot/efi/EFI/redhat/grub.cfg
 The output should return something similar to:
 set root='hd0,msdos1'
 usb0, cd, fd0, etc. are some examples of removeable
@@ -3079,9 +3237,10 @@ media which should not exist in the line:
 <pre>set root='hd0,msdos1'</pre>
 </td>
 <td>OL07-00-021700</td>
+<td>uefi_no_removeable_media</td>
 </tr>
 <tr>
-<td>OL07-00-021710</td>
+<td>V-221763</td>
 <td>381</td>
 <td>high</td>
 <td>The Oracle Linux operating system must not have the telnet-server package installed.</td>
@@ -3107,10 +3266,11 @@ $ rpm -q telnet-server
 $ sudo yum erase telnet-server</pre>
 </td>
 <td>OL07-00-021710</td>
+<td>package_telnet-server_removed</td>
 </tr>
 <tr>
-<td>OL07-00-030000</td>
-<td>135</td>
+<td>V-221764</td>
+<td>1814</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that auditing is configured to produce records containing information to establish what type of events occurred, where the events occurred, the source of the events, and the outcome of the events. These audit records must also identify individual identities of group account users.</td>
 <td>Without establishing what type of events occurred, it would be difficult
@@ -3137,9 +3297,10 @@ The <code>auditd</code> service can be enabled with the following command:
 <pre>$ sudo systemctl enable auditd.service</pre>
 </td>
 <td>OL07-00-030000</td>
+<td>service_auditd_enabled</td>
 </tr>
 <tr>
-<td>OL07-00-030010</td>
+<td>V-221765</td>
 <td>139</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must shut down upon audit processing failure, unless availability is an overriding concern. If availability is a concern, the system must alert the designated staff (System Administrator [SA] and Information System Security Officer [ISSO] at a minimum) in the event of an audit processing failure.</td>
@@ -3169,97 +3330,44 @@ top of the <code>/etc/audit/audit.rules</code> file:
 <pre>-f 2</pre>
 </td>
 <td>OL07-00-030010</td>
+<td>audit_rules_system_shutdown</td>
 </tr>
 <tr>
-<td>OL07-00-030201</td>
-<td>1851</td>
+<td>V-221767</td>
+<td></td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured to off-load audit logs onto a different system or storage media from the system being audited.</td>
-<td>A log server (loghost) receives syslog messages from one or more
-systems. This data can be used as an additional log source in the event a
-system is compromised and its local logs are suspect. Forwarding log messages
-to a remote loghost also provides system administrators with a centralized
-place to view the status of multiple hosts within the enterprise.</td>
-<td>To ensure logs are sent to a remote host, examine the file
-/etc/rsyslog.conf.
-If using UDP, a line similar to the following should be present:
- *.* @
-If using TCP, a line similar to the following should be present:
- *.* @@
-If using RELP, a line similar to the following should be present:
- *.* :omrelp:
-      Is it the case that none of these are present?
-      </td>
-<td>To configure rsyslog to send logs to a remote log server,
-open <code>/etc/rsyslog.conf</code> and read and understand the last section of the file,
-which describes the multiple directives necessary to activate remote
-logging.
-Along with these other directives, the system can be configured
-to forward its logs to a particular log server by
-adding or correcting one of the following lines,
-substituting <code><i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub></i></code> appropriately.
-The choice of protocol depends on the environment of the system;
-although TCP and RELP provide more reliable message delivery,
-they may not be supported in all environments.
-<br>
-To use UDP for log message delivery:
-<pre>*.* @<i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub></i></pre>
-<br>
-To use TCP for log message delivery:
-<pre>*.* @@<i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub></i></pre>
-<br>
-To use RELP for log message delivery:
-<pre>*.* :omrelp:<i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub></i></pre>
-<br>
-There must be a resolvable DNS CNAME or Alias record set to "<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub>" for logs to be sent correctly to the centralized logging utility.</td>
+<td></td>
+<td></td>
+<td></td>
 <td>OL07-00-030201</td>
+<td>Missing Rule</td>
 </tr>
 <tr>
-<td>OL07-00-030210</td>
+<td>V-221768</td>
 <td>1851</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must take appropriate action when the remote logging buffer is full.</td>
-<td>A log server (loghost) receives syslog messages from one or more
-systems. This data can be used as an additional log source in the event a
-system is compromised and its local logs are suspect. Forwarding log messages
-to a remote loghost also provides system administrators with a centralized
-place to view the status of multiple hosts within the enterprise.</td>
-<td>To ensure logs are sent to a remote host, examine the file
-/etc/rsyslog.conf.
-If using UDP, a line similar to the following should be present:
- *.* @
-If using TCP, a line similar to the following should be present:
- *.* @@
-If using RELP, a line similar to the following should be present:
- *.* :omrelp:
-      Is it the case that none of these are present?
+<td>The audit system should have an action setup in the event the internal event queue becomes full
+so that no data is lost.</td>
+<td>Verify the audit system is configured to take an appropriate action when the internal event queue is full:
+$ sudo grep -i overflow_action /etc/audit/auditd.conf
+
+The output should contain be like overflow_action = syslog
+
+If the value of the "overflow_action" option is not set to syslog, 
+single, halt or the line is commented out, ask the System Administrator
+to indicate how the audit logs are off-loaded to a different system or media. 
+      Is it the case that auditd overflow action is not setup correctly?
       </td>
-<td>To configure rsyslog to send logs to a remote log server,
-open <code>/etc/rsyslog.conf</code> and read and understand the last section of the file,
-which describes the multiple directives necessary to activate remote
-logging.
-Along with these other directives, the system can be configured
-to forward its logs to a particular log server by
-adding or correcting one of the following lines,
-substituting <code><i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub></i></code> appropriately.
-The choice of protocol depends on the environment of the system;
-although TCP and RELP provide more reliable message delivery,
-they may not be supported in all environments.
-<br>
-To use UDP for log message delivery:
-<pre>*.* @<i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub></i></pre>
-<br>
-To use TCP for log message delivery:
-<pre>*.* @@<i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub></i></pre>
-<br>
-To use RELP for log message delivery:
-<pre>*.* :omrelp:<i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub></i></pre>
-<br>
-There must be a resolvable DNS CNAME or Alias record set to "<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub>" for logs to be sent correctly to the centralized logging utility.</td>
+<td>The audit system should have an action setup in the event the internal event queue becomes full.
+To setup an overflow action edit <code>/etc/audit/auditd.conf</code>. Set <code>overflow_action</code>
+to one of the following values: <code>syslog</code>, <code>single</code>, <code>halt</code>.</td>
 <td>OL07-00-030210</td>
+<td>auditd_overflow_action</td>
 </tr>
 <tr>
-<td>OL07-00-030211</td>
+<td>V-221769</td>
 <td>1851</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must label all off-loaded audit logs before sending them to the central log server.</td>
@@ -3278,9 +3386,10 @@ syscall as computer node name in the audit events,
 set <code>name_format</code> to <code>hostname</code>
 in <code>/etc/audit/auditd.conf</code>.</td>
 <td>OL07-00-030211</td>
+<td>auditd_name_format</td>
 </tr>
 <tr>
-<td>OL07-00-030300</td>
+<td>V-221770</td>
 <td>1851</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must off-load audit records onto a different system or media from the system being audited.</td>
@@ -3304,9 +3413,10 @@ send audit records to. For example
 <pre>remote_server = <i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_audispd_remote_server"></xccdf-1.1:sub></i></pre>
 </td>
 <td>OL07-00-030300</td>
+<td>auditd_audispd_configure_remote_server</td>
 </tr>
 <tr>
-<td>OL07-00-030310</td>
+<td>V-221771</td>
 <td>1851</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must encrypt the transfer of audit records off-loaded onto a different system or media from the system being audited.</td>
@@ -3329,9 +3439,10 @@ and set it with the following line:
 <pre>enable_krb5 = yes</pre>
 </td>
 <td>OL07-00-030310</td>
+<td>auditd_audispd_encrypt_sent_records</td>
 </tr>
 <tr>
-<td>OL07-00-030320</td>
+<td>V-221772</td>
 <td>1851</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that the audit system takes appropriate action when the audit storage volume is full.</td>
@@ -3357,9 +3468,10 @@ mode for corrective action. Acceptable values also include <code>syslog</code> a
 outweighs the need to log all actions, and a different setting should be
 determined.</td>
 <td>OL07-00-030320</td>
+<td>auditd_audispd_disk_full_action</td>
 </tr>
 <tr>
-<td>OL07-00-030321</td>
+<td>V-221773</td>
 <td>1851</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that the audit system takes appropriate action when there is an error sending audit records to a remote system.</td>
@@ -3383,9 +3495,10 @@ outweighs the need to log all actions, and a different setting should be
 determined.
 This profile configures the <i>action</i> to be <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_audispd_network_failure_action"></xccdf-1.1:sub></code>.</td>
 <td>OL07-00-030321</td>
+<td>auditd_audispd_network_failure_action</td>
 </tr>
 <tr>
-<td>OL07-00-030330</td>
+<td>V-221774</td>
 <td>1855</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must initiate an action to notify the System Administrator (SA) and Information System Security Officer (ISSO), at a minimum, when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity.</td>
@@ -3404,36 +3517,46 @@ substituting <i>SIZE_in_MB</i> appropriately:
 Set this value to the appropriate size in Megabytes cause the system to
 notify the user of an issue.</td>
 <td>OL07-00-030330</td>
+<td>auditd_data_retention_space_left</td>
 </tr>
 <tr>
-<td>OL07-00-030340</td>
+<td>V-221775</td>
 <td>1855</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must immediately notify the System Administrator (SA) and Information System Security Officer (ISSO) (at a minimum) via email when the threshold for the repository maximum audit record storage capacity is reached.</td>
-<td>Administrators should be made aware of an inability to record
-audit records. If a separate partition or logical volume of adequate size
-is used, running low on space for audit records should never occur.</td>
+<td>Notifying administrators of an impending disk space problem may
+allow them to take corrective action prior to any disruption.</td>
 <td>Inspect /etc/audit/auditd.conf and locate the following line to
-determine if the system is configured to either suspend, switch to single user mode,
-or halt when disk space has run low:
-admin_space_left_action single
-      Is it the case that the system is not configured to switch to single user mode for corrective action?
+determine if the system is configured to email the administrator when
+disk space is starting to run low:
+$ sudo grep space_left_action /etc/audit/auditd.conf
+space_left_action
+Acceptable values are email, suspend, single, and halt.
+      Is it the case that the system is not configured to send an email to the system administrator when disk space is starting to run low?
       </td>
 <td>The <code>auditd</code> service can be configured to take an action
-when disk space is running low but prior to running out of space completely.
-Edit the file <code>/etc/audit/auditd.conf</code>. Add or modify the following line,
+when disk space <i>starts</i> to run low.
+Edit the file <code>/etc/audit/auditd.conf</code>. Modify the following line,
 substituting <i>ACTION</i> appropriately:
-<pre>admin_space_left_action = <i>ACTION</i></pre>
-Set this value to <code>single</code> to cause the system to switch to single user
-mode for corrective action. Acceptable values also include <code>suspend</code> and
-<code>halt</code>. For certain systems, the need for availability
-outweighs the need to log all actions, and a different setting should be
-determined. Details regarding all possible values for <i>ACTION</i> are described in the
-<code>auditd.conf</code> man page.</td>
+<pre>space_left_action = <i>ACTION</i></pre>
+Possible values for <i>ACTION</i> are described in the <code>auditd.conf</code> man page.
+These include:
+<ul>
+<li><code>syslog</code></li>
+<li><code>email</code></li>
+<li><code>exec</code></li>
+<li><code>suspend</code></li>
+<li><code>single</code></li>
+<li><code>halt</code></li>
+</ul>
+Set this to <code>email</code> (instead of the default,
+which is <code>suspend</code>) as it is more likely to get prompt attention. Acceptable values
+also include <code>suspend</code>, <code>single</code>, and <code>halt</code>.</td>
 <td>OL07-00-030340</td>
+<td>auditd_data_retention_space_left_action</td>
 </tr>
 <tr>
-<td>OL07-00-030350</td>
+<td>V-221776</td>
 <td>1855</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must immediately notify the System Administrator (SA) and Information System Security Officer (ISSO) (at a minimum) when the threshold for the repository maximum audit record storage capacity is reached.</td>
@@ -3452,9 +3575,10 @@ via email for those situations:
 <pre>action_mail_acct = <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_auditd_action_mail_acct"></xccdf-1.1:sub></pre>
 </td>
 <td>OL07-00-030350</td>
+<td>auditd_data_retention_action_mail_acct</td>
 </tr>
 <tr>
-<td>OL07-00-030360</td>
+<td>V-221777</td>
 <td>2234</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all executions of privileged functions.</td>
@@ -3499,10 +3623,11 @@ setuid / setgid program in the list:
 <pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>OL07-00-030360</td>
+<td>audit_rules_privileged_commands</td>
 </tr>
 <tr>
-<td>OL07-00-030370</td>
-<td>126</td>
+<td>V-221778</td>
+<td>172</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the chown syscall.</td>
 <td>The changing of file permissions could indicate that a user is attempting to
@@ -3532,9 +3657,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S chown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>OL07-00-030370</td>
+<td>audit_rules_dac_modification_chown</td>
 </tr>
 <tr>
-<td>OL07-00-030380</td>
+<td>V-221779</td>
 <td>172</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the fchown syscall.</td>
@@ -3568,10 +3694,11 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fchown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>OL07-00-030380</td>
+<td>audit_rules_dac_modification_fchown</td>
 </tr>
 <tr>
-<td>OL07-00-030390</td>
-<td>126</td>
+<td>V-221780</td>
+<td>172</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the lchown syscall.</td>
 <td>The changing of file permissions could indicate that a user is attempting to
@@ -3601,9 +3728,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lchown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>OL07-00-030390</td>
+<td>audit_rules_dac_modification_lchown</td>
 </tr>
 <tr>
-<td>OL07-00-030400</td>
+<td>V-221781</td>
 <td>172</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the fchownat syscall.</td>
@@ -3634,9 +3762,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fchownat -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>OL07-00-030400</td>
+<td>audit_rules_dac_modification_fchownat</td>
 </tr>
 <tr>
-<td>OL07-00-030410</td>
+<td>V-221782</td>
 <td>172</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the chmod syscall.</td>
@@ -3667,9 +3796,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S chmod -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>OL07-00-030410</td>
+<td>audit_rules_dac_modification_chmod</td>
 </tr>
 <tr>
-<td>OL07-00-030420</td>
+<td>V-221783</td>
 <td>172</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the fchmod syscall.</td>
@@ -3700,9 +3830,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fchmod -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>OL07-00-030420</td>
+<td>audit_rules_dac_modification_fchmod</td>
 </tr>
 <tr>
-<td>OL07-00-030430</td>
+<td>V-221784</td>
 <td>172</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the fchmodat syscall.</td>
@@ -3733,9 +3864,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fchmodat -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>OL07-00-030430</td>
+<td>audit_rules_dac_modification_fchmodat</td>
 </tr>
 <tr>
-<td>OL07-00-030440</td>
+<td>V-221785</td>
 <td>172</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the setxattr syscall.</td>
@@ -3766,9 +3898,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>OL07-00-030440</td>
+<td>audit_rules_dac_modification_setxattr</td>
 </tr>
 <tr>
-<td>OL07-00-030450</td>
+<td>V-221786</td>
 <td>172</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the fsetxattr syscall.</td>
@@ -3799,9 +3932,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>OL07-00-030450</td>
+<td>audit_rules_dac_modification_fsetxattr</td>
 </tr>
 <tr>
-<td>OL07-00-030460</td>
+<td>V-221787</td>
 <td>172</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the lsetxattr syscall.</td>
@@ -3832,9 +3966,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>OL07-00-030460</td>
+<td>audit_rules_dac_modification_lsetxattr</td>
 </tr>
 <tr>
-<td>OL07-00-030470</td>
+<td>V-221788</td>
 <td>172</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the removexattr syscall.</td>
@@ -3869,9 +4004,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>OL07-00-030470</td>
+<td>audit_rules_dac_modification_removexattr</td>
 </tr>
 <tr>
-<td>OL07-00-030480</td>
+<td>V-221789</td>
 <td>172</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the fremovexattr syscall.</td>
@@ -3907,9 +4043,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>OL07-00-030480</td>
+<td>audit_rules_dac_modification_fremovexattr</td>
 </tr>
 <tr>
-<td>OL07-00-030490</td>
+<td>V-221790</td>
 <td>172</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the lremovexattr syscall.</td>
@@ -3945,9 +4082,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>OL07-00-030490</td>
+<td>audit_rules_dac_modification_lremovexattr</td>
 </tr>
 <tr>
-<td>OL07-00-030500</td>
+<td>V-221791</td>
 <td>2884</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the creat syscall.</td>
@@ -3982,10 +4120,11 @@ If the system is 64 bit then also add the following lines:
 -a always,exit -F arch=b64 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
 </td>
 <td>OL07-00-030500</td>
+<td>audit_rules_unsuccessful_file_modification_creat</td>
 </tr>
 <tr>
-<td>OL07-00-030510</td>
-<td>172</td>
+<td>V-221792</td>
+<td>2884</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the open syscall.</td>
 <td>Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
@@ -4022,9 +4161,10 @@ If the system is 64 bit then also add the following lines:
 -a always,exit -F arch=b64 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
 </td>
 <td>OL07-00-030510</td>
+<td>audit_rules_unsuccessful_file_modification_open</td>
 </tr>
 <tr>
-<td>OL07-00-030520</td>
+<td>V-221793</td>
 <td>2884</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the openat syscall.</td>
@@ -4062,10 +4202,11 @@ If the system is 64 bit then also add the following lines:
 -a always,exit -F arch=b64 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
 </td>
 <td>OL07-00-030520</td>
+<td>audit_rules_unsuccessful_file_modification_openat</td>
 </tr>
 <tr>
-<td>OL07-00-030530</td>
-<td>172</td>
+<td>V-221794</td>
+<td>2884</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the open_by_handle_at syscall.</td>
 <td>Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
@@ -4099,9 +4240,10 @@ If the system is 64 bit then also add the following lines:
 -a always,exit -F arch=b64 -S open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
 </td>
 <td>OL07-00-030530</td>
+<td>audit_rules_unsuccessful_file_modification_open_by_handle_at</td>
 </tr>
 <tr>
-<td>OL07-00-030540</td>
+<td>V-221795</td>
 <td>2884</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the truncate syscall.</td>
@@ -4139,10 +4281,11 @@ If the system is 64 bit then also add the following lines:
 -a always,exit -F arch=b64 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
 </td>
 <td>OL07-00-030540</td>
+<td>audit_rules_unsuccessful_file_modification_truncate</td>
 </tr>
 <tr>
-<td>OL07-00-030550</td>
-<td>172</td>
+<td>V-221796</td>
+<td>2884</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the ftruncate syscall.</td>
 <td>Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
@@ -4179,10 +4322,11 @@ If the system is 64 bit then also add the following lines:
 -a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
 </td>
 <td>OL07-00-030550</td>
+<td>audit_rules_unsuccessful_file_modification_ftruncate</td>
 </tr>
 <tr>
-<td>OL07-00-030560</td>
-<td>172</td>
+<td>V-221797</td>
+<td>2884</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the semanage command.</td>
 <td>Misuse of privileged functions, either intentionally or unintentionally by
@@ -4213,9 +4357,10 @@ utility to read audit rules during daemon startup, add the following lines to
 <pre>-a always,exit -F path=/usr/sbin/semanage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>OL07-00-030560</td>
+<td>audit_rules_execution_semanage</td>
 </tr>
 <tr>
-<td>OL07-00-030570</td>
+<td>V-221798</td>
 <td>2884</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the setsebool command.</td>
@@ -4247,9 +4392,10 @@ utility to read audit rules during daemon startup, add the following lines to
 <pre>-a always,exit -F path=/usr/sbin/setsebool -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>OL07-00-030570</td>
+<td>audit_rules_execution_setsebool</td>
 </tr>
 <tr>
-<td>OL07-00-030580</td>
+<td>V-221799</td>
 <td>2884</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the chcon command.</td>
@@ -4266,7 +4412,6 @@ unusual activity.</td>
 <td>To verify that execution of the command is being audited, run the following command:
 $ sudo grep "path=/usr/bin/chcon" /etc/audit/audit.rules /etc/audit/rules.d/*
 The output should return something similar to:
-
 -a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged
       Is it the case that ?
       </td>
@@ -4275,19 +4420,17 @@ of the <code>chcon</code> command for all users and root. If the <code>auditd</c
 daemon is configured to use the <code>augenrules</code> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-
 <pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
-
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file:
-
 <pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>OL07-00-030580</td>
+<td>audit_rules_execution_chcon</td>
 </tr>
 <tr>
-<td>OL07-00-030590</td>
+<td>V-221800</td>
 <td>2884</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the setfiles command.</td>
@@ -4319,10 +4462,11 @@ utility to read audit rules during daemon startup, add the following lines to
 <pre>-a always,exit -F path=/usr/sbin/setfiles -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>OL07-00-030590</td>
+<td>audit_rules_execution_setfiles</td>
 </tr>
 <tr>
-<td>OL07-00-030610</td>
-<td>172</td>
+<td>V-221801</td>
+<td>2884</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must generate audit records for all unsuccessful account access events.</td>
 <td>Manual editing of these files may indicate nefarious activity, such
@@ -4345,10 +4489,11 @@ edits of files involved in storing logon events:
 <pre>-w /var/run/faillock -p wa -k logins</pre>
 </td>
 <td>OL07-00-030610</td>
+<td>audit_rules_login_events_faillock</td>
 </tr>
 <tr>
-<td>OL07-00-030620</td>
-<td>172</td>
+<td>V-221802</td>
+<td>2884</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must generate audit records for all successful account access events.</td>
 <td>Manual editing of these files may indicate nefarious activity, such
@@ -4371,9 +4516,10 @@ edits of files involved in storing logon events:
 <pre>-w /var/log/lastlog -p wa -k logins</pre>
 </td>
 <td>OL07-00-030620</td>
+<td>audit_rules_login_events_lastlog</td>
 </tr>
 <tr>
-<td>OL07-00-030630</td>
+<td>V-221803</td>
 <td>135</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the passwd command.</td>
@@ -4405,9 +4551,10 @@ form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/passwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>OL07-00-030630</td>
+<td>audit_rules_privileged_commands_passwd</td>
 </tr>
 <tr>
-<td>OL07-00-030640</td>
+<td>V-221804</td>
 <td>135</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the unix_chkpwd command.</td>
@@ -4439,9 +4586,10 @@ form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>OL07-00-030640</td>
+<td>audit_rules_privileged_commands_unix_chkpwd</td>
 </tr>
 <tr>
-<td>OL07-00-030650</td>
+<td>V-221805</td>
 <td>135</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the gpasswd command.</td>
@@ -4473,9 +4621,10 @@ form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/gpasswd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>OL07-00-030650</td>
+<td>audit_rules_privileged_commands_gpasswd</td>
 </tr>
 <tr>
-<td>OL07-00-030660</td>
+<td>V-221806</td>
 <td>135</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the chage command.</td>
@@ -4507,9 +4656,10 @@ form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/chage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>OL07-00-030660</td>
+<td>audit_rules_privileged_commands_chage</td>
 </tr>
 <tr>
-<td>OL07-00-030670</td>
+<td>V-221807</td>
 <td>135</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the userhelper command.</td>
@@ -4541,9 +4691,10 @@ form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/sbin/userhelper -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>OL07-00-030670</td>
+<td>audit_rules_privileged_commands_userhelper</td>
 </tr>
 <tr>
-<td>OL07-00-030680</td>
+<td>V-221808</td>
 <td>172</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the su command.</td>
@@ -4575,10 +4726,11 @@ form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/su -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>OL07-00-030680</td>
+<td>audit_rules_privileged_commands_su</td>
 </tr>
 <tr>
-<td>OL07-00-030690</td>
-<td>130</td>
+<td>V-221809</td>
+<td>172</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the sudo command.</td>
 <td>Misuse of privileged functions, either intentionally or unintentionally by
@@ -4609,9 +4761,10 @@ form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>OL07-00-030690</td>
+<td>audit_rules_privileged_commands_sudo</td>
 </tr>
 <tr>
-<td>OL07-00-030700</td>
+<td>V-221810</td>
 <td>172</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the sudoers file and all files in the /etc/sudoers.d/ directory.</td>
@@ -4635,9 +4788,10 @@ utility to read audit rules during daemon startup, add the following line to
 -w /etc/sudoers.d/ -p wa -k actions</pre>
 </td>
 <td>OL07-00-030700</td>
+<td>audit_rules_sysadmin_actions</td>
 </tr>
 <tr>
-<td>OL07-00-030710</td>
+<td>V-221811</td>
 <td>172</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the newgrp command.</td>
@@ -4669,9 +4823,10 @@ form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/newgrp -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>OL07-00-030710</td>
+<td>audit_rules_privileged_commands_newgrp</td>
 </tr>
 <tr>
-<td>OL07-00-030720</td>
+<td>V-221812</td>
 <td>130</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the chsh command.</td>
@@ -4703,9 +4858,10 @@ form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/chsh -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>OL07-00-030720</td>
+<td>audit_rules_privileged_commands_chsh</td>
 </tr>
 <tr>
-<td>OL07-00-030740</td>
+<td>V-221813</td>
 <td>2884</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the mount command and syscall.</td>
@@ -4737,9 +4893,10 @@ form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>OL07-00-030740</td>
+<td>audit_rules_privileged_commands_mount</td>
 </tr>
 <tr>
-<td>OL07-00-030750</td>
+<td>V-221814</td>
 <td>135</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the umount command.</td>
@@ -4771,9 +4928,10 @@ form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/umount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>OL07-00-030750</td>
+<td>audit_rules_privileged_commands_umount</td>
 </tr>
 <tr>
-<td>OL07-00-030760</td>
+<td>V-221815</td>
 <td>135</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the postdrop command.</td>
@@ -4805,9 +4963,10 @@ form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/sbin/postdrop -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>OL07-00-030760</td>
+<td>audit_rules_privileged_commands_postdrop</td>
 </tr>
 <tr>
-<td>OL07-00-030770</td>
+<td>V-221816</td>
 <td>135</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the postqueue command.</td>
@@ -4839,9 +4998,10 @@ form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/sbin/postqueue -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>OL07-00-030770</td>
+<td>audit_rules_privileged_commands_postqueue</td>
 </tr>
 <tr>
-<td>OL07-00-030780</td>
+<td>V-221817</td>
 <td>135</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the ssh-keysign command.</td>
@@ -4866,18 +5026,17 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 
--F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign
--F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>OL07-00-030780</td>
+<td>audit_rules_privileged_commands_ssh_keysign</td>
 </tr>
 <tr>
-<td>OL07-00-030800</td>
+<td>V-221818</td>
 <td>135</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the crontab command.</td>
@@ -4909,9 +5068,10 @@ form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/crontab -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>OL07-00-030800</td>
+<td>audit_rules_privileged_commands_crontab</td>
 </tr>
 <tr>
-<td>OL07-00-030810</td>
+<td>V-221819</td>
 <td>172</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the pam_timestamp_check command.</td>
@@ -4945,36 +5105,21 @@ form to <code>/etc/audit/audit.rules</code>:
 -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>OL07-00-030810</td>
+<td>audit_rules_privileged_commands_pam_timestamp_check</td>
 </tr>
 <tr>
-<td>OL07-00-030819</td>
-<td>172</td>
+<td>V-221820</td>
+<td></td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the create_module syscall.</td>
-<td>The removal of kernel modules can be used to alter the behavior of
-the kernel and potentially introduce malicious code into kernel space. It is important
-to have an audit trail of modules that have been introduced into the kernel.</td>
-<td>To determine if the system is configured to audit calls to the
-delete_module system call, run the following command:
-preserve$ sudo grep "delete_module" /etc/audit/audit.*
-If the system is configured to audit this activity, it will return a line.
-
-      Is it the case that no line is returned?
-      </td>
-<td>To capture kernel module unloading events, use following line, setting ARCH to
-either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
-<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
-
-Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
-to use the <code>augenrules</code> program (the default), add the line to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
-add the line to file <code>/etc/audit/audit.rules</code>.</td>
+<td></td>
+<td></td>
+<td></td>
 <td>OL07-00-030819</td>
+<td>Missing Rule</td>
 </tr>
 <tr>
-<td>OL07-00-030820</td>
+<td>V-221821</td>
 <td>172</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the init_module syscall.</td>
@@ -4999,9 +5144,10 @@ to use the <code>augenrules</code> program (the default), add the line to a file
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
 add the line to file <code>/etc/audit/audit.rules</code>.</td>
 <td>OL07-00-030820</td>
+<td>audit_rules_kernel_module_loading_init</td>
 </tr>
 <tr>
-<td>OL07-00-030821</td>
+<td>V-221822</td>
 <td>172</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the finit_module syscall.</td>
@@ -5027,9 +5173,10 @@ b64 as appropriate for your system:
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
 </td>
 <td>OL07-00-030821</td>
+<td>audit_rules_kernel_module_loading_finit</td>
 </tr>
 <tr>
-<td>OL07-00-030830</td>
+<td>V-221823</td>
 <td>172</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the delete_module syscall.</td>
@@ -5054,37 +5201,22 @@ to use the <code>augenrules</code> program (the default), add the line to a file
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
 add the line to file <code>/etc/audit/audit.rules</code>.</td>
 <td>OL07-00-030830</td>
+<td>audit_rules_kernel_module_loading_delete</td>
 </tr>
 <tr>
-<td>OL07-00-030840</td>
-<td>172</td>
+<td>V-221824</td>
+<td></td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the kmod command.</td>
-<td>The removal of kernel modules can be used to alter the behavior of
-the kernel and potentially introduce malicious code into kernel space. It is important
-to have an audit trail of modules that have been introduced into the kernel.</td>
-<td>To determine if the system is configured to audit calls to the
-delete_module system call, run the following command:
-preserve$ sudo grep "delete_module" /etc/audit/audit.*
-If the system is configured to audit this activity, it will return a line.
-
-      Is it the case that no line is returned?
-      </td>
-<td>To capture kernel module unloading events, use following line, setting ARCH to
-either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
-<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
-
-Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
-to use the <code>augenrules</code> program (the default), add the line to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
-add the line to file <code>/etc/audit/audit.rules</code>.</td>
+<td></td>
+<td></td>
+<td></td>
 <td>OL07-00-030840</td>
+<td>Missing Rule</td>
 </tr>
 <tr>
-<td>OL07-00-030870</td>
-<td>1405</td>
+<td>V-221825</td>
+<td>2130</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/passwd.</td>
 <td>In addition to auditing new user and group accounts, these watches
@@ -5115,9 +5247,10 @@ account changes:
 <pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
 </td>
 <td>OL07-00-030870</td>
+<td>audit_rules_usergroup_modification_passwd</td>
 </tr>
 <tr>
-<td>OL07-00-030871</td>
+<td>V-221826</td>
 <td>18</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/group.</td>
@@ -5149,9 +5282,10 @@ account changes:
 <pre>-w /etc/group -p wa -k audit_rules_usergroup_modification</pre>
 </td>
 <td>OL07-00-030871</td>
+<td>audit_rules_usergroup_modification_group</td>
 </tr>
 <tr>
-<td>OL07-00-030872</td>
+<td>V-221827</td>
 <td>18</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/gshadow.</td>
@@ -5183,9 +5317,10 @@ account changes:
 <pre>-w /etc/gshadow -p wa -k audit_rules_usergroup_modification</pre>
 </td>
 <td>OL07-00-030872</td>
+<td>audit_rules_usergroup_modification_gshadow</td>
 </tr>
 <tr>
-<td>OL07-00-030873</td>
+<td>V-221828</td>
 <td>18</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/shadow.</td>
@@ -5217,12 +5352,13 @@ account changes:
 <pre>-w /etc/shadow -p wa -k audit_rules_usergroup_modification</pre>
 </td>
 <td>OL07-00-030873</td>
+<td>audit_rules_usergroup_modification_shadow</td>
 </tr>
 <tr>
-<td>OL07-00-030874</td>
+<td>V-221829</td>
 <td>18</td>
 <td>medium</td>
-<td>The Oracle Linux operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/opasswd.</td>
+<td>The Oracle Linux operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/security/opasswd.</td>
 <td>In addition to auditing new user and group accounts, these watches
 will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</td>
@@ -5251,9 +5387,10 @@ account changes:
 <pre>-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
 </td>
 <td>OL07-00-030874</td>
+<td>audit_rules_usergroup_modification_opasswd</td>
 </tr>
 <tr>
-<td>OL07-00-030880</td>
+<td>V-221830</td>
 <td>2884</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the rename syscall.</td>
@@ -5281,10 +5418,11 @@ appropriate for your system:
 <pre>-a always,exit -F arch=ARCH -S rename -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
 </td>
 <td>OL07-00-030880</td>
+<td>audit_rules_file_deletion_events_rename</td>
 </tr>
 <tr>
-<td>OL07-00-030890</td>
-<td>172</td>
+<td>V-221831</td>
+<td>2884</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the renameat syscall.</td>
 <td>Auditing file deletions will create an audit trail for files that are removed
@@ -5311,9 +5449,10 @@ appropriate for your system:
 <pre>-a always,exit -F arch=ARCH -S renameat -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
 </td>
 <td>OL07-00-030890</td>
+<td>audit_rules_file_deletion_events_renameat</td>
 </tr>
 <tr>
-<td>OL07-00-030900</td>
+<td>V-221832</td>
 <td>2884</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the rmdir syscall.</td>
@@ -5341,10 +5480,11 @@ appropriate for your system:
 <pre>-a always,exit -F arch=ARCH -S rmdir -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
 </td>
 <td>OL07-00-030900</td>
+<td>audit_rules_file_deletion_events_rmdir</td>
 </tr>
 <tr>
-<td>OL07-00-030910</td>
-<td>172</td>
+<td>V-221833</td>
+<td>2884</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the unlink syscall.</td>
 <td>Auditing file deletions will create an audit trail for files that are removed
@@ -5371,9 +5511,10 @@ appropriate for your system:
 <pre>-a always,exit -F arch=ARCH -S unlink -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
 </td>
 <td>OL07-00-030910</td>
+<td>audit_rules_file_deletion_events_unlink</td>
 </tr>
 <tr>
-<td>OL07-00-030920</td>
+<td>V-221834</td>
 <td>2884</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must audit all uses of the unlinkat syscall.</td>
@@ -5401,9 +5542,10 @@ appropriate for your system:
 <pre>-a always,exit -F arch=ARCH -S unlinkat -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
 </td>
 <td>OL07-00-030920</td>
+<td>audit_rules_file_deletion_events_unlinkat</td>
 </tr>
 <tr>
-<td>OL07-00-031000</td>
+<td>V-221835</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must send rsyslog output to a log aggregation server.</td>
@@ -5445,9 +5587,10 @@ To use RELP for log message delivery:
 <br>
 There must be a resolvable DNS CNAME or Alias record set to "<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub>" for logs to be sent correctly to the centralized logging utility.</td>
 <td>OL07-00-031000</td>
+<td>rsyslog_remote_loghost</td>
 </tr>
 <tr>
-<td>OL07-00-031010</td>
+<td>V-221836</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that the rsyslog daemon does not accept log messages from other servers unless the server is being used for log aggregation.</td>
@@ -5477,9 +5620,10 @@ $ModLoad imrelp
 $InputRELPServerRun <i>port</i></pre>
 </td>
 <td>OL07-00-031010</td>
+<td>rsyslog_nolisten</td>
 </tr>
 <tr>
-<td>OL07-00-032000</td>
+<td>V-221837</td>
 <td>366</td>
 <td>high</td>
 <td>The Oracle Linux operating system must use a virus scan program.</td>
@@ -5495,9 +5639,10 @@ $ rpm -q McAfeeVSEForLinux
 which is provided for DoD systems and uses signatures to search for the
 presence of viruses on the filesystem.</td>
 <td>OL07-00-032000</td>
+<td>install_mcafee_antivirus</td>
 </tr>
 <tr>
-<td>OL07-00-040000</td>
+<td>V-221838</td>
 <td>54</td>
 <td>low</td>
 <td>The Oracle Linux operating system must limit the number of concurrent sessions to 10 for all accounts and/or account types.</td>
@@ -5519,9 +5664,10 @@ a file under <code>/etc/security/limits.d/</code>:
 <pre>* hard maxlogins <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_max_concurrent_login_sessions"></xccdf-1.1:sub></pre>
 </td>
 <td>OL07-00-040000</td>
+<td>accounts_max_concurrent_login_sessions</td>
 </tr>
 <tr>
-<td>OL07-00-040100</td>
+<td>V-221839</td>
 <td>2314</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured to prohibit or restrict the use of functions, ports, protocols, and/or services, as defined in the Ports, Protocols, and Services Management Component Local Service Assessment (PPSM CLSA) and vulnerability assessments.</td>
@@ -5561,10 +5707,11 @@ To configure <code>firewalld</code> to allow access, run the following command(s
 <code>firewall-cmd --permanent --add-service=ssh</code>
 </td>
 <td>OL07-00-040100</td>
+<td>configure_firewalld_ports</td>
 </tr>
 <tr>
-<td>OL07-00-040110</td>
-<td>68</td>
+<td>V-221840</td>
+<td>3123</td>
 <td>medium</td>
 <td>The Oracle Linux 7 operating system must implement DoD-approved encryption to protect the confidentiality of SSH connections.</td>
 <td>Unapproved mechanisms that are used for authentication to the cryptographic module are not verified and therefore
@@ -5590,9 +5737,10 @@ demonstrates use of FIPS-approved ciphers:
 This rule ensures that there are configured ciphers mentioned
 above (or their subset), keeping the given order of algorithms.</td>
 <td>OL07-00-040110</td>
+<td>sshd_use_approved_ciphers_ordered_stig</td>
 </tr>
 <tr>
-<td>OL07-00-040160</td>
+<td>V-221841</td>
 <td>1133</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that all network connections associated with a communication session are terminated at the end of the session or after 15 minutes of inactivity from the user at a command prompt, except to fulfill documented and validated mission requirements.</td>
@@ -5617,9 +5765,10 @@ setting in a file loaded by <code>/etc/profile</code>, e.g.
 <pre>TMOUT=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></xccdf-1.1:sub></pre>
 </td>
 <td>OL07-00-040160</td>
+<td>accounts_tmout</td>
 </tr>
 <tr>
-<td>OL07-00-040170</td>
+<td>V-221842</td>
 <td>48</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must display the Standard Mandatory DoD Notice and Consent Banner immediately prior to, or as part of, remote access logon prompts.</td>
@@ -5640,9 +5789,10 @@ across the system, add or correct the following line in <code>/etc/ssh/sshd_conf
 Another section contains information on how to create an
 appropriate system-wide warning banner.</td>
 <td>OL07-00-040170</td>
+<td>sshd_enable_warning_banner</td>
 </tr>
 <tr>
-<td>OL07-00-040180</td>
+<td>V-221843</td>
 <td>1453</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must implement cryptography to protect the integrity of Lightweight Directory Access Protocol (LDAP) authentication communications.</td>
@@ -5665,9 +5815,10 @@ set to <code>ldap</code> or <code>ipa</code>, use the following command:
 <pre>$ sudo grep -i ldap_id_use_start_tls /etc/sssd/sssd.conf</pre>
 </td>
 <td>OL07-00-040180</td>
+<td>sssd_ldap_start_tls</td>
 </tr>
 <tr>
-<td>OL07-00-040190</td>
+<td>V-221844</td>
 <td>1453</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must implement cryptography to protect the integrity of Lightweight Directory Access Protocol (LDAP) communications.</td>
@@ -5685,9 +5836,10 @@ protect the integrity of LDAP remote access sessions by setting
 the <pre>ldap_tls_reqcert</pre> option in <pre>/etc/sssd/sssd.conf</pre>
 to <code>demand</code>.</td>
 <td>OL07-00-040190</td>
+<td>sssd_ldap_configure_tls_reqcert</td>
 </tr>
 <tr>
-<td>OL07-00-040200</td>
+<td>V-221845</td>
 <td>1453</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must implement cryptography to protect the integrity of Lightweight Directory Access Protocol (LDAP) communications.</td>
@@ -5713,9 +5865,10 @@ to point to the path for the X.509 certificates used for peer authentication.
 <pre>ldap_tls_cacertdir /path/to/tls/cacert</pre>
 </td>
 <td>OL07-00-040200</td>
+<td>sssd_ldap_configure_tls_ca_dir</td>
 </tr>
 <tr>
-<td>OL07-00-040201</td>
+<td>V-221846</td>
 <td>2824</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must implement virtual address space randomization.</td>
@@ -5751,9 +5904,10 @@ is executed.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.randomize_va_space = 2</pre>
 </td>
 <td>OL07-00-040201</td>
+<td>sysctl_kernel_randomize_va_space</td>
 </tr>
 <tr>
-<td>OL07-00-040300</td>
+<td>V-221847</td>
 <td>2422</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that all networked systems have SSH installed.</td>
@@ -5769,9 +5923,10 @@ The <code>openssh-server</code> package can be installed with the following comm
 $ sudo yum install openssh-server</pre>
 </td>
 <td>OL07-00-040300</td>
+<td>package_openssh-server_installed</td>
 </tr>
 <tr>
-<td>OL07-00-040310</td>
+<td>V-221848</td>
 <td>2418</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that all networked systems use SSH for confidentiality and integrity of transmitted and received information as well as information during preparation for transmission.</td>
@@ -5798,10 +5953,11 @@ The <code>sshd</code> service can be enabled with the following command:
 <pre>$ sudo systemctl enable sshd.service</pre>
 </td>
 <td>OL07-00-040310</td>
+<td>service_sshd_enabled</td>
 </tr>
 <tr>
-<td>OL07-00-040320</td>
-<td>1133</td>
+<td>V-221849</td>
+<td>2361</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that all network connections associated with SSH traffic are terminated at the end of the session or after 10 minutes of inactivity, except to fulfill documented and validated mission requirements.</td>
 <td>Terminating an idle ssh session within a short time period reduces the window of
@@ -5827,9 +5983,10 @@ If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <code>/etc/ssh/sshd_config</code>. Keep in mind that
 some processes may stop SSH  from correctly detecting that the user is idle.</td>
 <td>OL07-00-040320</td>
+<td>sshd_set_idle_timeout</td>
 </tr>
 <tr>
-<td>OL07-00-040330</td>
+<td>V-221850</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that the SSH daemon does not allow authentication using RSA rhosts authentication.</td>
@@ -5855,9 +6012,10 @@ following line in <code>/etc/ssh/sshd_config</code>:
 <pre>RhostsRSAAuthentication no</pre>
 </td>
 <td>OL07-00-040330</td>
+<td>sshd_disable_rhosts_rsa</td>
 </tr>
 <tr>
-<td>OL07-00-040340</td>
+<td>V-221851</td>
 <td>1133</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that all network connections associated with SSH traffic terminate after a period of inactivity.</td>
@@ -5883,9 +6041,10 @@ To ensure the SSH idle timeout occurs precisely when the
 <code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
 value of <code>0</code>.</td>
 <td>OL07-00-040340</td>
+<td>sshd_set_keepalive_0</td>
 </tr>
 <tr>
-<td>OL07-00-040350</td>
+<td>V-221852</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that the SSH daemon does not allow authentication using rhosts authentication.</td>
@@ -5906,9 +6065,10 @@ following line in <code>/etc/ssh/sshd_config</code>:
 <pre>IgnoreRhosts yes</pre>
 </td>
 <td>OL07-00-040350</td>
+<td>sshd_disable_rhosts</td>
 </tr>
 <tr>
-<td>OL07-00-040360</td>
+<td>V-221853</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must display the date and time of the last successful account logon upon an SSH logon.</td>
@@ -5926,9 +6086,10 @@ SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> 
 <pre>PrintLastLog yes</pre>
 </td>
 <td>OL07-00-040360</td>
+<td>sshd_print_last_log</td>
 </tr>
 <tr>
-<td>OL07-00-040370</td>
+<td>V-221854</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must not permit direct logons to the root account using remote access via SSH.</td>
@@ -5951,9 +6112,10 @@ in <code>/etc/ssh/sshd_config</code>:
 <pre>PermitRootLogin no</pre>
 </td>
 <td>OL07-00-040370</td>
+<td>sshd_disable_root_login</td>
 </tr>
 <tr>
-<td>OL07-00-040380</td>
+<td>V-221855</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that the SSH daemon does not allow authentication using known hosts authentication.</td>
@@ -5975,9 +6137,10 @@ following line in <code>/etc/ssh/sshd_config</code>:
 <pre>IgnoreUserKnownHosts yes</pre>
 </td>
 <td>OL07-00-040380</td>
+<td>sshd_disable_user_known_hosts</td>
 </tr>
 <tr>
-<td>OL07-00-040390</td>
+<td>V-221856</td>
 <td>197</td>
 <td>high</td>
 <td>The Oracle Linux operating system must be configured so that the SSH daemon is configured to only use the SSHv2 protocol.</td>
@@ -6002,9 +6165,10 @@ line appears:
 <pre>Protocol 2</pre>
 </td>
 <td>OL07-00-040390</td>
+<td>sshd_allow_only_protocol2</td>
 </tr>
 <tr>
-<td>OL07-00-040400</td>
+<td>V-221857</td>
 <td>1453</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that the SSH daemon is configured to only use Message Authentication Codes (MACs) employing FIPS 140-2 approved cryptographic hash algorithms.</td>
@@ -6014,7 +6178,7 @@ functions. The only SSHv2 hash algorithms meeting this requirement is SHA2.</td>
 MACs are in use, run the following command:
 $ sudo grep -i macs /etc/ssh/sshd_config
 The output should contain only following MACs (or a subset) in the exact order:
-hmac-sha2-512,hmac-sha2-256
+MACs 
       Is it the case that MACs option is commented out or not using FIPS-approved hash algorithms?
       </td>
 <td>Limit the MACs to those hash algorithms which are FIPS-approved.
@@ -6024,9 +6188,10 @@ demonstrates use of FIPS-approved MACs:
 This rule ensures that there are configured MACs mentioned
 above (or their subset), keeping the given order of algorithms.</td>
 <td>OL07-00-040400</td>
+<td>sshd_use_approved_macs_ordered_stig</td>
 </tr>
 <tr>
-<td>OL07-00-040410</td>
+<td>V-221858</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that the SSH public host key files have mode 0644 or less permissive.</td>
@@ -6042,9 +6207,10 @@ If properly configured, the output should indicate the following permissions:
 <td> To properly set the permissions of <code>/etc/ssh/*.pub</code>, run the command: <pre>$ sudo chmod 0644 /etc/ssh/*.pub</pre>
 </td>
 <td>OL07-00-040410</td>
+<td>file_permissions_sshd_pub_key</td>
 </tr>
 <tr>
-<td>OL07-00-040420</td>
+<td>V-221859</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that the SSH private host key files have mode 0640 or less permissive.</td>
@@ -6063,9 +6229,10 @@ To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
 <pre>$ sudo chmod 0640 /etc/ssh/*_key</pre>
 </td>
 <td>OL07-00-040420</td>
+<td>file_permissions_sshd_private_key</td>
 </tr>
 <tr>
-<td>OL07-00-040430</td>
+<td>V-221860</td>
 <td>1813</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that the SSH daemon does not permit Generic Security Service Application Program Interface (GSSAPI) authentication unless needed.</td>
@@ -6084,9 +6251,10 @@ correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <pre>GSSAPIAuthentication no</pre>
 </td>
 <td>OL07-00-040430</td>
+<td>sshd_disable_gssapi_auth</td>
 </tr>
 <tr>
-<td>OL07-00-040440</td>
+<td>V-221861</td>
 <td>1813</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that the SSH daemon does not permit Kerberos authentication unless needed.</td>
@@ -6106,9 +6274,10 @@ or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <pre>KerberosAuthentication no</pre>
 </td>
 <td>OL07-00-040440</td>
+<td>sshd_disable_kerb_auth</td>
 </tr>
 <tr>
-<td>OL07-00-040450</td>
+<td>V-221862</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that the SSH daemon performs strict mode checking of home directory configuration files.</td>
@@ -6127,9 +6296,10 @@ add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <pre>StrictModes yes</pre>
 </td>
 <td>OL07-00-040450</td>
+<td>sshd_enable_strictmodes</td>
 </tr>
 <tr>
-<td>OL07-00-040460</td>
+<td>V-221863</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that the SSH daemon uses privilege separation.</td>
@@ -6148,9 +6318,10 @@ SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> 
 <pre>UsePrivilegeSeparation <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_priv_separation"></xccdf-1.1:sub></pre>
 </td>
 <td>OL07-00-040460</td>
+<td>sshd_use_priv_separation</td>
 </tr>
 <tr>
-<td>OL07-00-040470</td>
+<td>V-221864</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that the SSH daemon does not allow compression or only allows compression after successful authentication.</td>
@@ -6172,9 +6343,10 @@ a user has successfully authenticated, add or correct the following line in the
 <pre>Compression <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_disable_compression"></xccdf-1.1:sub></pre>
 </td>
 <td>OL07-00-040470</td>
+<td>sshd_disable_compression</td>
 </tr>
 <tr>
-<td>OL07-00-040500</td>
+<td>V-221866</td>
 <td>2046</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must, for networked systems, synchronize clocks with a server that is synchronized to one of the redundant United States Naval Observatory (USNO) time servers, a time server designated for the appropriate DoD network (NIPRNet/SIPRNet), and/or the Global Positioning System (GPS).</td>
@@ -6197,9 +6369,10 @@ add the following:
 <pre>maxpoll <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_time_service_set_maxpoll"></xccdf-1.1:sub></pre>
 </td>
 <td>OL07-00-040500</td>
+<td>chronyd_or_ntpd_set_maxpoll</td>
 </tr>
 <tr>
-<td>OL07-00-040510</td>
+<td>V-221867</td>
 <td>2385</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must protect against or limit the effects of Denial of Service (DoS) attacks by validating the operating system is implementing rate-limiting measures on impacted network interfaces.</td>
@@ -6237,9 +6410,10 @@ Issue the following command to make the changes take effect:
 <pre># sysctl --system</pre>
 </td>
 <td>OL07-00-040510</td>
+<td>sysctl_net_ipv4_tcp_invalid_ratelimit</td>
 </tr>
 <tr>
-<td>OL07-00-040520</td>
+<td>V-221868</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must enable an application firewall, if available.</td>
@@ -6259,9 +6433,10 @@ The <code>firewalld</code> service can be enabled with the following command:
 <pre>$ sudo systemctl enable firewalld.service</pre>
 </td>
 <td>OL07-00-040520</td>
+<td>service_firewalld_enabled</td>
 </tr>
 <tr>
-<td>OL07-00-040530</td>
+<td>V-221869</td>
 <td>366</td>
 <td>low</td>
 <td>The Oracle Linux operating system must display the date and time of the last successful account logon upon logon.</td>
@@ -6284,9 +6459,10 @@ settings in
 <pre>session     required pam_lastlog.so showfailed</pre>
 And make sure that the <code>silent</code> option is not set.</td>
 <td>OL07-00-040530</td>
+<td>display_login_attempts</td>
 </tr>
 <tr>
-<td>OL07-00-040540</td>
+<td>V-221870</td>
 <td>366</td>
 <td>high</td>
 <td>The Oracle Linux operating system must not contain .shosts files.</td>
@@ -6308,9 +6484,10 @@ to delete them from any location:
 <pre>$ sudo find / -name '.shosts' -type f -delete</pre>
 </td>
 <td>OL07-00-040540</td>
+<td>no_user_host_based_files</td>
 </tr>
 <tr>
-<td>OL07-00-040550</td>
+<td>V-221871</td>
 <td>366</td>
 <td>high</td>
 <td>The Oracle Linux operating system must not contain shosts.equiv files.</td>
@@ -6332,9 +6509,10 @@ location:
 <pre>$ sudo rm /[path]/[to]/[file]/shosts.equiv</pre>
 </td>
 <td>OL07-00-040550</td>
+<td>no_host_based_files</td>
 </tr>
 <tr>
-<td>OL07-00-040600</td>
+<td>V-221872</td>
 <td>366</td>
 <td>low</td>
 <td>For Oracle Linux operating systems using DNS resolution, at least two name servers must be configured.</td>
@@ -6359,9 +6537,10 @@ nameserver 192.168.0.1
 nameserver 192.168.0.2</pre>
 </td>
 <td>OL07-00-040600</td>
+<td>network_configure_name_resolution</td>
 </tr>
 <tr>
-<td>OL07-00-040610</td>
+<td>V-221873</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must not forward Internet Protocol version 4 (IPv4) source-routed packets.</td>
@@ -6399,9 +6578,10 @@ is executed.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.accept_source_route = 0</pre>
 </td>
 <td>OL07-00-040610</td>
+<td>sysctl_net_ipv4_conf_all_accept_source_route</td>
 </tr>
 <tr>
-<td>OL07-00-040611</td>
+<td>V-221874</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must use a reverse-path filter for IPv4 network traffic when possible on all interfaces.</td>
@@ -6436,9 +6616,10 @@ is executed.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.rp_filter = 1</pre>
 </td>
 <td>OL07-00-040611</td>
+<td>sysctl_net_ipv4_conf_all_rp_filter</td>
 </tr>
 <tr>
-<td>OL07-00-040612</td>
+<td>V-221875</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must use a reverse-path filter for IPv4 network traffic when possible by default.</td>
@@ -6473,9 +6654,10 @@ is executed.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.rp_filter = 1</pre>
 </td>
 <td>OL07-00-040612</td>
+<td>sysctl_net_ipv4_conf_default_rp_filter</td>
 </tr>
 <tr>
-<td>OL07-00-040620</td>
+<td>V-221876</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must not forward Internet Protocol version 4 (IPv4) source-routed packets by default.</td>
@@ -6513,9 +6695,10 @@ is executed.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.accept_source_route = 0</pre>
 </td>
 <td>OL07-00-040620</td>
+<td>sysctl_net_ipv4_conf_default_accept_source_route</td>
 </tr>
 <tr>
-<td>OL07-00-040630</td>
+<td>V-221877</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must not respond to Internet Protocol version 4 (IPv4) Internet Control Message Protocol (ICMP) echoes sent to a broadcast address.</td>
@@ -6550,9 +6733,10 @@ is executed.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.icmp_echo_ignore_broadcasts = 1</pre>
 </td>
 <td>OL07-00-040630</td>
+<td>sysctl_net_ipv4_icmp_echo_ignore_broadcasts</td>
 </tr>
 <tr>
-<td>OL07-00-040640</td>
+<td>V-221878</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must prevent Internet Protocol version 4 (IPv4) Internet Control Message Protocol (ICMP) redirect messages from being accepted.</td>
@@ -6588,9 +6772,10 @@ is executed.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.accept_redirects = 0</pre>
 </td>
 <td>OL07-00-040640</td>
+<td>sysctl_net_ipv4_conf_default_accept_redirects</td>
 </tr>
 <tr>
-<td>OL07-00-040641</td>
+<td>V-221879</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must ignore Internet Protocol version 4 (IPv4) Internet Control Message Protocol (ICMP) redirect messages.</td>
@@ -6627,9 +6812,10 @@ is executed.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.accept_redirects = 0</pre>
 </td>
 <td>OL07-00-040641</td>
+<td>sysctl_net_ipv4_conf_all_accept_redirects</td>
 </tr>
 <tr>
-<td>OL07-00-040650</td>
+<td>V-221880</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must not allow interfaces to perform Internet Protocol version 4 (IPv4) Internet Control Message Protocol (ICMP) redirects by default.</td>
@@ -6664,9 +6850,10 @@ is executed.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.send_redirects = 0</pre>
 </td>
 <td>OL07-00-040650</td>
+<td>sysctl_net_ipv4_conf_default_send_redirects</td>
 </tr>
 <tr>
-<td>OL07-00-040660</td>
+<td>V-221881</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must not send Internet Protocol version 4 (IPv4) Internet Control Message Protocol (ICMP) redirects.</td>
@@ -6701,9 +6888,10 @@ is executed.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.send_redirects = 0</pre>
 </td>
 <td>OL07-00-040660</td>
+<td>sysctl_net_ipv4_conf_all_send_redirects</td>
 </tr>
 <tr>
-<td>OL07-00-040670</td>
+<td>V-221882</td>
 <td>366</td>
 <td>medium</td>
 <td>Network interfaces configured on The Oracle Linux operating system must not be in promiscuous mode.</td>
@@ -6728,9 +6916,10 @@ Promiscuous mode of an interface can be disabled with the following command:
 <pre>$ sudo ip link set dev <code>device_name</code> multicast off promisc off</pre>
 </td>
 <td>OL07-00-040670</td>
+<td>network_sniffer_disabled</td>
 </tr>
 <tr>
-<td>OL07-00-040680</td>
+<td>V-221883</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured to prevent unrestricted mail relaying.</td>
@@ -6749,9 +6938,10 @@ to the local network with the following command:
 <pre>$ sudo postconf -e 'smtpd_client_restrictions = permit_mynetworks,reject'</pre>
 </td>
 <td>OL07-00-040680</td>
+<td>postfix_prevent_unrestricted_relay</td>
 </tr>
 <tr>
-<td>OL07-00-040690</td>
+<td>V-221884</td>
 <td>366</td>
 <td>high</td>
 <td>The Oracle Linux operating system must not have a File Transfer Protocol (FTP) server package installed unless needed.</td>
@@ -6764,9 +6954,10 @@ $ rpm -q vsftpd
 <td>The <code>vsftpd</code> package can be removed with the following command: <pre> $ sudo yum erase vsftpd</pre>
 </td>
 <td>OL07-00-040690</td>
+<td>package_vsftpd_removed</td>
 </tr>
 <tr>
-<td>OL07-00-040700</td>
+<td>V-221885</td>
 <td>366</td>
 <td>high</td>
 <td>The Oracle Linux operating system must not have the Trivial File Transfer Protocol (TFTP) server package installed if not required for operational support.</td>
@@ -6784,9 +6975,10 @@ $ rpm -q tftp-server
 <td>The <code>tftp-server</code> package can be removed with the following command: <pre> $ sudo yum erase tftp-server</pre>
 </td>
 <td>OL07-00-040700</td>
+<td>package_tftp-server_removed</td>
 </tr>
 <tr>
-<td>OL07-00-040710</td>
+<td>V-221886</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that remote X connections are disabled, unless to fulfill documented and validated mission requirements.</td>
@@ -6811,9 +7003,10 @@ following line in <code>/etc/ssh/sshd_config</code>:
 <pre>X11Forwarding no</pre>
 </td>
 <td>OL07-00-040710</td>
+<td>sshd_disable_x11_forwarding</td>
 </tr>
 <tr>
-<td>OL07-00-040711</td>
+<td>V-233306</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system SSH daemon must prevent remote hosts from connecting to the proxy display.</td>
@@ -6832,9 +7025,10 @@ If no line, a commented line, or a line indicating the value yes is returned, th
 display. Make sure that the option <code>X11UseLocalhost</code> is set to
 <code>yes</code> within the SSH server configuration file.</td>
 <td>OL07-00-040711</td>
+<td>sshd_x11_use_localhost</td>
 </tr>
 <tr>
-<td>OL07-00-040720</td>
+<td>V-221887</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that if the Trivial File Transfer Protocol (TFTP) server is required, the TFTP daemon is configured to operate in secure mode.</td>
@@ -6861,31 +7055,46 @@ the following example:
 <pre>server_args = -s <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_tftpd_secure_directory"></xccdf-1.1:sub></pre>
 </td>
 <td>OL07-00-040720</td>
+<td>tftpd_uses_secure_mode</td>
 </tr>
 <tr>
-<td>OL07-00-040730</td>
+<td>V-221888</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must not have a graphical display manager installed unless approved.</td>
 <td>Unnecessary service packages must not be installed to decrease the attack surface of the system. X windows has a long history of security
 vulnerabilities and should not be installed unless approved and documented.</td>
 <td>To ensure the X Windows package group is removed, run the following command:
-$ rpm -qi xorg-x11-server-common
-The output should be:
-package xorg-x11-server-common is not installed
-      Is it the case that the X Windows package group or xorg-x11-server-common has not be removed?
+
+$ rpm -qi xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils
+
+For each package mentioned above you should receive following line:
+package &lt;package&gt; is not installed
+      Is it the case that xorg related packages are not removed and run level is not correctly configured?
       </td>
-<td>By removing the xorg-x11-server-common package, the system no longer has X Windows
-installed. If X Windows is not installed then the system cannot boot into graphical user mode.
+<td>By removing the following packages,  the system no longer has X Windows installed.
+
+<code>xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils</code>
+
+If X Windows is not installed then the system cannot boot into graphical user mode.
 This prevents the system from being accidentally or maliciously booted into a <code>graphical.target</code>
 mode. To do so, run the following command:
-<pre>$ sudo yum groupremove "X Window System"</pre>
-<pre>$ sudo yum remove xorg-x11-server-common</pre>
+
+<pre>sudo yum remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils</pre>
+
+Additionally, setting the system's default target to
+<code>multi-user.target</code> will prevent automatic startup of the X server.
+To do so, run:
+<pre>$ systemctl set-default multi-user.target</pre>
+You should see the following output:
+<pre>Removed symlink /etc/systemd/system/default.target.
+Created symlink from /etc/systemd/system/default.target to /usr/lib/systemd/system/multi-user.target.</pre>
 </td>
 <td>OL07-00-040730</td>
+<td>xwindows_remove_packages</td>
 </tr>
 <tr>
-<td>OL07-00-040740</td>
+<td>V-221889</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must not be performing packet forwarding unless the system is a router.</td>
@@ -6919,9 +7128,10 @@ The ability to forward packets is only appropriate for routers.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.ip_forward = 0</pre>
 </td>
 <td>OL07-00-040740</td>
+<td>sysctl_net_ipv4_ip_forward</td>
 </tr>
 <tr>
-<td>OL07-00-040750</td>
+<td>V-221890</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that the Network File System (NFS) is configured to use RPCSEC_GSS.</td>
@@ -6938,9 +7148,10 @@ This is not applicable if NFS is not implemented.
 <td>Add the <code>sec=krb5:krb5i:krb5p</code> option to the fourth column of <code>/etc/fstab</code> for the line which controls mounting of
 any NFS mounts.</td>
 <td>OL07-00-040750</td>
+<td>mount_option_krb_sec_remote_filesystems</td>
 </tr>
 <tr>
-<td>OL07-00-040800</td>
+<td>V-221891</td>
 <td>366</td>
 <td>high</td>
 <td>SNMP community strings on the Oracle Linux operating system must be changed from the default.</td>
@@ -6961,9 +7172,10 @@ Once the default community strings have been changed, restart the SNMP service:
 <pre>$ sudo service snmpd restart</pre>
 </td>
 <td>OL07-00-040800</td>
+<td>snmpd_not_default_password</td>
 </tr>
 <tr>
-<td>OL07-00-040810</td>
+<td>V-221892</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system access control program must be configured to grant or deny system access to specific hosts and services.</td>
@@ -6984,9 +7196,10 @@ modify the following line in
 <pre>DefaultZone=drop</pre>
 </td>
 <td>OL07-00-040810</td>
+<td>set_firewalld_default_zone</td>
 </tr>
 <tr>
-<td>OL07-00-040820</td>
+<td>V-221893</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must not have unauthorized IP tunnels configured.</td>
@@ -7003,9 +7216,10 @@ network requirements such as filtering. Verify that if any IPsec connection
 (<code>conn</code>) configured in <code>/etc/ipsec.conf</code> and <code>/etc/ipsec.d</code>
 exists is an approved organizational connection.</td>
 <td>OL07-00-040820</td>
+<td>libreswan_approved_tunnels</td>
 </tr>
 <tr>
-<td>OL07-00-040830</td>
+<td>V-221894</td>
 <td>366</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must not forward IPv6 source-routed packets.</td>
@@ -7043,10 +7257,11 @@ is executed.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_source_route = 0</pre>
 </td>
 <td>OL07-00-040830</td>
+<td>sysctl_net_ipv6_conf_all_accept_source_route</td>
 </tr>
 <tr>
-<td>OL07-00-041001</td>
-<td>1948</td>
+<td>V-221895</td>
+<td>1954</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must have the required packages for multifactor authentication installed.</td>
 <td>Using an authentication device, such as a CAC or token that is separate from
@@ -7072,9 +7287,10 @@ The <code>pam_pkcs11</code> package can be installed with the following command:
 $ sudo yum install pam_pkcs11</pre>
 </td>
 <td>OL07-00-041001</td>
+<td>install_smartcard_packages</td>
 </tr>
 <tr>
-<td>OL07-00-041002</td>
+<td>V-221896</td>
 <td>1954</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must implement multifactor authentication for access to privileged accounts via pluggable authentication modules (PAM).</td>
@@ -7097,10 +7313,11 @@ services = sudo, autofs, pam
 </pre>
 </td>
 <td>OL07-00-041002</td>
+<td>sssd_enable_pam_services</td>
 </tr>
 <tr>
-<td>OL07-00-041003</td>
-<td>1948</td>
+<td>V-221897</td>
+<td>1954</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must implement certificate status checking for PKI authentication.</td>
 <td>Using an authentication device, such as a CAC or token that is separate from
@@ -7128,9 +7345,10 @@ authentication. Modify all of the <code>cert_policy</code> lines in
 <pre>cert_policy = ca, ocsp_on, signature;</pre>
 </td>
 <td>OL07-00-041003</td>
+<td>smartcard_configure_cert_checking</td>
 </tr>
 <tr>
-<td>OL07-00-041010</td>
+<td>V-221898</td>
 <td>2421</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must be configured so that all wireless network adapters are disabled.</td>
@@ -7158,31 +7376,28 @@ following command:
 <pre>$ sudo nmcli radio wifi off</pre>
 </td>
 <td>OL07-00-041010</td>
+<td>wireless_disable_interfaces</td>
 </tr>
 <tr>
-<td>OL07-00-910055</td>
-<td>164</td>
+<td>V-221899</td>
+<td>1314</td>
 <td>medium</td>
 <td>The Oracle Linux operating system must protect audit information from unauthorized read, modification, or deletion.</td>
-<td>Unauthorized disclosure of audit records can reveal system and configuration data to
-attackers, thus compromising its confidentiality.</td>
-<td>
-To properly set the owner of /var/log/audit, run the command:
-$ sudo chown root /var/log/audit 
-
-To properly set the owner of /var/log/audit/*, run the command:
-$ sudo chown root /var/log/audit/* 
-      Is it the case that ?
+<td>If users can write to audit logs, audit trails can be modified or destroyed.</td>
+<td>Run the following command to check the mode of the system audit logs:
+$ sudo ls -l /var/log/audit
+Audit logs must be mode 0640 or less permissive.
+      Is it the case that any are more permissive?
       </td>
-<td>All audit logs must be owned by root user and group. By default, the path for audit log is <pre>/var/log/audit/</pre>.
-
-To properly set the owner of <code>/var/log/audit</code>, run the command:
-<pre>$ sudo chown root /var/log/audit </pre>
-
-To properly set the owner of <code>/var/log/audit/*</code>, run the command:
-<pre>$ sudo chown root /var/log/audit/* </pre>
+<td>If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other than the <code>root</code>
+group account, change the mode of the audit log files with the following command:
+<pre>$ sudo chmod 0640 <i>audit_file</i></pre>
+<br>
+Otherwise, change the mode of the audit log files with the following command:
+<pre>$ sudo chmod 0600 <i>audit_file</i></pre>
 </td>
 <td>OL07-00-910055</td>
+<td>file_permissions_var_log_audit</td>
 </tr>
 </table>
 </body>

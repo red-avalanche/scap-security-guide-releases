@@ -628,9 +628,9 @@ $ sudo yum install aide</pre>
 <td>Configure Periodic Execution of AIDE</td>
 <td xml:lang="en-US">At a minimum, AIDE should be configured to run a weekly scan.
 To implement a daily execution of AIDE at 4:05am using cron, add the following line to <code>/etc/crontab</code>:
-<pre>05 4 * * * root /usr/sbin/aide --check</pre>
+<pre>05 4 * * * root  --check</pre>
 To implement a weekly execution of AIDE at 4:05am using cron, add the following line to <code>/etc/crontab</code>:
-<pre>05 4 * * 0 root /usr/sbin/aide --check</pre>
+<pre>05 4 * * 0 root  --check</pre>
 AIDE can be executed periodically through other means; this is merely one example.
 The usage of cron's special time codes, such as  <code>@daily</code> and
 <code>@weekly</code> is acceptable.</td>
@@ -729,7 +729,8 @@ world-writable directories installed by other software packages.</td>
 <td>1.1.11</td>
 <td>Ensure /var/log Located On Separate Partition</td>
 <td xml:lang="en-US">System logs are stored in the <code>/var/log</code> directory.
-Ensure that it has its own partition or logical
+
+Ensure that <code>/var/log</code> has its own partition or logical
 volume at installation time, or migrate it using LVM.</td>
 <td xml:lang="en-US">Placing <code>/var/log</code> in its own partition
 enables better separation between log files
@@ -739,9 +740,11 @@ and other files in <code>/var/</code>.</td>
 <tr>
 <td>1.1.12</td>
 <td>Ensure /var/log/audit Located On Separate Partition</td>
-<td xml:lang="en-US">Audit logs are stored in the <code>/var/log/audit</code> directory.  Ensure that it
-has its own partition or logical volume at installation time, or migrate it
-later using LVM. Make absolutely certain that it is large enough to store all
+<td xml:lang="en-US">Audit logs are stored in the <code>/var/log/audit</code> directory.
+
+Ensure that <code>/var/log/audit</code> has its own partition or logical
+volume at installation time, or migrate it using LVM.
+Make absolutely certain that it is large enough to store all
 audit logs that will be created by the auditing daemon.</td>
 <td xml:lang="en-US">Placing <code>/var/log/audit</code> in its own partition
 enables better separation between audit files
@@ -1252,8 +1255,10 @@ compromose the password.</td>
 <td>Ensure PAM Enforces Password Requirements - Authentication Retry Prompts Permitted Per-Session</td>
 <td xml:lang="en-US">To configure the number of retry prompts that are permitted per-session:
 Edit the <code>pam_pwquality.so</code> statement in
+
 <code>/etc/pam.d/system-auth</code>  and
 <code>/etc/pam.d/password-auth</code>  to show
+
 <code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if site
 policy is more restrictive. The DoD requirement is a maximum of 3 prompts
 per session.</td>
@@ -1531,6 +1536,19 @@ using the root account.</td>
 <td></td>
 </tr>
 <tr>
+<td>5.7</td>
+<td>Enforce usage of pam_wheel for su authentication</td>
+<td xml:lang="en-US">To ensure that only users who are members of the <code>wheel</code> group can
+run commands with altered privileges through the <code>su</code> command, make
+sure that the following line exists in the file <code>/etc/pam.d/su</code>:
+<pre>auth             required        pam_wheel.so use_uid</pre>
+</td>
+<td xml:lang="en-US">The <code>su</code> program allows to run commands with a substitute user and
+group ID. It is commonly used to run commands as the root user. Limiting
+access to such command is considered a good security practice.</td>
+<td></td>
+</tr>
+<tr>
 <td>5.5.3</td>
 <td>Set Interactive Session Timeout</td>
 <td xml:lang="en-US">Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
@@ -1563,10 +1581,11 @@ to system files they normally would not be able to access.</td>
 </tr>
 <tr>
 <td>6.2.8</td>
-<td>All User Files and Directories In The Home Directory Must Be Owned By The Primary User</td>
-<td xml:lang="en-US">Change the owner of a interactive users files and directories to that
-owner. To change the of a local interactive users files and
-directories, use the following command:
+<td>All User Files and Directories In The Home Directory Must Have a Valid Owner</td>
+<td xml:lang="en-US">Either remove all files and directories from the system that
+do not have a valid user, or assign a valid user to all unowned
+files and directories. To assign a valid owner to a local
+interactive user's files and directories, use the following command:
 <pre>$ sudo chown -R <i>USER</i> /home/<i>USER</i></pre>
 </td>
 <td xml:lang="en-US">If local interactive users do not own the files in their directories,
@@ -1611,6 +1630,34 @@ groups or ACLs.</td>
 <td></td>
 </tr>
 <tr>
+<td>6.2.3</td>
+<td>Ensure that Root's Path Does Not Include World or Group-Writable Directories</td>
+<td xml:lang="en-US">For each element in root's path, run:
+<pre># ls -ld <i>DIR</i></pre>
+and ensure that write permissions are disabled for group and
+other.</td>
+<td xml:lang="en-US">Such entries increase the risk that root could
+execute code provided by unprivileged users,
+and potentially malicious code.</td>
+<td></td>
+</tr>
+<tr>
+<td>6.2.3</td>
+<td>Ensure that Root's Path Does Not Include Relative Paths or Null Directories</td>
+<td xml:lang="en-US">Ensure that none of the directories in root's path is equal to a single
+<code>.</code> character, or
+that it contains any instances that lead to relative path traversal, such as
+<code>..</code> or beginning a path without the slash (<code>/</code>) character.
+Also ensure that there are no "empty" elements in the path, such as in these examples:
+<pre>PATH=:/bin
+PATH=/bin:
+PATH=/bin::/sbin</pre>
+These empty elements have the same effect as a single <code>.</code> character.</td>
+<td xml:lang="en-US">Including these entries increases the risk that root could
+execute code from an untrusted location.</td>
+<td></td>
+</tr>
+<tr>
 <td>5.5.4</td>
 <td>Ensure the Default Bash Umask is Set Correctly</td>
 <td xml:lang="en-US">To ensure the default umask for users of the Bash shell is set properly,
@@ -1620,6 +1667,18 @@ as follows:
 </td>
 <td xml:lang="en-US">The umask value influences the permissions assigned to files when they are created.
 A misconfigured umask value could result in files with excessive permissions that can be read or
+written to by unauthorized users.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.5.5</td>
+<td>Ensure the Default Umask is Set Correctly in login.defs</td>
+<td xml:lang="en-US">To ensure the default umask controlled by <code>/etc/login.defs</code> is set properly,
+add or correct the <code>UMASK</code> setting in <code>/etc/login.defs</code> to read as follows:
+<pre>UMASK <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_user_umask"></xccdf-1.1:sub></pre>
+</td>
+<td xml:lang="en-US">The umask value influences the permissions assigned to files when they are created.
+A misconfigured umask value could result in files with excessive permissions that can be read and
 written to by unauthorized users.</td>
 <td></td>
 </tr>
@@ -2099,17 +2158,21 @@ to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S fremovexattr -F auid=0 -F key=perm_mod</pre>
 <br><br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S fremovexattr -F auid=0 -F key=perm_mod</pre>
 <br><br>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S fremovexattr -F auid=0 -F key=perm_mod</pre>
 <br><br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S fremovexattr -F auid=0 -F key=perm_mod</pre>
 </td>
 <td xml:lang="en-US">The changing of file permissions could indicate that a user is attempting to
 gain access to information that would otherwise be disallowed. Auditing DAC modifications
@@ -2126,14 +2189,18 @@ to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S fsetxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S fsetxattr -F auid=0 -F key=perm_mod</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S fsetxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S fsetxattr -F auid=0 -F key=perm_mod</pre>
 </td>
 <td xml:lang="en-US">The changing of file permissions could indicate that a user is attempting to
 gain access to information that would otherwise be disallowed. Auditing DAC modifications
@@ -2176,17 +2243,21 @@ to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S lremovexattr -F auid=0 -F key=perm_mod</pre>
 <br><br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S lremovexattr -F auid=0 -F key=perm_mod</pre>
 <br><br>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S lremovexattr -F auid=0 -F key=perm_mod</pre>
 <br><br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S lremovexattr -F auid=0 -F key=perm_mod</pre>
 </td>
 <td xml:lang="en-US">The changing of file permissions could indicate that a user is attempting to
 gain access to information that would otherwise be disallowed. Auditing DAC modifications
@@ -2203,14 +2274,18 @@ to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S lsetxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S lsetxattr -F auid=0 -F key=perm_mod</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S lsetxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S lsetxattr -F auid=0 -F key=perm_mod</pre>
 </td>
 <td xml:lang="en-US">The changing of file permissions could indicate that a user is attempting to
 gain access to information that would otherwise be disallowed. Auditing DAC modifications
@@ -2228,17 +2303,21 @@ If the <code>auditd</code> daemon is configured to use the <code>augenrules</cod
 program to read audit rules during daemon startup (the default), add the
 following line to a file with suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S removexattr -F auid=0 -F key=perm_mod</pre>
 <br><br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S removexattr -F auid=0 -F key=perm_mod</pre>
 <br><br>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S removexattr -F auid=0 -F key=perm_mod</pre>
 <br><br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S removexattr -F auid=0 -F key=perm_mod</pre>
 </td>
 <td xml:lang="en-US">The changing of file permissions could indicate that a user is attempting to
 gain access to information that would otherwise be disallowed. Auditing DAC modifications
@@ -2255,14 +2334,18 @@ to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S setxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S setxattr -F auid=0 -F key=perm_mod</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S setxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S setxattr -F auid=0 -F key=perm_mod</pre>
 </td>
 <td xml:lang="en-US">The changing of file permissions could indicate that a user is attempting to
 gain access to information that would otherwise be disallowed. Auditing DAC modifications
@@ -3769,7 +3852,7 @@ and the cause should be discovered and addressed.</td>
 <td></td>
 </tr>
 <tr>
-<td>6.1.8</td>
+<td>6.1.9</td>
 <td>Verify Group Who Owns Backup group File</td>
 <td xml:lang="en-US"> To properly set the group owner of <code>/etc/group-</code>, run the command: <pre>$ sudo chgrp root /etc/group-</pre>
 </td>
@@ -3779,7 +3862,7 @@ Protection of this file is important for system security.</td>
 <td></td>
 </tr>
 <tr>
-<td>6.1.9</td>
+<td>6.1.7</td>
 <td>Verify Group Who Owns Backup gshadow File</td>
 <td xml:lang="en-US"> To properly set the group owner of <code>/etc/gshadow-</code>, run the command: <pre>$ sudo chgrp root /etc/gshadow-</pre>
 </td>
@@ -3788,7 +3871,7 @@ it contains group password hashes. Protection of this file is critical for syste
 <td></td>
 </tr>
 <tr>
-<td>6.1.6</td>
+<td>6.1.3</td>
 <td>Verify Group Who Owns Backup passwd File</td>
 <td xml:lang="en-US"> To properly set the group owner of <code>/etc/passwd-</code>, run the command: <pre>$ sudo chgrp root /etc/passwd-</pre>
 </td>
@@ -3798,7 +3881,7 @@ Protection of this file is critical for system security.</td>
 <td></td>
 </tr>
 <tr>
-<td>6.1.7</td>
+<td>6.1.5</td>
 <td>Verify User Who Owns Backup shadow File</td>
 <td xml:lang="en-US"> To properly set the group owner of <code>/etc/shadow-</code>, run the command: <pre>$ sudo chgrp root /etc/shadow-</pre>
 </td>
@@ -3808,7 +3891,7 @@ Protection of this file is critical for system security.</td>
 <td></td>
 </tr>
 <tr>
-<td>6.1.4</td>
+<td>6.1.8</td>
 <td>Verify Group Who Owns group File</td>
 <td xml:lang="en-US"> To properly set the group owner of <code>/etc/group</code>, run the command: <pre>$ sudo chgrp root /etc/group</pre>
 </td>
@@ -3817,7 +3900,7 @@ on the system. Protection of this file is important for system security.</td>
 <td></td>
 </tr>
 <tr>
-<td>6.1.5</td>
+<td>6.1.6</td>
 <td>Verify Group Who Owns gshadow File</td>
 <td xml:lang="en-US"> To properly set the group owner of <code>/etc/gshadow</code>, run the command: <pre>$ sudo chgrp root /etc/gshadow</pre>
 </td>
@@ -3835,7 +3918,7 @@ the system. Protection of this file is critical for system security.</td>
 <td></td>
 </tr>
 <tr>
-<td>6.1.3</td>
+<td>6.1.4</td>
 <td>Verify Group Who Owns shadow File</td>
 <td xml:lang="en-US"> To properly set the group owner of <code>/etc/shadow</code>, run the command: <pre>$ sudo chgrp root /etc/shadow</pre>
 </td>
@@ -3844,7 +3927,7 @@ critical for system security.</td>
 <td></td>
 </tr>
 <tr>
-<td>6.1.8</td>
+<td>6.1.9</td>
 <td>Verify User Who Owns Backup group File</td>
 <td xml:lang="en-US"> To properly set the owner of <code>/etc/group-</code>, run the command: <pre>$ sudo chown root /etc/group- </pre>
 </td>
@@ -3854,7 +3937,7 @@ Protection of this file is important for system security.</td>
 <td></td>
 </tr>
 <tr>
-<td>6.1.9</td>
+<td>6.1.7</td>
 <td>Verify User Who Owns Backup gshadow File</td>
 <td xml:lang="en-US"> To properly set the owner of <code>/etc/gshadow-</code>, run the command: <pre>$ sudo chown root /etc/gshadow- </pre>
 </td>
@@ -3863,7 +3946,7 @@ it contains group password hashes. Protection of this file is critical for syste
 <td></td>
 </tr>
 <tr>
-<td>6.1.6</td>
+<td>6.1.3</td>
 <td>Verify User Who Owns Backup passwd File</td>
 <td xml:lang="en-US"> To properly set the owner of <code>/etc/passwd-</code>, run the command: <pre>$ sudo chown root /etc/passwd- </pre>
 </td>
@@ -3873,7 +3956,7 @@ Protection of this file is critical for system security.</td>
 <td></td>
 </tr>
 <tr>
-<td>6.1.7</td>
+<td>6.1.5</td>
 <td>Verify Group Who Owns Backup shadow File</td>
 <td xml:lang="en-US"> To properly set the owner of <code>/etc/shadow-</code>, run the command: <pre>$ sudo chown root /etc/shadow- </pre>
 </td>
@@ -3883,7 +3966,7 @@ Protection of this file is critical for system security.</td>
 <td></td>
 </tr>
 <tr>
-<td>6.1.4</td>
+<td>6.1.8</td>
 <td>Verify User Who Owns group File</td>
 <td xml:lang="en-US"> To properly set the owner of <code>/etc/group</code>, run the command: <pre>$ sudo chown root /etc/group </pre>
 </td>
@@ -3892,7 +3975,7 @@ on the system. Protection of this file is important for system security.</td>
 <td></td>
 </tr>
 <tr>
-<td>6.1.5</td>
+<td>6.1.6</td>
 <td>Verify User Who Owns gshadow File</td>
 <td xml:lang="en-US"> To properly set the owner of <code>/etc/gshadow</code>, run the command: <pre>$ sudo chown root /etc/gshadow </pre>
 </td>
@@ -3910,7 +3993,7 @@ the system. Protection of this file is critical for system security.</td>
 <td></td>
 </tr>
 <tr>
-<td>6.1.3</td>
+<td>6.1.4</td>
 <td>Verify User Who Owns shadow File</td>
 <td xml:lang="en-US"> To properly set the owner of <code>/etc/shadow</code>, run the command: <pre>$ sudo chown root /etc/shadow </pre>
 </td>
@@ -3922,7 +4005,7 @@ which could weaken the system security posture.</td>
 <td></td>
 </tr>
 <tr>
-<td>6.1.8</td>
+<td>6.1.9</td>
 <td>Verify Permissions on Backup group File</td>
 <td xml:lang="en-US">
 To properly set the permissions of <code>/etc/group-</code>, run the command:
@@ -3934,7 +4017,7 @@ Protection of this file is important for system security.</td>
 <td></td>
 </tr>
 <tr>
-<td>6.1.9</td>
+<td>6.1.7</td>
 <td>Verify Permissions on Backup gshadow File</td>
 <td xml:lang="en-US">
 To properly set the permissions of <code>/etc/gshadow-</code>, run the command:
@@ -3945,7 +4028,7 @@ it contains group password hashes. Protection of this file is critical for syste
 <td></td>
 </tr>
 <tr>
-<td>6.1.6</td>
+<td>6.1.3</td>
 <td>Verify Permissions on Backup passwd File</td>
 <td xml:lang="en-US">
 To properly set the permissions of <code>/etc/passwd-</code>, run the command:
@@ -3957,7 +4040,7 @@ Protection of this file is critical for system security.</td>
 <td></td>
 </tr>
 <tr>
-<td>6.1.7</td>
+<td>6.1.5</td>
 <td>Verify Permissions on Backup shadow File</td>
 <td xml:lang="en-US">
 To properly set the permissions of <code>/etc/shadow-</code>, run the command:
@@ -3969,7 +4052,7 @@ Protection of this file is critical for system security.</td>
 <td></td>
 </tr>
 <tr>
-<td>6.1.4</td>
+<td>6.1.8</td>
 <td>Verify Permissions on group File</td>
 <td xml:lang="en-US">
 To properly set the permissions of <code>/etc/passwd</code>, run the command:
@@ -3980,7 +4063,7 @@ on the system. Protection of this file is important for system security.</td>
 <td></td>
 </tr>
 <tr>
-<td>6.1.5</td>
+<td>6.1.6</td>
 <td>Verify Permissions on gshadow File</td>
 <td xml:lang="en-US">
 To properly set the permissions of <code>/etc/gshadow</code>, run the command:
@@ -4004,7 +4087,7 @@ is critical for system security.</td>
 <td></td>
 </tr>
 <tr>
-<td>6.1.3</td>
+<td>6.1.4</td>
 <td>Verify Permissions on shadow File</td>
 <td xml:lang="en-US">
 To properly set the permissions of <code>/etc/shadow</code>, run the command:
@@ -4913,7 +4996,7 @@ in the previous sections in certain environments the <code>ntpd</code> daemon mi
 be preferred to be used rather than the <code>chronyd</code> one. Refer to:
 
     
-    <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html</a>
+    <a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-configuring_ntp_using_the_chrony_suite">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-configuring_ntp_using_the_chrony_suite</a>
 
 for guidance which NTP daemon to choose depending on the environment used.</td>
 <td xml:lang="en-US">Enabling some of <code>chronyd</code> or <code>ntpd</code> services ensures
@@ -4937,7 +5020,7 @@ configured to utilize the services of the <code>chronyd</code> NTP daemon (the
 default), or services of the <code>ntpd</code> NTP daemon. Refer to
 
     
-    <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html</a>
+    <a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-configuring_ntp_using_the_chrony_suite">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-configuring_ntp_using_the_chrony_suite</a>
 
 for more detailed comparison of the features of both of the choices, and for
 further guidance how to choose between the two NTP daemons.
@@ -5387,6 +5470,23 @@ logout record can eliminate those users who disconnected, which helps narrow the
 <td></td>
 </tr>
 <tr>
+<td>5.2.5</td>
+<td>Set SSH Daemon LogLevel to VERBOSE</td>
+<td xml:lang="en-US">The <code>VERBOSE</code> parameter configures the SSH daemon to record login and logout activity.
+To specify the log level in
+SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+<pre>LogLevel VERBOSE</pre>
+</td>
+<td xml:lang="en-US">SSH provides several logging levels with varying amounts of verbosity. <code>DEBUG</code> is specifically
+not recommended other than strictly for debugging SSH communications since it provides
+so much data that it is difficult to identify important security information. <code>INFO</code> or
+<code>VERBOSE</code> level is the basic level that only records login activity of SSH users. In many
+situations, such as Incident Response, it is important to determine when a particular user was active
+on a system. The logout record can eliminate those users who disconnected, which helps narrow the
+field.</td>
+<td></td>
+</tr>
+<tr>
 <td>5.2.7</td>
 <td>Set SSH authentication attempt limit</td>
 <td xml:lang="en-US">The <code>MaxAuthTries</code> parameter specifies the maximum number of authentication attempts
@@ -5435,6 +5535,31 @@ installed. If X Windows is not installed then the system cannot boot into graphi
 This prevents the system from being accidentally or maliciously booted into a <code>graphical.target</code>
 mode. To do so, run the following command:<pre>$ sudo yum groupremove base-x</pre>
 <pre>$ sudo yum remove xorg-x11-server-common</pre>
+</td>
+<td xml:lang="en-US">Unnecessary service packages must not be installed to decrease the attack surface of the system. X windows has a long history of security
+vulnerabilities and should not be installed unless approved and documented.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.2.2</td>
+<td>Disable graphical user interface</td>
+<td xml:lang="en-US">By removing the following packages,  the system no longer has X Windows installed.
+
+<code>xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</code>
+
+If X Windows is not installed then the system cannot boot into graphical user mode.
+This prevents the system from being accidentally or maliciously booted into a <code>graphical.target</code>
+mode. To do so, run the following command:
+
+<pre>sudo yum remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</pre>
+
+Additionally, setting the system's default target to
+<code>multi-user.target</code> will prevent automatic startup of the X server.
+To do so, run:
+<pre>$ systemctl set-default multi-user.target</pre>
+You should see the following output:
+<pre>Removed symlink /etc/systemd/system/default.target.
+Created symlink from /etc/systemd/system/default.target to /usr/lib/systemd/system/multi-user.target.</pre>
 </td>
 <td xml:lang="en-US">Unnecessary service packages must not be installed to decrease the attack surface of the system. X windows has a long history of security
 vulnerabilities and should not be installed unless approved and documented.</td>
