@@ -7,7 +7,7 @@
 # This is a *draft* SCAP profile for Red Hat Certified Cloud Providers
 #
 # Benchmark ID:  RHEL-6
-# Benchmark Version:  0.1.38
+# Benchmark Version:  0.1.39
 #
 # XCCDF Version:  1.1
 #
@@ -33,19 +33,564 @@
            "You must update Ansible to at least version 2.3 to use this role."
           
    vars:
-      var_selinux_state: enforcing
+      sshd_idle_timeout_value: 300
       var_selinux_policy_name: targeted
+      var_selinux_state: enforcing
       var_accounts_password_minlen_login_defs: 6
-      var_accounts_minimum_age_login_defs: 7
-      var_accounts_maximum_age_login_defs: 60
       var_accounts_password_warn_age_login_defs: 7
-      var_password_pam_retry: 3
+      var_accounts_maximum_age_login_defs: 120
+      var_accounts_minimum_age_login_defs: 7
+      var_password_pam_unix_remember: 5
       var_accounts_passwords_pam_faillock_deny: 5
       var_accounts_passwords_pam_faillock_unlock_time: 604800
-      var_accounts_passwords_pam_faillock_fail_interval: 900
-      var_password_pam_unix_remember: 5
-      sshd_idle_timeout_value: 300
+      var_accounts_passwords_pam_faillock_fail_interval: 100000000
+      var_password_pam_retry: 3
    tasks:
+    - name: Disable service avahi-daemon
+      service:
+        name="{{item}}"
+        enabled="no"
+        state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
+      with_items:
+        - avahi-daemon
+      tags:
+        - service_avahi-daemon_disabled
+        - unknown_severity
+        - disable_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27087-6
+        - NIST-800-53-CM-7
+        - DISA-STIG-RHEL-06-000246
+    
+    - name: Ensure rsh-server is removed
+      package:
+        name="{{item}}"
+        state=absent
+      with_items:
+        - rsh-server
+      tags:
+        - package_rsh-server_removed
+        - high_severity
+        - disable_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27062-9
+        - NIST-800-53-CM-7
+        - DISA-STIG-RHEL-06-000213
+    
+    - name: Ensure telnet-server is removed
+      package:
+        name="{{item}}"
+        state=absent
+      with_items:
+        - telnet-server
+      tags:
+        - package_telnet-server_removed
+        - high_severity
+        - disable_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27073-6
+        - NIST-800-53-CM-7
+        - DISA-STIG-RHEL-06-000206
+    
+    - name: Disable service ypbind
+      service:
+        name="{{item}}"
+        enabled="no"
+        state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
+      with_items:
+        - ypbind
+      tags:
+        - service_ypbind_disabled
+        - medium_severity
+        - disable_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26894-6
+        - NIST-800-53-CM-7
+        - DISA-STIG-RHEL-06-000221
+    
+    - name: Ensure ypserv is removed
+      package:
+        name="{{item}}"
+        state=absent
+      with_items:
+        - ypserv
+      tags:
+        - package_ypserv_removed
+        - medium_severity
+        - disable_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27079-3
+        - NIST-800-53-CM-7
+        - DISA-STIG-RHEL-06-000220
+    
+    - name: Disable service tftp
+      service:
+        name="{{item}}"
+        enabled="no"
+        state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
+      with_items:
+        - tftp
+      tags:
+        - service_tftp_disabled
+        - medium_severity
+        - disable_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27055-3
+        - NIST-800-53-CM-7
+        - DISA-STIG-RHEL-06-000223
+    
+    - name: Ensure tftp-server is removed
+      package:
+        name="{{item}}"
+        state=absent
+      with_items:
+        - tftp-server
+      tags:
+        - package_tftp-server_removed
+        - medium_severity
+        - disable_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26946-4
+        - NIST-800-53-CM-7
+        - DISA-STIG-RHEL-06-000222
+    
+    - name: Disable service xinetd
+      service:
+        name="{{item}}"
+        enabled="no"
+        state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
+      with_items:
+        - xinetd
+      tags:
+        - service_xinetd_disabled
+        - medium_severity
+        - disable_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27046-2
+        - NIST-800-53-CM-7
+        - DISA-STIG-RHEL-06-000203
+    
+    - name: Ensure xinetd is removed
+      package:
+        name="{{item}}"
+        state=absent
+      with_items:
+        - xinetd
+      tags:
+        - package_xinetd_removed
+        - unknown_severity
+        - disable_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27005-8
+        - NIST-800-53-CM-7
+        - DISA-STIG-RHEL-06-000204
+    
+    - name: Disable service rdisc
+      service:
+        name="{{item}}"
+        enabled="no"
+        state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
+      with_items:
+        - rdisc
+      tags:
+        - service_rdisc_disabled
+        - unknown_severity
+        - disable_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27261-7
+        - NIST-800-53-AC-4
+        - NIST-800-53-CM-7
+        - DISA-STIG-RHEL-06-000268
+    
+    - name: Disable service oddjobd
+      service:
+        name="{{item}}"
+        enabled="no"
+        state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
+      with_items:
+        - oddjobd
+      tags:
+        - service_oddjobd_disabled
+        - unknown_severity
+        - disable_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27257-5
+        - NIST-800-53-CM-7
+        - DISA-STIG-RHEL-06-000266
+    
+    - name: Disable service qpidd
+      service:
+        name="{{item}}"
+        enabled="no"
+        state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
+      with_items:
+        - qpidd
+      tags:
+        - service_qpidd_disabled
+        - unknown_severity
+        - disable_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26928-2
+        - NIST-800-53-CM-7
+        - DISA-STIG-RHEL-06-000267
+    
+    - name: Disable service abrtd
+      service:
+        name="{{item}}"
+        enabled="no"
+        state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
+      with_items:
+        - abrtd
+      tags:
+        - service_abrtd_disabled
+        - unknown_severity
+        - disable_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27247-6
+        - NIST-800-53-CM-7
+        - DISA-STIG-RHEL-06-000261
+    
+    - name: Disable service ntpdate
+      service:
+        name="{{item}}"
+        enabled="no"
+        state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
+      with_items:
+        - ntpdate
+      tags:
+        - service_ntpdate_disabled
+        - unknown_severity
+        - disable_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27256-7
+        - NIST-800-53-CM-7
+        - DISA-STIG-RHEL-06-000265
+    
+    - name: Disable service atd
+      service:
+        name="{{item}}"
+        enabled="no"
+        state="stopped"
+      register: service_result
+      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
+      with_items:
+        - atd
+      tags:
+        - service_atd_disabled
+        - unknown_severity
+        - disable_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27249-2
+        - NIST-800-53-CM-7
+        - DISA-STIG-RHEL-06-000262
+    
+    - name: Disable SSH Support for .rhosts Files
+      lineinfile:
+        create: yes
+        dest: /etc/ssh/sshd_config
+        regexp: ^IgnoreRhosts
+        line: IgnoreRhosts yes
+        validate: sshd -t -f %s
+      tags:
+        - sshd_disable_rhosts
+        - medium_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27124-7
+        - NIST-800-53-AC-3
+        - DISA-STIG-RHEL-06-000234
+    
+    
+    
+    - name: Set SSH Idle Timeout Interval
+      lineinfile:
+        create: yes
+        dest: /etc/ssh/sshd_config
+        regexp: ^ClientAliveInterval
+        line: "ClientAliveInterval {{ sshd_idle_timeout_value }}"
+        validate: sshd -t -f %s
+      #notify: restart sshd
+      tags:
+        - sshd_set_idle_timeout
+        - unknown_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26919-1
+        - NIST-800-53-AC-2(5)
+        - NIST-800-53-SA-8
+        - PCI-DSS-Req-8.1.8
+        - DISA-STIG-RHEL-06-000230
+    
+    - name: Enable SSH Warning Banner
+      lineinfile:
+        create: yes
+        dest: /etc/ssh/sshd_config
+        regexp: ^Banner
+        line: Banner /etc/issue
+        validate: sshd -t -f %s
+      tags:
+        - sshd_enable_warning_banner
+        - medium_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27112-2
+        - NIST-800-53-AC-8(a)
+        - DISA-STIG-RHEL-06-000240
+    
+    - name: Disable Host-Based Authentication
+      lineinfile:
+        create: yes
+        dest: /etc/ssh/sshd_config
+        regexp: ^HostbasedAuthentication
+        line: HostbasedAuthentication no
+      tags:
+        - disable_host_auth
+        - medium_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27091-8
+        - NIST-800-53-AC-3
+        - DISA-STIG-RHEL-06-000236
+    
+    - name: Disable SSH Access via Empty Passwords
+      lineinfile:
+        create: yes
+        dest: /etc/ssh/sshd_config
+        regexp: ^PermitEmptyPasswords
+        line: PermitEmptyPasswords no
+        validate: sshd -t -f %s
+      tags:
+        - sshd_disable_empty_passwords
+        - high_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26887-0
+        - NIST-800-53-AC-3
+        - DISA-STIG-RHEL-06-000239
+    
+    - name: Use Only Approved Ciphers
+      lineinfile:
+        create: yes
+        dest: /etc/ssh/sshd_config
+        regexp: ^Ciphers
+        line: Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc
+        validate: sshd -t -f %s
+      #notify: restart sshd
+      tags:
+        - sshd_use_approved_ciphers
+        - medium_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26555-3
+        - NIST-800-53-AC-3
+        - NIST-800-53-AC-17(2)
+        - NIST-800-53-SI-7
+        - NIST-800-53-IA-5(1)(c)
+        - NIST-800-53-IA-7
+        - DISA-STIG-RHEL-06-000243
+    
+    - name: Set SSH Client Alive Count
+      lineinfile:
+        create: yes
+        dest: /etc/ssh/sshd_config
+        regexp: ^ClientAliveCountMax
+        line: ClientAliveCountMax 0
+        validate: sshd -t -f %s
+      #notify: restart sshd
+      tags:
+        - sshd_set_keepalive
+        - unknown_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26282-4
+        - NIST-800-53-AC-2(5)
+        - NIST-800-53-SA-8
+        - DISA-STIG-RHEL-06-000231
+    
+    - name: Do Not Allow SSH Environment Options
+      lineinfile:
+        create: yes
+        dest: /etc/ssh/sshd_config
+        regexp: ^PermitUserEnvironment
+        line: PermitUserEnvironment no
+        validate: sshd -t -f %s
+      tags:
+        - sshd_do_not_permit_user_env
+        - unknown_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27201-3
+        - DISA-STIG-RHEL-06-000241
+    
+    - name: "Disable SSH Root Login"
+      lineinfile:
+        create: yes
+        dest: "/etc/ssh/sshd_config"
+        regexp: "^PermitRootLogin"
+        line: "PermitRootLogin no"
+        insertafter: '(?i)^#?authentication'
+        validate: sshd -t -f %s
+      #notify: restart sshd
+      tags:
+        - sshd_disable_root_login
+        - medium_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27100-7
+        - NIST-800-53-AC-3
+        - NIST-800-53-AC-6(2)
+        - NIST-800-53-IA-2(1)
+        - DISA-STIG-RHEL-06-000237
+    
+    
+    - name: "Allow Only SSH Protocol 2"
+      lineinfile:
+        dest: /etc/ssh/sshd_config
+        regexp: "^Protocol [0-9]"
+        line: "Protocol 2"
+        validate: sshd -t -f %s
+      #notify: :reload ssh
+      tags:
+        - sshd_allow_only_protocol2
+        - high_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27072-8
+        - NIST-800-53-AC-3(10)
+        - NIST-800-53-IA-5(1)(c)
+        - DISA-STIG-RHEL-06-000227
+    
+    - name: Ensure aide is installed
+      package:
+        name="{{item}}"
+        state=present
+      with_items:
+        - aide
+      tags:
+        - package_aide_installed
+        - medium_severity
+        - enable_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27024-9
+        - NIST-800-53-CM-3(d)
+        - NIST-800-53-CM-3(e)
+        - NIST-800-53-CM-6(d)
+        - NIST-800-53-SC-28
+        - NIST-800-53-SI-7
+        - PCI-DSS-Req-11.5
+        - DISA-STIG-RHEL-06-000016
+    
+    - name: Check existence of yum on Fedora
+      stat:
+        path: /etc/yum.conf
+      register: yum_config_file
+      check_mode: no
+      when: ansible_distribution == "Fedora"
+    
+    # Old versions of Fedora use yum
+    
+    - name: Ensure GPG check is globally activated (yum)
+      ini_file:
+        dest: "{{item}}"
+        section: main
+        option: gpgcheck
+        value: 1
+        create: False
+      with_items: "/etc/yum.conf"
+      when: ansible_distribution == "RedHat" or ansible_distribution == "CentOS" or yum_config_file.stat.exists
+      tags:
+        - ensure_gpgcheck_globally_activated
+        - medium_severity
+        - unknown_strategy
+        - low_complexity
+        - medium_disruption
+        - CCE-26709-6
+        - NIST-800-53-SI-7
+        - NIST-800-53-MA-1(b)
+        - PCI-DSS-Req-6.2
+        - DISA-STIG-RHEL-06-000013
+    
+    - name: Ensure GPG check is globally activated (dnf)
+      ini_file:
+        dest: "{{item}}"
+        section: main
+        option: gpgcheck
+        value: 1
+        create: False
+      with_items: "/etc/dnf/dnf.conf"
+      when: ansible_distribution == "Fedora"
+      tags:
+        - ensure_gpgcheck_globally_activated
+        - medium_severity
+        - unknown_strategy
+        - low_complexity
+        - medium_disruption
+        - CCE-26709-6
+        - NIST-800-53-SI-7
+        - NIST-800-53-MA-1(b)
+        - PCI-DSS-Req-6.2
+        - DISA-STIG-RHEL-06-000013
+    
+    - name: "Security patches are up to date"
+      package:
+        name: "*"
+        state: "latest"
+      tags:
+        - security_patches_up_to_date
+        - medium_severity
+        - patch_strategy
+        - low_complexity
+        - high_disruption
+        - CCE-27635-2
+        - NIST-800-53-SI-2
+        - NIST-800-53-MA-1(b)
+        - PCI-DSS-Req-6.2
+        - DISA-STIG-RHEL-06-000011
+    
     - name: "Read permission of GPG key directory"
       stat:
         path: /etc/pki/rpm-gpg/
@@ -118,58 +663,6 @@
         - PCI-DSS-Req-6.2
         - DISA-STIG-RHEL-06-000008
     
-    - name: Check existence of yum on Fedora
-      stat:
-        path: /etc/yum.conf
-      register: yum_config_file
-      check_mode: no
-      when: ansible_distribution == "Fedora"
-    
-    # Old versions of Fedora use yum
-    
-    - name: Ensure GPG check is globally activated (yum)
-      ini_file:
-        dest: "{{item}}"
-        section: main
-        option: gpgcheck
-        value: 1
-        create: False
-      with_items: "/etc/yum.conf"
-      when: ansible_distribution == "RedHat" or ansible_distribution == "CentOS" or yum_config_file.stat.exists
-      tags:
-        - ensure_gpgcheck_globally_activated
-        - medium_severity
-        - unknown_strategy
-        - low_complexity
-        - medium_disruption
-        - CCE-26709-6
-        - NIST-800-53-SI-7
-        - NIST-800-53-MA-1(b)
-        - PCI-DSS-Req-6.2
-        - DISA-STIG-RHEL-06-000013
-    
-    - name: Ensure GPG check is globally activated (dnf)
-      ini_file:
-        dest: "{{item}}"
-        section: main
-        option: gpgcheck
-        value: 1
-        create: False
-      with_items: "/etc/dnf/dnf.conf"
-      when: ansible_distribution == "Fedora"
-      tags:
-        - ensure_gpgcheck_globally_activated
-        - medium_severity
-        - unknown_strategy
-        - low_complexity
-        - medium_disruption
-        - CCE-26709-6
-        - NIST-800-53-SI-7
-        - NIST-800-53-MA-1(b)
-        - PCI-DSS-Req-6.2
-        - DISA-STIG-RHEL-06-000013
-    
-    
     #
     - name: Find All Yum Repositories
       find:
@@ -196,558 +689,137 @@
         - PCI-DSS-Req-6.2
         - DISA-STIG-RHEL-06-000015
     
-    - name: "Security patches are up to date"
-      package:
-        name: "*"
-        state: "latest"
-      tags:
-        - security_patches_up_to_date
-        - medium_severity
-        - patch_strategy
-        - low_complexity
-        - high_disruption
-        - CCE-27635-2
-        - NIST-800-53-SI-2
-        - NIST-800-53-MA-1(b)
-        - PCI-DSS-Req-6.2
-        - DISA-STIG-RHEL-06-000011
-    
-    
-    - name: Ensure aide is installed
-      package:
+    - name: Enable service ip6tables
+      service:
         name="{{item}}"
-        state=present
+        enabled="yes"
+        state="started"
       with_items:
-        - aide
+        - ip6tables
       tags:
-        - package_aide_installed
+        - service_ip6tables_enabled
         - medium_severity
         - enable_strategy
         - low_complexity
         - low_disruption
-        - CCE-27024-9
-        - NIST-800-53-CM-3(d)
-        - NIST-800-53-CM-3(e)
-        - NIST-800-53-CM-6(d)
-        - NIST-800-53-SC-28
-        - NIST-800-53-SI-7
-        - PCI-DSS-Req-11.5
-        - DISA-STIG-RHEL-06-000016
+        - CCE-27006-6
+        - NIST-800-53-AC-4
+        - NIST-800-53-CA-3(c)
+        - NIST-800-53-CM-7
+        - DISA-STIG-RHEL-06-000103
     
-    
-    - name: Disable service autofs
+    - name: Enable service iptables
       service:
         name="{{item}}"
-        enabled="no"
-        state="stopped"
-      register: service_result
-      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
+        enabled="yes"
+        state="started"
       with_items:
-        - autofs
+        - iptables
       tags:
-        - service_autofs_disabled
-        - low_severity
-        - disable_strategy
+        - service_iptables_enabled
+        - medium_severity
+        - enable_strategy
         - low_complexity
         - low_disruption
-        - CCE-26976-1
-        - NIST-800-53-AC-19(a)
-        - NIST-800-53-AC-19(d)
-        - NIST-800-53-AC-19(e)
-        - DISA-STIG-RHEL-06-000526
+        - CCE-27018-1
+        - NIST-800-53-AC-4
+        - NIST-800-53-CA-3(c)
+        - NIST-800-53-CM-7
+        - DISA-STIG-RHEL-06-000117
     
-    - name: Ensure permission 0000 on /etc/shadow
-      file:
-        path="{{item}}"
-        mode=0000
+    - name: Ensure kernel module 'dccp' is disabled
+      lineinfile:
+        create=yes
+        dest="/etc/modprobe.d/{{item}}.conf"
+        regexp="{{item}}"
+        line="install {{item}} /bin/true"
       with_items:
-        - /etc/shadow
+        - dccp
       tags:
-        - file_permissions_etc_shadow
-        - medium_severity
-        - configure_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26992-8
-        - NIST-800-53-AC-6
-        - PCI-DSS-Req-8.7.c
-        - DISA-STIG-RHEL-06-000035
-    
-    
-    
-    - name: Find /etc/group file(s)
-      find:
-        paths: "{{ '/etc/group' | dirname }}"
-        patterns: "{{ '/etc/group' | basename }}"
-      register: files_found
-      tags:
-        - file_owner_etc_group
-        - medium_severity
-        - configure_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26822-7
-        - NIST-800-53-AC-6
-        - PCI-DSS-Req-8.7.c
-        - DISA-STIG-RHEL-06-000042
-    
-    - name: Set user ownership to root
-      file:
-        path: "{{ item.path }}"
-        owner: root
-      with_items:
-        - "{{ files_found.files }}"
-      tags:
-        - file_owner_etc_group
-        - medium_severity
-        - configure_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26822-7
-        - NIST-800-53-AC-6
-        - PCI-DSS-Req-8.7.c
-        - DISA-STIG-RHEL-06-000042
-    
-    
-    
-    - name: Find /etc/group file(s)
-      find:
-        paths: "{{ '/etc/group' | dirname }}"
-        patterns: "{{ '/etc/group' | basename }}"
-      register: files_found
-      tags:
-        - file_groupowner_etc_group
-        - medium_severity
-        - configure_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26930-8
-        - NIST-800-53-AC-6
-        - PCI-DSS-Req-8.7.c
-        - DISA-STIG-RHEL-06-000043
-    
-    - name: Set group ownership to root
-      file:
-        path: "{{ item.path }}"
-        group: root
-      with_items:
-        - "{{ files_found.files }}"
-      tags:
-        - file_groupowner_etc_group
-        - medium_severity
-        - configure_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26930-8
-        - NIST-800-53-AC-6
-        - PCI-DSS-Req-8.7.c
-        - DISA-STIG-RHEL-06-000043
-    
-    
-    
-    - name: Find /etc/group file(s)
-      find:
-        paths: "{{ '/etc/group' | dirname }}"
-        patterns: "{{ '/etc/group' | basename }}"
-      register: files_found
-      tags:
-        - file_permissions_etc_group
-        - medium_severity
-        - configure_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26954-8
-        - NIST-800-53-AC-6
-        - PCI-DSS-Req-8.7.c
-        - DISA-STIG-RHEL-06-000044
-    
-    - name: Set permissions
-      file:
-        path: "{{ item.path }}"
-        mode: 0644
-      with_items:
-        - "{{ files_found.files }}"
-      tags:
-        - file_permissions_etc_group
-        - medium_severity
-        - configure_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26954-8
-        - NIST-800-53-AC-6
-        - PCI-DSS-Req-8.7.c
-        - DISA-STIG-RHEL-06-000044
-    
-    
-    
-    - name: Find /etc/gshadow file(s)
-      find:
-        paths: "{{ '/etc/gshadow' | dirname }}"
-        patterns: "{{ '/etc/gshadow' | basename }}"
-      register: files_found
-      tags:
-        - file_owner_etc_gshadow
-        - medium_severity
-        - configure_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27026-4
-        - NIST-800-53-AC-6
-        - DISA-STIG-RHEL-06-000036
-    
-    - name: Set user ownership to root
-      file:
-        path: "{{ item.path }}"
-        owner: root
-      with_items:
-        - "{{ files_found.files }}"
-      tags:
-        - file_owner_etc_gshadow
-        - medium_severity
-        - configure_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27026-4
-        - NIST-800-53-AC-6
-        - DISA-STIG-RHEL-06-000036
-    
-    
-    
-    - name: Find /etc/gshadow file(s)
-      find:
-        paths: "{{ '/etc/gshadow' | dirname }}"
-        patterns: "{{ '/etc/gshadow' | basename }}"
-      register: files_found
-      tags:
-        - file_groupowner_etc_gshadow
-        - medium_severity
-        - configure_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26975-3
-        - NIST-800-53-AC-6
-        - DISA-STIG-RHEL-06-000037
-    
-    - name: Set group ownership to root
-      file:
-        path: "{{ item.path }}"
-        group: root
-      with_items:
-        - "{{ files_found.files }}"
-      tags:
-        - file_groupowner_etc_gshadow
-        - medium_severity
-        - configure_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26975-3
-        - NIST-800-53-AC-6
-        - DISA-STIG-RHEL-06-000037
-    
-    
-    
-    - name: Find /etc/gshadow file(s)
-      find:
-        paths: "{{ '/etc/gshadow' | dirname }}"
-        patterns: "{{ '/etc/gshadow' | basename }}"
-      register: files_found
-      tags:
-        - file_permissions_etc_gshadow
-        - medium_severity
-        - configure_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26951-4
-        - NIST-800-53-AC-6
-        - DISA-STIG-RHEL-06-000038
-    
-    - name: Set permissions
-      file:
-        path: "{{ item.path }}"
-        mode: 0000
-      with_items:
-        - "{{ files_found.files }}"
-      tags:
-        - file_permissions_etc_gshadow
-        - medium_severity
-        - configure_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26951-4
-        - NIST-800-53-AC-6
-        - DISA-STIG-RHEL-06-000038
-    
-    
-    
-    - name: Find /etc/passwd file(s)
-      find:
-        paths: "{{ '/etc/passwd' | dirname }}"
-        patterns: "{{ '/etc/passwd' | basename }}"
-      register: files_found
-      tags:
-        - file_owner_etc_passwd
-        - medium_severity
-        - configure_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26953-0
-        - NIST-800-53-AC-6
-        - PCI-DSS-Req-8.7.c
-        - DISA-STIG-RHEL-06-000039
-    
-    - name: Set user ownership to root
-      file:
-        path: "{{ item.path }}"
-        owner: root
-      with_items:
-        - "{{ files_found.files }}"
-      tags:
-        - file_owner_etc_passwd
-        - medium_severity
-        - configure_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26953-0
-        - NIST-800-53-AC-6
-        - PCI-DSS-Req-8.7.c
-        - DISA-STIG-RHEL-06-000039
-    
-    
-    
-    - name: Find /etc/passwd file(s)
-      find:
-        paths: "{{ '/etc/passwd' | dirname }}"
-        patterns: "{{ '/etc/passwd' | basename }}"
-      register: files_found
-      tags:
-        - file_groupowner_etc_passwd
-        - medium_severity
-        - configure_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26856-5
-        - NIST-800-53-AC-6
-        - PCI-DSS-Req-8.7.c
-        - DISA-STIG-RHEL-06-000040
-    
-    - name: Set group ownership to root
-      file:
-        path: "{{ item.path }}"
-        group: root
-      with_items:
-        - "{{ files_found.files }}"
-      tags:
-        - file_groupowner_etc_passwd
-        - medium_severity
-        - configure_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26856-5
-        - NIST-800-53-AC-6
-        - PCI-DSS-Req-8.7.c
-        - DISA-STIG-RHEL-06-000040
-    
-    
-    
-    - name: Find /etc/passwd file(s)
-      find:
-        paths: "{{ '/etc/passwd' | dirname }}"
-        patterns: "{{ '/etc/passwd' | basename }}"
-      register: files_found
-      tags:
-        - file_permissions_etc_passwd
-        - medium_severity
-        - configure_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26868-0
-        - NIST-800-53-AC-6
-        - PCI-DSS-Req-8.7.c
-        - DISA-STIG-RHEL-06-000041
-    
-    - name: Set permissions
-      file:
-        path: "{{ item.path }}"
-        mode: 0644
-      with_items:
-        - "{{ files_found.files }}"
-      tags:
-        - file_permissions_etc_passwd
-        - medium_severity
-        - configure_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26868-0
-        - NIST-800-53-AC-6
-        - PCI-DSS-Req-8.7.c
-        - DISA-STIG-RHEL-06-000041
-    
-    
-    - name: "Read list of world and group writable files in libraries directories"
-      shell: "find /lib /lib64 /usr/lib /usr/lib64 -perm /022 -type f"
-      register: world_writable_library_files
-      changed_when: False
-      failed_when: False
-      check_mode: no
-      tags:
-        - file_permissions_library_dirs
-        - medium_severity
-        - restrict_strategy
-        - high_complexity
-        - medium_disruption
-        - CCE-27381-3
-        - NIST-800-53-AC-6
-        - DISA-STIG-RHEL-06-000045
-    
-    - name: "Disable world/group writability to library files"
-      file:
-        path: "{{item}}"
-        mode: "go-w"
-      with_items: "{{ world_writable_library_files.stdout_lines }}"
-      when: world_writable_library_files.stdout_lines | length > 0
-      tags:
-        - file_permissions_library_dirs
-        - medium_severity
-        - restrict_strategy
-        - high_complexity
-        - medium_disruption
-        - CCE-27381-3
-        - NIST-800-53-AC-6
-        - DISA-STIG-RHEL-06-000045
-    
-    
-    - name: "Read list libraries without root ownership"
-      shell: "find -L /usr/lib /usr/lib64 /lib /lib64 \\! -user root"
-      register: libraries_not_owned_by_root
-      changed_when: False
-      failed_when: False
-      check_mode: no
-      tags:
-        - file_ownership_library_dirs
-        - medium_severity
-        - restrict_strategy
-        - medium_complexity
-        - medium_disruption
-        - CCE-27424-1
-        - NIST-800-53-AC-6
-        - DISA-STIG-RHEL-06-000046
-    
-    - name: "Set ownership of system libraries to root"
-      file:
-        path: "{{item}}"
-        owner: "root"
-      with_items: "{{ libraries_not_owned_by_root.stdout_lines }}"
-      when: libraries_not_owned_by_root | length > 0
-      tags:
-        - file_ownership_library_dirs
-        - medium_severity
-        - restrict_strategy
-        - medium_complexity
-        - medium_disruption
-        - CCE-27424-1
-        - NIST-800-53-AC-6
-        - DISA-STIG-RHEL-06-000046
-    
-    
-    - name: "Read list of world and group writable system executables"
-      shell: "find /bin /usr/bin /usr/local/bin /sbin /usr/sbin /usr/local/sbin /usr/libexec -perm /022 -type f"
-      register: world_writable_library_files
-      changed_when: False
-      failed_when: False
-      check_mode: no
-      tags:
-        - file_permissions_binary_dirs
-        - medium_severity
-        - restrict_strategy
-        - medium_complexity
-        - medium_disruption
-        - CCE-27289-8
-        - NIST-800-53-AC-6
-        - DISA-STIG-RHEL-06-000047
-    
-    - name: "Remove world/group writability of system executables"
-      file:
-        path: "{{item}}"
-        mode: "go-w"
-      with_items: "{{ world_writable_library_files.stdout_lines }}"
-      when: world_writable_library_files.stdout_lines | length > 0
-      tags:
-        - file_permissions_binary_dirs
-        - medium_severity
-        - restrict_strategy
-        - medium_complexity
-        - medium_disruption
-        - CCE-27289-8
-        - NIST-800-53-AC-6
-        - DISA-STIG-RHEL-06-000047
-    
-    
-    - name: "Read list of system executables without root ownership"
-      shell: "find /bin/ /usr/bin/ /usr/local/bin/ /sbin/ /usr/sbin/ /usr/local/sbin/ /usr/libexec \\! -user root"
-      register: no_root_system_executables
-      changed_when: False
-      failed_when: False
-      check_mode: no
-      tags:
-        - file_ownership_binary_dirs
-        - medium_severity
-        - restrict_strategy
-        - medium_complexity
-        - medium_disruption
-        - CCE-27623-8
-        - NIST-800-53-AC-6
-        - DISA-STIG-RHEL-06-000048
-    
-    - name: "Set ownership to root of system executables"
-      file:
-        path: "{{item}}"
-        owner: "root"
-      with_items: "{{ no_root_system_executables.stdout_lines }}"
-      when: no_root_system_executables.stdout_lines | length > 0
-      tags:
-        - file_ownership_binary_dirs
-        - medium_severity
-        - restrict_strategy
-        - medium_complexity
-        - medium_disruption
-        - CCE-27623-8
-        - NIST-800-53-AC-6
-        - DISA-STIG-RHEL-06-000048
-    
-    
-    - name: Ensure sysctl kernel.exec-shield is set to 1
-      sysctl:
-        name: kernel.exec-shield
-        value: 1
-        state: present
-        reload: yes
-      tags:
-        - sysctl_kernel_exec_shield
+        - kernel_module_dccp_disabled
         - medium_severity
         - disable_strategy
         - low_complexity
         - medium_disruption
-        - CCE-27007-4
-        - NIST-800-53-SC-39
-        - DISA-STIG-RHEL-06-000079
+        - CCE-26448-1
+        - NIST-800-53-CM-7
+        - DISA-STIG-RHEL-06-000124
     
-    
-    - name: Ensure sysctl kernel.randomize_va_space is set to 2
-      sysctl:
-        name: kernel.randomize_va_space
-        value: 2
-        state: present
-        reload: yes
+    - name: Ensure kernel module 'rds' is disabled
+      lineinfile:
+        create=yes
+        dest="/etc/modprobe.d/{{item}}.conf"
+        regexp="{{item}}"
+        line="install {{item}} /bin/true"
+      with_items:
+        - rds
       tags:
-        - sysctl_kernel_randomize_va_space
+        - kernel_module_rds_disabled
+        - unknown_severity
+        - disable_strategy
+        - low_complexity
+        - medium_disruption
+        - CCE-26239-4
+        - NIST-800-53-CM-7
+        - DISA-STIG-RHEL-06-000126
+    
+    - name: Ensure kernel module 'sctp' is disabled
+      lineinfile:
+        create=yes
+        dest="/etc/modprobe.d/{{item}}.conf"
+        regexp="{{item}}"
+        line="install {{item}} /bin/true"
+      with_items:
+        - sctp
+      tags:
+        - kernel_module_sctp_disabled
         - medium_severity
         - disable_strategy
         - low_complexity
         - medium_disruption
-        - CCE-26999-3
-        - NIST-800-53-SC-30(2)
-        - DISA-STIG-RHEL-06-000078
+        - CCE-26410-1
+        - NIST-800-53-CM-7
+        - DISA-STIG-RHEL-06-000125
     
+    - name: Ensure kernel module 'tipc' is disabled
+      lineinfile:
+        create=yes
+        dest="/etc/modprobe.d/{{item}}.conf"
+        regexp="{{item}}"
+        line="install {{item}} /bin/true"
+      with_items:
+        - tipc
+      tags:
+        - kernel_module_tipc_disabled
+        - medium_severity
+        - disable_strategy
+        - low_complexity
+        - medium_disruption
+        - CCE-26696-5
+        - NIST-800-53-CM-7
+        - DISA-STIG-RHEL-06-000127
+    
+    
+    
+    - name: "Configure SELinux Policy"
+      lineinfile:
+        path: /etc/sysconfig/selinux
+        regexp: '^SELINUXTYPE='
+        line: "SELINUXTYPE={{ var_selinux_policy_name }}"
+        create: yes
+      tags:
+        - selinux_policytype
+        - unknown_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26875-5
+        - NIST-800-53-AC-3
+        - NIST-800-53-AC-3(3)
+        - NIST-800-53-AC-4
+        - NIST-800-53-AC-6
+        - NIST-800-53-AU-9
+        - DISA-STIG-RHEL-06-000023
     
     - name: Ensure SELinux Not Disabled in /etc/default/grub
       replace:
@@ -790,25 +862,81 @@
     
     
     
-    - name: "Configure SELinux Policy"
+    - name: "Set Password Minimum Length in login.defs"
       lineinfile:
-        path: /etc/sysconfig/selinux
-        regexp: '^SELINUXTYPE='
-        line: "SELINUXTYPE={{ var_selinux_policy_name }}"
-        create: yes
+        dest: /etc/login.defs
+        regexp: "^PASS_MIN_LEN *[0-9]*"
+        state: present
+        line: "PASS_MIN_LEN        {{ var_accounts_password_minlen_login_defs }}"
       tags:
-        - selinux_policytype
-        - low_severity
+        - accounts_password_minlen_login_defs
+        - medium_severity
         - restrict_strategy
         - low_complexity
         - low_disruption
-        - CCE-26875-5
-        - NIST-800-53-AC-3
-        - NIST-800-53-AC-3(3)
-        - NIST-800-53-AC-4
-        - NIST-800-53-AC-6
-        - NIST-800-53-AU-9
-        - DISA-STIG-RHEL-06-000023
+        - CCE-27002-5
+        - NIST-800-53-IA-5(f)
+        - NIST-800-53-IA-5(1)(a)
+        - DISA-STIG-RHEL-06-000050
+    
+    
+    
+    - name: "Set Password Warning Age"
+      lineinfile:
+        dest: /etc/login.defs
+        regexp: "^PASS_WARN_AGE *[0-9]*"
+        state: present
+        line: "PASS_WARN_AGE        {{ var_accounts_password_warn_age_login_defs }}"
+      tags:
+        - accounts_password_warn_age_login_defs
+        - unknown_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26988-6
+        - NIST-800-53-AC-2(2)
+        - NIST-800-53-IA-5(f)
+        - DISA-STIG-RHEL-06-000054
+    
+    
+    
+    - name: Set Password Maximum Age
+      lineinfile:
+        create: yes
+        dest: /etc/login.defs
+        regexp: ^#?PASS_MAX_DAYS
+        line: "PASS_MAX_DAYS {{ var_accounts_maximum_age_login_defs }}"
+      tags:
+        - accounts_maximum_age_login_defs
+        - medium_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26985-2
+        - NIST-800-53-IA-5(f)
+        - NIST-800-53-IA-5(g)
+        - NIST-800-53-IA-5(1)(d)
+        - PCI-DSS-Req-8.2.4
+        - DISA-STIG-RHEL-06-000053
+    
+    
+    
+    - name: Set Password Minimum Age
+      lineinfile:
+          create: yes
+          dest: /etc/login.defs
+          regexp: ^#?PASS_MIN_DAYS
+          line: "PASS_MIN_DAYS {{ var_accounts_minimum_age_login_defs }}"
+      tags:
+        - accounts_minimum_age_login_defs
+        - medium_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27013-2
+        - NIST-800-53-IA-5(f)
+        - NIST-800-53-IA-5(1)(d)
+        - DISA-STIG-RHEL-06-000051
     
     - name: "Prevent Log In to Accounts With Empty Password - system-auth"
       replace:
@@ -846,116 +974,84 @@
         - PCI-DSS-Req-8.2.3
         - DISA-STIG-RHEL-06-000030
     
-    
-    
-    
-    - name: "Set Password Minimum Length in login.defs"
+    - name: Set Password Hashing Algorithm in /etc/login.defs
       lineinfile:
-        dest: /etc/login.defs
-        regexp: "^PASS_MIN_LEN *[0-9]*"
-        state: present
-        line: "PASS_MIN_LEN        {{ var_accounts_password_minlen_login_defs }}"
-      tags:
-        - accounts_password_minlen_login_defs
-        - medium_severity
-        - restrict_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27002-5
-        - NIST-800-53-IA-5(f)
-        - NIST-800-53-IA-5(1)(a)
-        - DISA-STIG-RHEL-06-000050
-    
-    
-    
-    - name: Set Password Minimum Age
-      lineinfile:
-          create: yes
           dest: /etc/login.defs
-          regexp: ^#?PASS_MIN_DAYS
-          line: "PASS_MIN_DAYS {{ var_accounts_minimum_age_login_defs }}"
+          regexp: ^#?ENCRYPT_METHOD
+          line: ENCRYPT_METHOD SHA512
+          state: present
       tags:
-        - accounts_minimum_age_login_defs
+        - set_password_hashing_algorithm_logindefs
         - medium_severity
         - restrict_strategy
         - low_complexity
         - low_disruption
-        - CCE-27013-2
-        - NIST-800-53-IA-5(f)
-        - NIST-800-53-IA-5(1)(d)
-        - DISA-STIG-RHEL-06-000051
+        - CCE-27228-6
+        - NIST-800-53-IA-5(b)
+        - NIST-800-53-IA-5(c)
+        - NIST-800-53-IA-5(1)(c)
+        - NIST-800-53-IA-7
+        - PCI-DSS-Req-8.2.1
+        - DISA-STIG-RHEL-06-000063
     
-    
-    
-    - name: Set Password Maximum Age
+    - name: Set Password Hashing Algorithm in /etc/libuser.conf
       lineinfile:
-        create: yes
-        dest: /etc/login.defs
-        regexp: ^#?PASS_MAX_DAYS
-        line: "PASS_MAX_DAYS {{ var_accounts_maximum_age_login_defs }}"
-      tags:
-        - accounts_maximum_age_login_defs
-        - medium_severity
-        - restrict_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26985-2
-        - NIST-800-53-IA-5(f)
-        - NIST-800-53-IA-5(g)
-        - NIST-800-53-IA-5(1)(d)
-        - PCI-DSS-Req-8.2.4
-        - DISA-STIG-RHEL-06-000053
-    
-    
-    
-    - name: "Set Password Warning Age"
-      lineinfile:
-        dest: /etc/login.defs
-        regexp: "^PASS_WARN_AGE *[0-9]*"
+        dest: /etc/libuser.conf
+        insertafter: "^.default]"
+        regexp: ^#?crypt_style
+        line: crypt_style = sha512
         state: present
-        line: "PASS_WARN_AGE        {{ var_accounts_password_warn_age_login_defs }}"
       tags:
-        - accounts_password_warn_age_login_defs
-        - low_severity
+        - set_password_hashing_algorithm_libuserconf
+        - medium_severity
         - restrict_strategy
         - low_complexity
         - low_disruption
-        - CCE-26988-6
-        - NIST-800-53-AC-2(2)
+        - CCE-27229-4
+        - NIST-800-53-IA-5(b)
+        - NIST-800-53-IA-5(c)
+        - NIST-800-53-IA-5(1)(c)
+        - NIST-800-53-IA-7
+        - PCI-DSS-Req-8.2.1
+        - DISA-STIG-RHEL-06-000064
+    
+    
+    
+    - name: "Do not allow users to reuse recent passwords - system-auth (change)"
+      replace:
+        dest: /etc/pam.d/system-auth
+        follow: yes
+        regexp: '^(password\s+sufficient\s+pam_unix\.so\s.*remember\s*=\s*)(\S+)(.*)$'
+        replace: '\g<1>{{ var_password_pam_unix_remember }}\g<3>'
+      tags:
+        - accounts_password_pam_unix_remember
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - medium_disruption
+        - CCE-26741-9
         - NIST-800-53-IA-5(f)
-        - DISA-STIG-RHEL-06-000054
+        - NIST-800-53-IA-5(1)(e)
+        - PCI-DSS-Req-8.2.5
+        - DISA-STIG-RHEL-06-000274
     
-    
-    
-    - name: "Set Password Retry Prompts Permitted Per-Session - system-auth (change)"
+    - name: "Do not allow users to reuse recent passwords - system-auth (add)"
       replace:
         dest: /etc/pam.d/system-auth
         follow: yes
-        regexp: '(^.*\spam_pwquality.so\s.*retry\s*=\s*)(\S+)(.*$)'
-        replace: '\g<1>{{ var_password_pam_retry }}\g<3>'
+        regexp: '^password\s+sufficient\s+pam_unix\.so\s(?!.*remember\s*=\s*).*$'
+        replace: '\g<0> remember={{ var_password_pam_unix_remember }}'
       tags:
-        - accounts_password_pam_retry
-        - low_severity
+        - accounts_password_pam_unix_remember
+        - medium_severity
         - configure_strategy
         - low_complexity
         - medium_disruption
-        - CCE-27123-9
-        - NIST-800-53-IA-5(c)
-    
-    - name: "Set Password Retry Prompts Permitted Per-Session - system-auth (add)"
-      replace:
-        dest: /etc/pam.d/system-auth
-        follow: yes
-        regexp: '^.*\spam_pwquality.so\s(?!.*retry\s*=\s*).*$'
-        replace: '\g<0> retry={{ var_password_pam_retry }}'
-      tags:
-        - accounts_password_pam_retry
-        - low_severity
-        - configure_strategy
-        - low_complexity
-        - medium_disruption
-        - CCE-27123-9
-        - NIST-800-53-IA-5(c)
+        - CCE-26741-9
+        - NIST-800-53-IA-5(f)
+        - NIST-800-53-IA-5(1)(e)
+        - PCI-DSS-Req-8.2.5
+        - DISA-STIG-RHEL-06-000274
     
     
     - name: XCCDF Value var_accounts_passwords_pam_faillock_unlock_time # promote to variable
@@ -964,7 +1060,7 @@
       
     - name: XCCDF Value var_accounts_passwords_pam_faillock_fail_interval # promote to variable
       set_fact:
-        var_accounts_passwords_pam_faillock_fail_interval: 900
+        var_accounts_passwords_pam_faillock_fail_interval: 100000000
       tags:
         - always
     
@@ -974,7 +1070,7 @@
         type: auth
         control: sufficient
         module_path: pam_unix.so
-        new_type: a
+        new_t
     
     - name: set auth pam_faillock before pam_unix.so
       pamd:
@@ -1051,200 +1147,514 @@
     
     
     
-    - name: "Do not allow users to reuse recent passwords - system-auth (change)"
+    - name: "Set Password Retry Prompts Permitted Per-Session - system-auth (change)"
       replace:
         dest: /etc/pam.d/system-auth
         follow: yes
-        regexp: '^(password\s+sufficient\s+pam_unix\.so\s.*remember\s*=\s*)(\S+)(.*)$'
-        replace: '\g<1>{{ var_password_pam_unix_remember }}\g<3>'
+        regexp: '(^.*\spam_pwquality.so\s.*retry\s*=\s*)(\S+)(.*$)'
+        replace: '\g<1>{{ var_password_pam_retry }}\g<3>'
       tags:
-        - accounts_password_pam_unix_remember
-        - medium_severity
+        - accounts_password_pam_retry
+        - unknown_severity
         - configure_strategy
         - low_complexity
         - medium_disruption
-        - CCE-26741-9
-        - NIST-800-53-IA-5(f)
-        - NIST-800-53-IA-5(1)(e)
-        - PCI-DSS-Req-8.2.5
-        - DISA-STIG-RHEL-06-000274
+        - CCE-27123-9
+        - NIST-800-53-IA-5(c)
     
-    - name: "Do not allow users to reuse recent passwords - system-auth (add)"
+    - name: "Set Password Retry Prompts Permitted Per-Session - system-auth (add)"
       replace:
         dest: /etc/pam.d/system-auth
         follow: yes
-        regexp: '^password\s+sufficient\s+pam_unix\.so\s(?!.*remember\s*=\s*).*$'
-        replace: '\g<0> remember={{ var_password_pam_unix_remember }}'
+        regexp: '^.*\spam_pwquality.so\s(?!.*retry\s*=\s*).*$'
+        replace: '\g<0> retry={{ var_password_pam_retry }}'
       tags:
-        - accounts_password_pam_unix_remember
-        - medium_severity
+        - accounts_password_pam_retry
+        - unknown_severity
         - configure_strategy
         - low_complexity
         - medium_disruption
-        - CCE-26741-9
-        - NIST-800-53-IA-5(f)
-        - NIST-800-53-IA-5(1)(e)
-        - PCI-DSS-Req-8.2.5
-        - DISA-STIG-RHEL-06-000274
+        - CCE-27123-9
+        - NIST-800-53-IA-5(c)
     
-    - name: Set Password Hashing Algorithm in /etc/login.defs
-      lineinfile:
-          dest: /etc/login.defs
-          regexp: ^#?ENCRYPT_METHOD
-          line: ENCRYPT_METHOD SHA512
-          state: present
+    - name: Ensure permission 0000 on /etc/shadow
+      file:
+        path="{{item}}"
+        mode=0000
+      with_items:
+        - /etc/shadow
       tags:
-        - set_password_hashing_algorithm_logindefs
+        - file_permissions_etc_shadow
         - medium_severity
-        - restrict_strategy
+        - configure_strategy
         - low_complexity
         - low_disruption
-        - CCE-27228-6
-        - NIST-800-53-IA-5(b)
-        - NIST-800-53-IA-5(c)
-        - NIST-800-53-IA-5(1)(c)
-        - NIST-800-53-IA-7
-        - PCI-DSS-Req-8.2.1
-        - DISA-STIG-RHEL-06-000063
+        - CCE-26992-8
+        - NIST-800-53-AC-6
+        - PCI-DSS-Req-8.7.c
+        - DISA-STIG-RHEL-06-000035
     
-    - name: Set Password Hashing Algorithm in /etc/libuser.conf
-      lineinfile:
-        dest: /etc/libuser.conf
-        insertafter: "^.default]"
-        regexp: ^#?crypt_style
-        line: crypt_style = sha512
+    
+    - name: Find /etc/group file(s)
+      find:
+        paths: "{{ '/etc/group' | dirname }}"
+        patterns: "{{ '/etc/group' | basename }}"
+      register: files_found
+      tags:
+        - file_owner_etc_group
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26822-7
+        - NIST-800-53-AC-6
+        - PCI-DSS-Req-8.7.c
+        - DISA-STIG-RHEL-06-000042
+    
+    - name: Set user ownership to root
+      file:
+        path: "{{ item.path }}"
+        owner: root
+      with_items:
+        - "{{ files_found.files }}"
+      tags:
+        - file_owner_etc_group
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26822-7
+        - NIST-800-53-AC-6
+        - PCI-DSS-Req-8.7.c
+        - DISA-STIG-RHEL-06-000042
+    
+    
+    - name: Find /etc/group file(s)
+      find:
+        paths: "{{ '/etc/group' | dirname }}"
+        patterns: "{{ '/etc/group' | basename }}"
+      register: files_found
+      tags:
+        - file_permissions_etc_group
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26954-8
+        - NIST-800-53-AC-6
+        - PCI-DSS-Req-8.7.c
+        - DISA-STIG-RHEL-06-000044
+    
+    - name: Set permissions
+      file:
+        path: "{{ item.path }}"
+        mode: 0644
+      with_items:
+        - "{{ files_found.files }}"
+      tags:
+        - file_permissions_etc_group
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26954-8
+        - NIST-800-53-AC-6
+        - PCI-DSS-Req-8.7.c
+        - DISA-STIG-RHEL-06-000044
+    
+    
+    - name: Find /etc/passwd file(s)
+      find:
+        paths: "{{ '/etc/passwd' | dirname }}"
+        patterns: "{{ '/etc/passwd' | basename }}"
+      register: files_found
+      tags:
+        - file_owner_etc_passwd
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26953-0
+        - NIST-800-53-AC-6
+        - PCI-DSS-Req-8.7.c
+        - DISA-STIG-RHEL-06-000039
+    
+    - name: Set user ownership to root
+      file:
+        path: "{{ item.path }}"
+        owner: root
+      with_items:
+        - "{{ files_found.files }}"
+      tags:
+        - file_owner_etc_passwd
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26953-0
+        - NIST-800-53-AC-6
+        - PCI-DSS-Req-8.7.c
+        - DISA-STIG-RHEL-06-000039
+    
+    
+    - name: Find /etc/gshadow file(s)
+      find:
+        paths: "{{ '/etc/gshadow' | dirname }}"
+        patterns: "{{ '/etc/gshadow' | basename }}"
+      register: files_found
+      tags:
+        - file_groupowner_etc_gshadow
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26975-3
+        - NIST-800-53-AC-6
+        - DISA-STIG-RHEL-06-000037
+    
+    - name: Set group ownership to root
+      file:
+        path: "{{ item.path }}"
+        group: root
+      with_items:
+        - "{{ files_found.files }}"
+      tags:
+        - file_groupowner_etc_gshadow
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26975-3
+        - NIST-800-53-AC-6
+        - DISA-STIG-RHEL-06-000037
+    
+    
+    - name: Find /etc/passwd file(s)
+      find:
+        paths: "{{ '/etc/passwd' | dirname }}"
+        patterns: "{{ '/etc/passwd' | basename }}"
+      register: files_found
+      tags:
+        - file_groupowner_etc_passwd
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26856-5
+        - NIST-800-53-AC-6
+        - PCI-DSS-Req-8.7.c
+        - DISA-STIG-RHEL-06-000040
+    
+    - name: Set group ownership to root
+      file:
+        path: "{{ item.path }}"
+        group: root
+      with_items:
+        - "{{ files_found.files }}"
+      tags:
+        - file_groupowner_etc_passwd
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26856-5
+        - NIST-800-53-AC-6
+        - PCI-DSS-Req-8.7.c
+        - DISA-STIG-RHEL-06-000040
+    
+    
+    - name: Find /etc/gshadow file(s)
+      find:
+        paths: "{{ '/etc/gshadow' | dirname }}"
+        patterns: "{{ '/etc/gshadow' | basename }}"
+      register: files_found
+      tags:
+        - file_owner_etc_gshadow
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27026-4
+        - NIST-800-53-AC-6
+        - DISA-STIG-RHEL-06-000036
+    
+    - name: Set user ownership to root
+      file:
+        path: "{{ item.path }}"
+        owner: root
+      with_items:
+        - "{{ files_found.files }}"
+      tags:
+        - file_owner_etc_gshadow
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27026-4
+        - NIST-800-53-AC-6
+        - DISA-STIG-RHEL-06-000036
+    
+    
+    - name: Find /etc/group file(s)
+      find:
+        paths: "{{ '/etc/group' | dirname }}"
+        patterns: "{{ '/etc/group' | basename }}"
+      register: files_found
+      tags:
+        - file_groupowner_etc_group
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26930-8
+        - NIST-800-53-AC-6
+        - PCI-DSS-Req-8.7.c
+        - DISA-STIG-RHEL-06-000043
+    
+    - name: Set group ownership to root
+      file:
+        path: "{{ item.path }}"
+        group: root
+      with_items:
+        - "{{ files_found.files }}"
+      tags:
+        - file_groupowner_etc_group
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26930-8
+        - NIST-800-53-AC-6
+        - PCI-DSS-Req-8.7.c
+        - DISA-STIG-RHEL-06-000043
+    
+    
+    - name: Find /etc/gshadow file(s)
+      find:
+        paths: "{{ '/etc/gshadow' | dirname }}"
+        patterns: "{{ '/etc/gshadow' | basename }}"
+      register: files_found
+      tags:
+        - file_permissions_etc_gshadow
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26951-4
+        - NIST-800-53-AC-6
+        - DISA-STIG-RHEL-06-000038
+    
+    - name: Set permissions
+      file:
+        path: "{{ item.path }}"
+        mode: 0000
+      with_items:
+        - "{{ files_found.files }}"
+      tags:
+        - file_permissions_etc_gshadow
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26951-4
+        - NIST-800-53-AC-6
+        - DISA-STIG-RHEL-06-000038
+    
+    
+    - name: Find /etc/passwd file(s)
+      find:
+        paths: "{{ '/etc/passwd' | dirname }}"
+        patterns: "{{ '/etc/passwd' | basename }}"
+      register: files_found
+      tags:
+        - file_permissions_etc_passwd
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26868-0
+        - NIST-800-53-AC-6
+        - PCI-DSS-Req-8.7.c
+        - DISA-STIG-RHEL-06-000041
+    
+    - name: Set permissions
+      file:
+        path: "{{ item.path }}"
+        mode: 0644
+      with_items:
+        - "{{ files_found.files }}"
+      tags:
+        - file_permissions_etc_passwd
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26868-0
+        - NIST-800-53-AC-6
+        - PCI-DSS-Req-8.7.c
+        - DISA-STIG-RHEL-06-000041
+    
+    - name: "Read list libraries without root ownership"
+      shell: "find -L /usr/lib /usr/lib64 /lib /lib64 \\! -user root"
+      register: libraries_not_owned_by_root
+      changed_when: False
+      failed_when: False
+      check_mode: no
+      tags:
+        - file_ownership_library_dirs
+        - medium_severity
+        - restrict_strategy
+        - medium_complexity
+        - medium_disruption
+        - CCE-27424-1
+        - NIST-800-53-AC-6
+        - DISA-STIG-RHEL-06-000046
+    
+    - name: "Set ownership of system libraries to root"
+      file:
+        path: "{{item}}"
+        owner: "root"
+      with_items: "{{ libraries_not_owned_by_root.stdout_lines }}"
+      when: libraries_not_owned_by_root | length > 0
+      tags:
+        - file_ownership_library_dirs
+        - medium_severity
+        - restrict_strategy
+        - medium_complexity
+        - medium_disruption
+        - CCE-27424-1
+        - NIST-800-53-AC-6
+        - DISA-STIG-RHEL-06-000046
+    
+    - name: "Read list of world and group writable system executables"
+      shell: "find /bin /usr/bin /usr/local/bin /sbin /usr/sbin /usr/local/sbin /usr/libexec -perm /022 -type f"
+      register: world_writable_library_files
+      changed_when: False
+      failed_when: False
+      check_mode: no
+      tags:
+        - file_permissions_binary_dirs
+        - medium_severity
+        - restrict_strategy
+        - medium_complexity
+        - medium_disruption
+        - CCE-27289-8
+        - NIST-800-53-AC-6
+        - DISA-STIG-RHEL-06-000047
+    
+    - name: "Remove world/group writability of system executables"
+      file:
+        path: "{{item}}"
+        mode: "go-w"
+      with_items: "{{ world_writable_library_files.stdout_lines }}"
+      when: world_writable_library_files.stdout_lines | length > 0
+      tags:
+        - file_permissions_binary_dirs
+        - medium_severity
+        - restrict_strategy
+        - medium_complexity
+        - medium_disruption
+        - CCE-27289-8
+        - NIST-800-53-AC-6
+        - DISA-STIG-RHEL-06-000047
+    
+    - name: "Read list of system executables without root ownership"
+      shell: "find /bin/ /usr/bin/ /usr/local/bin/ /sbin/ /usr/sbin/ /usr/local/sbin/ /usr/libexec \\! -user root"
+      register: no_root_system_executables
+      changed_when: False
+      failed_when: False
+      check_mode: no
+      tags:
+        - file_ownership_binary_dirs
+        - medium_severity
+        - restrict_strategy
+        - medium_complexity
+        - medium_disruption
+        - CCE-27623-8
+        - NIST-800-53-AC-6
+        - DISA-STIG-RHEL-06-000048
+    
+    - name: "Set ownership to root of system executables"
+      file:
+        path: "{{item}}"
+        owner: "root"
+      with_items: "{{ no_root_system_executables.stdout_lines }}"
+      when: no_root_system_executables.stdout_lines | length > 0
+      tags:
+        - file_ownership_binary_dirs
+        - medium_severity
+        - restrict_strategy
+        - medium_complexity
+        - medium_disruption
+        - CCE-27623-8
+        - NIST-800-53-AC-6
+        - DISA-STIG-RHEL-06-000048
+    
+    - name: "Read list of world and group writable files in libraries directories"
+      shell: "find /lib /lib64 /usr/lib /usr/lib64 -perm /022 -type f"
+      register: world_writable_library_files
+      changed_when: False
+      failed_when: False
+      check_mode: no
+      tags:
+        - file_permissions_library_dirs
+        - medium_severity
+        - restrict_strategy
+        - high_complexity
+        - medium_disruption
+        - CCE-27381-3
+        - NIST-800-53-AC-6
+        - DISA-STIG-RHEL-06-000045
+    
+    - name: "Disable world/group writability to library files"
+      file:
+        path: "{{item}}"
+        mode: "go-w"
+      with_items: "{{ world_writable_library_files.stdout_lines }}"
+      when: world_writable_library_files.stdout_lines | length > 0
+      tags:
+        - file_permissions_library_dirs
+        - medium_severity
+        - restrict_strategy
+        - high_complexity
+        - medium_disruption
+        - CCE-27381-3
+        - NIST-800-53-AC-6
+        - DISA-STIG-RHEL-06-000045
+    
+    - name: Ensure sysctl kernel.exec-shield is set to 1
+      sysctl:
+        name: kernel.exec-shield
+        value: 1
         state: present
+        reload: yes
       tags:
-        - set_password_hashing_algorithm_libuserconf
-        - medium_severity
-        - restrict_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27229-4
-        - NIST-800-53-IA-5(b)
-        - NIST-800-53-IA-5(c)
-        - NIST-800-53-IA-5(1)(c)
-        - NIST-800-53-IA-7
-        - PCI-DSS-Req-8.2.1
-        - DISA-STIG-RHEL-06-000064
-    
-    - name: Enable service ip6tables
-      service:
-        name="{{item}}"
-        enabled="yes"
-        state="started"
-      with_items:
-        - ip6tables
-      tags:
-        - service_ip6tables_enabled
-        - medium_severity
-        - enable_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27006-6
-        - NIST-800-53-AC-4
-        - NIST-800-53-CA-3(c)
-        - NIST-800-53-CM-7
-        - DISA-STIG-RHEL-06-000103
-    
-    
-    - name: Enable service iptables
-      service:
-        name="{{item}}"
-        enabled="yes"
-        state="started"
-      with_items:
-        - iptables
-      tags:
-        - service_iptables_enabled
-        - medium_severity
-        - enable_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27018-1
-        - NIST-800-53-AC-4
-        - NIST-800-53-CA-3(c)
-        - NIST-800-53-CM-7
-        - DISA-STIG-RHEL-06-000117
-    
-    
-    - name: Ensure kernel module 'dccp' is disabled
-      lineinfile:
-        create=yes
-        dest="/etc/modprobe.d/{{item}}.conf"
-        regexp="{{item}}"
-        line="install {{item}} /bin/true"
-      with_items:
-        - dccp
-      tags:
-        - kernel_module_dccp_disabled
+        - sysctl_kernel_exec_shield
         - medium_severity
         - disable_strategy
         - low_complexity
         - medium_disruption
-        - CCE-26448-1
-        - NIST-800-53-CM-7
-        - DISA-STIG-RHEL-06-000124
+        - CCE-27007-4
+        - NIST-800-53-SC-39
+        - DISA-STIG-RHEL-06-000079
     
-    
-    - name: Ensure kernel module 'sctp' is disabled
-      lineinfile:
-        create=yes
-        dest="/etc/modprobe.d/{{item}}.conf"
-        regexp="{{item}}"
-        line="install {{item}} /bin/true"
-      with_items:
-        - sctp
+    - name: Ensure sysctl kernel.randomize_va_space is set to 2
+      sysctl:
+        name: kernel.randomize_va_space
+        value: 2
+        state: present
+        reload: yes
       tags:
-        - kernel_module_sctp_disabled
+        - sysctl_kernel_randomize_va_space
         - medium_severity
         - disable_strategy
         - low_complexity
         - medium_disruption
-        - CCE-26410-1
-        - NIST-800-53-CM-7
-        - DISA-STIG-RHEL-06-000125
+        - CCE-26999-3
+        - NIST-800-53-SC-30(2)
+        - DISA-STIG-RHEL-06-000078
     
-    
-    - name: Ensure kernel module 'rds' is disabled
-      lineinfile:
-        create=yes
-        dest="/etc/modprobe.d/{{item}}.conf"
-        regexp="{{item}}"
-        line="install {{item}} /bin/true"
-      with_items:
-        - rds
-      tags:
-        - kernel_module_rds_disabled
-        - low_severity
-        - disable_strategy
-        - low_complexity
-        - medium_disruption
-        - CCE-26239-4
-        - NIST-800-53-CM-7
-        - DISA-STIG-RHEL-06-000126
-    
-    
-    - name: Ensure kernel module 'tipc' is disabled
-      lineinfile:
-        create=yes
-        dest="/etc/modprobe.d/{{item}}.conf"
-        regexp="{{item}}"
-        line="install {{item}} /bin/true"
-      with_items:
-        - tipc
-      tags:
-        - kernel_module_tipc_disabled
-        - medium_severity
-        - disable_strategy
-        - low_complexity
-        - medium_disruption
-        - CCE-26696-5
-        - NIST-800-53-CM-7
-        - DISA-STIG-RHEL-06-000127
-    
-    
-    - name: Disable service xinetd
+    - name: Disable service autofs
       service:
         name="{{item}}"
         enabled="no"
@@ -1252,457 +1662,16 @@
       register: service_result
       failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
       with_items:
-        - xinetd
+        - autofs
       tags:
-        - service_xinetd_disabled
-        - medium_severity
-        - disable_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27046-2
-        - NIST-800-53-CM-7
-        - DISA-STIG-RHEL-06-000203
-    
-    - name: Ensure xinetd is removed
-      package:
-        name="{{item}}"
-        state=absent
-      with_items:
-        - xinetd
-      tags:
-        - package_xinetd_removed
+        - service_autofs_disabled
         - low_severity
         - disable_strategy
         - low_complexity
         - low_disruption
-        - CCE-27005-8
-        - NIST-800-53-CM-7
-        - DISA-STIG-RHEL-06-000204
-    
-    
-    - name: Ensure telnet-server is removed
-      package:
-        name="{{item}}"
-        state=absent
-      with_items:
-        - telnet-server
-      tags:
-        - package_telnet-server_removed
-        - high_severity
-        - disable_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27073-6
-        - NIST-800-53-CM-7
-        - DISA-STIG-RHEL-06-000206
-    
-    
-    - name: Ensure rsh-server is removed
-      package:
-        name="{{item}}"
-        state=absent
-      with_items:
-        - rsh-server
-      tags:
-        - package_rsh-server_removed
-        - high_severity
-        - disable_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27062-9
-        - NIST-800-53-CM-7
-        - DISA-STIG-RHEL-06-000213
-    
-    
-    - name: Ensure ypserv is removed
-      package:
-        name="{{item}}"
-        state=absent
-      with_items:
-        - ypserv
-      tags:
-        - package_ypserv_removed
-        - medium_severity
-        - disable_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27079-3
-        - NIST-800-53-CM-7
-        - DISA-STIG-RHEL-06-000220
-    
-    
-    - name: Disable service ypbind
-      service:
-        name="{{item}}"
-        enabled="no"
-        state="stopped"
-      register: service_result
-      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
-      with_items:
-        - ypbind
-      tags:
-        - service_ypbind_disabled
-        - medium_severity
-        - disable_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26894-6
-        - NIST-800-53-CM-7
-        - DISA-STIG-RHEL-06-000221
-    
-    - name: Disable service tftp
-      service:
-        name="{{item}}"
-        enabled="no"
-        state="stopped"
-      register: service_result
-      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
-      with_items:
-        - tftp
-      tags:
-        - service_tftp_disabled
-        - medium_severity
-        - disable_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27055-3
-        - NIST-800-53-CM-7
-        - DISA-STIG-RHEL-06-000223
-    
-    - name: Ensure tftp-server is removed
-      package:
-        name="{{item}}"
-        state=absent
-      with_items:
-        - tftp-server
-      tags:
-        - package_tftp-server_removed
-        - medium_severity
-        - disable_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26946-4
-        - NIST-800-53-CM-7
-        - DISA-STIG-RHEL-06-000222
-    
-    
-    - name: Disable service abrtd
-      service:
-        name="{{item}}"
-        enabled="no"
-        state="stopped"
-      register: service_result
-      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
-      with_items:
-        - abrtd
-      tags:
-        - service_abrtd_disabled
-        - low_severity
-        - disable_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27247-6
-        - NIST-800-53-CM-7
-        - DISA-STIG-RHEL-06-000261
-    
-    - name: Disable service ntpdate
-      service:
-        name="{{item}}"
-        enabled="no"
-        state="stopped"
-      register: service_result
-      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
-      with_items:
-        - ntpdate
-      tags:
-        - service_ntpdate_disabled
-        - low_severity
-        - disable_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27256-7
-        - NIST-800-53-CM-7
-        - DISA-STIG-RHEL-06-000265
-    
-    - name: Disable service oddjobd
-      service:
-        name="{{item}}"
-        enabled="no"
-        state="stopped"
-      register: service_result
-      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
-      with_items:
-        - oddjobd
-      tags:
-        - service_oddjobd_disabled
-        - low_severity
-        - disable_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27257-5
-        - NIST-800-53-CM-7
-        - DISA-STIG-RHEL-06-000266
-    
-    - name: Disable service qpidd
-      service:
-        name="{{item}}"
-        enabled="no"
-        state="stopped"
-      register: service_result
-      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
-      with_items:
-        - qpidd
-      tags:
-        - service_qpidd_disabled
-        - low_severity
-        - disable_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26928-2
-        - NIST-800-53-CM-7
-        - DISA-STIG-RHEL-06-000267
-    
-    - name: Disable service rdisc
-      service:
-        name="{{item}}"
-        enabled="no"
-        state="stopped"
-      register: service_result
-      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
-      with_items:
-        - rdisc
-      tags:
-        - service_rdisc_disabled
-        - low_severity
-        - disable_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27261-7
-        - NIST-800-53-AC-4
-        - NIST-800-53-CM-7
-        - DISA-STIG-RHEL-06-000268
-    
-    - name: Disable service atd
-      service:
-        name="{{item}}"
-        enabled="no"
-        state="stopped"
-      register: service_result
-      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
-      with_items:
-        - atd
-      tags:
-        - service_atd_disabled
-        - low_severity
-        - disable_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27249-2
-        - NIST-800-53-CM-7
-        - DISA-STIG-RHEL-06-000262
-    
-    
-    - name: "Allow Only SSH Protocol 2"
-      lineinfile:
-        dest: /etc/ssh/sshd_config
-        regexp: "^Protocol [0-9]"
-        line: "Protocol 2"
-        validate: sshd -t -f %s
-      #notify: :reload ssh
-      tags:
-        - sshd_allow_only_protocol2
-        - high_severity
-        - restrict_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27072-8
-        - NIST-800-53-AC-3(10)
-        - NIST-800-53-IA-5(1)(c)
-        - DISA-STIG-RHEL-06-000227
-    
-    
-    
-    - name: Set SSH Idle Timeout Interval
-      lineinfile:
-        create: yes
-        dest: /etc/ssh/sshd_config
-        regexp: ^ClientAliveInterval
-        line: "ClientAliveInterval {{ sshd_idle_timeout_value }}"
-        validate: sshd -t -f %s
-      #notify: restart sshd
-      tags:
-        - sshd_set_idle_timeout
-        - low_severity
-        - restrict_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26919-1
-        - NIST-800-53-AC-2(5)
-        - NIST-800-53-SA-8
-        - PCI-DSS-Req-8.1.8
-        - DISA-STIG-RHEL-06-000230
-    
-    - name: Set SSH Client Alive Count
-      lineinfile:
-        create: yes
-        dest: /etc/ssh/sshd_config
-        regexp: ^ClientAliveCountMax
-        line: ClientAliveCountMax 0
-        validate: sshd -t -f %s
-      #notify: restart sshd
-      tags:
-        - sshd_set_keepalive
-        - low_severity
-        - restrict_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26282-4
-        - NIST-800-53-AC-2(5)
-        - NIST-800-53-SA-8
-        - DISA-STIG-RHEL-06-000231
-    
-    - name: Disable SSH Support for .rhosts Files
-      lineinfile:
-        create: yes
-        dest: /etc/ssh/sshd_config
-        regexp: ^IgnoreRhosts
-        line: IgnoreRhosts yes
-        validate: sshd -t -f %s
-      tags:
-        - sshd_disable_rhosts
-        - medium_severity
-        - restrict_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27124-7
-        - NIST-800-53-AC-3
-        - DISA-STIG-RHEL-06-000234
-    
-    - name: Disable Host-Based Authentication
-      lineinfile:
-        create: yes
-        dest: /etc/ssh/sshd_config
-        regexp: ^HostbasedAuthentication
-        line: HostbasedAuthentication no
-      tags:
-        - disable_host_auth
-        - medium_severity
-        - restrict_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27091-8
-        - NIST-800-53-AC-3
-        - DISA-STIG-RHEL-06-000236
-    
-    - name: "Disable SSH Root Login"
-      lineinfile:
-        create: yes
-        dest: "/etc/ssh/sshd_config"
-        regexp: "^PermitRootLogin"
-        line: "PermitRootLogin no"
-        insertafter: '(?i)^#?authentication'
-        validate: sshd -t -f %s
-      #notify: restart sshd
-      tags:
-        - sshd_disable_root_login
-        - medium_severity
-        - restrict_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27100-7
-        - NIST-800-53-AC-3
-        - NIST-800-53-AC-6(2)
-        - NIST-800-53-IA-2(1)
-        - DISA-STIG-RHEL-06-000237
-    
-    - name: Disable SSH Access via Empty Passwords
-      lineinfile:
-        create: yes
-        dest: /etc/ssh/sshd_config
-        regexp: ^PermitEmptyPasswords
-        line: PermitEmptyPasswords no
-        validate: sshd -t -f %s
-      tags:
-        - sshd_disable_empty_passwords
-        - high_severity
-        - restrict_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26887-0
-        - NIST-800-53-AC-3
-        - DISA-STIG-RHEL-06-000239
-    
-    - name: Enable SSH Warning Banner
-      lineinfile:
-        create: yes
-        dest: /etc/ssh/sshd_config
-        regexp: ^Banner
-        line: Banner /etc/issue
-        validate: sshd -t -f %s
-      tags:
-        - sshd_enable_warning_banner
-        - medium_severity
-        - restrict_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27112-2
-        - NIST-800-53-AC-8(a)
-        - DISA-STIG-RHEL-06-000240
-    
-    - name: Do Not Allow SSH Environment Options
-      lineinfile:
-        create: yes
-        dest: /etc/ssh/sshd_config
-        regexp: ^PermitUserEnvironment
-        line: PermitUserEnvironment no
-        validate: sshd -t -f %s
-      tags:
-        - sshd_do_not_permit_user_env
-        - low_severity
-        - restrict_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27201-3
-        - DISA-STIG-RHEL-06-000241
-    
-    - name: Use Only Approved Ciphers
-      lineinfile:
-        create: yes
-        dest: /etc/ssh/sshd_config
-        regexp: ^Ciphers
-        line: Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc
-        validate: sshd -t -f %s
-      #notify: restart sshd
-      tags:
-        - sshd_use_approved_ciphers
-        - medium_severity
-        - restrict_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-26555-3
-        - NIST-800-53-AC-3
-        - NIST-800-53-AC-17(2)
-        - NIST-800-53-SI-7
-        - NIST-800-53-IA-5(1)(c)
-        - NIST-800-53-IA-7
-        - DISA-STIG-RHEL-06-000243
-    
-    - name: Disable service avahi-daemon
-      service:
-        name="{{item}}"
-        enabled="no"
-        state="stopped"
-      register: service_result
-      failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
-      with_items:
-        - avahi-daemon
-      tags:
-        - service_avahi-daemon_disabled
-        - low_severity
-        - disable_strategy
-        - low_complexity
-        - low_disruption
-        - CCE-27087-6
-        - NIST-800-53-CM-7
-        - DISA-STIG-RHEL-06-000246
+        - CCE-26976-1
+        - NIST-800-53-AC-19(a)
+        - NIST-800-53-AC-19(d)
+        - NIST-800-53-AC-19(e)
+        - DISA-STIG-RHEL-06-000526
     
