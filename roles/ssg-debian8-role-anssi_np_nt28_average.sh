@@ -6,7 +6,7 @@
 # This profile contains items for GNU/Linux installations already protected by multiple higher level security stacks.
 #
 # Benchmark ID:  DEBIAN-8
-# Benchmark Version:  0.1.40
+# Benchmark Version:  0.1.41
 #
 # XCCDF Version:  1.1
 #
@@ -22,60 +22,23 @@
 ###############################################################################
 
 ###############################################################################
-# BEGIN fix (1 / 37) for 'package_ntp_installed'
+# BEGIN fix (1 / 45) for 'apt_conf_disallow_unauthenticated'
 ###############################################################################
-(>&2 echo "Remediating rule 1/37: 'package_ntp_installed'")
-(>&2 echo "FIX FOR THIS RULE 'package_ntp_installed' IS MISSING!")
-# END fix for 'package_ntp_installed'
-
-###############################################################################
-# BEGIN fix (2 / 37) for 'package_nis_removed'
-###############################################################################
-(>&2 echo "Remediating rule 2/37: 'package_nis_removed'")
-# Function to remove packages on RHEL, Fedora, Debian, and possibly other systems.
-#
-# Example Call(s):
-#
-#     package_remove telnet-server
-#
-function package_remove {
-
-# Load function arguments into local variables
-local package="$1"
-
-# Check sanity of the input
-if [ $# -ne "1" ]
-then
-  echo "Usage: package_remove 'package_name'"
-  echo "Aborting."
-  exit 1
-fi
-
-if which dnf ; then
-  if rpm -q --quiet "$package"; then
-    dnf remove -y "$package"
-  fi
-elif which yum ; then
-  if rpm -q --quiet "$package"; then
-    yum remove -y "$package"
-  fi
-elif which apt-get ; then
-  apt-get remove -y "$package"
-else
-  echo "Failed to detect available packaging system, tried dnf, yum and apt-get!"
-  echo "Aborting."
-  exit 1
-fi
-
-}
-
-package_remove nis
-# END fix for 'package_nis_removed'
+(>&2 echo "Remediating rule 1/45: 'apt_conf_disallow_unauthenticated'")
+(>&2 echo "FIX FOR THIS RULE 'apt_conf_disallow_unauthenticated' IS MISSING!")
+# END fix for 'apt_conf_disallow_unauthenticated'
 
 ###############################################################################
-# BEGIN fix (3 / 37) for 'package_inetutils-telnetd_removed'
+# BEGIN fix (2 / 45) for 'apt_sources_list_official'
 ###############################################################################
-(>&2 echo "Remediating rule 3/37: 'package_inetutils-telnetd_removed'")
+(>&2 echo "Remediating rule 2/45: 'apt_sources_list_official'")
+(>&2 echo "FIX FOR THIS RULE 'apt_sources_list_official' IS MISSING!")
+# END fix for 'apt_sources_list_official'
+
+###############################################################################
+# BEGIN fix (3 / 45) for 'package_inetutils-telnetd_removed'
+###############################################################################
+(>&2 echo "Remediating rule 3/45: 'package_inetutils-telnetd_removed'")
 # Function to remove packages on RHEL, Fedora, Debian, and possibly other systems.
 #
 # Example Call(s):
@@ -117,9 +80,53 @@ package_remove inetutils-telnetd
 # END fix for 'package_inetutils-telnetd_removed'
 
 ###############################################################################
-# BEGIN fix (4 / 37) for 'package_ntpdate_removed'
+# BEGIN fix (4 / 45) for 'package_nis_removed'
 ###############################################################################
-(>&2 echo "Remediating rule 4/37: 'package_ntpdate_removed'")
+(>&2 echo "Remediating rule 4/45: 'package_nis_removed'")
+# Function to remove packages on RHEL, Fedora, Debian, and possibly other systems.
+#
+# Example Call(s):
+#
+#     package_remove telnet-server
+#
+function package_remove {
+
+# Load function arguments into local variables
+local package="$1"
+
+# Check sanity of the input
+if [ $# -ne "1" ]
+then
+  echo "Usage: package_remove 'package_name'"
+  echo "Aborting."
+  exit 1
+fi
+
+if which dnf ; then
+  if rpm -q --quiet "$package"; then
+    dnf remove -y "$package"
+  fi
+elif which yum ; then
+  if rpm -q --quiet "$package"; then
+    yum remove -y "$package"
+  fi
+elif which apt-get ; then
+  apt-get remove -y "$package"
+else
+  echo "Failed to detect available packaging system, tried dnf, yum and apt-get!"
+  echo "Aborting."
+  exit 1
+fi
+
+}
+
+package_remove nis
+# END fix for 'package_nis_removed'
+
+###############################################################################
+# BEGIN fix (5 / 45) for 'package_ntpdate_removed'
+###############################################################################
+(>&2 echo "Remediating rule 5/45: 'package_ntpdate_removed'")
 # Function to remove packages on RHEL, Fedora, Debian, and possibly other systems.
 #
 # Example Call(s):
@@ -161,9 +168,9 @@ package_remove ntpdate
 # END fix for 'package_ntpdate_removed'
 
 ###############################################################################
-# BEGIN fix (5 / 37) for 'package_telnetd-ssl_removed'
+# BEGIN fix (6 / 45) for 'package_telnetd-ssl_removed'
 ###############################################################################
-(>&2 echo "Remediating rule 5/37: 'package_telnetd-ssl_removed'")
+(>&2 echo "Remediating rule 6/45: 'package_telnetd-ssl_removed'")
 # Function to remove packages on RHEL, Fedora, Debian, and possibly other systems.
 #
 # Example Call(s):
@@ -205,9 +212,9 @@ package_remove telnetd-ssl
 # END fix for 'package_telnetd-ssl_removed'
 
 ###############################################################################
-# BEGIN fix (6 / 37) for 'package_telnetd_removed'
+# BEGIN fix (7 / 45) for 'package_telnetd_removed'
 ###############################################################################
-(>&2 echo "Remediating rule 6/37: 'package_telnetd_removed'")
+(>&2 echo "Remediating rule 7/45: 'package_telnetd_removed'")
 # Function to remove packages on RHEL, Fedora, Debian, and possibly other systems.
 #
 # Example Call(s):
@@ -249,223 +256,294 @@ package_remove telnetd
 # END fix for 'package_telnetd_removed'
 
 ###############################################################################
-# BEGIN fix (7 / 37) for 'apt_conf_disallow_unauthenticated'
+# BEGIN fix (8 / 45) for 'package_ntp_installed'
 ###############################################################################
-(>&2 echo "Remediating rule 7/37: 'apt_conf_disallow_unauthenticated'")
-(>&2 echo "FIX FOR THIS RULE 'apt_conf_disallow_unauthenticated' IS MISSING!")
-# END fix for 'apt_conf_disallow_unauthenticated'
+(>&2 echo "Remediating rule 8/45: 'package_ntp_installed'")
+(>&2 echo "FIX FOR THIS RULE 'package_ntp_installed' IS MISSING!")
+# END fix for 'package_ntp_installed'
 
 ###############################################################################
-# BEGIN fix (8 / 37) for 'apt_sources_list_official'
+# BEGIN fix (9 / 45) for 'sshd_allow_only_protocol2'
 ###############################################################################
-(>&2 echo "Remediating rule 8/37: 'apt_sources_list_official'")
-(>&2 echo "FIX FOR THIS RULE 'apt_sources_list_official' IS MISSING!")
-# END fix for 'apt_sources_list_official'
-
-###############################################################################
-# BEGIN fix (9 / 37) for 'sshd_allow_only_protocol2'
-###############################################################################
-(>&2 echo "Remediating rule 9/37: 'sshd_allow_only_protocol2'")
+(>&2 echo "Remediating rule 9/45: 'sshd_allow_only_protocol2'")
 (>&2 echo "FIX FOR THIS RULE 'sshd_allow_only_protocol2' IS MISSING!")
 # END fix for 'sshd_allow_only_protocol2'
 
 ###############################################################################
-# BEGIN fix (10 / 37) for 'sshd_disable_empty_passwords'
+# BEGIN fix (10 / 45) for 'sshd_disable_empty_passwords'
 ###############################################################################
-(>&2 echo "Remediating rule 10/37: 'sshd_disable_empty_passwords'")
+(>&2 echo "Remediating rule 10/45: 'sshd_disable_empty_passwords'")
 (>&2 echo "FIX FOR THIS RULE 'sshd_disable_empty_passwords' IS MISSING!")
 # END fix for 'sshd_disable_empty_passwords'
 
 ###############################################################################
-# BEGIN fix (11 / 37) for 'sshd_set_keepalive'
+# BEGIN fix (11 / 45) for 'sshd_disable_root_login'
 ###############################################################################
-(>&2 echo "Remediating rule 11/37: 'sshd_set_keepalive'")
-(>&2 echo "FIX FOR THIS RULE 'sshd_set_keepalive' IS MISSING!")
-# END fix for 'sshd_set_keepalive'
-
-###############################################################################
-# BEGIN fix (12 / 37) for 'sshd_set_idle_timeout'
-###############################################################################
-(>&2 echo "Remediating rule 12/37: 'sshd_set_idle_timeout'")
-(>&2 echo "FIX FOR THIS RULE 'sshd_set_idle_timeout' IS MISSING!")
-# END fix for 'sshd_set_idle_timeout'
-
-###############################################################################
-# BEGIN fix (13 / 37) for 'sshd_disable_root_login'
-###############################################################################
-(>&2 echo "Remediating rule 13/37: 'sshd_disable_root_login'")
+(>&2 echo "Remediating rule 11/45: 'sshd_disable_root_login'")
 (>&2 echo "FIX FOR THIS RULE 'sshd_disable_root_login' IS MISSING!")
 # END fix for 'sshd_disable_root_login'
 
 ###############################################################################
-# BEGIN fix (14 / 37) for 'package_syslogng_installed'
+# BEGIN fix (12 / 45) for 'sshd_set_idle_timeout'
 ###############################################################################
-(>&2 echo "Remediating rule 14/37: 'package_syslogng_installed'")
-(>&2 echo "FIX FOR THIS RULE 'package_syslogng_installed' IS MISSING!")
-# END fix for 'package_syslogng_installed'
+(>&2 echo "Remediating rule 12/45: 'sshd_set_idle_timeout'")
+(>&2 echo "FIX FOR THIS RULE 'sshd_set_idle_timeout' IS MISSING!")
+# END fix for 'sshd_set_idle_timeout'
 
 ###############################################################################
-# BEGIN fix (15 / 37) for 'service_syslogng_enabled'
+# BEGIN fix (13 / 45) for 'sshd_set_keepalive'
 ###############################################################################
-(>&2 echo "Remediating rule 15/37: 'service_syslogng_enabled'")
-(>&2 echo "FIX FOR THIS RULE 'service_syslogng_enabled' IS MISSING!")
-# END fix for 'service_syslogng_enabled'
+(>&2 echo "Remediating rule 13/45: 'sshd_set_keepalive'")
+(>&2 echo "FIX FOR THIS RULE 'sshd_set_keepalive' IS MISSING!")
+# END fix for 'sshd_set_keepalive'
 
 ###############################################################################
-# BEGIN fix (16 / 37) for 'ensure_logrotate_activated'
+# BEGIN fix (14 / 45) for 'rsyslog_files_groupownership'
 ###############################################################################
-(>&2 echo "Remediating rule 16/37: 'ensure_logrotate_activated'")
-(>&2 echo "FIX FOR THIS RULE 'ensure_logrotate_activated' IS MISSING!")
-# END fix for 'ensure_logrotate_activated'
-
-###############################################################################
-# BEGIN fix (17 / 37) for 'rsyslog_files_groupownership'
-###############################################################################
-(>&2 echo "Remediating rule 17/37: 'rsyslog_files_groupownership'")
+(>&2 echo "Remediating rule 14/45: 'rsyslog_files_groupownership'")
 (>&2 echo "FIX FOR THIS RULE 'rsyslog_files_groupownership' IS MISSING!")
 # END fix for 'rsyslog_files_groupownership'
 
 ###############################################################################
-# BEGIN fix (18 / 37) for 'rsyslog_files_ownership'
+# BEGIN fix (15 / 45) for 'rsyslog_files_ownership'
 ###############################################################################
-(>&2 echo "Remediating rule 18/37: 'rsyslog_files_ownership'")
+(>&2 echo "Remediating rule 15/45: 'rsyslog_files_ownership'")
 (>&2 echo "FIX FOR THIS RULE 'rsyslog_files_ownership' IS MISSING!")
 # END fix for 'rsyslog_files_ownership'
 
 ###############################################################################
-# BEGIN fix (19 / 37) for 'rsyslog_files_permissions'
+# BEGIN fix (16 / 45) for 'rsyslog_files_permissions'
 ###############################################################################
-(>&2 echo "Remediating rule 19/37: 'rsyslog_files_permissions'")
+(>&2 echo "Remediating rule 16/45: 'rsyslog_files_permissions'")
 (>&2 echo "FIX FOR THIS RULE 'rsyslog_files_permissions' IS MISSING!")
 # END fix for 'rsyslog_files_permissions'
 
 ###############################################################################
-# BEGIN fix (20 / 37) for 'package_rsyslog_installed'
+# BEGIN fix (17 / 45) for 'ensure_logrotate_activated'
 ###############################################################################
-(>&2 echo "Remediating rule 20/37: 'package_rsyslog_installed'")
+(>&2 echo "Remediating rule 17/45: 'ensure_logrotate_activated'")
+
+LOGROTATE_CONF_FILE="/etc/logrotate.conf"
+CRON_DAILY_LOGROTATE_FILE="/etc/cron.daily/logrotate"
+
+# daily rotation is configured
+grep -q "^daily$" $LOGROTATE_CONF_FILE|| echo "daily" >> $LOGROTATE_CONF_FILE
+
+# remove any line configuring weekly, monthly or yearly rotation
+sed -i -r "/^(weekly|monthly|yearly)$/d" $LOGROTATE_CONF_FILE
+
+# configure cron.daily if not already
+if ! grep -q "^[[:space:]]*/usr/sbin/logrotate[[:alnum:][:blank:][:punct:]]*$LOGROTATE_CONF_FILE$" $CRON_DAILY_LOGROTATE_FILE; then
+	echo "#!/bin/sh" > $CRON_DAILY_LOGROTATE_FILE
+	echo "/usr/sbin/logrotate $LOGROTATE_CONF_FILE" >> $CRON_DAILY_LOGROTATE_FILE
+fi
+# END fix for 'ensure_logrotate_activated'
+
+###############################################################################
+# BEGIN fix (18 / 45) for 'package_syslogng_installed'
+###############################################################################
+(>&2 echo "Remediating rule 18/45: 'package_syslogng_installed'")
+(>&2 echo "FIX FOR THIS RULE 'package_syslogng_installed' IS MISSING!")
+# END fix for 'package_syslogng_installed'
+
+###############################################################################
+# BEGIN fix (19 / 45) for 'service_syslogng_enabled'
+###############################################################################
+(>&2 echo "Remediating rule 19/45: 'service_syslogng_enabled'")
+(>&2 echo "FIX FOR THIS RULE 'service_syslogng_enabled' IS MISSING!")
+# END fix for 'service_syslogng_enabled'
+
+###############################################################################
+# BEGIN fix (20 / 45) for 'package_rsyslog_installed'
+###############################################################################
+(>&2 echo "Remediating rule 20/45: 'package_rsyslog_installed'")
 (>&2 echo "FIX FOR THIS RULE 'package_rsyslog_installed' IS MISSING!")
 # END fix for 'package_rsyslog_installed'
 
 ###############################################################################
-# BEGIN fix (21 / 37) for 'service_rsyslog_enabled'
+# BEGIN fix (21 / 45) for 'service_rsyslog_enabled'
 ###############################################################################
-(>&2 echo "Remediating rule 21/37: 'service_rsyslog_enabled'")
+(>&2 echo "Remediating rule 21/45: 'service_rsyslog_enabled'")
 (>&2 echo "FIX FOR THIS RULE 'service_rsyslog_enabled' IS MISSING!")
 # END fix for 'service_rsyslog_enabled'
 
 ###############################################################################
-# BEGIN fix (22 / 37) for 'file_permissions_systemmap'
+# BEGIN fix (22 / 45) for 'file_groupowner_etc_group'
 ###############################################################################
-(>&2 echo "Remediating rule 22/37: 'file_permissions_systemmap'")
-(>&2 echo "FIX FOR THIS RULE 'file_permissions_systemmap' IS MISSING!")
-# END fix for 'file_permissions_systemmap'
+(>&2 echo "Remediating rule 22/45: 'file_groupowner_etc_group'")
+
+chgrp 0 /etc/group
+# END fix for 'file_groupowner_etc_group'
 
 ###############################################################################
-# BEGIN fix (23 / 37) for 'file_permissions_etc_shadow'
+# BEGIN fix (23 / 45) for 'file_groupowner_etc_gshadow'
 ###############################################################################
-(>&2 echo "Remediating rule 23/37: 'file_permissions_etc_shadow'")
+(>&2 echo "Remediating rule 23/45: 'file_groupowner_etc_gshadow'")
 
-chmod 0640 /etc/shadow
-# END fix for 'file_permissions_etc_shadow'
-
-###############################################################################
-# BEGIN fix (24 / 37) for 'file_permissions_etc_passwd'
-###############################################################################
-(>&2 echo "Remediating rule 24/37: 'file_permissions_etc_passwd'")
-
-chmod 0644 /etc/passwd
-# END fix for 'file_permissions_etc_passwd'
+chgrp 42 /etc/gshadow
+# END fix for 'file_groupowner_etc_gshadow'
 
 ###############################################################################
-# BEGIN fix (25 / 37) for 'file_permissions_etc_group'
+# BEGIN fix (24 / 45) for 'file_groupowner_etc_passwd'
 ###############################################################################
-(>&2 echo "Remediating rule 25/37: 'file_permissions_etc_group'")
+(>&2 echo "Remediating rule 24/45: 'file_groupowner_etc_passwd'")
+
+chgrp 0 /etc/passwd
+# END fix for 'file_groupowner_etc_passwd'
+
+###############################################################################
+# BEGIN fix (25 / 45) for 'file_groupowner_etc_shadow'
+###############################################################################
+(>&2 echo "Remediating rule 25/45: 'file_groupowner_etc_shadow'")
+
+chgrp 42 /etc/shadow
+# END fix for 'file_groupowner_etc_shadow'
+
+###############################################################################
+# BEGIN fix (26 / 45) for 'file_owner_etc_group'
+###############################################################################
+(>&2 echo "Remediating rule 26/45: 'file_owner_etc_group'")
+
+chown 0 /etc/group
+# END fix for 'file_owner_etc_group'
+
+###############################################################################
+# BEGIN fix (27 / 45) for 'file_owner_etc_gshadow'
+###############################################################################
+(>&2 echo "Remediating rule 27/45: 'file_owner_etc_gshadow'")
+
+chown 0 /etc/gshadow
+# END fix for 'file_owner_etc_gshadow'
+
+###############################################################################
+# BEGIN fix (28 / 45) for 'file_owner_etc_passwd'
+###############################################################################
+(>&2 echo "Remediating rule 28/45: 'file_owner_etc_passwd'")
+
+chown 0 /etc/passwd
+# END fix for 'file_owner_etc_passwd'
+
+###############################################################################
+# BEGIN fix (29 / 45) for 'file_owner_etc_shadow'
+###############################################################################
+(>&2 echo "Remediating rule 29/45: 'file_owner_etc_shadow'")
+
+chown 0 /etc/shadow
+# END fix for 'file_owner_etc_shadow'
+
+###############################################################################
+# BEGIN fix (30 / 45) for 'file_permissions_etc_group'
+###############################################################################
+(>&2 echo "Remediating rule 30/45: 'file_permissions_etc_group'")
 
 chmod 0644 /etc/group
 # END fix for 'file_permissions_etc_group'
 
 ###############################################################################
-# BEGIN fix (26 / 37) for 'file_permissions_etc_gshadow'
+# BEGIN fix (31 / 45) for 'file_permissions_etc_gshadow'
 ###############################################################################
-(>&2 echo "Remediating rule 26/37: 'file_permissions_etc_gshadow'")
+(>&2 echo "Remediating rule 31/45: 'file_permissions_etc_gshadow'")
 
 chmod 0640 /etc/gshadow
 # END fix for 'file_permissions_etc_gshadow'
 
 ###############################################################################
-# BEGIN fix (27 / 37) for 'sysctl_kernel_randomize_va_space'
+# BEGIN fix (32 / 45) for 'file_permissions_etc_passwd'
 ###############################################################################
-(>&2 echo "Remediating rule 27/37: 'sysctl_kernel_randomize_va_space'")
-(>&2 echo "FIX FOR THIS RULE 'sysctl_kernel_randomize_va_space' IS MISSING!")
-# END fix for 'sysctl_kernel_randomize_va_space'
+(>&2 echo "Remediating rule 32/45: 'file_permissions_etc_passwd'")
+
+chmod 0644 /etc/passwd
+# END fix for 'file_permissions_etc_passwd'
 
 ###############################################################################
-# BEGIN fix (28 / 37) for 'sysctl_fs_suid_dumpable'
+# BEGIN fix (33 / 45) for 'file_permissions_etc_shadow'
 ###############################################################################
-(>&2 echo "Remediating rule 28/37: 'sysctl_fs_suid_dumpable'")
-(>&2 echo "FIX FOR THIS RULE 'sysctl_fs_suid_dumpable' IS MISSING!")
-# END fix for 'sysctl_fs_suid_dumpable'
+(>&2 echo "Remediating rule 33/45: 'file_permissions_etc_shadow'")
+
+chmod 0640 /etc/shadow
+# END fix for 'file_permissions_etc_shadow'
 
 ###############################################################################
-# BEGIN fix (29 / 37) for 'sysctl_fs_protected_symlinks'
+# BEGIN fix (34 / 45) for 'file_permissions_systemmap'
 ###############################################################################
-(>&2 echo "Remediating rule 29/37: 'sysctl_fs_protected_symlinks'")
-(>&2 echo "FIX FOR THIS RULE 'sysctl_fs_protected_symlinks' IS MISSING!")
-# END fix for 'sysctl_fs_protected_symlinks'
+(>&2 echo "Remediating rule 34/45: 'file_permissions_systemmap'")
+(>&2 echo "FIX FOR THIS RULE 'file_permissions_systemmap' IS MISSING!")
+# END fix for 'file_permissions_systemmap'
 
 ###############################################################################
-# BEGIN fix (30 / 37) for 'sysctl_fs_protected_hardlinks'
+# BEGIN fix (35 / 45) for 'sysctl_fs_protected_hardlinks'
 ###############################################################################
-(>&2 echo "Remediating rule 30/37: 'sysctl_fs_protected_hardlinks'")
+(>&2 echo "Remediating rule 35/45: 'sysctl_fs_protected_hardlinks'")
 (>&2 echo "FIX FOR THIS RULE 'sysctl_fs_protected_hardlinks' IS MISSING!")
 # END fix for 'sysctl_fs_protected_hardlinks'
 
 ###############################################################################
-# BEGIN fix (31 / 37) for 'partition_for_tmp'
+# BEGIN fix (36 / 45) for 'sysctl_fs_protected_symlinks'
 ###############################################################################
-(>&2 echo "Remediating rule 31/37: 'partition_for_tmp'")
-(>&2 echo "FIX FOR THIS RULE 'partition_for_tmp' IS MISSING!")
-# END fix for 'partition_for_tmp'
+(>&2 echo "Remediating rule 36/45: 'sysctl_fs_protected_symlinks'")
+(>&2 echo "FIX FOR THIS RULE 'sysctl_fs_protected_symlinks' IS MISSING!")
+# END fix for 'sysctl_fs_protected_symlinks'
 
 ###############################################################################
-# BEGIN fix (32 / 37) for 'partition_for_var_log'
+# BEGIN fix (37 / 45) for 'sysctl_fs_suid_dumpable'
 ###############################################################################
-(>&2 echo "Remediating rule 32/37: 'partition_for_var_log'")
-(>&2 echo "FIX FOR THIS RULE 'partition_for_var_log' IS MISSING!")
-# END fix for 'partition_for_var_log'
+(>&2 echo "Remediating rule 37/45: 'sysctl_fs_suid_dumpable'")
+(>&2 echo "FIX FOR THIS RULE 'sysctl_fs_suid_dumpable' IS MISSING!")
+# END fix for 'sysctl_fs_suid_dumpable'
 
 ###############################################################################
-# BEGIN fix (33 / 37) for 'partition_for_var'
+# BEGIN fix (38 / 45) for 'sysctl_kernel_randomize_va_space'
 ###############################################################################
-(>&2 echo "Remediating rule 33/37: 'partition_for_var'")
-(>&2 echo "FIX FOR THIS RULE 'partition_for_var' IS MISSING!")
-# END fix for 'partition_for_var'
+(>&2 echo "Remediating rule 38/45: 'sysctl_kernel_randomize_va_space'")
+(>&2 echo "FIX FOR THIS RULE 'sysctl_kernel_randomize_va_space' IS MISSING!")
+# END fix for 'sysctl_kernel_randomize_va_space'
 
 ###############################################################################
-# BEGIN fix (34 / 37) for 'partition_for_var_log_audit'
+# BEGIN fix (39 / 45) for 'partition_for_home'
 ###############################################################################
-(>&2 echo "Remediating rule 34/37: 'partition_for_var_log_audit'")
-(>&2 echo "FIX FOR THIS RULE 'partition_for_var_log_audit' IS MISSING!")
-# END fix for 'partition_for_var_log_audit'
-
-###############################################################################
-# BEGIN fix (35 / 37) for 'partition_for_home'
-###############################################################################
-(>&2 echo "Remediating rule 35/37: 'partition_for_home'")
+(>&2 echo "Remediating rule 39/45: 'partition_for_home'")
 (>&2 echo "FIX FOR THIS RULE 'partition_for_home' IS MISSING!")
 # END fix for 'partition_for_home'
 
 ###############################################################################
-# BEGIN fix (36 / 37) for 'sudo_remove_nopasswd'
+# BEGIN fix (40 / 45) for 'partition_for_tmp'
 ###############################################################################
-(>&2 echo "Remediating rule 36/37: 'sudo_remove_nopasswd'")
-(>&2 echo "FIX FOR THIS RULE 'sudo_remove_nopasswd' IS MISSING!")
-# END fix for 'sudo_remove_nopasswd'
+(>&2 echo "Remediating rule 40/45: 'partition_for_tmp'")
+(>&2 echo "FIX FOR THIS RULE 'partition_for_tmp' IS MISSING!")
+# END fix for 'partition_for_tmp'
 
 ###############################################################################
-# BEGIN fix (37 / 37) for 'sudo_remove_no_authenticate'
+# BEGIN fix (41 / 45) for 'partition_for_var'
 ###############################################################################
-(>&2 echo "Remediating rule 37/37: 'sudo_remove_no_authenticate'")
+(>&2 echo "Remediating rule 41/45: 'partition_for_var'")
+(>&2 echo "FIX FOR THIS RULE 'partition_for_var' IS MISSING!")
+# END fix for 'partition_for_var'
+
+###############################################################################
+# BEGIN fix (42 / 45) for 'partition_for_var_log'
+###############################################################################
+(>&2 echo "Remediating rule 42/45: 'partition_for_var_log'")
+(>&2 echo "FIX FOR THIS RULE 'partition_for_var_log' IS MISSING!")
+# END fix for 'partition_for_var_log'
+
+###############################################################################
+# BEGIN fix (43 / 45) for 'partition_for_var_log_audit'
+###############################################################################
+(>&2 echo "Remediating rule 43/45: 'partition_for_var_log_audit'")
+(>&2 echo "FIX FOR THIS RULE 'partition_for_var_log_audit' IS MISSING!")
+# END fix for 'partition_for_var_log_audit'
+
+###############################################################################
+# BEGIN fix (44 / 45) for 'sudo_remove_no_authenticate'
+###############################################################################
+(>&2 echo "Remediating rule 44/45: 'sudo_remove_no_authenticate'")
 (>&2 echo "FIX FOR THIS RULE 'sudo_remove_no_authenticate' IS MISSING!")
 # END fix for 'sudo_remove_no_authenticate'
+
+###############################################################################
+# BEGIN fix (45 / 45) for 'sudo_remove_nopasswd'
+###############################################################################
+(>&2 echo "Remediating rule 45/45: 'sudo_remove_nopasswd'")
+(>&2 echo "FIX FOR THIS RULE 'sudo_remove_nopasswd' IS MISSING!")
+# END fix for 'sudo_remove_nopasswd'
 

@@ -14,7 +14,7 @@
 # (JRE) as well as Red Hat with OpenJDK.
 #
 # Benchmark ID:  JRE
-# Benchmark Version:  0.1.40
+# Benchmark Version:  0.1.41
 #
 # XCCDF Version:  1.1
 #
@@ -48,9 +48,22 @@ chmod 644 ${JAVA_CONFIG}
 # END fix for 'java_jre_deployment_config_exists'
 
 ###############################################################################
-# BEGIN fix (2 / 11) for 'java_jre_deployment_config_properties'
+# BEGIN fix (2 / 11) for 'java_jre_deployment_config_mandatory'
 ###############################################################################
-(>&2 echo "Remediating rule 2/11: 'java_jre_deployment_config_properties'")
+(>&2 echo "Remediating rule 2/11: 'java_jre_deployment_config_mandatory'")
+JAVA_CONFIG="/etc/.java/deployment/deployment.config"
+
+grep -q "^deployment.system.config.mandatory=false$" ${JAVA_CONFIG} && \
+sed -i "s/deployment.system.config.mandatory=.*/deployment.system.config.mandatory=false/g" ${JAVA_CONFIG}
+if ! [ $? -eq 0 ] ; then
+  echo "deployment.system.config.mandatory=false" >> ${JAVA_CONFIG}
+fi
+# END fix for 'java_jre_deployment_config_mandatory'
+
+###############################################################################
+# BEGIN fix (3 / 11) for 'java_jre_deployment_config_properties'
+###############################################################################
+(>&2 echo "Remediating rule 3/11: 'java_jre_deployment_config_properties'")
 JAVA_CONFIG="/etc/.java/deployment/deployment.config"
 JAVA_PROPERTIES="/etc/.java/deployment/deployment.properties"
 
@@ -60,19 +73,6 @@ if ! [ $? -eq 0 ] ; then
   echo "deployment.system.config=file://${JAVA_PROPERTIES}" >> ${JAVA_CONFIG}
 fi
 # END fix for 'java_jre_deployment_config_properties'
-
-###############################################################################
-# BEGIN fix (3 / 11) for 'java_jre_deployment_config_mandatory'
-###############################################################################
-(>&2 echo "Remediating rule 3/11: 'java_jre_deployment_config_mandatory'")
-JAVA_CONFIG="/etc/.java/deployment/deployment.config"
-
-grep -q "^deployment.system.config.mandatory=false$" ${JAVA_CONFIG} && \
-sed -i "s/deployment.system.config.mandatory=.*/deployment.system.config.mandatory=false/g" ${JAVA_CONFIG}
-if ! [ $? -eq 0 ] ; then
-  echo "deployment.system.config.mandatory=false" >> ${JAVA_CONFIG}
-fi
-# END fix for 'java_jre_deployment_config_mandatory'
 
 ###############################################################################
 # BEGIN fix (4 / 11) for 'java_jre_deployment_properties_exists'
@@ -93,16 +93,9 @@ chmod 644 ${JAVA_PROPERTIES}
 # END fix for 'java_jre_deployment_properties_exists'
 
 ###############################################################################
-# BEGIN fix (5 / 11) for 'java_jre_updated'
+# BEGIN fix (5 / 11) for 'java_jre_untrusted_sources'
 ###############################################################################
-(>&2 echo "Remediating rule 5/11: 'java_jre_updated'")
-(>&2 echo "FIX FOR THIS RULE 'java_jre_updated' IS MISSING!")
-# END fix for 'java_jre_updated'
-
-###############################################################################
-# BEGIN fix (6 / 11) for 'java_jre_untrusted_sources'
-###############################################################################
-(>&2 echo "Remediating rule 6/11: 'java_jre_untrusted_sources'")
+(>&2 echo "Remediating rule 5/11: 'java_jre_untrusted_sources'")
 JAVA_PROPERTIES="/etc/.java/deployment/deployment.properties"
 
 grep -q "^deployment.security.askgrantdialog.notinca=false$" ${JAVA_PROPERTIES} && \
@@ -113,17 +106,24 @@ fi
 # END fix for 'java_jre_untrusted_sources'
 
 ###############################################################################
-# BEGIN fix (7 / 11) for 'java_jre_validation_ocsp_locked'
+# BEGIN fix (6 / 11) for 'java_jre_untrusted_sources_locked'
 ###############################################################################
-(>&2 echo "Remediating rule 7/11: 'java_jre_validation_ocsp_locked'")
+(>&2 echo "Remediating rule 6/11: 'java_jre_untrusted_sources_locked'")
 JAVA_PROPERTIES="/etc/.java/deployment/deployment.properties"
 
-grep -q "^deployment.security.validation.ocsp.locked$" ${JAVA_PROPERTIES} && \
-sed -i "s/deployment.security.validation.ocsp\..*/deployment.security.validation.ocsp.locked/g" ${JAVA_PROPERTIES}
+grep -q "^deployment.security.askgrantdialog.notinca.locked$" ${JAVA_PROPERTIES} && \
+sed -i "s/deployment.security.askgrantdialog.notinca\..*/deployment.security.askgrantdialog.notinca.locked/g" ${JAVA_PROPERTIES}
 if ! [ $? -eq 0 ] ; then
-  echo "deployment.security.validation.ocsp.locked" >> ${JAVA_PROPERTIES}
+  echo "deployment.security.askgrantdialog.notinca.locked" >> ${JAVA_PROPERTIES}
 fi
-# END fix for 'java_jre_validation_ocsp_locked'
+# END fix for 'java_jre_untrusted_sources_locked'
+
+###############################################################################
+# BEGIN fix (7 / 11) for 'java_jre_updated'
+###############################################################################
+(>&2 echo "Remediating rule 7/11: 'java_jre_updated'")
+(>&2 echo "FIX FOR THIS RULE 'java_jre_updated' IS MISSING!")
+# END fix for 'java_jre_updated'
 
 ###############################################################################
 # BEGIN fix (8 / 11) for 'java_jre_validation_crl'
@@ -165,15 +165,15 @@ fi
 # END fix for 'java_jre_validation_ocsp'
 
 ###############################################################################
-# BEGIN fix (11 / 11) for 'java_jre_untrusted_sources_locked'
+# BEGIN fix (11 / 11) for 'java_jre_validation_ocsp_locked'
 ###############################################################################
-(>&2 echo "Remediating rule 11/11: 'java_jre_untrusted_sources_locked'")
+(>&2 echo "Remediating rule 11/11: 'java_jre_validation_ocsp_locked'")
 JAVA_PROPERTIES="/etc/.java/deployment/deployment.properties"
 
-grep -q "^deployment.security.askgrantdialog.notinca.locked$" ${JAVA_PROPERTIES} && \
-sed -i "s/deployment.security.askgrantdialog.notinca\..*/deployment.security.askgrantdialog.notinca.locked/g" ${JAVA_PROPERTIES}
+grep -q "^deployment.security.validation.ocsp.locked$" ${JAVA_PROPERTIES} && \
+sed -i "s/deployment.security.validation.ocsp\..*/deployment.security.validation.ocsp.locked/g" ${JAVA_PROPERTIES}
 if ! [ $? -eq 0 ] ; then
-  echo "deployment.security.askgrantdialog.notinca.locked" >> ${JAVA_PROPERTIES}
+  echo "deployment.security.validation.ocsp.locked" >> ${JAVA_PROPERTIES}
 fi
-# END fix for 'java_jre_untrusted_sources_locked'
+# END fix for 'java_jre_validation_ocsp_locked'
 

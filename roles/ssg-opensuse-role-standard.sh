@@ -8,7 +8,7 @@
 # all of these checks should pass.
 #
 # Benchmark ID:  OPENSUSE
-# Benchmark Version:  0.1.40
+# Benchmark Version:  0.1.41
 #
 # XCCDF Version:  1.1
 #
@@ -31,16 +31,16 @@
 # END fix for 'file_groupowner_etc_passwd'
 
 ###############################################################################
-# BEGIN fix (2 / 3) for 'file_permissions_etc_passwd'
+# BEGIN fix (2 / 3) for 'file_owner_etc_passwd'
 ###############################################################################
-(>&2 echo "Remediating rule 2/3: 'file_permissions_etc_passwd'")
-(>&2 echo "FIX FOR THIS RULE 'file_permissions_etc_passwd' IS MISSING!")
-# END fix for 'file_permissions_etc_passwd'
-
-###############################################################################
-# BEGIN fix (3 / 3) for 'file_owner_etc_passwd'
-###############################################################################
-(>&2 echo "Remediating rule 3/3: 'file_owner_etc_passwd'")
+(>&2 echo "Remediating rule 2/3: 'file_owner_etc_passwd'")
 (>&2 echo "FIX FOR THIS RULE 'file_owner_etc_passwd' IS MISSING!")
 # END fix for 'file_owner_etc_passwd'
+
+###############################################################################
+# BEGIN fix (3 / 3) for 'file_permissions_etc_passwd'
+###############################################################################
+(>&2 echo "Remediating rule 3/3: 'file_permissions_etc_passwd'")
+(>&2 echo "FIX FOR THIS RULE 'file_permissions_etc_passwd' IS MISSING!")
+# END fix for 'file_permissions_etc_passwd'
 

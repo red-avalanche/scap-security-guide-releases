@@ -6,7 +6,7 @@
 # Not available
 #
 # Benchmark ID:  Jboss-Fuse-6
-# Benchmark Version:  0.1.40
+# Benchmark Version:  0.1.41
 #
 # XCCDF Version:  1.1
 #

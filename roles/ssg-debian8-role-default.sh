@@ -6,7 +6,7 @@
 # Not available
 #
 # Benchmark ID:  DEBIAN-8
-# Benchmark Version:  0.1.40
+# Benchmark Version:  0.1.41
 #
 # XCCDF Version:  1.1
 #
