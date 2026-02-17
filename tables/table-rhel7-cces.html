@@ -510,7 +510,12 @@ mode. To do so, run the following command:
 <td>CCE-81004-4</td>
 <td>Make sure that the dconf databases are up-to-date with regards to respective keyfiles</td>
 <td xml:lang="en-US">By default, DConf uses a binary database as a data backend.
-The system-level database is compiled from keyfiles in the /etc/dconf/db/ directory by the <pre>dconf update</pre> command.</td>
+The system-level database is compiled from keyfiles in the /etc/dconf/db/
+directory by the <pre>dconf update</pre> command. More specifically, content present
+in the following directories:
+<pre>/etc/dconf/db/gdm.d</pre>
+<pre>/etc/dconf/db/local.d</pre>
+</td>
 </tr>
 <tr>
 <td>CCE-27446-4</td>
@@ -1463,9 +1468,11 @@ dictates.</td>
 <tr>
 <td>CCE-27303-7</td>
 <td>Modify the System Login Banner</td>
-<td xml:lang="en-US">To configure the system login banner edit <code>/etc/issue</code>. Replace the
+<td xml:lang="en-US">
+To configure the system login banner edit <code>/etc/issue</code>. Replace the
 default text with a message compliant with the local site policy or a legal
 disclaimer.
+
 
 The DoD required text is either:
 <br><br>
@@ -1680,66 +1687,47 @@ The DoD STIG requirement is 5 passwords.</td>
 </tr>
 <tr>
 <td>CCE-27350-8</td>
-<td>Set Deny For Failed Password Attempts</td>
-<td xml:lang="en-US">To configure the system to lock out accounts after a number of incorrect login
-attempts using <code>pam_faillock.so</code>, modify the content of both
-<code>/etc/pam.d/system-auth</code> and <code>/etc/pam.d/password-auth</code> as follows:
-<br><br>
-<ul>
-<li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth required pam_faillock.so preauth silent deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
-</li>
-<li> add the following line immediately <code>after</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth [default=die] pam_faillock.so authfail deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
-</li>
-<li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>ACCOUNT</code> section:
-<pre>account required pam_faillock.so</pre>
-</li>
-</ul>
-</td>
+<td>Lock Accounts After Failed Password Attempts</td>
+<td xml:lang="en-US">This rule configures the system to lock out accounts after a number of incorrect login attempts
+using <code>pam_faillock.so</code>.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid any errors when manually editing these files,
+it is recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
+depending on the OS version.</td>
 </tr>
 <tr>
 <td>CCE-80353-6</td>
 <td>Configure the root Account for Failed Password Attempts</td>
-<td xml:lang="en-US">To configure the system to lock out the <code>root</code> account after a
-number of incorrect login attempts using <code>pam_faillock.so</code>, modify
-the content of both <code>/etc/pam.d/system-auth</code> and
-<code>/etc/pam.d/password-auth</code> as follows:
-<br><br>
-<ul>
-<li>Modify the following line in the <code>AUTH</code> section to add
-<code>even_deny_root</code>:
-<pre>auth required pam_faillock.so preauth silent <b>even_deny_root</b> deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
-</li>
-<li>Modify the following line in the <code>AUTH</code> section to add
-<code>even_deny_root</code>:
-<pre>auth [default=die] pam_faillock.so authfail <b>even_deny_root</b> deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
-</li>
-</ul>
-</td>
+<td xml:lang="en-US">This rule configures the system to lock out the <code>root</code> account after a number of
+incorrect login attempts using <code>pam_faillock.so</code>.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid any errors when manually editing these files,
+it is recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
+depending on the OS version.</td>
 </tr>
 <tr>
 <td>CCE-27297-1</td>
 <td>Set Interval For Counting Failed Password Attempts</td>
-<td xml:lang="en-US">Utilizing <code>pam_faillock.so</code>, the <code>fail_interval</code> directive
-configures the system to lock out an account after a number of incorrect
-login attempts within a specified time period. Modify the content of both
-<code>/etc/pam.d/system-auth</code> and <code>/etc/pam.d/password-auth</code>
-as follows:
+<td xml:lang="en-US">Utilizing <code>pam_faillock.so</code>, the <code>fail_interval</code> directive configures the system
+to lock out an account after a number of incorrect login attempts within a specified time
+period. First make sure the feature is enabled using the following command:
+<br><br>
+
+<ul><li><pre>authconfig --enablefaillock --update</pre></li></ul>
+<br>
+Then modify the content of both <code>/etc/pam.d/system-auth</code> and
+<code>/etc/pam.d/password-auth</code> as follows:
 <br><br>
 <ul>
-<li>Add the following line immediately <code>before</code> the
-    <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth required pam_faillock.so preauth silent deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
+<li> edit the fail_interval parameter in the following line <code>before</code> the <code>pam_unix.so</code>
+statement in the <code>auth</code> section, like this:
+<pre>auth required pam_faillock.so preauth silent deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> <code>fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></code></pre>
 </li>
-<li>Add the following line immediately <code>after</code> the
-    <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth [default=die] pam_faillock.so authfail deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub>
-</pre>
-</li>
-<li>Add the following line immediately <code>before</code> the
-    <code>pam_unix.so</code> statement in the <code>ACCOUNT</code> section:
-<pre>account required pam_faillock.so</pre>
+<li> edit the deny parameter in the following line <code>after</code> the <code>pam_unix.so</code>
+statement in the <code>auth</code> section, like this:
+<pre>auth required pam_faillock.so authfail deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> <code>fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></code></pre>
 </li>
 </ul>
 </td>
@@ -1747,22 +1735,13 @@ as follows:
 <tr>
 <td>CCE-26884-7</td>
 <td>Set Lockout Time for Failed Password Attempts</td>
-<td xml:lang="en-US">To configure the system to lock out accounts after a number of incorrect login
-attempts and require an administrator to unlock the account using <code>pam_faillock.so</code>,
-modify the content of both <code>/etc/pam.d/system-auth</code> and <code>/etc/pam.d/password-auth</code> as follows:
-<br><br>
-<ul>
-<li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth required pam_faillock.so preauth silent deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
-</li>
-<li> add the following line immediately <code>after</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth [default=die] pam_faillock.so authfail deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
-</li>
-<li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>ACCOUNT</code> section:
-<pre>account required pam_faillock.so</pre>
-</li>
-</ul>
-If <code>unlock_time</code> is set to <code>0</code>, manual intervention by an administrator is required to unlock a user.</td>
+<td xml:lang="en-US">This rule configures the system to lock out accounts during a specified time period after a
+number of incorrect login attempts using <code>pam_faillock.so</code>.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid any errors when manually editing these files,
+it is recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
+depending on the OS version.</td>
 </tr>
 <tr>
 <td>CCE-27214-6</td>
@@ -2110,7 +2089,7 @@ authentication. Modify all of the <code>cert_policy</code> lines in
 <td>Only Authorized Local User Accounts Exist on Operating System</td>
 <td xml:lang="en-US">Enterprise Application tends to use the server or virtual machine exclusively.
 Besides the default operating system user, there should be only authorized local
-users required by the installed softoware groups and applications that exist on
+users required by the installed software groups and applications that exist on
 the operating system. The authorized user list can be customized in the refine
 value variable <code>var_accounts_authorized_local_users_regex</code>.
 OVAL regular expression is used for the user list.
@@ -6255,16 +6234,10 @@ protection enabled to protect boot-time settings.
 Since plaintext passwords are a security risk, generate a hash for the password
 by running the following command:
 
-<pre>$ grub2-setpassword</pre>
+<pre># grub2-setpassword</pre>
 
 When prompted, enter the password that was selected.
 <br><br>
-
-<br><br>
-Once the superuser password has been added,
-update the
-<code>grub.cfg</code> file by running:
-<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
 </td>
 </tr>
 <tr>
@@ -6328,16 +6301,10 @@ protection enabled to protect boot-time settings.
 Since plaintext passwords are a security risk, generate a hash for the password
 by running the following command:
 
-<pre>$ grub2-setpassword</pre>
+<pre># grub2-setpassword</pre>
 
 When prompted, enter the password that was selected.
 <br><br>
-
-Once the superuser password has been added,
-update the
-<code>grub.cfg</code> file by running:
-
-<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
 </td>
 </tr>
 <tr>
@@ -13560,7 +13527,8 @@ The <code>ntpd</code> service can be enabled with the following command:
 <code>maxpoll</code> in <code>/etc/ntp.conf</code> or <code>/etc/chrony.conf</code>
 add the following:
 <pre>maxpoll <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_time_service_set_maxpoll"></xccdf-1.1:sub></pre>
-</td>
+to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
+should be configured too.</td>
 </tr>
 <tr>
 <td>CCE-27012-4</td>
@@ -14277,9 +14245,16 @@ remote access.</td>
 more secure than <code>.rhosts</code> authentication. However, it is
 not recommended that hosts unilaterally trust one another, even
 within an organization.
-<br><br>
-To disable host-based authentication, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
+<br>
+The default SSH configuration disables host-based authentication. The appropriate
+configuration is used if no value is set for <code>HostbasedAuthentication</code>.
+<br>
+To explicitly disable host-based authentication, add or correct the
+following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>HostbasedAuthentication no</pre>
 </td>
 </tr>
@@ -14323,11 +14298,18 @@ a user has successfully authenticated, add or correct the following line in the
 <tr>
 <td>CCE-27471-2</td>
 <td>Disable SSH Access via Empty Passwords</td>
-<td xml:lang="en-US">To explicitly disallow SSH login from accounts with
-empty passwords, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+<td xml:lang="en-US">Disallow SSH login with empty passwords.
+The default SSH configuration disables logins with empty passwords. The appropriate
+configuration is used if no value is set for <code>PermitEmptyPasswords</code>.
+<br>
+To explicitly disallow SSH login from accounts with empty passwords,
+add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <br>
 <pre>PermitEmptyPasswords no</pre>
-<br>
 Any accounts with empty passwords should be disabled immediately, and PAM configuration
 should prevent users from being able to assign themselves empty passwords.</td>
 </tr>
@@ -14335,8 +14317,16 @@ should prevent users from being able to assign themselves empty passwords.</td>
 <td>CCE-80220-7</td>
 <td>Disable GSSAPI Authentication</td>
 <td xml:lang="en-US">Unless needed, SSH should not permit extraneous or unnecessary
-authentication mechanisms like GSSAPI. To disable GSSAPI authentication, add or
-correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+authentication mechanisms like GSSAPI.
+<br>
+The default SSH configuration disallows authentications based on GSSAPI. The appropriate
+configuration is used if no value is set for <code>GSSAPIAuthentication</code>.
+<br>
+To explicitly disable GSSAPI authentication, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>GSSAPIAuthentication no</pre>
 </td>
 </tr>
@@ -14344,8 +14334,16 @@ correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <td>CCE-80221-5</td>
 <td>Disable Kerberos Authentication</td>
 <td xml:lang="en-US">Unless needed, SSH should not permit extraneous or unnecessary
-authentication mechanisms like Kerberos. To disable Kerberos authentication, add
-or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+authentication mechanisms like Kerberos.
+<br>
+The default SSH configuration disallows authentication validation through Kerberos.
+The appropriate configuration is used if no value is set for <code>KerberosAuthentication</code>.
+<br>
+To explicitly disable Kerberos authentication, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>KerberosAuthentication no</pre>
 </td>
 </tr>
@@ -14354,7 +14352,11 @@ or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <td>Disable PubkeyAuthentication Authentication</td>
 <td xml:lang="en-US">Unless needed, SSH should not permit extraneous or unnecessary
 authentication mechanisms. To disable PubkeyAuthentication authentication, add or
-correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>PubkeyAuthentication no</pre>
 </td>
 </tr>
@@ -14364,9 +14366,15 @@ correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <td xml:lang="en-US">SSH can emulate the behavior of the obsolete rsh
 command in allowing users to enable insecure access to their
 accounts via <code>.rhosts</code> files.
-<br><br>
-To ensure this behavior is disabled, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
+<br>
+The default SSH configuration disables support for <code>.rhosts</code>. The appropriate
+configuration is used if no value is set for <code>IgnoreRhosts</code>.
+<br>
+To explicitly disable support for .rhosts files, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>IgnoreRhosts yes</pre>
 </td>
 </tr>
@@ -14386,16 +14394,22 @@ following line in <code>/etc/ssh/sshd_config</code>:
 <td>Disable SSH Root Login</td>
 <td xml:lang="en-US">The root user should never be allowed to login to a
 system directly over a network.
-To disable root login via SSH, add or correct the following line
-in <code>/etc/ssh/sshd_config</code>:
+To disable root login via SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>PermitRootLogin no</pre>
 </td>
 </tr>
 <tr>
 <td></td>
 <td>Disable SSH root Login with a Password (Insecure)</td>
-<td xml:lang="en-US">To disable password-based root logins over SSH, add or correct the following
-line in <code>/etc/ssh/sshd_config</code>:
+<td xml:lang="en-US">To disable password-based root logins over SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>PermitRootLogin prohibit-password</pre>
 </td>
 </tr>
@@ -14403,8 +14417,11 @@ line in <code>/etc/ssh/sshd_config</code>:
 <td>CCE-85854-8</td>
 <td>Disable SSH TCP Forwarding</td>
 <td xml:lang="en-US">The <code>AllowTcpForwarding</code> parameter specifies whether TCP forwarding is permitted.
-To disable TCP forwarding, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
+To disable TCP forwarding, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>AllowTcpForwarding no</pre>
 </td>
 </tr>
@@ -14414,8 +14431,11 @@ following line in <code>/etc/ssh/sshd_config</code>:
 <td xml:lang="en-US">SSH can allow system users to connect to systems if a cache of the remote
 systems public keys is available.  This should be disabled.
 <br><br>
-To ensure this behavior is disabled, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
+To ensure this behavior is disabled, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>IgnoreUserKnownHosts yes</pre>
 </td>
 </tr>
@@ -14426,18 +14446,31 @@ following line in <code>/etc/ssh/sshd_config</code>:
 through the connection to enable remote graphic connections.
 SSH has the capability to encrypt remote X11 connections when SSH's
 <code>X11Forwarding</code> option is enabled.
-<br><br>
-To disable X11 Forwarding, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
+<br>
+The default SSH configuration disables X11Forwarding. The appropriate
+configuration is used if no value is set for <code>X11Forwarding</code>.
+<br>
+To explicitly disable X11 Forwarding, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>X11Forwarding no</pre>
 </td>
 </tr>
 <tr>
 <td>CCE-27363-1</td>
 <td>Do Not Allow SSH Environment Options</td>
-<td xml:lang="en-US">To ensure users are not able to override environment
-variables of the SSH daemon, add or correct the following line
-in <code>/etc/ssh/sshd_config</code>:
+<td xml:lang="en-US">Ensure that users are not able to override environment variables of the SSH daemon.
+<br>
+The default SSH configuration disables environment processing. The appropriate
+configuration is used if no value is set for <code>PermitUserEnvironment</code>.
+<br>
+To explicitly disable Environment options, add or correct the following
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>PermitUserEnvironment no</pre>
 </td>
 </tr>
@@ -14446,8 +14479,11 @@ in <code>/etc/ssh/sshd_config</code>:
 <td>Enable GSSAPI Authentication</td>
 <td xml:lang="en-US">Sites setup to use Kerberos or other GSSAPI Authenticaion require setting
 sshd to accept this authentication.
-To enable GSSAPI authentication, add or correct the following line in the
-<code>/etc/ssh/sshd_config</code> file:
+To enable GSSAPI authentication, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>GSSAPIAuthentication yes</pre>
 </td>
 </tr>
@@ -14459,18 +14495,28 @@ enable PAM authentication using ChallengeResponseAuthentication and
 PasswordAuthentication in addition to PAM account and session module processing for all
 authentication types.
 
-To enable PAM authentication, add or correct the following line in the
-<code>/etc/ssh/sshd_config</code> file:
+To enable PAM authentication, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>UsePAM yes</pre>
 </td>
 </tr>
 <tr>
 <td></td>
 <td>Enable Public Key Authentication</td>
-<td xml:lang="en-US">Verify the sshd daemon allows public key authentication with the
-following:
-<pre>$ grep ^PubkeyAuthentication /etc/ssh/sshd_config
-PubkeyAuthentication yes</pre>
+<td xml:lang="en-US">Enable SSH login with public keys.
+<br>
+The default SSH configuration enables authentication based on public keys. The appropriate
+configuration is used if no value is set for <code>PubkeyAuthentication</code>.
+<br>
+To explicitly enable Public Key Authentication, add or correct the following
+
+
+<code>/etc/ssh/sshd_config</code>:
+
+<pre>PubkeyAuthentication yes</pre>
 </td>
 </tr>
 <tr>
@@ -14478,8 +14524,16 @@ PubkeyAuthentication yes</pre>
 <td>Enable Use of Strict Mode Checking</td>
 <td xml:lang="en-US">SSHs <code>StrictModes</code> option checks file and ownership permissions in
 the user's home directory <code>.ssh</code> folder before accepting login. If world-
-writable permissions are found, logon is rejected. To enable <code>StrictModes</code> in SSH,
-add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+writable permissions are found, logon is rejected.
+<br>
+The default SSH configuration has <code>StrictModes</code> enabled. The appropriate
+configuration is used if no value is set for <code>StrictModes</code>.
+<br>
+To explicitly enable <code>StrictModes</code> in SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>StrictModes yes</pre>
 </td>
 </tr>
@@ -14487,7 +14541,11 @@ add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <td>CCE-27314-4</td>
 <td>Enable SSH Warning Banner</td>
 <td xml:lang="en-US">To enable the warning banner and ensure it is consistent
-across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+across the system, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>Banner /etc/issue</pre>
 Another section contains information on how to create an
 appropriate system-wide warning banner.</td>
@@ -14496,7 +14554,10 @@ appropriate system-wide warning banner.</td>
 <td></td>
 <td>Enable SSH Warning Banner</td>
 <td xml:lang="en-US">To enable the warning banner and ensure it is consistent
-across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+across the system, add or correct the following line in
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>Banner /etc/issue.net</pre>
 Another section contains information on how to create an
 appropriate system-wide warning banner.</td>
@@ -14508,8 +14569,11 @@ appropriate system-wide warning banner.</td>
 by users. SSH has the capability to encrypt remote X11 connections when SSH's
 <code>X11Forwarding</code> option is enabled.
 <br><br>
-To enable X11 Forwarding, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
+To enable X11 Forwarding, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>X11Forwarding yes</pre>
 </td>
 </tr>
@@ -14526,9 +14590,16 @@ Where <code>USER1</code> and <code>USER2</code> are valid user names.</td>
 <tr>
 <td>CCE-80225-6</td>
 <td>Enable SSH Print Last Log</td>
-<td xml:lang="en-US">When enabled, SSH will display the date and time of the last
-successful account logon. To enable LastLog in
-SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+<td xml:lang="en-US">Ensure that SSH will display the date and time of the last successful account logon.
+<br>
+The default SSH configuration enables print of the date and time of the last login.
+The appropriate configuration is used if no value is set for <code>PrintLastLog</code>.
+<br>
+To explicitly enable LastLog in SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>PrintLastLog yes</pre>
 </td>
 </tr>
@@ -14586,7 +14657,10 @@ and terminated.
 
 To ensure the SSH idle timeout occurs precisely when the
 <code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
-value of <code>0</code>.</td>
+value of <code>0</code> in
+
+
+<code>/etc/ssh/sshd_config</code>:</td>
 </tr>
 <tr>
 <td>CCE-86550-1</td>
@@ -14600,8 +14674,15 @@ appropriate limits to ensure the service is available for needed access.</td>
 <td>CCE-80645-5</td>
 <td>Set LogLevel to INFO</td>
 <td xml:lang="en-US">The INFO parameter specifices that record login and logout activity will be logged.
-To specify the log level in
-SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+<br>
+The default SSH configuration sets the log level to INFO. The appropriate
+configuration is used if no value is set for <code>LogLevel</code>.
+<br>
+To explicitly specify the log level in SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>LogLevel INFO</pre>
 </td>
 </tr>
@@ -14610,7 +14691,11 @@ SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> 
 <td>Set SSH Daemon LogLevel to VERBOSE</td>
 <td xml:lang="en-US">The <code>VERBOSE</code> parameter configures the SSH daemon to record login and logout activity.
 To specify the log level in
-SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>LogLevel VERBOSE</pre>
 </td>
 </tr>
@@ -14755,8 +14840,19 @@ of those MACs:
 <td>CCE-83404-4</td>
 <td>Prevent remote hosts from connecting to the proxy display</td>
 <td xml:lang="en-US">The SSH daemon should prevent remote hosts from connecting to the proxy
-display. Make sure that the option <code>X11UseLocalhost</code> is set to
-<code>yes</code> within the SSH server configuration file.</td>
+display.
+<br>
+The default SSH configuration for <code>X11UseLocalhost</code> is <code>yes</code>,
+which prevents remote hosts from connecting to the proxy display.
+<br>
+To explicitly prevent remote connections to the proxy display, add or correct
+the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
+<code>X11UseLocalhost yes</code>
+</td>
 </tr>
 <tr>
 <td>CCE-82993-7</td>
