@@ -1447,40 +1447,6 @@ must be set upon account creation.
   <td></td>
 </tr>
 <tr>
-  <td>SI-2(2)</td>
-  <td>CCE-86261-5</td>
-  <td>Ensure McAfee Endpoint Security for Linux (ENSL) is running</td>
-  <td xml:lang="en-US">
-Install McAfee Endpoint Security for Linux antivirus software
-which is provided for DoD systems and uses signatures to search for the
-presence of viruses on the filesystem.
-  </td>
-  <td xml:lang="en-US">
-Virus scanning software can be used to detect if a system has been compromised by
-computer viruses, as well as to limit their spread to other systems.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>SI-2(2)</td>
-  <td>CCE-86260-7</td>
-  <td>Install McAfee Endpoint Security for Linux (ENSL)</td>
-  <td xml:lang="en-US">
-Install McAfee Endpoint Security for Linux antivirus software
-which is provided for DoD systems and uses signatures to search for the
-presence of viruses on the filesystem.
-
-The <code>McAfeeTP</code> package can be installed with the following command:
-<pre>
-$ sudo yum install McAfeeTP</pre>
-  </td>
-  <td xml:lang="en-US">
-Virus scanning software can be used to detect if a system has been compromised by
-computer viruses, as well as to limit their spread to other systems.
-  </td>
-  <td></td>
-</tr>
-<tr>
   <td>AC-2(4)<br/>AU-2(d)<br/>AU-12(c)<br/>AC-6(9)<br/>CM-6(a)</td>
   <td>CCE-80700-8</td>
   <td>Record Any Attempts to Run semanage</td>
@@ -4357,17 +4323,17 @@ software.
   <td>Configure Logind to terminate idle sessions after certain time of inactivity</td>
   <td xml:lang="en-US">
 To configure <tt>logind</tt> service to terminate inactive user sessions
-after <tt>15_minutes</tt> seconds, edit the file
+after <tt>10_minutes</tt> seconds, edit the file
 <tt>/etc/systemd/logind.conf</tt>. Ensure that there is a section
 <pre>[Login]</pre> which contains the configuration
-<pre>StopIdleSessionSec=<tt>15_minutes</tt></pre>.
+<pre>StopIdleSessionSec=<tt>10_minutes</tt></pre>.
   </td>
   <td xml:lang="en-US">
 Terminating an idle session within a short time period reduces the window of
 opportunity for unauthorized personnel to take control of a management
 session enabled on the console or console port that has been let unattended.
   </td>
-  <td>var_logind_session_timeout=15_minutes</td>
+  <td>var_logind_session_timeout=10_minutes</td>
 </tr>
 <tr>
   <td>CM-6(b)<br/>CM-6.1(iv)</td>
@@ -4497,22 +4463,6 @@ accounts are created in the future, and the cause should be discovered and addre
   <td></td>
 </tr>
 <tr>
-  <td>CM-6</td>
-  <td>CCE-82361-7</td>
-  <td>Prevent user from disabling the screen lock</td>
-  <td xml:lang="en-US">
-The <tt>tmux</tt> terminal multiplexer is used to implement
-automatic session locking. It should not be listed in
-<tt>/etc/shells</tt>.
-  </td>
-  <td xml:lang="en-US">
-Not listing <tt>tmux</tt> among permitted shells
-prevents malicious program running as user
-from lowering security by disabling the screen lock.
-  </td>
-  <td></td>
-</tr>
-<tr>
   <td>CM-6(a)</td>
   <td>CCE-80844-4</td>
   <td>Install AIDE</td>
@@ -4613,31 +4563,6 @@ Rsyslog is installed by default. The <code>rsyslog</code> package can be install
   <td xml:lang="en-US">
 The rsyslog package provides the rsyslog daemon, which provides
 system logging services.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>CM-6(a)</td>
-  <td>CCE-80644-8</td>
-  <td>Install the tmux Package</td>
-  <td xml:lang="en-US">
-To enable console screen locking, install the <tt>tmux</tt> package.
-A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not want to log out because of the temporary nature of the absence.
-The session lock is implemented at the point where session activity can be determined.
-Rather than be forced to wait for a period of time to expire before the user session can be locked, Red Hat Enterprise Linux 8 needs to provide users with the ability to manually invoke a session lock so users can secure their session if it is necessary to temporarily vacate the immediate physical vicinity.
-Instruct users to begin new terminal sessions with the following command:
-<pre>$ tmux</pre>
-The console can now be locked with the following key combination:
-<pre>ctrl+b :lock-session</pre>
-  </td>
-  <td xml:lang="en-US">
-A session time-out lock is a temporary action taken when a user stops work and moves away from the immediate
-physical vicinity of the information system but does not logout because of the temporary nature of the absence.
-Rather than relying on the user to manually lock their operation system session prior to vacating the vicinity,
-operating systems need to be able to identify when a user's session has idled and take action to initiate the
-session lock.
-<br /><br />
-The <tt>tmux</tt> package allows for a session lock to be implemented and configured.
   </td>
   <td></td>
 </tr>
@@ -5415,6 +5340,7 @@ For example, add <tt>acl</tt> to the following line in <tt>/etc/aide.conf</tt>:
 AIDE rules can be configured in multiple ways; this is merely one example that is already
 configured by default.
 
+
 The remediation provided with this rule adds <tt>acl</tt> to all rule sets available in
 <tt>/etc/aide.conf</tt>
   </td>
@@ -5436,6 +5362,7 @@ For example, add <tt>xattrs</tt> to the following line in <tt>/etc/aide.conf</tt
 <pre>FIPSR = p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha256</pre>
 AIDE rules can be configured in multiple ways; this is merely one example that is already
 configured by default.
+
 
 The remediation provided with this rule adds <tt>xattrs</tt> to all rule sets available in
 <tt>/etc/aide.conf</tt>
@@ -6846,26 +6773,6 @@ maliciously may result in an exceptional number of simultaneous login sessions.
   <td>var_accounts_max_concurrent_login_sessions=10</td>
 </tr>
 <tr>
-  <td>AC-11(a)<br/>AC-11(b)<br/>CM-6(a)</td>
-  <td>CCE-80940-0</td>
-  <td>Configure the tmux Lock Command</td>
-  <td xml:lang="en-US">
-To enable console screen locking in <tt>tmux</tt> terminal multiplexer,
-the <tt>vlock</tt> command must be configured to be used as a locking
-mechanism.
-Add the following line to <tt>/etc/tmux.conf</tt>:
-<pre>set -g lock-command vlock</pre>.
-The console can now be locked with the following key combination:
-<pre>ctrl+b :lock-session</pre>
-  </td>
-  <td xml:lang="en-US">
-The <tt>tmux</tt> package allows for a session lock to be implemented and configured.
-However, the session lock is implemented by an external command. The <tt>tmux</tt>
-default configuration does not contain an effective session lock.
-  </td>
-  <td></td>
-</tr>
-<tr>
   <td>AC-11(a)<br/>CM-6(a)</td>
   <td>CCE-80775-0</td>
   <td>Set GNOME3 Screensaver Inactivity Timeout</td>
@@ -7391,7 +7298,10 @@ network. The <tt>/etc/rsyslog.conf</tt> or
 <tt>/etc/rsyslog.d/*.conf</tt> file should contain a match for the following
 selectors: <tt>auth.*</tt>, <tt>authpriv.*</tt>, and <tt>daemon.*</tt>. If
 not, use the following as an example configuration:
-<pre>auth.*;authpriv.*;daemon.*                              /var/log/secure</pre>
+<code>
+    auth.*;authpriv.*                              /var/log/secure
+    daemon.*                                       /var/log/messages
+</code>
   </td>
   <td xml:lang="en-US">
 Logging remote access methods can be used to trace the decrease the risks
@@ -8287,59 +8197,7 @@ Check that Chrony only has time sources configured with the <tt>server</tt> dire
   </td>
   <td xml:lang="en-US">
 Depending on the infrastructure being used the <tt>pool</tt> directive may not be supported.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td></td>
-  <td>CCE-90782-4</td>
-  <td>Support session locking with tmux (not enforcing)</td>
-  <td xml:lang="en-US">
-The <tt>tmux</tt> terminal multiplexer is used to implement
-automatic session locking. It should be started from
-<tt>/etc/bashrc</tt> or drop-in files within <tt>/etc/profile.d/</tt>.
-  </td>
-  <td xml:lang="en-US">
-Unlike <tt>bash</tt> itself, the <tt>tmux</tt> terminal multiplexer
-provides a mechanism to lock sessions after period of inactivity.
-A session lock is a temporary action taken when a user stops work and moves away from the
-immediate physical vicinity of the information system but does not want to
-log out because of the temporary nature of the absence.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td></td>
-  <td>CCE-82199-1</td>
-  <td>Configure tmux to lock session after inactivity</td>
-  <td xml:lang="en-US">
-To enable console screen locking in <tt>tmux</tt> terminal multiplexer
-after a period of inactivity,
-the <tt>lock-after-time</tt> option has to be set to a value greater than 0 and less than
-or equal to 900 in <tt>/etc/tmux.conf</tt>.
-  </td>
-  <td xml:lang="en-US">
-Locking the session after a period of inactivity limits the
-potential exposure if the session is left unattended.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td></td>
-  <td>CCE-86135-1</td>
-  <td>Configure the tmux lock session key binding</td>
-  <td xml:lang="en-US">
-To set a key binding for the screen locking in <tt>tmux</tt> terminal multiplexer,
-the <tt>session-lock</tt> command must be bound to a key.
-Add the following line to <tt>/etc/tmux.conf</tt>:
-<pre>bind X lock-session</pre>.
-The console can now be locked with the following key combination:
-<pre>Ctrl+b Shift+x</pre>
-  </td>
-  <td xml:lang="en-US">
-The <tt>tmux</tt> package allows for a session lock to be implemented and configured.
-However, the session lock is implemented by an external command. The <tt>tmux</tt>
-default configuration does not contain an effective session lock.
+Using the <tt>server</tt> directive allows for better control of where the system gets time data from.
   </td>
   <td></td>
 </tr>
@@ -9034,7 +8892,7 @@ By decreasing the limit based on the amount of data and enabling
 time-based limit, effects of potential attacks against
 encryption keys are limited.
   </td>
-  <td>var_rekey_limit_time=1hour<br/>var_rekey_limit_size=1G</td>
+  <td>var_rekey_limit_size=1G<br/>var_rekey_limit_time=1hour</td>
 </tr>
 <tr>
   <td></td>

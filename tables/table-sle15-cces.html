@@ -94,7 +94,7 @@ run the following command to determine which package owns it:
 <pre>$ rpm -qf <i>FILENAME</i>
           </pre>
 Next, run the following command to reset its permissions to the correct values:
-<pre>$ sudo rpm --setugids <i>PACKAGENAME</i>
+<pre>$ sudo rpm --restore <i>PACKAGENAME</i>
           </pre>
          </td>
 </tr>
@@ -114,7 +114,7 @@ package owns it:
           </pre>
           <br>
 Next, run the following command to reset its permissions to the correct values:
-<pre>$ sudo rpm --setperms <i>PACKAGENAME</i>
+<pre>$ sudo rpm --restore <i>PACKAGENAME</i>
           </pre>
          </td>
 </tr>
@@ -197,6 +197,7 @@ For example, add <code>acl</code> to the following line in <code>/etc/aide.conf<
 AIDE rules can be configured in multiple ways; this is merely one example that is already
 configured by default.
 
+
 The remediation provided with this rule adds <code>acl</code> to all rule sets available in
 <code>/etc/aide.conf</code>
          </td>
@@ -211,6 +212,7 @@ For example, add <code>xattrs</code> to the following line in <code>/etc/aide.co
 <pre>FIPSR = p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha256</pre>
 AIDE rules can be configured in multiple ways; this is merely one example that is already
 configured by default.
+
 
 The remediation provided with this rule adds <code>xattrs</code> to all rule sets available in
 <code>/etc/aide.conf</code>
@@ -288,18 +290,6 @@ automating backups of user data. Commercial and open-source products
 are also available.</td>
 </tr>
 <tr>
-<td>CCE-92486-0</td>
-<td>Install McAfee Endpoint Security for Linux (ENSL)</td>
-<td>Install McAfee Endpoint Security for Linux antivirus software
-which is provided for DoD systems and uses signatures to search for the
-presence of viruses on the filesystem.
-
-The <code>McAfeeTP</code> package can be installed with the following command:
-<pre>
-$ sudo zypper install McAfeeTP</pre>
-          </td>
-</tr>
-<tr>
 <td>CCE-92487-8</td>
 <td>Ensure McAfee Endpoint Security for Linux (ENSL) is running</td>
 <td>Install McAfee Endpoint Security for Linux antivirus software
@@ -324,7 +314,7 @@ every time the system boots.
         <br>
 Detailed information on encrypting partitions using LUKS or LUKS ciphers can be found on
 the SUSE Linux Enterprise 15 Documentation web site:<br>
-        <a href="https://www.suse.com/documentation/sled-12/book_security/data/sec_security_cryptofs_y2.html">https://www.suse.com/documentation/sled-12/book_security/data/sec_security_cryptofs_y2.html</a>
+        <a href="https://documentation.suse.com/sles/15-SP2/html/SLES-all/cha-security-cryptofs.html">https://documentation.suse.com/sles/15-SP2/html/SLES-all/cha-security-cryptofs.html</a>
 .</td>
 </tr>
 <tr>
@@ -415,7 +405,7 @@ logical volume at installation time, or migrate it using LVM.</td>
 </tr>
 <tr>
 <td></td>
-<td>Ensure tmp.mount Unit Us Enabled</td>
+<td>Ensure tmp.mount Unit Is Enabled</td>
 <td>The <code>/tmp</code> directory is a world-writable directory used
 for temporary file storage. This directory is managed by <code>systemd-tmpfiles</code>.
 Ensure that the <code>tmp.mount</code> systemd unit is enabled.</td>
@@ -1774,11 +1764,11 @@ function of the device or has the concept of an organizational user (e.g.,
 VPN, proxy capability). This does not apply to authentication for the
 purpose of configuring the device itself (management).
 
+
 Check that the <code>pam_pkcs11.so</code> option is configured in the
 <code>etc/pam.d/common-auth</code> file with the following command:
 
 <pre># grep pam_pkcs11.so /etc/pam.d/common-auth
-
 
 auth sufficient pam_pkcs11.so</pre>
 
@@ -4061,7 +4051,7 @@ $ sudo zypper install iptables</pre>
 <tr>
 <td></td>
 <td>Verify Permissions On /etc/iptables Directory</td>
-<td> To properly set the permissions of <code>/etc/iptables</code>, run the command: <pre>$ sudo chmod 0600 /etc/iptables</pre>
+<td> To properly set the permissions of <code>/etc/iptables</code>, run the command: <pre>$ sudo chmod 0700 /etc/iptables</pre>
        </td>
 </tr>
 <tr>
@@ -5820,7 +5810,7 @@ generators.</td>
 <td>CCE-85607-0</td>
 <td>Verify that Local Logs of the audit Daemon are not World-Readable</td>
 <td>Files containing sensitive informations should be protected by restrictive
-permissions. Most of the time, there is no need that these files need to bei
+permissions. Most of the time, there is no need that these files need to be
 read by any non-root user.
 
 Check that "permissions.local" file contains the correct permissions rules with the following command:
@@ -6906,10 +6896,12 @@ This recommendation only applies if chrony is in use on the system.</td>
 <td>Enable the NTP Daemon</td>
 <td>
 
+
 Run the following command to determine the current status of the
 <code>chronyd</code> service:
 <pre>$ sudo systemctl is-active chronyd</pre>
 If the service is running, it should return the following: <pre>active</pre>
+
 Note: The <code>chronyd</code> daemon is enabled by default.
 <br>
        <br>
@@ -7017,7 +7009,7 @@ This recommendation only applies if chrony is in use on the system.</td>
 <tr>
 <td></td>
 <td>Verify Group Who Owns /etc/chrony.keys File</td>
-<td> To properly set the group owner of <code>/etc/chrony.keys</code>, run the command: <pre>$ sudo chgrp root /etc/chrony.keys</pre>
+<td> To properly set the group owner of <code>/etc/chrony.keys</code>, run the command: <pre>$ sudo chgrp chrony /etc/chrony.keys</pre>
       </td>
 </tr>
 <tr>
@@ -7029,7 +7021,7 @@ This recommendation only applies if chrony is in use on the system.</td>
 <tr>
 <td></td>
 <td>Verify Permissions On /etc/chrony.keys File</td>
-<td> To properly set the permissions of <code>/etc/chrony.keys</code>, run the command: <pre>$ sudo chmod 0600 /etc/chrony.keys</pre>
+<td> To properly set the permissions of <code>/etc/chrony.keys</code>, run the command: <pre>$ sudo chmod 0640 /etc/chrony.keys</pre>
       </td>
 </tr>
 <tr>
@@ -7991,16 +7983,13 @@ from a given connection. To set MaxSessions edit
 <tr>
 <td>CCE-91308-7</td>
 <td>Ensure SSH MaxStartups is configured</td>
-<td>The MaxStartups parameter specifies the maximum number of concurrent
-unauthenticated connections to the SSH daemon. Additional connections will be
-dropped until authentication succeeds or the LoginGraceTime expires for a
-connection. To confgure MaxStartups, you should add or correct the following
-line in the
-<code>/etc/ssh/sshd_config</code> file:
+<td>The MaxStartups parameter specifies the maximum number of concurrent unauthenticated
+connections to the SSH daemon. Additional connections will be dropped until authentication
+succeeds or the LoginGraceTime expires for a connection. To configure MaxStartups, you should
+add or edit the following line in the <code>/etc/ssh/sshd_config</code> file:
 <pre>MaxStartups <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_sshd_set_maxstartups" use="legacy"></xccdf-1.2:sub>
         </pre>
-CIS recommends a MaxStartups value of '10:30:60', or more restrictive where
-dictated by site policy.</td>
+       </td>
 </tr>
 <tr>
 <td>CCE-91337-6</td>
@@ -10244,10 +10233,8 @@ determined.</td>
 <td>Configure the operating system to encrypt the transfer of off-loaded audit
 records onto a different system or media from the system being audited.
 
-Uncomment the <code>enable_krb5</code> option in <pre>/etc/audit/audisp-remote.conf</pre>,
-and set it with the following line:
-<pre>enable_krb5 = yes</pre>
-      </td>
+Set the <code>transport</code> option in <pre>/etc/audit/audisp-remote.conf</pre>
+to <code>KRB5</code>.</td>
 </tr>
 <tr>
 <td>CCE-85705-2</td>
