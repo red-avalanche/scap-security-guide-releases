@@ -71,7 +71,11 @@ who may have compromised their credentials.</td>
 <tr>
 <td>CCE-27609-7</td>
 <td>Ensure All Accounts on the System Have Unique Names</td>
-<td xml:lang="en-US">Change usernames, or delete accounts, so each has a unique name.</td>
+<td xml:lang="en-US">Ensure accounts on the system have unique names.
+
+To ensure all accounts have unique names, run the following command:
+<pre>$ sudo getent passwd | awk -F: '{ print $1}' | uniq -d</pre>
+If a username is returned, change or delete the username.</td>
 <td xml:lang="en-US">Unique usernames allow for accountability on the system.</td>
 <td></td>
 <td></td>
@@ -2219,8 +2223,7 @@ directory. These files may contain unencrypted passwords to
 remote FTP servers making them susceptible to access by unauthorized
 users and should not be used.  Any <code>.netrc</code> files should be removed.</td>
 <td xml:lang="en-US">Unencrypted passwords for remote FTP servers may be stored in <code>.netrc</code>
-files. DoD policy requires passwords be encrypted in storage and not used
-in access scripts.</td>
+files. </td>
 <td></td>
 <td>IA-5(h)<br>IA-5(1)(c)<br>CM-6(a)<br>IA-5(7)<br>
 </td>
@@ -2236,9 +2239,9 @@ location:
 <pre>$ sudo rm /etc/hosts.equiv</pre>
 <pre>$ rm ~/.rhosts</pre>
 </td>
-<td xml:lang="en-US">Trust files are convenient, but when
-used in conjunction with the R-services, they can allow
-unauthenticated access to a system.</td>
+<td xml:lang="en-US">This action is only meaningful if <code>.rhosts</code> support is permitted
+through PAM. Trust files are convenient, but when used in conjunction with
+the R-services, they can allow unauthenticated access to a system.</td>
 <td></td>
 <td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
 </td>

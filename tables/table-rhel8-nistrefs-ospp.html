@@ -1131,7 +1131,7 @@ set up to ignore it.
 To check that Crypto Policies settings are configured correctly, you have to examine the OpenSSL config file
 available under <code>/etc/pki/tls/openssl.cnf</code>.
 This file has the <code>ini</code> format, and it enables crypto policy support
-if there is a <code>[ crypto_policy ]</code> section that contains the <code>.include /etc/crypto-policies/back-ends/openssl.config</code> directive.</td>
+if there is a <code>[ crypto_policy ]</code> section that contains the <code>.include /etc/crypto-policies/back-ends/opensslcnf.config</code> directive.</td>
 <td xml:lang="en-US">Overriding the system crypto policy makes the behavior of the Java runtime violates expectations,
 and makes system configuration more fragmented.</td>
 <td></td>
@@ -2855,6 +2855,27 @@ enforce the USB device authorization policy for all USB devices.</td>
 <td></td>
 </tr>
 <tr>
+<td>CCE-82880-6</td>
+<td>Configure session renegotiation for SSH client</td>
+<td xml:lang="en-US">The <code>RekeyLimit</code> parameter specifies how often
+the session key is renegotiated, both in terms of
+amount of data that may be transmitted and the time
+elapsed. To decrease the default limits, put line
+<code>RekeyLimit <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_ssh_client_rekey_limit_size"></xccdf-1.1:sub> <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_ssh_client_rekey_limit_time"></xccdf-1.1:sub></code> to file <code>/etc/ssh/ssh_config.d/02-rekey-limit.conf</code>.
+Make sure that there is no other <code>RekeyLimit</code> configuration preceding
+the <code>include</code> directive in the main config file
+<code>/etc/ssh/ssh_config</code>. Check also other files in
+<code>/etc/ssh/ssh_config.d</code> directory. Files are processed according to
+lexicographical order of file names. Make sure that there is no file
+processed before <code>02-rekey-limit.conf</code> containing definition of
+<code>RekeyLimit</code>.</td>
+<td xml:lang="en-US">By decreasing the limit based on the amount of data and enabling
+time-based limit, effects of potential attacks against
+encryption keys are limited.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>CCE-80896-4</td>
 <td>Disable SSH Access via Empty Passwords</td>
 <td xml:lang="en-US">To explicitly disallow SSH login from accounts with
@@ -2958,7 +2979,7 @@ not provide easy attribution.</td>
 the session key of the is renegotiated, both in terms of
 amount of data that may be transmitted and the time
 elapsed. To decrease the default limits, put line
-<code>RekeyLimit 512M 1h</code> to file <code>/etc/ssh/sshd_config</code>.</td>
+<code>RekeyLimit <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_rekey_limit_size"></xccdf-1.1:sub> <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_rekey_limit_time"></xccdf-1.1:sub></code> to file <code>/etc/ssh/sshd_config</code>.</td>
 <td xml:lang="en-US">By decreasing the limit based on the amount of data and enabling
 time-based limit, effects of potential attacks against
 encryption keys are limited.</td>
