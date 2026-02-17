@@ -155,47 +155,44 @@ If the operating system is in non-compliance with the Information Assurance Vuln
 	<td>V-230223</td>
 	<td>CCI-000068</td>
 	<td>high</td>
-	<td>RHEL 8 must implement NIST FIPS-validated cryptography for the following: to provision digital signatures, to generate cryptographic hashes, and to protect data requiring data-at-rest protections in accordance with applicable federal laws, Executive Orders, directives, policies, regulations, and standards.</td>
+	<td>RHEL 8 must implement NIST FIPS-validated cryptography for the following: To provision digital signatures, to generate cryptographic hashes, and to protect data requiring data-at-rest protections in accordance with applicable federal laws, Executive Orders, directives, policies, regulations, and standards.</td>
 	<td>SRG-OS-000033-GPOS-00014</td>
-	<td><pre>Use of weak or untested encryption algorithms undermines the purposes of using encryption to protect data. The operating system must implement cryptographic modules adhering to the higher standards approved by the Federal Government since this provides assurance they have been tested and validated.
+	<td><pre>Use of weak or untested encryption algorithms undermines the purposes of using encryption to protect data. The operating system must implement cryptographic modules adhering to the higher standards approved by the federal government since this provides assurance they have been tested and validated.
 
-RHEL 8 utilizes GRUB 2 as the default bootloader. Note that GRUB 2 command-line parameters are defined in the "kernelopts" variable of the /boot/grub2/grubenv file for all kernel boot entries.  The command "fips-mode-setup" modifies the "kernelopts" variable, which in turn updates all kernel boot entries. 
+RHEL 8 utilizes GRUB 2 as the default bootloader. Note that GRUB 2 command-line parameters are defined in the "kernelopts" variable of the /boot/grub2/grubenv file for all kernel boot entries. The command "fips-mode-setup" modifies the "kernelopts" variable, which in turn updates all kernel boot entries. 
 
-The fips=1 kernel option needs to be added to the kernel command line during system installation so that key generation is done with FIPS-approved algorithms and continuous monitoring tests in place. Users must also ensure the system has plenty of entropy during the installation process by moving the mouse around, or if no mouse is available, ensuring that many keystrokes are typed. The recommended amount of keystrokes is 256 and more. Less than 256 keystrokes may generate a non-unique key.
+The fips=1 kernel option needs to be added to the kernel command line during system installation so that key generation is done with FIPS-approved algorithms and continuous monitoring tests in place. Users must also ensure the system has plenty of entropy during the installation process by moving the mouse around, or if no mouse is available, ensuring that many keystrokes are typed. The recommended amount of keystrokes is 256 and more. Less than 256 keystrokes may generate a nonunique key.
 
 Satisfies: SRG-OS-000033-GPOS-00014, SRG-OS-000125-GPOS-00065, SRG-OS-000396-GPOS-00176, SRG-OS-000423-GPOS-00187, SRG-OS-000478-GPOS-00223</pre></td>
-	<td><pre>Verify the operating system implements DoD-approved encryption to protect the confidentiality of remote access sessions.
+	<td><pre>Verify the operating system implements DOD-approved encryption to protect the confidentiality of remote access sessions.
 
 Check to see if FIPS mode is enabled with the following command:
 
-$ fips-mode-setup --check
-
-FIPS mode is enabled
+     $ fips-mode-setup --check
+     FIPS mode is enabled
 
 If FIPS mode is "enabled", check to see if the kernel boot parameter is configured for FIPS mode with the following command:
 
-$ sudo grub2-editenv list | grep fips
-
-kernelopts=root=/dev/mapper/rhel-root ro crashkernel=auto resume=/dev/mapper/rhel-swap rd.lvm.lv=rhel/root rd.lvm.lv=rhel/swap rhgb quiet fips=1 boot=UUID=8d171156-cd61-421c-ba41-1c021ac29e82
+     $ sudo grub2-editenv list | grep fips
+     kernelopts=root=/dev/mapper/rhel-root ro crashkernel=auto resume=/dev/mapper/rhel-swap rd.lvm.lv=rhel/root rd.lvm.lv=rhel/swap rhgb quiet fips=1 boot=UUID=8d171156-cd61-421c-ba41-1c021ac29e82
 
 If the kernel boot parameter is configured to use FIPS mode, check to see if the system is in FIPS mode with the following command:
 
-$ sudo cat /proc/sys/crypto/fips_enabled
-
-1
+     $ sudo cat /proc/sys/crypto/fips_enabled
+     1
 
 If FIPS mode is not "on", the kernel boot parameter is not configured for FIPS mode, or the system does not have a value of "1" for "fips_enabled" in "/proc/sys/crypto", this is a finding.</pre></td>
-	<td><pre>Configure the operating system to implement DoD-approved encryption by following the steps below:
+	<td><pre>Configure the operating system to implement DOD-approved encryption by following the steps below:
 
 To enable strict FIPS compliance, the fips=1 kernel option needs to be added to the kernel boot parameters during system installation so key generation is done with FIPS-approved algorithms and continuous monitoring tests in place.
 
-Enable FIPS mode after installation (not strict FIPS compliant) with the following command:
+Enable FIPS mode after installation (not strict FIPS-compliant) with the following command:
 
-$ sudo fips-mode-setup --enable
+     $ sudo fips-mode-setup --enable
 
 Reboot the system for the changes to take effect.</pre></td>
 	<td>RHEL-08-010020</td>
-	<td>SV-230223r877398_rule</td>
+	<td>SV-230223r928585_rule</td>
 </tr>
 
 <tr>
@@ -2271,22 +2268,20 @@ $ sudo rm /[path]/[to]/[file]/.shosts</pre></td>
 	<td>low</td>
 	<td>RHEL 8 must enable the hardware random number generator entropy gatherer service.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
-	<td><pre>The most important characteristic of a random number generator is its randomness, namely its ability to deliver random numbers that are impossible to predict.  Entropy in computer security is associated with the unpredictability of a source of randomness.  The random source with high entropy tends to achieve a uniform distribution of random values.  Random number generators are one of the most important building blocks of cryptosystems.  
+	<td><pre>The most important characteristic of a random number generator is its randomness, namely its ability to deliver random numbers that are impossible to predict. Entropy in computer security is associated with the unpredictability of a source of randomness.  The random source with high entropy tends to achieve a uniform distribution of random values. Random number generators are one of the most important building blocks of cryptosystems.  
 
-The rngd service feeds random data from hardware device to kernel random device. Quality (non-predictable) random number generation is important for several security functions (i.e., ciphers).</pre></td>
-	<td><pre>Note: For RHEL versions 8.4 and above running with kernel FIPS mode enabled as specified by RHEL-08-010020, this requirement is not applicable.
+The rngd service feeds random data from hardware device to kernel random device. Quality (nonpredictable) random number generation is important for several security functions (i.e., ciphers).</pre></td>
+	<td><pre>Note: For RHEL versions 8.4 and above running with kernel FIPS mode enabled as specified by RHEL-08-010020, this requirement is Not Applicable.
 
 Check that  RHEL 8 has enabled the hardware random number generator entropy gatherer service.
 
 Verify the rngd service is enabled and active with the following commands:
 
-$ sudo systemctl is-enabled rngd
+     $ sudo systemctl is-enabled rngd
+     enabled
 
-enabled
-
-$ sudo systemctl is-active rngd
-
-active
+     $ sudo systemctl is-active rngd
+     active
 
 If the service is not "enabled" and "active", this is a finding.</pre></td>
 	<td><pre>Start the rngd service and enable the rngd service with the following commands:
@@ -2295,7 +2290,7 @@ If the service is not "enabled" and "active", this is a finding.</pre></td>
 
      $ sudo systemctl enable rngd.service</pre></td>
 	<td>RHEL-08-010471</td>
-	<td>SV-230285r917876_rule</td>
+	<td>SV-230285r928587_rule</td>
 </tr>
 
 <tr>
@@ -7817,19 +7812,20 @@ Minimizing the exposure of the server functionality of the chrony daemon diminis
 
 RHEL 8 utilizes the "timedatectl" command to view the status of the "systemd-timesyncd.service". The "timedatectl" status will display the local time, UTC, and the offset from UTC.
 
-Note that USNO offers authenticated NTP service to DoD and U.S. Government agencies operating on the NIPR and SIPR networks. Visit https://www.usno.navy.mil/USNO/time/ntp/dod-customers for more information.</pre></td>
-	<td><pre>Verify RHEL 8 disables the chrony daemon from acting as a server with the following command:
+Note that USNO offers authenticated NTP service to DOD and U.S. Government agencies operating on the NIPR and SIPR networks. Visit https://www.usno.navy.mil/USNO/time/ntp/DOD-customers for more information.</pre></td>
+	<td><pre>Note: If the system is approved and documented by the information system security officer (ISSO) to function as an NTP time server, this requirement is Not Applicable.
 
-$ sudo grep -w 'port' /etc/chrony.conf
+Verify RHEL 8 disables the chrony daemon from acting as a server with the following command:
 
-port 0
+     $ sudo grep -w 'port' /etc/chrony.conf
+     port 0
 
 If the "port" option is not set to "0", is commented out or missing, this is a finding.</pre></td>
-	<td><pre>Configure the operating system to disable the chrony daemon from acting as a server by adding/modifying the following line in the /etc/chrony.conf file.
+	<td><pre>Configure the operating system to disable the chrony daemon from acting as a server by adding or modifying the following line in the "/etc/chrony.conf" file:
 
-port 0</pre></td>
+     port 0</pre></td>
 	<td>RHEL-08-030741</td>
-	<td>SV-230485r627750_rule</td>
+	<td>SV-230485r928590_rule</td>
 </tr>
 
 <tr>
@@ -7844,19 +7840,20 @@ Not exposing the management interface of the chrony daemon on the network dimini
 
 RHEL 8 utilizes the "timedatectl" command to view the status of the "systemd-timesyncd.service". The "timedatectl" status will display the local time, UTC, and the offset from UTC.
 
-Note that USNO offers authenticated NTP service to DoD and U.S. Government agencies operating on the NIPR and SIPR networks. Visit https://www.usno.navy.mil/USNO/time/ntp/dod-customers for more information.</pre></td>
-	<td><pre>Verify RHEL 8 disables network management of the chrony daemon with the following command:
+Note that USNO offers authenticated NTP service to DOD and U.S. Government agencies operating on the NIPR and SIPR networks. Visit https://www.usno.navy.mil/USNO/time/ntp/DOD-customers for more information.</pre></td>
+	<td><pre>Note: If the system is approved and documented by the information system security officer (ISSO) to function as an NTP time server, this requirement is Not Applicable.
 
-$ sudo grep -w 'cmdport' /etc/chrony.conf
+Verify RHEL 8 disables network management of the chrony daemon with the following command:
 
-cmdport 0
+     $ sudo grep -w 'cmdport' /etc/chrony.conf
+     cmdport 0
 
 If the "cmdport" option is not set to "0", is commented out or missing, this is a finding.</pre></td>
-	<td><pre>Configure the operating system disable network management of the chrony daemon by adding/modifying the following line in the /etc/chrony.conf file.
+	<td><pre>Configure the operating system disable network management of the chrony daemon by adding or modifying the following line in the "/etc/chrony.conf" file.
 
-cmdport 0</pre></td>
+     cmdport 0</pre></td>
 	<td>RHEL-08-030742</td>
-	<td>SV-230486r627750_rule</td>
+	<td>SV-230486r928593_rule</td>
 </tr>
 
 <tr>
@@ -12446,56 +12443,64 @@ A reboot is required for the changes to take effect.</pre></td>
 	<td>V-254520</td>
 	<td>CCI-002265</td>
 	<td>medium</td>
-	<td>RHEL 8 must prevent non-privileged users from executing privileged functions, including disabling, circumventing, or altering implemented security safeguards/countermeasures.</td>
+	<td>RHEL 8 must prevent nonprivileged users from executing privileged functions, including disabling, circumventing, or altering implemented security safeguards/countermeasures.</td>
 	<td>SRG-OS-000324-GPOS-00125</td>
-	<td><pre>Preventing non-privileged users from executing privileged functions mitigates the risk that unauthorized individuals or processes may gain unnecessary access to information or privileges. 
+	<td><pre>Preventing nonprivileged users from executing privileged functions mitigates the risk that unauthorized individuals or processes may gain unnecessary access to information or privileges. 
  
-Privileged functions include, for example, establishing accounts, performing system integrity checks, or administering cryptographic key management activities. Non-privileged users are individuals who do not possess appropriate authorizations. Circumventing intrusion detection and prevention mechanisms or malicious code protection mechanisms are examples of privileged functions that require protection from non-privileged users.</pre></td>
-	<td><pre>Verify the operating system prevents non-privileged users from executing privileged functions, including disabling, circumventing, or altering implemented security safeguards/countermeasures. 
+Privileged functions include, for example, establishing accounts, performing system integrity checks, or administering cryptographic key management activities. Nonprivileged users are individuals who do not possess appropriate authorizations. Circumventing intrusion detection and prevention mechanisms or malicious code protection mechanisms are examples of privileged functions that require protection from nonprivileged users.</pre></td>
+	<td><pre>Verify the operating system prevents nonprivileged users from executing privileged functions, including disabling, circumventing, or altering implemented security safeguards/countermeasures. 
  
-Obtain a list of authorized users (other than System Administrator and guest accounts) for the system. 
+Obtain a list of authorized users (other than system administrator and guest accounts) for the system. 
  
 Check the list against the system by using the following command: 
  
-$ sudo semanage login -l | more 
-Login Name SELinux User MLS/MCS Range Service 
-__default__ user_u s0-s0:c0.c1023 * 
-root unconfined_u s0-s0:c0.c1023 * 
-system_u system_u s0-s0:c0.c1023 * 
-joe staff_u s0-s0:c0.c1023 * 
+     $ sudo semanage login -l | more
+ 
+     Login Name    SELinux User    MLS/MCS Range    Service
+
+     __default__   user_u                 s0-s0:c0.c1023        *
+     root                   unconfined_u  s0-s0:c0.c1023        *
+     system_u        system_u           s0-s0:c0.c1023        *
+     joe                     staff_u                s0-s0:c0.c1023        *
  
 All administrators must be mapped to the "sysadm_u", "staff_u", or an appropriately tailored confined role as defined by the organization. 
  
-All authorized non-administrative users must be mapped to the "user_u" role. 
+All authorized nonadministrative users must be mapped to the "user_u" role. 
  
 If they are not mapped in this way, this is a finding.</pre></td>
-	<td><pre>Configure RHEL 8 to prevent non-privileged users from executing privileged functions, including disabling, circumventing, or altering implemented security safeguards/countermeasures. 
+	<td><pre>Configure RHEL 8 to prevent nonprivileged users from executing privileged functions, including disabling, circumventing, or altering implemented security safeguards/countermeasures. 
  
 Use the following command to map a new user to the "sysadm_u" role: 
  
-$ sudo semanage login -a -s sysadm_u <username> 
+     $ sudo semanage login -a -s sysadm_u <username> 
  
 Use the following command to map an existing user to the "sysadm_u" role: 
  
-$ sudo semanage login -m -s sysadm_u <username> 
+     $ sudo semanage login -m -s sysadm_u <username> 
  
 Use the following command to map a new user to the "staff_u" role: 
  
-$ sudo semanage login -a -s staff_u <username> 
+     $ sudo semanage login -a -s staff_u <username> 
  
 Use the following command to map an existing user to the "staff_u" role: 
  
-$ sudo semanage login -m -s staff_u <username> 
+     $ sudo semanage login -m -s staff_u <username> 
  
 Use the following command to map a new user to the "user_u" role: 
  
-$ sudo  semanage login -a -s user_u <username> 
+     $ sudo  semanage login -a -s user_u <username> 
  
 Use the following command to map an existing user to the "user_u" role: 
  
-$ sudo semanage login -m -s user_u <username></pre></td>
+     $ sudo semanage login -m -s user_u <username>
+
+Note: SELinux confined users mapped to sysadm_u are not allowed to log in to the system over SSH, by default. If this is a required function, it can be configured by setting the ssh_sysadm_login SELinux boolean to "on" with the following command:
+
+     $ sudo setsebool -P ssh_sysadm_login on
+
+This must be documented with the information system security officer (ISSO) as an operational requirement.</pre></td>
 	<td>RHEL-08-040400</td>
-	<td>SV-254520r877392_rule</td>
+	<td>SV-254520r928805_rule</td>
 </tr>
 
 <tr>

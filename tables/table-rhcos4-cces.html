@@ -1238,18 +1238,6 @@ $ sudo echo &gt; /etc/securetty
 </td>
 </tr>
 <tr>
-<td></td>
-<td>Ensure that System Accounts Are Locked</td>
-<td>Some accounts are not associated with a human user of the system, and exist to perform some
-administrative functions. An attacker should not be able to log into these accounts.
-<br><br>
-System accounts are those user accounts with a user ID less than <code>1000</code>.
-If any system account other than <code>root</code>, <code>halt</code>, <code>sync</code>, <code>shutdown</code>
-and <code>nfsnobody</code> has an unlocked password, disable it with the command:
-<pre>$ sudo usermod -L <i>account</i></pre>
-</td>
-</tr>
-<tr>
 <td>CCE-82697-4</td>
 <td>Ensure that System Accounts Do Not Run a Shell Upon Login</td>
 <td>Some accounts are not associated with a human user of the system, and exist to perform some
@@ -1410,11 +1398,6 @@ considered during the check and properly remediated, if necessary.</td>
 <td>The <code>audispd-plugins</code> package can be installed with the following command:
 <pre></pre>
 </td>
-</tr>
-<tr>
-<td></td>
-<td>Ensure the default plugins for the audit dispatcher are Installed</td>
-<td>The audit-audispd-plugins package should be installed.</td>
 </tr>
 <tr>
 <td>CCE-82669-3</td>
@@ -5681,8 +5664,7 @@ The configuration that was used to build kernel is available at <code>/boot/conf
     To check the configuration value for <code>CONFIG_SECURITY_DMESG_RESTRICT</code>, run the following command:
     <code>grep CONFIG_SECURITY_DMESG_RESTRICT /boot/config-*</code>
     
-    Configs with value 'n' are not explicitly set in the file, so either commented lines or no
-    lines should be returned.
+    For each kernel installed, a line with value "y" should be returned.
     </td>
 </tr>
 <tr>
@@ -5694,7 +5676,8 @@ The configuration that was used to build kernel is available at <code>/boot/conf
     To check the configuration value for <code>CONFIG_SECURITY_WRITABLE_HOOKS</code>, run the following command:
     <code>grep CONFIG_SECURITY_WRITABLE_HOOKS /boot/config-*</code>
     
-    For each kernel installed, a line with value "y" should be returned.
+    Configs with value 'n' are not explicitly set in the file, so either commented lines or no
+    lines should be returned.
     </td>
 </tr>
 <tr>
@@ -5853,22 +5836,15 @@ When using <code>rsyslogd</code> to off-load logs off an encryption system must 
 <td></td>
 <td>Ensure Log Files Are Owned By Appropriate Group</td>
 <td>The group-owner of all log files written by
-<code>rsyslog</code> should be
-
-<code>root</code>.
-
+<code>rsyslog</code> should be <code>root</code>.
 These log files are determined by the second part of each Rule line in
 <code>/etc/rsyslog.conf</code> and typically all appear in <code>/var/log</code>.
 For each log file <i>LOGFILE</i> referenced in <code>/etc/rsyslog.conf</code>,
 run the following command to inspect the file's group owner:
 <pre>$ ls -l <i>LOGFILE</i></pre>
-If the owner is not
-
-<code>root</code>,
-
+If the owner is not <code>root</code>,
 run the following command to
 correct this:
-
 <pre>$ sudo chgrp root <i>LOGFILE</i></pre>
 </td>
 </tr>
@@ -6253,20 +6229,6 @@ add or correct the following line in
 If changes were required, reload the ip6tables rules:
 <pre>$ sudo service ip6tables reload</pre>
 </td>
-</tr>
-<tr>
-<td></td>
-<td>Set configuration for IPv6 loopback traffic</td>
-<td>Configure the loopback interface to accept traffic.
-Configure all other interfaces to deny traffic to the loopback
-network.</td>
-</tr>
-<tr>
-<td></td>
-<td>Set configuration for loopback traffic</td>
-<td>Configure the loopback interface to accept traffic.
-Configure all other interfaces to deny traffic to the loopback
-network.</td>
 </tr>
 <tr>
 <td></td>
@@ -8275,42 +8237,6 @@ be preferred to be used rather than the <code>chronyd</code> one. Refer to:
     <a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-configuring_ntp_using_the_chrony_suite">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-configuring_ntp_using_the_chrony_suite</a>
 
 for guidance which NTP daemon to choose depending on the environment used.</td>
-</tr>
-<tr>
-<td></td>
-<td>Enable the NTP Daemon</td>
-<td>
-The <code>ntp</code> service can be enabled with the following manifest:
-<pre>
----
-apiVersion: machineconfiguration.openshift.io/v1
-kind: MachineConfig
-metadata:
-  labels:
-    machineconfiguration.openshift.io/role: master
-  name: 75-master-ntp-enable
-spec:
-  config:
-    ignition:
-      version: 3.1.0
-    systemd:
-      units:
-      - name: ntp.service
-        enabled: true
-</pre>
-<p>
-This will enable the <code>ntp</code> service in all the
-nodes labeled with the "master" role.
-</p>
-<p>
-Note that this needs to be done for each <code>MachineConfigPool</code>
-</p>
-<p>
-For more information on how to configure nodes with the Machine Config
-Operator see
-<a href="https://docs.openshift.com/container-platform/4.6/post_installation_configuration/machine-configuration-tasks.html">the relevant documentation</a>.
-</p>
-</td>
 </tr>
 <tr>
 <td></td>

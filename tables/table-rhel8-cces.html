@@ -2983,11 +2983,12 @@ assigned.</td>
 </tr>
 <tr>
 <td>CCE-86071-8</td>
-<td>Ensure the Group Used by pam_wheel Module Exists on System and is Empty</td>
-<td>Ensure that the group <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_pam_wheel_group_for_su" use="legacy"></xccdf-1.2:sub>
-referenced by the pam_wheel  <code>group</code> parameter exists and has no
-members. This ensures that no user can run commands with altered
-privileges through the <code>su</code> command.</td>
+<td>Ensure the Group Used by pam_wheel.so Module Exists on System and is Empty</td>
+<td>Ensure that the group <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_pam_wheel_group_for_su" use="legacy"></xccdf-1.2:sub></code> referenced by
+<code>var_pam_wheel_group_for_su</code> variable and used as value for the <code>pam_wheel.so</code>
+<code>group</code> option exists and has no members. This empty group used by
+<code>pam_wheel.so</code> in <code>/etc/pam.d/su</code> ensures that no user can run commands with
+altered privileges through the <code>su</code> command.</td>
 </tr>
 <tr>
 <td>CCE-80840-2</td>
@@ -3081,10 +3082,9 @@ sure that the following line exists in the file <code>/etc/pam.d/su</code>:
 <tr>
 <td>CCE-86064-3</td>
 <td>Enforce Usage of pam_wheel with Group Parameter for su Authentication</td>
-<td>To ensure that only users who are members of the group set in the
-<code>group</code> pam_wheel parameter can run commands with altered
-privileges through the <code>su</code> command, make sure that the
-following line exists in the file <code>/etc/pam.d/su</code>:
+<td>To ensure that only users who are members of the group set in the <code>group</code> option of
+<code>pam_wheel.so</code> module can run commands with altered privileges through the <code>su</code>
+command, make sure that the following line exists in the file <code>/etc/pam.d/su</code>:
 <pre>auth required pam_wheel.so use_uid group=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_pam_wheel_group_for_su" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
@@ -8900,8 +8900,7 @@ The configuration that was used to build kernel is available at <code>/boot/conf
     To check the configuration value for <code>CONFIG_SECURITY_DMESG_RESTRICT</code>, run the following command:
     <code>grep CONFIG_SECURITY_DMESG_RESTRICT /boot/config-*</code>
     
-    Configs with value 'n' are not explicitly set in the file, so either commented lines or no
-    lines should be returned.
+    For each kernel installed, a line with value "y" should be returned.
     </td>
 </tr>
 <tr>
@@ -8913,7 +8912,8 @@ The configuration that was used to build kernel is available at <code>/boot/conf
     To check the configuration value for <code>CONFIG_SECURITY_WRITABLE_HOOKS</code>, run the following command:
     <code>grep CONFIG_SECURITY_WRITABLE_HOOKS /boot/config-*</code>
     
-    For each kernel installed, a line with value "y" should be returned.
+    Configs with value 'n' are not explicitly set in the file, so either commented lines or no
+    lines should be returned.
     </td>
 </tr>
 <tr>
@@ -9249,22 +9249,15 @@ When using <code>rsyslogd</code> to off-load logs off an encryption system must 
 <td>CCE-80860-0</td>
 <td>Ensure Log Files Are Owned By Appropriate Group</td>
 <td>The group-owner of all log files written by
-<code>rsyslog</code> should be
-
-<code>root</code>.
-
+<code>rsyslog</code> should be <code>root</code>.
 These log files are determined by the second part of each Rule line in
 <code>/etc/rsyslog.conf</code> and typically all appear in <code>/var/log</code>.
 For each log file <i>LOGFILE</i> referenced in <code>/etc/rsyslog.conf</code>,
 run the following command to inspect the file's group owner:
 <pre>$ ls -l <i>LOGFILE</i></pre>
-If the owner is not
-
-<code>root</code>,
-
+If the owner is not <code>root</code>,
 run the following command to
 correct this:
-
 <pre>$ sudo chgrp root <i>LOGFILE</i></pre>
 </td>
 </tr>
@@ -17062,7 +17055,7 @@ The <code>ntp</code> service can be enabled with the following command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86486-8</td>
 <td>Enable the NTP Daemon</td>
 <td>
 The <code>ntpd</code> service can be enabled with the following command:
@@ -17185,7 +17178,7 @@ Add or edit server or pool lines to <code>/etc/chrony.conf</code> as appropriate
 Multiple servers may be configured.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86488-4</td>
 <td>Specify Additional Remote NTP Servers</td>
 <td>Additional NTP servers can be specified for time synchronization
 in the file <code>/etc/ntp.conf</code>.  To do so, add additional lines of the
@@ -17195,7 +17188,7 @@ following form, substituting the IP address or hostname of a remote NTP server f
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86508-9</td>
 <td>Specify a Remote NTP Server</td>
 <td>To specify a remote NTP server for time synchronization, edit
 the file <code>/etc/ntp.conf</code>. Add or correct the following lines,
@@ -17733,8 +17726,6 @@ firewall configuration.
 <br><br>
 
 To configure <code>firewalld</code> to prevent access, run the following command(s):
-
-
 <code>firewall-cmd --permanent --remove-service=ssh</code>
 </td>
 </tr>
@@ -17876,11 +17867,8 @@ remote access through SSH. In more restrictive firewalld settings, the SSH port 
 added to the proper firewalld zone in order to allow SSH remote access.
 <br><br>
 
-
-
 To configure <code>firewalld</code> to allow <code>ssh</code> access, run the following command(s):
 <pre>firewall-cmd --permanent --add-service=ssh</pre>
-
 Then run the following command to load the newly created rule(s):
 <pre>firewall-cmd --reload</pre>
 </td>
