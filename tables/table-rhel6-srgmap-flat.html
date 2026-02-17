@@ -311,32 +311,30 @@ exec /usr/bin/logger -p security.info "Control-Alt-Delete pressed"</td>
 <td>SRG-OS-000480-GPOS-00227</td>
 <td><i>TBD - Assigned by DISA after STIG release</i></td>
 <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-<td>CCE-27056-1:Add nosuid Option to Removable Media Partitions</td>
+<td>CCE-26872-2:Ensure All Files Are Owned by a Group</td>
 <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
 
 Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
-<td xml:lang="en-US">The <code>nosuid</code> mount option prevents set-user-identifier (SUID)
-and set-group-identifier (SGID) permissions from taking effect. These permissions
-allow users to execute binaries with the same permissions as the owner and group
-of the file respectively. Users should not be allowed to introduce SUID and SGID
-files into the system via partitions mounted from removeable media.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
-
-    any removable media partitions.</td>
+<td xml:lang="en-US">If any files are not owned by a group, then the
+cause of their lack of group-ownership should be investigated.
+Following this, the files should be deleted or assigned to an
+appropriate group.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
-<td></td>
-<td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-61487r1_fix">Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</fixtext></td>
-<td>The nosuid mount option prevents set-user-identifier (SUID)
-and set-group-identifier (SGID) permissions from taking effect. These permissions
-allow users to execute binaries with the same permissions as the owner and group
-of the file respectively. Users should not be allowed to introduce SUID and SGID
-files into the system via partitions mounted from removeable media.
-Add the nosuid option to the fourth column of
-/etc/fstab for the line which controls mounting of
+<td>The following command will discover and print any
+files on local partitions which do not belong to a valid group.
+$ sudo find / -xdev -fstype local -nogroup
 
-    any removable media partitions.</td>
+Either remove all files and directories from the system that do not have a valid group,
+or assign a valid group with the chgrp command:
+$ sudo chgrp group file
+      Is it the case that there is output?
+      </td>
+<td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-61487r1_fix">Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</fixtext></td>
+<td>If any files are not owned by a group, then the
+cause of their lack of group-ownership should be investigated.
+Following this, the files should be deleted or assigned to an
+appropriate group.</td>
 <td>medium</td>
 <td></td>
 <td></td>
@@ -382,30 +380,32 @@ appropriate user.</td>
 <td>SRG-OS-000480-GPOS-00227</td>
 <td><i>TBD - Assigned by DISA after STIG release</i></td>
 <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-<td>CCE-26872-2:Ensure All Files Are Owned by a Group</td>
+<td>CCE-27056-1:Add nosuid Option to Removable Media Partitions</td>
 <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
 
 Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
-<td xml:lang="en-US">If any files are not owned by a group, then the
-cause of their lack of group-ownership should be investigated.
-Following this, the files should be deleted or assigned to an
-appropriate group.</td>
+<td xml:lang="en-US">The <code>nosuid</code> mount option prevents set-user-identifier (SUID)
+and set-group-identifier (SGID) permissions from taking effect. These permissions
+allow users to execute binaries with the same permissions as the owner and group
+of the file respectively. Users should not be allowed to introduce SUID and SGID
+files into the system via partitions mounted from removeable media.
+Add the <code>nosuid</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+
+    any removable media partitions.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
-<td>The following command will discover and print any
-files on local partitions which do not belong to a valid group.
-$ sudo find / -xdev -fstype local -nogroup
-
-Either remove all files and directories from the system that do not have a valid group,
-or assign a valid group with the chgrp command:
-$ sudo chgrp group file
-      Is it the case that there is output?
-      </td>
+<td></td>
 <td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-61487r1_fix">Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</fixtext></td>
-<td>If any files are not owned by a group, then the
-cause of their lack of group-ownership should be investigated.
-Following this, the files should be deleted or assigned to an
-appropriate group.</td>
+<td>The nosuid mount option prevents set-user-identifier (SUID)
+and set-group-identifier (SGID) permissions from taking effect. These permissions
+allow users to execute binaries with the same permissions as the owner and group
+of the file respectively. Users should not be allowed to introduce SUID and SGID
+files into the system via partitions mounted from removeable media.
+Add the nosuid option to the fourth column of
+/etc/fstab for the line which controls mounting of
+
+    any removable media partitions.</td>
 <td>medium</td>
 <td></td>
 <td></td>
@@ -3236,31 +3236,33 @@ This requirement is a permanent not a finding. No fix is required.
 <td>SRG-OS-000368-GPOS-00154</td>
 <td><i>TBD - Assigned by DISA after STIG release</i></td>
 <td>The operating system must prevent program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage.</td>
-<td>CCE-26778-1:Add nodev Option to /dev/shm</td>
+<td>CCE-26622-1:Add noexec Option to /dev/shm</td>
 <td>Control of program execution is a mechanism used to prevent execution of unauthorized programs. Some operating systems may provide a capability that runs counter to the mission or provides users with functionality that exceeds mission requirements. This includes functions and services installed at the operating system-level.
 
 Some of the programs, installed by default, may be harmful or may not be necessary to support essential organizational operations (e.g., key missions, functions). Removal of executable programs is not always possible; therefore, establishing a method of preventing program execution is critical to maintaining a secure system baseline.
 
 Methods for complying with this requirement include restricting execution of programs in certain environments, while preventing execution in other environments; or limiting execution of certain program functionality based on organization-defined criteria (e.g., privileges, subnets, sandboxed environments, or roles).</td>
-<td xml:lang="en-US">The <code>nodev</code> mount option can be used to prevent creation of device
-files in <code>/dev/shm</code>. Legitimate character and block devices should
-not exist within temporary directories like <code>/dev/shm</code>.
-Add the <code>nodev</code> option to the fourth column of
+<td xml:lang="en-US">The <code>noexec</code> mount option can be used to prevent binaries
+from being executed out of <code>/dev/shm</code>.
+It can be dangerous to allow the execution of binaries
+from world-writable temporary storage directories such as <code>/dev/shm</code>.
+Add the <code>noexec</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
 <code>/dev/shm</code>.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system prevents program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage. If it does not, this is a finding.</td>
-<td>To verify the nodev option is configured for the /dev/shm mount point, run the following command:
+<td>To verify the noexec option is configured for the /dev/shm mount point, run the following command:
     $ mount | grep '\s/dev/shm\s'
-    The output should show the corresponding mount point along with the nodev setting in parentheses.
+    The output should show the corresponding mount point along with the noexec setting in parentheses.
 
       Is it the case that the  is not present in the output line, or there is no output line at all?
       </td>
 <td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-61741r1_fix">Configure the operating system to prevent program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage.</fixtext></td>
-<td>The nodev mount option can be used to prevent creation of device
-files in /dev/shm. Legitimate character and block devices should
-not exist within temporary directories like /dev/shm.
-Add the nodev option to the fourth column of
+<td>The noexec mount option can be used to prevent binaries
+from being executed out of /dev/shm.
+It can be dangerous to allow the execution of binaries
+from world-writable temporary storage directories such as /dev/shm.
+Add the noexec option to the fourth column of
 /etc/fstab for the line which controls mounting of
 /dev/shm.</td>
 <td>medium</td>
@@ -3310,33 +3312,31 @@ Add the nosuid option to the fourth column of
 <td>SRG-OS-000368-GPOS-00154</td>
 <td><i>TBD - Assigned by DISA after STIG release</i></td>
 <td>The operating system must prevent program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage.</td>
-<td>CCE-26622-1:Add noexec Option to /dev/shm</td>
+<td>CCE-26778-1:Add nodev Option to /dev/shm</td>
 <td>Control of program execution is a mechanism used to prevent execution of unauthorized programs. Some operating systems may provide a capability that runs counter to the mission or provides users with functionality that exceeds mission requirements. This includes functions and services installed at the operating system-level.
 
 Some of the programs, installed by default, may be harmful or may not be necessary to support essential organizational operations (e.g., key missions, functions). Removal of executable programs is not always possible; therefore, establishing a method of preventing program execution is critical to maintaining a secure system baseline.
 
 Methods for complying with this requirement include restricting execution of programs in certain environments, while preventing execution in other environments; or limiting execution of certain program functionality based on organization-defined criteria (e.g., privileges, subnets, sandboxed environments, or roles).</td>
-<td xml:lang="en-US">The <code>noexec</code> mount option can be used to prevent binaries
-from being executed out of <code>/dev/shm</code>.
-It can be dangerous to allow the execution of binaries
-from world-writable temporary storage directories such as <code>/dev/shm</code>.
-Add the <code>noexec</code> option to the fourth column of
+<td xml:lang="en-US">The <code>nodev</code> mount option can be used to prevent creation of device
+files in <code>/dev/shm</code>. Legitimate character and block devices should
+not exist within temporary directories like <code>/dev/shm</code>.
+Add the <code>nodev</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
 <code>/dev/shm</code>.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system prevents program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage. If it does not, this is a finding.</td>
-<td>To verify the noexec option is configured for the /dev/shm mount point, run the following command:
+<td>To verify the nodev option is configured for the /dev/shm mount point, run the following command:
     $ mount | grep '\s/dev/shm\s'
-    The output should show the corresponding mount point along with the noexec setting in parentheses.
+    The output should show the corresponding mount point along with the nodev setting in parentheses.
 
       Is it the case that the  is not present in the output line, or there is no output line at all?
       </td>
 <td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-61741r1_fix">Configure the operating system to prevent program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage.</fixtext></td>
-<td>The noexec mount option can be used to prevent binaries
-from being executed out of /dev/shm.
-It can be dangerous to allow the execution of binaries
-from world-writable temporary storage directories such as /dev/shm.
-Add the noexec option to the fourth column of
+<td>The nodev mount option can be used to prevent creation of device
+files in /dev/shm. Legitimate character and block devices should
+not exist within temporary directories like /dev/shm.
+Add the nodev option to the fourth column of
 /etc/fstab for the line which controls mounting of
 /dev/shm.</td>
 <td>medium</td>
