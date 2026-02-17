@@ -1444,7 +1444,7 @@ negative consequences that could ultimately affect the security state of the ope
 system. The operating system's Information Management Officer (IMO)/Information System
 Security Officer (ISSO) and System Administrators (SAs) must be notified via email and/or
 monitoring system trap when there is an unauthorized modification of a configuration item.</td>
-<td xml:lang="en-US">At a minimum, AIDE should be configured to run a weekly scan. At most, AIDE should be run daily.
+<td xml:lang="en-US">At a minimum, AIDE should be configured to run a weekly scan.
 To implement a daily execution of AIDE at 4:05am using cron, add the following line to <code>/etc/crontab</code>:
 <pre>05 4 * * * root /usr/sbin/aide --check</pre>
 To implement a weekly execution of AIDE at 4:05am using cron, add the following line to <code>/etc/crontab</code>:
@@ -4502,7 +4502,7 @@ appropriate system-wide warning banner.</td>
 </tr>
 <tr>
 <td>sssd_ldap_start_tls</td>
-<td>medium</td>
+<td>high</td>
 <td>Configure SSSD LDAP Backend to Use TLS For All Transactions</td>
 <td xml:lang="en-US">Without cryptographic integrity protections, information can be
 altered by unauthorized users without detection. The ssl directive specifies
@@ -4641,21 +4641,19 @@ The <code>sshd</code> service can be enabled with the following command:
 <td xml:lang="en-US">Terminating an idle ssh session within a short time period reduces the window of
 opportunity for unauthorized personnel to take control of a management session
 enabled on the console or console port that has been let unattended.</td>
-<td xml:lang="en-US">SSH allows administrators to set an idle timeout
-interval.
-After this interval has passed, the idle user will be
-automatically logged out.
+<td xml:lang="en-US">SSH allows administrators to set an idle timeout interval. After this interval 
+has passed, the idle user will be automatically logged out.
 <br><br>
 To set an idle timeout interval, edit the following line in <code>/etc/ssh/sshd_config</code> as
 follows:
 <pre>ClientAliveInterval <b><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="sshd_idle_timeout_value"></ns0:sub></b></pre>
-The timeout <b>interval</b> is given in seconds. To have a timeout
-of e.g. 10 minutes, set <b>interval</b> to 600.
 <br><br>
-If a shorter timeout has already been set for the login
-shell, that value will preempt any SSH
-setting made here. Keep in mind that some processes may stop SSH
-from correctly detecting that the user is idle.</td>
+The timeout <b>interval</b> is given in seconds. For example, have a timeout
+of 10 minutes, set <b>interval</b> to 600.
+<br><br>
+If a shorter timeout has already been set for the login shell, that value will
+preempt any SSH setting made in <code>/etc/ssh/sshd_config</code>. Keep in mind that
+some processes may stop SSH  from correctly detecting that the user is idle.</td>
 <td></td>
 <td></td>
 <td>CCI-NaN<br>CCI-NaN<br>CCI-NaN<br>
@@ -4865,9 +4863,9 @@ or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <td>Enable Use of Strict Mode Checking</td>
 <td xml:lang="en-US">If other users have access to modify user-specific SSH configuration files, they
 may be able to log into the system as another user.</td>
-<td xml:lang="en-US">SSHs StrictModes option checks file and ownership permissions in
+<td xml:lang="en-US">SSHs <code>StrictModes</code> option checks file and ownership permissions in
 the user's home directory <code>.ssh</code> folder before accepting login. If world-
-writable permissions are found, logon is rejected. To enable StrictModes in SSH,
+writable permissions are found, logon is rejected. To enable <code>StrictModes</code> in SSH,
 add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <pre>StrictModes yes</pre>
 </td>
@@ -4901,11 +4899,11 @@ SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> 
 <td>Disable Compression Or Set Compression to delayed</td>
 <td xml:lang="en-US">If compression is allowed in an SSH connection prior to authentication,
 vulnerabilities in the compression software could result in compromise of the
-system from an unauthenticated connection, potentially wih root privileges.</td>
+system from an unauthenticated connection, potentially with root privileges.</td>
 <td xml:lang="en-US">Compression is useful for slow network connections over long
 distances but can cause performance issues on local LANs. If use of compression
-is required, it should be enabled only after a user has authenticated; otherwise
-, it should be disabled. To disable compression or delay compression until after
+is required, it should be enabled only after a user has authenticated; otherwise,
+it should be disabled. To disable compression or delay compression until after
 a user has successfully authenticated, add or correct the following line in the
 <code>/etc/ssh/sshd_config</code> file:
 <pre>Compression <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_disable_compression"></ns0:sub></pre>
@@ -5225,9 +5223,9 @@ to the local network with the following command:
 </tr>
 <tr>
 <td>package_vsftpd_removed</td>
-<td>high</td>
+<td>low</td>
 <td>Uninstall vsftpd Package</td>
-<td xml:lang="en-US">Removing the vsftpd package decreases the risk of its
+<td xml:lang="en-US">Removing the <code>vsftpd</code> package decreases the risk of its
 accidental activation.</td>
 <td xml:lang="en-US">The <code>vsftpd</code> package can be removed with the following command: <pre> $ sudo yum erase vsftpd</pre>
 </td>
@@ -5241,7 +5239,8 @@ accidental activation.</td>
 <td>package_tftp-server_removed</td>
 <td>high</td>
 <td>Uninstall tftp-server Package</td>
-<td xml:lang="en-US">Removing the <code>tftp-server</code> package decreases the risk of the accidental (or intentional) activation of tftp services.
+<td xml:lang="en-US">Removing the <code>tftp-server</code> package decreases the risk of the accidental
+(or intentional) activation of tftp services.
 <br><br>
 If TFTP is required for operational support (such as transmission of router
 configurations), its use must be documented with the Information Systems
@@ -5259,7 +5258,7 @@ access control rules established.</td>
 <td>sshd_enable_x11_forwarding</td>
 <td>high</td>
 <td>Enable Encrypted X11 Forwarding</td>
-<td xml:lang="en-US">Open X displays allow an attacker to capture keystrokes and to execute commands
+<td xml:lang="en-US">Non-encrypted X displays allow an attacker to capture keystrokes and to execute commands
 remotely.</td>
 <td xml:lang="en-US">By default, remote X11 connections are not encrypted when initiated
 by users. SSH has the capability to encrypt remote X11 connections when SSH's

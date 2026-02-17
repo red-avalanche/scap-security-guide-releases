@@ -68,7 +68,6 @@ For each file returned, verify the current permissions, ownership, and group mem
 
 -rw-------. 1 root root 133 Jan 11 13:25 /etc/audisp/audisp-remote.conf
 
-
 If the file is more permissive than the default permissions, this is a finding.
 
 If the file is not owned by the default owner and is not documented with the Information System Security Officer (ISSO), this is a finding.
@@ -420,9 +419,11 @@ Install the tmux program (if it is not on the system) with the following command
 The session lock is implemented at the point where session activity can be determined and/or controlled.</td>
 <td>Verify the operating system initiates a session lock after a 15-minute period of inactivity for graphical user interfaces. The screen program must be installed to lock sessions on the console.
 
-If it is installed, GNOME must be configured to enforce a session lock after a 15-minute delay. Check for the session lock settings with the following commands:
+Note: If the system does not have a Graphical User Interface installed, this requirement is Not Applicable.
 
-# grep -i  idle-activation-enabled /etc/dconf/db/local.d/*
+Check for the session lock settings with the following commands:
+
+# grep -i idle-activation-enabled /etc/dconf/db/local.d/*
 
 idle-activation-enabled=true
 
@@ -1676,7 +1677,15 @@ Policy deny_unknown status: allowed
 
 Max kernel policy version: 28
 
-If the "Policy from config file" is not set to "targeted", or the "Loaded policy name" is not set to "targeted", this is a finding.</td>
+If the "Loaded policy name" is not set to "targeted", this is a finding.
+
+Verify that the /etc/selinux/config file is configured to the "SELINUXTYPE" to "targeted":
+
+# grep -i "selinuxtype" /etc/selinux/config | grep -v '^#'
+
+SELINUXTYPE = targeted
+
+If no results are returned or "SELINUXTYPE" is not set to "targeted", this is a finding.</td>
 <td>Configure the operating system to verify correct operation of all security functions.
 
 Set the "SELinuxtype" to the "targeted" policy by modifying the "/etc/selinux/config" file to have the following line:
@@ -1755,6 +1764,8 @@ Current End of Life for RHEL 7.4 is 31 August 2019.
 Current End of Life for RHEL 7.5 is 30 April 2020.
 
 Current End of Life for RHEL 7.6 is 31 October 2020.
+
+Current End of Life for RHEL 7.7 is 30 August 2021.
 
 If the release is not supported by the vendor, this is a finding.</td>
 <td>Upgrade to a supported version of the operating system.</td>
@@ -4876,10 +4887,20 @@ To determine if LDAP is being used for authentication, use the following command
 
 # systemctl status sssd.service
 sssd.service - System Security Services Daemon
-   Loaded: loaded (/usr/lib/systemd/system/sssd.service; enabled; vendor preset: disabled)
-   Active: active (running) since Wed 2018-06-27 10:58:11 EST; 1h 50min ago
+Loaded: loaded (/usr/lib/systemd/system/sssd.service; enabled; vendor preset: disabled)
+Active: active (running) since Wed 2018-06-27 10:58:11 EST; 1h 50min ago
 
-If the "sssd.service" is "active", then LDAP is being used. To see if LDAP is configured to use TLS, use the following command:
+If the "sssd.service" is "active", then LDAP is being used.
+
+Determine the "id_provider" the LDAP is currently using:
+
+# grep -i "id_provider" /etc/sssd/sssd.conf
+
+id_provider = ad
+
+If "id_provider" is set to "ad", this is Not Applicable.
+
+Ensure that LDAP is configured to use TLS by using the following command:
 
 # grep -i "start_tls" /etc/sssd/sssd.conf
 ldap_id_use_start_tls = true
@@ -4907,12 +4928,20 @@ To determine if LDAP is being used for authentication, use the following command
 
 # systemctl status sssd.service
 sssd.service - System Security Services Daemon
-   Loaded: loaded (/usr/lib/systemd/system/sssd.service; enabled; vendor preset: disabled)
-   Active: active (running) since Wed 2018-06-27 10:58:11 EST; 1h 50min ago
+Loaded: loaded (/usr/lib/systemd/system/sssd.service; enabled; vendor preset: disabled)
+Active: active (running) since Wed 2018-06-27 10:58:11 EST; 1h 50min ago
 
-If the "sssd.service" is "active", then LDAP is being used.  
+If the "sssd.service" is "active", then LDAP is being used.
 
-Verify that the sssd service is configured to require the use of certificates:
+Determine the "id_provider" the LDAP is currently using:
+
+# grep -i "id_provider" /etc/sssd/sssd.conf
+
+id_provider = ad
+
+If "id_provider" is set to "ad", this is Not Applicable.
+
+Verify the sssd service is configured to require the use of certificates:
 
 # grep -i tls_reqcert /etc/sssd/sssd.conf
 ldap_tls_reqcert = demand
@@ -4942,12 +4971,20 @@ To determine if LDAP is being used for authentication, use the following command
 
 # systemctl status sssd.service
 sssd.service - System Security Services Daemon
-   Loaded: loaded (/usr/lib/systemd/system/sssd.service; enabled; vendor preset: disabled)
-   Active: active (running) since Wed 2018-06-27 10:58:11 EST; 1h 50min ago
+Loaded: loaded (/usr/lib/systemd/system/sssd.service; enabled; vendor preset: disabled)
+Active: active (running) since Wed 2018-06-27 10:58:11 EST; 1h 50min ago
 
 If the "sssd.service" is "active", then LDAP is being used.
 
-Check that the path to the X.509 certificate for peer authentication with the following command:
+Determine the "id_provider" that the LDAP is currently using:
+
+# grep -i "id_provider" /etc/sssd/sssd.conf
+
+id_provider = ad
+
+If "id_provider" is set to "ad", this is Not Applicable.
+
+Check the path to the X.509 certificate for peer authentication with the following command:
 
 # grep -i tls_cacert /etc/sssd/sssd.conf
 
