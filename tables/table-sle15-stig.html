@@ -48,63 +48,19 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>232</td>
-			<td>26</td>
-			<td>206</td>
-			<td>88.79%</td>
+			<td>218</td>
+			<td>4</td>
+			<td>214</td>
+			<td>98.17%</td>
 			<td>
 				
 					SLES-15-010001
 				
-					SLES-15-010250
-				
 					SLES-15-010370
 				
-					SLES-15-030160
-				
-					SLES-15-030170
-				
-					SLES-15-030180
-				
-					SLES-15-030200
-				
-					SLES-15-030210
-				
-					SLES-15-030220
-				
-					SLES-15-030230
-				
-					SLES-15-030240
-				
-					SLES-15-030260
-				
-					SLES-15-030270
-				
-					SLES-15-030280
-				
-					SLES-15-030300
-				
-					SLES-15-030310
-				
-					SLES-15-030320
-				
-					SLES-15-030540
-				
-					SLES-15-030610
-				
-					SLES-15-030710
-				
-					SLES-15-030720
-				
-					SLES-15-030730
-				
-					SLES-15-030750
+					SLES-15-020061
 				
 					SLES-15-040010
-				
-					SLES-15-040061
-				
-					SLES-15-040280
 				
 			</td>
 		</tr>
@@ -562,29 +518,25 @@ $ sudo zypper install kbd</pre></td>
 	<td>medium</td>
 	<td>The SUSE operating system must initiate a session lock after a 15-minute period of inactivity for the graphical user interface (GUI).</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>A session time-out lock is a temporary action taken when a user stops work and moves away from
-the immediate physical vicinity of the information system but does not logout because of the
-temporary nature of the absence. Rather than relying on the user to manually lock their operating
-system session prior to vacating the vicinity, GNOME3 can be configured to identify when
-a user's session has idled and take action to initiate a session lock.</pre></td>
-	<td><pre>To check the current idle time-out value, run the following command:
-$ gsettings get org.gnome.desktop.session idle-delay
-If properly configured, the output should be 'uint32 '.
-To ensure that users cannot change the screensaver inactivity timeout setting, run the following:
-$ grep idle-delay /etc/dconf/db/local.d/locks/*
-If properly configured, the output should be /org/gnome/desktop/session/idle-delay
-      Is it the case that idle-delay is set to 0 or a value greater than <sub idref="inactivity_timeout_value" />?
+	<td><pre>A session time-out lock is a temporary action taken when a user stops work and moves away from the immediate
+physical vicinity of the information system but does not logout because of the temporary nature of the absence.
+Rather than relying on the user to manually lock their operating system session prior to vacating the vicinity,
+GNOME desktops can be configured to identify when a user's session has idled and take action to initiate the
+session lock. As such, users should not be allowed to change session settings.</pre></td>
+	<td><pre>To ensure that users cannot change session idle and lock settings, run the following:
+$ grep 'idle-delay' /etc/dconf/db/local.d/locks/*
+If properly configured, the output should return:
+/org/gnome/desktop/session/idle-delay
+      Is it the case that idle-delay is not locked?
       </pre></td>
-	<td><pre>The idle time-out value for inactivity in the GNOME3 desktop is configured via the idle-delay
-setting must be set under an appropriate configuration file(s) in the /etc/dconf/db/local.d directory
-and locked in /etc/dconf/db/local.d/locks directory to prevent user modification.
-
-For example, to configure the system for a 15 minute delay, add the following to
-/etc/dconf/db/local.d/00-security-settings:
-[org/gnome/desktop/session]
-idle-delay=uint32 900</pre></td>
+	<td><pre>If not already configured, ensure that users cannot change GNOME3 session idle settings
+by adding /org/gnome/desktop/session/idle-delay
+to /etc/dconf/db/local.d/locks/00-security-settings-lock to prevent user modification.
+For example:
+/org/gnome/desktop/session/idle-delay
+After the settings have been set, run dconf update.</pre></td>
 	<td>SLES-15-010120</td>
-	<td>dconf_gnome_screensaver_idle_delay</td>
+	<td>dconf_gnome_session_idle_user_locks</td>
 </tr>
 
 <tr>
@@ -979,19 +931,6 @@ The autofs service can be disabled with the following command:
 $ sudo systemctl mask --now autofs.service</pre></td>
 	<td>SLES-15-010240</td>
 	<td>service_autofs_disabled</td>
-</tr>
-
-<tr>
-	<td>V-234824</td>
-	<td></td>
-	<td>medium</td>
-	<td>The SUSE operating system must employ FIPS 140-2 approved cryptographic hashing algorithm for system authentication (system-auth).</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td>SLES-15-010250</td>
-	<td>Missing Rule</td>
 </tr>
 
 <tr>
@@ -1667,7 +1606,7 @@ $ sudo chown root DIR</pre></td>
 	<td>V-234844</td>
 	<td>1499</td>
 	<td>medium</td>
-	<td>The SUSE operating system must have system commands group-owned by root.</td>
+	<td>The SUSE operating system must have system commands group-owned by root or a system account.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>If the operating system allows any user to make changes to software
 libraries, then those changes might be implemented without undergoing the
@@ -1759,6 +1698,27 @@ $ sudo chgrp root DIR</pre></td>
 	<td><pre></pre></td>
 	<td>SLES-15-010370</td>
 	<td>Missing Rule</td>
+</tr>
+
+<tr>
+	<td>V-255921</td>
+	<td>1090</td>
+	<td>low</td>
+	<td>The SUSE operating system must restrict access to the kernel message buffer.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>Unprivileged access to the kernel syslog can expose sensitive kernel
+address information.</pre></td>
+	<td><pre>The runtime status of the kernel.dmesg_restrict kernel parameter can be queried
+by running the following command:
+$ sysctl kernel.dmesg_restrict
+1.
+
+      Is it the case that the correct value is not returned?
+      </pre></td>
+	<td><pre>To set the runtime status of the kernel.dmesg_restrict kernel parameter, run the following command: $ sudo sysctl -w kernel.dmesg_restrict=1
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: kernel.dmesg_restrict = 1</pre></td>
+	<td>SLES-15-010375</td>
+	<td>sysctl_kernel_dmesg_restrict</td>
 </tr>
 
 <tr>
@@ -1913,6 +1873,59 @@ To configure the system time zone to use UTC or GMT, run the following command, 
 	<td><pre>Ensure that the system real-time clock (RTC) is set to Coordinated Universal Time (UTC).</pre></td>
 	<td>SLES-15-010410</td>
 	<td>ensure_rtc_utc_configuration</td>
+</tr>
+
+<tr>
+	<td>V-256983</td>
+	<td>1744</td>
+	<td>medium</td>
+	<td>The SUSE operating system must be configured to allow sending email notifications of unauthorized configuration changes to designated personnel.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>Emails can be used to notify designated personnel about important
+system events such as failures or warnings.</pre></td>
+	<td><pre>Run the following command to determine if the mailx package is installed: $ rpm -q mailx
+      Is it the case that the package is not installed?
+      </pre></td>
+	<td><pre>A mail server is required for sending emails.
+The mailx package can be installed with the following command:
+
+$ sudo zypper install mailx</pre></td>
+	<td>SLES-15-010418</td>
+	<td>package_mailx_installed</td>
+</tr>
+
+<tr>
+	<td>V-255922</td>
+	<td>2696</td>
+	<td>medium</td>
+	<td>The SUSE operating system must use a file integrity tool to verify correct operation of all security functions.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>For AIDE to be effective, an initial database of "known-good" information about files
+must be captured and it should be able to be verified against the installed files.</pre></td>
+	<td><pre>To find the location of the AIDE database file, run the following command:
+$ sudo ls -l DBDIR/database_file_name
+      Is it the case that there is no database file?
+      </pre></td>
+	<td><pre>Run the following command to generate a new database:
+
+$ sudo /usr/bin/aide --init
+
+By default, the database will be written to the file
+
+/var/lib/aide/aide.db.new.
+
+Storing the database, the configuration file /etc/aide.conf, and the binary
+/usr/bin/aide
+(or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
+The newly-generated database can be installed as follows:
+
+$ sudo cp /var/lib/aide/aide.db.new /var/lib/aide/aide.db
+
+To initiate a manual check, run the following command:
+$ sudo /usr/bin/aide --check
+If this check produces any unexpected output, investigate.</pre></td>
+	<td>SLES-15-010419</td>
+	<td>aide_build_database</td>
 </tr>
 
 <tr>
@@ -2592,7 +2605,9 @@ etc/pam.d/common-auth file with the following command:
 
 # grep pam_pkcs11.so /etc/pam.d/common-auth
 
+
 auth sufficient pam_pkcs11.so
+
 
 If pam_pkcs11.so is not set in etc/pam.d/common-auth this
 is a finding.
@@ -2608,7 +2623,9 @@ etc/pam.d/common-auth file with the following command:
 
 # grep pam_pkcs11.so /etc/pam.d/common-auth
 
+
 auth sufficient pam_pkcs11.so
+
 
 For general information about enabling smart card authentication, consult
 the documentation at:
@@ -2728,30 +2745,40 @@ If Password expires or Account expires is set to anything other than never, this
 </tr>
 
 <tr>
+	<td>V-256982</td>
+	<td></td>
+	<td>medium</td>
+	<td>The SUSE operating system must automatically expire temporary accounts within 72 hours.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre></pre></td>
+	<td><pre></pre></td>
+	<td><pre></pre></td>
+	<td>SLES-15-020061</td>
+	<td>Missing Rule</td>
+</tr>
+
+<tr>
 	<td>V-234873</td>
-	<td>366</td>
+	<td>52</td>
 	<td>low</td>
 	<td>The SUSE operating system must display the date and time of the last successful account logon upon logon.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Users need to be aware of activity that occurs regarding
-their account. Providing users with information regarding the number
-of unsuccessful attempts that were made to login to their account
-allows the user to determine if any unauthorized activity has occurred
-and gives them an opportunity to notify administrators.</pre></td>
+	<td><pre>Users need to be aware of activity that occurs regarding their account. Providing users with
+information regarding the number of unsuccessful attempts that were made to login to their
+account allows the user to determine if any unauthorized activity has occurred and gives them
+an opportunity to notify administrators.</pre></td>
 	<td><pre>Verify users are provided with feedback on when account accesses last occurred with the following command:
 
 $ sudo grep pam_lastlog /etc/pam.d/login
 
-session required pam_lastlog.so showfailed
-      Is it the case that "pam_lastlog" is missing from "/etc/pam.d/login" file, or the silent option is present?
+session optional pam_lastlog.so showfailed
+      Is it the case that "pam_lastlog.so" is not properly configured in "/etc/pam.d/login" file?
       </pre></td>
-	<td><pre>To configure the system to notify users of last logon/access
-using pam_lastlog, add or correct the pam_lastlog
-settings in
-/etc/pam.d/login to read as follows:
-session     required pam_lastlog.so showfailed
-And make sure that the silent option is not set for
-pam_lastlog module.</pre></td>
+	<td><pre>To configure the system to notify users of last logon/access using pam_lastlog,
+add or correct the pam_lastlog settings in /etc/pam.d/login
+to include showfailed option, such as:
+session     optional    pam_lastlog.so showfailed
+And make sure that the silent option is not set for this specific line.</pre></td>
 	<td>SLES-15-020080</td>
 	<td>display_login_attempts</td>
 </tr>
@@ -2813,6 +2840,36 @@ other than root has a login shell, disable it with the command:
 $ sudo usermod -s /sbin/nologin account</pre></td>
 	<td>SLES-15-020091</td>
 	<td>no_shelllogin_for_systemaccounts</td>
+</tr>
+
+<tr>
+	<td>V-251723</td>
+	<td>366</td>
+	<td>medium</td>
+	<td>The SUSE operating system must specify the default "include" directory for the /etc/sudoers file.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>Some sudo configurtion options allow users to run programs without re-authenticating.
+Use of these configuration options makes it easier for one compromised accound to be used to
+compromise other accounts.</pre></td>
+	<td><pre>To determine whether sudo command includes configuration files from the appropriate directory,
+run the following command:
+$ sudo grep -rP '^[#@]include(dir)?' /etc/sudoers /etc/sudoers.d
+If only the line /etc/sudoers:#includedir /etc/sudoers.d is returned, then the drop-in include configuration is set correctly.
+Any other line returned is a finding.
+      Is it the case that the /etc/sudoers doesn't include /etc/sudores.d or includes other directories??
+      </pre></td>
+	<td><pre>Administrators can configure authorized sudo users via drop-in files, and it is possible to include
+other directories and configuration files from the file currently being parsed.
+
+Make sure that /etc/sudoers only includes drop-in configuration files from /etc/sudoers.d,
+or that no drop-in file is included.
+Either the /etc/sudoers should contain only one #includedir directive pointing to
+/etc/sudoers.d, and no file in /etc/sudoers.d/ should include other files or directories;
+Or the /etc/sudoers should not contain any #include,
+@include, #includedir or @includedir directives.
+Note that the '#' character doesn't denote a comment in the configuration file.</pre></td>
+	<td>SLES-15-020099</td>
+	<td>sudoers_default_includedir</td>
 </tr>
 
 <tr>
@@ -2935,6 +2992,28 @@ or if cvtsudoers not supported:
 </tr>
 
 <tr>
+	<td>V-251724</td>
+	<td>2038</td>
+	<td>medium</td>
+	<td>The SUSE operating system must not be configured to bypass password requirements for privilege escalation.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>Without re-authentication, users may access resources or perform tasks for which they do not
+have authorization. When operating systems provide the capability to escalate a functional
+capability, it is critical the user re-authenticate.</pre></td>
+	<td><pre>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+$ sudo grep pam_succeed_if /etc/pam.d/sudo
+      Is it the case that system is configured to bypass password requirements for privilege escalation?
+      </pre></td>
+	<td><pre>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+$ sudo grep pam_succeed_if /etc/pam.d/sudo
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.</pre></td>
+	<td>SLES-15-020104</td>
+	<td>disallow_bypass_password_sudo</td>
+</tr>
+
+<tr>
 	<td>V-234880</td>
 	<td>366</td>
 	<td>medium</td>
@@ -2960,7 +3039,7 @@ CREATE_HOME yes</pre></td>
 
 <tr>
 	<td>V-234881</td>
-	<td>366</td>
+	<td>52</td>
 	<td>medium</td>
 	<td>The SUSE operating system must display the date and time of the last successful account logon upon an SSH logon.</td>
 	<td>SRG-OS-ID</td>
@@ -3188,6 +3267,35 @@ If any interactive user password hash does not begin with $6,
 this is a finding.</pre></td>
 	<td>SLES-15-020180</td>
 	<td>accounts_password_all_shadowed_sha512</td>
+</tr>
+
+<tr>
+	<td>V-251725</td>
+	<td>366</td>
+	<td>high</td>
+	<td>The SUSE operating system must not have accounts configured with blank or null passwords.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>If an account has an empty password, anyone could log in and
+run commands with the privileges of that account. Accounts with
+empty passwords should never be used in operational environments.</pre></td>
+	<td><pre>To verify that null passwords cannot be used, run the following command:
+$ sudo awk -F: '!$2 {print $1}' /etc/shadow
+If this produces any output, it may be possible to log into accounts
+with empty passwords.
+      Is it the case that Blank or NULL passwords can be used?
+      </pre></td>
+	<td><pre>Check the "/etc/shadow" file for blank passwords with the
+following command:
+$ sudo awk -F: '!$2 {print $1}' /etc/shadow
+If the command returns any results, this is a finding.
+Configure all accounts on the system to have a password or lock
+the account with the following commands:
+Perform a password reset:
+$ sudo passwd [username]
+Lock an account:
+$ sudo passwd -l [username]</pre></td>
+	<td>SLES-15-020181</td>
+	<td>no_empty_passwords_etc_shadow</td>
 </tr>
 
 <tr>
@@ -4034,7 +4142,7 @@ utility to read audit rules during daemon startup, add the following line to
 	<td>V-234914</td>
 	<td>2884</td>
 	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the open system call.</td>
+	<td>The SUSE operating system must generate audit records for all uses of the creat, open, openat, open_by_handle_at, truncate, and ftruncate system calls.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
 these events could serve as evidence of potential system compromise.</pre></td>
@@ -4084,49 +4192,10 @@ If the system is 64 bit then also add the following lines:
 </tr>
 
 <tr>
-	<td>V-234915</td>
-	<td></td>
-	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the creat system call.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td>SLES-15-030160</td>
-	<td>Missing Rule</td>
-</tr>
-
-<tr>
-	<td>V-234916</td>
-	<td></td>
-	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the openat system call.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td>SLES-15-030170</td>
-	<td>Missing Rule</td>
-</tr>
-
-<tr>
-	<td>V-234917</td>
-	<td></td>
-	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the open_by_handle_at system call.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td>SLES-15-030180</td>
-	<td>Missing Rule</td>
-</tr>
-
-<tr>
 	<td>V-234918</td>
 	<td>2884</td>
 	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the removexattr system call.</td>
+	<td>The SUSE operating system must generate audit records for all uses of the setxattr, fsetxattr, lsetxattr, removexattr, fremovexattr, and lremovexattr system calls.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>The changing of file permissions could indicate that a user is attempting to
 gain access to information that would otherwise be disallowed. Auditing DAC modifications
@@ -4158,75 +4227,10 @@ If the system is 64 bit then also add the following line:
 </tr>
 
 <tr>
-	<td>V-234919</td>
-	<td></td>
-	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the lremovexattr system call.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td>SLES-15-030200</td>
-	<td>Missing Rule</td>
-</tr>
-
-<tr>
-	<td>V-234920</td>
-	<td></td>
-	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the fremovexattr system call.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td>SLES-15-030210</td>
-	<td>Missing Rule</td>
-</tr>
-
-<tr>
-	<td>V-234921</td>
-	<td></td>
-	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the setxattr system call.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td>SLES-15-030220</td>
-	<td>Missing Rule</td>
-</tr>
-
-<tr>
-	<td>V-234922</td>
-	<td></td>
-	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the fsetxattr system call.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td>SLES-15-030230</td>
-	<td>Missing Rule</td>
-</tr>
-
-<tr>
-	<td>V-234923</td>
-	<td></td>
-	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the lsetxattr system call.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td>SLES-15-030240</td>
-	<td>Missing Rule</td>
-</tr>
-
-<tr>
 	<td>V-234924</td>
 	<td>2884</td>
 	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the chown system call.</td>
+	<td>The SUSE operating system must generate audit records for all uses of the chown, fchown, fchownat, and lchown system calls.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>The changing of file permissions could indicate that a user is attempting to
 gain access to information that would otherwise be disallowed. Auditing DAC modifications
@@ -4258,49 +4262,10 @@ If the system is 64 bit then also add the following line:
 </tr>
 
 <tr>
-	<td>V-234925</td>
-	<td></td>
-	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the fchown system call.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td>SLES-15-030260</td>
-	<td>Missing Rule</td>
-</tr>
-
-<tr>
-	<td>V-234926</td>
-	<td></td>
-	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the lchown system call.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td>SLES-15-030270</td>
-	<td>Missing Rule</td>
-</tr>
-
-<tr>
-	<td>V-234927</td>
-	<td></td>
-	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the fchownat system call.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td>SLES-15-030280</td>
-	<td>Missing Rule</td>
-</tr>
-
-<tr>
 	<td>V-234928</td>
 	<td>2884</td>
 	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the chmod system call.</td>
+	<td>The SUSE operating system must generate audit records for all uses of the chmod, fchmod, and fchmodat system calls.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>The changing of file permissions could indicate that a user is attempting to
 gain access to information that would otherwise be disallowed. Auditing DAC modifications
@@ -4329,45 +4294,6 @@ If the system is 64 bit then also add the following line:
 -a always,exit -F arch=b64 -S fchmodat -F auid>=1000 -F auid!=unset -F key=perm_mod</pre></td>
 	<td>SLES-15-030290</td>
 	<td>audit_rules_dac_modification_fchmodat</td>
-</tr>
-
-<tr>
-	<td>V-234929</td>
-	<td></td>
-	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the fchmod system call.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td>SLES-15-030300</td>
-	<td>Missing Rule</td>
-</tr>
-
-<tr>
-	<td>V-234930</td>
-	<td></td>
-	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the fchmodat system call.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td>SLES-15-030310</td>
-	<td>Missing Rule</td>
-</tr>
-
-<tr>
-	<td>V-234931</td>
-	<td></td>
-	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the ftruncate system call.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td>SLES-15-030320</td>
-	<td>Missing Rule</td>
 </tr>
 
 <tr>
@@ -5058,7 +4984,7 @@ add the line to file /etc/audit/audit.rules.</pre></td>
 	<td>V-234952</td>
 	<td>2884</td>
 	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the finit_module system call.</td>
+	<td>The SUSE operating system must generate audit records for all uses of the init_module and finit_module system calls.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>The addition of kernel modules can be used to alter the behavior of
 the kernel and potentially introduce malicious code into kernel space. It is important
@@ -5084,19 +5010,6 @@ If the auditd daemon is configured to use the auditctl utility,
 add the line to file /etc/audit/audit.rules.</pre></td>
 	<td>SLES-15-030530</td>
 	<td>audit_rules_kernel_module_loading_init</td>
-</tr>
-
-<tr>
-	<td>V-234953</td>
-	<td></td>
-	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the init_module system call.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td>SLES-15-030540</td>
-	<td>Missing Rule</td>
 </tr>
 
 <tr>
@@ -5304,19 +5217,6 @@ Check that "permissions.local" file contains the correct permissions rules with 
 /etc/audit/rules.d/audit.rules root:root 640</pre></td>
 	<td>SLES-15-030600</td>
 	<td>permissions_local_var_log_audit</td>
-</tr>
-
-<tr>
-	<td>V-234960</td>
-	<td></td>
-	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the truncate command.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td>SLES-15-030610</td>
-	<td>Missing Rule</td>
 </tr>
 
 <tr>
@@ -5648,49 +5548,10 @@ notify the user of an issue.</pre></td>
 </tr>
 
 <tr>
-	<td>V-234970</td>
-	<td></td>
-	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the rename system call.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td>SLES-15-030710</td>
-	<td>Missing Rule</td>
-</tr>
-
-<tr>
-	<td>V-234971</td>
-	<td></td>
-	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the renameat system call.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td>SLES-15-030720</td>
-	<td>Missing Rule</td>
-</tr>
-
-<tr>
-	<td>V-234972</td>
-	<td></td>
-	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the renameat2 system call.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td>SLES-15-030730</td>
-	<td>Missing Rule</td>
-</tr>
-
-<tr>
 	<td>V-234973</td>
 	<td>172</td>
 	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the unlink system call.</td>
+	<td>The SUSE operating system must generate audit records for all uses of the unlink, unlinkat, rename, renameat, and rmdir system calls.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Unsuccessful attempts to delete files could be an indicator of malicious activity on a system. Auditing
 these events could serve as evidence of potential system compromise.</pre></td>
@@ -5724,19 +5585,6 @@ an audit record for all uses of the unlinkat system call:
 -a always,exit -F arch=b64 -S unlinkat -F auid>=1000 -F auid!=-1 -k perm_mod</pre></td>
 	<td>SLES-15-030740</td>
 	<td>audit_rules_unsuccessful_file_modification_unlinkat</td>
-</tr>
-
-<tr>
-	<td>V-234974</td>
-	<td></td>
-	<td>medium</td>
-	<td>The SUSE operating system must generate audit records for all uses of the unlinkat system call.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td>SLES-15-030750</td>
-	<td>Missing Rule</td>
 </tr>
 
 <tr>
@@ -6114,15 +5962,34 @@ as this file may be restored during future system updates.</pre></td>
 
 <tr>
 	<td>V-234989</td>
-	<td></td>
+	<td>366</td>
 	<td>high</td>
 	<td>The SUSE operating system must disable the x86 Ctrl-Alt-Delete key sequence for Graphical User Interfaces.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>Failure to have a functional DConf profile prevents GNOME3 configuration settings
+from being enforced for all users and allows various security risks.</pre></td>
+	<td><pre>To verify that the DConf User profile is configured correctly, run the following
+command:
+
+$ cat /etc/dconf/profile/gdm
+The output should show the following:
+user-db:user
+system-db:gdm
+      Is it the case that DConf User profile does not exist or is not configured correctly?
+      </pre></td>
+	<td><pre>By default, DConf provides a standard user profile. This profile contains a list
+of DConf configuration databases. The user profile and database always take the
+highest priority. As such the DConf User profile should always exist and be
+configured correctly.
+
+
+To make sure that the user profile is configured correctly, the /etc/dconf/profile/gdm
+should be set as follows:
+user-db:user
+system-db:gdm
+</pre></td>
 	<td>SLES-15-040061</td>
-	<td>Missing Rule</td>
+	<td>enable_dconf_user_profile</td>
 </tr>
 
 <tr>
@@ -6625,7 +6492,7 @@ If properly configured, the output should indicate the following permissions:
 	<td>V-235009</td>
 	<td>366</td>
 	<td>medium</td>
-	<td>The SUSE operating system SSH daemon private host key files must have mode 0600 or less permissive.</td>
+	<td>The SUSE operating system SSH daemon private host key files must have mode 0640 or less permissive.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>If an unauthorized user obtains the private SSH host key file, the host could be
 impersonated.</pre></td>
@@ -6673,19 +6540,6 @@ To explicitly enable StrictModes in SSH, add or correct the following line in
 StrictModes yes</pre></td>
 	<td>SLES-15-040260</td>
 	<td>sshd_enable_strictmodes</td>
-</tr>
-
-<tr>
-	<td>V-235012</td>
-	<td></td>
-	<td>medium</td>
-	<td>The SUSE operating system SSH daemon must not allow compression or must only allow compression after successful authentication.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td>SLES-15-040280</td>
-	<td>Missing Rule</td>
 </tr>
 
 <tr>
@@ -7217,6 +7071,33 @@ To explicitly disable Environment options, add or correct the following
 PermitUserEnvironment no</pre></td>
 	<td>SLES-15-040440</td>
 	<td>sshd_do_not_permit_user_env</td>
+</tr>
+
+<tr>
+	<td>V-255920</td>
+	<td>1453</td>
+	<td>medium</td>
+	<td>The SUSE operating system SSH server must be configured to use only FIPS-validated key exchange algorithms.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>DoD information systems are required to use FIPS-approved key exchange algorithms.
+The system will attempt to use the first algorithm presented by the client that matches
+the server list. Listing the values "strongest to weakest" is a method to ensure the use
+of the strongest algorithm available to secure the SSH connection.</pre></td>
+	<td><pre>Only FIPS-approved key exchange algorithms must be used. To verify that only FIPS-approved
+key exchange algorithms are in use, run the following command:
+$ sudo grep -i kexalgorithms /etc/ssh/sshd_config
+The output should contain only following algorithms (or a subset) in the exact order:
+KexAlgorithms ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256
+      Is it the case that KexAlgorithms option is commented out, contains non-approved algorithms, or the FIPS-approved algorithms are not in the exact order?
+      </pre></td>
+	<td><pre>Limit the key exchange algorithms to those  which are FIPS-approved.
+Add or modify the following line in /etc/ssh/sshd_config
+KexAlgorithms ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256
+This rule ensures that only the key exchange algorithms mentioned
+above (or their subset) are configured for use, keeping the given
+order of algorithms.</pre></td>
+	<td>SLES-15-040450</td>
+	<td>sshd_use_approved_kex_ordered_stig</td>
 </tr>
 
 </table>

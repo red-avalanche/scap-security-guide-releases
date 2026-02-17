@@ -48,9 +48,9 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>380</td>
+			<td>381</td>
 			<td>0</td>
-			<td>380</td>
+			<td>381</td>
 			<td>100.00%</td>
 			<td>
 				
@@ -277,26 +277,26 @@ Reboot the system for the changes to take effect.</pre></td>
 Selection of a cryptographic mechanism is based on the need to protect the integrity of organizational information. The strength of the mechanism is commensurate with the security category and/or classification of the information. Organizations have the flexibility to either encrypt all information on storage devices (i.e., full disk encryption) or encrypt specific data structures (e.g., files, records, or fields).
 
 Satisfies: SRG-OS-000185-GPOS-00079, SRG-OS-000404-GPOS-00183, SRG-OS-000405-GPOS-00184</pre></td>
-	<td><pre>Verify OL 8 prevents unauthorized disclosure or modification of all information requiring at rest protection by using disk encryption. 
+	<td><pre>Verify OL 8 prevents unauthorized disclosure or modification of all information requiring at-rest protection by using disk encryption. 
  
-If there is a documented and approved reason for not having data-at-rest encryption, this requirement is not applicable. 
+If there is a documented and approved reason for not having data-at-rest encryption at the operating system level, such as encryption provided by a hypervisor or a disk storage array in a virtualized environment, this requirement is not applicable.
   
 Verify all system partitions are encrypted with the following command: 
  
-$ sudo blkid
+     $ sudo blkid
 
-/dev/mapper/ol-root:  UUID="67b7d7fe-de60-6fd0-befb-e6748cf97743" TYPE="crypto_LUKS"
+     /dev/mapper/ol-root:  UUID="67b7d7fe-de60-6fd0-befb-e6748cf97743" TYPE="crypto_LUKS"
  
 Every persistent disk partition present must be of type "crypto_LUKS".
  
-If any partitions other than the boot partition or pseudo file systems (such as "/proc" or "/sys") are not listed, ask the administrator to indicate how the partitions are encrypted.  If there is no evidence that these partitions are encrypted, this is a finding.</pre></td>
+If any partitions other than the boot partition or pseudo file systems (such as "/proc" or "/sys") are not listed, ask the administrator to indicate how the partitions are encrypted. If there is no evidence that these partitions are encrypted, this is a finding.</pre></td>
 	<td><pre>Configure OL 8 to prevent unauthorized modification of all information at rest by using disk encryption. 
  
 Encrypting a partition in an already-installed system is more difficult because existing partitions will need to be resized and changed.  
  
 To encrypt an entire partition, dedicate a partition for encryption in the partition layout.</pre></td>
 	<td>OL08-00-010030</td>
-	<td>SV-248525r853748_rule</td>
+	<td>SV-248525r917893_rule</td>
 </tr>
 
 <tr>
@@ -1123,72 +1123,78 @@ $ sudo chmod 1777 [World-Writable Directory]</pre></td>
 	<td>V-248552</td>
 	<td>CCI-000879</td>
 	<td>medium</td>
-	<td>OL 8 must be configured so that all network connections associated with SSH traffic are terminate after a period of inactivity.</td>
+	<td>OL 8 must be configured so that all network connections associated with SSH traffic terminate after becoming unresponsive.</td>
 	<td>SRG-OS-000126-GPOS-00066</td>
-	<td><pre>Terminating an idle SSH session within a short time period reduces the window of opportunity for unauthorized personnel to take control of a management session enabled on the console or console port that has been left unattended. In addition, quickly terminating an idle SSH session will also free resources committed by the managed network element. 
+	<td><pre>Terminating an unresponsive SSH session within a short time period reduces the window of opportunity for unauthorized personnel to take control of a management session enabled on the console or console port that has been left unattended. In addition, quickly terminating an idle SSH session will also free up resources committed by the managed network element.
+
+Terminating network connections associated with communications sessions includes, for example, de-allocating associated TCP/IP address/port pairs at the operating system level and de-allocating networking assignments at the application level if multiple application sessions are using a single operating system-level network connection. This does not mean that the operating system terminates all sessions or network access; it only ends the unresponsive session and releases the resources associated with that session. 
  
-Terminating network connections associated with communications sessions includes, for example, de-allocating associated TCP/IP address/port pairs at the operating system level and deallocating networking assignments at the application level if multiple application sessions are using a single operating system-level network connection. This does not mean that the operating system terminates all sessions or network access; it only ends the inactive session and releases the resources associated with that session. 
- 
-OL 8 uses "/etc/ssh/sshd_config" for configurations of OpenSSH. Within the "sshd_config", the product of the values of "ClientAliveInterval" and "ClientAliveCountMax" are used to establish the inactivity threshold. The "ClientAliveInterval" is a timeout interval in seconds after which if no data has been received from the client, sshd will send a message through the encrypted channel to request a response from the client. The "ClientAliveCountMax" is the number of client alive messages that may be sent without sshd receiving any messages back from the client. If this threshold is met, sshd will disconnect the client. For more information on these settings and others, refer to the sshd_config man pages.
+OL 8 uses "/etc/ssh/sshd_config" for configurations of OpenSSH. Within the "sshd_config", the product of the values of "ClientAliveInterval" and "ClientAliveCountMax" is used to establish the inactivity threshold. The "ClientAliveInterval" is a timeout interval in seconds after which if no data has been received from the client, sshd will send a message through the encrypted channel to request a response from the client. The "ClientAliveCountMax" is the number of client alive messages that may be sent without sshd receiving any messages back from the client. If this threshold is met, sshd will disconnect the client. For more information on these settings and others, refer to the sshd_config man pages.
 
 Satisfies: SRG-OS-000126-GPOS-00066, SRG-OS-000163-GPOS-00072, SRG-OS-000279-GPOS-00109</pre></td>
-	<td><pre>Verify all network connections associated with SSH traffic are automatically terminated at the end of the session.
+	<td><pre>Verify the SSH server automatically terminates a user session after the SSH client has become unresponsive.
 
 Check that the "ClientAliveCountMax" is set to "1" by running the following command:
 
-$ sudo grep -ir ClientAliveCountMax /etc/ssh/sshd_config*
+     $ sudo grep -ir ClientAliveCountMax /etc/ssh/sshd_config*
 
-ClientAliveCountMax 1
+     ClientAliveCountMax 1
 
 If "ClientAliveCountMax" does not exist, does not have a product value of "1" in "/etc/ssh/sshd_config", or is commented out, this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to automatically terminate all network connections associated with SSH traffic at the end of a session.
+	<td><pre>Note: This setting must be applied in conjunction with OL08-00-010201 to function correctly.
+
+Configure the SSH server to terminate a user session automatically after the SSH client has become unresponsive.
 
 Modify or append the following line in the "/etc/ssh/sshd_config" file:
 
-ClientAliveCountMax 1
+     ClientAliveCountMax 1
 
-In order for the changes to take effect, the SSH daemon must be restarted.
+For the changes to take effect, the SSH daemon must be restarted.
 
-$ sudo systemctl restart sshd.service</pre></td>
+     $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-010200</td>
-	<td>SV-248552r860908_rule</td>
+	<td>SV-248552r917896_rule</td>
 </tr>
 
 <tr>
 	<td>V-248553</td>
 	<td>CCI-000879</td>
 	<td>medium</td>
-	<td>OL 8 must be configured so that all network connections associated with SSH traffic are terminated at the end of the session or after 10 minutes of inactivity.</td>
+	<td>OL 8 must be configured so that all network connections associated with SSH traffic are terminated after 10 minutes of becoming unresponsive.</td>
 	<td>SRG-OS-000126-GPOS-00066</td>
-	<td><pre>Terminating an idle SSH session within a short time period reduces the window of opportunity for unauthorized personnel to take control of a management session enabled on the console or console port that has been left unattended. In addition, quickly terminating an idle SSH session will also free resources committed by the managed network element. 
+	<td><pre>Terminating an unresponsive SSH session within a short time period reduces the window of opportunity for unauthorized personnel to take control of a management session enabled on the console or console port that has been left unattended. In addition, quickly terminating an idle SSH session will also free up resources committed by the managed network element.
+
+Terminating network connections associated with communications sessions includes, for example, de-allocating associated TCP/IP address/port pairs at the operating system level and de-allocating networking assignments at the application level if multiple application sessions are using a single operating system-level network connection. This does not mean that the operating system terminates all sessions or network access; it only ends the unresponsive session and releases the resources associated with that session.
  
-Terminating network connections associated with communications sessions includes, for example, de-allocating associated TCP/IP address/port pairs at the operating system level and deallocating networking assignments at the application level if multiple application sessions are using a single operating system-level network connection. This does not mean that the operating system terminates all sessions or network access; it only ends the inactive session and releases the resources associated with that session. 
- 
-OL 8 uses "/etc/ssh/sshd_config" for configurations of OpenSSH. Within the "sshd_config", the product of the values of "ClientAliveInterval" and "ClientAliveCountMax" are used to establish the inactivity threshold. The "ClientAliveInterval" is a timeout interval in seconds after which if no data has been received from the client, sshd will send a message through the encrypted channel to request a response from the client. The "ClientAliveCountMax" is the number of client alive messages that may be sent without sshd receiving any messages back from the client. If this threshold is met, sshd will disconnect the client. For more information on these settings and others, refer to the sshd_config man pages.
+OL 8 uses "/etc/ssh/sshd_config" for configurations of OpenSSH. Within the "sshd_config", the product of the values of "ClientAliveInterval" and "ClientAliveCountMax" is used to establish the inactivity threshold. The "ClientAliveInterval" is a timeout interval in seconds after which if no data has been received from the client, sshd will send a message through the encrypted channel to request a response from the client. The "ClientAliveCountMax" is the number of client alive messages that may be sent without sshd receiving any messages back from the client. If this threshold is met, sshd will disconnect the client. For more information on these settings and others, refer to the sshd_config man pages.
 
 Satisfies: SRG-OS-000126-GPOS-00066, SRG-OS-000163-GPOS-00072, SRG-OS-000279-GPOS-00109</pre></td>
-	<td><pre>Verify all network connections associated with SSH traffic are automatically terminated after 10 minutes of inactivity.
+	<td><pre>Verify the SSH server automatically terminates a user session after the SSH client has been unresponsive for 10 minutes.
 
 Check that the "ClientAliveInterval" variable is set to a value of "600" or less by running the following command:
 
-$ sudo grep -ir ClientAliveInterval /etc/ssh/sshd_config*
+     $ sudo grep -ir ClientAliveInterval /etc/ssh/sshd_config*
 
-ClientAliveInterval 600
+     ClientAliveInterval 600
 
 If "ClientAliveInterval" does not exist, does not have a product value of "600" or less in "/etc/ssh/sshd_config", or is commented out, this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to automatically terminate all network connections associated with SSH traffic after 10 minutes of inactivity. 
+	<td><pre>Note: This setting must be applied in conjunction with OL08-00-010200 to function correctly.
+
+Configure the SSH server to terminate a user session automatically after the SSH client has been unresponsive for 10 minutes.
  
 Modify or append the following lines in the "/etc/ssh/sshd_config" file to have a product value of "600" or less: 
  
-ClientAliveInterval 600 
+     ClientAliveInterval 600 
  
-The SSH daemon must be restarted for changes to take effect. 
+The SSH daemon must be restarted for changes to take effect.
  
-$ sudo systemctl restart sshd.service</pre></td>
+     $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-010201</td>
-	<td>SV-248553r860909_rule</td>
+	<td>SV-248553r917899_rule</td>
 </tr>
 
 <tr>
@@ -1375,20 +1381,20 @@ OL 8 incorporates system-wide crypto policies by default. The SSH configuration 
 The system will attempt to use the first hash presented by the client that matches the server list. Listing the values "strongest to weakest" is a method to ensure the use of the strongest hash available to secure the SSH connection.</pre></td>
 	<td><pre>Verify the SSH server is configured to use only MACs employing FIPS 140-2-approved algorithms with the following command:
 
-$ sudo grep -i macs /etc/crypto-policies/back-ends/opensshserver.config
+     $ sudo grep -i macs /etc/crypto-policies/back-ends/opensshserver.config
 
--oMACS=hmac-sha2-512,hmac-sha2-256
+     -oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
 
-If the MAC entries in the "opensshserver.config" file have any hashes other than "hmac-sha2-512" and "hmac-sha2-256", the order differs from the example above, if they are missing, or commented out, this is a finding.</pre></td>
+If the MACs entries in the "opensshserver.config" file have any hashes other than shown here, the order differs from the example above, or they are missing or commented out, this is a finding.</pre></td>
 	<td><pre>Configure the OL 8 SSH server to use only MACs employing FIPS 140-2 approved algorithms:
 
 Update the "/etc/crypto-policies/back-ends/opensshserver.config" file to include these MACs employing FIPS 140-2 approved algorithms: 
  
--oMACS=hmac-sha2-512,hmac-sha2-256 
+-oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
  
 A reboot is required for the changes to take effect.</pre></td>
 	<td>OL08-00-010290</td>
-	<td>SV-248561r877395_rule</td>
+	<td>SV-248561r917902_rule</td>
 </tr>
 
 <tr>
@@ -1406,20 +1412,20 @@ FIPS 140-2 is the current standard for validating that mechanisms used to access
 The system will attempt to use the first hash presented by the client that matches the server list. Listing the values "strongest to weakest" is a method to ensure the use of the strongest cipher available to secure the SSH connection.</pre></td>
 	<td><pre>Verify the OL 8 SSH server is configured to use only ciphers employing FIPS 140-2 approved algorithms with the following command: 
   
-$ sudo grep -i ciphers /etc/crypto-policies/back-ends/opensshserver.config 
+     $ sudo grep -i ciphers /etc/crypto-policies/back-ends/opensshserver.config 
  
-CRYPTO_POLICY='-oCiphers=aes256-ctr,aes192-ctr,aes128-ctr' 
+     CRYPTO_POLICY='-oCiphers=aes256-ctr,aes192-ctr,aes128-ctr,aes256-gcm@openssh.com,aes128-gcm@openssh.com'
  
-If the cipher entries in the "opensshserver.config" file have any ciphers other than "aes256-ctr,aes192-ctr,aes128-ctr", the order differs from the example above, or they are missing or commented out, this is a finding.</pre></td>
+If the cipher entries in the "opensshserver.config" file have any ciphers other than shown here, the order differs from the example above, or they are missing or commented out, this is a finding.</pre></td>
 	<td><pre>Configure the OL 8 SSH server to use only ciphers employing FIPS 140-2 approved algorithms: 
 
 Update the "/etc/crypto-policies/back-ends/opensshserver.config" file to include these ciphers employing FIPS 140-2-approved algorithms: 
  
-CRYPTO_POLICY='-oCiphers=aes256-ctr,aes192-ctr,aes128-ctr'
+CRYPTO_POLICY='-oCiphers=aes256-ctr,aes192-ctr,aes128-ctr,aes256-gcm@openssh.com,aes128-gcm@openssh.com'
  
 A reboot is required for the changes to take effect.</pre></td>
 	<td>OL08-00-010291</td>
-	<td>SV-248562r877395_rule</td>
+	<td>SV-248562r917905_rule</td>
 </tr>
 
 <tr>
@@ -1827,7 +1833,9 @@ The sysctl --system command will load settings from all system configuration fil
 /usr/lib/sysctl.d/*.conf
 /lib/sysctl.d/*.conf
 /etc/sysctl.conf</pre></td>
-	<td><pre>Verify the operating system is configured to disable kernel image loading with the following commands.
+	<td><pre>Note: For OL 8 systems using the Oracle Unbreakable Enterprise Kernel (UEK) Release 6 or above and with secureboot enabled, this requirement is not applicable.
+
+Verify the operating system is configured to disable kernel image loading with the following commands.
 
 Check the status of the "kernel.kexec_load_disabled" kernel parameter:
 
@@ -1864,7 +1872,7 @@ Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>OL08-00-010372</td>
-	<td>SV-248576r877463_rule</td>
+	<td>SV-248576r917907_rule</td>
 </tr>
 
 <tr>
@@ -2694,7 +2702,11 @@ $ sudo rm /[path]/[to]/[file]/.shosts</pre></td>
 	<td><pre>The most important characteristic of a random number generator is its randomness, namely its ability to deliver random numbers that are impossible to predict. Entropy in computer security is associated with the unpredictability of a source of randomness. The random source with high entropy tends to achieve a uniform distribution of random values. Random number generators are one of the most important building blocks of cryptosystems.  
  
 The rngd service feeds random data from hardware device to kernel random device. Quality (non-predictable) random number generation is important for several security functions (i.e., ciphers).</pre></td>
-	<td><pre>Verify the rngd service is enabled and active with the following commands: 
+	<td><pre>Note: For OL versions 8.4 and above running with kernel FIPS mode enabled as specified by OL08-00-010020, this requirement is not applicable.
+
+Check that OL 8 has enabled the hardware random number generator entropy gatherer service.
+
+Verify the rngd service is enabled and active with the following commands: 
  
 $ sudo systemctl is-enabled rngd 
  
@@ -2704,14 +2716,14 @@ $ sudo systemctl is-active rngd
  
 active 
  
-If the service is not "enable and "active", this is a finding.</pre></td>
+If the service is not "enabled" and "active", this is a finding.</pre></td>
 	<td><pre>Start the rngd service and enable it with the following commands: 
  
-$ sudo systemctl start rngd.service 
+     $ sudo systemctl start rngd.service 
  
-$ sudo systemctl enable rngd.service</pre></td>
+     $ sudo systemctl enable rngd.service</pre></td>
 	<td>OL08-00-010471</td>
-	<td>SV-248599r779363_rule</td>
+	<td>SV-248599r917910_rule</td>
 </tr>
 
 <tr>
@@ -4945,11 +4957,7 @@ Reload tmux configuration to take effect. This can be performed in tmux while it
 	<td>medium</td>
 	<td>OL 8 must ensure session control is automatically started at shell initialization.</td>
 	<td>SRG-OS-000028-GPOS-00009</td>
-	<td><pre>A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not want to log out because of the temporary nature of the absence.
-
-The session lock is implemented at the point where session activity can be determined. Rather than be forced to wait for a period of time to expire before the user session can be locked, OL 8 needs to provide users with the ability to manually invoke a session lock so users can secure their session if it is necessary to temporarily vacate the immediate physical vicinity.
-
-Tmux is a terminal multiplexer that enables a number of terminals to be created, accessed, and controlled from a single screen.
+	<td><pre>Tmux is a terminal multiplexer that enables a number of terminals to be created, accessed, and controlled from a single screen.
 
 Satisfies: SRG-OS-000028-GPOS-00009, SRG-OS-000030-GPOS-00011</pre></td>
 	<td><pre>Verify the operating system shell initialization file is configured to start each shell with the tmux terminal multiplexer with the following commands:
@@ -4985,7 +4993,7 @@ fi
 
 This setting will take effect at next logon.</pre></td>
 	<td>OL08-00-020041</td>
-	<td>SV-248676r880538_rule</td>
+	<td>SV-248676r917911_rule</td>
 </tr>
 
 <tr>
@@ -8838,18 +8846,22 @@ Note that a port number was given as there is no standard port for RELP.
 Satisfies: SRG-OS-000342-GPOS-00133, SRG-OS-000479-GPOS-00224</pre></td>
 	<td><pre>Verify the audit system offloads audit records onto a different system or media from the system being audited with the following command: 
  
-$ sudo grep @@ /etc/rsyslog.conf /etc/rsyslog.d/*.conf 
+     $ sudo grep @@ /etc/rsyslog.conf /etc/rsyslog.d/*.conf 
  
-/etc/rsyslog.conf:*.* @@[remoteloggingserver]:[port] 
+     /etc/rsyslog.conf:*.* @@[logaggregationserver.example.mil]:[port] 
  
-If a remote server is not configured or the line is commented out, ask the System Administrator to indicate how the audit logs are offloaded to a different system or media.  
+If a remote server is not configured or the line is commented out, ask the system administrator to indicate how the audit logs are offloaded to a different system or media.  
  
 If there is no evidence that the audit logs are being offloaded to another system or media, this is a finding.</pre></td>
 	<td><pre>Configure OL 8 to offload audit records onto a different system or media from the system being audited by specifying the remote logging server in "/etc/rsyslog.conf" or "/etc/rsyslog.d/[customfile].conf" with the name or IP address of the log aggregation server. 
  
-*.* @@[remoteloggingserver]:[port]</pre></td>
+For UDP:
+     *.* @[logaggregationserver.example.mil]:[port]
+
+For TCP: 
+     *.* @@[logaggregationserver.example.mil]:[port]</pre></td>
 	<td>OL08-00-030690</td>
-	<td>SV-248814r877390_rule</td>
+	<td>SV-248814r917914_rule</td>
 </tr>
 
 <tr>
@@ -10605,7 +10617,7 @@ If the "SSH server" package is not installed, this is a finding.</pre></td>
 
 $ sudo yum install openssh-server.x86_64</pre></td>
 	<td>OL08-00-040159</td>
-	<td>SV-248866r853875_rule</td>
+	<td>SV-248866r916422_rule</td>
 </tr>
 
 <tr>
@@ -10637,7 +10649,7 @@ If "sshd" does not show a status of "active" and "running", this is a finding.</
  
 $ sudo systemctl enable sshd.service</pre></td>
 	<td>OL08-00-040160</td>
-	<td>SV-248867r853876_rule</td>
+	<td>SV-248867r916422_rule</td>
 </tr>
 
 <tr>
@@ -12743,14 +12755,14 @@ The system will attempt to use the first algorithm presented by the client that 
 
      CRYPTO_POLICY='-oKexAlgorithms=ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512'
 
-If the entries following "KexAlgorithms" have any algorithms defined other than "ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512", appear in different order than shown, are missing, or commented out, this is a finding.</pre></td>
+If the entries following "KexAlgorithms" have any algorithms defined other than "ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512", appear in a different order than shown, or are missing or commented out, this is a finding.</pre></td>
 	<td><pre>Configure the SSH server to use only FIPS-validated key exchange algorithms by adding or modifying the following line in "/etc/crypto-policies/back-ends/opensshserver.config":
 
 -oKexAlgorithms=ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512
 
 A reboot is required for the changes to take effect.</pre></td>
 	<td>OL08-00-040342</td>
-	<td>SV-255898r880544_rule</td>
+	<td>SV-255898r917916_rule</td>
 </tr>
 
 <tr>
@@ -12831,6 +12843,31 @@ If "mailx" package is not installed, this is a finding.</pre></td>
      $ sudo yum install mailx</pre></td>
 	<td>OL08-00-010358</td>
 	<td>SV-256979r902803_rule</td>
+</tr>
+
+<tr>
+	<td>V-257259</td>
+	<td>CCI-001133</td>
+	<td>medium</td>
+	<td>OL 8 must terminate idle user sessions.</td>
+	<td>SRG-OS-000163-GPOS-00072</td>
+	<td><pre>Terminating an idle session within a short time period reduces the window of opportunity for unauthorized personnel to take control of a management session enabled on the console or console port that has been left unattended.</pre></td>
+	<td><pre>Verify that OL 8 logs out sessions that are idle for 15 minutes with the following command:
+
+     $ sudo grep -i ^StopIdleSessionSec /etc/systemd/logind.conf
+
+     StopIdleSessionSec=900
+
+If "StopIdleSessionSec" is not configured to 900 seconds, this is a finding.</pre></td>
+	<td><pre>Configure OL 8 to log out idle sessions by editing the /etc/systemd/logind.conf file with the following line:
+
+     StopIdleSessionSec=900
+
+The "logind" service must be restarted for the changes to take effect. To restart the "logind" service, run the following command:
+
+     $ sudo systemctl restart systemd-logind</pre></td>
+	<td>OL08-00-020035</td>
+	<td>SV-257259r917919_rule</td>
 </tr>
 
 </table>
