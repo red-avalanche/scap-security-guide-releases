@@ -49,20 +49,16 @@
 		<tbody>
 		<tr>
 			<td>241</td>
-			<td>5</td>
-			<td>236</td>
-			<td>97.93%</td>
+			<td>3</td>
+			<td>238</td>
+			<td>98.76%</td>
 			<td>
-				
-					RHEL-07-010199
 				
 					RHEL-07-010291
 				
 					RHEL-07-010344
 				
 					RHEL-07-020021
-				
-					RHEL-07-040712
 				
 			</td>
 		</tr>
@@ -908,15 +904,27 @@ to prevent a run of ( + 1) or more identical characters.</pre></td>
 
 <tr>
 	<td>V-255928</td>
-	<td></td>
+	<td>196</td>
 	<td>medium</td>
 	<td>The Red Hat Enterprise Linux operating system must be configured to prevent overwriting of custom authentication configuration settings by the authconfig utility.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>When using the authconfig utility to modify authentication configuration settings,
+the "system-auth" and "password-auth" files and any custom settings that they may
+contain are overwritten.</pre></td>
+	<td><pre>Verify "system-auth" and "password-auth" files are symbolic
+links pointing to "system-auth-local" and "password-auth-local":
+$ sudo ls -l /etc/pam.d/{password,system}-auth
+      Is it the case that The system-auth and password-auth files are not symbolic links or they
+do not point to system-auth-local password-auth-local?
+      </pre></td>
+	<td><pre>Red Hat Enterprise Linux 7 must be configured to prevent overwriting of custom authentication
+configuration settings by the authconfig utility.
+This can be avoided by creating new local configuration files and creating new or moving
+existing symbolic links to them. The authconfig utility will recognize the local configuration
+files and not overwrite them, while writing its own settings to the original configuration
+files.</pre></td>
 	<td>RHEL-07-010199</td>
-	<td>Missing Rule</td>
+	<td>authconfig_config_files_symlinks</td>
 </tr>
 
 <tr>
@@ -981,12 +989,12 @@ Check the hashing algorithm that is being used to hash passwords with the follow
 
 $ sudo grep -i ENCRYPT_METHOD /etc/login.defs
 
-ENCRYPT_METHOD SHA512
-      Is it the case that ENCRYPT_METHOD is not set to SHA512?
+ENCRYPT_METHOD 
+      Is it the case that ENCRYPT_METHOD is not set to <sub idref="var_password_hashing_algorithm" />?
       </pre></td>
 	<td><pre>In /etc/login.defs, add or correct the following line to ensure
-the system will use SHA-512 as the hashing algorithm:
-ENCRYPT_METHOD SHA512</pre></td>
+the system will use  as the hashing algorithm:
+ENCRYPT_METHOD </pre></td>
 	<td>RHEL-07-010210</td>
 	<td>set_password_hashing_algorithm_logindefs</td>
 </tr>
@@ -6330,8 +6338,8 @@ GSSAPIAuthentication no</pre></td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Kerberos authentication for SSH is often implemented using GSSAPI. If Kerberos
 is enabled through SSH, the SSH daemon provides a means of access to the
-system's Kerberos implementation. 
-Configuring these settings for the SSH daemon provides additional assurance that remote logon via SSH will not use unused methods of authentication, even in the event of misconfiguration elsewhere. </pre></td>
+system's Kerberos implementation.
+Configuring these settings for the SSH daemon provides additional assurance that remote logon via SSH will not use unused methods of authentication, even in the event of misconfiguration elsewhere.</pre></td>
 	<td><pre>To determine how the SSH daemon's KerberosAuthentication option is set, run the following command:
 
 $ sudo grep -i KerberosAuthentication /etc/ssh/sshd_config
@@ -6989,7 +6997,7 @@ server and client displays if the sshd proxy display is configured to listen
 on the wildcard address. By default, sshd binds the forwarding server to the
 loopback address and sets the hostname part of the DISPLAY
 environment variable to localhost. This prevents remote hosts from
-connecting to the proxy display.  </pre></td>
+connecting to the proxy display.</pre></td>
 	<td><pre>To determine how the SSH daemon's X11UseLocalhost option is set, run the following command:
 
 $ sudo grep -i X11UseLocalhost /etc/ssh/sshd_config
@@ -7016,15 +7024,29 @@ X11UseLocalhost yes</pre></td>
 
 <tr>
 	<td>V-255925</td>
-	<td></td>
+	<td>1453</td>
 	<td>medium</td>
 	<td>The Red Hat Enterprise Linux operating system SSH server must be configured to use only FIPS-validated key exchange algorithms.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>DoD information systems are required to use FIPS-approved key exchange algorithms.
+The system will attempt to use the first algorithm presented by the client that matches
+the server list. Listing the values "strongest to weakest" is a method to ensure the use
+of the strongest algorithm available to secure the SSH connection.</pre></td>
+	<td><pre>Only FIPS-approved key exchange algorithms must be used. To verify that only FIPS-approved
+key exchange algorithms are in use, run the following command:
+$ sudo grep -i kexalgorithms /etc/ssh/sshd_config
+The output should contain only following algorithms (or a subset) in the exact order:
+KexAlgorithms ecdh-sha1-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256
+      Is it the case that KexAlgorithms option is commented out, contains non-approved algorithms, or the FIPS-approved algorithms are not in the exact order?
+      </pre></td>
+	<td><pre>Limit the key exchange algorithms to those  which are FIPS-approved.
+Add or modify the following line in /etc/ssh/sshd_config
+KexAlgorithms ecdh-sha1-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256
+This rule ensures that only the key exchange algorithms mentioned
+above (or their subset) are configured for use, keeping the given
+order of algorithms.</pre></td>
 	<td>RHEL-07-040712</td>
-	<td>Missing Rule</td>
+	<td>sshd_use_approved_kex_ordered_stig</td>
 </tr>
 
 <tr>

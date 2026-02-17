@@ -403,6 +403,14 @@ the Red Hat Enterprise Linux CoreOS 4 Documentation web site:<br>
 .</td>
 </tr>
 <tr>
+<td></td>
+<td>Ensure /dev/shm is configured</td>
+<td>The <code>/dev/shm</code> is a traditional shared memory concept. 
+One program will create a memory portion, which other processes 
+(if permitted) can access. If <code>/dev/shm</code> is not configured, 
+tmpfs will be mounted to /dev/shm by systemd.</td>
+</tr>
+<tr>
 <td>CCE-82739-4</td>
 <td>Ensure /home Located On Separate Partition</td>
 <td>If user home directories will be stored locally, create a separate partition
@@ -1141,6 +1149,11 @@ properly stored, or the account should be deleted entirely.</td>
 </tr>
 <tr>
 <td></td>
+<td>Ensure all users last password change date is in the past</td>
+<td>All users should have a password change date in the past.</td>
+</tr>
+<tr>
+<td></td>
 <td>All GIDs referenced in /etc/passwd must be defined in /etc/group</td>
 <td>Add a group to the system for each GID referenced without a corresponding group.</td>
 </tr>
@@ -1710,6 +1723,20 @@ If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-w /etc/selinux/ -p wa -k MAC-policy</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Record Events that Modify the System's Mandatory Access Controls in usr/share</td>
+<td>If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+<pre>-w /usr/share/selinux/ -p wa -k MAC-policy</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following line to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-w /usr/share/selinux/ -p wa -k MAC-policy</pre>
 </td>
 </tr>
 <tr>
@@ -5637,30 +5664,46 @@ When using <code>rsyslogd</code> to off-load logs off an encryption system must 
 <td></td>
 <td>Ensure Log Files Are Owned By Appropriate Group</td>
 <td>The group-owner of all log files written by
-<code>rsyslog</code> should be <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_groupowner_logfiles_value" use="legacy"></xccdf-1.2:sub></code>.
+<code>rsyslog</code> should be
+
+<code>root</code>.
+
 These log files are determined by the second part of each Rule line in
 <code>/etc/rsyslog.conf</code> and typically all appear in <code>/var/log</code>.
 For each log file <i>LOGFILE</i> referenced in <code>/etc/rsyslog.conf</code>,
 run the following command to inspect the file's group owner:
 <pre>$ ls -l <i>LOGFILE</i></pre>
-If the owner is not <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_groupowner_logfiles_value" use="legacy"></xccdf-1.2:sub></code>, run the following command to
+If the owner is not
+
+<code>root</code>,
+
+run the following command to
 correct this:
-<pre>$ sudo chgrp <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_groupowner_logfiles_value" use="legacy"></xccdf-1.2:sub> <i>LOGFILE</i></pre>
+
+<pre>$ sudo chgrp root <i>LOGFILE</i></pre>
 </td>
 </tr>
 <tr>
 <td></td>
 <td>Ensure Log Files Are Owned By Appropriate User</td>
 <td>The owner of all log files written by
-<code>rsyslog</code> should be <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_owner_logfiles_value" use="legacy"></xccdf-1.2:sub></code>.
+<code>rsyslog</code> should be
+
+<code>root</code>.
+
 These log files are determined by the second part of each Rule line in
 <code>/etc/rsyslog.conf</code> and typically all appear in <code>/var/log</code>.
 For each log file <i>LOGFILE</i> referenced in <code>/etc/rsyslog.conf</code>,
 run the following command to inspect the file's owner:
 <pre>$ ls -l <i>LOGFILE</i></pre>
-If the owner is not <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_owner_logfiles_value" use="legacy"></xccdf-1.2:sub></code>, run the following command to
+If the owner is not
+
+<code>root</code>,
+
+run the following command to
 correct this:
-<pre>$ sudo chown <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_owner_logfiles_value" use="legacy"></xccdf-1.2:sub> <i>LOGFILE</i></pre>
+
+<pre>$ sudo chown root <i>LOGFILE</i></pre>
 </td>
 </tr>
 <tr>
@@ -5675,7 +5718,7 @@ inspect the file's permissions:
 <pre>$ ls -l <i>LOGFILE</i></pre>
 If the permissions are not 600 or more restrictive, run the following
 command to correct this:
-<pre>$ sudo chmod 0600 <i>LOGFILE</i></pre>"</td>
+<pre>$ sudo chmod 600 <i>LOGFILE</i></pre>"</td>
 </tr>
 <tr>
 <td></td>
@@ -5716,14 +5759,28 @@ Operator see
 </td>
 </tr>
 <tr>
+<td></td>
+<td>Ensure logrotate is Installed</td>
+<td>logrotate is installed by default. The <code>logrotate</code> package can be installed with the following command: <pre></pre>
+</td>
+</tr>
+<tr>
 <td>CCE-82689-1</td>
 <td>Ensure Logrotate Runs Periodically</td>
 <td>The <code>logrotate</code> utility allows for the automatic rotation of
 log files.  The frequency of rotation is specified in <code>/etc/logrotate.conf</code>,
-which triggers a cron task.  To configure logrotate to run daily, add or correct
+which triggers a cron task or a timer.  To configure logrotate to run daily, add or correct
 the following line in <code>/etc/logrotate.conf</code>:
 <pre># rotate log files <i>frequency</i>
 daily</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Enable logrotate Timer</td>
+<td>
+The <code>logrotate</code> timer can be enabled with the following command:
+<pre>$ sudo systemctl enable logrotate.timer</pre>
 </td>
 </tr>
 <tr>
@@ -5891,6 +5948,13 @@ untrusted networks. The <code>libreswan</code> package can be installed with the
 </td>
 </tr>
 <tr>
+<td>CCE-86834-9</td>
+<td>Install iptables-nft Package</td>
+<td>The <code>iptables-nft</code> package can be installed with the following command:
+<pre></pre>
+</td>
+</tr>
+<tr>
 <td>CCE-82522-4</td>
 <td>Install iptables Package</td>
 <td>The <code>iptables</code> package can be installed with the following command:
@@ -5991,8 +6055,8 @@ network.</td>
 <tr>
 <td></td>
 <td>Set configuration for loopback traffic</td>
-<td>Configure the loopback interface to accept traffic. 
-Configure all other interfaces to deny traffic to the loopback 
+<td>Configure the loopback interface to accept traffic.
+Configure all other interfaces to deny traffic to the loopback
 network.</td>
 </tr>
 <tr>

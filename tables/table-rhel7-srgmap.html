@@ -5279,6 +5279,19 @@ differing categories of characters when changing passwords.</td>
 
       <table>
         <tr>
+          <td>Ensure system-auth and password-auth files are symbolic links pointing
+to system-auth-local and password-auth-local</td>
+          <td>Red Hat Enterprise Linux 7 must be configured to prevent overwriting of custom authentication
+configuration settings by the authconfig utility.
+This can be avoided by creating new local configuration files and creating new or moving
+existing symbolic links to them. The authconfig utility will recognize the local configuration
+files and not overwrite them, while writing its own settings to the original configuration
+files.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Set Password Hashing Algorithm in /etc/libuser.conf</td>
           <td>In <tt>/etc/libuser.conf</tt>, add or correct the following line in its
 <tt>[defaults]</tt> section to ensure the system will use the SHA-512
@@ -5291,8 +5304,8 @@ algorithm for password hashing:
         <tr>
           <td>Set Password Hashing Algorithm in /etc/login.defs</td>
           <td>In <tt>/etc/login.defs</tt>, add or correct the following line to ensure
-the system will use SHA-512 as the hashing algorithm:
-<pre>ENCRYPT_METHOD SHA512</pre></td>
+the system will use <sub idref="var_password_hashing_algorithm" /> as the hashing algorithm:
+<pre>ENCRYPT_METHOD <sub idref="var_password_hashing_algorithm" /></pre></td>
         </tr>
       </table>
 
@@ -7287,6 +7300,18 @@ demonstrates use of FIPS-approved ciphers:
 <pre>Ciphers aes256-ctr,aes192-ctr,aes128-ctr</pre>
 This rule ensures that there are configured ciphers mentioned
 above (or their subset), keeping the given order of algorithms.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Use Only FIPS 140-2 Validated Key Exchange Algorithms</td>
+          <td>Limit the key exchange algorithms to those  which are FIPS-approved.
+Add or modify the following line in <tt>/etc/ssh/sshd_config</tt>
+<pre>KexAlgorithms ecdh-sha1-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256</pre>
+This rule ensures that only the key exchange algorithms mentioned
+above (or their subset) are configured for use, keeping the given
+order of algorithms.</td>
         </tr>
       </table>
 
@@ -9516,7 +9541,7 @@ in <tt>/etc/sudoers.d/</tt>.</td>
 
       <table>
         <tr>
-          <td>The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+          <td>Require Re-Authentication When Using the sudo Command</td>
           <td>The sudo <tt>timestamp_timeout</tt> tag sets the amount of time sudo password prompt waits.
 The default <tt>timestamp_timeout</tt> value is 5 minutes.
 The timestamp_timeout should be configured by making sure that the
@@ -9566,7 +9591,7 @@ in <tt>/etc/sudoers.d/</tt>.</td>
 
       <table>
         <tr>
-          <td>The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+          <td>Require Re-Authentication When Using the sudo Command</td>
           <td>The sudo <tt>timestamp_timeout</tt> tag sets the amount of time sudo password prompt waits.
 The default <tt>timestamp_timeout</tt> value is 5 minutes.
 The timestamp_timeout should be configured by making sure that the
@@ -9616,7 +9641,7 @@ in <tt>/etc/sudoers.d/</tt>.</td>
 
       <table>
         <tr>
-          <td>The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+          <td>Require Re-Authentication When Using the sudo Command</td>
           <td>The sudo <tt>timestamp_timeout</tt> tag sets the amount of time sudo password prompt waits.
 The default <tt>timestamp_timeout</tt> value is 5 minutes.
 The timestamp_timeout should be configured by making sure that the
@@ -16932,7 +16957,7 @@ per session.</td>
 
       <table>
         <tr>
-          <td>User Initialization Files Must Be Group-Owned By The Primary User</td>
+          <td>User Initialization Files Must Be Group-Owned By The Primary Group</td>
           <td>Change the group owner of interactive users files to the group found
 in <pre>/etc/passwd</pre> for the user. To change the group owner of a local
 interactive user home directory, use the following command:
@@ -16985,7 +17010,7 @@ home directory assigned in <tt>/etc/passwd</tt>:
 
       <table>
         <tr>
-          <td>All User Files and Directories In The Home Directory Must Be Group-Owned By The Primary User</td>
+          <td>All User Files and Directories In The Home Directory Must Be Group-Owned By The Primary Group</td>
           <td>Change the group of a local interactive users files and directories to a
 group that the interactive user is a member of. To change the group owner of a
 local interactive users files and directories, use the following command:
@@ -17218,7 +17243,7 @@ To properly set the group owner of <code>/etc/cron.allow</code>, run the command
 
       <table>
         <tr>
-          <td>All Interactive User Home Directories Must Be Group-Owned By The Primary User</td>
+          <td>All Interactive User Home Directories Must Be Group-Owned By The Primary Group</td>
           <td>Change the group owner of interactive users home directory to the
 group found in <tt>/etc/passwd</tt>. To change the group owner of
 interactive users home directory, use the following command:
