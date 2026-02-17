@@ -48,9 +48,9 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>215</td>
+			<td>216</td>
 			<td>0</td>
-			<td>215</td>
+			<td>216</td>
 			<td>100.00%</td>
 			<td>
 				
@@ -1208,7 +1208,7 @@ If "1" is not the system's default value, add or update the following line in "/
 	<td>V-234830</td>
 	<td>CCI-001133</td>
 	<td>medium</td>
-	<td>The SUSE operating system for all network connections associated with SSH traffic must immediately terminate at the end of the session or after 10 minutes of inactivity.</td>
+	<td>The SUSE operating system, for all network connections associated with SSH traffic, must immediately terminate at the end of the session or after 10 minutes of inactivity.</td>
 	<td>SRG-OS-000163-GPOS-00072</td>
 	<td><pre>Automatic session termination addresses the termination of user-initiated logical sessions in contrast to the termination of network connections associated with communications sessions (i.e., network disconnect). A logical session (for local, network, and remote access) is initiated whenever a user (or process acting on behalf of a user) accesses an organizational information system. Such user sessions can be terminated (and thus terminate user access) without terminating network sessions.
 
@@ -1219,9 +1219,9 @@ Conditions or trigger events requiring automatic session termination can include
 This capability is typically reserved for specific SUSE operating system functionality where the system owner, data owner, or organization requires additional assurance.
 
 In Linux, ClientAliveCountMax directive is used in the SSH daemon configuration file to define the number of client alive messages the SSH server will send without receiving any response from the client before terminating the session. The ClientAliveInterval (SLES-15-010280/ V-234827) sets a timeout interval in seconds after which if no data has been received from the client, the ssh daemon will send a message through the encrypted channel to request a response from the client. Together, these two settings provide a way to configure a timeout for inactive sessions.</pre></td>
-	<td><pre>Verify that all network connections associated with SSH traffic are automatically terminated at the end of the session or after 10 minutes of inactivity.
+	<td><pre>Verify all network connections associated with SSH traffic are automatically terminated at the end of the session or after 10 minutes of inactivity.
 
-Check that the "ClientAliveCountMax" variable is set to a value of "1" or less by performing the following command:
+Check that the "ClientAliveCountMax" variable is set to a value of "1" by performing the following command:
 
 > sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*clientalivecountmax'
 
@@ -1238,7 +1238,7 @@ For the changes to take effect, the SSH daemon must be restarted.
 
 > sudo systemctl restart sshd.service</pre></td>
 	<td>SLES-15-010320</td>
-	<td>SV-234830r1069400_rule</td>
+	<td>SV-234830r1106556_rule</td>
 </tr>
 
 <tr>
@@ -1358,19 +1358,19 @@ Set the correct permissions with the following command:
 	<td>SRG-OS-000259-GPOS-00100</td>
 	<td><pre>If the SUSE operating system were to allow any user to make changes to software libraries, then those changes might be implemented without undergoing the appropriate testing and approvals that are part of a robust change management process.
 
-This requirement applies to SUSE operating systems with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs which execute with escalated privileges. Only qualified and authorized individuals must be allowed to obtain access to information system components for purposes of initiating changes, including upgrades and modifications.</pre></td>
-	<td><pre>Verify the system-wide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" have mode "0755" or less permissive.
+This requirement applies to SUSE operating systems with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs that execute with escalated privileges. Only qualified and authorized individuals must be allowed to obtain access to information system components for purposes of initiating changes, including upgrades and modifications.</pre></td>
+	<td><pre>Verify the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" have mode 0755 or less permissive.
 
-Check that the system-wide shared library files have mode "0755" or less permissive with the following command:
+Check that the systemwide shared library files have mode 0755 or less permissive with the following command:
 
-> sudo find /lib /lib64 /usr/lib /usr/lib64 -perm /022 -type f -exec stat -c "%n %a" '{}' \;
+> sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' -perm /022 -exec stat -c "%n %a" {} +
 
-If any files are found to be group-writable or world-writable, this is a finding.</pre></td>
-	<td><pre>Configure the library files to be protected from unauthorized access. Run the following command:
+If any output is returned, this is a finding.</pre></td>
+	<td><pre>Configure the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" to have mode 0755 or less permissive with the following command:
 
-> sudo find /lib /lib64 /usr/lib /usr/lib64 -perm /022 -type f -exec chmod 755 '{}' \;</pre></td>
+> sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' -perm /022 -exec chmod go-w {} +</pre></td>
 	<td>SLES-15-010351</td>
-	<td>SV-234834r991560_rule</td>
+	<td>SV-234834r1106567_rule</td>
 </tr>
 
 <tr>
@@ -1404,19 +1404,17 @@ If any of the aforementioned directories are found to be group-writable or world
 	<td>SRG-OS-000259-GPOS-00100</td>
 	<td><pre>If the SUSE operating system were to allow any user to make changes to software libraries, then those changes might be implemented without undergoing the appropriate testing and approvals that are part of a robust change management process.
 
-This requirement applies to SUSE operating systems with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs which execute with escalated privileges. Only qualified and authorized individuals must be allowed to obtain access to information system components for purposes of initiating changes, including upgrades and modifications.</pre></td>
-	<td><pre>Verify the system-wide shared library files contained in the directories "/lib", "/lib64", "/usr/lib" and "/usr/lib64" are owned by root.
+This requirement applies to SUSE operating systems with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs that execute with escalated privileges. Only qualified and authorized individuals must be allowed to obtain access to information system components for purposes of initiating changes, including upgrades and modifications.</pre></td>
+	<td><pre>Verify the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" are owned by root with the following command:
 
-Check that the system-wide shared library files are owned by root with the following command:
+> sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -user root -exec stat -c "%n %U" {} +
 
-> sudo find /lib /lib64 /usr/lib /usr/lib64 ! -user root -type f -exec stat -c "%n %U" '{}' \;
+If any output is returned, this is a finding.</pre></td>
+	<td><pre>Configure the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" are owned by root with the following command:
 
-If any system wide library file is returned, this is a finding.</pre></td>
-	<td><pre>Configure the system library files to be protected from unauthorized access. Run the following command:
-
-> sudo find /lib /lib64 /usr/lib /usr/lib64 ! -user root -type f -exec chown root '{}' \;</pre></td>
+> sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -user root -exec chown root {} +</pre></td>
 	<td>SLES-15-010353</td>
-	<td>SV-234836r991560_rule</td>
+	<td>SV-234836r1106561_rule</td>
 </tr>
 
 <tr>
@@ -1450,19 +1448,17 @@ If any system wide library directory is returned, this is a finding.</pre></td>
 	<td>SRG-OS-000259-GPOS-00100</td>
 	<td><pre>If the SUSE operating system were to allow any user to make changes to software libraries, then those changes might be implemented without undergoing the appropriate testing and approvals that are part of a robust change management process.
 
-This requirement applies to SUSE operating systems with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs which execute with escalated privileges. Only qualified and authorized individuals must be allowed to obtain access to information system components for purposes of initiating changes, including upgrades and modifications.</pre></td>
-	<td><pre>Verify the system-wide library files contained in the directories "/lib", "/lib64", "/usr/lib" and "/usr/lib64" are group-owned by root.
+This requirement applies to SUSE operating systems with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs that execute with escalated privileges. Only qualified and authorized individuals must be allowed to obtain access to information system components for purposes of initiating changes, including upgrades and modifications.</pre></td>
+	<td><pre>Verify the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" are group owned by root with the following command:
 
-Check that the system-wide library files are group-owned by root with the following command:
+> sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -group root -exec stat -c "%n %G" {} +
 
-> sudo find /lib /lib64 /usr/lib /usr/lib64 ! -group root -type f -exec stat -c "%n %G" '{}' \;
+If any output is returned, this is a finding.</pre></td>
+	<td><pre>Configure the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" to be group owned by root with the following command:
 
-If any system wide shared library file is returned, this is a finding.</pre></td>
-	<td><pre>Configure the system library files to be protected from unauthorized access. Run the following command:
-
-> sudo find /lib /lib64 /usr/lib /usr/lib64 ! -group root -type f -exec chgrp root '{}' \;</pre></td>
+> sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -group root -exec chown :root {} +</pre></td>
 	<td>SLES-15-010355</td>
-	<td>SV-234838r991560_rule</td>
+	<td>SV-234838r1106563_rule</td>
 </tr>
 
 <tr>
@@ -5957,20 +5953,28 @@ logout=['']
 	<td><pre>A locally logged-on user, who presses Ctrl-Alt-Delete when at the console, can reboot the system. If accidentally pressed, as could happen in the case of a mixed OS environment, this can create the risk of short-term loss of availability of systems due to unintentional reboot. In the graphical user interface environment, risk of unintentional reboot from the Ctrl-Alt-Delete sequence is reduced because the user will be prompted before any action is taken.</pre></td>
 	<td><pre>Verify the SUSE operating system is not configured to reboot the system when Ctrl-Alt-Delete is pressed seven times within two seconds with the following command:
 
-> sudo grep -i ctrl /etc/systemd/system.conf
+> systemd-analyze cat-config systemd/system.conf
+
+# /etc/systemd/system.conf.d/55-CtrlAltDel-BurstAction.conf
+CtrlAltDelBurstAction=none
+
+If the "CtrlAltDelBurstAction" is not set to "none", commented out, or is missing, this is a finding.
+If the setting is not configured in a drop in file, this is a finding.</pre></td>
+	<td><pre>Configure the system to disable the CtrlAltDelBurstAction by adding it to a drop file in a "/etc/systemd/system.conf.d/" configuration file:
+
+If no drop file exists, create one with the following command:
+
+> sudo touch /etc/systemd/system.conf.d/55-CtrlAltDel-BurstAction
+
+Edit the file to contain the setting by adding the following text:
 
 CtrlAltDelBurstAction=none
 
-If the "CtrlAltDelBurstAction" is not set to "none", commented out, or is missing, this is a finding.</pre></td>
-	<td><pre>Configure the system to disable the CtrlAltDelBurstAction by added or modifying the following line in the "/etc/systemd/system.conf" configuration file:
+Reload the daemon for this change to take effect:
 
-CtrlAltDelBurstAction=none
-
-Reload the daemon for this change to take effect
-
-> sudo systemctl daemon-reload</pre></td>
+> sudo systemctl daemon-reexec</pre></td>
 	<td>SLES-15-040062</td>
-	<td>SV-234990r991589_rule</td>
+	<td>SV-234990r1106565_rule</td>
 </tr>
 
 <tr>
@@ -7323,6 +7327,36 @@ If "mailx" package is not installed, this is a finding.</pre></td>
      > sudo zypper install mailx</pre></td>
 	<td>SLES-15-010418</td>
 	<td>SV-256983r958794_rule</td>
+</tr>
+
+<tr>
+	<td>V-274879</td>
+	<td>CCI-000172</td>
+	<td>medium</td>
+	<td>The SUSE operating system must audit any script or executable called by cron as root or by any privileged user.</td>
+	<td>SRG-OS-000471-GPOS-00215</td>
+	<td><pre>Any script or executable called by cron as root or by any privileged user must be owned by that user, must have the permissions 755 or more restrictive, and have no extended rights that allow any nonprivileged user to modify the script or executable.</pre></td>
+	<td><pre>Verify the SUSE operating system is configured to audit the execution of any system call made by cron as root or as any privileged user.
+
+> sudo auditctl -l | grep /etc/cron.d
+-w /etc/cron.d -p wa -k cronjobs
+
+$ sudo auditctl -l | grep /var/spool/cron
+-w /var/spool/cron -p wa -k cronjobs
+
+If either of these commands do not return the expected output, or the lines are commented out, this is a finding.</pre></td>
+	<td><pre>Configure the SUSE operating system to audit the execution of any system call made by cron as root or as any privileged user.
+
+Add or update the following file system rules to "/etc/audit/rules.d/audit.rules":
+
+auditctl -w /etc/cron.d/ -p wa -k cronjobs
+auditctl -w /var/spool/cron/ -p wa -k cronjobs
+
+To load the rules to the kernel immediately, use the following command:
+
+> sudo augenrules --load</pre></td>
+	<td>SLES-15-030015</td>
+	<td>SV-274879r1106564_rule</td>
 </tr>
 
 </table>

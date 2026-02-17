@@ -299,6 +299,11 @@ Other such as <code>AD-SUPPORT</code> should only be enabled if operationally re
 The <code>OSPP</code>, <code>NO-SHA1</code>, <code>NO-CAMELLIA</code>, and <code>ECDHE-ONLY</code> are allowed by this rule.</td>
 </tr>
 <tr>
+<td>CCE-86570-9</td>
+<td>Implement STIG Sub Crypto Policy</td>
+<td>Create a custom cryptographic policy to follow the guidance from DISA.</td>
+</tr>
+<tr>
 <td>CCE-83441-6</td>
 <td>Set kernel parameter 'crypto.fips_enabled' to 1</td>
 <td>System running in FIPS mode is indicated by kernel parameter
@@ -358,8 +363,9 @@ set up to ignore it.
 To check that Crypto Policies settings are configured correctly, ensure that
 <code>/etc/crypto-policies/back-ends/gnutls.config</code> contains the following
 line and is not commented out:
-<code>+VERS-ALL:-VERS-DTLS0.9:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-VERS-DTLS1.0</code>
-        </td>
+<code>+VERS-ALL:-VERS-DTLS0.9:-VERS-TLS1.1:-VERS-TLS1.0:-VERS-SSL3.0:-VERS-DTLS1.0</code>
+
+These keywords are order-independent, so the line can be in any order. GnuTLS will then prefer the highest version.</td>
 </tr>
 <tr>
 <td>CCE-83449-9</td>
@@ -523,6 +529,26 @@ automating backups of user data. Commercial and open-source products
 are also available.</td>
 </tr>
 <tr>
+<td>CCE-86556-8</td>
+<td>Install Virus Scanning Software</td>
+<td>Virus scanning software can be used to protect a system from penetration from
+computer viruses and to limit their spread through intermediate systems.
+
+The virus scanning software should be configured to perform scans dynamically
+on accessed files. If this capability is not available, the system must be
+configured to scan, at a minimum, all altered files on the system on a daily
+basis.
+
+If the system processes inbound SMTP mail, the virus scanner must be configured
+to scan all received mail.</td>
+</tr>
+<tr>
+<td>CCE-88504-6</td>
+<td>Install an Endpoint Security Solution</td>
+<td>Verify that an Endpoint Security Solution has been deployed on the operating system.
+If there is not an Endpoint Security Solution deployed, this is a finding.</td>
+</tr>
+<tr>
 <td>CCE-88837-0</td>
 <td>Install Intrusion Detection Software</td>
 <td>The base Red Hat Enterprise Linux 9 platform already includes a sophisticated auditing system that
@@ -534,7 +560,7 @@ sessions which may become compromised.</td>
 <td>CCE-86236-7</td>
 <td>Install McAfee Endpoint Security for Linux (ENSL)</td>
 <td>Install McAfee Endpoint Security for Linux antivirus software
-which is provided for DoD systems and uses signatures to search for the
+which is provided for systems and uses signatures to search for the
 presence of viruses on the filesystem.
 
 The <code>McAfeeTP</code> package can be installed with the following command:
@@ -546,7 +572,7 @@ $ sudo dnf install McAfeeTP</pre>
 <td>CCE-88806-5</td>
 <td>Ensure McAfee Endpoint Security for Linux (ENSL) is running</td>
 <td>Install McAfee Endpoint Security for Linux antivirus software
-which is provided for DoD systems and uses signatures to search for the
+which is provided for systems and uses signatures to search for the
 presence of viruses on the filesystem.</td>
 </tr>
 <tr>
@@ -610,6 +636,12 @@ creating a separate partition is not necessary at installation time, and the
 mountpoint can instead be configured later.</td>
 </tr>
 <tr>
+<td>CCE-88770-3</td>
+<td>Ensure /opt Located On Separate Partition</td>
+<td>It is recommended that the <code>/opt</code> directory resides on a separate
+partition.</td>
+</tr>
+<tr>
 <td>CCE-90846-7</td>
 <td>Ensure /srv Located On Separate Partition</td>
 <td>If a file server (FTP, TFTP...) is hosted locally, create a separate partition
@@ -624,6 +656,12 @@ mountpoint can instead be configured later.</td>
 <td>The <code>/tmp</code> directory is a world-writable directory used
 for temporary file storage. Ensure it has its own partition or
 logical volume at installation time, or migrate it using LVM.</td>
+</tr>
+<tr>
+<td>CCE-90144-7</td>
+<td>Ensure /usr Located On Separate Partition</td>
+<td>It is recommended that the <code>/usr</code> directory resides on a separate
+partition.</td>
 </tr>
 <tr>
 <td>CCE-83466-3</td>
@@ -1221,8 +1259,9 @@ $ sudo dnf install sudo</pre>
 <td>Ensure That the sudo Binary Has the Correct Permissions</td>
 <td>
 To properly set the permissions of <code>/usr/bin/sudo</code>, run the command:
-<pre>$ sudo chmod 4111 /usr/bin/sudo</pre>
-       </td>
+<pre>$ sudo chmod 4110 /usr/bin/sudo</pre>
+In order to use this rule, the group owner for /usr/bin/sudo needs to be changed to a
+group other than root to effectively limit access to sudo.</td>
 </tr>
 <tr>
 <td>CCE-83537-1</td>
@@ -2203,7 +2242,8 @@ Edit the <code>password</code> section in
 Edit the <code>/etc/security/pwquality.conf</code> to include
 <code>retry=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_retry" use="legacy"></xccdf-1.2:sub>
           </code>, or a lower value if site
-policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+policy is more restrictive. The profile requirement is a maximum of <code>retry=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_retry" use="legacy"></xccdf-1.2:sub>
+          </code> prompts
 per session.</td>
 </tr>
 <tr>
@@ -2223,7 +2263,8 @@ Edit the <code>/etc/security/pwquality.conf</code> to include
 
 <code>retry=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_retry" use="legacy"></xccdf-1.2:sub>
           </code>, or a lower value if site
-policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+policy is more restrictive. The profile requirement is a maximum of <code>retry=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_retry" use="legacy"></xccdf-1.2:sub>
+          </code> prompts
 per session.</td>
 </tr>
 <tr>
@@ -2566,6 +2607,11 @@ To remove unauthorized system accounts, use the following command:
 <td>Change the group name or delete groups, so each has a unique id.</td>
 </tr>
 <tr>
+<td>CCE-86966-9</td>
+<td>Ensure All Groups on the System Have Unique Group Names</td>
+<td>Change the group name or delete groups, so each has a unique name.</td>
+</tr>
+<tr>
 <td>CCE-83627-0</td>
 <td>Set Account Expiration Following Inactivity</td>
 <td>To specify the number of days after a password expires (which
@@ -2640,8 +2686,6 @@ edit the file <code>/etc/login.defs</code>
 and add or correct the following line:
 <pre>PASS_MAX_DAYS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></xccdf-1.2:sub>
          </pre>
-A value of 180 days is sufficient for many environments.
-The DoD requirement is 60.
 The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
@@ -2653,7 +2697,7 @@ and add or correct the following line:
 <pre>PASS_MIN_DAYS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_minimum_age_login_defs" use="legacy"></xccdf-1.2:sub>
          </pre>
 A value of 1 day is considered sufficient for many
-environments. The DoD requirement is 1.
+environments.
 The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_minimum_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
@@ -2665,8 +2709,6 @@ The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklis
          </pre>
          <br>
          <br>
-The DoD requirement is <code>15</code>.
-The FISMA requirement is <code>12</code>.
 The profile requirement is
 <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_minlen_login_defs" use="legacy"></xccdf-1.2:sub></code>.
 If a program consults <code>/etc/login.defs</code> and also another PAM module
@@ -2708,7 +2750,6 @@ users, run the command:
 <pre>$ sudo chage --warndays <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub>
           <i>USER</i>
          </pre>
-The DoD requirement is 7, and CIS recommendation is no less than 7 days.
 This profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
@@ -2720,7 +2761,6 @@ edit the file <code>/etc/login.defs</code> and add or correct
  the following line:
 <pre>PASS_WARN_AGE <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub>
          </pre>
-The DoD requirement is 7.
 The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
@@ -3032,8 +3072,9 @@ Then, add the following entry to <code>/etc/security/namespace.conf</code>:
 <td>CCE-83633-8</td>
 <td>Set Interactive Session Timeout</td>
 <td>Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of <code>0</code> (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The <code>TMOUT</code>
 
 setting in a file loaded by <code>/etc/profile</code>, e.g.
@@ -3150,6 +3191,19 @@ interactive users home directory, use the following command:
 This rule ensures every home directory related to an interactive user is
 group-owned by an interactive user. It also ensures that interactive users
 are group-owners of one and only one home directory.</td>
+</tr>
+<tr>
+<td>CCE-87917-1</td>
+<td>All Interactive User Home Directories Must Be Owned By The Primary User</td>
+<td>Change the owner of interactive users home directories to that correct
+owner. To change the owner of a interactive users home directory, use
+the following command:
+<pre>$ sudo chown <i>USER</i> /home/<i>USER</i>
+        </pre>
+
+This rule ensures every home directory related to an interactive user is
+owned by an interactive user. It also ensures that interactive users are
+owners of one and only one home directory.</td>
 </tr>
 <tr>
 <td>CCE-83637-9</td>
@@ -3772,7 +3826,7 @@ so that the <code>superusers</code> is honored.
 Once the superuser account has been added,
 update the
 <code>grub.cfg</code> file by running:
-<pre>grub-mkconfig -o /boot/grub2/grub.cfg</pre>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
        </td>
 </tr>
 <tr>
@@ -3881,7 +3935,7 @@ so that the <code>superusers</code> is honored.
 Once the superuser account has been added,
 update the
 <code>grub.cfg</code> file by running:
-<pre>grub-mkconfig -o /boot/grub2/grub.cfg</pre>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
        </td>
 </tr>
 <tr>
@@ -5451,6 +5505,26 @@ Promiscuous mode of an interface can be disabled with the following command:
 <td>Firewalld can be configured with many backends, such as nftables.</td>
 </tr>
 <tr>
+<td>CCE-90607-3</td>
+<td>Ensure network interfaces are assigned to appropriate zone</td>
+<td>Firewall zones define the trust level of network connections or interfaces.
+Note: Changing firewall settings while connected over network can result in 
+being locked out of the system.</td>
+</tr>
+<tr>
+<td>CCE-87628-4</td>
+<td>Ensure Unnecessary Services and Ports Are Not Accepted</td>
+<td>Services and ports can be accepted or explicitly rejected or dropped by a zone.
+For every zone, a default behavior can be set that handles incoming traffic that
+is not further specified. Such behavior is defined by setting the target of the zone.
+The possible options are:
+- <code>ACCEPT</code> - accepts all incoming packets except those disabled by a specific rule.
+- <code>REJECT</code> - disables all incoming packets except those that have been allowed in
+   specific rules and the source machine is informed about the rejection.
+- <code>DROP</code> - disables all incoming packets except those that have been allowed in
+   specific rules and no information sent to the source machine.</td>
+</tr>
+<tr>
 <td>CCE-84021-5</td>
 <td>Install firewalld Package</td>
 <td>The <code>firewalld</code> package can be installed with the following command:
@@ -6259,7 +6333,7 @@ to prevent the loading of the Bluetooth module:
         </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-87615-1</td>
 <td>Disable Kernel cfg80211 Module</td>
 <td>
 To configure the system to prevent the <code>cfg80211</code>
@@ -6268,7 +6342,7 @@ kernel module from being loaded, add the following line to the file <code>/etc/m
         </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-90727-9</td>
 <td>Disable Kernel iwlmvm Module</td>
 <td>
 To configure the system to prevent the <code>iwlmvm</code>
@@ -6277,7 +6351,7 @@ kernel module from being loaded, add the following line to the file <code>/etc/m
         </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-89240-6</td>
 <td>Disable Kernel iwlwifi Module</td>
 <td>
 To configure the system to prevent the <code>iwlwifi</code>
@@ -6286,13 +6360,21 @@ kernel module from being loaded, add the following line to the file <code>/etc/m
         </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-87086-5</td>
 <td>Disable Kernel mac80211 Module</td>
 <td>
 To configure the system to prevent the <code>mac80211</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/mac80211.conf</code>:
 <pre>install mac80211 /bin/false</pre>
         </td>
+</tr>
+<tr>
+<td>CCE-89909-6</td>
+<td>Disable WiFi or Bluetooth in BIOS</td>
+<td>Some machines that include built-in wireless support offer the
+ability to disable the device through the BIOS. This is hardware-specific;
+consult your hardware manual or explore the BIOS setup during
+boot.</td>
 </tr>
 <tr>
 <td>CCE-84066-0</td>
@@ -6305,6 +6387,13 @@ capability.
 Configure the system to disable all wireless network interfaces with the following command:
 <pre>$ sudo nmcli radio all off</pre>
         </td>
+</tr>
+<tr>
+<td>CCE-89013-7</td>
+<td>Only Allow specific PKI-established CAs</td>
+<td>The operating system must only allow the use of trusted PKI-established
+certificate authorities for verification of the establishment of
+protected sessions.</td>
 </tr>
 <tr>
 <td>CCE-86805-9</td>
@@ -7029,8 +7118,8 @@ by default:
 /usr/lib64
 </pre>
 All system-wide shared library files should be protected from unauthorised
-access. If any of these files is not group-owned by root, correct its group-owner with
-the following command:
+access. If any of these files is not group-owned by root,
+correct its group-owner with the following command:
 <pre>$ sudo chgrp root <i>FILE</i>
          </pre>
         </td>
@@ -7066,6 +7155,33 @@ rather than relying on the automounter.
 The <code>autofs</code> service can be disabled with the following command:
 <pre>$ sudo systemctl mask --now autofs.service</pre>
        </td>
+</tr>
+<tr>
+<td>CCE-87913-0</td>
+<td>Disable Booting from USB Devices in Boot Firmware</td>
+<td>Configure the system boot firmware (historically called BIOS on PC
+systems) to disallow booting from USB drives.</td>
+</tr>
+<tr>
+<td>CCE-89568-0</td>
+<td>Disable Kernel Support for USB via Bootloader Configuration</td>
+<td>All USB support can be disabled by adding the <code>nousb</code>
+argument to the kernel's boot loader configuration. To do so,
+add the argument <code>nousb</code> to the default
+GRUB 2 command line for the Linux operating system.
+To ensure that <code>nousb</code> is added as a kernel command line
+argument to newly installed kernels, add <code>nousb</code> to the
+default Grub2 command line for Linux operating systems. Modify the line within
+<code>/etc/default/grub</code> as shown below:
+<pre>GRUB_CMDLINE_LINUX="... nousb ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="nousb"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["nousb"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://bootc-dev.github.io/bootc//building/kernel-arguments.html">Bootc documentation</a>.</td>
 </tr>
 <tr>
 <td>CCE-83853-2</td>
@@ -7757,15 +7873,17 @@ By masking the unit, core dump processing is disabled.</td>
 <td>CCE-83984-5</td>
 <td>Disable core dump backtraces</td>
 <td>The <code>ProcessSizeMax</code> option in <code>[Coredump]</code> section
-of <code>/etc/systemd/coredump.conf</code>
-specifies the maximum size in bytes of a core which will be processed.
-Core dumps exceeding this size may be stored, but the backtrace will not
-be generated.</td>
+of <code>/etc/systemd/coredump.conf</code> or in a drop-in file under
+<code>/etc/systemd/coredump.conf.d/</code> specifies the maximum size in bytes
+of a core which will be processed. Core dumps exceeding this size may be
+stored, but the backtrace will not be generated.</td>
 </tr>
 <tr>
 <td>CCE-83979-5</td>
 <td>Disable storing core dump</td>
-<td>The <code>Storage</code> option in <code>[Coredump]</code> sectionof <code>/etc/systemd/coredump.conf</code>
+<td>The <code>Storage</code> option in <code>[Coredump]</code> section
+of <code>/etc/systemd/coredump.conf</code> or a drop-in file in
+<code>/etc/systemd/coredump.conf.d/*.conf</code>
 can be set to <code>none</code> to disable storing core dumps permanently.</td>
 </tr>
 <tr>
@@ -8030,7 +8148,9 @@ the system to boot into enforcing or permissive mode:
 <pre>SELINUX=enforcing</pre>
 OR
 <pre>SELINUX=permissive</pre>
-      </td>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.</td>
 </tr>
 <tr>
 <td>CCE-84074-4</td>
@@ -8053,7 +8173,9 @@ system boot time.  In the file <code>/etc/selinux/config</code>, add or correct 
 following line to configure the system to boot into enforcing mode:
 <pre>SELINUX=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_selinux_state" use="legacy"></xccdf-1.2:sub>
        </pre>
-      </td>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.</td>
 </tr>
 <tr>
 <td></td>
@@ -11040,6 +11162,17 @@ To disable the <code>zoneminder_run_sudo</code> SELinux boolean, run the followi
        </td>
 </tr>
 <tr>
+<td>CCE-89970-8</td>
+<td>Ensure nonessential services are removed or masked</td>
+<td>A network port is identified by its number, the associated IP address, 
+and the type of the communication protocol such as TCP or UDP.
+A listening port is a network port on which an application or process 
+listens on, acting as a communication endpoint.
+Each listening port can be open or closed (filtered) using a firewall. 
+In general terms, an open port is a network port that accepts 
+incoming packets from remote locations.</td>
+</tr>
+<tr>
 <td></td>
 <td>Disable Avahi Publishing</td>
 <td>To prevent Avahi from publishing its records, edit <code>/etc/avahi/avahi-daemon.conf</code>
@@ -11401,6 +11534,16 @@ To properly set the group owner of <code>/etc/at.allow</code>, run the command:
 To properly set the group owner of <code>/etc/cron.allow</code>, run the command:
 
   <pre>$ sudo chgrp root /etc/cron.allow</pre>
+       </td>
+</tr>
+<tr>
+<td>CCE-86346-4</td>
+<td>Verify User Who Owns /etc/at.allow file</td>
+<td>If <code>/etc/at.allow</code> exists, it must be owned by <code>root</code>.
+
+To properly set the owner of <code>/etc/at.allow</code>, run the command:
+
+  <pre>$ sudo chown root /etc/at.allow </pre>
        </td>
 </tr>
 <tr>
@@ -12861,7 +13004,7 @@ To disable root login via SSH, add or correct the following line in
        </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-88194-6</td>
 <td>Disable SSH root Login with a Password (Insecure)</td>
 <td>To disable password-based root logins over SSH, add or correct the following line in
 
@@ -13536,6 +13679,29 @@ kargs = ["audit_backlog_limit=8192"]
 For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://bootc-dev.github.io/bootc//building/kernel-arguments.html">Bootc documentation</a>.</td>
 </tr>
 <tr>
+<td>CCE-86613-7</td>
+<td>Ensure auditd Collects Changes to Cron Jobs - /etc/cron.d/</td>
+<td>At a minimum, the audit system should collect administrator actions
+for all users and root.
+
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /etc/cron.d/ -p wa -k cronjobs</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code>:
+
+<pre>-w /etc/cron.d/ -p wa -k cronjobs</pre>
+      </td>
+</tr>
+<tr>
 <td></td>
 <td>Record Events that Modify User/Group Information via open syscall - /etc/group</td>
 <td>The audit system should collect write events to /etc/group file for all users and root.
@@ -14159,6 +14325,27 @@ utility to read audit rules during daemon startup, add the following lines to
       </td>
 </tr>
 <tr>
+<td>CCE-86213-6</td>
+<td>Record Events that Modify User/Group Information - /etc/nsswitch.conf</td>
+<td>
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /etc/nsswitch.conf -p wa -k audit_rules_usergroup_modification</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code>:
+
+<pre>-w /etc/nsswitch.conf -p wa -k audit_rules_usergroup_modification</pre>
+      </td>
+</tr>
+<tr>
 <td>CCE-83712-0</td>
 <td>Record Events that Modify User/Group Information - /etc/security/opasswd</td>
 <td>
@@ -14177,6 +14364,48 @@ utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code>:
 
 <pre>-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
+      </td>
+</tr>
+<tr>
+<td>CCE-86212-8</td>
+<td>Record Events that Modify User/Group Information - /etc/pam.conf</td>
+<td>
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /etc/pam.conf -p wa -k audit_rules_usergroup_modification</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code>:
+
+<pre>-w /etc/pam.conf -p wa -k audit_rules_usergroup_modification</pre>
+      </td>
+</tr>
+<tr>
+<td>CCE-86211-0</td>
+<td>Record Events that Modify User/Group Information - /etc/pam.d/</td>
+<td>
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /etc/pam.d/ -p wa -k audit_rules_usergroup_modification</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code>:
+
+<pre>-w /etc/pam.d/ -p wa -k audit_rules_usergroup_modification</pre>
       </td>
 </tr>
 <tr>
@@ -14219,6 +14448,27 @@ utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code>:
 
 <pre>-w /etc/shadow -p wa -k audit_rules_usergroup_modification</pre>
+      </td>
+</tr>
+<tr>
+<td>CCE-86636-8</td>
+<td>Ensure auditd Collects Changes to Cron Jobs - /var/spool/cron</td>
+<td>
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre>
       </td>
 </tr>
 <tr>

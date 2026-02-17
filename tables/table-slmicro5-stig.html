@@ -48,9 +48,9 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>211</td>
+			<td>210</td>
 			<td>2</td>
-			<td>209</td>
+			<td>208</td>
 			<td>99.05%</td>
 			<td>
 				
@@ -261,7 +261,7 @@ root account and password.
 Once the superuser password has been added,
 update the
 grub.cfg file by running:
-grubby --update-kernel=ALL
+grub2-mkconfig -o /boot/grub2/grub.cfg
           </pre></td>
 	<td>SLEM-05-212010</td>
 	<td>grub2_password</td>
@@ -278,7 +278,7 @@ users with physical access cannot trivially alter
 important bootloader settings. These include which kernel to use,
 and whether to enter single-user mode.</pre></td>
 	<td><pre>To verify the boot loader superuser password has been set, run the following command:
-$ sudo grep "^[\s]*GRUB2_PASSWORD=grub\.pbkdf2\.sha512.*$" /boot/grub2/user.cfg
+$ sudo grep "^[\s]*GRUB2_PASSWORD=grub\.pbkdf2\.sha512.*$" /boot/efi/EFI/sles/user.cfg
 The output should be similar to:
 GRUB2_PASSWORD=grub.pbkdf2.sha512.10000.C4E08AC72FBFF7E837FD267BFAD7AEB3D42DDC
 2C99F2A94DD5E2E75C2DC331B719FE55D9411745F82D1B6CFD9E927D61925F9BBDD1CFAA0080E0
@@ -309,7 +309,7 @@ root account and password.
 Once the superuser password has been added,
 update the
 grub.cfg file by running:
-grubby --update-kernel=ALL
+grub2-mkconfig -o /boot/grub2/grub.cfg
           </pre></td>
 	<td>SLEM-05-212015</td>
 	<td>grub2_uefi_password</td>
@@ -1171,10 +1171,10 @@ accessible and configurable, as in the case of interpreted languages. Software l
 also include privileged programs which execute with escalated privileges. Only qualified
 and authorized individuals must be allowed to obtain access to information system components
 for purposes of initiating changes, including upgrades and modifications.</pre></td>
-	<td><pre>Verify the system-wide shared library files are group-owned by "root" with the following command:
+	<td><pre>Verify the system-wide shared library files are group-owned by root with the following command:
 
 $ sudo find -L /lib /lib64 /usr/lib /usr/lib64 ! -group root -exec ls -l {} \;
-      Is it the case that any system wide shared library file is returned and is not group-owned by a required system account?
+      Is it the case that any system wide shared library file is returned and is not group-owned by root?
       </pre></td>
 	<td><pre>System-wide library files are stored in the following directories
 by default:
@@ -1184,8 +1184,8 @@ by default:
 /usr/lib64
 
 All system-wide shared library files should be protected from unauthorised
-access. If any of these files is not group-owned by root, correct its group-owner with
-the following command:
+access. If any of these files is not group-owned by root,
+correct its group-owner with the following command:
 $ sudo chgrp root FILE
               
             </pre></td>
@@ -2391,8 +2391,8 @@ above (or their subset), keeping the given order of algorithms.</pre></td>
 	<td>high</td>
 	<td>SLEM 5 SSH daemon must be configured to only use Message Authentication Codes (MACs) employing FIPS 140-2/140-3 approved cryptographic hash algorithms.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>DoD Information Systems are required to use FIPS-approved cryptographic hash
-functions. The only SSHv2 hash algorithms meeting this requirement is SHA2.</pre></td>
+	<td><pre>FIPS-approved cryptographic hash functions are required to be used.
+The only SSHv2 hash algorithms meeting this requirement is SHA2.</pre></td>
 	<td><pre>Only FIPS-approved MACs should be used. To verify that only FIPS-approved
 MACs are in use, run the following command:
 $ sudo grep -i macs /etc/ssh/sshd_config
@@ -2416,7 +2416,7 @@ above (or their subset), keeping the given order of algorithms.</pre></td>
 	<td>high</td>
 	<td>SLEM 5 SSH server must be configured to use only FIPS 140-2/140-3 validated key exchange algorithms.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>DoD information systems are required to use FIPS-approved key exchange algorithms.
+	<td><pre>FIPS-approved key exchange algorithms are required to be used.
 The system will attempt to use the first algorithm presented by the client that matches
 the server list. Listing the values "strongest to weakest" is a method to ensure the use
 of the strongest algorithm available to secure the SSH connection.</pre></td>
@@ -3258,11 +3258,12 @@ TMOUT=
 
 readonly TMOUT
 export TMOUT
-      Is it the case that value of TMOUT is not less than or equal to expected setting?
+      Is it the case that the TMOUT value is not configured, is set to 0, or is not less than or equal to the expected setting?
       </pre></td>
 	<td><pre>Setting the TMOUT option in /etc/profile ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of 0 (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The TMOUT
 
 setting in /etc/profile.d/autologout.sh should read as follows:
@@ -3361,32 +3362,6 @@ auth required pam_faildelay.so delay=
 </tr>
 
 <tr>
-	<td>V-261366</td>
-	<td></td>
-	<td>medium</td>
-	<td>SLEM 5 must use the default pam_tally2 tally directory.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre>Not having the correct SELinux context on the pam_tally2.so file may lead to
-unauthorized access to the directory.</pre></td>
-	<td><pre>If the system does not have SELinux enabled and enforcing a targeted policy,
-or if the pam_tally2 module is not configured for use, this requirement is not applicable
-
-Check the security context type of the default tally2 directory with the following command:
-
-$ sudo ls -Z /var/log/tallylog
-
-unconfined_u:object_r:faillog_t:s0 /var/log/faillock
-
-If the security context type of the tally directory is not "faillog_t", this is a finding.
-      Is it the case that the security context type of the non-default tally directory is not "faillog_t"?
-      </pre></td>
-	<td><pre>The file configuration option in PAM pam_tally2.so module defines where to keep counts.
-Default is /var/log/tallylog. The configured directory must have the correct SELinux context.</pre></td>
-	<td>SLEM-05-412030</td>
-	<td>accounts_passwords_pam_tally2_file_selinux</td>
-</tr>
-
-<tr>
 	<td>V-261367</td>
 	<td></td>
 	<td>low</td>
@@ -3473,7 +3448,9 @@ system boot time.  In the file /etc/selinux/config, add or correct the
 following line to configure the system to boot into enforcing mode:
 SELINUX=
           
-        </pre></td>
+Ensure that all files have correct SELinux labels by running:
+fixfiles onboot
+Then reboot the system.</pre></td>
 	<td>SLEM-05-431015</td>
 	<td>selinux_state</td>
 </tr>
@@ -3732,8 +3709,8 @@ grep pam_cracklib.so /etc/pam.d/common-password
 password requisite pam_cracklib.so ucredit=
 The ucredit parameter (as a negative number) will indicate how
 many uppercase characters are required.
-The DoD and FISMA require at least one uppercase character in a password.
-This would appear as ucredit=-1.
+The profile require at least  uppercase character in a password.
+This would appear as ucredit=-.
       Is it the case that ucredit is not found or not set to the required value?
       </pre></td>
 	<td><pre>The pam_cracklib module's ucredit= parameter controls requirements
@@ -3766,8 +3743,8 @@ If the command does not return anything, the returned line is commented
 out, or has a second column value different from "requisite", or does not
 contain lcredit=, this is a finding.
 
-The DoD and FISMA require at least one lowercase character in a password.
-This would appear as lcredit=-1.
+The profile requires at least  lowercase character in a password.
+This would appear as lcredit=-.
       Is it the case that lcredit is not found or not set to the required value?
       </pre></td>
 	<td><pre>The pam_cracklib module's lcredit= parameter controls requirements
@@ -3795,8 +3772,8 @@ command:
 password requisite pam_cracklib.so dcredit=
 The dcredit parameter (as a negative number) will indicate how
 many digits are required.
-The DoD requires at least one digit in a password.
-This would appear as dcredit=-1.
+The profile requires at least  digit in a password.
+This would appear as dcredit=-.
       Is it the case that dcredit is not found or not set to the required value?
       </pre></td>
 	<td><pre>The pam_cracklib module's dcredit parameter controls requirements
@@ -3823,8 +3800,8 @@ following command:
 password requisite pam_cracklib.so ocredit=
 The ocredit parameter (as a negative number) will indicate how
 many special characters are required.
-The DoD and FISMA require at least one special character in a password.
-This would appear as ocredit=-1.
+The profile requires at least  special character in a password.
+This would appear as ocredit=-.
       Is it the case that ocredit is not found or not set to the required value?
       </pre></td>
 	<td><pre>The pam_cracklib module's ocredit= parameter controls requirements
@@ -3906,8 +3883,8 @@ following command:
 # grep pam_cracklib.so /etc/pam.d/common-password
 password requisite pam_cracklib.so difok=
 The difok parameter will indicate how many characters must differ.
-The DoD requires at least eight characters differ during a password change.
-This would appear as difok=8.
+The profile requires at least  characters differ during a password change.
+This would appear as difok=.
       Is it the case that difok is not found or not set to the required value?
       </pre></td>
 	<td><pre>The pam_cracklib module's difok parameter controls requirements for
@@ -3951,7 +3928,7 @@ In the file /etc/pam.d/common-password, make sure the parameters
 remember and use_authtok are present, and that the value
 for the remember parameter is  or greater. For example:
 password requisite pam_pwhistory.so ...existing_options... remember= use_authtok
-The DoD STIG requirement is 5 passwords.</pre></td>
+The profile requirement is  passwords.</pre></td>
 	<td>SLEM-05-611045</td>
 	<td>accounts_password_pam_pwhistory_remember</td>
 </tr>
@@ -4244,7 +4221,7 @@ Verify that the shadow password suite configuration is set to encrypt password w
 
 Check the hashing algorithm that is being used to hash passwords with the following command:
 
-$ sudo grep -i ENCRYPT_METHOD /etc/login.defs
+$ sudo grep -i ENCRYPT_METHOD  /etc/login.defs
 
 ENCRYPT_METHOD 
       Is it the case that ENCRYPT_METHOD is not set to <sub idref="var_password_hashing_algorithm" />?
@@ -4288,7 +4265,7 @@ and add or correct the following line:
 PASS_MIN_DAYS 
               
 A value of 1 day is considered sufficient for many
-environments. The DoD requirement is 1.
+environments.
 The profile requirement is 
                 
               .</pre></td>
@@ -4324,8 +4301,6 @@ edit the file /etc/login.defs
 and add or correct the following line:
 PASS_MAX_DAYS 
               
-A value of 180 days is sufficient for many environments.
-The DoD requirement is 60.
 The profile requirement is 
                 
               .</pre></td>
@@ -4347,9 +4322,8 @@ authentication device.
                 
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</pre></td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</pre></td>
 	<td><pre>Check that SUSE Linux Enterprise Micro 5 has the packages for smart card support installed.
 
 Run the following command to determine if the pam_pkcs11 package is installed:
@@ -4433,10 +4407,9 @@ authentication device.
 
 Multifactor solutions that require devices separate from information
 systems gaining access include, for example, hardware tokens providing
-time-based or challenge-response authenticators and smart cards such as the
-U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</pre></td>
-	<td><pre>Remote access is access to DoD nonpublic information systems by an
+time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</pre></td>
+	<td><pre>Remote access is access to nonpublic information systems by an
 authorized user (or an information system) communicating through an
 external, non-organization-controlled network. Remote access methods
 include, for example, dial-up, broadband, and wireless.
@@ -4502,9 +4475,8 @@ authentication device.
                 
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</pre></td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</pre></td>
 	<td><pre>To verify the operating system implements certificate status checking for PKI
 authentication, run the following command:
 $ sudo grep -i cert_policy /etc/pam_pkcs11/pam_pkcs11.conf
@@ -4597,9 +4569,8 @@ authentication device.
                 
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</pre></td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</pre></td>
 	<td><pre>To verify the operating system implements certificate status checking for PKI
 authentication, run the following command:
 $ sudo grep -i cert_policy /etc/pam_pkcs11/pam_pkcs11.conf

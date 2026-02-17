@@ -644,8 +644,9 @@ The session lock is implemented at the point where session activity can be deter
         <tr>
           <td>Set Interactive Session Timeout</td>
           <td>Setting the <tt>TMOUT</tt> option in <tt>/etc/profile</tt> ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of <tt>0</tt> (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The <tt>TMOUT</tt>
 
 setting in a file loaded by <tt>/etc/profile</tt>, e.g.
@@ -6778,7 +6779,7 @@ Edit the <tt>password</tt> section in
           <td>To configure the number of retry prompts that are permitted per-session:
 Edit the <tt>/etc/security/pwquality.conf</tt> to include
 <tt>retry=<sub idref="var_password_pam_retry" /></tt>, or a lower value if site
-policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+policy is more restrictive. The profile requirement is a maximum of <tt>retry=<sub idref="var_password_pam_retry" /></tt> prompts
 per session.</td>
         </tr>
       </table>
@@ -7114,7 +7115,7 @@ edit the file <tt>/etc/login.defs</tt>
 and add or correct the following line:
 <pre>PASS_MIN_DAYS <sub idref="var_accounts_minimum_age_login_defs" /></pre>
 A value of 1 day is considered sufficient for many
-environments. The DoD requirement is 1.
+environments.
 The profile requirement is <tt><sub idref="var_accounts_minimum_age_login_defs" /></tt>.</td>
         </tr>
       </table>
@@ -7148,8 +7149,6 @@ lifetime by running the following command:
 edit the file <tt>/etc/login.defs</tt>
 and add or correct the following line:
 <pre>PASS_MAX_DAYS <sub idref="var_accounts_maximum_age_login_defs" /></pre>
-A value of 180 days is sufficient for many environments.
-The DoD requirement is 60.
 The profile requirement is <tt><sub idref="var_accounts_maximum_age_login_defs" /></tt>.</td>
         </tr>
       </table>
@@ -7248,7 +7247,7 @@ so that the <tt>superusers</tt> is honored.
 Once the superuser account has been added,
 update the
 <tt>grub.cfg</tt> file by running:
-<pre>grub-mkconfig -o /boot/grub2/grub.cfg</pre></td>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre></td>
         </tr>
       </table>
 
@@ -8616,7 +8615,10 @@ $ sudo dnf install policycoreutils</pre></td>
           <td>The SELinux state should be set to <tt><sub idref="var_selinux_state" /></tt> at
 system boot time.  In the file <tt>/etc/selinux/config</tt>, add or correct the
 following line to configure the system to boot into enforcing mode:
-<pre>SELINUX=<sub idref="var_selinux_state" /></pre></td>
+<pre>SELINUX=<sub idref="var_selinux_state" /></pre>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.</td>
         </tr>
       </table>
 
@@ -8720,8 +8722,9 @@ Terminating network connections associated with communications sessions includes
         <tr>
           <td>Set Interactive Session Timeout</td>
           <td>Setting the <tt>TMOUT</tt> option in <tt>/etc/profile</tt> ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of <tt>0</tt> (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The <tt>TMOUT</tt>
 
 setting in a file loaded by <tt>/etc/profile</tt>, e.g.
@@ -10185,8 +10188,8 @@ by default:
 /usr/lib64
 </pre>
 All system-wide shared library files should be protected from unauthorised
-access. If any of these files is not group-owned by root, correct its group-owner with
-the following command:
+access. If any of these files is not group-owned by root,
+correct its group-owner with the following command:
 <pre>$ sudo chgrp root <i>FILE</i></pre></td>
         </tr>
       </table>
@@ -12284,6 +12287,50 @@ following line to the existing AIDE line:
 Otherwise, add the following line to <tt>/etc/crontab</tt>:
 <pre>05 4 * * * root /usr/sbin/aide --check | /bin/mail -s "$(hostname) - AIDE Integrity Check" root@localhost</pre>
 AIDE can be executed periodically through other means; this is merely one example.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure auditd Collects Changes to Cron Jobs - /var/spool/cron</td>
+          <td>
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre>
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure auditd Collects Changes to Cron Jobs - /var/spool/cron</td>
+          <td>
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre>
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre></td>
         </tr>
       </table>
 
@@ -14935,6 +14982,13 @@ Crypto policies may be customized by crypto policy modules, in which case it is 
 
       <table>
         <tr>
+          <td>Implement STIG Sub Crypto Policy</td>
+          <td>Create a custom cryptographic policy to follow the guidance from DISA.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Configure SSH Client to Use FIPS 140 Validated Ciphers: openssh.config</td>
           <td>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
 OpenSSH is supported by system crypto policy, but the OpenSSH configuration may be
@@ -15003,6 +15057,13 @@ policy, run the following command:
 <pre>$ sudo update-crypto-policies --set <sub idref="var_system_crypto_policy" /></pre>
 The rule checks if settings for selected crypto policy are configured as expected. Configuration files in the <tt>/etc/crypto-policies/back-ends</tt> are either symlinks to correct files provided by Crypto-policies package or they are regular files in case crypto policy customizations are applied.
 Crypto policies may be customized by crypto policy modules, in which case it is delimited from the base policy using a colon.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Implement STIG Sub Crypto Policy</td>
+          <td>Create a custom cryptographic policy to follow the guidance from DISA.</td>
         </tr>
       </table>
 
@@ -15122,6 +15183,13 @@ in <tt>/usr/lib/bootc/kargs.d/01-fips.toml</tt>:
 <pre>kargs = ["fips=1"]</pre>
 Then set the cryptographic policy to <tt><sub idref="var_system_crypto_policy" /></tt>:
 <pre>update-crypto-policies --no-reload --set <sub idref="var_system_crypto_policy" /></pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Implement STIG Sub Crypto Policy</td>
+          <td>Create a custom cryptographic policy to follow the guidance from DISA.</td>
         </tr>
       </table>
 
@@ -15707,7 +15775,10 @@ use cases.</td>
           <td>The SELinux state should be set to <tt><sub idref="var_selinux_state" /></tt> at
 system boot time.  In the file <tt>/etc/selinux/config</tt>, add or correct the
 following line to configure the system to boot into enforcing mode:
-<pre>SELINUX=<sub idref="var_selinux_state" /></pre></td>
+<pre>SELINUX=<sub idref="var_selinux_state" /></pre>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.</td>
         </tr>
       </table>
 
@@ -15755,6 +15826,28 @@ AIDE can be executed periodically through other means; this is merely one exampl
         </tr>
       </table>
 
+      <table>
+        <tr>
+          <td>Ensure auditd Collects Changes to Cron Jobs - /var/spool/cron</td>
+          <td>
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre>
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre></td>
+        </tr>
+      </table>
+
     </td>
 </tr>
 
@@ -15798,6 +15891,28 @@ following line to the existing AIDE line:
 Otherwise, add the following line to <tt>/etc/crontab</tt>:
 <pre>05 4 * * * root /usr/sbin/aide --check | /bin/mail -s "$(hostname) - AIDE Integrity Check" root@localhost</pre>
 AIDE can be executed periodically through other means; this is merely one example.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure auditd Collects Changes to Cron Jobs - /var/spool/cron</td>
+          <td>
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre>
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre></td>
         </tr>
       </table>
 
@@ -19931,6 +20046,30 @@ If the system is 64 bit then also add the following line:
 
       <table>
         <tr>
+          <td>Ensure auditd Collects Changes to Cron Jobs - /etc/cron.d/</td>
+          <td>At a minimum, the audit system should collect administrator actions
+for all users and root.
+
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
+<pre>-w /etc/cron.d/ -p wa -k cronjobs</pre>
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt>:
+
+<pre>-w /etc/cron.d/ -p wa -k cronjobs</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Record Any Attempts to Run chacl</td>
           <td>
 
@@ -22394,17 +22533,19 @@ This is the default setting.</td>
         <tr>
           <td>Disable core dump backtraces</td>
           <td>The <tt>ProcessSizeMax</tt> option in <tt>[Coredump]</tt> section
-of <tt>/etc/systemd/coredump.conf</tt>
-specifies the maximum size in bytes of a core which will be processed.
-Core dumps exceeding this size may be stored, but the backtrace will not
-be generated.</td>
+of <tt>/etc/systemd/coredump.conf</tt> or in a drop-in file under
+<tt>/etc/systemd/coredump.conf.d/</tt> specifies the maximum size in bytes
+of a core which will be processed. Core dumps exceeding this size may be
+stored, but the backtrace will not be generated.</td>
         </tr>
       </table>
 
       <table>
         <tr>
           <td>Disable storing core dump</td>
-          <td>The <tt>Storage</tt> option in <tt>[Coredump]</tt> sectionof <tt>/etc/systemd/coredump.conf</tt>
+          <td>The <tt>Storage</tt> option in <tt>[Coredump]</tt> section
+of <tt>/etc/systemd/coredump.conf</tt> or a drop-in file in
+<tt>/etc/systemd/coredump.conf.d/*.conf</tt>
 can be set to <tt>none</tt> to disable storing core dumps permanently.</td>
         </tr>
       </table>

@@ -48,9 +48,9 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>368</td>
+			<td>369</td>
 			<td>0</td>
-			<td>368</td>
+			<td>369</td>
 			<td>100.00%</td>
 			<td>
 				
@@ -1336,16 +1336,18 @@ $ sudo chgrp root [FILE]</pre></td>
 	<td><pre>If RHEL 8 were to allow any user to make changes to software libraries, then those changes might be implemented without undergoing the appropriate testing and approvals that are part of a robust change management process.
 
 This requirement applies to RHEL 8 with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs that execute with escalated privileges. Only qualified and authorized individuals will be allowed to obtain access to information system components for purposes of initiating changes, including upgrades and modifications.</pre></td>
-	<td><pre>Verify the system-wide shared library files contained in the following directories have mode "755" or less permissive with the following command:
+	<td><pre>Verify the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" have mode 0755 or less permissive.
 
-$ sudo find -L /lib /lib64 /usr/lib /usr/lib64 -perm /022 -type f -exec ls -l {} \;
+Check that the systemwide shared library files have mode 0755 or less permissive with the following command:
 
-If any system-wide shared library file is found to be group-writable or world-writable, this is a finding.</pre></td>
-	<td><pre>Configure the library files to be protected from unauthorized access. Run the following command, replacing "[FILE]" with any library file with a mode more permissive than 755.
+$ sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' -perm /022 -exec stat -c "%n %a" {} +
 
-$ sudo chmod 755 [FILE]</pre></td>
+If any output is returned, this is a finding.</pre></td>
+	<td><pre>Configure the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" have mode 0755 or less permissive with the following command.
+
+$ sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' -perm /022 -exec chmod go-w {} +</pre></td>
 	<td>RHEL-08-010330</td>
-	<td>SV-230260r1017080_rule</td>
+	<td>SV-230260r1101888_rule</td>
 </tr>
 
 <tr>
@@ -1357,18 +1359,16 @@ $ sudo chmod 755 [FILE]</pre></td>
 	<td><pre>If RHEL 8 were to allow any user to make changes to software libraries, then those changes might be implemented without undergoing the appropriate testing and approvals that are part of a robust change management process.
 
 This requirement applies to RHEL 8 with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs that execute with escalated privileges. Only qualified and authorized individuals will be allowed to obtain access to information system components for purposes of initiating changes, including upgrades and modifications.</pre></td>
-	<td><pre>Verify the system-wide shared library files are owned by "root" with the following command:
+	<td><pre>Verify the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" are owned by root with the following command:
 
-$ sudo find /lib /lib64 /usr/lib /usr/lib64 ! -user root -exec ls -l {} \;
+$ sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -user root -exec stat -c "%n %U" {} +
 
-If any system wide shared library file is returned, this is a finding.</pre></td>
-	<td><pre>Configure the system-wide shared library files (/lib, /lib64, /usr/lib and /usr/lib64) to be protected from unauthorized access.
+If any output is returned, this is a finding.</pre></td>
+	<td><pre>Configure the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" to be owned by root with the following command:
 
-Run the following command, replacing "[FILE]" with any library file not owned by "root".
-
-$ sudo chown root [FILE]</pre></td>
+$ sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -user root -exec chown root {} +</pre></td>
 	<td>RHEL-08-010340</td>
-	<td>SV-230261r1069326_rule</td>
+	<td>SV-230261r1101891_rule</td>
 </tr>
 
 <tr>
@@ -1380,18 +1380,16 @@ $ sudo chown root [FILE]</pre></td>
 	<td><pre>If RHEL 8 were to allow any user to make changes to software libraries, then those changes might be implemented without undergoing the appropriate testing and approvals that are part of a robust change management process.
 
 This requirement applies to RHEL 8 with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs that execute with escalated privileges. Only qualified and authorized individuals will be allowed to obtain access to information system components for purposes of initiating changes, including upgrades and modifications.</pre></td>
-	<td><pre>Verify the system-wide shared library files are group-owned by "root" with the following command:
+	<td><pre>Verify the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" are group owned by root with the following command:
 
-$ sudo find /lib /lib64 /usr/lib /usr/lib64 ! -group root -exec ls -l {} \;
+$ sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -group root -exec stat -c "%n %G" {} +
 
-If any system wide shared library file is returned and is not group-owned by a required system account, this is a finding.</pre></td>
-	<td><pre>Configure the system-wide shared library files (/lib, /lib64, /usr/lib and /usr/lib64) to be protected from unauthorized access.
+If any output is returned, this is a finding.</pre></td>
+	<td><pre>Configure the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" are group owned by root with the following command:
 
-Run the following command, replacing "[FILE]" with any library file not group-owned by "root".
-
-$ sudo chgrp root [FILE]</pre></td>
+$ sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -group root -exec chown :root {} +</pre></td>
 	<td>RHEL-08-010350</td>
-	<td>SV-230262r1017082_rule</td>
+	<td>SV-230262r1101894_rule</td>
 </tr>
 
 <tr>
@@ -1824,14 +1822,14 @@ Satisfies: SRG-OS-000373-GPOS-00156, SRG-OS-000373-GPOS-00157, SRG-OS-000373-GPO
 
 Check that the "/etc/sudoers" file has no occurrences of "NOPASSWD" by running the following command:
 
-$ sudo grep -ir nopasswd /etc/sudoers /etc/sudoers.d/
+$ sudo grep -iR 'NOPASSWD' /etc/sudoers /etc/sudoers.d/
 
 %admin ALL=(ALL) NOPASSWD: ALL
 
-If any occurrences of "NOPASSWD" are returned from the command and have not been documented with the ISSO as an organizationally defined administrative group utilizing MFA, this is a finding.</pre></td>
+If any occurrences of "NOPASSWD" are returned from the command and have not been documented with the information system security officer (ISSO) as an organizationally defined administrative group utilizing multifactor authentication (MFA), this is a finding.</pre></td>
 	<td><pre>Remove any occurrence of "NOPASSWD" found in "/etc/sudoers" file or files in the "/etc/sudoers.d" directory.</pre></td>
 	<td>RHEL-08-010380</td>
-	<td>SV-230271r1069290_rule</td>
+	<td>SV-230271r1101896_rule</td>
 </tr>
 
 <tr>
@@ -1849,12 +1847,12 @@ Satisfies: SRG-OS-000373-GPOS-00156, SRG-OS-000373-GPOS-00157, SRG-OS-000373-GPO
 
 Check that the "/etc/sudoers" file has no occurrences of "!authenticate" by running the following command:
 
-$ sudo grep -ir '!authenticate' /etc/sudoers /etc/sudoers.d/
+$ sudo egrep -iR '!authenticate' /etc/sudoers /etc/sudoers.d/
 
 If any occurrences of "!authenticate" return from the command, this is a finding.</pre></td>
 	<td><pre>Remove any occurrence of "!authenticate" found in "/etc/sudoers" file or files in the "/etc/sudoers.d" directory.</pre></td>
 	<td>RHEL-08-010381</td>
-	<td>SV-230272r1069289_rule</td>
+	<td>SV-230272r1101898_rule</td>
 </tr>
 
 <tr>
@@ -8093,7 +8091,7 @@ To support the requirements and principles of least functionality, the operating
 
 Check which services are currently active with the following command:
 
-$ sudo firewall-cmd --list-all-zones
+$ firewall-cmd --list-all-zones | grep -e "active" -e "services"
 
 custom (active)
 target: DROP
@@ -8107,12 +8105,12 @@ forward-ports:
 icmp-blocks: 
 rich rules: 
 
-Ask the System Administrator for the site or program Ports, Protocols, and Services Management Component Local Service Assessment (PPSM CLSA). Verify the services allowed by the firewall match the PPSM CLSA. 
+Ask the system administrator (SA) for the site or program Ports, Protocols, and Services Management Component Local Service Assessment (PPSM CLSA). Verify the services allowed by the firewall match the PPSM CLSA. 
 
 If there are additional ports, protocols, or services that are not in the PPSM CLSA, or there are ports, protocols, or services that are prohibited by the PPSM Category Assurance List (CAL), this is a finding.</pre></td>
 	<td><pre>Update the host's firewall settings and/or running services to comply with the PPSM Component Local Service Assessment (CLSA) for the site or program and the PPSM CAL.</pre></td>
 	<td>RHEL-08-040030</td>
-	<td>SV-230500r1017283_rule</td>
+	<td>SV-230500r1101900_rule</td>
 </tr>
 
 <tr>
@@ -10056,29 +10054,34 @@ If AIDE is installed, ensure the "xattrs" rule is present on all uncommented fil
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>ACLs can provide permissions beyond those permitted through the file mode and must be verified by file integrity tools.
 
+Selection lines in the aide.conf file determine which files and directories AIDE will monitor for changes. They follow this format:
+
+<path> <rules>
+
+The <path> specifies a file, directory or wildcard pattern to monitor.
+The <rules>define which attributes (hashes, permissions, timestamps, etc.) to check.
+
 RHEL 8 installation media come with a file integrity tool, Advanced Intrusion Detection Environment (AIDE).</pre></td>
 	<td><pre>Verify the file integrity tool is configured to verify ACLs.
 
 Note: AIDE is highly configurable at install time. This requirement assumes the "aide.conf" file is under the "/etc" directory.
 
-If AIDE is not installed, ask the System Administrator how file integrity checks are performed on the system.
+If AIDE is not installed, ask the system administrator (SA) how file integrity checks are performed on the system.
 
 Use the following command to determine if the file is in a location other than "/etc/aide/aide.conf":
 
-     $ sudo find / -name aide.conf
+$ sudo find / -name aide.conf
 
-Check the "aide.conf" file to determine if the "acl" rule has been added to the rule list being applied to the files and directories selection lists with the following command:
+Use the following command to review the "aide.conf" file to determine if the "acl" rule has been added to the rule list being applied to the files and directories selection lists:
 
-     $ sudo grep -E "[+]?acl" /etc/aide.conf
-
-     VarFile = OwnerMode+n+l+X+acl
+$ sudo cat /etc/aide.conf | more
 
 If the "acl" rule is not being used on all selection lines in the "/etc/aide.conf" file, is commented out, or ACLs are not being checked by another file integrity tool, this is a finding.</pre></td>
 	<td><pre>Configure the file integrity tool to check file and directory ACLs. 
 
 If AIDE is installed, ensure the "acl" rule is present on all file and directory selection lists.</pre></td>
 	<td>RHEL-08-040310</td>
-	<td>SV-230552r1017314_rule</td>
+	<td>SV-230552r1101902_rule</td>
 </tr>
 
 <tr>
@@ -10361,7 +10364,7 @@ $ sudo yum remove krb5-server</pre></td>
 	<td><pre>The sudo command allows a user to execute programs with elevated (administrator) privileges. It prompts the user for their password and confirms your request to execute a command by checking a file, called sudoers. If the "sudoers" file is not configured correctly, any user defined on the system can initiate privileged actions on the target system.</pre></td>
 	<td><pre>Verify the "sudoers" file restricts sudo access to authorized personnel.
 
-$ sudo grep -iwr 'ALL' /etc/sudoers /etc/sudoers.d/
+$ sudo grep -iwR 'ALL' /etc/sudoers /etc/sudoers.d/ | grep -v '#'
 
 If the either of the following entries are returned, this is a finding:
 ALL     ALL=(ALL) ALL
@@ -10370,7 +10373,7 @@ ALL     ALL=(ALL:ALL) ALL</pre></td>
 ALL     ALL=(ALL) ALL
 ALL     ALL=(ALL:ALL) ALL</pre></td>
 	<td>RHEL-08-010382</td>
-	<td>SV-237641r1069288_rule</td>
+	<td>SV-237641r1101904_rule</td>
 </tr>
 
 <tr>
@@ -10807,20 +10810,20 @@ $ sudo ls -lLR /<home directory>/<users home directory>/
 -rw-r--r-- 1 smithj smithj 193 Mar  5 17:06 file2
 -rw-r--r-- 1 smithj sa        231 Mar  5 17:06 file3
 
-If any files found with a group-owner different from the home directory user private group, check to see if the user is a member of that group with the following command:
+If any files are found with a group owner different from the home directory user private group, check to see if the user is a member of that group with the following command:
 
 $ sudo grep smithj /etc/group
 sa:x:100:juan,shelley,bob,smithj 
 smithj:x:521:smithj
 
-If any files or directories are group owned by a group that the directory owner is not a member of, this is a finding.</pre></td>
+If any files or directories are group owned by a group that the directory owner is not a member of verify that it is documented with the information system security officer (ISSO). If it is not, this is a finding.</pre></td>
 	<td><pre>Change the group of a local interactive user's files and directories to a group that the interactive user is a member. To change the group owner of a local interactive user's files and directories, use the following command:
 
 Note: The example will be for the user smithj, who has a home directory of "/home/smithj" and is a member of the users group.
 
 $ sudo chgrp smithj /home/smithj/<file or directory></pre></td>
 	<td>RHEL-08-010741</td>
-	<td>SV-244532r1017339_rule</td>
+	<td>SV-244532r1101906_rule</td>
 </tr>
 
 <tr>
@@ -12408,6 +12411,35 @@ Remove any configurations that conflict with the above from the following locati
 /etc/sudoers.d/</pre></td>
 	<td>RHEL-08-010455</td>
 	<td>SV-272484r1069340_rule</td>
+</tr>
+
+<tr>
+	<td>V-274877</td>
+	<td>CCI-000172</td>
+	<td>medium</td>
+	<td>RHEL 8 must audit any script or executable called by cron as root or by any privileged user.</td>
+	<td>SRG-OS-000471-GPOS-00215</td>
+	<td><pre>Any script or executable called by cron as root or by any privileged user must be owned by that user, must have the permissions set to 755 or more restrictive, and have no extended rights that allow a nonprivileged user to modify the script or executable.</pre></td>
+	<td><pre>Verify RHEL 8 is configured to audit the execution of any system call made by cron as root or as any privileged user.
+
+$ sudo auditctl -l | grep /etc/cron.d
+-w /etc/cron.d -p wa -k cronjobs
+
+$ sudo auditctl -l | grep /var/spool/cron
+-w /var/spool/cron -p wa -k cronjobs
+
+If either of these commands do not return the expected output, or the lines are commented out, this is a finding.</pre></td>
+	<td><pre>Configure RHEL 8 to audit the execution of any system call made by cron as root or as any privileged user.
+
+Add or update the following file system rules to "/etc/audit/rules.d/audit.rules":
+auditctl -w /etc/cron.d/ -p wa -k cronjobs
+auditctl -w /var/spool/cron/ -p wa -k cronjobs
+
+To load the rules to the kernel immediately, use the following command:
+
+$ sudo augenrules --load</pre></td>
+	<td>RHEL-08-030655</td>
+	<td>SV-274877r1106148_rule</td>
 </tr>
 
 </table>

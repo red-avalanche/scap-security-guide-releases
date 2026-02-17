@@ -918,8 +918,9 @@ $ sudo dnf install sudo</pre>
 <td>Ensure That the sudo Binary Has the Correct Permissions</td>
 <td>
 To properly set the permissions of <code>/usr/bin/sudo</code>, run the command:
-<pre>$ sudo chmod 4111 /usr/bin/sudo</pre>
-       </td>
+<pre>$ sudo chmod 4110 /usr/bin/sudo</pre>
+In order to use this rule, the group owner for /usr/bin/sudo needs to be changed to a
+group other than root to effectively limit access to sudo.</td>
 </tr>
 <tr>
 <td>CCE-90747-7</td>
@@ -1762,7 +1763,8 @@ No additional authselect feature is needed to be enabled.</td>
 Edit the <code>/etc/security/pwquality.conf</code> to include
 <code>retry=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_retry" use="legacy"></xccdf-1.2:sub>
           </code>, or a lower value if site
-policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+policy is more restrictive. The profile requirement is a maximum of <code>retry=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_retry" use="legacy"></xccdf-1.2:sub>
+          </code> prompts
 per session.</td>
 </tr>
 <tr>
@@ -2160,8 +2162,6 @@ edit the file <code>/etc/login.defs</code>
 and add or correct the following line:
 <pre>PASS_MAX_DAYS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></xccdf-1.2:sub>
          </pre>
-A value of 180 days is sufficient for many environments.
-The DoD requirement is 60.
 The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
@@ -2173,7 +2173,7 @@ and add or correct the following line:
 <pre>PASS_MIN_DAYS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_minimum_age_login_defs" use="legacy"></xccdf-1.2:sub>
          </pre>
 A value of 1 day is considered sufficient for many
-environments. The DoD requirement is 1.
+environments.
 The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_minimum_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
@@ -2185,8 +2185,6 @@ The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklis
          </pre>
          <br>
          <br>
-The DoD requirement is <code>15</code>.
-The FISMA requirement is <code>12</code>.
 The profile requirement is
 <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_minlen_login_defs" use="legacy"></xccdf-1.2:sub></code>.
 If a program consults <code>/etc/login.defs</code> and also another PAM module
@@ -2228,7 +2226,6 @@ users, run the command:
 <pre>$ sudo chage --warndays <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub>
           <i>USER</i>
          </pre>
-The DoD requirement is 7, and CIS recommendation is no less than 7 days.
 This profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
@@ -2240,7 +2237,6 @@ edit the file <code>/etc/login.defs</code> and add or correct
  the following line:
 <pre>PASS_WARN_AGE <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub>
          </pre>
-The DoD requirement is 7.
 The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
@@ -2519,8 +2515,9 @@ Then, add the following entry to <code>/etc/security/namespace.conf</code>:
 <td>CCE-88163-1</td>
 <td>Set Interactive Session Timeout</td>
 <td>Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of <code>0</code> (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The <code>TMOUT</code>
 
 setting in a file loaded by <code>/etc/profile</code>, e.g.
@@ -3234,7 +3231,7 @@ so that the <code>superusers</code> is honored.
 Once the superuser account has been added,
 update the
 <code>grub.cfg</code> file by running:
-<pre>grub-mkconfig -o /boot/grub2/grub.cfg</pre>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
        </td>
 </tr>
 <tr>
@@ -3279,7 +3276,7 @@ so that the <code>superusers</code> is honored.
 Once the superuser account has been added,
 update the
 <code>grub.cfg</code> file by running:
-<pre>grub-mkconfig -o /boot/grub2/grub.cfg</pre>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
        </td>
 </tr>
 <tr>
@@ -5924,8 +5921,8 @@ by default:
 /usr/lib64
 </pre>
 All system-wide shared library files should be protected from unauthorised
-access. If any of these files is not group-owned by root, correct its group-owner with
-the following command:
+access. If any of these files is not group-owned by root,
+correct its group-owner with the following command:
 <pre>$ sudo chgrp root <i>FILE</i>
          </pre>
         </td>
@@ -5967,9 +5964,21 @@ The <code>autofs</code> service can be disabled with the following command:
 <td>Disable Kernel Support for USB via Bootloader Configuration</td>
 <td>All USB support can be disabled by adding the <code>nousb</code>
 argument to the kernel's boot loader configuration. To do so,
-append "nousb" to the kernel line in <code>/etc/default/grub</code> as shown:
-<pre>kernel /vmlinuz-<i>VERSION</i> ro vga=ext root=/dev/VolGroup00/LogVol00 rhgb quiet nousb</pre>
-       </td>
+add the argument <code>nousb</code> to the default
+GRUB 2 command line for the Linux operating system.
+To ensure that <code>nousb</code> is added as a kernel command line
+argument to newly installed kernels, add <code>nousb</code> to the
+default Grub2 command line for Linux operating systems. Modify the line within
+<code>/etc/default/grub</code> as shown below:
+<pre>GRUB_CMDLINE_LINUX="... nousb ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="nousb"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["nousb"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://bootc-dev.github.io/bootc//building/kernel-arguments.html">Bootc documentation</a>.</td>
 </tr>
 <tr>
 <td>CCE-88216-7</td>
@@ -6510,15 +6519,17 @@ By masking the unit, core dump processing is disabled.</td>
 <td>CCE-88825-5</td>
 <td>Disable core dump backtraces</td>
 <td>The <code>ProcessSizeMax</code> option in <code>[Coredump]</code> section
-of <code>/etc/systemd/coredump.conf</code>
-specifies the maximum size in bytes of a core which will be processed.
-Core dumps exceeding this size may be stored, but the backtrace will not
-be generated.</td>
+of <code>/etc/systemd/coredump.conf</code> or in a drop-in file under
+<code>/etc/systemd/coredump.conf.d/</code> specifies the maximum size in bytes
+of a core which will be processed. Core dumps exceeding this size may be
+stored, but the backtrace will not be generated.</td>
 </tr>
 <tr>
 <td>CCE-88732-3</td>
 <td>Disable storing core dump</td>
-<td>The <code>Storage</code> option in <code>[Coredump]</code> sectionof <code>/etc/systemd/coredump.conf</code>
+<td>The <code>Storage</code> option in <code>[Coredump]</code> section
+of <code>/etc/systemd/coredump.conf</code> or a drop-in file in
+<code>/etc/systemd/coredump.conf.d/*.conf</code>
 can be set to <code>none</code> to disable storing core dumps permanently.</td>
 </tr>
 <tr>
@@ -6781,7 +6792,9 @@ the system to boot into enforcing or permissive mode:
 <pre>SELINUX=enforcing</pre>
 OR
 <pre>SELINUX=permissive</pre>
-      </td>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.</td>
 </tr>
 <tr>
 <td>CCE-88366-0</td>
@@ -6804,7 +6817,9 @@ system boot time.  In the file <code>/etc/selinux/config</code>, add or correct 
 following line to configure the system to boot into enforcing mode:
 <pre>SELINUX=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_selinux_state" use="legacy"></xccdf-1.2:sub>
        </pre>
-      </td>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.</td>
 </tr>
 <tr>
 <td>CCE-89945-0</td>

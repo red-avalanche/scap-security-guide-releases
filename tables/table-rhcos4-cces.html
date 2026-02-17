@@ -593,8 +593,9 @@ $ sudo dnf install sudo</pre>
 <td>Ensure That the sudo Binary Has the Correct Permissions</td>
 <td>
 To properly set the permissions of <code>/usr/bin/sudo</code>, run the command:
-<pre>$ sudo chmod 4111 /usr/bin/sudo</pre>
-       </td>
+<pre>$ sudo chmod 4110 /usr/bin/sudo</pre>
+In order to use this rule, the group owner for /usr/bin/sudo needs to be changed to a
+group other than root to effectively limit access to sudo.</td>
 </tr>
 <tr>
 <td></td>
@@ -960,7 +961,8 @@ Edit the <code>pam_pwquality.so</code> statement in
 
 <code>retry=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_retry" use="legacy"></xccdf-1.2:sub>
           </code>, or a lower value if site
-policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+policy is more restrictive. The profile requirement is a maximum of <code>retry=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_retry" use="legacy"></xccdf-1.2:sub>
+          </code> prompts
 per session.</td>
 </tr>
 <tr>
@@ -1126,6 +1128,16 @@ It is also required to change the runtime configuration, run:
        </td>
 </tr>
 <tr>
+<td></td>
+<td>Configure Logind to terminate idle sessions after certain time of inactivity</td>
+<td>To configure <code>logind</code> service to terminate inactive user sessions
+after <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_logind_session_timeout" use="legacy"></xccdf-1.2:sub> seconds, edit the file
+<code>/etc/systemd/logind.conf</code>. Ensure that there is a section
+<pre>[Login]</pre> which contains the configuration
+<pre>StopIdleSessionSec=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_logind_session_timeout" use="legacy"></xccdf-1.2:sub>
+        </pre>.</td>
+</tr>
+<tr>
 <td>CCE-82550-5</td>
 <td>Require Authentication for Single User Mode</td>
 <td>Single-user mode is intended as a system recovery
@@ -1228,8 +1240,6 @@ edit the file <code>/etc/login.defs</code>
 and add or correct the following line:
 <pre>PASS_MAX_DAYS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></xccdf-1.2:sub>
          </pre>
-A value of 180 days is sufficient for many environments.
-The DoD requirement is 60.
 The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
@@ -1241,7 +1251,7 @@ and add or correct the following line:
 <pre>PASS_MIN_DAYS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_minimum_age_login_defs" use="legacy"></xccdf-1.2:sub>
          </pre>
 A value of 1 day is considered sufficient for many
-environments. The DoD requirement is 1.
+environments.
 The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_minimum_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
@@ -1253,8 +1263,6 @@ The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklis
          </pre>
          <br>
          <br>
-The DoD requirement is <code>15</code>.
-The FISMA requirement is <code>12</code>.
 The profile requirement is
 <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_minlen_login_defs" use="legacy"></xccdf-1.2:sub></code>.
 If a program consults <code>/etc/login.defs</code> and also another PAM module
@@ -1278,7 +1286,6 @@ edit the file <code>/etc/login.defs</code> and add or correct
  the following line:
 <pre>PASS_WARN_AGE <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub>
          </pre>
-The DoD requirement is 7.
 The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
@@ -1471,8 +1478,9 @@ Then, add the following entry to <code>/etc/security/namespace.conf</code>:
 <td></td>
 <td>Set Interactive Session Timeout</td>
 <td>Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of <code>0</code> (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The <code>TMOUT</code>
 
 setting in a file loaded by <code>/etc/profile</code>, e.g.
@@ -4559,8 +4567,10 @@ object.</td>
 <td>Disable Kernel Support for USB via Bootloader Configuration</td>
 <td>All USB support can be disabled by adding the <code>nousb</code>
 argument to the kernel's boot loader configuration. To do so,
-append "nousb" to the kernel line in <code>/etc/default/grub</code> as shown:
-<pre>kernel /vmlinuz-<i>VERSION</i> ro vga=ext root=/dev/VolGroup00/LogVol00 rhgb quiet nousb</pre>
+add the argument <code>nousb</code> to the default
+GRUB 2 command line for the Linux operating system.
+Configure the default Grub2 kernel command line to contain nousb as follows:
+<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) nousb"</pre>
        </td>
 </tr>
 <tr>
@@ -5062,15 +5072,17 @@ By masking the unit, core dump processing is disabled.</td>
 <td>CCE-82529-9</td>
 <td>Disable core dump backtraces</td>
 <td>The <code>ProcessSizeMax</code> option in <code>[Coredump]</code> section
-of <code>/etc/systemd/coredump.conf</code>
-specifies the maximum size in bytes of a core which will be processed.
-Core dumps exceeding this size may be stored, but the backtrace will not
-be generated.</td>
+of <code>/etc/systemd/coredump.conf</code> or in a drop-in file under
+<code>/etc/systemd/coredump.conf.d/</code> specifies the maximum size in bytes
+of a core which will be processed. Core dumps exceeding this size may be
+stored, but the backtrace will not be generated.</td>
 </tr>
 <tr>
 <td>CCE-82528-1</td>
 <td>Disable storing core dump</td>
-<td>The <code>Storage</code> option in <code>[Coredump]</code> sectionof <code>/etc/systemd/coredump.conf</code>
+<td>The <code>Storage</code> option in <code>[Coredump]</code> section
+of <code>/etc/systemd/coredump.conf</code> or a drop-in file in
+<code>/etc/systemd/coredump.conf.d/*.conf</code>
 can be set to <code>none</code> to disable storing core dumps permanently.</td>
 </tr>
 <tr>
@@ -5232,7 +5244,9 @@ the system to boot into enforcing or permissive mode:
 <pre>SELINUX=enforcing</pre>
 OR
 <pre>SELINUX=permissive</pre>
-      </td>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.</td>
 </tr>
 <tr>
 <td>CCE-82532-3</td>
@@ -5255,7 +5269,9 @@ system boot time.  In the file <code>/etc/selinux/config</code>, add or correct 
 following line to configure the system to boot into enforcing mode:
 <pre>SELINUX=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_selinux_state" use="legacy"></xccdf-1.2:sub>
        </pre>
-      </td>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.</td>
 </tr>
 <tr>
 <td></td>

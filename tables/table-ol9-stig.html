@@ -49,12 +49,10 @@
 		<tbody>
 		<tr>
 			<td>456</td>
-			<td>5</td>
-			<td>451</td>
-			<td>98.90%</td>
+			<td>4</td>
+			<td>452</td>
+			<td>99.12%</td>
 			<td>
-				
-					OL09-00-000244
 				
 					OL09-00-000280
 				
@@ -809,7 +807,9 @@ system boot time.  In the file /etc/selinux/config, add or correct the
 following line to configure the system to boot into enforcing mode:
 SELINUX=
           
-        </pre></td>
+Ensure that all files have correct SELinux labels by running:
+fixfiles onboot
+Then reboot the system.</pre></td>
 	<td>OL09-00-000060</td>
 	<td>selinux_state</td>
 </tr>
@@ -1271,7 +1271,7 @@ $ sudo yum install policycoreutils-python-utils
 
 Remote access services, such as those providing remote access to network devices and information systems, which lack automated control capabilities, increase risk and make remote user access management difficult at best.
 
-Remote access is access to DoD nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
+Remote access is access to nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
 
 Oracle Linux 9 functionality (e.g., SSH) must be capable of taking enforcement action if the audit reveals unauthorized activity.
 Automated control of remote access sessions allows organizations to ensure ongoing compliance with remote access policies by enforcing connection rules of remote access applications on a variety of information system components (e.g., servers, workstations, notebook computers, smartphones, and tablets)."</pre></td>
@@ -1317,44 +1317,43 @@ $ sudo systemctl enable firewalld.service
 	<td>medium</td>
 	<td>OL 9 must be configured to prohibit or restrict the use of functions, ports, protocols, and/or services, as defined in the Ports, Protocols, and Services Management (PPSM) Category Assignments List (CAL) and vulnerability assessments.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>If inbound SSH connections are expected, adding the SSH port to the proper firewalld zone
-will allow remote access through the SSH port.</pre></td>
-	<td><pre>
+	<td><pre>In order to prevent unauthorized connection of devices, unauthorized transfer of information,
+or unauthorized tunneling (i.e., embedding of data types within data types), organizations must
+disable or restrict unused or unnecessary physical and logical ports/protocols on information
+systems.
 
+              
+Operating systems are capable of providing a wide variety of functions and services.
+Some of the functions and services provided by default may not be necessary to support
+essential organizational operations.
+Additionally, it is sometimes convenient to provide multiple services from a single component
+(e.g., VPN and IPS); however, doing so increases risk over limiting the services provided by
+one component.
 
-To determine if firewalld is configured to allow access
+              
+To support the requirements and principles of least functionality, the operating system must
+support the organizational requirements, providing only essential capabilities and limiting the
+use of ports, protocols, and/or services to only those required, authorized, and approved to
+conduct official business.</pre></td>
+	<td><pre>Inspect the list of enabled firewall ports and verify they are configured correctly by running
+the following command:
 
-on port 22/tcp, run the following command(s):
-    firewall-cmd --list-ports
+$ sudo firewall-cmd --list-all
 
-
-to ssh
-    firewall-cmd --list-services
-
-If firewalld is configured to allow access through the firewall, something similar to the following will be output:
-
-If it is a service:
-ssh
-
-
-If it is a port:
-22/tcp
-
-      Is it the case that sshd service is not enabled in the proper firewalld zone?
+Ask the System Administrator for the site or program Ports, Protocols, and Services Management Component Local Service Assessment (PPSM CLSA). Verify the services allowed by the firewall match the PPSM CLSA.
+      Is it the case that there are additional ports, protocols, or services that are not in the PPSM CLSA, or there are ports, protocols, or services that are prohibited by the PPSM Category Assurance List (CAL), or there are no firewall rules configured?
       </pre></td>
-	<td><pre>If the SSH server is in use, inbound connections to SSH's port should be allowed to permit
-remote access through SSH. In more restrictive firewalld settings, the SSH port should be
-added to the proper firewalld zone in order to allow SSH remote access.
-
-            
-
-To configure firewalld to allow ssh access, run the following command(s):
-firewall-cmd --permanent --add-service=ssh
-Then run the following command to load the newly created rule(s):
-firewall-cmd --reload
-          </pre></td>
+	<td><pre>Configure the firewalld ports to allow approved services to have access to the system.
+To configure firewalld to open ports, run the following command:
+firewall-cmd --permanent --add-port=port_number/tcp
+              
+To configure firewalld to allow access for pre-defined services, run the following
+command:
+firewall-cmd --permanent --add-service=service_name
+              
+            </pre></td>
 	<td>OL09-00-000222</td>
-	<td>firewalld_sshd_port_enabled</td>
+	<td>configure_firewalld_ports</td>
 </tr>
 
 <tr>
@@ -1671,11 +1670,29 @@ $ sudo rpm -Uvh PACKAGENAME
 	<td>high</td>
 	<td>OL 9 cryptographic policy files must match files shipped with the operating system.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>The crypto-policies package defines the cryptography policies for the system.
+If the files are changed from those shipped with the operating system, 
+It may be possible for Oracle Linux 9 to use cryptographic functions that are not FIPS 140-3 approved.</pre></td>
+	<td><pre>Verify that Oracle Linux 9 crypto-policies package has not been modified with the following command:
+$ rpm -V crypto-policies
+If the command has any output, this is a finding.
+      Is it the case that there is output?
+      </pre></td>
+	<td><pre>Without cryptographic integrity protections, system executables and files can be altered by
+unauthorized users without detection. The RPM package management system can check the hashes
+of installed software packages, including many that are important to system security.
+
+If the file was not expected to change, investigate the cause of the change using audit logs
+or other means. The package can then be reinstalled to restore the file. Run the following
+command to determine which package owns the file:
+$ rpm -qf FILENAME
+                
+
+The package can be reinstalled from a yum repository using the command:
+$ sudo yum reinstall crypto-policies
+              </pre></td>
 	<td>OL09-00-000244</td>
-	<td>Missing Rule</td>
+	<td>rpm_verify_crypto_policies</td>
 </tr>
 
 <tr>
@@ -1821,7 +1838,8 @@ whose ownership should not be obvious should ensure usage of a banner that does
 not provide easy attribution.</pre></td>
 	<td><pre>To determine how the SSH daemon's Banner option is set, run the following command:
 
-$ sudo grep -i Banner /etc/ssh/sshd_config
+$ sudo grep -i Banner /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+
 
 If a line indicating /etc/issue is returned, then the required value is set.
 
@@ -1831,7 +1849,7 @@ If a line indicating /etc/issue is returned, then the required value is set.
 across the system, add or correct the following line in
 
 
-/etc/ssh/sshd_config:
+/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf:
 
 Banner /etc/issue
 Another section contains information on how to create an
@@ -1896,26 +1914,27 @@ Ciphers
 	<td>medium</td>
 	<td>OL 9 SSH client must be configured to use only DOD-approved Message Authentication Codes (MACs) employing FIPS 140-3 validated cryptographic hash algorithms to protect the confidentiality of SSH client connections.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>MD5 and 96-bit MAC algorithms are considered weak and have been shown to increase
-exploitability in SSH downgrade attacks. Weak algorithms continue to have a great deal of
-attention as a weak spot that can be exploited with expanded computing power. An
-attacker that breaks the algorithm could take advantage of a MiTM position to decrypt the
-SSH tunnel and capture credentials and information</pre></td>
-	<td><pre>Only strong MACs should be used. To verify that only strong
-MACs are in use, run the following command:
-$ sudo grep -i macs /etc/ssh/sshd_config
-The output should contain only those MACs which are strong, namely,
- hash functions.
-      Is it the case that MACs option is commented out or not using strong hash algorithms?
-      </pre></td>
-	<td><pre>Limit the MACs to strong hash algorithms.
-The following line in /etc/ssh/sshd_config demonstrates use
-of those MACs:
+	<td><pre>Overriding the system crypto policy makes the behavior of the OpenSSH
+client violate expectations, and makes system configuration more
+fragmented.</pre></td>
+	<td><pre>To verify if the OpenSSH client uses defined MACs in the Crypto Policy, run:
+$ grep -i macs /etc/crypto-policies/back-ends/openssh.config
+and verify that the line matches:
 MACs 
-            
-          </pre></td>
+      Is it the case that Crypto Policy for OpenSSH client is not configured correctly?
+      </pre></td>
+	<td><pre>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
+OpenSSH is supported by system crypto policy, but the OpenSSH configuration may be
+set up incorrectly.
+
+To check that Crypto Policies settings are configured correctly, ensure that
+/etc/crypto-policies/back-ends/openssh.config contains the following
+line and is not commented out:
+MACs 
+              
+            </pre></td>
 	<td>OL09-00-000262</td>
-	<td>sshd_use_strong_macs</td>
+	<td>harden_sshd_macs_openssh_conf_crypto_policy</td>
 </tr>
 
 <tr>
@@ -1932,9 +1951,8 @@ authentication device.
                 
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</pre></td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</pre></td>
 	<td><pre>Check that Oracle Linux 9 has the packages for smart card support installed.
 
 Run the following command to determine if the openssl-pkcs11 package is installed:
@@ -2474,9 +2492,8 @@ authentication device.
                 
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</pre></td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</pre></td>
 	<td><pre>Run the following command to determine if the opensc package is installed: $ rpm -q opensc
       Is it the case that the package is not installed?
       </pre></td>
@@ -2503,9 +2520,8 @@ authentication device.
                 
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</pre></td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</pre></td>
 	<td><pre>
 
 Run the following command to determine the current status of the
@@ -5696,32 +5712,26 @@ also include suspend, single, and halt.</pre></td>
 	<td>medium</td>
 	<td>OL 9 must take action when allocated audit record storage volume reaches 95 percent of the audit record storage capacity.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Administrators should be made aware of an inability to record
-audit records. If a separate partition or logical volume of adequate size
-is used, running low on space for audit records should never occur.</pre></td>
-	<td><pre>Verify that Oracle Linux 9 is configured to take action in the event of allocated audit record storage volume reaches 95 percent of the repository maximum audit record storage capacity with the following command:
+	<td><pre>Notifying administrators of an impending disk space problem may allow them to
+take corrective action prior to any disruption.</pre></td>
+	<td><pre>Verify Oracle Linux 9 takes action when allocated audit record storage volume reaches 95 percent of the repository maximum audit record storage capacity with the following command:
 
-$ sudo grep admin_space_left_action /etc/audit/auditd.conf
+$ sudo grep -w admin_space_left /etc/audit/auditd.conf
 
-admin_space_left_action = single
+admin_space_left = %
 
-If the value of the "admin_space_left_action" is not set to "single", or if the line is commented out, ask the System Administrator to indicate how the system is providing real-time alerts to the SA and ISSO.
-      Is it the case that there is no evidence that real-time alerts are configured on the system?
+If the value of the "admin_space_left" keyword is not set to % of the storage volume allocated to audit logs, or if the line is commented out, ask the System Administrator to indicate how the system is taking action if the allocated storage is about to reach capacity.
+      Is it the case that the "admin_space_left" value is not configured to the correct value?
       </pre></td>
 	<td><pre>The auditd service can be configured to take an action
 when disk space is running low but prior to running out of space completely.
 Edit the file /etc/audit/auditd.conf. Add or modify the following line,
-substituting ACTION appropriately:
-admin_space_left_action = ACTION
-          
-Set this value to single to cause the system to switch to single user
-mode for corrective action. Acceptable values also include suspend and
-halt. For certain systems, the need for availability
-outweighs the need to log all actions, and a different setting should be
-determined. Details regarding all possible values for ACTION are described in the
-auditd.conf man page.</pre></td>
+substituting PERCENTAGE appropriately:
+admin_space_left = PERCENTAGE%
+Set this value to 
+to cause the system to perform an action.</pre></td>
 	<td>OL09-00-000875</td>
-	<td>auditd_data_retention_admin_space_left_action</td>
+	<td>auditd_data_retention_admin_space_left_percentage</td>
 </tr>
 
 <tr>
@@ -5900,9 +5910,8 @@ authentication device.
           
 Multi-Factor Authentication (MFA) solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</pre></td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</pre></td>
 	<td><pre>To verify that smart cards are enabled in SSSD, run the following command:
 $ sudo grep pam_cert_auth /etc/sssd/sssd.conf
 If configured properly, output should be
@@ -6090,7 +6099,8 @@ Edit the /etc/security/pwquality.conf to include
 
 retry=
                 , or a lower value if site
-policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+policy is more restrictive. The profile requirement is a maximum of retry=
+                 prompts
 per session.</pre></td>
 	<td>OL09-00-001001</td>
 	<td>accounts_password_pam_retry</td>
@@ -6449,7 +6459,7 @@ Using a stronger hashing algorithm makes password cracking attacks more difficul
 
 Check the hashing algorithm that is being used to hash passwords with the following command:
 
-$ sudo grep -i ENCRYPT_METHOD /etc/login.defs
+$ sudo grep -i ENCRYPT_METHOD  /etc/login.defs
 
 ENCRYPT_METHOD 
       Is it the case that ENCRYPT_METHOD is not set to <sub idref="var_password_hashing_algorithm" />?
@@ -6639,21 +6649,34 @@ this is a finding.</pre></td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Enforcing a minimum password lifetime helps to prevent repeated password
 changes to defeat the password reuse or history enforcement requirement. If
-users are allowed to immediately and continually change their password, the
-password could be repeatedly changed in a short period of time to defeat the
-organization's policy regarding password reuse.</pre></td>
-	<td><pre>Verify that Oracle Linux 9 has configured the minimum time period between password changes for each user account is one day or greater with the following command:
+users are allowed to immediately and continually change their password,
+then the password could be repeatedly changed in a short period of time to
+defeat the organization's policy regarding password reuse.
 
-$ sudo awk -F: '$4 < 1 {print $1 " " $4}' /etc/shadow
-      Is it the case that any results are returned that are not associated with a system account?
-      </pre></td>
-	<td><pre>Configure non-compliant accounts to enforce a 24 hours/1 day minimum password
-lifetime by running the following command:
-$ sudo chage -m 1 USER
               
-            </pre></td>
+Setting the minimum password age protects against users cycling back to a
+favorite password after satisfying the password reuse requirement.</pre></td>
+	<td><pre>Verify Oracle Linux 9 enforces 24 hours/one day as the minimum password lifetime for new user accounts.
+
+Check for the value of "PASS_MIN_DAYS" in "/etc/login.defs" with the following command:
+
+$ grep -i pass_min_days /etc/login.defs
+
+PASS_MIN_DAYS 
+      Is it the case that the "PASS_MIN_DAYS" parameter value is not "<sub idref="var_accounts_minimum_age_login_defs" />" or greater, or is commented out?
+      </pre></td>
+	<td><pre>To specify password minimum age for new accounts,
+edit the file /etc/login.defs
+and add or correct the following line:
+PASS_MIN_DAYS 
+              
+A value of 1 day is considered sufficient for many
+environments.
+The profile requirement is 
+                
+              .</pre></td>
 	<td>OL09-00-001085</td>
-	<td>accounts_password_set_min_life_existing</td>
+	<td>accounts_minimum_age_login_defs</td>
 </tr>
 
 <tr>
@@ -6709,8 +6732,6 @@ edit the file /etc/login.defs
 and add or correct the following line:
 PASS_MAX_DAYS 
               
-A value of 180 days is sufficient for many environments.
-The DoD requirement is 60.
 The profile requirement is 
                 
               .</pre></td>
@@ -6752,34 +6773,28 @@ $ sudo chage -M
 	<td>medium</td>
 	<td>OL 9 passwords must be created with a minimum of 15 characters.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Requiring a minimum password length makes password
-cracking attacks more difficult by ensuring a larger
-search space. However, any security benefit from an onerous requirement
-must be carefully weighed against usability problems, support costs, or counterproductive
-behavior that may result.</pre></td>
-	<td><pre>To check the minimum password length, run the command:
-$ grep PASS_MIN_LEN /etc/login.defs
-The DoD requirement is 15.
-      Is it the case that it is not set to the required value?
-      </pre></td>
-	<td><pre>To specify password length requirements for new accounts, edit the file
-/etc/login.defs and add or correct the following line:
-PASS_MIN_LEN 
-              
-              
-              
-The DoD requirement is 15.
-The FISMA requirement is 12.
-The profile requirement is
+	<td><pre>The shorter the password, the lower the number of possible combinations
+that need to be tested before the password is compromised.
 
+Password complexity, or strength, is a measure of the effectiveness of a
+password in resisting attempts at guessing and brute-force attacks.
+Password length is one factor of several that helps to determine strength
+and how long it takes to crack a password. Use of more characters in a password
+helps to exponentially increase the time and/or resources required to
+compromise the password.</pre></td>
+	<td><pre>Verify that Oracle Linux 9 enforces a minimum -character password length with the following command:
+
+$ grep minlen /etc/security/pwquality.conf
+
+minlen = 
+      Is it the case that the command does not return a "minlen" value of "<sub idref="var_password_pam_minlen" />" or greater, does not return a line, or the line is commented out?
+      </pre></td>
+	<td><pre>The pam_pwquality module's minlen parameter controls requirements for
+minimum characters required in a password. Add minlen=
                 
-              .
-If a program consults /etc/login.defs and also another PAM module
-(such as pam_pwquality) during a password change operation, then
-the most restrictive must be satisfied. See PAM section for more
-information about enforcing password quality requirements.</pre></td>
+after pam_pwquality to set minimum password length requirements.</pre></td>
 	<td>OL09-00-001105</td>
-	<td>accounts_password_minlen_login_defs</td>
+	<td>accounts_password_pam_minlen</td>
 </tr>
 
 <tr>
@@ -8770,7 +8785,8 @@ on a system. The logout record can eliminate those users who disconnected, which
 field.</pre></td>
 	<td><pre>To determine how the SSH daemon's LogLevel option is set, run the following command:
 
-$ sudo grep -i LogLevel /etc/ssh/sshd_config
+$ sudo grep -i LogLevel /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+
 
 If a line indicating VERBOSE is returned, then the required value is set.
 
@@ -8781,7 +8797,7 @@ To specify the log level in
 SSH, add or correct the following line in
 
 
-/etc/ssh/sshd_config:
+/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf:
 
 LogLevel VERBOSE
           </pre></td>
@@ -8800,7 +8816,8 @@ applications. Allowing GSSAPI authentication through SSH exposes the system's
 GSSAPI to remote hosts, increasing the attack surface of the system.</pre></td>
 	<td><pre>To determine how the SSH daemon's GSSAPIAuthentication option is set, run the following command:
 
-$ sudo grep -i GSSAPIAuthentication /etc/ssh/sshd_config
+$ sudo grep -i GSSAPIAuthentication /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+$ sudo grep -i GSSAPIAuthentication /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
 
 If a line indicating no is returned, then the required value is set.
 
@@ -8815,7 +8832,7 @@ configuration is used if no value is set for GSSAPIAuthentication.
 To explicitly disable GSSAPI authentication, add or correct the following line in
 
 
-/etc/ssh/sshd_config:
+/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf:
 
 GSSAPIAuthentication no
           </pre></td>
@@ -8835,7 +8852,7 @@ encryption keys are limited.</pre></td>
 	<td><pre>To check if RekeyLimit is set correctly, run the
 following command:
 
-$ sudo grep RekeyLimit /etc/ssh/sshd_config
+$ sudo grep RekeyLimit /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*
 
 If configured properly, output should be
 RekeyLimit  
@@ -8848,7 +8865,7 @@ elapsed.
 To decrease the default limits, add or correct the following line in
 
 
-/etc/ssh/sshd_config:
+/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf:
 
 RekeyLimit 
               
@@ -8869,7 +8886,8 @@ that remote login via SSH will require a password, even in the event of
 misconfiguration elsewhere.</pre></td>
 	<td><pre>To determine how the SSH daemon's PermitEmptyPasswords option is set, run the following command:
 
-$ sudo grep -i PermitEmptyPasswords /etc/ssh/sshd_config
+$ sudo grep -i PermitEmptyPasswords /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+$ sudo grep -i PermitEmptyPasswords /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
 
 If a line indicating no is returned, then the required value is set.
 
@@ -8883,7 +8901,7 @@ To explicitly disallow SSH login from accounts with empty passwords,
 add or correct the following line in
 
 
-/etc/ssh/sshd_config:
+/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf:
 
 
             PermitEmptyPasswords no
@@ -8905,7 +8923,8 @@ the account. Additionally, you can make sure users inherit certain environment v
 on login or disallow access to the server.</pre></td>
 	<td><pre>To determine how the SSH daemon's UsePAM option is set, run the following command:
 
-$ sudo grep -i UsePAM /etc/ssh/sshd_config
+$ sudo grep -i UsePAM /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+
 
 If a line indicating yes is returned, then the required value is set.
 
@@ -8919,7 +8938,7 @@ authentication types.
 To enable PAM authentication, add or correct the following line in
 
 
-/etc/ssh/sshd_config:
+/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf:
 
 UsePAM yes
           </pre></td>
@@ -8940,7 +8959,8 @@ accountability of actions performed on the system and also helps to minimize
 direct attack attempts on root's password.</pre></td>
 	<td><pre>To determine how the SSH daemon's PermitRootLogin option is set, run the following command:
 
-$ sudo grep -i PermitRootLogin /etc/ssh/sshd_config
+$ sudo grep -i PermitRootLogin /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+
 
 If a line indicating no is returned, then the required value is set.
 
@@ -8951,7 +8971,7 @@ system directly over a network.
 To disable root login via SSH, add or correct the following line in
 
 
-/etc/ssh/sshd_config:
+/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf:
 
 PermitRootLogin no
           </pre></td>
@@ -9043,7 +9063,8 @@ some processes may stop SSH from correctly detecting that the user is idle.</pre
 can allow an attacker to move trivially to other hosts.</pre></td>
 	<td><pre>To determine how the SSH daemon's IgnoreRhosts option is set, run the following command:
 
-$ sudo grep -i IgnoreRhosts /etc/ssh/sshd_config
+$ sudo grep -i IgnoreRhosts /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+$ sudo grep -i IgnoreRhosts /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
 
 If a line indicating yes is returned, then the required value is set.
 
@@ -9059,7 +9080,7 @@ configuration is used if no value is set for IgnoreRhosts.
 To explicitly disable support for .rhosts files, add or correct the following line in
 
 
-/etc/ssh/sshd_config:
+/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf:
 
 IgnoreRhosts yes
           </pre></td>
@@ -9078,7 +9099,8 @@ assurance that remote login via SSH will require a password, even
 in the event of misconfiguration elsewhere.</pre></td>
 	<td><pre>To determine how the SSH daemon's IgnoreUserKnownHosts option is set, run the following command:
 
-$ sudo grep -i IgnoreUserKnownHosts /etc/ssh/sshd_config
+$ sudo grep -i IgnoreUserKnownHosts /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+
 
 If a line indicating yes is returned, then the required value is set.
 
@@ -9091,7 +9113,7 @@ systems public keys is available.  This should be disabled.
 To ensure this behavior is disabled, add or correct the following line in
 
 
-/etc/ssh/sshd_config:
+/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf:
 
 IgnoreUserKnownHosts yes
           </pre></td>
@@ -9112,7 +9134,8 @@ other users on the X11 server. Note that even if X11 forwarding is disabled,
 users can always install their own forwarders.</pre></td>
 	<td><pre>To determine how the SSH daemon's X11Forwarding option is set, run the following command:
 
-$ sudo grep -i X11Forwarding /etc/ssh/sshd_config
+$ sudo grep -i X11Forwarding /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+$ sudo grep -i X11Forwarding /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
 
 If a line indicating no is returned, then the required value is set.
 
@@ -9129,7 +9152,7 @@ configuration is used if no value is set for X11Forwarding.
 To explicitly disable X11 Forwarding, add or correct the following line in
 
 
-/etc/ssh/sshd_config:
+/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf:
 
 X11Forwarding no
           </pre></td>
@@ -9147,7 +9170,8 @@ X11Forwarding no
 may be able to log into the system as another user.</pre></td>
 	<td><pre>To determine how the SSH daemon's StrictModes option is set, run the following command:
 
-$ sudo grep -i StrictModes /etc/ssh/sshd_config
+$ sudo grep -i StrictModes /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+$ sudo grep -i StrictModes /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
 
 If a line indicating yes is returned, then the required value is set.
 
@@ -9163,7 +9187,7 @@ configuration is used if no value is set for StrictModes.
 To explicitly enable StrictModes in SSH, add or correct the following line in
 
 
-/etc/ssh/sshd_config:
+/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf:
 
 StrictModes yes
           </pre></td>
@@ -9181,7 +9205,8 @@ StrictModes yes
 recognition and reporting of unauthorized account use.</pre></td>
 	<td><pre>To determine how the SSH daemon's PrintLastLog option is set, run the following command:
 
-$ sudo grep -i PrintLastLog /etc/ssh/sshd_config
+$ sudo grep -i PrintLastLog /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+$ sudo grep -i PrintLastLog /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
 
 If a line indicating yes is returned, then the required value is set.
 
@@ -9195,7 +9220,7 @@ The appropriate configuration is used if no value is set for PrintLastLog.
 To explicitly enable LastLog in SSH, add or correct the following line in
 
 
-/etc/ssh/sshd_config:
+/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf:
 
 PrintLastLog yes
           </pre></td>
@@ -9217,7 +9242,8 @@ environment variable to localhost. This prevents remote hosts from
 connecting to the proxy display.</pre></td>
 	<td><pre>To determine how the SSH daemon's X11UseLocalhost option is set, run the following command:
 
-$ sudo grep -i X11UseLocalhost /etc/ssh/sshd_config
+$ sudo grep -i X11UseLocalhost /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+$ sudo grep -i X11UseLocalhost /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
 
 If a line indicating yes is returned, then the required value is set.
       Is it the case that the display proxy is listening on wildcard address?
@@ -9232,7 +9258,7 @@ To explicitly prevent remote connections to the proxy display, add or correct
 the following line in
 
 
-/etc/ssh/sshd_config:
+/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf:
 
 X11UseLocalhost yes
           </pre></td>
@@ -9280,7 +9306,8 @@ system's Kerberos implementation.
 Configuring these settings for the SSH daemon provides additional assurance that remote logon via SSH will not use unused methods of authentication, even in the event of misconfiguration elsewhere.</pre></td>
 	<td><pre>To determine how the SSH daemon's KerberosAuthentication option is set, run the following command:
 
-$ sudo grep -i KerberosAuthentication /etc/ssh/sshd_config
+$ sudo grep -i KerberosAuthentication /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+$ sudo grep -i KerberosAuthentication /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
 
 If a line indicating no is returned, then the required value is set.
 
@@ -9295,7 +9322,7 @@ The appropriate configuration is used if no value is set for KerberosAuthenticat
 To explicitly disable Kerberos authentication, add or correct the following line in
 
 
-/etc/ssh/sshd_config:
+/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf:
 
 KerberosAuthentication no
           </pre></td>
@@ -9313,7 +9340,8 @@ KerberosAuthentication no
 can allow an attacker to move trivially to other hosts.</pre></td>
 	<td><pre>To determine how the SSH daemon's HostbasedAuthentication option is set, run the following command:
 
-$ sudo grep -i HostbasedAuthentication /etc/ssh/sshd_config
+$ sudo grep -i HostbasedAuthentication /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+$ sudo grep -i HostbasedAuthentication /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
 
 If a line indicating no is returned, then the required value is set.
 
@@ -9331,7 +9359,7 @@ To explicitly disable host-based authentication, add or correct the
 following line in
 
 
-/etc/ssh/sshd_config:
+/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf:
 
 HostbasedAuthentication no
           </pre></td>
@@ -9349,7 +9377,8 @@ HostbasedAuthentication no
 access restriction in some configurations.</pre></td>
 	<td><pre>To determine how the SSH daemon's PermitUserEnvironment option is set, run the following command:
 
-$ sudo grep -i PermitUserEnvironment /etc/ssh/sshd_config
+$ sudo grep -i PermitUserEnvironment /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+$ sudo grep -i PermitUserEnvironment /etc/ssh/sshd_config.d/01-complianceascode-reinforce-os-defaults.conf
 
 If a line indicating no is returned, then the required value is set.
 
@@ -9363,7 +9392,7 @@ configuration is used if no value is set for PermitUserEnvironment.
 To explicitly disable Environment options, add or correct the following
 
 
-/etc/ssh/sshd_config:
+/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf:
 
 PermitUserEnvironment no
           </pre></td>
@@ -9382,11 +9411,12 @@ privileged functions is greatly increased. Multifactor authentication
 requires using two or more factors to achieve authentication.
 A privileged account is defined as an information system account with
 authorizations of a privileged user. 
-The DoD CAC with DoD-approved PKI is an example of multifactor
-authentication.</pre></td>
+Smart cards or hardware tokens paired with digital certificates are
+common examples of multifactor implementations.</pre></td>
 	<td><pre>To determine how the SSH daemon's PubkeyAuthentication option is set, run the following command:
 
-$ sudo grep -i PubkeyAuthentication /etc/ssh/sshd_config
+$ sudo grep -i PubkeyAuthentication /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
+
 
 If a line indicating yes is returned, then the required value is set.
 
@@ -9400,7 +9430,7 @@ configuration is used if no value is set for PubkeyAuthentication.
 To explicitly enable Public Key Authentication, add or correct the following
 
 
-/etc/ssh/sshd_config:
+/etc/ssh/sshd_config.d/00-complianceascode-hardening.conf:
 
 PubkeyAuthentication yes
           </pre></td>
@@ -9614,16 +9644,16 @@ debuging. Permitting temporary enablement of core dumps during such situations
 should be reviewed through local needs and policy.</pre></td>
 	<td><pre>Verify Oracle Linux 9 disables core dump backtraces by issuing the following command:
 
-$ grep -i process /etc/systemd/coredump.conf
+$ grep -i process /etc/systemd/coredump.conf /etc/systemd/coredump.conf.d/*.conf
 
 ProcessSizeMax=0
       Is it the case that the "ProcessSizeMax" item is missing, commented out, or the value is anything other than "0" and the need for core dumps is not documented with the Information System Security Officer (ISSO) as an operational requirement for all domains that have the "core" item assigned?
       </pre></td>
 	<td><pre>The ProcessSizeMax option in [Coredump] section
-of /etc/systemd/coredump.conf
-specifies the maximum size in bytes of a core which will be processed.
-Core dumps exceeding this size may be stored, but the backtrace will not
-be generated.</pre></td>
+of /etc/systemd/coredump.conf or in a drop-in file under
+/etc/systemd/coredump.conf.d/ specifies the maximum size in bytes
+of a core which will be processed. Core dumps exceeding this size may be
+stored, but the backtrace will not be generated.</pre></td>
 	<td>OL09-00-002381</td>
 	<td>coredump_disable_backtraces</td>
 </tr>
@@ -9643,12 +9673,14 @@ debuging. Permitting temporary enablement of core dumps during such situations
 should be reviewed through local needs and policy.</pre></td>
 	<td><pre>Verify Oracle Linux 9 disables storing core dumps for all users by issuing the following command:
 
-$ grep -i storage /etc/systemd/coredump.conf
+$ grep -i storage /etc/systemd/coredump.conf /etc/systemd/coredump.conf.d/*.conf
 
 Storage=none
       Is it the case that Storage is not set to none or is commented out and the need for core dumps is not documented with the Information System Security Officer (ISSO) as an operational requirement for all domains that have the "core" item assigned?
       </pre></td>
-	<td><pre>The Storage option in [Coredump] sectionof /etc/systemd/coredump.conf
+	<td><pre>The Storage option in [Coredump] section
+of /etc/systemd/coredump.conf or a drop-in file in
+/etc/systemd/coredump.conf.d/*.conf
 can be set to none to disable storing core dumps permanently.</pre></td>
 	<td>OL09-00-002382</td>
 	<td>coredump_disable_storage</td>
@@ -10282,11 +10314,12 @@ $ sudo grep TMOUT /etc/profile /etc/profile.d/*.sh
 
 The output should return the following:
 TMOUT=
-      Is it the case that value of TMOUT is not less than or equal to expected setting?
+      Is it the case that the TMOUT value is not configured, is set to 0, or is not less than or equal to the expected setting?
       </pre></td>
 	<td><pre>Setting the TMOUT option in /etc/profile ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of 0 (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The TMOUT
 
 setting in a file loaded by /etc/profile, e.g.
@@ -10730,36 +10763,28 @@ $ sudo postconf -e 'smtpd_client_restrictions = permit_mynetworks,reject'
 	<td><pre>Using the -s option causes the TFTP service to only serve files from the
 given directory. Serving files from an intentionally-specified directory
 reduces the risk of sharing files which should remain private.</pre></td>
-	<td><pre>Verify the TFTP daemon is configured to operate in secure mode.
-
-Check if a TFTP server is installed with the following command:
-
-$ sudo dnf list --installed tftp-server
-
-tftp-server.x86_64    5.2-35.el9.x86_64
+	<td><pre>Use udo systemctl show tftp to verify that tftp service is using secure mode.
+$ sudo systemctl show tftp | grep ExecStart=
+ExecStart={ path=/usr/sbin/in.tftpd ; argv[]=/usr/sbin/in.tftpd -s /var/lib/tftpboot ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }e
 
 
-If a TFTP server is not installed, this is Not Applicable.
-
-
-If a TFTP server is installed, check for the server arguments with the following command:
-
-$ systemctl cat tftp | grep ExecStart=
+and ensure the ExecStart line on that file includes the -s option with a subdirectory:
 ExecStart=/usr/sbin/in.tftpd -s 
-      Is it the case that 'the "ExecStart" line does not have a "-s" option, and a subdirectory is not assigned'?
+      Is it the case that the ExecStart property of tftp does not contain correctly set -s flag?
       </pre></td>
 	<td><pre>If running the Trivial File Transfer Protocol (TFTP) service is necessary,
 it should be configured to change its root directory at startup. To do so,
 find the path for the tftp systemd service:
-$ sudo systemctl show tftp | grep FragmentPath=
-FragmentPath=/etc/systemd/system/tftp.service
+$ sudo systemctl show tftp | grep ExecStart=
+ExecStart={ path=/usr/sbin/in.tftpd ; argv[]=/usr/sbin/in.tftpd -s /var/lib/tftpboot ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }e
+
 
 and ensure the ExecStart line on that file includes the -s option with a subdirectory:
 ExecStart=/usr/sbin/in.tftpd -s 
             
           </pre></td>
 	<td>OL09-00-002426</td>
-	<td>tftpd_uses_secure_mode</td>
+	<td>tftp_uses_secure_mode_systemd</td>
 </tr>
 
 <tr>
@@ -10924,11 +10949,11 @@ impersonated.</pre></td>
 run the command:
 $ ls -l /etc/ssh/*_key
 If properly configured, the output should indicate the following permissions:
--rw-------
-      Is it the case that /etc/ssh/*_key does not have unix mode -rw-------?
+-rw-r-----
+      Is it the case that /etc/ssh/*_key does not have unix mode -rw-r-----?
       </pre></td>
 	<td><pre>SSH server private keys - files that match the /etc/ssh/*_key glob, have to have restricted permissions.
-If those files are owned by the root user and the root group, they have to have the 0600 permission or stricter.
+If those files are owned by the root user and the root group, they have to have the 0640 permission or stricter.
 If they are owned by the root user, but by a dedicated group ssh_keys, they can have the 0640 permission or stricter.</pre></td>
 	<td>OL09-00-002502</td>
 	<td>file_permissions_sshd_private_key</td>
@@ -11490,10 +11515,10 @@ accessible and configurable, as in the case of interpreted languages. Software l
 also include privileged programs which execute with escalated privileges. Only qualified
 and authorized individuals must be allowed to obtain access to information system components
 for purposes of initiating changes, including upgrades and modifications.</pre></td>
-	<td><pre>Verify the system-wide shared library files are group-owned by "root" with the following command:
+	<td><pre>Verify the system-wide shared library files are group-owned by root with the following command:
 
 $ sudo find -L /lib /lib64 /usr/lib /usr/lib64 ! -group root -exec ls -l {} \;
-      Is it the case that any system wide shared library file is returned and is not group-owned by a required system account?
+      Is it the case that any system wide shared library file is returned and is not group-owned by root?
       </pre></td>
 	<td><pre>System-wide library files are stored in the following directories
 by default:
@@ -11503,8 +11528,8 @@ by default:
 /usr/lib64
 
 All system-wide shared library files should be protected from unauthorised
-access. If any of these files is not group-owned by root, correct its group-owner with
-the following command:
+access. If any of these files is not group-owned by root,
+correct its group-owner with the following command:
 $ sudo chgrp root FILE
               
             </pre></td>
@@ -12356,12 +12381,12 @@ the system and should only be accessed by authorized personnel.</pre></td>
 run the command:
 $ ls -l /var/log/messages
 If properly configured, the output should indicate the following permissions:
--rw-------
-      Is it the case that /var/log/messages does not have unix mode -rw-------?
+-rw-r-----
+      Is it the case that /var/log/messages does not have unix mode -rw-r-----?
       </pre></td>
 	<td><pre>
 To properly set the permissions of /var/log/messages, run the command:
-$ sudo chmod 0600 /var/log/messages
+$ sudo chmod 0640 /var/log/messages
             </pre></td>
 	<td>OL09-00-002565</td>
 	<td>file_permissions_var_log_messages</td>
@@ -13738,8 +13763,7 @@ by running the following command:
 $ sysctl net.ipv4.conf.all.rp_filter
 The output of the command should indicate either:
 net.ipv4.conf.all.rp_filter = 1
-or:
-net.ipv4.conf.all.rp_filter = 2
+
 The output of the command should not indicate:
 net.ipv4.conf.all.rp_filter = 0
 
@@ -13752,11 +13776,10 @@ Verify that there is not any existing incorrect configuration by executing the f
 $ grep -r '^\s*net.ipv4.conf.all.rp_filter\s*=' /etc/sysctl.conf /etc/sysctl.d
 The command should not find any assignments other than:
 net.ipv4.conf.all.rp_filter = 1
-or:
-net.ipv4.conf.all.rp_filter = 2
+
 
 Conflicting assignments are not allowed.
-      Is it the case that the net.ipv4.conf.all.rp_filter is not set to 1 or 2 or is configured to be 0?
+      Is it the case that the net.ipv4.conf.all.rp_filter is not set to 1 or is configured to be 0 or 2?
       </pre></td>
 	<td><pre>To set the runtime status of the net.ipv4.conf.all.rp_filter kernel parameter, run the following command: $ sudo sysctl -w net.ipv4.conf.all.rp_filter=1
 To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv4.conf.all.rp_filter = 1

@@ -1609,8 +1609,6 @@ To specify password length requirements for new accounts, edit the file
 <tt>/etc/login.defs</tt> and add or correct the following line:
 <pre>PASS_MIN_LEN <tt>15</tt></pre>
 <br /><br />
-The DoD requirement is <tt>15</tt>.
-The FISMA requirement is <tt>12</tt>.
 The profile requirement is
 <tt><tt>15</tt></tt>.
 If a program consults <tt>/etc/login.defs</tt> and also another PAM module
@@ -1899,8 +1897,9 @@ that are well tested and supported to solve different use-cases.
   <td>Set Interactive Session Timeout</td>
   <td xml:lang="en-US">
 Setting the <tt>TMOUT</tt> option in <tt>/etc/profile</tt> ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of <tt>0</tt> (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The <tt>TMOUT</tt>
 
 setting in a file loaded by <tt>/etc/profile</tt>, e.g.
@@ -2085,6 +2084,9 @@ The SELinux state should be set to <tt><tt>enforcing</tt></tt> at
 system boot time.  In the file <tt>/etc/selinux/config</tt>, add or correct the
 following line to configure the system to boot into enforcing mode:
 <pre>SELINUX=<tt>enforcing</tt></pre>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.
   </td>
   <td xml:lang="en-US">
 Setting the SELinux state to enforcing ensures SELinux is able to confine
@@ -4204,7 +4206,7 @@ To configure the number of retry prompts that are permitted per-session:
 Edit the <tt>/etc/security/pwquality.conf</tt> to include
 
 <tt>retry=<tt>3</tt></tt>, or a lower value if site
-policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+policy is more restrictive. The profile requirement is a maximum of <tt>retry=<tt>3</tt></tt> prompts
 per session.
   </td>
   <td xml:lang="en-US">

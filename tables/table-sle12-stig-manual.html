@@ -2,10 +2,10 @@
 <html>
 <head lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Rules in SLES 12 Security Technical Implementation Guide</title>
+<title>Rules in SUSE Linux Enterprise Server 12 Security Technical Implementation Guide</title>
 </head>
 <body>
-	<br><br><div style="text-align: center; font-size: x-large; font-weight:bold">Rules in SLES 12 Security Technical Implementation Guide</div>
+	<br><br><div style="text-align: center; font-size: x-large; font-weight:bold">Rules in SUSE Linux Enterprise Server 12 Security Technical Implementation Guide</div>
 <br><br><style type="text/css">
 		table
 		{
@@ -6077,18 +6077,18 @@ Run the following command to disable the interactive shell for a specific non-in
 	<td><pre>If the SUSE operating system were to allow any user to make changes to software libraries, then those changes might be implemented without undergoing the appropriate testing and approvals that are part of a robust change management process.
 
 This requirement applies to SUSE operating systems with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs which execute with escalated privileges. Only qualified and authorized individuals must be allowed to obtain access to information system components for purposes of initiating changes, including upgrades and modifications.</pre></td>
-	<td><pre>Verify the system-wide shared library files contained in the directories "/lib", "/lib64", "/usr/lib" and "/usr/lib64" have mode 0755 or less permissive.
+	<td><pre>Verify the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" have mode 0755 or less permissive.
 
-Check that the system-wide shared library files have mode 0755 or less permissive with the following command:
+Check that the systemwide shared library files have mode 0755 or less permissive with the following command:
 
-> sudo find /lib /lib64 /usr/lib /usr/lib64 -perm /022 -type f -exec stat -c "%n %a" '{}' \;
+> sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' -perm /022 -exec stat -c "%n %a" {} +
 
-If any files are found to be group-writable or world-writable, this is a finding.</pre></td>
-	<td><pre>Configure the library files to be protected from unauthorized access. Run the following command:
+If any output is returned, this is a finding.</pre></td>
+	<td><pre>Configure the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" have mode 0755 or less permissive with the following command:
 
-> sudo find /lib /lib64 /usr/lib /usr/lib64 -perm /022 -type f -exec chmod 755 '{}' \;</pre></td>
+> sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' -perm /022 -exec chmod go-w {} +</pre></td>
 	<td>SLES-12-010871</td>
-	<td>SV-237607r991560_rule</td>
+	<td>SV-237607r1106480_rule</td>
 </tr>
 
 <tr>
@@ -6123,18 +6123,16 @@ If any of the aforementioned directories are found to be group-writable or world
 	<td><pre>If the SUSE operating system were to allow any user to make changes to software libraries, then those changes might be implemented without undergoing the appropriate testing and approvals that are part of a robust change management process.
 
 This requirement applies to SUSE operating systems with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs which execute with escalated privileges. Only qualified and authorized individuals must be allowed to obtain access to information system components for purposes of initiating changes, including upgrades and modifications.</pre></td>
-	<td><pre>Verify the system-wide shared library files contained in the directories "/lib", "/lib64", "/usr/lib" and "/usr/lib64" are owned by root.
+	<td><pre>Verify the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" are owned by root with the following command:
 
-Check that the system-wide shared library files are owned by root with the following command:
+> sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -user root -exec stat -c "%n %U" {} +
 
-> sudo find /lib /lib64 /usr/lib /usr/lib64 ! -user root -type f -exec stat -c "%n %U" '{}' \;
+If any output is returned, this is a finding.</pre></td>
+	<td><pre>Configure the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" are owned by root with the following command:
 
-If any system wide library file is returned, this is a finding.</pre></td>
-	<td><pre>Configure the system library files to be protected from unauthorized access. Run the following command:
-
-> sudo find /lib /lib64 /usr/lib /usr/lib64 ! -user root -type f -exec chown root '{}' \;</pre></td>
+> sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -user root -exec chown root {} +</pre></td>
 	<td>SLES-12-010873</td>
-	<td>SV-237609r991560_rule</td>
+	<td>SV-237609r1102108_rule</td>
 </tr>
 
 <tr>
@@ -6169,18 +6167,16 @@ If any system wide library directory is returned, this is a finding.</pre></td>
 	<td><pre>If the SUSE operating system were to allow any user to make changes to software libraries, then those changes might be implemented without undergoing the appropriate testing and approvals that are part of a robust change management process.
 
 This requirement applies to SUSE operating systems with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs which execute with escalated privileges. Only qualified and authorized individuals must be allowed to obtain access to information system components for purposes of initiating changes, including upgrades and modifications.</pre></td>
-	<td><pre>Verify the system-wide library files contained in the directories "/lib", "/lib64", "/usr/lib" and "/usr/lib64" are group-owned by root.
+	<td><pre>Verify the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" are group owned by root with the following command:
 
-Check that the system-wide library files are group-owned by root with the following command:
+> sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -group root -exec stat -c "%n %G" {} +
 
-> sudo find /lib /lib64 /usr/lib /usr/lib64 ! -group root -type f -exec stat -c "%n %G" '{}' \;
+If any output is returned, this is a finding.</pre></td>
+	<td><pre>Configure the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" are group owned by root with the following command:
 
-If any system wide shared library file is returned, this is a finding.</pre></td>
-	<td><pre>Configure the system library files to be protected from unauthorized access. Run the following command:
-
-> sudo find /lib /lib64 /usr/lib /usr/lib64 ! -group root -type f -exec chgrp root '{}' \;</pre></td>
+> sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -group root -exec chown :root {} +</pre></td>
 	<td>SLES-12-010875</td>
-	<td>SV-237611r991560_rule</td>
+	<td>SV-237611r1102111_rule</td>
 </tr>
 
 <tr>

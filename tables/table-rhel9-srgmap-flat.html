@@ -1622,8 +1622,9 @@ After the settings have been set, run <tt>dconf update</tt>.</td>
 
 The session lock is implemented at the point where session activity can be determined and/or controlled.</td>
     <td>Setting the <tt>TMOUT</tt> option in <tt>/etc/profile</tt> ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of <tt>0</tt> (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The <tt>TMOUT</tt>
 
 setting in a file loaded by <tt>/etc/profile</tt>, e.g.
@@ -1640,11 +1641,12 @@ on the system:
 <pre>$ sudo grep TMOUT /etc/profile /etc/profile.d/*.sh</pre>
 
 The output should return the following:
-<pre>TMOUT=<sub idref="var_accounts_tmout" /></pre> Is it the case that value of TMOUT is not less than or equal to expected setting?</td>
+<pre>TMOUT=<sub idref="var_accounts_tmout" /></pre> Is it the case that the TMOUT value is not configured, is set to 0, or is not less than or equal to the expected setting?</td>
     <td>Configure the operating system to initiate a session lock after a 15-minute period of inactivity for all connection types.</td>
     <td>Setting the <tt>TMOUT</tt> option in <tt>/etc/profile</tt> ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of <tt>0</tt> (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The <tt>TMOUT</tt>
 
 setting in a file loaded by <tt>/etc/profile</tt>, e.g.
@@ -19895,7 +19897,7 @@ Password complexity is one factor of several that determines how long it takes t
     <td>To configure the number of retry prompts that are permitted per-session:
 Edit the <tt>/etc/security/pwquality.conf</tt> to include
 <tt>retry=<sub idref="var_password_pam_retry" /></tt>, or a lower value if site
-policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+policy is more restrictive. The profile requirement is a maximum of <tt>retry=<sub idref="var_password_pam_retry" /></tt> prompts
 per session.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system enforces password complexity by requiring that at least one uppercase character be used. If it does not, this is a finding.</td>
@@ -19907,7 +19909,7 @@ Check for the use of the "pwquality" retry option in the pwquality.conf file wit
     <td>To configure the number of retry prompts that are permitted per-session:
 Edit the <tt>/etc/security/pwquality.conf</tt> to include
 <tt>retry=<sub idref="var_password_pam_retry" /></tt>, or a lower value if site
-policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+policy is more restrictive. The profile requirement is a maximum of <tt>retry=<sub idref="var_password_pam_retry" /></tt> prompts
 per session.</td>
     <td>medium</td>
     <td></td>
@@ -20604,7 +20606,7 @@ algorithm for password hashing:
 
 Check the hashing algorithm that is being used to hash passwords with the following command:
 
-$ sudo grep -i ENCRYPT_METHOD /etc/login.defs
+$ sudo grep -i ENCRYPT_METHOD  /etc/login.defs
 
 ENCRYPT_METHOD <sub idref="var_password_hashing_algorithm" /> Is it the case that ENCRYPT_METHOD is not set to <sub idref="var_password_hashing_algorithm" />?</td>
     <td>Configure the operating system to store only encrypted representations of passwords.</td>
@@ -20710,7 +20712,7 @@ edit the file <tt>/etc/login.defs</tt>
 and add or correct the following line:
 <pre>PASS_MIN_DAYS <sub idref="var_accounts_minimum_age_login_defs" /></pre>
 A value of 1 day is considered sufficient for many
-environments. The DoD requirement is 1.
+environments.
 The profile requirement is <tt><sub idref="var_accounts_minimum_age_login_defs" /></tt>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify operating system enforces 24 hours/1 day as the minimum password lifetime. If it does not, this is a finding.</td>
@@ -20727,7 +20729,7 @@ edit the file <tt>/etc/login.defs</tt>
 and add or correct the following line:
 <pre>PASS_MIN_DAYS <sub idref="var_accounts_minimum_age_login_defs" /></pre>
 A value of 1 day is considered sufficient for many
-environments. The DoD requirement is 1.
+environments.
 The profile requirement is <tt><sub idref="var_accounts_minimum_age_login_defs" /></tt>.</td>
     <td>medium</td>
     <td></td>
@@ -20780,8 +20782,6 @@ lifetime by running the following command:
 edit the file <tt>/etc/login.defs</tt>
 and add or correct the following line:
 <pre>PASS_MAX_DAYS <sub idref="var_accounts_maximum_age_login_defs" /></pre>
-A value of 180 days is sufficient for many environments.
-The DoD requirement is 60.
 The profile requirement is <tt><sub idref="var_accounts_maximum_age_login_defs" /></tt>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify operating system enforces a 60-day maximum password lifetime restriction. If it does not, this is a finding.</td>
@@ -20795,8 +20795,6 @@ PASS_MAX_DAYS <sub idref="var_accounts_maximum_age_login_defs" /></pre> Is it th
 edit the file <tt>/etc/login.defs</tt>
 and add or correct the following line:
 <pre>PASS_MAX_DAYS <sub idref="var_accounts_maximum_age_login_defs" /></pre>
-A value of 180 days is sufficient for many environments.
-The DoD requirement is 60.
 The profile requirement is <tt><sub idref="var_accounts_maximum_age_login_defs" /></tt>.</td>
     <td>medium</td>
     <td></td>
@@ -20964,7 +20962,7 @@ so that the <tt>superusers</tt> is honored.
 Once the superuser account has been added,
 update the
 <tt>grub.cfg</tt> file by running:
-<pre>grub-mkconfig -o /boot/grub2/grub.cfg</pre></td>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system enforces approved authorizations for logical access to information and system resources in accordance with applicable access control policies. If it does not, this is a finding.</td>
     <td>To verify the boot loader superuser account has been set, run the following
@@ -20994,7 +20992,7 @@ so that the <tt>superusers</tt> is honored.
 Once the superuser account has been added,
 update the
 <tt>grub.cfg</tt> file by running:
-<pre>grub-mkconfig -o /boot/grub2/grub.cfg</pre></td>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre></td>
     <td>high</td>
     <td></td>
     <td></td>
@@ -24500,7 +24498,10 @@ Developers and implementers can increase the assurance in security functions by 
     <td>The SELinux state should be set to <tt><sub idref="var_selinux_state" /></tt> at
 system boot time.  In the file <tt>/etc/selinux/config</tt>, add or correct the
 following line to configure the system to boot into enforcing mode:
-<pre>SELINUX=<sub idref="var_selinux_state" /></pre></td>
+<pre>SELINUX=<sub idref="var_selinux_state" /></pre>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system isolates security functions from nonsecurity functions. If it does not, this is a finding.</td>
     <td>Ensure that Red Hat Enterprise Linux 9 verifies correct operation of security functions.
@@ -24513,7 +24514,10 @@ $ sudo getenforce
     <td>The SELinux state should be set to <tt><sub idref="var_selinux_state" /></tt> at
 system boot time.  In the file <tt>/etc/selinux/config</tt>, add or correct the
 following line to configure the system to boot into enforcing mode:
-<pre>SELINUX=<sub idref="var_selinux_state" /></pre></td>
+<pre>SELINUX=<sub idref="var_selinux_state" /></pre>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.</td>
     <td>high</td>
     <td></td>
     <td></td>
@@ -24721,8 +24725,9 @@ To make sure that the setting is persistent, add the following line to a file in
 
 Terminating network connections associated with communications sessions includes, for example, de-allocating associated TCP/IP address/port pairs at the operating system level, and de-allocating networking assignments at the application level if multiple application sessions are using a single operating system-level network connection. This does not mean that the operating system terminates all sessions or network access; it only ends the inactive session and releases the resources associated with that session.</td>
     <td>Setting the <tt>TMOUT</tt> option in <tt>/etc/profile</tt> ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of <tt>0</tt> (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The <tt>TMOUT</tt>
 
 setting in a file loaded by <tt>/etc/profile</tt>, e.g.
@@ -24741,11 +24746,12 @@ on the system:
 <pre>$ sudo grep TMOUT /etc/profile /etc/profile.d/*.sh</pre>
 
 The output should return the following:
-<pre>TMOUT=<sub idref="var_accounts_tmout" /></pre> Is it the case that value of TMOUT is not less than or equal to expected setting?</td>
+<pre>TMOUT=<sub idref="var_accounts_tmout" /></pre> Is it the case that the TMOUT value is not configured, is set to 0, or is not less than or equal to the expected setting?</td>
     <td>Configure the operating system to terminate all network connections associated with a communications session at the end of the session, or as follows: for in-band management sessions (privileged sessions), the session must be terminated after 10 minutes of inactivity; and for user sessions (non-privileged session), the session must be terminated after 15 minutes of inactivity, except to fulfill documented and validated mission requirements.</td>
     <td>Setting the <tt>TMOUT</tt> option in <tt>/etc/profile</tt> ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of <tt>0</tt> (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The <tt>TMOUT</tt>
 
 setting in a file loaded by <tt>/etc/profile</tt>, e.g.
@@ -28546,14 +28552,14 @@ by default:
 /usr/lib64
 </pre>
 All system-wide shared library files should be protected from unauthorised
-access. If any of these files is not group-owned by root, correct its group-owner with
-the following command:
+access. If any of these files is not group-owned by root,
+correct its group-owner with the following command:
 <pre>$ sudo chgrp root <i>FILE</i></pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system limits privileges to change software resident within software libraries. If it does not, this is a finding.</td>
-    <td>Verify the system-wide shared library files are group-owned by "root" with the following command:
+    <td>Verify the system-wide shared library files are group-owned by root with the following command:
 
-$ sudo find -L /lib /lib64 /usr/lib /usr/lib64 ! -group root -exec ls -l {} \; Is it the case that any system wide shared library file is returned and is not group-owned by a required system account?</td>
+$ sudo find -L /lib /lib64 /usr/lib /usr/lib64 ! -group root -exec ls -l {} \; Is it the case that any system wide shared library file is returned and is not group-owned by root?</td>
     <td>Configure the operating system to limit privileges to change software resident within software libraries.</td>
     <td>System-wide library files are stored in the following directories
 by default:
@@ -28563,8 +28569,8 @@ by default:
 /usr/lib64
 </pre>
 All system-wide shared library files should be protected from unauthorised
-access. If any of these files is not group-owned by root, correct its group-owner with
-the following command:
+access. If any of these files is not group-owned by root,
+correct its group-owner with the following command:
 <pre>$ sudo chgrp root <i>FILE</i></pre></td>
     <td>medium</td>
     <td></td>
@@ -33242,6 +33248,122 @@ following line to the existing AIDE line:
 Otherwise, add the following line to <tt>/etc/crontab</tt>:
 <pre>05 4 * * * root /usr/sbin/aide --check | /bin/mail -s "$(hostname) - AIDE Integrity Check" root@localhost</pre>
 AIDE can be executed periodically through other means; this is merely one example.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-001744</td>
+    <td>SRG-OS-000363-GPOS-00150</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must notify designated personnel if baseline configurations are changed in an unauthorized manner.</td>
+
+    <td>CCE-86636-8: Ensure auditd Collects Changes to Cron Jobs - /var/spool/cron</td>
+
+    <td>Unauthorized changes to the baseline configuration could make the system vulnerable to various attacks or allow unauthorized access to the operating system. Changes to operating system configurations can have unintended side effects, some of which may be relevant to security.
+
+Detecting such changes and providing an automated response can help avoid unintended, negative consequences that could ultimately affect the security state of the operating system. The operating system's IMO/ISSO and SAs must be notified via email and/or monitoring system trap when there is an unauthorized modification of a configuration item.</td>
+    <td>
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre>
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system notifies designated personnel if baseline configurations are changed in an unauthorized manner. If it does not, this is a finding.</td>
+    <td>
+Verify Red Hat Enterprise Linux 9 generates audit records for all events that affect "/var/spool/cron" with the following command:
+
+$ sudo auditctl -l | grep /var/spool/cron
+
+-w /var/spool/cron -p wa -k cronjobs Is it the case that command does not return a line, or the line is commented out?</td>
+    <td>Configure the operating system to notify designated personnel if baseline configurations are changed in an unauthorized manner.</td>
+    <td>
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre>
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre></td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-001744</td>
+    <td>SRG-OS-000363-GPOS-00150</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must notify designated personnel if baseline configurations are changed in an unauthorized manner.</td>
+
+    <td>CCE-86636-8: Ensure auditd Collects Changes to Cron Jobs - /var/spool/cron</td>
+
+    <td>Unauthorized changes to the baseline configuration could make the system vulnerable to various attacks or allow unauthorized access to the operating system. Changes to operating system configurations can have unintended side effects, some of which may be relevant to security.
+
+Detecting such changes and providing an automated response can help avoid unintended, negative consequences that could ultimately affect the security state of the operating system. The operating system's IMO/ISSO and SAs must be notified via email and/or monitoring system trap when there is an unauthorized modification of a configuration item.</td>
+    <td>
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre>
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system notifies designated personnel if baseline configurations are changed in an unauthorized manner. If it does not, this is a finding.</td>
+    <td>
+Verify Red Hat Enterprise Linux 9 generates audit records for all events that affect "/var/spool/cron" with the following command:
+
+$ sudo auditctl -l | grep /var/spool/cron
+
+-w /var/spool/cron -p wa -k cronjobs Is it the case that command does not return a line, or the line is commented out?</td>
+    <td>Configure the operating system to notify designated personnel if baseline configurations are changed in an unauthorized manner.</td>
+    <td>
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre>
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -40441,6 +40563,35 @@ Crypto policies may be customized by crypto policy modules, in which case it is 
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must implement cryptographic mechanisms to protect the integrity of nonlocal maintenance and diagnostic communications, when used for nonlocal maintenance sessions.</td>
 
+    <td>CCE-86570-9: Implement STIG Sub Crypto Policy</td>
+
+    <td>Privileged access contains control and configuration information and is particularly sensitive, so additional protections are necessary. This is maintained by using cryptographic mechanisms, such as a hash function or digital signature, to protect integrity. 
+
+Nonlocal maintenance and diagnostic activities are those activities conducted by individuals communicating through a network, either an external network (e.g., the Internet) or an internal network. Local maintenance and diagnostic activities are those activities carried out by individuals physically present at the information system or information system component and not communicating across a network connection. 
+
+The operating system can meet this requirement through leveraging a cryptographic module. This requirement does not cover hardware/software components that may support information system maintenance, yet are a part of the system (e.g., the software implementing "ping," "ls," "ipconfig," or the hardware and software implementing the monitoring port of an Ethernet switch).</td>
+    <td>Create a custom cryptographic policy to follow the guidance from DISA.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system implements cryptographic mechanisms to protect the integrity of nonlocal maintenance and diagnostic communications, when used for nonlocal maintenance sessions. If it does not, this is a finding.</td>
+    <td>Verify that <tt>/etc/crypto-policies/policies/modules/STIG.pmod</tt> exists and has the following content:
+<pre>
+cipher@SSH=AES-256-GCM AES-256-CTR AES-128-GCM AES-128-CTR
+mac@SSH=HMAC-SHA2-512 HMAC-SHA2-256
+</pre> Is it the case that the STIG subpolicy does not exist?</td>
+    <td>Configure the operating system to implement cryptographic mechanisms to protect the integrity of nonlocal maintenance and diagnostic communications, when used for nonlocal maintenance sessions.</td>
+    <td>Create a custom cryptographic policy to follow the guidance from DISA.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-002890</td>
+    <td>SRG-OS-000393-GPOS-00173</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must implement cryptographic mechanisms to protect the integrity of nonlocal maintenance and diagnostic communications, when used for nonlocal maintenance sessions.</td>
+
     <td>CCE-90125-6: Configure SSH Client to Use FIPS 140 Validated Ciphers: openssh.config</td>
 
     <td>Privileged access contains control and configuration information and is particularly sensitive, so additional protections are necessary. This is maintained by using cryptographic mechanisms, such as a hash function or digital signature, to protect integrity. 
@@ -40607,6 +40758,37 @@ policy, run the following command:
 The rule checks if settings for selected crypto policy are configured as expected. Configuration files in the <tt>/etc/crypto-policies/back-ends</tt> are either symlinks to correct files provided by Crypto-policies package or they are regular files in case crypto policy customizations are applied.
 Crypto policies may be customized by crypto policy modules, in which case it is delimited from the base policy using a colon.</td>
     <td>high</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-003123</td>
+    <td>SRG-OS-000394-GPOS-00174</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must implement cryptographic mechanisms to protect the confidentiality of nonlocal maintenance and diagnostic communications, when used for nonlocal maintenance sessions.</td>
+
+    <td>CCE-86570-9: Implement STIG Sub Crypto Policy</td>
+
+    <td>Privileged access contains control and configuration information and is particularly sensitive, so additional protections are necessary. This is maintained by using cryptographic mechanisms such as encryption to protect confidentiality.
+
+Nonlocal maintenance and diagnostic activities are those activities conducted by individuals communicating through a network, either an external network (e.g., the Internet) or an internal network. Local maintenance and diagnostic activities are those activities carried out by individuals physically present at the information system or information system component and not communicating across a network connection. 
+
+This requirement applies to hardware/software diagnostic test equipment or tools. This requirement does not cover hardware/software components that may support information system maintenance, yet are a part of the system (e.g., the software implementing "ping," "ls," "ipconfig," or the hardware and software implementing the monitoring port of an Ethernet switch).
+
+The operating system can meet this requirement through leveraging a cryptographic module.</td>
+    <td>Create a custom cryptographic policy to follow the guidance from DISA.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system implements cryptographic mechanisms to protect the confidentiality of nonlocal maintenance and diagnostic communications, when used for nonlocal maintenance sessions. If it does not, this is a finding.</td>
+    <td>Verify that <tt>/etc/crypto-policies/policies/modules/STIG.pmod</tt> exists and has the following content:
+<pre>
+cipher@SSH=AES-256-GCM AES-256-CTR AES-128-GCM AES-128-CTR
+mac@SSH=HMAC-SHA2-512 HMAC-SHA2-256
+</pre> Is it the case that the STIG subpolicy does not exist?</td>
+    <td>Configure the operating system to implement cryptographic mechanisms to protect the confidentiality of nonlocal maintenance and diagnostic communications, when used for nonlocal maintenance sessions.</td>
+    <td>Create a custom cryptographic policy to follow the guidance from DISA.</td>
+    <td>medium</td>
     <td></td>
     <td></td>
     <td></td>
@@ -40887,6 +41069,31 @@ in <tt>/usr/lib/bootc/kargs.d/01-fips.toml</tt>:
 Then set the cryptographic policy to <tt><sub idref="var_system_crypto_policy" /></tt>:
 <pre>update-crypto-policies --no-reload --set <sub idref="var_system_crypto_policy" /></pre></td>
     <td>high</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-002450</td>
+    <td>SRG-OS-000396-GPOS-00176</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must implement NSA-approved cryptography to protect classified information in accordance with applicable federal laws, Executive Orders, directives, policies, regulations, and standards.</td>
+
+    <td>CCE-86570-9: Implement STIG Sub Crypto Policy</td>
+
+    <td>Use of weak or untested encryption algorithms undermines the purposes of utilizing encryption to protect data. The operating system must implement cryptographic modules adhering to the higher standards approved by the federal government since this provides assurance they have been tested and validated.</td>
+    <td>Create a custom cryptographic policy to follow the guidance from DISA.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system implements NSA-approved cryptography to protect classified information in accordance with applicable federal laws, Executive Orders, directives, policies, regulations, and standards. If it does not, this is a finding.</td>
+    <td>Verify that <tt>/etc/crypto-policies/policies/modules/STIG.pmod</tt> exists and has the following content:
+<pre>
+cipher@SSH=AES-256-GCM AES-256-CTR AES-128-GCM AES-128-CTR
+mac@SSH=HMAC-SHA2-512 HMAC-SHA2-256
+</pre> Is it the case that the STIG subpolicy does not exist?</td>
+    <td>Configure the operating system to implement NSA-approved cryptography to protect classified information in accordance with applicable federal laws, Executive Orders, directives, policies, regulations, and standards.</td>
+    <td>Create a custom cryptographic policy to follow the guidance from DISA.</td>
+    <td>medium</td>
     <td></td>
     <td></td>
     <td></td>
@@ -42179,7 +42386,10 @@ This requirement applies to operating systems performing security function verif
     <td>The SELinux state should be set to <tt><sub idref="var_selinux_state" /></tt> at
 system boot time.  In the file <tt>/etc/selinux/config</tt>, add or correct the
 following line to configure the system to boot into enforcing mode:
-<pre>SELINUX=<sub idref="var_selinux_state" /></pre></td>
+<pre>SELINUX=<sub idref="var_selinux_state" /></pre>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system verifies correct operation of all security functions. If it does not, this is a finding.</td>
     <td>Ensure that Red Hat Enterprise Linux 9 verifies correct operation of security functions.
@@ -42192,7 +42402,10 @@ $ sudo getenforce
     <td>The SELinux state should be set to <tt><sub idref="var_selinux_state" /></tt> at
 system boot time.  In the file <tt>/etc/selinux/config</tt>, add or correct the
 following line to configure the system to boot into enforcing mode:
-<pre>SELINUX=<sub idref="var_selinux_state" /></pre></td>
+<pre>SELINUX=<sub idref="var_selinux_state" /></pre>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.</td>
     <td>high</td>
     <td></td>
     <td></td>
@@ -42293,6 +42506,66 @@ AIDE can be executed periodically through other means; this is merely one exampl
     <td></td>
   </tr>
 
+  <tr>
+    <td>CCI-002699</td>
+    <td>SRG-OS-000446-GPOS-00200</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must perform verification of the correct operation of security functions: upon system start-up and/or restart; upon command by a user with privileged access; and/or every 30 days.</td>
+
+    <td>CCE-86636-8: Ensure auditd Collects Changes to Cron Jobs - /var/spool/cron</td>
+
+    <td>Without verification of the security functions, security functions may not operate correctly and the failure may go unnoticed. Security function is defined as the hardware, software, and/or firmware of the information system responsible for enforcing the system security policy and supporting the isolation of code and data on which the protection is based. Security functionality includes, but is not limited to, establishing system accounts, configuring access authorizations (i.e., permissions, privileges), setting events to be audited, and setting intrusion detection parameters.
+
+Notifications provided by information systems include, for example, electronic alerts to system administrators, messages to local computer consoles, and/or hardware indications, such as lights.
+
+This requirement applies to operating systems performing security function verification/testing and/or systems and environments that require this functionality.</td>
+    <td>
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre>
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system performs verification of the correct operation of security functions: upon system start-up and/or restart; upon command by a user with privileged access; and/or every 30 days. If it does not, this is a finding.</td>
+    <td>
+Verify Red Hat Enterprise Linux 9 generates audit records for all events that affect "/var/spool/cron" with the following command:
+
+$ sudo auditctl -l | grep /var/spool/cron
+
+-w /var/spool/cron -p wa -k cronjobs Is it the case that command does not return a line, or the line is commented out?</td>
+    <td>Configure the operating system to perform verification of the correct operation of security functions: upon system start-up and/or restart; upon command by a user with privileged access; and/or every 30 days.</td>
+    <td>
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre>
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre></td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
 
 
 
@@ -42385,6 +42658,68 @@ following line to the existing AIDE line:
 Otherwise, add the following line to <tt>/etc/crontab</tt>:
 <pre>05 4 * * * root /usr/sbin/aide --check | /bin/mail -s "$(hostname) - AIDE Integrity Check" root@localhost</pre>
 AIDE can be executed periodically through other means; this is merely one example.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-002702</td>
+    <td>SRG-OS-000447-GPOS-00201</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must shut down the information system, restart the information system, and/or notify the system administrator when anomalies in the operation of any security functions are discovered.</td>
+
+    <td>CCE-86636-8: Ensure auditd Collects Changes to Cron Jobs - /var/spool/cron</td>
+
+    <td>If anomalies are not acted upon, security functions may fail to secure the system. 
+
+Security function is defined as the hardware, software, and/or firmware of the information system responsible for enforcing the system security policy and supporting the isolation of code and data on which the protection is based. Security functionality includes, but is not limited to, establishing system accounts, configuring access authorizations (i.e., permissions, privileges), setting events to be audited, and setting intrusion detection parameters.
+
+Notifications provided by information systems include messages to local computer consoles, and/or hardware indications, such as lights.
+
+This capability must take into account operational requirements for availability for selecting an appropriate response. The organization may choose to shut down or restart the information system upon security function anomaly detection.</td>
+    <td>
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre>
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system shuts down the information system, restarts the information system, and/or notifies the system administrator when anomalies in the operation of any security functions are discovered. If it does not, this is a finding.</td>
+    <td>
+Verify Red Hat Enterprise Linux 9 generates audit records for all events that affect "/var/spool/cron" with the following command:
+
+$ sudo auditctl -l | grep /var/spool/cron
+
+-w /var/spool/cron -p wa -k cronjobs Is it the case that command does not return a line, or the line is commented out?</td>
+    <td>Configure the operating system to shut down the information system, restart the information system, and/or notify the system administrator when anomalies in the operation of the security functions are discovered.</td>
+    <td>
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre>
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -52905,6 +53240,68 @@ utility to read audit rules during daemon startup, add the following line to
 <pre>-a always,exit -F arch=b32 -S umount2 -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S umount2 -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre></td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-000172</td>
+    <td>SRG-OS-000471-GPOS-00215</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must generate audit records for privileged activities or other system-level access.</td>
+
+    <td>CCE-86613-7: Ensure auditd Collects Changes to Cron Jobs - /etc/cron.d/</td>
+
+    <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
+
+Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
+    <td>At a minimum, the audit system should collect administrator actions
+for all users and root.
+
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
+<pre>-w /etc/cron.d/ -p wa -k cronjobs</pre>
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt>:
+
+<pre>-w /etc/cron.d/ -p wa -k cronjobs</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system generates audit records for privileged activities or other system-level access. If it does not, this is a finding.</td>
+    <td>
+Verify Red Hat Enterprise Linux 9 generates audit records for all events that affect "/etc/cron.d/" with the following command:
+
+$ sudo auditctl -l | grep /etc/cron.d/
+
+-w /etc/cron.d/ -p wa -k cronjobs Is it the case that the command does not return a line, or the line is commented out?</td>
+    <td>Configure the operating system to generate audit records for privileged activities or other system-level access.</td>
+    <td>At a minimum, the audit system should collect administrator actions
+for all users and root.
+
+
+
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt>:
+
+<pre>-w /etc/cron.d/ -p wa -k cronjobs</pre>
+
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt>:
+
+<pre>-w /etc/cron.d/ -p wa -k cronjobs</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -59217,23 +59614,23 @@ This is the default setting.</td>
 
 Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
     <td>The <tt>ProcessSizeMax</tt> option in <tt>[Coredump]</tt> section
-of <tt>/etc/systemd/coredump.conf</tt>
-specifies the maximum size in bytes of a core which will be processed.
-Core dumps exceeding this size may be stored, but the backtrace will not
-be generated.</td>
+of <tt>/etc/systemd/coredump.conf</tt> or in a drop-in file under
+<tt>/etc/systemd/coredump.conf.d/</tt> specifies the maximum size in bytes
+of a core which will be processed. Core dumps exceeding this size may be
+stored, but the backtrace will not be generated.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 9 disables core dump backtraces by issuing the following command:
 
-<pre>$ grep -i process /etc/systemd/coredump.conf
+<pre>$ grep -i process /etc/systemd/coredump.conf /etc/systemd/coredump.conf.d/*.conf
 
 ProcessSizeMax=0</pre> Is it the case that the "ProcessSizeMax" item is missing, commented out, or the value is anything other than "0" and the need for core dumps is not documented with the Information System Security Officer (ISSO) as an operational requirement for all domains that have the "core" item assigned?</td>
     <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
     <td>The <tt>ProcessSizeMax</tt> option in <tt>[Coredump]</tt> section
-of <tt>/etc/systemd/coredump.conf</tt>
-specifies the maximum size in bytes of a core which will be processed.
-Core dumps exceeding this size may be stored, but the backtrace will not
-be generated.</td>
+of <tt>/etc/systemd/coredump.conf</tt> or in a drop-in file under
+<tt>/etc/systemd/coredump.conf.d/</tt> specifies the maximum size in bytes
+of a core which will be processed. Core dumps exceeding this size may be
+stored, but the backtrace will not be generated.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -59251,17 +59648,21 @@ be generated.</td>
     <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
 
 Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
-    <td>The <tt>Storage</tt> option in <tt>[Coredump]</tt> sectionof <tt>/etc/systemd/coredump.conf</tt>
+    <td>The <tt>Storage</tt> option in <tt>[Coredump]</tt> section
+of <tt>/etc/systemd/coredump.conf</tt> or a drop-in file in
+<tt>/etc/systemd/coredump.conf.d/*.conf</tt>
 can be set to <tt>none</tt> to disable storing core dumps permanently.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 9 disables storing core dumps for all users by issuing the following command:
 
-$ grep -i storage /etc/systemd/coredump.conf
+$ grep -i storage /etc/systemd/coredump.conf /etc/systemd/coredump.conf.d/*.conf
 
 Storage=none Is it the case that Storage is not set to none or is commented out and the need for core dumps is not documented with the Information System Security Officer (ISSO) as an operational requirement for all domains that have the "core" item assigned?</td>
     <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-    <td>The <tt>Storage</tt> option in <tt>[Coredump]</tt> sectionof <tt>/etc/systemd/coredump.conf</tt>
+    <td>The <tt>Storage</tt> option in <tt>[Coredump]</tt> section
+of <tt>/etc/systemd/coredump.conf</tt> or a drop-in file in
+<tt>/etc/systemd/coredump.conf.d/*.conf</tt>
 can be set to <tt>none</tt> to disable storing core dumps permanently.</td>
     <td>medium</td>
     <td></td>
@@ -65412,8 +65813,7 @@ by running the following command:
 <pre>$ sysctl net.ipv4.conf.all.rp_filter</pre>
 The output of the command should indicate either:
 <code>net.ipv4.conf.all.rp_filter = 1</code>
-or:
-<code>net.ipv4.conf.all.rp_filter = 2</code>
+
 The output of the command should not indicate:
 <code>net.ipv4.conf.all.rp_filter = 0</code>
 
@@ -65426,10 +65826,9 @@ Verify that there is not any existing incorrect configuration by executing the f
 <pre>$ grep -r '^\s*net.ipv4.conf.all.rp_filter\s*=' /etc/sysctl.conf /etc/sysctl.d</pre>
 The command should not find any assignments other than:
 net.ipv4.conf.all.rp_filter = 1
-or:
-net.ipv4.conf.all.rp_filter = 2
 
-Conflicting assignments are not allowed. Is it the case that the net.ipv4.conf.all.rp_filter is not set to 1 or 2 or is configured to be 0?</td>
+
+Conflicting assignments are not allowed. Is it the case that the net.ipv4.conf.all.rp_filter is not set to 1 or is configured to be 0 or 2?</td>
     <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
     <td>To set the runtime status of the <code>net.ipv4.conf.all.rp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.rp_filter=1</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>net.ipv4.conf.all.rp_filter = 1</pre></td>

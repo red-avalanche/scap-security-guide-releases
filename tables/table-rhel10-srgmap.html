@@ -670,8 +670,9 @@ The session lock is implemented at the point where session activity can be deter
         <tr>
           <td>Set Interactive Session Timeout</td>
           <td>Setting the <tt>TMOUT</tt> option in <tt>/etc/profile</tt> ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of <tt>0</tt> (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The <tt>TMOUT</tt>
 
 setting in a file loaded by <tt>/etc/profile</tt>, e.g.
@@ -7382,7 +7383,7 @@ No additional authselect feature is needed to be enabled.</td>
           <td>To configure the number of retry prompts that are permitted per-session:
 Edit the <tt>/etc/security/pwquality.conf</tt> to include
 <tt>retry=<sub idref="var_password_pam_retry" /></tt>, or a lower value if site
-policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+policy is more restrictive. The profile requirement is a maximum of <tt>retry=<sub idref="var_password_pam_retry" /></tt> prompts
 per session.</td>
         </tr>
       </table>
@@ -7669,18 +7670,6 @@ If either is set, they must have the minimum value of <sub idref="var_password_h
         </tr>
       </table>
 
-      <table>
-        <tr>
-          <td>Set yescrypt Cost Factor in /etc/login.defs</td>
-          <td>In <tt>/etc/login.defs</tt>, ensure <tt>YESCRYPT_COST_FACTOR</tt> has the minimum value of <tt><sub idref="var_password_yescrypt_cost_factor_login_defs" /></tt>.
-For example:
-<pre>YESCRYPT_COST_FACTOR <sub idref="var_password_yescrypt_cost_factor_login_defs" />
-YESCRYPT_COST_FACTOR <sub idref="var_password_yescrypt_cost_factor_login_defs" /></pre>
-Notice that if is not set, it already has the default value of 5.
-If it is set, it must have the minimum value of <sub idref="var_password_yescrypt_cost_factor_login_defs" />.</td>
-        </tr>
-      </table>
-
     </td>
 </tr>
 
@@ -7747,7 +7736,7 @@ edit the file <tt>/etc/login.defs</tt>
 and add or correct the following line:
 <pre>PASS_MIN_DAYS <sub idref="var_accounts_minimum_age_login_defs" /></pre>
 A value of 1 day is considered sufficient for many
-environments. The DoD requirement is 1.
+environments.
 The profile requirement is <tt><sub idref="var_accounts_minimum_age_login_defs" /></tt>.</td>
         </tr>
       </table>
@@ -7781,8 +7770,6 @@ lifetime by running the following command:
 edit the file <tt>/etc/login.defs</tt>
 and add or correct the following line:
 <pre>PASS_MAX_DAYS <sub idref="var_accounts_maximum_age_login_defs" /></pre>
-A value of 180 days is sufficient for many environments.
-The DoD requirement is 60.
 The profile requirement is <tt><sub idref="var_accounts_maximum_age_login_defs" /></tt>.</td>
         </tr>
       </table>
@@ -7881,7 +7868,7 @@ so that the <tt>superusers</tt> is honored.
 Once the superuser account has been added,
 update the
 <tt>grub.cfg</tt> file by running:
-<pre>grub-mkconfig -o /boot/grub2/grub.cfg</pre></td>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre></td>
         </tr>
       </table>
 
@@ -8831,18 +8818,6 @@ If either is set, they must have the minimum value of <sub idref="var_password_h
         </tr>
       </table>
 
-      <table>
-        <tr>
-          <td>Set yescrypt Cost Factor in /etc/login.defs</td>
-          <td>In <tt>/etc/login.defs</tt>, ensure <tt>YESCRYPT_COST_FACTOR</tt> has the minimum value of <tt><sub idref="var_password_yescrypt_cost_factor_login_defs" /></tt>.
-For example:
-<pre>YESCRYPT_COST_FACTOR <sub idref="var_password_yescrypt_cost_factor_login_defs" />
-YESCRYPT_COST_FACTOR <sub idref="var_password_yescrypt_cost_factor_login_defs" /></pre>
-Notice that if is not set, it already has the default value of 5.
-If it is set, it must have the minimum value of <sub idref="var_password_yescrypt_cost_factor_login_defs" />.</td>
-        </tr>
-      </table>
-
     </td>
 </tr>
 
@@ -9187,7 +9162,10 @@ $ sudo dnf install policycoreutils</pre></td>
           <td>The SELinux state should be set to <tt><sub idref="var_selinux_state" /></tt> at
 system boot time.  In the file <tt>/etc/selinux/config</tt>, add or correct the
 following line to configure the system to boot into enforcing mode:
-<pre>SELINUX=<sub idref="var_selinux_state" /></pre></td>
+<pre>SELINUX=<sub idref="var_selinux_state" /></pre>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.</td>
         </tr>
       </table>
 
@@ -9291,8 +9269,9 @@ Terminating network connections associated with communications sessions includes
         <tr>
           <td>Set Interactive Session Timeout</td>
           <td>Setting the <tt>TMOUT</tt> option in <tt>/etc/profile</tt> ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of <tt>0</tt> (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The <tt>TMOUT</tt>
 
 setting in a file loaded by <tt>/etc/profile</tt>, e.g.
@@ -10831,8 +10810,8 @@ by default:
 /usr/lib64
 </pre>
 All system-wide shared library files should be protected from unauthorised
-access. If any of these files is not group-owned by root, correct its group-owner with
-the following command:
+access. If any of these files is not group-owned by root,
+correct its group-owner with the following command:
 <pre>$ sudo chgrp root <i>FILE</i></pre></td>
         </tr>
       </table>
@@ -16670,7 +16649,10 @@ use cases.</td>
           <td>The SELinux state should be set to <tt><sub idref="var_selinux_state" /></tt> at
 system boot time.  In the file <tt>/etc/selinux/config</tt>, add or correct the
 following line to configure the system to boot into enforcing mode:
-<pre>SELINUX=<sub idref="var_selinux_state" /></pre></td>
+<pre>SELINUX=<sub idref="var_selinux_state" /></pre>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.</td>
         </tr>
       </table>
 
@@ -23986,17 +23968,19 @@ To configure NTS for given time server add <tt>nts</tt> to each <tt>server</tt> 
         <tr>
           <td>Disable core dump backtraces</td>
           <td>The <tt>ProcessSizeMax</tt> option in <tt>[Coredump]</tt> section
-of <tt>/etc/systemd/coredump.conf</tt>
-specifies the maximum size in bytes of a core which will be processed.
-Core dumps exceeding this size may be stored, but the backtrace will not
-be generated.</td>
+of <tt>/etc/systemd/coredump.conf</tt> or in a drop-in file under
+<tt>/etc/systemd/coredump.conf.d/</tt> specifies the maximum size in bytes
+of a core which will be processed. Core dumps exceeding this size may be
+stored, but the backtrace will not be generated.</td>
         </tr>
       </table>
 
       <table>
         <tr>
           <td>Disable storing core dump</td>
-          <td>The <tt>Storage</tt> option in <tt>[Coredump]</tt> sectionof <tt>/etc/systemd/coredump.conf</tt>
+          <td>The <tt>Storage</tt> option in <tt>[Coredump]</tt> section
+of <tt>/etc/systemd/coredump.conf</tt> or a drop-in file in
+<tt>/etc/systemd/coredump.conf.d/*.conf</tt>
 can be set to <tt>none</tt> to disable storing core dumps permanently.</td>
         </tr>
       </table>

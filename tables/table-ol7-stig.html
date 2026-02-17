@@ -712,7 +712,8 @@ Edit the pam_pwquality.so statement in
 
 retry=
                 , or a lower value if site
-policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+policy is more restrictive. The profile requirement is a maximum of retry=
+                 prompts
 per session.</pre></td>
 	<td>OL07-00-010119</td>
 	<td>accounts_password_pam_retry</td>
@@ -1088,7 +1089,7 @@ Verify that the shadow password suite configuration is set to encrypt password w
 
 Check the hashing algorithm that is being used to hash passwords with the following command:
 
-$ sudo grep -i ENCRYPT_METHOD /etc/login.defs
+$ sudo grep -i ENCRYPT_METHOD  /etc/login.defs
 
 ENCRYPT_METHOD 
       Is it the case that ENCRYPT_METHOD is not set to <sub idref="var_password_hashing_algorithm" />?
@@ -1168,7 +1169,7 @@ and add or correct the following line:
 PASS_MIN_DAYS 
               
 A value of 1 day is considered sufficient for many
-environments. The DoD requirement is 1.
+environments.
 The profile requirement is 
                 
               .</pre></td>
@@ -1229,8 +1230,6 @@ edit the file /etc/login.defs
 and add or correct the following line:
 PASS_MAX_DAYS 
               
-A value of 180 days is sufficient for many environments.
-The DoD requirement is 60.
 The profile requirement is 
                 
               .</pre></td>
@@ -2790,7 +2789,9 @@ system boot time.  In the file /etc/selinux/config, add or correct the
 following line to configure the system to boot into enforcing mode:
 SELINUX=
           
-        </pre></td>
+Ensure that all files have correct SELinux labels by running:
+fixfiles onboot
+Then reboot the system.</pre></td>
 	<td>OL07-00-020210</td>
 	<td>selinux_state</td>
 </tr>
@@ -6417,11 +6418,12 @@ $ sudo grep TMOUT /etc/profile /etc/profile.d/*.sh
 
 The output should return the following:
 TMOUT=
-      Is it the case that value of TMOUT is not less than or equal to expected setting?
+      Is it the case that the TMOUT value is not configured, is set to 0, or is not less than or equal to the expected setting?
       </pre></td>
 	<td><pre>Setting the TMOUT option in /etc/profile ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of 0 (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The TMOUT
 
 setting in a file loaded by /etc/profileor /etc/bashrc, e.g.
@@ -6905,8 +6907,8 @@ Protocol 2
 	<td>medium</td>
 	<td>The Oracle Linux operating system must be configured so that the SSH daemon is configured to only use Message Authentication Codes (MACs) employing FIPS 140-2 approved cryptographic hash algorithms.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>DoD Information Systems are required to use FIPS-approved cryptographic hash
-functions. The only SSHv2 hash algorithms meeting this requirement is SHA2.</pre></td>
+	<td><pre>FIPS-approved cryptographic hash functions are required to be used.
+The only SSHv2 hash algorithms meeting this requirement is SHA2.</pre></td>
 	<td><pre>Only FIPS-approved MACs should be used. To verify that only FIPS-approved
 MACs are in use, run the following command:
 $ sudo grep -i macs /etc/ssh/sshd_config
@@ -7384,6 +7386,7 @@ The output of the command should indicate either:
 net.ipv4.conf.all.rp_filter = 1
 or:
 net.ipv4.conf.all.rp_filter = 2
+
 The output of the command should not indicate:
 net.ipv4.conf.all.rp_filter = 0
 
@@ -7398,6 +7401,7 @@ The command should not find any assignments other than:
 net.ipv4.conf.all.rp_filter = 1
 or:
 net.ipv4.conf.all.rp_filter = 2
+
 
 Conflicting assignments are not allowed.
       Is it the case that the net.ipv4.conf.all.rp_filter is not set to 1 or 2 or is configured to be 0?
@@ -7765,7 +7769,7 @@ X11UseLocalhost yes
 	<td>medium</td>
 	<td>The Oracle Linux operating system SSH server must be configured to use only FIPS-validated key exchange algorithms.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>DoD information systems are required to use FIPS-approved key exchange algorithms.
+	<td><pre>FIPS-approved key exchange algorithms are required to be used.
 The system will attempt to use the first algorithm presented by the client that matches
 the server list. Listing the values "strongest to weakest" is a method to ensure the use
 of the strongest algorithm available to secure the SSH connection.</pre></td>
@@ -8081,9 +8085,8 @@ authentication device.
                 
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</pre></td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</pre></td>
 	<td><pre>Check that Oracle Linux 7 has the packages for smart card support installed.
 
 Run the following command to determine if the pam_pkcs11 package is installed:
@@ -8143,9 +8146,8 @@ authentication device.
                 
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</pre></td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</pre></td>
 	<td><pre>To verify the operating system implements certificate status checking for PKI
 authentication, run the following command:
 $ sudo grep -i cert_policy /etc/pam_pkcs11/pam_pkcs11.conf

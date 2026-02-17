@@ -6,7 +6,7 @@
 <body>
 <br><br><div style="text-align: center; font-size: x-large; font-weight:bold">DISA STIG for Red Hat Enterprise Linux 9</div>
 <div style="text-align: center; font-size: normal ">This profile contains configuration checks that align to the
-DISA STIG for Red Hat Enterprise Linux 9 V2R4.
+DISA STIG for Red Hat Enterprise Linux 9 V2R5.
 
 In addition to being applicable to Red Hat Enterprise Linux 9, this
 configuration baseline is applicable to the operating system tier of
@@ -348,8 +348,6 @@ edit the file <code>/etc/login.defs</code>
 and add or correct the following line:
 <pre>PASS_MAX_DAYS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></xccdf-1.2:sub>
               </pre>
-A value of 180 days is sufficient for many environments.
-The DoD requirement is 60.
 The profile requirement is <code>
                 <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></xccdf-1.2:sub>
               </code>.</td>
@@ -383,7 +381,7 @@ and add or correct the following line:
 <pre>PASS_MIN_DAYS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_minimum_age_login_defs" use="legacy"></xccdf-1.2:sub>
               </pre>
 A value of 1 day is considered sufficient for many
-environments. The DoD requirement is 1.
+environments.
 The profile requirement is <code>
                 <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_minimum_age_login_defs" use="legacy"></xccdf-1.2:sub>
               </code>.</td>
@@ -812,7 +810,8 @@ is different from account lockout, which is provided by the pam_faillock module.
 Edit the <code>/etc/security/pwquality.conf</code> to include
 <code>retry=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_retry" use="legacy"></xccdf-1.2:sub>
                 </code>, or a lower value if site
-policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+policy is more restrictive. The profile requirement is a maximum of <code>retry=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_retry" use="legacy"></xccdf-1.2:sub>
+                </code> prompts
 per session.</td>
 <td><pre>Verify Red Hat Enterprise Linux 9 is configured to limit the "pwquality" retry option to .
 
@@ -1160,8 +1159,9 @@ the window of opportunity for unauthorized personnel to take control of a
 management session enabled on the console or console port that has been
 left unattended.</td>
 <td>Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of <code>0</code> (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The <code>TMOUT</code>
 
 setting in a file loaded by <code>/etc/profile</code>, e.g.
@@ -1179,7 +1179,7 @@ $ sudo grep TMOUT /etc/profile /etc/profile.d/*.sh
 
 The output should return the following:
 TMOUT=
-      Is it the case that value of TMOUT is not less than or equal to expected setting?
+      Is it the case that the TMOUT value is not configured, is set to 0, or is not less than or equal to the expected setting?
       </pre></td>
 <td></td>
 <td></td>
@@ -2335,6 +2335,46 @@ $ sudo grep "umount2" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
+      </pre></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_etc_cron_d</td>
+<td>medium</td>
+<td>Ensure auditd Collects Changes to Cron Jobs - /etc/cron.d/</td>
+<td>The actions taken by system administrators should be audited to keep a record
+of what was executed on the system, as well as, for accountability purposes.
+Editing the sudoers file may be sign of an attacker trying to
+establish persistent methods to a system, auditing the editing of the sudoers
+files mitigates this risk.</td>
+<td>At a minimum, the audit system should collect administrator actions
+for all users and root.
+
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /etc/cron.d/ -p wa -k cronjobs</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code>:
+
+<pre>-w /etc/cron.d/ -p wa -k cronjobs</pre>
+        </td>
+<td><pre>
+Verify Red Hat Enterprise Linux 9 generates audit records for all events that affect "/etc/cron.d/" with the following command:
+
+$ sudo auditctl -l | grep /etc/cron.d/
+
+-w /etc/cron.d/ -p wa -k cronjobs
+      Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
 <td></td>
 <td></td>
@@ -4520,6 +4560,42 @@ $ sudo auditctl -l | grep /etc/shadow
 <td></td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_var_spool_cron</td>
+<td>medium</td>
+<td>Ensure auditd Collects Changes to Cron Jobs - /var/spool/cron</td>
+<td>In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</td>
+<td>
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre>
+        </td>
+<td><pre>
+Verify Red Hat Enterprise Linux 9 generates audit records for all events that affect "/var/spool/cron" with the following command:
+
+$ sudo auditctl -l | grep /var/spool/cron
+
+-w /var/spool/cron -p wa -k cronjobs
+      Is it the case that command does not return a line, or the line is commented out?
+      </pre></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_auditd_audispd_configure_sufficiently_large_partition</td>
 <td>medium</td>
 <td>Configure a Sufficiently Large Partition for Audit Logs</td>
@@ -5394,13 +5470,13 @@ however there may be overriding operational requirements to enable advanced
 debuging. Permitting temporary enablement of core dumps during such situations
 should be reviewed through local needs and policy.</td>
 <td>The <code>ProcessSizeMax</code> option in <code>[Coredump]</code> section
-of <code>/etc/systemd/coredump.conf</code>
-specifies the maximum size in bytes of a core which will be processed.
-Core dumps exceeding this size may be stored, but the backtrace will not
-be generated.</td>
+of <code>/etc/systemd/coredump.conf</code> or in a drop-in file under
+<code>/etc/systemd/coredump.conf.d/</code> specifies the maximum size in bytes
+of a core which will be processed. Core dumps exceeding this size may be
+stored, but the backtrace will not be generated.</td>
 <td><pre>Verify Red Hat Enterprise Linux 9 disables core dump backtraces by issuing the following command:
 
-$ grep -i process /etc/systemd/coredump.conf
+$ grep -i process /etc/systemd/coredump.conf /etc/systemd/coredump.conf.d/*.conf
 
 ProcessSizeMax=0
       Is it the case that the "ProcessSizeMax" item is missing, commented out, or the value is anything other than "0" and the need for core dumps is not documented with the Information System Security Officer (ISSO) as an operational requirement for all domains that have the "core" item assigned?
@@ -5420,11 +5496,13 @@ debug problems. Enabling core dumps on production systems is not recommended,
 however there may be overriding operational requirements to enable advanced
 debuging. Permitting temporary enablement of core dumps during such situations
 should be reviewed through local needs and policy.</td>
-<td>The <code>Storage</code> option in <code>[Coredump]</code> sectionof <code>/etc/systemd/coredump.conf</code>
+<td>The <code>Storage</code> option in <code>[Coredump]</code> section
+of <code>/etc/systemd/coredump.conf</code> or a drop-in file in
+<code>/etc/systemd/coredump.conf.d/*.conf</code>
 can be set to <code>none</code> to disable storing core dumps permanently.</td>
 <td><pre>Verify Red Hat Enterprise Linux 9 disables storing core dumps for all users by issuing the following command:
 
-$ grep -i storage /etc/systemd/coredump.conf
+$ grep -i storage /etc/systemd/coredump.conf /etc/systemd/coredump.conf.d/*.conf
 
 Storage=none
       Is it the case that Storage is not set to none or is commented out and the need for core dumps is not documented with the Information System Security Officer (ISSO) as an operational requirement for all domains that have the "core" item assigned?
@@ -8579,6 +8657,23 @@ FIPS
 <td></td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_fips_custom_stig_sub_policy</td>
+<td>medium</td>
+<td>Implement STIG Sub Crypto Policy</td>
+<td>To follow STIG policy.</td>
+<td>Create a custom cryptographic policy to follow the guidance from DISA.</td>
+<td><pre>Verify that /etc/crypto-policies/policies/modules/STIG.pmod exists and has the following content:
+
+cipher@SSH=AES-256-GCM AES-256-CTR AES-128-GCM AES-128-CTR
+mac@SSH=HMAC-SHA2-512 HMAC-SHA2-256
+
+      Is it the case that the STIG subpolicy does not exist?
+      </pre></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_firewalld-backend</td>
 <td>medium</td>
 <td>Configure Firewalld to Use the Nftables Backend</td>
@@ -8733,7 +8828,7 @@ so that the <code>superusers</code> is honored.
 Once the superuser account has been added,
 update the
 <code>grub.cfg</code> file by running:
-<pre>grub-mkconfig -o /boot/grub2/grub.cfg</pre>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
           </td>
 <td><pre>To verify the boot loader superuser account has been set, run the following
 command:
@@ -9162,9 +9257,8 @@ authentication device.
                 <br>
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</td>
 <td>Configure the operating system to implement multifactor authentication by
 installing the required package with the following command:
 
@@ -10543,7 +10637,7 @@ $ sudo dnf install fapolicyd</pre>
 
 Remote access services, such as those providing remote access to network devices and information systems, which lack automated control capabilities, increase risk and make remote user access management difficult at best.
 
-Remote access is access to DoD nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
+Remote access is access to nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
 
 Red Hat Enterprise Linux 9 functionality (e.g., SSH) must be capable of taking enforcement action if the audit reveals unauthorized activity.
 Automated control of remote access sessions allows organizations to ensure ongoing compliance with remote access policies by enforcing connection rules of remote access applications on a variety of information system components (e.g., servers, workstations, notebook computers, smartphones, and tablets)."</td>
@@ -10693,9 +10787,8 @@ authentication device.
                 <br>
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</td>
 <td>
 The <code>opensc</code> package can be installed with the following command:
 <pre>
@@ -11385,15 +11478,15 @@ by default:
 /usr/lib64
 </pre>
 All system-wide shared library files should be protected from unauthorised
-access. If any of these files is not group-owned by root, correct its group-owner with
-the following command:
+access. If any of these files is not group-owned by root,
+correct its group-owner with the following command:
 <pre>$ sudo chgrp root <i>FILE</i>
               </pre>
             </td>
-<td><pre>Verify the system-wide shared library files are group-owned by "root" with the following command:
+<td><pre>Verify the system-wide shared library files are group-owned by root with the following command:
 
 $ sudo find -L /lib /lib64 /usr/lib /usr/lib64 ! -group root -exec ls -l {} \;
-      Is it the case that any system wide shared library file is returned and is not group-owned by a required system account?
+      Is it the case that any system wide shared library file is returned and is not group-owned by root?
       </pre></td>
 <td></td>
 <td></td>
@@ -11871,7 +11964,9 @@ system boot time.  In the file <code>/etc/selinux/config</code>, add or correct 
 following line to configure the system to boot into enforcing mode:
 <pre>SELINUX=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_selinux_state" use="legacy"></xccdf-1.2:sub>
           </pre>
-        </td>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.</td>
 <td><pre>Ensure that Red Hat Enterprise Linux 9 verifies correct operation of security functions.
 
 Check if "SELinux" is active and in "" mode with the following command:
@@ -12141,9 +12236,8 @@ authentication device.
                 <br>
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</td>
 <td>
 The <code>pcscd</code> service can be enabled with the following command:
 <pre>$ sudo systemctl enable pcscd.service</pre>
@@ -12339,7 +12433,7 @@ Using a stronger hashing algorithm makes password cracking attacks more difficul
 
 Check the hashing algorithm that is being used to hash passwords with the following command:
 
-$ sudo grep -i ENCRYPT_METHOD /etc/login.defs
+$ sudo grep -i ENCRYPT_METHOD  /etc/login.defs
 
 ENCRYPT_METHOD 
       Is it the case that ENCRYPT_METHOD is not set to &lt;sub idref="var_password_hashing_algorithm" /&gt;?
@@ -12742,8 +12836,8 @@ privileged functions is greatly increased. Multifactor authentication
 requires using two or more factors to achieve authentication.
 A privileged account is defined as an information system account with
 authorizations of a privileged user. 
-The DoD CAC with DoD-approved PKI is an example of multifactor
-authentication.</td>
+Smart cards or hardware tokens paired with digital certificates are
+common examples of multifactor implementations.</td>
 <td>Enable SSH login with public keys.
 <br>
 The default SSH configuration enables authentication based on public keys. The appropriate
@@ -13118,9 +13212,8 @@ authentication device.
           <br>
 Multi-Factor Authentication (MFA) solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</td>
 <td>SSSD should be configured to authenticate access to the system using smart cards.
 To enable smart cards in SSSD, set <code>pam_cert_auth</code> to <code>True</code> under the
 <code>[pam]</code> section in <code>/etc/sssd/sssd.conf</code>. For example:
@@ -13817,8 +13910,7 @@ by running the following command:
 $ sysctl net.ipv4.conf.all.rp_filter
 The output of the command should indicate either:
 net.ipv4.conf.all.rp_filter = 1
-or:
-net.ipv4.conf.all.rp_filter = 2
+
 The output of the command should not indicate:
 net.ipv4.conf.all.rp_filter = 0
 
@@ -13831,11 +13923,10 @@ Verify that there is not any existing incorrect configuration by executing the f
 $ grep -r '^\s*net.ipv4.conf.all.rp_filter\s*=' /etc/sysctl.conf /etc/sysctl.d
 The command should not find any assignments other than:
 net.ipv4.conf.all.rp_filter = 1
-or:
-net.ipv4.conf.all.rp_filter = 2
+
 
 Conflicting assignments are not allowed.
-      Is it the case that the net.ipv4.conf.all.rp_filter is not set to 1 or 2 or is configured to be 0?
+      Is it the case that the net.ipv4.conf.all.rp_filter is not set to 1 or is configured to be 0 or 2?
       </pre></td>
 <td></td>
 <td></td>
