@@ -227,33 +227,6 @@ prevents connections from unknown hosts and protocols.
   <td></td>
 </tr>
 <tr>
-  <td>IA-5(f)<br/>IA-5(1)(a)<br/>CM-6(a)</td>
-  <td>CCE-82049-8</td>
-  <td>Set Password Minimum Length in login.defs</td>
-  <td xml:lang="en-US">
-To specify password length requirements for new accounts, edit the file
-<tt>/etc/login.defs</tt> and add or correct the following line:
-<pre>PASS_MIN_LEN <tt>12</tt></pre>
-<br /><br />
-The DoD requirement is <tt>15</tt>.
-The FISMA requirement is <tt>12</tt>.
-The profile requirement is
-<tt><tt>12</tt></tt>.
-If a program consults <tt>/etc/login.defs</tt> and also another PAM module
-(such as <tt>pam_pwquality</tt>) during a password change operation, then
-the most restrictive must be satisfied. See PAM section for more
-information about enforcing password quality requirements.
-  </td>
-  <td xml:lang="en-US">
-Requiring a minimum password length makes password
-cracking attacks more difficult by ensuring a larger
-search space. However, any security benefit from an onerous requirement
-must be carefully weighed against usability problems, support costs, or counterproductive
-behavior that may result.
-  </td>
-  <td>var_accounts_password_minlen_login_defs=12</td>
-</tr>
-<tr>
   <td>IA-5(c)<br/>IA-5(1)(a)<br/>CM-6(a)<br/>IA-5(4)</td>
   <td>CCE-27214-6</td>
   <td>Ensure PAM Enforces Password Requirements - Minimum Digit Characters</td>
@@ -396,7 +369,7 @@ password in resisting attempts at guessing and brute-force attacks.
 Password length is one factor of several that helps to determine strength
 and how long it takes to crack a password. Use of more characters in a password
 helps to exponentially increase the time and/or resources required to
-compromose the password.
+compromise the password.
   </td>
   <td>var_password_pam_minlen=12</td>
 </tr>
@@ -1130,6 +1103,11 @@ of the return instruction pointer.
 To configure the system to prevent the <code>cramfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cramfs.conf</code>:
 <pre>install cramfs /bin/true</pre>
+
+To configure the system to prevent the <code>cramfs</code> from being used,
+add the following line to file <code>/etc/modprobe.d/cramfs.conf</code>:
+<pre>blacklist cramfs</pre>
+
 This effectively prevents usage of this uncommon filesystem.
 
 The <tt>cramfs</tt> filesystem type is a compressed read-only
@@ -1155,6 +1133,10 @@ streaming media and telephony.
 To configure the system to prevent the <code>dccp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/dccp.conf</code>:
 <pre>install dccp /bin/true</pre>
+
+To configure the system to prevent the <code>dccp</code> from being used,
+add the following line to file <code>/etc/modprobe.d/dccp.conf</code>:
+<pre>blacklist dccp</pre>
   </td>
   <td xml:lang="en-US">
 Disabling DCCP protects
@@ -1175,6 +1157,10 @@ within one connection.
 To configure the system to prevent the <code>sctp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
 <pre>install sctp /bin/true</pre>
+
+To configure the system to prevent the <code>sctp</code> from being used,
+add the following line to file <code>/etc/modprobe.d/sctp.conf</code>:
+<pre>blacklist sctp</pre>
   </td>
   <td xml:lang="en-US">
 Disabling SCTP protects
@@ -1193,6 +1179,11 @@ to prevent automatic loading of the USB storage driver.
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
 <pre>install usb-storage /bin/true</pre>
+
+To configure the system to prevent the <code>usb-storage</code> from being used,
+add the following line to file <code>/etc/modprobe.d/usb-storage.conf</code>:
+<pre>blacklist usb-storage</pre>
+
 This will prevent the <tt>modprobe</tt> program from loading the <tt>usb-storage</tt>
 module, but will not prevent an administrator (or another program) from using the
 <tt>insmod</tt> program to load the module manually.
@@ -1973,8 +1964,8 @@ To explicitly disable Kerberos authentication, add or correct the following line
   <td xml:lang="en-US">
 Kerberos authentication for SSH is often implemented using GSSAPI. If Kerberos
 is enabled through SSH, the SSH daemon provides a means of access to the
-system's Kerberos implementation. Vulnerabilities in the system's Kerberos
-implementations may be subject to exploitation.
+system's Kerberos implementation. 
+Configuring these settings for the SSH daemon provides additional assurance that remote logon via SSH will not use unused methods of authentication, even in the event of misconfiguration elsewhere. 
   </td>
   <td></td>
 </tr>

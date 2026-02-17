@@ -303,6 +303,25 @@ privileges.
   <td>var_selinux_state=enforcing</td>
 </tr>
 <tr>
+  <td>BP28(R5)</td>
+  <td>CCE-88248-0</td>
+  <td>Enable authselect</td>
+  <td xml:lang="en-US">
+Configure user authentication setup to use the <tt>authselect</tt> tool.
+
+If authselect profile is selected, the rule will enable the <tt>sssd</tt> profile.
+  </td>
+  <td xml:lang="en-US">
+Authselect is a successor to authconfig.
+It is a tool to select system authentication and identity sources from a list of supported profiles
+instead of letting the administrator build the PAM stack with a tool.
+
+That way, it avoids potential breakage of configuration,
+as it ships several tested profiles that are well tested and supported and that each solve a use-case.
+  </td>
+  <td>var_authselect_profile=sssd</td>
+</tr>
+<tr>
   <td>BP28(R5)<br/>NT28(R46)</td>
   <td>CCE-80847-7</td>
   <td>Ensure rsyslog is Installed</td>
@@ -1172,33 +1191,6 @@ location subject to physical compromise.
 </tr>
 <tr>
   <td>BP28(R18)</td>
-  <td>CCE-80652-1</td>
-  <td>Set Password Minimum Length in login.defs</td>
-  <td xml:lang="en-US">
-To specify password length requirements for new accounts, edit the file
-<tt>/etc/login.defs</tt> and add or correct the following line:
-<pre>PASS_MIN_LEN <tt>18</tt></pre>
-<br /><br />
-The DoD requirement is <tt>15</tt>.
-The FISMA requirement is <tt>12</tt>.
-The profile requirement is
-<tt><tt>18</tt></tt>.
-If a program consults <tt>/etc/login.defs</tt> and also another PAM module
-(such as <tt>pam_pwquality</tt>) during a password change operation, then
-the most restrictive must be satisfied. See PAM section for more
-information about enforcing password quality requirements.
-  </td>
-  <td xml:lang="en-US">
-Requiring a minimum password length makes password
-cracking attacks more difficult by ensuring a larger
-search space. However, any security benefit from an onerous requirement
-must be carefully weighed against usability problems, support costs, or counterproductive
-behavior that may result.
-  </td>
-  <td>var_accounts_password_minlen_login_defs=18</td>
-</tr>
-<tr>
-  <td>BP28(R18)</td>
   <td>CCE-80653-9</td>
   <td>Ensure PAM Enforces Password Requirements - Minimum Digit Characters</td>
   <td xml:lang="en-US">
@@ -1265,7 +1257,7 @@ password in resisting attempts at guessing and brute-force attacks.
 Password length is one factor of several that helps to determine strength
 and how long it takes to crack a password. Use of more characters in a password
 helps to exponentially increase the time and/or resources required to
-compromose the password.
+compromise the password.
   </td>
   <td>var_password_pam_minlen=18</td>
 </tr>
@@ -2228,11 +2220,13 @@ without any additional assistance from the user (i.e. without resorting to phish
   <td>Set Interactive Session Timeout</td>
   <td xml:lang="en-US">
 Setting the <tt>TMOUT</tt> option in <tt>/etc/profile</tt> ensures that
-all user sessions will terminate based on inactivity. The <tt>TMOUT</tt>
+all user sessions will terminate based on inactivity.
+The value of TMOUT should be exported and read only.
+The <tt>TMOUT</tt>
 
 setting in a file loaded by <tt>/etc/profile</tt>, e.g.
 <tt>/etc/profile.d/tmout.sh</tt> should read as follows:
-<pre>TMOUT=<tt>10_min</tt></pre>
+<pre>declare -xr TMOUT=<tt>10_min</tt></pre>
   </td>
   <td xml:lang="en-US">
 Terminating an idle session within a short time period reduces
@@ -2331,10 +2325,10 @@ Using a higher number of rounds makes password cracking attacks more difficult.
 <tr>
   <td>BP28(R32)</td>
   <td>CCE-80893-1</td>
-  <td>Set PAM's Password Hashing Algorithm</td>
+  <td>Set PAM''s Password Hashing Algorithm</td>
   <td xml:lang="en-US">
 The PAM system service can be configured to only store encrypted
-representations of passwords. In "/etc/pam.d/password-auth", the
+representations of passwords. In "/etc/pam.d/system-auth", the
 <tt>password</tt> section of the file controls which PAM modules execute
 during a password change. Set the <tt>pam_unix.so</tt> module in the
 <tt>password</tt> section to include the argument <tt>sha512</tt>, as shown
@@ -2511,9 +2505,9 @@ which could weaken the system security posture.
   <td>CCE-82424-3</td>
   <td>Verify Permissions on SSH Server Private *_key Key Files</td>
   <td xml:lang="en-US">
-
-To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
-<pre>$ sudo chmod 0600 /etc/ssh/*_key</pre>
+SSH server private keys - files that match the <code>/etc/ssh/*_key</code> glob, have to have restricted permissions.
+If those files are owned by the <code>root</code> user and the <code>root</code> group, they have to have the <code>0600</code> permission or stricter.
+If they are owned by the <code>root</code> user, but by a dedicated group <code>ssh_keys</code>, they can have the <code>0640</code> permission or stricter.
   </td>
   <td xml:lang="en-US">
 If an unauthorized user obtains the private SSH host key file, the host could be
@@ -2964,18 +2958,14 @@ By default, the database will be written to the file
 <tt>/var/lib/aide/aide.db.new.gz</tt>.
 
 Storing the database, the configuration file <tt>/etc/aide.conf</tt>, and the binary
-
 <tt>/usr/sbin/aide</tt>
-
 (or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
 The newly-generated database can be installed as follows:
 
 <pre>$ sudo cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz</pre>
 
 To initiate a manual check, run the following command:
-
 <pre>$ sudo /usr/sbin/aide --check</pre>
-
 If this check produces any unexpected output, investigate.
   </td>
   <td xml:lang="en-US">

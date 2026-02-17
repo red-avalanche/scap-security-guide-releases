@@ -938,7 +938,7 @@ startup (the default), add the following lines to a file with suffix
 
 If the system is 64 bit then also add the following lines:
 <pre>
--a always,exit -F arch=b64 -S ftruncate -F exiu=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
 -a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
 
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
@@ -1646,7 +1646,7 @@ password in resisting attempts at guessing and brute-force attacks.
 Password length is one factor of several that helps to determine strength
 and how long it takes to crack a password. Use of more characters in a password
 helps to exponentially increase the time and/or resources required to
-compromose the password.
+compromise the password.
   </td>
   <td>var_password_pam_minlen=14</td>
 </tr>
@@ -1761,10 +1761,10 @@ log data, or which use external processes to transfer it and reclaim space,
 <tr>
   <td>IA-5(c)<br/>IA-5(1)(c)<br/>CM-6(a)</td>
   <td>CCE-82043-1</td>
-  <td>Set PAM's Password Hashing Algorithm</td>
+  <td>Set PAM''s Password Hashing Algorithm</td>
   <td xml:lang="en-US">
 The PAM system service can be configured to only store encrypted
-representations of passwords. In "/etc/pam.d/password-auth", the
+representations of passwords. In "/etc/pam.d/system-auth", the
 <tt>password</tt> section of the file controls which PAM modules execute
 during a password change. Set the <tt>pam_unix.so</tt> module in the
 <tt>password</tt> section to include the argument <tt>sha512</tt>, as shown
@@ -3254,9 +3254,9 @@ operation.
   <td xml:lang="en-US">
 At a minimum, AIDE should be configured to run a weekly scan.
 To implement a daily execution of AIDE at 4:05am using cron, add the following line to <tt>/etc/crontab</tt>:
-<pre>05 4 * * * root  --check</pre>
+<pre>05 4 * * * root /usr/sbin/aide --check</pre>
 To implement a weekly execution of AIDE at 4:05am using cron, add the following line to <tt>/etc/crontab</tt>:
-<pre>05 4 * * 0 root  --check</pre>
+<pre>05 4 * * 0 root /usr/sbin/aide --check</pre>
 AIDE can be executed periodically through other means; this is merely one example.
 The usage of cron's special time codes, such as  <tt>@daily</tt> and
 <tt>@weekly</tt> is acceptable.
@@ -3287,6 +3287,11 @@ monitoring system trap when there is an unauthorized modification of a configura
 To configure the system to prevent the <code>cramfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cramfs.conf</code>:
 <pre>install cramfs /bin/true</pre>
+
+To configure the system to prevent the <code>cramfs</code> from being used,
+add the following line to file <code>/etc/modprobe.d/cramfs.conf</code>:
+<pre>blacklist cramfs</pre>
+
 This effectively prevents usage of this uncommon filesystem.
 
 The <tt>cramfs</tt> filesystem type is a compressed read-only
@@ -3312,6 +3317,10 @@ streaming media and telephony.
 To configure the system to prevent the <code>dccp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/dccp.conf</code>:
 <pre>install dccp /bin/true</pre>
+
+To configure the system to prevent the <code>dccp</code> from being used,
+add the following line to file <code>/etc/modprobe.d/dccp.conf</code>:
+<pre>blacklist dccp</pre>
   </td>
   <td xml:lang="en-US">
 Disabling DCCP protects
@@ -3328,6 +3337,11 @@ the system against exploitation of any flaws in its implementation.
 To configure the system to prevent the <code>freevxfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/freevxfs.conf</code>:
 <pre>install freevxfs /bin/true</pre>
+
+To configure the system to prevent the <code>freevxfs</code> from being used,
+add the following line to file <code>/etc/modprobe.d/freevxfs.conf</code>:
+<pre>blacklist freevxfs</pre>
+
 This effectively prevents usage of this uncommon filesystem.
   </td>
   <td xml:lang="en-US">
@@ -3345,6 +3359,11 @@ local system should be disabled.
 To configure the system to prevent the <code>hfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/hfs.conf</code>:
 <pre>install hfs /bin/true</pre>
+
+To configure the system to prevent the <code>hfs</code> from being used,
+add the following line to file <code>/etc/modprobe.d/hfs.conf</code>:
+<pre>blacklist hfs</pre>
+
 This effectively prevents usage of this uncommon filesystem.
   </td>
   <td xml:lang="en-US">
@@ -3362,6 +3381,11 @@ local system should be disabled.
 To configure the system to prevent the <code>hfsplus</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/hfsplus.conf</code>:
 <pre>install hfsplus /bin/true</pre>
+
+To configure the system to prevent the <code>hfsplus</code> from being used,
+add the following line to file <code>/etc/modprobe.d/hfsplus.conf</code>:
+<pre>blacklist hfsplus</pre>
+
 This effectively prevents usage of this uncommon filesystem.
   </td>
   <td xml:lang="en-US">
@@ -3379,6 +3403,11 @@ local system should be disabled.
 To configure the system to prevent the <code>jffs2</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/jffs2.conf</code>:
 <pre>install jffs2 /bin/true</pre>
+
+To configure the system to prevent the <code>jffs2</code> from being used,
+add the following line to file <code>/etc/modprobe.d/jffs2.conf</code>:
+<pre>blacklist jffs2</pre>
+
 This effectively prevents usage of this uncommon filesystem.
   </td>
   <td xml:lang="en-US">
@@ -3400,6 +3429,10 @@ within one connection.
 To configure the system to prevent the <code>sctp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
 <pre>install sctp /bin/true</pre>
+
+To configure the system to prevent the <code>sctp</code> from being used,
+add the following line to file <code>/etc/modprobe.d/sctp.conf</code>:
+<pre>blacklist sctp</pre>
   </td>
   <td xml:lang="en-US">
 Disabling SCTP protects
@@ -3416,6 +3449,11 @@ the system against exploitation of any flaws in its implementation.
 To configure the system to prevent the <code>squashfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/squashfs.conf</code>:
 <pre>install squashfs /bin/true</pre>
+
+To configure the system to prevent the <code>squashfs</code> from being used,
+add the following line to file <code>/etc/modprobe.d/squashfs.conf</code>:
+<pre>blacklist squashfs</pre>
+
 This effectively prevents usage of this uncommon filesystem.
 
 The <tt>squashfs</tt> filesystem type is a compressed read-only Linux
@@ -3438,6 +3476,11 @@ surface of the system.
 To configure the system to prevent the <code>udf</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/udf.conf</code>:
 <pre>install udf /bin/true</pre>
+
+To configure the system to prevent the <code>udf</code> from being used,
+add the following line to file <code>/etc/modprobe.d/udf.conf</code>:
+<pre>blacklist udf</pre>
+
 This effectively prevents usage of this uncommon filesystem.
 
 The <tt>udf</tt> filesystem type is the universal disk format

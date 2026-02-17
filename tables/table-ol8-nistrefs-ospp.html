@@ -55,12 +55,12 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S open,openat,openat2,open_by_handle_at -F exit=-EACCES -F auid>=1000 -F auid!=unset -F key=unsuccessful-access
 -a always,exit -F arch=b64 -S open,openat,openat2,open_by_handle_at -F exit=-EACCES -F auid>=1000 -F auid!=unset -F key=unsuccessful-access
 -a always,exit -F arch=b32 -S open,openat,openat2,open_by_handle_at -F exit=-EPERM -F auid>=1000 -F auid!=unset -F key=unsuccessful-access
--a always,exit -F arch=b64 -S open,openat,openat2,open_by_handle_at -F exit=-EPERM -F auid>=1000 -F auid!=unset -F key=unsuccessful-access    </pre>    
+-a always,exit -F arch=b64 -S open,openat,openat2,open_by_handle_at -F exit=-EPERM -F auid>=1000 -F auid!=unset -F key=unsuccessful-access    </pre>
 
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <tt>Audit</tt> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
   </td>
   <td xml:lang="en-US">
 Unsuccessful attempts to access a file might be signs of malicious activity happening within the system. Auditing of such activities helps in their monitoring and investigation.
@@ -80,19 +80,13 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S open,openat,openat2,open_by_handle_at -F success=1 -F auid>=1000 -F auid!=unset -F key=successful-access
 -a always,exit -F arch=b64 -S open,openat,openat2,open_by_handle_at -F success=1 -F auid>=1000 -F auid!=unset -F key=successful-access    </pre>
 
-The <tt>Audit</tt> package provides pre-configured  rules in <tt>/usr/share/audit/sample-rules</tt>. The above content can be found in <tt>/usr/share/audit/sample-rules/30-ospp-v42-3-access-success.rules</tt>.
-To deploy this configuration, it is recommended to copy it over to the <tt>/etc/audit/rules.d/</tt> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42-3-access-success.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <tt>Audit</tt> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
   </td>
   <td xml:lang="en-US">
-Auditing of successful attempts to access a file helps in investigation of activities performed on the system. 
+Auditing of successful attempts to access a file helps in investigation of activities performed on the system.
   </td>
   <td></td>
 </tr>
@@ -117,12 +111,6 @@ The following rules configure audit as described above:
 
 ## Set failure mode to syslog
 -f 1    </pre>
-
-The <tt>Audit</tt> package provides pre-configured  rules in <tt>/usr/share/audit/sample-rules</tt>. The above content can be found in <tt>/usr/share/audit/sample-rules/10-base-config.rules</tt>.
-To deploy this configuration, it is recommended to copy it over to the <tt>/etc/audit/rules.d/</tt> directory:
-<pre>
-cp /usr/share/audit/sample-rules/10-base-config.rules /etc/audit/rules.d/
-</pre>
 
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
@@ -154,16 +142,10 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
 -a always,exit -F arch=b64 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create    </pre>
 
-The <tt>Audit</tt> package provides pre-configured  rules in <tt>/usr/share/audit/sample-rules</tt>. The above content can be found in <tt>/usr/share/audit/sample-rules/30-ospp-v42-1-create-failed.rules</tt>.
-To deploy this configuration, it is recommended to copy it over to the <tt>/etc/audit/rules.d/</tt> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42-1-create-failed.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <tt>Audit</tt> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
   </td>
   <td xml:lang="en-US">
 Unsuccessful file creations might be a sign of a malicious action being performed on the system. Keeping log of such events helps in monitoring and investigation of such actions.
@@ -186,14 +168,10 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S creat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-create
 -a always,exit -F arch=b64 -S creat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-create    </pre>
 
-The <tt>Audit</tt> package provides pre-configured  rules in <tt>/usr/share/audit/sample-rules</tt>. The above content can be found in <tt>/usr/share/audit/sample-rules/30-ospp-v42-1-create-success.rules</tt>.
-To deploy this configuration, it is recommended to copy it over to the <tt>/etc/audit/rules.d/</tt> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42-1-create-success.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
   </td>
   <td xml:lang="en-US">
 Auditing of successful attempts to create a file helps in investigation of actions which happened on the system.
@@ -214,19 +192,13 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S unlink,unlinkat,rename,renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
 -a always,exit -F arch=b64 -S unlink,unlinkat,rename,renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete    </pre>
 
-The <tt>Audit</tt> package provides pre-configured  rules in <tt>/usr/share/audit/sample-rules</tt>. The above content can be found in <tt>/usr/share/audit/sample-rules/30-ospp-v42-4-delete-failed.rules</tt>.
-To deploy this configuration, it is recommended to copy it over to the <tt>/etc/audit/rules.d/</tt> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42-4-delete-failed.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <tt>Audit</tt> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
   </td>
   <td xml:lang="en-US">
-Unsuccessful attempts to delete a file might be signs of malicious activities. Auditing of such events help in monitoring and investigating of such activities. 
+Unsuccessful attempts to delete a file might be signs of malicious activities. Auditing of such events help in monitoring and investigating of such activities.
   </td>
   <td></td>
 </tr>
@@ -242,16 +214,10 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S unlink,unlinkat,rename,renameat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-delete
 -a always,exit -F arch=b64 -S unlink,unlinkat,rename,renameat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-delete    </pre>
 
-The <tt>Audit</tt> package provides pre-configured  rules in <tt>/usr/share/audit/sample-rules</tt>. The above content can be found in <tt>/usr/share/audit/sample-rules/30-ospp-v42-4-delete-success.rules</tt>.
-To deploy this configuration, it is recommended to copy it over to the <tt>/etc/audit/rules.d/</tt> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42-4-delete-success.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <tt>Audit</tt> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
   </td>
   <td xml:lang="en-US">
 Auditing of successful attempts to delete a file may help in monitoring and investigation of activities performed on the system.
@@ -264,23 +230,19 @@ Auditing of successful attempts to delete a file may help in monitoring and inve
   <td>Configure immutable Audit login UIDs</td>
   <td xml:lang="en-US">
 Configure kernel to prevent modification of login UIDs once they are set.
-Changing login UIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.
+Changing login UIDs while this configuration is enforced requires special capabilities which
+are not available to unprivileged users.
 
 The following rules configure audit as described above:
 <pre>## Make the loginuid immutable. This prevents tampering with the auid.
 --loginuid-immutable    </pre>
 
-The <tt>Audit</tt> provides pre-configured  rules in <tt>/usr/share/audit/sample-rules</tt>. The above content can be found in <tt>/usr/share/audit/sample-rules/11-loginuid.rules</tt>.
-To deploy this configuration, it is recommended to copy it over to the <tt>/etc/audit/rules.d/</tt> directory:
-<pre>
-cp /usr/share/audit/sample-rules/11-loginuid.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
   </td>
   <td xml:lang="en-US">
-If modification of login UIDs is not prevented, they can be changed by unprivileged users and make auditing complicated or impossible. 
+If modification of login UIDs is not prevented, they can be changed by unprivileged users and
+make auditing complicated or impossible.
   </td>
   <td></td>
 </tr>
@@ -306,16 +268,10 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
 -a always,exit -F arch=b64 -S truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification    </pre>
 
-The <tt>Audit</tt> package provides pre-configured  rules in <tt>/usr/share/audit/sample-rules</tt>. The above content can be found in <tt>/usr/share/audit/sample-rules/30-ospp-v42-2-modify-failed.rules</tt>.
-To deploy this configuration, it is recommended to copy it over to the <tt>/etc/audit/rules.d/</tt> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42-2-modify-failed.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <tt>Audit</tt> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
   </td>
   <td xml:lang="en-US">
 Unsuccessful file modifications might be a sign of a malicious action being performed on the system. Auditing of such events helps in detection and investigation of such actions.
@@ -338,16 +294,10 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S truncate,ftruncate -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-modification
 -a always,exit -F arch=b64 -S truncate,ftruncate -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-modification    </pre>
 
-The <tt>Audit</tt> package provides pre-configured  rules in <tt>/usr/share/audit/sample-rules</tt>. The above content can be found in <tt>/usr/share/audit/sample-rules/30-ospp-v42-2-modify-success.rules</tt>.
-To deploy this configuration, it is recommended to copy it over to the <tt>/etc/audit/rules.d/</tt> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42-2-modify-success.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <tt>Audit</tt> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
   </td>
   <td xml:lang="en-US">
 Auditing of successful attempts to modify a file helps in investigation of actions which happened on the system.
@@ -369,12 +319,6 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S delete_module -F key=module-unload
 -a always,exit -F arch=b64 -S delete_module -F key=module-unload    </pre>
 
-The <tt>Audit</tt> package provides pre-configured  rules in <tt>/usr/share/audit/sample-rules</tt>. The above content can be found in <tt>/usr/share/audit/sample-rules/43-module-load.rules</tt>.
-To deploy this configuration, it is recommended to copy it over to the <tt>/etc/audit/rules.d/</tt> directory:
-<pre>
-cp /usr/share/audit/sample-rules/43-module-load.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
   </td>
@@ -388,10 +332,9 @@ Loading of a malicious kernel module introduces a risk to the system, as the mod
   <td>N/A</td>
   <td>Perform general configuration of Audit for OSPP</td>
   <td xml:lang="en-US">
-Configure some basic <tt>Audit</tt> parameters specific for OSPP profile. 
+Configure some basic <tt>Audit</tt> parameters specific for OSPP profile.
 In particular, configure <tt>Audit</tt> to watch for direct modification of files storing system user and group information, and usage of applications with special rights which can change system configuration.
 Further audited events include access to audit log it self, attempts to Alter Process and Session Initiation Information, and attempts to modify MAC controls.
-
 
 The following rules configure audit as described above:
 <pre>## The purpose of these rules is to meet the requirements for Operating
@@ -478,16 +421,10 @@ The following rules configure audit as described above:
 ## state results from that policy. This would be handled entirely by
 ## that daemon.    </pre>
 
-The <tt>Audit</tt> package provides pre-configured  rules in <tt>/usr/share/audit/sample-rules</tt>. The above content can be found in <tt>/usr/share/audit/sample-rules/30-ospp-v42.rules</tt>.
-To deploy this configuration, it is recommended to copy it over to the <tt>/etc/audit/rules.d/</tt> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <tt>Audit</tt> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
   </td>
   <td xml:lang="en-US">
 Auditing of events listed in the description provides data for monitoring and investigation of potentially malicious events e.g. tampering with <tt>Audit</tt> logs, malicious access to files storing information about system users and groups etc.
@@ -508,16 +445,10 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-owner-change
 -a always,exit -F arch=b64 -S lchown,fchown,chown,fchownat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-owner-change    </pre>
 
-The <tt>Audit</tt> package provides pre-configured  rules in <tt>/usr/share/audit/sample-rules</tt>. The above content can be found in <tt>/usr/share/audit/sample-rules/30-ospp-v42-6-owner-change-failed.rules</tt>.
-To deploy this configuration, it is recommended to copy it over to the <tt>/etc/audit/rules.d/</tt> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42-6-owner-change-failed.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <tt>Audit</tt> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
   </td>
   <td xml:lang="en-US">
 Unsuccessful attempts to change an ownership of files or directories might be signs of a malicious activity. Having such events audited helps in monitoring and investigation of such activities.
@@ -536,22 +467,13 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-owner-change
 -a always,exit -F arch=b64 -S lchown,fchown,chown,fchownat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-owner-change    </pre>
 
-The <tt>Audit</tt> package provides pre-configured  rules in <tt>/usr/share/audit/sample-rules</tt>. The above content can be found in <tt>/usr/share/audit/sample-rules/30-ospp-v42-6-owner-change-success.rules</tt>.
-To deploy this configuration, it is recommended to copy it over to the <tt>/etc/audit/rules.d/</tt> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42-6-owner-change-success.rules /etc/audit/rules.d/
-</pre>
-
-The file has the following SHA-256 checksum:
-<pre>7eb41a6aaf6737c2571b6424fae7fa53af4b41a9115b6c5732a5778ccd9900ad</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <tt>Audit</tt> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
   </td>
   <td xml:lang="en-US">
-Auditing of successful ownership changes of files or directories helps in monitoring or investingating of activities performed on the system. 
+Auditing of successful ownership changes of files or directories helps in monitoring or investingating of activities performed on the system.
   </td>
   <td></td>
 </tr>
@@ -569,19 +491,13 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-perm-change
 -a always,exit -F arch=b64 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-perm-change    </pre>
 
-The <tt>Audit</tt> package provides pre-configured  rules in <tt>/usr/share/audit/sample-rules</tt>. The above content can be found in <tt>/usr/share/audit/sample-rules/30-ospp-v42-5-perm-change-failed.rules</tt>.
-To deploy this configuration, it is recommended to copy it over to the <tt>/etc/audit/rules.d/</tt> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42-5-perm-change-failed.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <tt>Audit</tt> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
   </td>
   <td xml:lang="en-US">
-Unsuccessful attempts to change permissions of files or directories might be signs of malicious activity. Having such events audited helps in monitoring and investigation of such activities. 
+Unsuccessful attempts to change permissions of files or directories might be signs of malicious activity. Having such events audited helps in monitoring and investigation of such activities.
   </td>
   <td></td>
 </tr>
@@ -597,16 +513,10 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-perm-change
 -a always,exit -F arch=b64 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-perm-change    </pre>
 
-The <tt>Audit</tt> package provides pre-configured  rules in <tt>/usr/share/audit/sample-rules</tt>. The above content can be found in <tt>/usr/share/audit/sample-rules/30-ospp-v42-5-perm-change-success.rules</tt>.
-To deploy this configuration, it is recommended to copy it over to the <tt>/etc/audit/rules.d/</tt> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42-5-perm-change-success.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <tt>Audit</tt> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.
   </td>
   <td xml:lang="en-US">
 Auditing successful file or directory permission changes helps in monitoring and investigating of activities performed on the system.
@@ -1056,7 +966,7 @@ password in resisting attempts at guessing and brute-force attacks.
 Password length is one factor of several that helps to determine strength
 and how long it takes to crack a password. Use of more characters in a password
 helps to exponentially increase the time and/or resources required to
-compromose the password.
+compromise the password.
   </td>
   <td>var_password_pam_minlen=12</td>
 </tr>
@@ -2097,6 +2007,11 @@ of the return instruction pointer.
 To configure the system to prevent the <code>cramfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cramfs.conf</code>:
 <pre>install cramfs /bin/true</pre>
+
+To configure the system to prevent the <code>cramfs</code> from being used,
+add the following line to file <code>/etc/modprobe.d/cramfs.conf</code>:
+<pre>blacklist cramfs</pre>
+
 This effectively prevents usage of this uncommon filesystem.
 
 The <tt>cramfs</tt> filesystem type is a compressed read-only
@@ -2123,6 +2038,10 @@ within one connection.
 To configure the system to prevent the <code>sctp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
 <pre>install sctp /bin/true</pre>
+
+To configure the system to prevent the <code>sctp</code> from being used,
+add the following line to file <code>/etc/modprobe.d/sctp.conf</code>:
+<pre>blacklist sctp</pre>
   </td>
   <td xml:lang="en-US">
 Disabling SCTP protects
@@ -2142,6 +2061,10 @@ cluster.
 To configure the system to prevent the <code>tipc</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/tipc.conf</code>:
 <pre>install tipc /bin/true</pre>
+
+To configure the system to prevent the <code>tipc</code> from being used,
+add the following line to file <code>/etc/modprobe.d/tipc.conf</code>:
+<pre>blacklist tipc</pre>
   </td>
   <td xml:lang="en-US">
 Disabling TIPC protects
@@ -3356,8 +3279,8 @@ To explicitly disable Kerberos authentication, add or correct the following line
   <td xml:lang="en-US">
 Kerberos authentication for SSH is often implemented using GSSAPI. If Kerberos
 is enabled through SSH, the SSH daemon provides a means of access to the
-system's Kerberos implementation. Vulnerabilities in the system's Kerberos
-implementations may be subject to exploitation.
+system's Kerberos implementation. 
+Configuring these settings for the SSH daemon provides additional assurance that remote logon via SSH will not use unused methods of authentication, even in the event of misconfiguration elsewhere. 
   </td>
   <td></td>
 </tr>
@@ -3396,6 +3319,10 @@ and virtual paths.
 To configure the system to prevent the <code>atm</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/atm.conf</code>:
 <pre>install atm /bin/true</pre>
+
+To configure the system to prevent the <code>atm</code> from being used,
+add the following line to file <code>/etc/modprobe.d/atm.conf</code>:
+<pre>blacklist atm</pre>
   </td>
   <td xml:lang="en-US">
 Disabling ATM protects the system against exploitation of any
@@ -3433,6 +3360,10 @@ is now also used in marine, industrial, and medical applications.
 To configure the system to prevent the <code>can</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/can.conf</code>:
 <pre>install can /bin/true</pre>
+
+To configure the system to prevent the <code>can</code> from being used,
+add the following line to file <code>/etc/modprobe.d/can.conf</code>:
+<pre>blacklist can</pre>
   </td>
   <td xml:lang="en-US">
 Disabling CAN protects the system against exploitation of any
@@ -3451,6 +3382,10 @@ high-speed real-time communication.
 To configure the system to prevent the <code>firewire-core</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/firewire-core.conf</code>:
 <pre>install firewire-core /bin/true</pre>
+
+To configure the system to prevent the <code>firewire-core</code> from being used,
+add the following line to file <code>/etc/modprobe.d/firewire-core.conf</code>:
+<pre>blacklist firewire-core</pre>
   </td>
   <td xml:lang="en-US">
 Disabling FireWire protects the system against exploitation of any
@@ -3491,6 +3426,9 @@ When containers are deployed on the machine, the value should be set
 to large non-zero value.
   </td>
   <td xml:lang="en-US">
+It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or system objectives.
+These unnecessary capabilities or services are often overlooked and therefore may remain unsecured.
+They increase the risk to the platform by providing additional attack vectors.
 User namespaces are used primarily for Linux containers. The value 0
 disallows the use of user namespaces.
   </td>
@@ -3521,8 +3459,8 @@ log out because of the temporary nature of the absence.
   <td xml:lang="en-US">
 To enable console screen locking in <tt>tmux</tt> terminal multiplexer
 after a period of inactivity,
-the <tt>lock-after-time</tt> option has to be set to nonzero value in
-<tt>/etc/tmux.conf</tt>.
+the <tt>lock-after-time</tt> option has to be set to a value greater than 0 and less than
+or equal to 900 in <tt>/etc/tmux.conf</tt>.
   </td>
   <td xml:lang="en-US">
 Locking the session after a period of inactivity limits the
@@ -3901,9 +3839,6 @@ $ sudo yum erase krb5-workstation</pre>
   <td xml:lang="en-US">
 Kerberos is a network authentication system. The <tt>krb5-workstation</tt> package contains the basic
 Kerberos programs (<tt>kinit</tt>, <tt>klist</tt>, <tt>kdestroy</tt>, <tt>kpasswd</tt>).
-
-Currently, Kerberos does not utilize FIPS 140-2 cryptography and is not permitted on Government networks,
-nor is it permitted in many regulatory environments such as HIPAA.
   </td>
   <td></td>
 </tr>
@@ -3982,7 +3917,7 @@ $ sudo yum install openssh-clients</pre>
   </td>
   <td xml:lang="en-US">
 This package includes utilities to make encrypted connections and transfer
-files securely to SSH servers. 
+files securely to SSH servers.
   </td>
   <td></td>
 </tr>
@@ -4185,7 +4120,7 @@ By decreasing the limit based on the amount of data and enabling
 time-based limit, effects of potential attacks against
 encryption keys are limited.
   </td>
-  <td>var_rekey_limit_size=1G<br/>var_rekey_limit_time=1hour</td>
+  <td>var_rekey_limit_time=1hour<br/>var_rekey_limit_size=1G</td>
 </tr>
 <tr>
   <td></td>
@@ -4198,10 +4133,11 @@ make sure that the file contains line
 <pre>SSH_USE_STRONG_RNG=32</pre>
   </td>
   <td xml:lang="en-US">
-SSH implementation in RHEL8 uses the openssl library, which doesn't use high-entropy sources by default.
-Randomness is needed to generate data-encryption keys, and as plaintext padding and initialization vectors
-in encryption algorithms, and high-quality entropy elliminates the possibility that the output of
-the random number generator used by SSH would be known to potential attackers.
+SSH implementation in Oracle Linux 8 uses the openssl library, which doesn't use
+high-entropy sources by default. Randomness is needed to generate data-encryption keys, and as
+plaintext padding and initialization vectors in encryption algorithms, and high-quality
+entropy elliminates the possibility that the output of the random number generator used by SSH
+would be known to potential attackers.
   </td>
   <td></td>
 </tr>
