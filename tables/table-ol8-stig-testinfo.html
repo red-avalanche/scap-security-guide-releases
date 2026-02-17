@@ -6,7 +6,7 @@
 <body>
 <br><br><div style="text-align: center; font-size: x-large; font-weight:bold">DISA STIG for Oracle Linux 8</div>
 <div style="text-align: center; font-size: normal ">This profile contains configuration checks that align to the
-DISA STIG for Oracle Linux 8 V1R10.</div>
+DISA STIG for Oracle Linux 8 V2R1.</div>
 <br><br><style type="text/css">
 		table
 		{
@@ -917,112 +917,6 @@ ocredit =
 </td>
 </tr>
 <tr>
-<td>xccdf_org.ssgproject.content_rule_accounts_password_pam_pwhistory_remember_password_auth</td>
-<td>medium</td>
-<td>Limit Password Reuse: password-auth</td>
-<td>Preventing re-use of previous passwords helps ensure that a compromised password is not
-re-used by a user.</td>
-<td>Do not allow users to reuse recent passwords. This can be accomplished by using the
-<code>remember</code> option for the <code>pam_pwhistory</code> PAM module.
-<br>
-              <br>
-
-On systems with newer versions of <code>authselect</code>, the <code>pam_pwhistory</code> PAM module
-can be enabled via authselect feature:
-<pre>authselect enable-feature with-pwhistory</pre>
-
-Otherwise, it should be enabled using an authselect custom profile.
-<br>
-              <br>
-Newer systems also have the <code>/etc/security/pwhistory.conf</code> file for setting
-<code>pam_pwhistory</code> module options. This file should be used whenever available.
-Otherwise, the <code>pam_pwhistory</code> module options can be set in PAM files.
-<br>
-              <br>
-The value for <code>remember</code> option must be equal or greater than
-<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>
-            </td>
-<td><pre>Verify Oracle Linux 8 use the "pam_pwhistory.so" module in the /etc/pam.d/password-auth file
-and is configured to prohibit password reuse for a minimum of 
-generations.
-
-Verify the "/etc/pam.d/password-auth" file with the following command:
-
-$ grep pam_pwhistory.so /etc/pam.d/password-auth
-password  pam_pwhistory.so use_authtok remember=
-
-
-Verify the "/etc/security/pwhistory.conf" file using the following command:
-
-$ grep remember /etc/security/pwhistory.conf
-remember = 
-
-The pam_pwhistory.so "remember" option must be configured only in one file.
-      Is it the case that the pam_pwhistory.so module is not used, the "remember" module option is not set in
-/etc/pam.d/password-auth or in /etc/security/pwhistory.conf, or is set in both files, or is set
-with a value less than "&lt;sub idref="var_password_pam_remember" /&gt;"?
-      </pre></td>
-<td>SRG-OS-000077-GPOS-00045<br>
-</td>
-<td>CCI-000200<br>
-</td>
-<td>IA-5 (1) (e)<br>
-</td>
-</tr>
-<tr>
-<td>xccdf_org.ssgproject.content_rule_accounts_password_pam_pwhistory_remember_system_auth</td>
-<td>medium</td>
-<td>Limit Password Reuse: system-auth</td>
-<td>Preventing re-use of previous passwords helps ensure that a compromised password is not
-re-used by a user.</td>
-<td>Do not allow users to reuse recent passwords. This can be accomplished by using the
-<code>remember</code> option for the <code>pam_pwhistory</code> PAM module.
-<br>
-              <br>
-
-On systems with newer versions of <code>authselect</code>, the <code>pam_pwhistory</code> PAM module
-can be enabled via authselect feature:
-<pre>authselect enable-feature with-pwhistory</pre>
-
-Otherwise, it should be enabled using an authselect custom profile.
-<br>
-              <br>
-Newer systems also have the <code>/etc/security/pwhistory.conf</code> file for setting
-<code>pam_pwhistory</code> module options. This file should be used whenever available.
-Otherwise, the <code>pam_pwhistory</code> module options can be set in PAM files.
-<br>
-              <br>
-The value for <code>remember</code> option must be equal or greater than
-<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>
-            </td>
-<td><pre>Verify Oracle Linux 8 use the "pam_pwhistory.so" module in the /etc/pam.d/system-auth file
-and is configured to prohibit password reuse for a minimum of 
-generations.
-
-Verify the "/etc/pam.d/system-auth" file with the following command:
-
-$ grep pam_pwhistory.so /etc/pam.d/system-auth
-password  pam_pwhistory.so use_authtok remember=
-
-
-Verify the "/etc/security/pwhistory.conf" file using the following command:
-
-$ grep remember /etc/security/pwhistory.conf
-remember = 
-
-The pam_pwhistory.so "remember" option must be configured only in one file.
-      Is it the case that the pam_pwhistory.so module is not used, the "remember" module option is not set in
-/etc/pam.d/system-auth or in /etc/security/pwhistory.conf, or is set in both files, or is set
-with a value less than "&lt;sub idref="var_password_pam_remember" /&gt;"?
-      </pre></td>
-<td>SRG-OS-000077-GPOS-00045<br>
-</td>
-<td>CCI-000200<br>
-</td>
-<td>IA-5 (1) (e)<br>
-</td>
-</tr>
-<tr>
 <td>xccdf_org.ssgproject.content_rule_accounts_password_pam_pwquality_password_auth</td>
 <td>medium</td>
 <td>Ensure PAM password complexity module is enabled in password-auth</td>
@@ -1217,19 +1111,16 @@ the account.</td>
 using <code>pam_faillock.so</code>.
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
-
 Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
 <code>deny = &lt;count&gt;</code>
 Where count should be less than or equal to
 <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_deny" use="legacy"></xccdf-1.2:sub> and greater than 0.
-
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
 depending on the OS version.</td>
 <td><pre>Verify Oracle Linux 8 is configured to lock an account after 
 unsuccessful logon attempts with the command:
-
 
 $ grep 'deny =' /etc/security/faillock.conf
 deny = .
@@ -1259,7 +1150,6 @@ recommended to use the appropriate tools, such as <code>authselect</code> or <co
 depending on the OS version.</td>
 <td><pre>Verify Oracle Linux 8 is configured to lock the root account after 
 unsuccessful logon attempts with the command:
-
 
 $ grep even_deny_root /etc/security/faillock.conf
 even_deny_root
@@ -1378,13 +1268,11 @@ Limits are imposed by locking the account.</td>
 <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <code>pam_faillock.so</code>.
 
-
 Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
 <code>unlock_time=&lt;interval-in-seconds&gt;</code> where
 <code>interval-in-seconds</code> is <code>
                 <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_unlock_time" use="legacy"></xccdf-1.2:sub>
               </code> or greater.
-
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -1396,7 +1284,6 @@ to unlock a user. This should be done using the <code>faillock</code> tool.</td>
 <td><pre>Verify Oracle Linux 8 is configured to lock an account until released by an administrator
 after  unsuccessful logon
 attempts with the command:
-
 
 $ grep 'unlock_time =' /etc/security/faillock.conf
 unlock_time = 
@@ -1716,27 +1603,6 @@ $ sudo ls -lLR /home/USER
 <td>CCI-000366<br>
 </td>
 <td>CM-6 b<br>
-</td>
-</tr>
-<tr>
-<td>xccdf_org.ssgproject.content_rule_agent_mfetpd_running</td>
-<td>medium</td>
-<td>Ensure McAfee Endpoint Security for Linux (ENSL) is running</td>
-<td>Virus scanning software can be used to detect if a system has been compromised by
-computer viruses, as well as to limit their spread to other systems.</td>
-<td>Install McAfee Endpoint Security for Linux antivirus software
-which is provided for DoD systems and uses signatures to search for the
-presence of viruses on the filesystem.</td>
-<td><pre>To verify that McAfee Endpoint Security for Linux is
-running, run the following command:
-$ sudo ps -ef | grep -i mfetpd
-      Is it the case that virus scanning software is not running?
-      </pre></td>
-<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
-</td>
-<td>CCI-001263<br>CCI-000366<br>
-</td>
-<td>SI-4 (5)<br>CM-6 b<br>
 </td>
 </tr>
 <tr>
@@ -4573,8 +4439,11 @@ facility.
 
 The partition size needed to capture a week's worth of audit records is
 based on the activity level of the system and the total storage capacity
-available. In normal circumstances, 10.0 GB of storage space for audit
+available.
+
+In normal circumstances, 10.0 GB of storage space for audit
 records will be sufficient.
+
 
 Determine which partition the audit records are being written to with the
 following command:
@@ -5041,17 +4910,15 @@ Synchronizing internal information system clocks provides uniformity of time sta
 Organizations should consider endpoints that may not have regular access to the authoritative time server (e.g., mobile, teleworking, and tactical endpoints).</td>
 <td>The <code>maxpoll</code> should be configured to
 <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_time_service_set_maxpoll" use="legacy"></xccdf-1.2:sub> in <code>/etc/ntp.conf</code> or
-<code>/etc/chrony.conf</code> to continuously poll time servers. To configure
-<code>maxpoll</code> in <code>/etc/ntp.conf</code> or <code>/etc/chrony.conf</code>
-add the following after each `server`, `pool` or `peer` entry:
+<code>/etc/chrony.conf</code> (or <code>/etc/chrony.d/</code>) to continuously poll time servers. To configure
+<code>maxpoll</code> in <code>/etc/ntp.conf</code> or <code>/etc/chrony.conf</code> (or <code>/etc/chrony.d/</code>)
+add the following after each <code>server</code>, <code>pool</code> or <code>peer</code> entry:
 <pre>maxpoll <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_time_service_set_maxpoll" use="legacy"></xccdf-1.2:sub>
           </pre>
-to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
-should be configured too.
-If no <code>server</code> or <code>pool</code> directives are configured, the rule evaluates
-to pass.</td>
+to <code>server</code> directives. If using chrony, any <code>pool</code> directives
+should be configured too.</td>
 <td><pre>Verify Oracle Linux 8 is securely comparing internal information system clocks at a regular interval with an NTP server with the following command:
-$ sudo grep maxpoll /etc/ntp.conf /etc/chrony.conf
+$ sudo grep maxpoll /etc/ntp.conf /etc/chrony.conf /etc/chrony.d/
 server [ntp.server.name] iburst maxpoll .
       Is it the case that "maxpoll" has not been set to the value of "&lt;sub idref="var_time_service_set_maxpoll" /&gt;", is commented out, or is missing?
       </pre></td>
@@ -5713,10 +5580,10 @@ loss of availability of systems due to unintentional reboot.</td>
               <br>
 To configure the system to ignore the <code>Ctrl-Alt-Del</code> key sequence
 from the Graphical User Interface (GUI) instead of rebooting the system,
-add or set <code>logout</code> to <code>''</code> in
+add or set <code>logout</code> to <code>['']</code> in
 <code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
 <pre>[org/gnome/settings-daemon/plugins/media-keys]
-logout=''</pre>
+logout=['']</pre>
 Once the settings have been added, add a lock to
 <code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent
 user modification. For example:
@@ -8289,7 +8156,7 @@ and virtual paths.
 
 To configure the system to prevent the <code>atm</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/atm.conf</code>:
-<pre>install atm /bin/true</pre>
+<pre>install atm /bin/false</pre>
 
 To configure the system to prevent the <code>atm</code> from being used,
 add the following line to file <code>/etc/modprobe.d/atm.conf</code>:
@@ -8298,7 +8165,7 @@ add the following line to file <code>/etc/modprobe.d/atm.conf</code>:
 <td><pre>
 If the system is configured to prevent the loading of the atm kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the atm kernel module via blacklist keyword.
 
@@ -8329,7 +8196,7 @@ to prevent the loading of the Bluetooth module:
 <td><pre>
 If the system is configured to prevent the loading of the bluetooth kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the bluetooth kernel module via blacklist keyword.
 
@@ -8356,7 +8223,7 @@ is now also used in marine, industrial, and medical applications.
 
 To configure the system to prevent the <code>can</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/can.conf</code>:
-<pre>install can /bin/true</pre>
+<pre>install can /bin/false</pre>
 
 To configure the system to prevent the <code>can</code> from being used,
 add the following line to file <code>/etc/modprobe.d/can.conf</code>:
@@ -8365,7 +8232,7 @@ add the following line to file <code>/etc/modprobe.d/can.conf</code>:
 <td><pre>
 If the system is configured to prevent the loading of the can kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the can kernel module via blacklist keyword.
 
@@ -8389,7 +8256,7 @@ of the server.</td>
 <td>
 To configure the system to prevent the <code>cramfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cramfs.conf</code>:
-<pre>install cramfs /bin/true</pre>
+<pre>install cramfs /bin/false</pre>
 
 To configure the system to prevent the <code>cramfs</code> from being used,
 add the following line to file <code>/etc/modprobe.d/cramfs.conf</code>:
@@ -8404,7 +8271,7 @@ decompress the image.</td>
 <td><pre>
 If the system is configured to prevent the loading of the cramfs kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the cramfs kernel module via blacklist keyword.
 
@@ -8430,7 +8297,7 @@ high-speed real-time communication.
 
 To configure the system to prevent the <code>firewire-core</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/firewire-core.conf</code>:
-<pre>install firewire-core /bin/true</pre>
+<pre>install firewire-core /bin/false</pre>
 
 To configure the system to prevent the <code>firewire-core</code> from being used,
 add the following line to file <code>/etc/modprobe.d/firewire-core.conf</code>:
@@ -8439,7 +8306,7 @@ add the following line to file <code>/etc/modprobe.d/firewire-core.conf</code>:
 <td><pre>
 If the system is configured to prevent the loading of the firewire-core kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the firewire-core kernel module via blacklist keyword.
 
@@ -8467,7 +8334,7 @@ within one connection.
 
 To configure the system to prevent the <code>sctp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
-<pre>install sctp /bin/true</pre>
+<pre>install sctp /bin/false</pre>
 
 To configure the system to prevent the <code>sctp</code> from being used,
 add the following line to file <code>/etc/modprobe.d/sctp.conf</code>:
@@ -8476,7 +8343,7 @@ add the following line to file <code>/etc/modprobe.d/sctp.conf</code>:
 <td><pre>
 If the system is configured to prevent the loading of the sctp kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the sctp kernel module via blacklist keyword.
 
@@ -8503,7 +8370,7 @@ cluster.
 
 To configure the system to prevent the <code>tipc</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/tipc.conf</code>:
-<pre>install tipc /bin/true</pre>
+<pre>install tipc /bin/false</pre>
 
 To configure the system to prevent the <code>tipc</code> from being used,
 add the following line to file <code>/etc/modprobe.d/tipc.conf</code>:
@@ -8512,7 +8379,7 @@ add the following line to file <code>/etc/modprobe.d/tipc.conf</code>:
 <td><pre>
 If the system is configured to prevent the loading of the tipc kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the tipc kernel module via blacklist keyword.
 
@@ -8538,7 +8405,7 @@ to prevent automatic loading of the USB storage driver.
 
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
-<pre>install usb-storage /bin/true</pre>
+<pre>install usb-storage /bin/false</pre>
 
 To configure the system to prevent the <code>usb-storage</code> from being used,
 add the following line to file <code>/etc/modprobe.d/usb-storage.conf</code>:
@@ -8550,7 +8417,7 @@ module, but will not prevent an administrator (or another program) from using th
 <td><pre>
 If the system is configured to prevent the loading of the usb-storage kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the usb-storage kernel module via blacklist keyword.
 
@@ -9821,30 +9688,6 @@ $ sudo yum install mailx</pre>
 <td></td>
 </tr>
 <tr>
-<td>xccdf_org.ssgproject.content_rule_package_mcafeetp_installed</td>
-<td>medium</td>
-<td>Install McAfee Endpoint Security for Linux (ENSL)</td>
-<td>Virus scanning software can be used to detect if a system has been compromised by
-computer viruses, as well as to limit their spread to other systems.</td>
-<td>Install McAfee Endpoint Security for Linux antivirus software
-which is provided for DoD systems and uses signatures to search for the
-presence of viruses on the filesystem.
-
-The <code>McAfeeTP</code> package can be installed with the following command:
-<pre>
-$ sudo yum install McAfeeTP</pre>
-                </td>
-<td><pre>Run the following command to determine if the McAfeeTP package is installed: $ rpm -q McAfeeTP
-      Is it the case that the package is not installed?
-      </pre></td>
-<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
-</td>
-<td>CCI-001263<br>CCI-000366<br>
-</td>
-<td>SI-4 (5)<br>CM-6 b<br>
-</td>
-</tr>
-<tr>
 <td>xccdf_org.ssgproject.content_rule_package_opensc_installed</td>
 <td>medium</td>
 <td>Install the opensc Package For Multifactor Authentication</td>
@@ -10509,12 +10352,17 @@ facility by unauthorized and malicious users.</td>
 cron job status. If <code>cron</code> is not logging to <code>rsyslog</code>, it
 can be implemented by adding the following to the <i>RULES</i> section of
 <code>/etc/rsyslog.conf</code>:
+If the legacy syntax is used:
 <pre>cron.*                                                  /var/log/cron</pre>
+If the modern syntax (RainerScript) is used:
+<pre>cron.* action(type="omfile" file="/var/log/cron")</pre>
           </td>
 <td><pre>Verify that cron is logging to rsyslog,
 run the following command:
 grep -rni "cron\.\*" /etc/rsyslog.*
 cron.*                                                  /var/log/cron
+or
+cron.* action(type="omfile" file="/var/log/cron")
       Is it the case that cron is not logging to rsyslog?
       </pre></td>
 <td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
@@ -10537,7 +10385,13 @@ and remote logging.  Couple this utility with <code>gnutls</code> (which is a se
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <code>rsyslogd</code> to off-load logs the remote system must be authenticated.</td>
+When using <code>rsyslogd</code> to off-load logs the remote system must be authenticated.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$ActionSendStreamDriverAuthMode x509/name</pre>
+Alternatively, use the RainerScript syntax:
+<pre>action(type="omfwd" Target="some.example.com" StreamDriverAuthMode="x509/name")</pre>
+          </td>
 <td><pre>Verify the operating system authenticates the remote logging server for off-loading audit logs with the following command:
 
 $ sudo grep -i '$ActionSendStreamDriverAuthMode' /etc/rsyslog.conf /etc/rsyslog.d/*.conf
@@ -10564,7 +10418,14 @@ and remote logging.  Couple this utility with <code>gnutls</code> (which is a se
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <code>rsyslogd</code> to off-load logs off a encrpytion system must be used.</td>
+When using <code>rsyslogd</code> to off-load logs off a encrpytion system must be used.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$ActionSendStreamDriverMode 1</pre>
+
+Alternatively, use the RainerScript syntax:
+<pre>action(type="omfwd" ... StreamDriverMode="1")</pre>
+          </td>
 <td><pre>Verify the operating system encrypts audit records off-loaded onto a different system
 or media from the system being audited with the following commands:
 
@@ -10594,7 +10455,14 @@ and remote logging.  Couple this utility with <code>gnutls</code> (which is a se
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <code>rsyslogd</code> to off-load logs off an encryption system must be used.</td>
+When using <code>rsyslogd</code> to off-load logs off an encryption system must be used.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$DefaultNetstreamDriver gtls</pre>
+
+Alternatively, use the RainerScript syntax:
+<pre>global(DefaultNetstreamDriver="gtls")</pre>
+          </td>
 <td><pre>Verify the operating system encrypts audit records off-loaded onto a different system
 or media from the system being audited with the following commands:
 
@@ -11229,14 +11097,15 @@ If the service is running, it should return the following: active
 <td>xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_logindefs</td>
 <td>medium</td>
 <td>Set Password Hashing Algorithm in /etc/login.defs</td>
-<td>Passwords need to be protected at all times, and encryption is the standard method for protecting passwords.
-If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised. Passwords
-that are encrypted with a weak algorithm are no more protected than if they are kept in plain text.
+<td>Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 <br>
               <br>
 Using a stronger hashing algorithm makes password cracking attacks more difficult.</td>
-<td>In <code>/etc/login.defs</code>, add or correct the following line to ensure
-the system will use <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm" use="legacy"></xccdf-1.2:sub> as the hashing algorithm:
+<td>In <code>/etc/login.defs</code>, add or update the following line to ensure the system will use
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm" use="legacy"></xccdf-1.2:sub> as the hashing algorithm:
 <pre>ENCRYPT_METHOD <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm" use="legacy"></xccdf-1.2:sub>
               </pre>
             </td>
@@ -11261,37 +11130,37 @@ ENCRYPT_METHOD
 <td>xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_passwordauth</td>
 <td>medium</td>
 <td>Set PAM''s Password Hashing Algorithm - password-auth</td>
-<td>Passwords need to be protected at all times, and encryption is the standard
-method for protecting passwords. If passwords are not encrypted, they can
-be plainly read (i.e., clear text) and easily compromised. Passwords that
-are encrypted with a weak algorithm are no more protected than if they are
-kepy in plain text.
+<td>Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 <br>
               <br>
-This setting ensures user and group account administration utilities are
-configured to store only encrypted representations of passwords.
-Additionally, the <code>crypt_style</code> configuration option ensures the use
-of a strong hashing algorithm that makes password cracking attacks more
-difficult.</td>
-<td>The PAM system service can be configured to only store encrypted
-representations of passwords. In
-<code>/etc/pam.d/password-auth</code>,
-the
-<code>password</code> section of the file controls which PAM modules execute
-during a password change. Set the <code>pam_unix.so</code> module in the
-<code>password</code> section to include the argument <code>sha512</code>, as shown
-below:
+This setting ensures user and group account administration utilities are configured to store
+only encrypted representations of passwords. Additionally, the <code>crypt_style</code>
+configuration option in <code>/etc/libuser.conf</code> ensures the use of a strong hashing
+algorithm that makes password cracking attacks more difficult.</td>
+<td>The PAM system service can be configured to only store encrypted representations of passwords.
+In <code>/etc/pam.d/password-auth</code>, the <code>password</code> section of the file controls which
+PAM modules to execute during a password change.
+
+Set the <code>pam_unix.so</code> module in the <code>password</code> section to include the option
+<code>
+                <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub>
+              </code> and no other hashing
+algorithms as shown below:
 <br>
-              <pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i>
+              <pre>password    sufficient    pam_unix.so <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub>
+                <i>other arguments...</i>
               </pre>
               <br>
-This will help ensure when local users change their passwords, hashes for
-the new passwords will be generated using the SHA-512 algorithm. This is
-the default.</td>
+This will help ensure that new passwords for local users will be stored using the
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub> algorithm.</td>
 <td><pre>Inspect the password section of /etc/pam.d/password-auth
-and ensure that the pam_unix.so module includes the argument
-sha512:
-$ grep sha512 /etc/pam.d/password-auth
+and ensure that the pam_unix.so module is configured to use the argument
+:
+
+$ grep  /etc/pam.d/password-auth
       Is it the case that it does not?
       </pre></td>
 <td>SRG-OS-000073-GPOS-00041<br>SRG-OS-000120-GPOS-00061<br>
@@ -11305,39 +11174,40 @@ $ grep sha512 /etc/pam.d/password-auth
 <td>xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_systemauth</td>
 <td>medium</td>
 <td>Set PAM''s Password Hashing Algorithm</td>
-<td>Passwords need to be protected at all times, and encryption is the standard
-method for protecting passwords. If passwords are not encrypted, they can
-be plainly read (i.e., clear text) and easily compromised. Passwords that
-are encrypted with a weak algorithm are no more protected than if they are
-kepy in plain text.
+<td>Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 <br>
               <br>
-This setting ensures user and group account administration utilities are
-configured to store only encrypted representations of passwords.
-Additionally, the <code>crypt_style</code> configuration option ensures the use
-of a strong hashing algorithm that makes password cracking attacks more
-difficult.</td>
-<td>The PAM system service can be configured to only store encrypted
-representations of passwords. In "/etc/pam.d/system-auth", the
-<code>password</code> section of the file controls which PAM modules execute
-during a password change. Set the <code>pam_unix.so</code> module in the
-<code>password</code> section to include the argument <code>sha512</code>, as shown
-below:
+This setting ensures user and group account administration utilities are configured to store
+only encrypted representations of passwords. Additionally, the <code>crypt_style</code>
+configuration option in <code>/etc/libuser.conf</code> ensures the use of a strong hashing
+algorithm that makes password cracking attacks more difficult.</td>
+<td>The PAM system service can be configured to only store encrypted representations of passwords.
+In "/etc/pam.d/system-auth", the <code>password</code> section of the file controls which
+PAM modules to execute during a password change.
+
+Set the <code>pam_unix.so</code> module in the <code>password</code> section to include the option
+<code>
+                <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub>
+              </code> and no other hashing
+algorithms as shown below:
 <br>
-              <pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i>
+              <pre>password    sufficient    pam_unix.so <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub>
+                <i>other arguments...</i>
               </pre>
               <br>
-This will help ensure when local users change their passwords, hashes for
-the new passwords will be generated using the SHA-512 algorithm. This is
-the default.</td>
+This will help ensure that new passwords for local users will be stored using the
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub> algorithm.</td>
 <td><pre>Inspect the password section of /etc/pam.d/system-auth
-and ensure that the pam_unix.so module  is configured to use the argument
-sha512:
+and ensure that the pam_unix.so module is configured to use the argument
+:
 
-$ sudo grep "^password.*pam_unix\.so.*sha512" /etc/pam.d/system-auth
+$ sudo grep "^password.*pam_unix\.so.*" /etc/pam.d/system-auth
 
-password sufficient pam_unix.so sha512
-      Is it the case that "sha512" is missing, or is commented out?
+password sufficient pam_unix.so 
+      Is it the case that "&lt;sub idref="var_password_hashing_algorithm_pam" /&gt;" is missing, or is commented out?
       </pre></td>
 <td>SRG-OS-000073-GPOS-00041<br>SRG-OS-000120-GPOS-00061<br>
 </td>

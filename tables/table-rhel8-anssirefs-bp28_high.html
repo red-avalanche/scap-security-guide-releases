@@ -2681,7 +2681,7 @@ This is a countermeasure to the Meltdown attack.
   <td>Add noexec Option to /boot</td>
   <td xml:lang="en-US">
 The <tt>noexec</tt> mount option can be used to prevent binaries from being
-executed out of <tt>/boot</tt>. 
+executed out of <tt>/boot</tt>.
 Add the <code>noexec</code> option to the fourth column of
 <tt>/etc/fstab</tt> for the line which controls mounting of
 <code>/boot</code>.
@@ -3559,12 +3559,10 @@ This rule configures the system to lock out accounts after a number of incorrect
 using <tt>pam_faillock.so</tt>.
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
-
 Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
 <tt>deny = &lt;count&gt;</tt>
 Where count should be less than or equal to
 <tt>3</tt> and greater than 0.
-
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -3629,11 +3627,9 @@ Limits are imposed by locking the account.
 This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
 
-
 Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
 <tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
 <tt>interval-in-seconds</tt> is <tt><tt>900</tt></tt> or greater.
-
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -6275,15 +6271,17 @@ is different from account lockout, which is provided by the pam_faillock module.
 Configure the number or rounds for the password hashing algorithm. This can be
 accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
 <br /><br />
-In file <tt>/etc/pam.d/password-auth</tt> append <tt>rounds=<tt>11</tt></tt>
+In file <tt>/etc/pam.d/password-auth</tt> append <tt>rounds=<tt>65536</tt></tt>
 to the <tt>pam_unix.so</tt> entry, as shown below:
-<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<tt>11</tt></pre>
+
+<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<tt>65536</tt></pre>
+
 The system's default number of rounds is 5000.
   </td>
   <td xml:lang="en-US">
 Using a higher number of rounds makes password cracking attacks more difficult.
   </td>
-  <td>var_password_pam_unix_rounds=11</td>
+  <td>var_password_pam_unix_rounds=65536</td>
 </tr>
 <tr>
   <td>R68</td>
@@ -6293,50 +6291,48 @@ Using a higher number of rounds makes password cracking attacks more difficult.
 Configure the number or rounds for the password hashing algorithm. This can be
 accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
 <br /><br />
-In file <tt>/etc/pam.d/system-auth</tt> append <tt>rounds=<tt>11</tt></tt>
+In file <tt>/etc/pam.d/system-auth</tt> append <tt>rounds=<tt>65536</tt></tt>
 to the <tt>pam_unix.so</tt> entry, as shown below:
-<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<tt>11</tt></pre>
+<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<tt>65536</tt></pre>
 The system's default number of rounds is 5000.
   </td>
   <td xml:lang="en-US">
 Using a higher number of rounds makes password cracking attacks more difficult.
   </td>
-  <td>var_password_pam_unix_rounds=11</td>
+  <td>var_password_pam_unix_rounds=65536</td>
 </tr>
 <tr>
   <td>R68</td>
   <td>CCE-80893-1</td>
   <td>Set PAM''s Password Hashing Algorithm</td>
   <td xml:lang="en-US">
-The PAM system service can be configured to only store encrypted
-representations of passwords. In "/etc/pam.d/system-auth", the
-<tt>password</tt> section of the file controls which PAM modules execute
-during a password change. Set the <tt>pam_unix.so</tt> module in the
-<tt>password</tt> section to include the argument <tt>sha512</tt>, as shown
-below:
+The PAM system service can be configured to only store encrypted representations of passwords.
+In "/etc/pam.d/system-auth", the <tt>password</tt> section of the file controls which
+PAM modules to execute during a password change.
+
+Set the <tt>pam_unix.so</tt> module in the <tt>password</tt> section to include the option
+<tt><tt>sha512</tt></tt> and no other hashing
+algorithms as shown below:
 <br />
 
-<pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i></pre>
+<pre>password    sufficient    pam_unix.so <tt>sha512</tt> <i>other arguments...</i></pre>
 
 <br />
-This will help ensure when local users change their passwords, hashes for
-the new passwords will be generated using the SHA-512 algorithm. This is
-the default.
+This will help ensure that new passwords for local users will be stored using the
+<tt>sha512</tt> algorithm.
   </td>
   <td xml:lang="en-US">
-Passwords need to be protected at all times, and encryption is the standard
-method for protecting passwords. If passwords are not encrypted, they can
-be plainly read (i.e., clear text) and easily compromised. Passwords that
-are encrypted with a weak algorithm are no more protected than if they are
-kepy in plain text.
+Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 <br /><br />
-This setting ensures user and group account administration utilities are
-configured to store only encrypted representations of passwords.
-Additionally, the <tt>crypt_style</tt> configuration option ensures the use
-of a strong hashing algorithm that makes password cracking attacks more
-difficult.
+This setting ensures user and group account administration utilities are configured to store
+only encrypted representations of passwords. Additionally, the <tt>crypt_style</tt>
+configuration option in <tt>/etc/libuser.conf</tt> ensures the use of a strong hashing
+algorithm that makes password cracking attacks more difficult.
   </td>
-  <td></td>
+  <td>var_password_hashing_algorithm_pam=sha512</td>
 </tr>
 <tr>
   <td>R69</td>

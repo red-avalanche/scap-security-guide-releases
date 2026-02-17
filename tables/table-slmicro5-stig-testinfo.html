@@ -1,0 +1,1701 @@
+<html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.2" xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" xmlns:cci="http://iase.disa.mil/cci" xmlns:xhtml="http://www.w3.org/1999/xhtml" xmlns:ovalns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ocil2="http://scap.nist.gov/schema/ocil/2.0">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>DISA STIG for SUSE Linux Enterprise Micro (SLEM) 5</title>
+</head>
+<body>
+<br><br><div style="text-align: center; font-size: x-large; font-weight:bold">DISA STIG for SUSE Linux Enterprise Micro (SLEM) 5</div>
+<div style="text-align: center; font-size: normal ">This profile contains configuration checks that align to the
+DISA STIG for SUSE Linux Enterprise Micro (SLEM) 5.</div>
+<br><br><style type="text/css">
+		table
+		{
+			border-collapse:collapse;
+		}
+		table, th, td
+		{
+			border: 2px solid #dcdcdc;
+			border-left: none;
+			border-right: none;
+			vertical-align: top;
+			padding: 2px;
+			font-family: verdana,arial,sans-serif;
+			font-size:11px;
+		}
+		pre { 
+			white-space: pre-wrap;
+			white-space: -moz-pre-wrap !important;
+			word-wrap:break-word; 
+		}
+		table tr:nth-child(2n+2) { background-color: #f4f4f4; }
+		thead
+		{
+			display: table-header-group;
+			font-weight: bold;
+			background-color: #dedede;
+		}
+	</style>
+<table>
+<thead>
+<td>ID</td>
+<td>Severity</td>
+<td>Title</td>
+<td>Discussion (Rationale)</td>
+<td>Fix Text (Description)</td>
+<td>Check Text (OCIL Check)</td>
+<td>SRG Refs</td>
+<td>CCI Refs</td>
+<td>800-53 Refs</td>
+</thead>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_accounts_logon_fail_delay</td>
+<td>medium</td>
+<td>Ensure the Logon Failure Delay is Set Correctly in login.defs</td>
+<td>Increasing the time between a failed authentication attempt and re-prompting to
+enter credentials helps to slow a single-threaded brute force attack.</td>
+<td>To ensure the logon failure delay controlled by <code>/etc/login.defs</code> is set properly,
+add or correct the <code>FAIL_DELAY</code> setting in <code>/etc/login.defs</code> to read as follows:
+<pre>FAIL_DELAY <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_fail_delay" use="legacy"></xccdf-1.2:sub>
+            </pre>
+          </td>
+<td><pre>Verify SUSE Linux Enterprise Micro 5 enforces a delay of at least  seconds between console logon prompts following a failed logon attempt with the following command:
+
+$ sudo grep -i "FAIL_DELAY" /etc/login.defs
+FAIL_DELAY 
+      Is it the case that the value of "FAIL_DELAY" is not set to "&lt;sub idref="var_accounts_fail_delay" /&gt;" or greater, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td>CM-6 b<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_accounts_passwords_pam_faildelay_delay</td>
+<td>medium</td>
+<td>Enforce Delay After Failed Logon Attempts</td>
+<td>Limiting the number of logon attempts over a certain time interval reduces
+the chances that an unauthorized user may gain access to an account.</td>
+<td>To configure the system to introduce a delay after failed logon attempts,
+add or correct the <code>pam_faildelay</code> settings in
+<code>/etc/pam.d/common-auth</code> to make sure its <code>delay</code> parameter
+is at least <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_delay" use="legacy"></xccdf-1.2:sub> or greater. For example:
+<pre>auth required pam_faildelay.so delay=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_delay" use="legacy"></xccdf-1.2:sub>
+              </pre>
+            </td>
+<td><pre>Verify that the SUSE Linux Enterprise Micro 5 operating system enforces a minimum delay betweeen
+logon prompts following a failed logon attempt.
+
+# grep pam_faildelay /etc/pam.d/common-auth
+auth required pam_faildelay.so delay=
+
+If the value of delay is not set to
+ or greater,
+"delay" is commented out, "delay" is missing, or the "pam_faildelay" line is missing
+completely, this is a finding.
+      Is it the case that the value of delay is not set properly or the line is commented or missing?
+      </pre></td>
+<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td>CM-6 b<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_accounts_passwords_pam_tally2_file</td>
+<td>medium</td>
+<td>SLEM 5 must use the default pam_tally2 tally directory.</td>
+<td>By limiting the number of failed logon attempts, the risk of unauthorized
+system access via user password guessing, otherwise known as
+brute-force attacks, is reduced. Limits are imposed by locking the account.</td>
+<td>This rule configures the system to use default pam_tally2 tally directory</td>
+<td><pre>Verify the location of the default tallylog file for the pam_tally2 module,
+with the following command
+$sudo grep -R pam_tally2 /etc/pam.d/login | grep "file=" | grep -v "^#"
+      Is it the case that file= is set to /var/log/tallylog or missing?
+      </pre></td>
+<td>SRG-OS-000021-GPOS-00005<br>
+</td>
+<td>CCI-000044<br>
+</td>
+<td>AC-7 a<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_accounts_passwords_pam_tally2_file_selinux</td>
+<td>medium</td>
+<td>An SELinux Context must be configured for default pam_tally2 file option</td>
+<td>Not having the correct SELinux context on the pam_tally2.so file may lead to
+unauthorized access to the directory.</td>
+<td>The <code>file</code> configuration option in PAM pam_tally2.so module defines where to keep counts.
+Default is /var/log/tallylog. The configured directory must have the correct SELinux context.</td>
+<td><pre>If the system does not have SELinux enabled and enforcing a targeted policy,
+or if the pam_tally2 module is not configured for use, this requirement is not applicable
+
+Check the security context type of the default tally2 directory with the following command:
+
+$ sudo ls -Z /var/log/tallylog
+
+unconfined_u:object_r:faillog_t:s0 /var/log/faillock
+
+If the security context type of the tally directory is not "faillog_t", this is a finding.
+      Is it the case that the security context type of the non-default tally directory is not "faillog_t"?
+      </pre></td>
+<td>SRG-OS-000021-GPOS-00005<br>
+</td>
+<td>CCI-000044<br>
+</td>
+<td>AC-7 a<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_execution_chacl</td>
+<td>medium</td>
+<td>Record Any Attempts to Run chacl</td>
+<td>Without generating audit records that are specific to the security and
+mission needs of the organization, it would be difficult to establish,
+correlate, and investigate the events relating to an incident or identify
+those responsible for one.
+Audit records can be generated from various components within the
+information system (e.g., module or policy filter).</td>
+<td>At a minimum, the audit system should collect any execution attempt
+of the <code>chacl</code> command for all users and root. If the <code>auditd</code>
+daemon is configured to use the <code>augenrules</code> program to read audit rules
+during daemon startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/chacl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F path=/usr/bin/chacl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+          </td>
+<td><pre>Verify that SUSE Linux Enterprise Micro 5 is configured to audit the execution of the "chacl" command with the following command:
+
+$ sudo auditctl -l | grep chacl
+
+-a always,exit -F path=/usr/bin/chacl -F perm=x -F auid&gt;=1000 -F auid!=unset -k perm_mod
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000135<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-3 (1)<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_execution_chcon</td>
+<td>medium</td>
+<td>Record Any Attempts to Run chcon</td>
+<td>Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br>
+            <br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td>At a minimum, the audit system should collect any execution attempt
+of the <code>chcon</code> command for all users and root. If the <code>auditd</code>
+daemon is configured to use the <code>augenrules</code> program to read audit rules
+during daemon startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+          </td>
+<td><pre>Verify that SUSE Linux Enterprise Micro 5 is configured to audit the execution of the "chcon" command with the following command:
+
+$ sudo auditctl -l | grep chcon
+
+-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -k perm_mod
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000135<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-3 (1)<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_execution_chmod</td>
+<td>medium</td>
+<td>Record Any Attempts to Run chmod</td>
+<td>Without generating audit records that are specific to the security and
+mission needs of the organization, it would be difficult to establish,
+correlate, and investigate the events relating to an incident or identify
+those responsible for one.
+
+Audit records can be generated from various components within the
+information system (e.g., module or policy filter).</td>
+<td>At a minimum, the audit system should collect any execution attempt
+of the <code>chmod</code> command for all users and root. If the <code>auditd</code>
+daemon is configured to use the <code>augenrules</code> program to read audit rules
+during daemon startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/chmod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F path=/usr/bin/chmod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+          </td>
+<td><pre>To verify that execution of the command is being audited, run the following command:
+$ sudo grep "path=/usr/bin/chmod" /etc/audit/audit.rules /etc/audit/rules.d/*
+The output should return something similar to:
+-a always,exit -F path=/usr/bin/chmod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged
+      Is it the case that ?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_execution_rm</td>
+<td>medium</td>
+<td>Record Any Attempts to Run rm</td>
+<td>Without generating audit records that are specific to the security and
+mission needs of the organization, it would be difficult to establish,
+correlate, and investigate the events relating to an incident or identify
+those responsible for one.
+
+Audit records can be generated from various components within the
+information system (e.g., module or policy filter).</td>
+<td>At a minimum, the audit system should collect any execution attempt
+of the <code>rm</code> command for all users and root. If the <code>auditd</code>
+daemon is configured to use the <code>augenrules</code> program to read audit rules
+during daemon startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/rm -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F path=/usr/bin/rm -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+          </td>
+<td><pre>To verify that execution of the command is being audited, run the following command:
+$ sudo grep "path=/usr/bin/rm" /etc/audit/audit.rules /etc/audit/rules.d/*
+The output should return something similar to:
+-a always,exit -F path=/usr/bin/rm -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged
+      Is it the case that ?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_execution_semanage</td>
+<td>medium</td>
+<td>Record Any Attempts to Run semanage</td>
+<td>Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br>
+            <br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td>At a minimum, the audit system should collect any execution attempt
+of the <code>semanage</code> command for all users and root. If the <code>auditd</code>
+daemon is configured to use the <code>augenrules</code> program to read audit rules
+during daemon startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+          </td>
+<td><pre>Verify that SUSE Linux Enterprise Micro 5 is configured to audit the execution of the "semanage" command with the following command:
+
+$ sudo auditctl -l | grep semanage
+
+-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-unix-update
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_execution_setfacl</td>
+<td>medium</td>
+<td>Record Any Attempts to Run setfacl</td>
+<td>Without generating audit records that are specific to the security and
+mission needs of the organization, it would be difficult to establish,
+correlate, and investigate the events relating to an incident or identify
+those responsible for one.
+Audit records can be generated from various components within the
+information system (e.g., module or policy filter).</td>
+<td>At a minimum, the audit system should collect any execution attempt
+of the <code>setfacl</code> command for all users and root. If the <code>auditd</code>
+daemon is configured to use the <code>augenrules</code> program to read audit rules
+during daemon startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+          </td>
+<td><pre>Verify that SUSE Linux Enterprise Micro 5 is configured to audit the execution of the "setfacl" command with the following command:
+
+$ sudo auditctl -l | grep setfacl
+
+-a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid&gt;=1000 -F auid!=unset -k perm_mod
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000135<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-3 (1)<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_execution_setfiles</td>
+<td>medium</td>
+<td>Record Any Attempts to Run setfiles</td>
+<td>Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br>
+            <br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td>At a minimum, the audit system should collect any execution attempt
+of the <code>setfiles</code> command for all users and root. If the <code>auditd</code>
+daemon is configured to use the <code>augenrules</code> program to read audit rules
+during daemon startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+          </td>
+<td><pre>Verify that SUSE Linux Enterprise Micro 5 is configured to audit the execution of the "setfiles" command with the following command:
+
+$ sudo auditctl -l | grep setfiles
+
+-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-unix-update
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_execution_setsebool</td>
+<td>medium</td>
+<td>Record Any Attempts to Run setsebool</td>
+<td>Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br>
+            <br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td>At a minimum, the audit system should collect any execution attempt
+of the <code>setsebool</code> command for all users and root. If the <code>auditd</code>
+daemon is configured to use the <code>augenrules</code> program to read audit rules
+during daemon startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+          </td>
+<td><pre>Verify that SUSE Linux Enterprise Micro 5 is configured to audit the execution of the "setsebool" command with the following command:
+
+$ sudo auditctl -l | grep setsebool
+
+-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000135<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-3 (1)<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_privileged_commands_chage</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - chage</td>
+<td>Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br>
+            <br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+          </td>
+<td><pre>Verify that SUSE Linux Enterprise Micro 5 is configured to audit the execution of the "chage" command with the following command:
+
+$ sudo auditctl -l | grep chage
+
+-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-chage
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000135<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-3 (1)<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_privileged_commands_chfn</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - chfn</td>
+<td>Without generating audit records that are specific to the security and
+mission needs of the organization, it would be difficult to establish,
+correlate, and investigate the events relating to an incident or identify
+those responsible for one.
+
+Audit records can be generated from various components within the
+information system (e.g., module or policy filter).</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/chfn -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/chfn -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+          </td>
+<td><pre>To verify that auditing of privileged command use is configured, run the
+following command:
+$ sudo grep chfn /etc/audit/audit.rules /etc/audit/rules.d/*
+It should return a relevant line in the audit rules.
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_privileged_commands_chsh</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - chsh</td>
+<td>Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br>
+            <br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+          </td>
+<td><pre>Verify that SUSE Linux Enterprise Micro 5 is configured to audit the execution of the "chsh" command with the following command:
+
+$ sudo auditctl -l | grep chsh
+
+-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-chsh
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000135<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-3 (1)<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_privileged_commands_crontab</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - crontab</td>
+<td>Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br>
+            <br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+          </td>
+<td><pre>Verify that SUSE Linux Enterprise Micro 5 is configured to audit the execution of the "crontab" command with the following command:
+
+$ sudo auditctl -l | grep crontab
+
+-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-crontab
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000135<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-3 (1)<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_privileged_commands_gpasswd</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - gpasswd</td>
+<td>Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br>
+            <br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+          </td>
+<td><pre>Verify that SUSE Linux Enterprise Micro 5 is configured to audit the execution of the "gpasswd" command with the following command:
+
+$ sudo auditctl -l | grep gpasswd
+
+-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-gpasswd
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000135<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-3 (1)<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_privileged_commands_insmod</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - insmod</td>
+<td>Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br>
+            <br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-w /sbin/insmod -p x -k modules</pre>
+          </td>
+<td><pre>To verify that auditing of privileged command use is configured, run the
+following command:
+
+   sudo auditctl -l | grep -w '/sbin/insmod'
+
+If the system is configured to audit the execution of the module management program "insmod",
+the command will return a line.
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_privileged_commands_kmod</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - kmod</td>
+<td>Without generating audit records that are specific to the security and
+mission needs of the organization, it would be difficult to establish,
+correlate, and investigate the events relating to an incident or identify
+those responsible for one.
+
+Audit records can be generated from various components within the
+information system (e.g., module or policy filter).</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-w /usr/bin/kmod -p x -k modules</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-w /usr/bin/kmod -p x -k modules</pre>
+          </td>
+<td><pre>Verify that SUSE Linux Enterprise Micro 5 is configured to audit the execution of the "kmod" command with the following command:
+
+$ sudo auditctl -l | grep kmod
+
+-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-kmod
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000135<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-3 (1)<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_privileged_commands_modprobe</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - modprobe</td>
+<td>Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br>
+            <br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-w /sbin/modprobe -p x -k modules</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-w /sbin/modprobe -p x -k modules</pre>
+          </td>
+<td><pre>To verify that auditing of privileged command use is configured, run the
+following command:
+
+  sudo auditctl -l | grep -w '/sbin/modprobe'
+  -w /sbin/modprobe -p x -k modules
+
+It should return a relevant line in the audit rules.
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_privileged_commands_newgrp</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - newgrp</td>
+<td>Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br>
+            <br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+          </td>
+<td><pre>Verify that SUSE Linux Enterprise Micro 5 is configured to audit the execution of the "newgrp" command with the following command:
+
+$ sudo auditctl -l | grep newgrp
+
+-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-newgrp
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000169<br>CCI-000135<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-12 a<br>AU-3 (1)<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_privileged_commands_pam_timestamp_check</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - pam_timestamp_check</td>
+<td>Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br>
+            <br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/sbin/pam_timestamp_check
+-F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/sbin/pam_timestamp_check
+-F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+          </td>
+<td><pre></pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000135<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-3 (1)<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_privileged_commands_passwd</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - passwd</td>
+<td>Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br>
+            <br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+          </td>
+<td><pre>Verify that SUSE Linux Enterprise Micro 5 is configured to audit the execution of the "passwd" command with the following command:
+
+$ sudo auditctl -l | grep passwd
+
+-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-passwd
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000135<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-3 (1)<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_privileged_commands_rmmod</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - rmmod</td>
+<td>Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br>
+            <br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-w /sbin/rmmod -p x -k modules</pre>
+          </td>
+<td><pre>To verify that auditing of privileged command use is configured, run the
+following command:
+
+   sudo auditctl -l | grep -w '/sbin/rmmod'
+
+If the system is configured to audit the execution of the module management program "rmmod",
+the command will return a line.
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_privileged_commands_ssh_agent</td>
+<td>medium</td>
+<td>Record Any Attempts to Run ssh-agent</td>
+<td>Without generating audit records that are specific to the security and
+mission needs of the organization, it would be difficult to establish,
+correlate, and investigate the events relating to an incident or identify
+those responsible for one.
+
+Audit records can be generated from various components within the
+information system (e.g., module or policy filter).</td>
+<td>At a minimum, the audit system should collect any execution attempt
+of the <code>ssh-agent</code> command for all users and root. If the <code>auditd</code>
+daemon is configured to use the <code>augenrules</code> program to read audit rules
+during daemon startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-ssh-agent</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-ssh-agent</pre>
+          </td>
+<td><pre>Verify that SUSE Linux Enterprise Micro 5 is configured to audit the execution of the "ssh-agent" command with the following command:
+
+$ sudo auditctl -l | grep ssh-agent
+
+-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-ssh-agent
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000135<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-3 (1)<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_privileged_commands_ssh_keysign</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - ssh-keysign</td>
+<td>Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br>
+            <br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/lib/ssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/lib/ssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+          </td>
+<td><pre>Verify that SUSE Linux Enterprise Micro 5 is configured to audit the execution of the "ssh-keysign" command with the following command:
+
+$ sudo auditctl -l | grep ssh-keysign
+
+-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-ssh-keysign
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000135<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-3 (1)<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_privileged_commands_su</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - su</td>
+<td>Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br>
+            <br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+          </td>
+<td><pre>Verify that SUSE Linux Enterprise Micro 5 is configured to audit the execution of the "su" command with the following command:
+
+$ sudo auditctl -l | grep su
+
+-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-su
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000135<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-3 (1)<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_privileged_commands_sudo</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - sudo</td>
+<td>Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br>
+            <br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+          </td>
+<td><pre>Verify that SUSE Linux Enterprise Micro 5 is configured to audit the execution of the "sudo" command with the following command:
+
+$ sudo auditctl -l | grep sudo
+
+-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-sudo
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000135<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-3 (1)<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_privileged_commands_sudoedit</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - sudoedit</td>
+<td>Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br>
+            <br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+          </td>
+<td><pre>Verify that SUSE Linux Enterprise Micro 5 is configured to audit the execution of the "sudoedit" command with the following command:
+
+$ sudo auditctl -l | grep sudoedit
+
+-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-sudoedit
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000135<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-3 (1)<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_privileged_commands_unix_chkpwd</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - unix_chkpwd</td>
+<td>Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br>
+            <br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+          </td>
+<td><pre>Verify that SUSE Linux Enterprise Micro 5 is configured to audit the execution of the "unix_chkpwd" command with the following command:
+
+$ sudo auditctl -l | grep unix_chkpwd
+
+-a always,exit -F path=/usr/bin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-unix_chkpwd
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000135<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-3 (1)<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_privileged_commands_usermod</td>
+<td>medium</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - usermod</td>
+<td>Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br>
+            <br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+          </td>
+<td><pre>Verify that SUSE Linux Enterprise Micro 5 is configured to audit the execution of the "usermod" command with the following command:
+
+$ sudo auditctl -l | grep usermod
+
+-a always,exit -F path=/usr/bin/usermod -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-usermod
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000037-GPOS-00015<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000130<br>CCI-000135<br>CCI-000169<br>CCI-000172<br>CCI-002884<br>
+</td>
+<td>AU-3<br>AU-3 (1)<br>AU-12 a<br>AU-12 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_usergroup_modification_passwd</td>
+<td>medium</td>
+<td>Record Events that Modify User/Group Information - /etc/passwd</td>
+<td>In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</td>
+<td>If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br>
+          <br>
+          <pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+          <br>
+          <br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br>
+          <br>
+          <pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+        </td>
+<td><pre>Verify SUSE Linux Enterprise Micro 5 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
+
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
+
+-w /etc/passwd -p wa -k identity
+      Is it the case that the command does not return a line, or the line is commented out?
+      </pre></td>
+<td>SRG-OS-000004-GPOS-00004<br>SRG-OS-000037-GPOS-00015<br>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000239-GPOS-00089<br>SRG-OS-000240-GPOS-00090<br>SRG-OS-000241-GPOS-00091<br>SRG-OS-000274-GPOS-00104<br>SRG-OS-000275-GPOS-00105<br>SRG-OS-000276-GPOS-00106<br>SRG-OS-000277-GPOS-00107<br>SRG-OS-000303-GPOS-00120<br>SRG-OS-000304-GPOS-00121<br>SRG-OS-000392-GPOS-00172<br>
+</td>
+<td>CCI-000018<br>CCI-000130<br>CCI-000135<br>CCI-000169<br>CCI-000172<br>CCI-001403<br>CCI-001404<br>CCI-001405<br>CCI-001683<br>CCI-001684<br>CCI-001685<br>CCI-001686<br>CCI-002130<br>CCI-002132<br>CCI-002884<br>
+</td>
+<td>AC-2 (4)<br>AU-3<br>AU-3 (1)<br>AU-12 a<br>AU-12 c<br>AC-2 (4)<br>AC-2 (4)<br>AC-2 (4)<br>AC-2 (4)<br>AC-2 (4)<br>AC-2 (4)<br>AC-2 (4)<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_installed_OS_is_vendor_supported</td>
+<td>high</td>
+<td>The Installed Operating System Is Vendor Supported</td>
+<td>An operating system is considered "supported" if the vendor continues to
+provide security patches for the product.  With an unsupported release, it
+will not be possible to resolve any security issue discovered in the system
+software.</td>
+<td>The installed operating system must be maintained by a vendor.
+
+SUSE Linux Enterprise is supported by SUSE. As the SUSE Linux Enterprise
+vendor, SUSE is responsible for providing security patches.</td>
+<td><pre>To verify that the installed operating system is supported, run
+the following command:
+
+$ grep -i "suse" /etc/os-release
+
+SUSE Linux Enterprise Micro 5
+      Is it the case that the installed operating system is not supported?
+      </pre></td>
+<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td>CM-6 b<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_package_audit-audispd-plugins_installed</td>
+<td>medium</td>
+<td>Ensure the default plugins for the audit dispatcher are Installed</td>
+<td>Information stored in one location is vulnerable to accidental or incidental deletion or alteration. Off-loading is a common process in information systems with limited audit storage capacity.</td>
+<td>The audit-audispd-plugins package should be installed.</td>
+<td><pre>
+      Is it the case that the package is not installed?
+      </pre></td>
+<td>SRG-OS-000342-GPOS-00133<br>SRG-OS-000479-GPOS-00224<br>
+</td>
+<td>CCI-001851<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_package_policycoreutils-python-utils_installed</td>
+<td>medium</td>
+<td>Install policycoreutils-python-utils package</td>
+<td>This package is required to operate and manage an SELinux environment and its policies.
+It provides utilities such as semanage, audit2allow, audit2why, chcat and sandbox.</td>
+<td>The <code>policycoreutils-python-utils</code> package can be installed with the following command:
+<pre>
+$ sudo zypper install policycoreutils-python-utils</pre>
+        </td>
+<td><pre>Run the following command to determine if the policycoreutils-python-utils package is installed: $ rpm -q policycoreutils-python-utils
+      Is it the case that the package is not installed?
+      </pre></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_package_policycoreutils_installed</td>
+<td>low</td>
+<td>Install policycoreutils Package</td>
+<td>Security-enhanced Linux is a feature of the Linux kernel and a number of utilities
+with enhanced security functionality designed to add mandatory access controls to Linux.
+The Security-enhanced Linux kernel contains new architectural components originally
+developed to improve security of the Flask operating system. These architectural components
+provide general support for the enforcement of many kinds of mandatory access control
+policies, including those based on the concepts of Type Enforcement, Role-based Access
+Control, and Multi-level Security.
+
+<code>policycoreutils</code> contains the policy core utilities that are required for
+basic operation of an SELinux-enabled system. These utilities include <code>load_policy</code>
+to load SELinux policies, <code>setfiles</code> to label filesystems, <code>newrole</code> to
+switch roles, and so on.</td>
+<td>The <code>policycoreutils</code> package can be installed with the following command:
+<pre>
+$ sudo zypper install policycoreutils</pre>
+        </td>
+<td><pre>Run the following command to determine if the policycoreutils package is installed: $ rpm -q policycoreutils
+      Is it the case that the policycoreutils package is not installed?
+      </pre></td>
+<td>SRG-OS-000134-GPOS-00068<br>
+</td>
+<td>CCI-001084<br>
+</td>
+<td>SC-3<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_selinux_policytype</td>
+<td>medium</td>
+<td>Configure SELinux Policy</td>
+<td>Setting the SELinux policy to <code>targeted</code> or a more specialized policy
+ensures the system will confine processes that are likely to be
+targeted for exploitation, such as network or system services.
+<br>
+          <br>
+Note: During the development or debugging of SELinux modules, it is common to
+temporarily place non-production systems in <code>permissive</code> mode. In such
+temporary cases, SELinux policies should be developed, and once work
+is completed, the system should be reconfigured to
+<code>
+            <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_selinux_policy_name" use="legacy"></xccdf-1.2:sub>
+          </code>.</td>
+<td>The SELinux <code>targeted</code> policy is appropriate for
+general-purpose desktops and servers, as well as systems in many other roles.
+To configure the system to use this policy, add or correct the following line
+in <code>/etc/selinux/config</code>:
+<pre>SELINUXTYPE=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_selinux_policy_name" use="legacy"></xccdf-1.2:sub>
+          </pre>
+Other policies, such as <code>mls</code>, provide additional security labeling
+and greater confinement but are not compatible with many general-purpose
+use cases.</td>
+<td><pre>Verify the SELINUX on SUSE Linux Enterprise Micro 5 is using the  policy with the following command:
+
+$ sestatus | grep policy
+
+Loaded policy name:             
+      Is it the case that the loaded policy name is not "&lt;sub idref="var_selinux_policy_name" /&gt;"?
+      </pre></td>
+<td>SRG-OS-000312-GPOS-00122<br>SRG-OS-000312-GPOS-00123<br>SRG-OS-000312-GPOS-00124<br>SRG-OS-000445-GPOS-00199<br>
+</td>
+<td>CCI-002165<br>CCI-002696<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_selinux_state</td>
+<td>high</td>
+<td>Ensure SELinux State is Enforcing</td>
+<td>Setting the SELinux state to enforcing ensures SELinux is able to confine
+potentially compromised processes to the security policy, which is designed to
+prevent them from causing damage to the system or further elevating their
+privileges.</td>
+<td>The SELinux state should be set to <code>
+            <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_selinux_state" use="legacy"></xccdf-1.2:sub>
+          </code> at
+system boot time.  In the file <code>/etc/selinux/config</code>, add or correct the
+following line to configure the system to boot into enforcing mode:
+<pre>SELINUX=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_selinux_state" use="legacy"></xccdf-1.2:sub>
+          </pre>
+        </td>
+<td><pre>Ensure that SUSE Linux Enterprise Micro 5 verifies correct operation of security functions.
+
+Check if "SELinux" is active and in "" mode with the following command:
+
+$ sudo getenforce
+
+      Is it the case that SELINUX is not set to enforcing?
+      </pre></td>
+<td>SRG-OS-000134-GPOS-00068<br>SRG-OS-000312-GPOS-00122<br>SRG-OS-000312-GPOS-00123<br>SRG-OS-000312-GPOS-00124<br>SRG-OS-000445-GPOS-00199<br>
+</td>
+<td>CCI-001084<br>CCI-002165<br>CCI-002696<br>
+</td>
+<td>SC-3<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_sshd_disable_empty_passwords</td>
+<td>high</td>
+<td>Disable SSH Access via Empty Passwords</td>
+<td>Configuring this setting for the SSH daemon provides additional assurance
+that remote login via SSH will require a password, even in the event of
+misconfiguration elsewhere.</td>
+<td>Disallow SSH login with empty passwords.
+The default SSH configuration disables logins with empty passwords. The appropriate
+configuration is used if no value is set for <code>PermitEmptyPasswords</code>.
+<br>
+To explicitly disallow SSH login from accounts with empty passwords,
+add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
+<br>
+            <pre>PermitEmptyPasswords no</pre>
+Any accounts with empty passwords should be disabled immediately, and PAM configuration
+should prevent users from being able to assign themselves empty passwords.</td>
+<td><pre>To determine how the SSH daemon's PermitEmptyPasswords option is set, run the following command:
+
+$ sudo grep -i PermitEmptyPasswords /etc/ssh/sshd_config
+
+If a line indicating no is returned, then the required value is set.
+
+      Is it the case that the required value is not set?
+      </pre></td>
+<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>SRG-OS-000106-GPOS-00053<br>
+</td>
+<td>CCI-000366<br>CCI-000766<br>
+</td>
+<td>CM-6 b<br>IA-2 (2)<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_sshd_disable_root_login</td>
+<td>medium</td>
+<td>Disable SSH Root Login</td>
+<td>Even though the communications channel may be encrypted, an additional layer of
+security is gained by extending the policy of not logging directly on as root.
+In addition, logging in with a user-specific account provides individual
+accountability of actions performed on the system and also helps to minimize
+direct attack attempts on root's password.</td>
+<td>The root user should never be allowed to login to a
+system directly over a network.
+To disable root login via SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
+<pre>PermitRootLogin no</pre>
+          </td>
+<td><pre>To determine how the SSH daemon's PermitRootLogin option is set, run the following command:
+
+$ sudo grep -i PermitRootLogin /etc/ssh/sshd_config
+
+If a line indicating no is returned, then the required value is set.
+
+      Is it the case that the required value is not set?
+      </pre></td>
+<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>SRG-OS-000109-GPOS-00056<br>
+</td>
+<td>CCI-000366<br>CCI-000770<br>
+</td>
+<td>CM-6 b<br>IA-2 (5) (b)<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_sshd_disable_user_known_hosts</td>
+<td>medium</td>
+<td>Disable SSH Support for User Known Hosts</td>
+<td>Configuring this setting for the SSH daemon provides additional
+assurance that remote login via SSH will require a password, even
+in the event of misconfiguration elsewhere.</td>
+<td>SSH can allow system users to connect to systems if a cache of the remote
+systems public keys is available.  This should be disabled.
+<br>
+            <br>
+To ensure this behavior is disabled, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
+<pre>IgnoreUserKnownHosts yes</pre>
+          </td>
+<td><pre>To determine how the SSH daemon's IgnoreUserKnownHosts option is set, run the following command:
+
+$ sudo grep -i IgnoreUserKnownHosts /etc/ssh/sshd_config
+
+If a line indicating yes is returned, then the required value is set.
+
+      Is it the case that the required value is not set?
+      </pre></td>
+<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td>CM-6 b<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_sshd_disable_x11_forwarding</td>
+<td>medium</td>
+<td>Disable X11 Forwarding</td>
+<td>Disable X11 forwarding unless there is an operational requirement to use X11
+applications directly. There is a small risk that the remote X11 servers of
+users who are logged in via SSH with X11 forwarding could be compromised by
+other users on the X11 server. Note that even if X11 forwarding is disabled,
+users can always install their own forwarders.</td>
+<td>The X11Forwarding parameter provides the ability to tunnel X11 traffic
+through the connection to enable remote graphic connections.
+SSH has the capability to encrypt remote X11 connections when SSH's
+<code>X11Forwarding</code> option is enabled.
+<br>
+The default SSH configuration disables X11Forwarding. The appropriate
+configuration is used if no value is set for <code>X11Forwarding</code>.
+<br>
+To explicitly disable X11 Forwarding, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
+<pre>X11Forwarding no</pre>
+          </td>
+<td><pre>To determine how the SSH daemon's X11Forwarding option is set, run the following command:
+
+$ sudo grep -i X11Forwarding /etc/ssh/sshd_config
+
+If a line indicating no is returned, then the required value is set.
+
+      Is it the case that the required value is not set?
+      </pre></td>
+<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td>CM-6 b<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_sshd_do_not_permit_user_env</td>
+<td>medium</td>
+<td>Do Not Allow SSH Environment Options</td>
+<td>SSH environment options potentially allow users to bypass
+access restriction in some configurations.</td>
+<td>Ensure that users are not able to override environment variables of the SSH daemon.
+<br>
+The default SSH configuration disables environment processing. The appropriate
+configuration is used if no value is set for <code>PermitUserEnvironment</code>.
+<br>
+To explicitly disable Environment options, add or correct the following
+
+
+<code>/etc/ssh/sshd_config</code>:
+
+<pre>PermitUserEnvironment no</pre>
+          </td>
+<td><pre>To determine how the SSH daemon's PermitUserEnvironment option is set, run the following command:
+
+$ sudo grep -i PermitUserEnvironment /etc/ssh/sshd_config
+
+If a line indicating no is returned, then the required value is set.
+
+      Is it the case that the required value is not set?
+      </pre></td>
+<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td>CM-6 b<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_sshd_enable_strictmodes</td>
+<td>medium</td>
+<td>Enable Use of Strict Mode Checking</td>
+<td>If other users have access to modify user-specific SSH configuration files, they
+may be able to log into the system as another user.</td>
+<td>SSHs <code>StrictModes</code> option checks file and ownership permissions in
+the user's home directory <code>.ssh</code> folder before accepting login. If world-
+writable permissions are found, logon is rejected.
+<br>
+The default SSH configuration has <code>StrictModes</code> enabled. The appropriate
+configuration is used if no value is set for <code>StrictModes</code>.
+<br>
+To explicitly enable <code>StrictModes</code> in SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
+<pre>StrictModes yes</pre>
+          </td>
+<td><pre>To determine how the SSH daemon's StrictModes option is set, run the following command:
+
+$ sudo grep -i StrictModes /etc/ssh/sshd_config
+
+If a line indicating yes is returned, then the required value is set.
+
+      Is it the case that the required value is not set?
+      </pre></td>
+<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td>CM-6 b<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_sshd_enable_warning_banner</td>
+<td>medium</td>
+<td>Enable SSH Warning Banner</td>
+<td>The warning message reinforces policy awareness during the logon process and
+facilitates possible legal action against attackers. Alternatively, systems
+whose ownership should not be obvious should ensure usage of a banner that does
+not provide easy attribution.</td>
+<td>To enable the warning banner and ensure it is consistent
+across the system, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
+<pre>Banner /etc/issue</pre>
+Another section contains information on how to create an
+appropriate system-wide warning banner.</td>
+<td><pre>To determine how the SSH daemon's Banner option is set, run the following command:
+
+$ sudo grep -i Banner /etc/ssh/sshd_config
+
+If a line indicating /etc/issue is returned, then the required value is set.
+
+      Is it the case that the required value is not set?
+      </pre></td>
+<td>SRG-OS-000023-GPOS-00006<br>SRG-OS-000024-GPOS-00007<br>SRG-OS-000228-GPOS-00088<br>SRG-OS-000228-GPOS-00088<br>SRG-OS-000228-GPOS-00088<br>SRG-OS-000228-GPOS-00088<br>SRG-OS-000228-GPOS-00088<br>
+</td>
+<td>CCI-000048<br>CCI-000050<br>CCI-001384<br>CCI-001385<br>CCI-001386<br>CCI-001387<br>CCI-001388<br>
+</td>
+<td>AC-8 a<br>AC-8 b<br>AC-8 c<br>AC-8 c<br>AC-8 c<br>AC-8 c<br>AC-8 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_sshd_print_last_log</td>
+<td>medium</td>
+<td>Enable SSH Print Last Log</td>
+<td>Providing users feedback on when account accesses last occurred facilitates user
+recognition and reporting of unauthorized account use.</td>
+<td>Ensure that SSH will display the date and time of the last successful account logon.
+<br>
+The default SSH configuration enables print of the date and time of the last login.
+The appropriate configuration is used if no value is set for <code>PrintLastLog</code>.
+<br>
+To explicitly enable LastLog in SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
+<pre>PrintLastLog yes</pre>
+          </td>
+<td><pre>To determine how the SSH daemon's PrintLastLog option is set, run the following command:
+
+$ sudo grep -i PrintLastLog /etc/ssh/sshd_config
+
+If a line indicating yes is returned, then the required value is set.
+
+      Is it the case that the required value is not set?
+      </pre></td>
+<td></td>
+<td>CCI-000052<br>
+</td>
+<td>AC-9<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_sshd_set_loglevel_verbose</td>
+<td>medium</td>
+<td>Set SSH Daemon LogLevel to VERBOSE</td>
+<td>SSH provides several logging levels with varying amounts of verbosity. <code>DEBUG</code> is specifically
+not recommended other than strictly for debugging SSH communications since it provides
+so much data that it is difficult to identify important security information. <code>INFO</code> or
+<code>VERBOSE</code> level is the basic level that only records login activity of SSH users. In many
+situations, such as Incident Response, it is important to determine when a particular user was active
+on a system. The logout record can eliminate those users who disconnected, which helps narrow the
+field.</td>
+<td>The <code>VERBOSE</code> parameter configures the SSH daemon to record login and logout activity.
+To specify the log level in
+SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
+<pre>LogLevel VERBOSE</pre>
+          </td>
+<td><pre>To determine how the SSH daemon's LogLevel option is set, run the following command:
+
+$ sudo grep -i LogLevel /etc/ssh/sshd_config
+
+If a line indicating VERBOSE is returned, then the required value is set.
+
+      Is it the case that the required value is not set?
+      </pre></td>
+<td>SRG-OS-000032-GPOS-00013<br>
+</td>
+<td>CCI-000067<br>
+</td>
+<td>AC-17 (1)<br>
+</td>
+</tr>
+</table>
+</body>
+</html>

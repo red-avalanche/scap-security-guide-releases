@@ -866,19 +866,16 @@ the account.</td>
 using <code>pam_faillock.so</code>.
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
-
 Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
 <code>deny = &lt;count&gt;</code>
 Where count should be less than or equal to
 <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_deny" use="legacy"></xccdf-1.2:sub> and greater than 0.
-
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
 depending on the OS version.</td>
 <td><pre>Verify Oracle Linux 7 is configured to lock an account after 
 unsuccessful logon attempts with the command:
-
 
 $ grep 'deny =' /etc/security/faillock.conf
 deny = .
@@ -908,7 +905,6 @@ recommended to use the appropriate tools, such as <code>authselect</code> or <co
 depending on the OS version.</td>
 <td><pre>Verify Oracle Linux 7 is configured to lock the root account after 
 unsuccessful logon attempts with the command:
-
 
 $ grep even_deny_root /etc/security/faillock.conf
 even_deny_root
@@ -965,13 +961,11 @@ Limits are imposed by locking the account.</td>
 <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <code>pam_faillock.so</code>.
 
-
 Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
 <code>unlock_time=&lt;interval-in-seconds&gt;</code> where
 <code>interval-in-seconds</code> is <code>
                 <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_unlock_time" use="legacy"></xccdf-1.2:sub>
               </code> or greater.
-
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -983,7 +977,6 @@ to unlock a user. This should be done using the <code>faillock</code> tool.</td>
 <td><pre>Verify Oracle Linux 7 is configured to lock an account until released by an administrator
 after  unsuccessful logon
 attempts with the command:
-
 
 $ grep 'unlock_time =' /etc/security/faillock.conf
 unlock_time = 
@@ -4402,17 +4395,15 @@ Synchronizing internal information system clocks provides uniformity of time sta
 Organizations should consider endpoints that may not have regular access to the authoritative time server (e.g., mobile, teleworking, and tactical endpoints).</td>
 <td>The <code>maxpoll</code> should be configured to
 <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_time_service_set_maxpoll" use="legacy"></xccdf-1.2:sub> in <code>/etc/ntp.conf</code> or
-<code>/etc/chrony.conf</code> to continuously poll time servers. To configure
-<code>maxpoll</code> in <code>/etc/ntp.conf</code> or <code>/etc/chrony.conf</code>
-add the following after each `server`, `pool` or `peer` entry:
+<code>/etc/chrony.conf</code> (or <code>/etc/chrony.d/</code>) to continuously poll time servers. To configure
+<code>maxpoll</code> in <code>/etc/ntp.conf</code> or <code>/etc/chrony.conf</code> (or <code>/etc/chrony.d/</code>)
+add the following after each <code>server</code>, <code>pool</code> or <code>peer</code> entry:
 <pre>maxpoll <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_time_service_set_maxpoll" use="legacy"></xccdf-1.2:sub>
           </pre>
-to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
-should be configured too.
-If no <code>server</code> or <code>pool</code> directives are configured, the rule evaluates
-to pass.</td>
+to <code>server</code> directives. If using chrony, any <code>pool</code> directives
+should be configured too.</td>
 <td><pre>Verify Oracle Linux 7 is securely comparing internal information system clocks at a regular interval with an NTP server with the following command:
-$ sudo grep maxpoll /etc/ntp.conf /etc/chrony.conf
+$ sudo grep maxpoll /etc/ntp.conf /etc/chrony.conf /etc/chrony.d/
 server [ntp.server.name] iburst maxpoll .
       Is it the case that "maxpoll" has not been set to the value of "&lt;sub idref="var_time_service_set_maxpoll" /&gt;", is commented out, or is missing?
       </pre></td>
@@ -4681,10 +4672,10 @@ loss of availability of systems due to unintentional reboot.</td>
               <br>
 To configure the system to ignore the <code>Ctrl-Alt-Del</code> key sequence
 from the Graphical User Interface (GUI) instead of rebooting the system,
-add or set <code>logout</code> to <code>''</code> in
+add or set <code>logout</code> to <code>['']</code> in
 <code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
 <pre>[org/gnome/settings-daemon/plugins/media-keys]
-logout=''</pre>
+logout=['']</pre>
 Once the settings have been added, add a lock to
 <code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent
 user modification. For example:
@@ -6047,7 +6038,7 @@ streaming media and telephony.
 
 To configure the system to prevent the <code>dccp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/dccp.conf</code>:
-<pre>install dccp /bin/true</pre>
+<pre>install dccp /bin/false</pre>
 
 To configure the system to prevent the <code>dccp</code> from being used,
 add the following line to file <code>/etc/modprobe.d/dccp.conf</code>:
@@ -6056,7 +6047,7 @@ add the following line to file <code>/etc/modprobe.d/dccp.conf</code>:
 <td><pre>
 If the system is configured to prevent the loading of the dccp kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the dccp kernel module via blacklist keyword.
 
@@ -6081,7 +6072,7 @@ to prevent automatic loading of the USB storage driver.
 
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
-<pre>install usb-storage /bin/true</pre>
+<pre>install usb-storage /bin/false</pre>
 
 To configure the system to prevent the <code>usb-storage</code> from being used,
 add the following line to file <code>/etc/modprobe.d/usb-storage.conf</code>:
@@ -6093,7 +6084,7 @@ module, but will not prevent an administrator (or another program) from using th
 <td><pre>
 If the system is configured to prevent the loading of the usb-storage kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the usb-storage kernel module via blacklist keyword.
 
@@ -7263,12 +7254,17 @@ facility by unauthorized and malicious users.</td>
 cron job status. If <code>cron</code> is not logging to <code>rsyslog</code>, it
 can be implemented by adding the following to the <i>RULES</i> section of
 <code>/etc/rsyslog.conf</code>:
+If the legacy syntax is used:
 <pre>cron.*                                                  /var/log/cron</pre>
+If the modern syntax (RainerScript) is used:
+<pre>cron.* action(type="omfile" file="/var/log/cron")</pre>
           </td>
 <td><pre>Verify that cron is logging to rsyslog,
 run the following command:
 grep -rni "cron\.\*" /etc/rsyslog.*
 cron.*                                                  /var/log/cron
+or
+cron.* action(type="omfile" file="/var/log/cron")
       Is it the case that cron is not logging to rsyslog?
       </pre></td>
 <td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
@@ -7893,22 +7889,21 @@ If the service is running, it should return the following: active
 <td>xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_libuserconf</td>
 <td>medium</td>
 <td>Set Password Hashing Algorithm in /etc/libuser.conf</td>
-<td>Passwords need to be protected at all times, and encryption is the standard
-method for protecting passwords. If passwords are not encrypted, they can
-be plainly read (i.e., clear text) and easily compromised. Passwords that
-are encrypted with a weak algorithm are no more protected than if they are
-kepy in plain text.
+<td>Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 <br>
               <br>
-This setting ensures user and group account administration utilities are
-configured to store only encrypted representations of passwords.
-Additionally, the <code>crypt_style</code> configuration option ensures the use
-of a strong hashing algorithm that makes password cracking attacks more
-difficult.</td>
-<td>In <code>/etc/libuser.conf</code>, add or correct the following line in its
-<code>[defaults]</code> section to ensure the system will use the SHA-512
+This setting ensures user and group account administration utilities are configured to store
+only encrypted representations of passwords. Additionally, the <code>crypt_style</code>
+configuration option in <code>/etc/libuser.conf</code> ensures the use of a strong hashing
+algorithm that makes password cracking attacks more difficult.</td>
+<td>In <code>/etc/libuser.conf</code>, add or correct the following line in its <code>[defaults]</code>
+section to ensure the system will use the <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub>
 algorithm for password hashing:
-<pre>crypt_style = sha512</pre>
+<pre>crypt_style = <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub>
+              </pre>
             </td>
 <td><pre>
 Verify that the libuser is set to encrypt password with a FIPS 140-2 approved cryptographic hashing algorithm.
@@ -7917,7 +7912,7 @@ Check the hashing algorithm that is being used to hash passwords with the follow
 
 $ sudo grep -i crypt_style /etc/libuser.conf
 
-crypt_style = sha512
+crypt_style = 
       Is it the case that crypt_style is not set to sha512?
       </pre></td>
 <td>SRG-OS-000073-GPOS-00041<br>
@@ -7931,14 +7926,15 @@ crypt_style = sha512
 <td>xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_logindefs</td>
 <td>medium</td>
 <td>Set Password Hashing Algorithm in /etc/login.defs</td>
-<td>Passwords need to be protected at all times, and encryption is the standard method for protecting passwords.
-If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised. Passwords
-that are encrypted with a weak algorithm are no more protected than if they are kept in plain text.
+<td>Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 <br>
               <br>
 Using a stronger hashing algorithm makes password cracking attacks more difficult.</td>
-<td>In <code>/etc/login.defs</code>, add or correct the following line to ensure
-the system will use <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm" use="legacy"></xccdf-1.2:sub> as the hashing algorithm:
+<td>In <code>/etc/login.defs</code>, add or update the following line to ensure the system will use
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm" use="legacy"></xccdf-1.2:sub> as the hashing algorithm:
 <pre>ENCRYPT_METHOD <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm" use="legacy"></xccdf-1.2:sub>
               </pre>
             </td>
@@ -7963,37 +7959,37 @@ ENCRYPT_METHOD
 <td>xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_passwordauth</td>
 <td>medium</td>
 <td>Set PAM''s Password Hashing Algorithm - password-auth</td>
-<td>Passwords need to be protected at all times, and encryption is the standard
-method for protecting passwords. If passwords are not encrypted, they can
-be plainly read (i.e., clear text) and easily compromised. Passwords that
-are encrypted with a weak algorithm are no more protected than if they are
-kepy in plain text.
+<td>Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 <br>
               <br>
-This setting ensures user and group account administration utilities are
-configured to store only encrypted representations of passwords.
-Additionally, the <code>crypt_style</code> configuration option ensures the use
-of a strong hashing algorithm that makes password cracking attacks more
-difficult.</td>
-<td>The PAM system service can be configured to only store encrypted
-representations of passwords. In
-<code>/etc/pam.d/password-auth</code>,
-the
-<code>password</code> section of the file controls which PAM modules execute
-during a password change. Set the <code>pam_unix.so</code> module in the
-<code>password</code> section to include the argument <code>sha512</code>, as shown
-below:
+This setting ensures user and group account administration utilities are configured to store
+only encrypted representations of passwords. Additionally, the <code>crypt_style</code>
+configuration option in <code>/etc/libuser.conf</code> ensures the use of a strong hashing
+algorithm that makes password cracking attacks more difficult.</td>
+<td>The PAM system service can be configured to only store encrypted representations of passwords.
+In <code>/etc/pam.d/password-auth</code>, the <code>password</code> section of the file controls which
+PAM modules to execute during a password change.
+
+Set the <code>pam_unix.so</code> module in the <code>password</code> section to include the option
+<code>
+                <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub>
+              </code> and no other hashing
+algorithms as shown below:
 <br>
-              <pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i>
+              <pre>password    sufficient    pam_unix.so <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub>
+                <i>other arguments...</i>
               </pre>
               <br>
-This will help ensure when local users change their passwords, hashes for
-the new passwords will be generated using the SHA-512 algorithm. This is
-the default.</td>
+This will help ensure that new passwords for local users will be stored using the
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub> algorithm.</td>
 <td><pre>Inspect the password section of /etc/pam.d/password-auth
-and ensure that the pam_unix.so module includes the argument
-sha512:
-$ grep sha512 /etc/pam.d/password-auth
+and ensure that the pam_unix.so module is configured to use the argument
+:
+
+$ grep  /etc/pam.d/password-auth
       Is it the case that it does not?
       </pre></td>
 <td>SRG-OS-000073-GPOS-00041<br>SRG-OS-000120-GPOS-00061<br>
@@ -8007,39 +8003,40 @@ $ grep sha512 /etc/pam.d/password-auth
 <td>xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_systemauth</td>
 <td>medium</td>
 <td>Set PAM''s Password Hashing Algorithm</td>
-<td>Passwords need to be protected at all times, and encryption is the standard
-method for protecting passwords. If passwords are not encrypted, they can
-be plainly read (i.e., clear text) and easily compromised. Passwords that
-are encrypted with a weak algorithm are no more protected than if they are
-kepy in plain text.
+<td>Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 <br>
               <br>
-This setting ensures user and group account administration utilities are
-configured to store only encrypted representations of passwords.
-Additionally, the <code>crypt_style</code> configuration option ensures the use
-of a strong hashing algorithm that makes password cracking attacks more
-difficult.</td>
-<td>The PAM system service can be configured to only store encrypted
-representations of passwords. In "/etc/pam.d/system-auth", the
-<code>password</code> section of the file controls which PAM modules execute
-during a password change. Set the <code>pam_unix.so</code> module in the
-<code>password</code> section to include the argument <code>sha512</code>, as shown
-below:
+This setting ensures user and group account administration utilities are configured to store
+only encrypted representations of passwords. Additionally, the <code>crypt_style</code>
+configuration option in <code>/etc/libuser.conf</code> ensures the use of a strong hashing
+algorithm that makes password cracking attacks more difficult.</td>
+<td>The PAM system service can be configured to only store encrypted representations of passwords.
+In "/etc/pam.d/system-auth", the <code>password</code> section of the file controls which
+PAM modules to execute during a password change.
+
+Set the <code>pam_unix.so</code> module in the <code>password</code> section to include the option
+<code>
+                <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub>
+              </code> and no other hashing
+algorithms as shown below:
 <br>
-              <pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i>
+              <pre>password    sufficient    pam_unix.so <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub>
+                <i>other arguments...</i>
               </pre>
               <br>
-This will help ensure when local users change their passwords, hashes for
-the new passwords will be generated using the SHA-512 algorithm. This is
-the default.</td>
+This will help ensure that new passwords for local users will be stored using the
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub> algorithm.</td>
 <td><pre>Inspect the password section of /etc/pam.d/system-auth
-and ensure that the pam_unix.so module  is configured to use the argument
-sha512:
+and ensure that the pam_unix.so module is configured to use the argument
+:
 
-$ sudo grep "^password.*pam_unix\.so.*sha512" /etc/pam.d/system-auth
+$ sudo grep "^password.*pam_unix\.so.*" /etc/pam.d/system-auth
 
-password sufficient pam_unix.so sha512
-      Is it the case that "sha512" is missing, or is commented out?
+password sufficient pam_unix.so 
+      Is it the case that "&lt;sub idref="var_password_hashing_algorithm_pam" /&gt;" is missing, or is commented out?
       </pre></td>
 <td>SRG-OS-000073-GPOS-00041<br>SRG-OS-000120-GPOS-00061<br>
 </td>

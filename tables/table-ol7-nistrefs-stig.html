@@ -2703,39 +2703,38 @@ take corrective action prior to any disruption.
   <td>N/A</td>
   <td>Set Password Hashing Algorithm in /etc/libuser.conf</td>
   <td xml:lang="en-US">
-In <tt>/etc/libuser.conf</tt>, add or correct the following line in its
-<tt>[defaults]</tt> section to ensure the system will use the SHA-512
+In <tt>/etc/libuser.conf</tt>, add or correct the following line in its <tt>[defaults]</tt>
+section to ensure the system will use the <tt>sha512</tt>
 algorithm for password hashing:
-<pre>crypt_style = sha512</pre>
+<pre>crypt_style = <tt>sha512</tt></pre>
   </td>
   <td xml:lang="en-US">
-Passwords need to be protected at all times, and encryption is the standard
-method for protecting passwords. If passwords are not encrypted, they can
-be plainly read (i.e., clear text) and easily compromised. Passwords that
-are encrypted with a weak algorithm are no more protected than if they are
-kepy in plain text.
+Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 <br /><br />
-This setting ensures user and group account administration utilities are
-configured to store only encrypted representations of passwords.
-Additionally, the <tt>crypt_style</tt> configuration option ensures the use
-of a strong hashing algorithm that makes password cracking attacks more
-difficult.
+This setting ensures user and group account administration utilities are configured to store
+only encrypted representations of passwords. Additionally, the <tt>crypt_style</tt>
+configuration option in <tt>/etc/libuser.conf</tt> ensures the use of a strong hashing
+algorithm that makes password cracking attacks more difficult.
   </td>
-  <td></td>
+  <td>var_password_hashing_algorithm_pam=sha512</td>
 </tr>
 <tr>
   <td>IA-5(c)<br/>IA-5(1)(c)<br/>CM-6(a)</td>
   <td>N/A</td>
   <td>Set Password Hashing Algorithm in /etc/login.defs</td>
   <td xml:lang="en-US">
-In <tt>/etc/login.defs</tt>, add or correct the following line to ensure
-the system will use <tt>SHA512</tt> as the hashing algorithm:
+In <tt>/etc/login.defs</tt>, add or update the following line to ensure the system will use
+<tt>SHA512</tt> as the hashing algorithm:
 <pre>ENCRYPT_METHOD <tt>SHA512</tt></pre>
   </td>
   <td xml:lang="en-US">
-Passwords need to be protected at all times, and encryption is the standard method for protecting passwords.
-If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised. Passwords
-that are encrypted with a weak algorithm are no more protected than if they are kept in plain text.
+Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 <br /><br />
 Using a stronger hashing algorithm makes password cracking attacks more difficult.
   </td>
@@ -2746,70 +2745,64 @@ Using a stronger hashing algorithm makes password cracking attacks more difficul
   <td>N/A</td>
   <td>Set PAM''s Password Hashing Algorithm - password-auth</td>
   <td xml:lang="en-US">
-The PAM system service can be configured to only store encrypted
-representations of passwords. In
-<tt>/etc/pam.d/password-auth</tt>,
-the
-<tt>password</tt> section of the file controls which PAM modules execute
-during a password change. Set the <tt>pam_unix.so</tt> module in the
-<tt>password</tt> section to include the argument <tt>sha512</tt>, as shown
-below:
+The PAM system service can be configured to only store encrypted representations of passwords.
+In <tt>/etc/pam.d/password-auth</tt>, the <tt>password</tt> section of the file controls which
+PAM modules to execute during a password change.
+
+Set the <tt>pam_unix.so</tt> module in the <tt>password</tt> section to include the option
+<tt><tt>sha512</tt></tt> and no other hashing
+algorithms as shown below:
 <br />
-<pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i></pre>
+<pre>password    sufficient    pam_unix.so <tt>sha512</tt> <i>other arguments...</i></pre>
 <br />
-This will help ensure when local users change their passwords, hashes for
-the new passwords will be generated using the SHA-512 algorithm. This is
-the default.
+This will help ensure that new passwords for local users will be stored using the
+<tt>sha512</tt> algorithm.
   </td>
   <td xml:lang="en-US">
-Passwords need to be protected at all times, and encryption is the standard
-method for protecting passwords. If passwords are not encrypted, they can
-be plainly read (i.e., clear text) and easily compromised. Passwords that
-are encrypted with a weak algorithm are no more protected than if they are
-kepy in plain text.
+Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 <br /><br />
-This setting ensures user and group account administration utilities are
-configured to store only encrypted representations of passwords.
-Additionally, the <tt>crypt_style</tt> configuration option ensures the use
-of a strong hashing algorithm that makes password cracking attacks more
-difficult.
+This setting ensures user and group account administration utilities are configured to store
+only encrypted representations of passwords. Additionally, the <tt>crypt_style</tt>
+configuration option in <tt>/etc/libuser.conf</tt> ensures the use of a strong hashing
+algorithm that makes password cracking attacks more difficult.
   </td>
-  <td></td>
+  <td>var_password_hashing_algorithm_pam=sha512</td>
 </tr>
 <tr>
   <td>IA-5(c)<br/>IA-5(1)(c)<br/>CM-6(a)</td>
   <td>N/A</td>
   <td>Set PAM''s Password Hashing Algorithm</td>
   <td xml:lang="en-US">
-The PAM system service can be configured to only store encrypted
-representations of passwords. In "/etc/pam.d/system-auth", the
-<tt>password</tt> section of the file controls which PAM modules execute
-during a password change. Set the <tt>pam_unix.so</tt> module in the
-<tt>password</tt> section to include the argument <tt>sha512</tt>, as shown
-below:
+The PAM system service can be configured to only store encrypted representations of passwords.
+In "/etc/pam.d/system-auth", the <tt>password</tt> section of the file controls which
+PAM modules to execute during a password change.
+
+Set the <tt>pam_unix.so</tt> module in the <tt>password</tt> section to include the option
+<tt><tt>sha512</tt></tt> and no other hashing
+algorithms as shown below:
 <br />
 
-<pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i></pre>
+<pre>password    sufficient    pam_unix.so <tt>sha512</tt> <i>other arguments...</i></pre>
 
 <br />
-This will help ensure when local users change their passwords, hashes for
-the new passwords will be generated using the SHA-512 algorithm. This is
-the default.
+This will help ensure that new passwords for local users will be stored using the
+<tt>sha512</tt> algorithm.
   </td>
   <td xml:lang="en-US">
-Passwords need to be protected at all times, and encryption is the standard
-method for protecting passwords. If passwords are not encrypted, they can
-be plainly read (i.e., clear text) and easily compromised. Passwords that
-are encrypted with a weak algorithm are no more protected than if they are
-kepy in plain text.
+Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 <br /><br />
-This setting ensures user and group account administration utilities are
-configured to store only encrypted representations of passwords.
-Additionally, the <tt>crypt_style</tt> configuration option ensures the use
-of a strong hashing algorithm that makes password cracking attacks more
-difficult.
+This setting ensures user and group account administration utilities are configured to store
+only encrypted representations of passwords. Additionally, the <tt>crypt_style</tt>
+configuration option in <tt>/etc/libuser.conf</tt> ensures the use of a strong hashing
+algorithm that makes password cracking attacks more difficult.
   </td>
-  <td></td>
+  <td>var_password_hashing_algorithm_pam=sha512</td>
 </tr>
 <tr>
   <td>IA-5(e)</td>
@@ -3046,12 +3039,10 @@ This rule configures the system to lock out accounts after a number of incorrect
 using <tt>pam_faillock.so</tt>.
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
-
 Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
 <tt>deny = &lt;count&gt;</tt>
 Where count should be less than or equal to
 <tt>3</tt> and greater than 0.
-
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -3116,11 +3107,9 @@ Limits are imposed by locking the account.
 This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
 
-
 Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
 <tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
 <tt>interval-in-seconds</tt> is <tt><tt>never</tt></tt> or greater.
-
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -3218,14 +3207,12 @@ to distinguish.
   <td xml:lang="en-US">
 The <tt>maxpoll</tt> should be configured to
 <tt>18_hours</tt> in <tt>/etc/ntp.conf</tt> or
-<tt>/etc/chrony.conf</tt> to continuously poll time servers. To configure
-<tt>maxpoll</tt> in <tt>/etc/ntp.conf</tt> or <tt>/etc/chrony.conf</tt>
-add the following after each `server`, `pool` or `peer` entry:
+<tt>/etc/chrony.conf</tt> (or <tt>/etc/chrony.d/</tt>) to continuously poll time servers. To configure
+<tt>maxpoll</tt> in <tt>/etc/ntp.conf</tt> or <tt>/etc/chrony.conf</tt> (or <tt>/etc/chrony.d/</tt>)
+add the following after each <tt>server</tt>, <tt>pool</tt> or <tt>peer</tt> entry:
 <pre>maxpoll <tt>18_hours</tt></pre>
-to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
+to <tt>server</tt> directives. If using chrony, any <tt>pool</tt> directives
 should be configured too.
-If no <tt>server</tt> or <tt>pool</tt> directives are configured, the rule evaluates
-to pass.
   </td>
   <td xml:lang="en-US">
 Inaccurate time stamps make it more difficult to correlate events and can lead to an inaccurate analysis. Determining the correct time a particular event occurred on a system is critical when conducting forensic analysis and investigating system events. Sources outside the configured acceptable allowance (drift) may be inaccurate.
@@ -3244,10 +3231,10 @@ By default, <tt>GNOME</tt> will reboot the system if the
 <br /><br />
 To configure the system to ignore the <tt>Ctrl-Alt-Del</tt> key sequence
 from the Graphical User Interface (GUI) instead of rebooting the system,
-add or set <tt>logout</tt> to <tt>''</tt> in
+add or set <tt>logout</tt> to <tt>['']</tt> in
 <tt>/etc/dconf/db/local.d/00-security-settings</tt>. For example:
 <pre>[org/gnome/settings-daemon/plugins/media-keys]
-logout=''</pre>
+logout=['']</pre>
 Once the settings have been added, add a lock to
 <tt>/etc/dconf/db/local.d/locks/00-security-settings-lock</tt> to prevent
 user modification. For example:
@@ -4142,7 +4129,10 @@ Cron logging must be implemented to spot intrusions or trace
 cron job status. If <tt>cron</tt> is not logging to <tt>rsyslog</tt>, it
 can be implemented by adding the following to the <i>RULES</i> section of
 <tt>/etc/rsyslog.conf</tt>:
+If the legacy syntax is used:
 <pre>cron.*                                                  /var/log/cron</pre>
+If the modern syntax (RainerScript) is used:
+<pre>cron.* action(type="omfile" file="/var/log/cron")</pre>
   </td>
   <td xml:lang="en-US">
 Cron logging can be used to trace the successful or unsuccessful execution
@@ -4696,7 +4686,7 @@ streaming media and telephony.
 
 To configure the system to prevent the <code>dccp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/dccp.conf</code>:
-<pre>install dccp /bin/true</pre>
+<pre>install dccp /bin/false</pre>
 
 To configure the system to prevent the <code>dccp</code> from being used,
 add the following line to file <code>/etc/modprobe.d/dccp.conf</code>:
@@ -4718,7 +4708,7 @@ to prevent automatic loading of the USB storage driver.
 
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
-<pre>install usb-storage /bin/true</pre>
+<pre>install usb-storage /bin/false</pre>
 
 To configure the system to prevent the <code>usb-storage</code> from being used,
 add the following line to file <code>/etc/modprobe.d/usb-storage.conf</code>:
