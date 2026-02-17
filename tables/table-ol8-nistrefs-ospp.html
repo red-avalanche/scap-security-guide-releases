@@ -66,7 +66,7 @@ maliciously may result in an exceptional number of simultaneous login sessions.<
 <code>/etc/login.defs</code> and add or correct the following line:
 <pre>PASS_MIN_LEN <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_password_minlen_login_defs"></xccdf-1.1:sub></pre>
 <br><br>
-The DoD requirement is <code>15</code>. 
+The DoD requirement is <code>15</code>.
 The FISMA requirement is <code>12</code>.
 The profile requirement is
 <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_password_minlen_login_defs"></xccdf-1.1:sub></code>.
@@ -1140,6 +1140,21 @@ and makes system configuration more fragmented.</td>
 </tr>
 <tr>
 <td></td>
+<td>Configure SSH to use System Crypto Policy</td>
+<td xml:lang="en-US">Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
+SSH is supported by crypto policy, but the SSH configuration may be
+set up to ignore it.
+To check that Crypto Policies settings are configured correctly, ensure that
+the <code>CRYPTO_POLICY</code> variable is either commented or not set at all
+in the <code>/etc/sysconfig/sshd</code>.</td>
+<td xml:lang="en-US">Overriding the system crypto policy makes the behavior of the SSH service violate expectations,
+and makes system configuration more fragmented.</td>
+<td></td>
+<td>AC-17(a)<br>AC-17(2)<br>CM-6(a)<br>MA-4(6)<br>SC-13<br>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>Configure tmux to lock session after inactivity</td>
 <td xml:lang="en-US">To enable console screen locking in <code>tmux</code> terminal multiplexer
 after a period of inactivity,
@@ -1212,7 +1227,7 @@ and is generally useful only for developers or system operators trying to
 debug problems. Enabling core dumps on production systems is not recommended,
 however there may be overriding operational requirements to enable advanced
 debuging. Permitting temporary enablement of core dumps during such situations
-should be reviewed through local needs and policy. </td>
+should be reviewed through local needs and policy.</td>
 <td></td>
 <td></td>
 </tr>
@@ -1223,6 +1238,7 @@ should be reviewed through local needs and policy. </td>
 key sequence is pressed Ctrl-Alt-Delete more than 7 times in 2 seconds.
 <br><br>
 To configure the system to ignore the <code>CtrlAltDelBurstAction</code>
+
 setting, add or modify the following to <code>/etc/systemd/system.conf</code>:
 <pre>CtrlAltDelBurstAction=none</pre>
 </td>
@@ -1241,6 +1257,7 @@ loss of availability of systems due to unintentional reboot.</td>
 key sequence is pressed.
 <br><br>
 To configure the system to ignore the <code>Ctrl-Alt-Del</code> key sequence from the
+
 command line instead of rebooting the system, do either of the following:
 <pre>ln -sf /dev/null /etc/systemd/system/ctrl-alt-del.target</pre>
 or
@@ -1498,6 +1515,26 @@ or other services, weakening system security.</td>
 <td></td>
 <td>SC-2(1)<br>CM-6(a)<br>
 </td>
+</tr>
+<tr>
+<td></td>
+<td>Configure kernel to trust the CPU random number generator</td>
+<td xml:lang="en-US">There exist two ways how to ensure that the Linux kernel trusts the CPU
+hardware random number generator. If the option is configured during kernel
+compilation, e.g. the option <code>CONFIG_RANDOM_TRUST_CPU</code> is set to
+<code>Y</code>, make sure that it is not overridden with the boot parameter.
+There must not exist the boot parameter <code>random.trust_cpu=off</code>. If
+the option is not compiled in, make sure that <code>random.trust_cpu=on</code>
+is configured as a boot parameter by running the following command:
+<pre>sudo grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) random.trust_cpu=on"</pre>
+</td>
+<td xml:lang="en-US">The Linux kernel offers an option which signifies if the kernel should trust
+data provided by CPU hardware random number generator. Hardware random
+number generators can provide random data very quickly and are used to generate random cryptographic keys. They can
+be useful during boot time when other means of getting random data can be
+slow because there is not yet enough entropy in the system.</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td></td>
@@ -2084,6 +2121,50 @@ from lowering security by disabling the screen lock.</td>
 </tr>
 <tr>
 <td></td>
+<td>OpenSSL uses strong entropy source</td>
+<td xml:lang="en-US">By default, OpenSSL doesn't always use a SP800-90A compliant random number generator.
+A way to configure OpenSSL to always use a strong source is to setup a wrapper that
+defines a shell function that shadows the actual <code>openssl</code> binary,
+and that ensures that the <code>-rand /dev/random</code> option is added to every <code>openssl</code> invocation.
+
+To do so, place the following shell snippet exactly as-is to <code>/etc/profile.d/openssl-rand.sh</code>:
+<pre>
+# provide a default -rand /dev/random option to openssl commands that
+# support it
+
+# written inefficiently for maximum shell compatibility
+openssl()
+(
+  openssl_bin=/usr/bin/openssl
+
+  case "$*" in
+    # if user specified -rand, honor it
+    *\ -rand\ *|*\ -help*) exec $openssl_bin "$@" ;;
+  esac
+
+  cmds=`$openssl_bin list -digest-commands -cipher-commands | tr '\n' ' '`
+  for i in `$openssl_bin list -commands`; do
+    if $openssl_bin list -options "$i" | grep -q '^rand '; then
+      cmds=" $i $cmds"
+    fi
+  done
+
+  case "$cmds" in
+    *\ "$1"\ *)
+      cmd="$1"; shift
+      exec $openssl_bin "$cmd" -rand /dev/random "$@" ;;
+  esac
+
+  exec $openssl_bin "$@"
+)
+</pre>
+</td>
+<td xml:lang="en-US">This rule ensures that <code>openssl</code> invocations always uses SP800-90A compliant random number generator as a default behavior.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
 <td>Uninstall abrt-addon-ccpp Package</td>
 <td xml:lang="en-US">The <code>abrt-addon-ccpp</code> package can be removed with the following command:
 <pre>
@@ -2191,12 +2272,42 @@ $ sudo yum install aide</pre>
 </tr>
 <tr>
 <td></td>
+<td>Install audispd-plugins Package</td>
+<td xml:lang="en-US">The <code>audispd-plugins</code> package can be installed with the following command:
+<pre>
+$ sudo yum install audispd-plugins</pre>
+</td>
+<td xml:lang="en-US">
+<code>audispd-plugins</code> provides plugins for the real-time interface to the
+audit subsystem, <code>audispd</code>. These plugins can do things like relay events
+to remote machines or analyze events for suspicious behavior.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
 <td>Ensure the audit Subsystem is Installed</td>
 <td xml:lang="en-US">The audit package should be installed.</td>
 <td xml:lang="en-US">The auditd service is an access monitoring and accounting daemon, watching system calls to audit any access, in comparison with potential local access control policy such as SELinux policy.</td>
 <td></td>
 <td>AC-7(a)<br>AU-7(1)<br>AU-7(2)<br>AU-14<br>AU-12(2)<br>AU-2(a)<br>CM-6(a)<br>
 </td>
+</tr>
+<tr>
+<td></td>
+<td>The Chrony package is installed</td>
+<td xml:lang="en-US">System time should be synchronized between all systems in an environment. This is
+typically done by establishing an authoritative time server or set of servers and having all
+systems synchronize their clocks to them.
+The <code>chrony</code> package can be installed with the following command:
+<pre>
+$ sudo yum install chrony</pre>
+</td>
+<td xml:lang="en-US">Time synchronization is important to support time sensitive security mechanisms like
+Kerberos and also ensures log files have consistent time records across the enterprise,
+which aids in forensic investigations.</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td></td>
@@ -2252,6 +2363,23 @@ $ sudo yum install firewalld</pre>
 </tr>
 <tr>
 <td></td>
+<td>Ensure gnutls-utils is installed</td>
+<td xml:lang="en-US">The <code>gnutls-utils</code> package can be installed with the following command:
+<pre>
+$ sudo yum install gnutls-utils</pre>
+</td>
+<td xml:lang="en-US">GnuTLS is a secure communications library implementing the SSL, TLS and DTLS
+protocols and technologies around them. It provides a simple C language
+application programming interface (API) to access the secure communications
+protocols as well as APIs to parse and write X.509, PKCS #12, OpenPGP and
+other required structures.
+This package contains command line TLS client and server and certificate
+manipulation tools.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
 <td>Uninstall gssproxy Package</td>
 <td xml:lang="en-US">The <code>gssproxy</code> package can be removed with the following command:
 <pre>
@@ -2274,21 +2402,6 @@ $ sudo yum erase iprutils</pre>
 supported by the ipr SCSI storage device driver.</td>
 <td></td>
 <td></td>
-</tr>
-<tr>
-<td></td>
-<td>Install iptables Package</td>
-<td xml:lang="en-US">The <code>iptables</code> package can be installed with the following command:
-<pre>
-$ sudo yum install iptables</pre>
-</td>
-<td xml:lang="en-US">
-<code>iptables</code> controls the Linux kernel network packet filtering
-code. <code>iptables</code> allows system operators to set up firewalls and IP
-masquerading, etc.</td>
-<td></td>
-<td>CM-6(a)<br>
-</td>
 </tr>
 <tr>
 <td></td>
@@ -2364,20 +2477,6 @@ intercepted and either read or altered.</td>
 </tr>
 <tr>
 <td></td>
-<td>Uninstall pigz Package</td>
-<td xml:lang="en-US">The <code>pigz</code> package can be removed with the following command:
-<pre>
-$ sudo yum erase pigz</pre>
-</td>
-<td xml:lang="en-US">Binaries shipped in <code>pigz</code> package in Oracle Linux 8
-have not been compiled using recommended compiler flags. The binaries
-are compiled without sufficient stack protection and its address space
-layout randomization (ASLR) is weak.</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
 <td>Install policycoreutils-python-utils package</td>
 <td xml:lang="en-US">The <code>policycoreutils-python-utils</code> package can be installed with the following command:
 <pre>
@@ -2401,28 +2500,38 @@ The Security-enhanced Linux kernel contains new architectural components origina
 developed to improve security of the Flask operating system. These architectural components
 provide general support for the enforcement of many kinds of mandatory access control
 policies, including those based on the concepts of Type Enforcement, Role-based Access
-Control, and Multi-level Security. 
+Control, and Multi-level Security.
 
 <code>policycoreutils</code> contains the policy core utilities that are required for
 basic operation of an SELinux-enabled system. These utilities include <code>load_policy</code>
 to load SELinux policies, <code>setfiles</code> to label filesystems, <code>newrole</code> to
-switch roles, and <code>run_init</code> to run <code>/etc/init.d</code> scripts in the proper
-context.</td>
+switch roles, and so on.</td>
 <td></td>
 <td></td>
 </tr>
 <tr>
 <td></td>
-<td>Install rng-tools Package</td>
-<td xml:lang="en-US">The <code>rng-tools</code> package can be installed with the following command:
+<td>Ensure rsyslog-gnutls is installed</td>
+<td xml:lang="en-US">TLS protocol support for rsyslog is installed.
+The <code>rsyslog-gnutls</code> package can be installed with the following command:
 <pre>
-$ sudo yum install rng-tools</pre>
+$ sudo yum install rsyslog-gnutls</pre>
 </td>
-<td xml:lang="en-US">
-<code>rng-tools</code> provides hardware random number generator tools,
-such as those used in the formation of x509/PKI certificates.</td>
+<td xml:lang="en-US">The rsyslog-gnutls package provides Transport Layer Security (TLS) support
+for the rsyslog daemon, which enables secure remote logging.</td>
 <td></td>
 <td></td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure rsyslog is Installed</td>
+<td xml:lang="en-US">Rsyslog is installed by default. The <code>rsyslog</code> package can be installed with the following command: <pre> $ sudo yum install rsyslog</pre>
+</td>
+<td xml:lang="en-US">The rsyslog package provides the rsyslog daemon, which provides
+system logging services.</td>
+<td></td>
+<td>CM-6(a)<br>
+</td>
 </tr>
 <tr>
 <td></td>
@@ -2500,23 +2609,9 @@ The <code>tmux</code> package allows for a session lock to be implemented and co
 </tr>
 <tr>
 <td></td>
-<td>Uninstall tuned Package</td>
-<td xml:lang="en-US">The <code>tuned</code> package can be removed with the following command:
-<pre>
-$ sudo yum erase tuned</pre>
-</td>
-<td xml:lang="en-US">
-<code>tuned</code> contains a daemon that tunes the system settings dynamically.
-It does so by monitoring the usage of several system components periodically. Based
-on that information, components will then be put into lower or higher power savings
-modes to adapt to the current usage.</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td></td>
 <td>Install usbguard Package</td>
-<td xml:lang="en-US">The <code>usbguard</code> package can be installed with the following command:
+<td xml:lang="en-US">
+The <code>usbguard</code> package can be installed with the following command:
 <pre>
 $ sudo yum install usbguard</pre>
 </td>
@@ -2614,6 +2709,39 @@ by configuring the bootloader password.</td>
 <td></td>
 <td>IA-2<br>AC-3<br>CM-6(a)<br>
 </td>
+</tr>
+<tr>
+<td></td>
+<td>Configure TLS for rsyslog remote logging</td>
+<td xml:lang="en-US">Configure <code>rsyslog</code> to use Transport Layer
+Security (TLS) support for logging to remote server
+for the Forwarding Output Module in <code>/etc/rsyslog.conf</code>
+using action. You can use the following command:
+<pre>echo 'action(type="omfwd" protocol="tcp" Target="&lt;remote system&gt;" port="6514"
+    StreamDriver="gtls" StreamDriverMode="1" StreamDriverAuthMode="x509/name" streamdriver.CheckExtendedKeyPurpose="on")' &gt;&gt; /etc/rsyslog.conf
+</pre>
+Replace the <code>&lt;remote system&gt;</code> in the above command with an IP address or a host name of the remote logging server.</td>
+<td xml:lang="en-US">For protection of data being logged, the connection to the
+remote logging server needs to be authenticated and encrypted.</td>
+<td></td>
+<td>AU-9(3)<br>CM-6(a)<br>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Configure CA certificate for rsyslog remote logging</td>
+<td xml:lang="en-US">Configure CA certificate for <code>rsyslog</code> logging
+to remote server using Transport Layer Security (TLS)
+using correct path for the <code>DefaultNetstreamDriverCAFile</code>
+global option in <code>/etc/rsyslog.conf</code>, for example with the following command:
+<pre>echo 'global(DefaultNetstreamDriverCAFile="/etc/pki/tls/cert.pem")' &gt;&gt; /etc/rsyslog.conf</pre>
+Replace the <code>/etc/pki/tls/cert.pem</code> in the above command with the path to the file with CA certificate generated for the purpose of remote logging.</td>
+<td xml:lang="en-US">The CA certificate needs to be set or <code>rsyslog.service</code>
+fails to start with
+<pre>error: ca certificate is not set, cannot continue</pre>
+</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td></td>
@@ -2732,7 +2860,9 @@ implements application whitelisting to decide file access rights.</td>
 <tr>
 <td></td>
 <td>Verify firewalld Enabled</td>
-<td xml:lang="en-US"> The <code>firewalld</code> service can be enabled with the following command: <pre>$ sudo systemctl enable firewalld.service</pre>
+<td xml:lang="en-US">
+The <code>firewalld</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable firewalld.service</pre>
 </td>
 <td xml:lang="en-US">Access control methods provide the ability to enhance system security posture
 by restricting services and known good IP addresses and address ranges. This
@@ -2743,16 +2873,22 @@ prevents connections from unknown hosts and protocols.</td>
 </tr>
 <tr>
 <td></td>
-<td>Enable the Hardware RNG Entropy Gatherer Service</td>
-<td xml:lang="en-US">The Hardware RNG Entropy Gatherer service should be enabled.
+<td>Disable KDump Kernel Crash Analyzer (kdump)</td>
+<td xml:lang="en-US">The <code>kdump</code> service provides a kernel crash dump analyzer. It uses the <code>kexec</code>
+system call to boot a secondary kernel ("capture" kernel) following a system
+crash, which can load information from the crashed kernel for analysis.
 
-The <code>rngd</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable rngd.service</pre>
+The <code>kdump</code> service can be disabled with the following command:
+<pre>$ sudo systemctl mask --now kdump.service</pre>
 </td>
-<td xml:lang="en-US">The <code>rngd</code> service
-feeds random data from hardware device to kernel random device.</td>
+<td xml:lang="en-US">Kernel core dumps may contain the full contents of system memory at the
+time of the crash. Kernel core dumps consume a considerable amount of disk
+space and may result in denial of service by exhausting the available space
+on the target file system partition. Unless the system is used for kernel
+development or testing, there is little need to run the kdump service.</td>
 <td></td>
-<td></td>
+<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
+</td>
 </tr>
 <tr>
 <td></td>
@@ -2776,6 +2912,60 @@ The <code>usbguard</code> service can be enabled with the following command:
 </td>
 <td xml:lang="en-US">The <code>usbguard</code> service must be running in order to
 enforce the USB device authorization policy for all USB devices.</td>
+<td></td>
+<td>CM-8(3)(a)<br>IA-3<br>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Configure session renegotiation for SSH client</td>
+<td xml:lang="en-US">The <code>RekeyLimit</code> parameter specifies how often
+the session key is renegotiated, both in terms of
+amount of data that may be transmitted and the time
+elapsed. To decrease the default limits, put line
+<code>RekeyLimit <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_ssh_client_rekey_limit_size"></xccdf-1.1:sub> <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_ssh_client_rekey_limit_time"></xccdf-1.1:sub></code> to file <code>/etc/ssh/ssh_config.d/02-rekey-limit.conf</code>.
+Make sure that there is no other <code>RekeyLimit</code> configuration preceding
+the <code>include</code> directive in the main config file
+<code>/etc/ssh/ssh_config</code>. Check also other files in
+<code>/etc/ssh/ssh_config.d</code> directory. Files are processed according to
+lexicographical order of file names. Make sure that there is no file
+processed before <code>02-rekey-limit.conf</code> containing definition of
+<code>RekeyLimit</code>.</td>
+<td xml:lang="en-US">By decreasing the limit based on the amount of data and enabling
+time-based limit, effects of potential attacks against
+encryption keys are limited.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>SSH client uses strong entropy to seed (for CSH like shells)</td>
+<td xml:lang="en-US">To set up SSH client to use entropy from a high-quality source, make sure
+that the appropriate shell environment variable is configured. The
+<code>SSH_USE_STRONG_RNG</code> environment variable determines how many bytes
+of entropy to use. Make sure that the file
+<code>/etc/profile.d/cc-ssh-strong-rng.csh</code> contains line
+<pre>setenv SSH_USE_STRONG_RNG 32</pre>.</td>
+<td xml:lang="en-US">Some SSH implementations use the openssl library for entropy, which by default, doesn't use high-entropy sources.
+Randomness is needed to generate considerably more secure data-encryption keys. Plaintext padding, initialization vectors
+in encryption algorithms, and high-quality entropy eliminates the possibility that the output of
+the random number generator used by SSH would be known to potential attackers.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>SSH client uses strong entropy to seed (Bash-like shells)</td>
+<td xml:lang="en-US">To set up SSH client to use entropy from a high-quality source, make sure
+that the appropriate shell environment variable is configured. The
+<code>SSH_USE_STRONG_RNG</code> environment variable determines how many bytes
+of entropy to use. Make sure that the file
+<code>/etc/profile.d/cc-ssh-strong-rng.sh</code> contains line
+<pre>export SSH_USE_STRONG_RNG=32</pre>.</td>
+<td xml:lang="en-US">Some SSH implementations use the openssl library for entropy, which by default, doesn't use high-entropy sources.
+Randomness is needed to generate considerably more secure data-encryption keys. Plaintext padding, initialization vectors
+in encryption algorithms, and high-quality entropy eliminates the possibility that the output of
+the random number generator used by SSH would be known to potential attackers.</td>
 <td></td>
 <td></td>
 </tr>
@@ -2915,7 +3105,7 @@ enabled on the console or console port that has been let unattended.</td>
 </tr>
 <tr>
 <td></td>
-<td>Set SSH Client Alive Count Max</td>
+<td>Set SSH Client Alive Count Max to zero</td>
 <td xml:lang="en-US">The SSH server sends at most <code>ClientAliveCountMax</code> messages
 during a SSH session and waits for a response from the SSH client.
 The option <code>ClientAliveInterval</code> configures timeout after
@@ -2931,6 +3121,21 @@ is reached.</td>
 <td></td>
 <td>AC-2(5)<br>AC-12<br>AC-17(a)<br>SC-10<br>CM-6(a)<br>
 </td>
+</tr>
+<tr>
+<td></td>
+<td>SSH server uses strong entropy to seed</td>
+<td xml:lang="en-US">To set up SSH server to use entropy from a high-quality source, edit the <code>/etc/sysconfig/sshd</code> file.
+The <code>SSH_USE_STRONG_RNG</code> configuration value determines how many bytes of entropy to use, so
+make sure that the file contains line
+<pre>SSH_USE_STRONG_RNG=32</pre>
+</td>
+<td xml:lang="en-US">SSH implementation in RHEL8 uses the openssl library, which doesn't use high-entropy sources by default.
+Randomness is needed to generate data-encryption keys, and as plaintext padding and initialization vectors
+in encryption algorithms, and high-quality entropy elliminates the possibility that the output of
+the random number generator used by SSH would be known to potential attackers.</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td></td>
@@ -3417,11 +3622,25 @@ The tool is controlled by <code>dnf-automatic.timer</code> SystemD timer.</td>
 <td xml:lang="en-US">To allow authorization of USB devices combining human interface device and hub capabilities
 by USBGuard daemon,
 add the line
-<code>allow with-interface match_all { 03:*:* 09:00:* }</code>
+<code>allow with-interface match-all { 03:*:* 09:00:* }</code>
 to <code>/etc/usbguard/rules.conf</code>.</td>
 <td xml:lang="en-US">Without allowing Human Interface Devices, it might not be possible
 to interact with the system. Without allowing hubs, it might not be possible to use any
 USB devices on the system.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Enforce usage of pam_wheel for su authentication</td>
+<td xml:lang="en-US">To ensure that only users who are members of the <code>wheel</code> group can
+run commands with altered privileges through the <code>su</code> command, make
+sure that the following line exists in the file <code>/etc/pam.d/su</code>:
+<pre>auth             required        pam_wheel.so use_uid</pre>
+</td>
+<td xml:lang="en-US">The <code>su</code> program allows to run commands with a substitute user and
+group ID. It is commonly used to run commands as the root user. Limiting
+access to such command is considered a good security practice.</td>
 <td></td>
 <td></td>
 </tr>

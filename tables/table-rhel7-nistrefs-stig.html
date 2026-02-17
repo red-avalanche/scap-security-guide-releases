@@ -564,7 +564,8 @@ situations.</td>
 <td xml:lang="en-US">Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
 all user sessions will terminate based on inactivity. The <code>TMOUT</code>
 
-setting in <code>/etc/profile</code> should read as follows:
+setting in a file loaded by <code>/etc/profile</code>, e.g.
+<code>/etc/profile.d/tmout.sh</code> should read as follows:
 <pre>TMOUT=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></xccdf-1.1:sub></pre>
 </td>
 <td xml:lang="en-US">Terminating an idle session within a short time period reduces
@@ -794,7 +795,11 @@ to the appropriate ruleset.
 For example, add <code>acl</code> to the following line in <code>/etc/aide.conf</code>:
 <pre>FIPSR = p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha256</pre>
 AIDE rules can be configured in multiple ways; this is merely one example that is already
-configured by default.</td>
+configured by default.
+
+The remediation provided with this rule adds <code>acl</code> to all rule sets available in
+<code>/etc/aide.conf</code>
+</td>
 <td xml:lang="en-US">ACLs can provide permissions beyond those permitted through the file mode and must be
 verified by the file integrity tools.</td>
 <td></td>
@@ -810,7 +815,11 @@ to the appropriate ruleset.
 For example, add <code>xattrs</code> to the following line in <code>/etc/aide.conf</code>:
 <pre>FIPSR = p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha256</pre>
 AIDE rules can be configured in multiple ways; this is merely one example that is already
-configured by default.</td>
+configured by default.
+
+The remediation provided with this rule adds <code>xattrs</code> to all rule sets available in
+<code>/etc/aide.conf</code>
+</td>
 <td xml:lang="en-US">Extended attributes in file systems are used to contain arbitrary data and file metadata
 with security implications.</td>
 <td></td>
@@ -1508,28 +1517,6 @@ as an attacker attempting to remove evidence of an intrusion.</td>
 </td>
 </tr>
 <tr>
-<td>CCE-80994-7</td>
-<td>Record Attempts to Alter Logon and Logout Events - tallylog</td>
-<td xml:lang="en-US">The audit system already collects login information for all users
-and root. If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
-edits of files involved in storing logon events:
-<pre>-w /var/log/tallylog -p wa -k logins</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file in order to watch for unattempted manual
-edits of files involved in storing logon events:
-<pre>-w /var/log/tallylog -p wa -k logins</pre>
-</td>
-<td xml:lang="en-US">Manual editing of these files may indicate nefarious activity, such
-as an attacker attempting to remove evidence of an intrusion.</td>
-<td></td>
-<td>AU-2(d)<br>AU-12(c)<br>AC-6(9)<br>CM-6(a)<br>
-</td>
-</tr>
-<tr>
 <td>CCE-27447-2</td>
 <td>Ensure auditd Collects Information on Exporting to Media (successful)</td>
 <td xml:lang="en-US">At a minimum, the audit system should collect media exportation
@@ -1551,42 +1538,6 @@ trail should be created each time a filesystem is mounted to help identify and g
 loss.</td>
 <td></td>
 <td>AU-2(d)<br>AU-12(c)<br>AC-6(9)<br>CM-6(a)<br>
-</td>
-</tr>
-<tr>
-<td>CCE-27437-3</td>
-<td>Ensure auditd Collects Information on the Use of Privileged Commands</td>
-<td xml:lang="en-US">The audit system should collect information about usage of privileged
-commands for all users and root. To find the relevant setuid /
-setgid programs, run the following command for each local partition
-<i>PART</i>:
-<pre>$ sudo find <i>PART</i> -xdev -type f -perm -4000 -o -type f -perm -2000 2&gt;/dev/null</pre>
-If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
-program to read audit rules during daemon startup (the default), add a line of
-the following form to a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code> for each setuid / setgid program on the system,
-replacing the <i>SETUID_PROG_PATH</i> part with the full path of that setuid /
-setgid program in the list:
-<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add a line of the following
-form to <code>/etc/audit/audit.rules</code> for each setuid / setgid program on the
-system, replacing the <i>SETUID_PROG_PATH</i> part with the full path of that
-setuid / setgid program in the list:
-<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
-</td>
-<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
-authorized users, or by unauthorized external entities that have compromised system accounts,
-is a serious and ongoing concern and can have significant adverse impacts on organizations.
-Auditing the use of privileged functions is one way to detect such misuse and identify
-the risk from insider and advanced persistent threats.
-<br><br>
-Privileged programs are subject to escalation-of-privilege attacks,
-which attempt to subvert their normal role of providing some necessary but
-limited capability. As such, motivation exists to monitor these programs for
-unusual activity.</td>
-<td></td>
-<td>AC-2(4)<br>AU-2(d)<br>AU-12(c)<br>AC-6(9)<br>CM-6(a)<br>
 </td>
 </tr>
 <tr>
@@ -1942,34 +1893,6 @@ If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
-</td>
-<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
-authorized users, or by unauthorized external entities that have compromised system accounts,
-is a serious and ongoing concern and can have significant adverse impacts on organizations.
-Auditing the use of privileged functions is one way to detect such misuse and identify
-the risk from insider and advanced persistent threats.
-<br><br>
-Privileged programs are subject to escalation-of-privilege attacks,
-which attempt to subvert their normal role of providing some necessary but
-limited capability. As such, motivation exists to monitor these programs for
-unusual activity.</td>
-<td></td>
-<td>AU-2(d)<br>AU-12(c)<br>AC-6(9)<br>CM-6(a)<br>
-</td>
-</tr>
-<tr>
-<td>CCE-80402-1</td>
-<td>Ensure auditd Collects Information on the Use of Privileged Commands - sudoedit</td>
-<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <code>auditd</code> daemon is
-configured to use the <code>augenrules</code> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/sudoedit -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add a line of the following
-form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/sudoedit -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -2680,29 +2603,6 @@ official business or to address authorized quality of life issues.</td>
 </td>
 </tr>
 <tr>
-<td>CCE-80542-4</td>
-<td>Configure firewalld To Rate Limit Connections</td>
-<td xml:lang="en-US">Create a direct firewall rule to protect against DoS attacks with the following
-command:
-<pre>$ sudo firewall-cmd --permanent --direct --add-rule ipv4 filter INPUT_direct 0 -p tcp -m limit --limit 25/minute --limit-burst 100  -j INPUT_ZONES</pre>
-</td>
-<td xml:lang="en-US">DoS is a condition when a resource is not available for legitimate users. When
-this occurs, the organization either cannot accomplish its mission or must
-operate at degraded capacity.
-<br><br>
-This requirement addresses the configuration of
-the operating system to mitigate the impact of DoS attacks that have occurred or
-are ongoing on system availability. For each system, known and potential DoS
-attacks must be identified and solutions for each type implemented. A variety of
-technologies exist to limit or, in some cases, eliminate the effects of DoS
-attacks (e.g., limiting processes or establishing memory partitions). Employing
-increased capacity and bandwidth, combined with service redundancy, may reduce
-the susceptibility to some DoS attacks.</td>
-<td></td>
-<td>SC-5<br>SC-5(1)<br>SC-5(2)<br>SC-5(3)(a)<br>CM-6(a)<br>
-</td>
-</tr>
-<tr>
 <td>CCE-81004-4</td>
 <td>Make sure that the dconf databases are up-to-date with regards to respective keyfiles</td>
 <td xml:lang="en-US">By default, DConf uses a binary database as a data backend.
@@ -2974,7 +2874,8 @@ of the information system but does not want to logout because of the temporary n
 <tr>
 <td>CCE-80112-6</td>
 <td>Enable GNOME3 Screensaver Lock After Idle Period</td>
-<td xml:lang="en-US">To activate locking of the screensaver in the GNOME3 desktop when it is activated,
+<td xml:lang="en-US">
+To activate locking of the screensaver in the GNOME3 desktop when it is activated,
 add or set <code>lock-enabled</code> to <code>true</code> in
 <code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
 <pre>[org/gnome/desktop/screensaver]
@@ -3083,6 +2984,7 @@ users.</td>
 key sequence is pressed.
 <br><br>
 To configure the system to ignore the <code>Ctrl-Alt-Del</code> key sequence from the
+
 command line instead of rebooting the system, do either of the following:
 <pre>ln -sf /dev/null /etc/systemd/system/ctrl-alt-del.target</pre>
 or
@@ -3313,7 +3215,13 @@ may be compromised.</td>
 <td xml:lang="en-US">If any files are not owned by a group, then the
 cause of their lack of group-ownership should be investigated.
 Following this, the files should be deleted or assigned to an
-appropriate group.</td>
+appropriate group. The following command will discover and print
+any files on local partitions which do not belong to a valid group:
+<pre>$ df --local -P | awk '{if (NR!=1) print $6}' | sudo xargs -I '{}' find '{}' -xdev -nogroup</pre>
+To search all filesystems on a system including network mounted
+filesystems the following command can be run manually for each partition:
+<pre>$ sudo find PARTITION -xdev -nogroup</pre>
+</td>
 <td xml:lang="en-US">Unowned files do not directly imply a security problem, but they are generally
 a sign that something is amiss. They may
 be caused by an intruder, by incorrect software installation or
@@ -3777,7 +3685,13 @@ empty passwords should never be used in operational environments.</td>
 <td xml:lang="en-US">If any files are not owned by a user, then the
 cause of their lack of ownership should be investigated.
 Following this, the files should be deleted or assigned to an
-appropriate user.</td>
+appropriate user. The following command will discover and print
+any files on local partitions which do not belong to a valid user:
+<pre>$ df --local -P | awk {'if (NR!=1) print $6'} | sudo xargs -I '{}' find '{}' -xdev -nouser</pre>
+To search all filesystems on a system including network mounted
+filesystems the following command can be run manually for each partition:
+<pre>$ sudo find PARTITION -xdev -nouser</pre>
+</td>
 <td xml:lang="en-US">Unowned files do not directly imply a security problem, but they are generally
 a sign that something is amiss. They may
 be caused by an intruder, by incorrect software installation or
@@ -3927,22 +3841,6 @@ access control rules established.</td>
 </td>
 <td xml:lang="en-US">Removing the <code>vsftpd</code> package decreases the risk of its
 accidental activation.</td>
-<td></td>
-<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
-</td>
-</tr>
-<tr>
-<td>CCE-27218-7</td>
-<td>Remove the X Windows Package Group</td>
-<td xml:lang="en-US">By removing the xorg-x11-server-common package, the system no longer has X Windows
-installed. If X Windows is not installed then the system cannot boot into graphical user mode.
-This prevents the system from being accidentally or maliciously booted into a <code>graphical.target</code>
-mode. To do so, run the following command:
-<pre>$ sudo yum groupremove "X Window System"</pre>
-<pre>$ sudo yum remove xorg-x11-server-common</pre>
-</td>
-<td xml:lang="en-US">Unnecessary service packages must not be installed to decrease the attack surface of the system. X windows has a long history of security
-vulnerabilities and should not be installed unless approved and documented.</td>
 <td></td>
 <td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
 </td>
@@ -4364,7 +4262,9 @@ unknown devices, thereby facilitating malicious activity.</td>
 <tr>
 <td>CCE-80998-8</td>
 <td>Verify firewalld Enabled</td>
-<td xml:lang="en-US"> The <code>firewalld</code> service can be enabled with the following command: <pre>$ sudo systemctl enable firewalld.service</pre>
+<td xml:lang="en-US">
+The <code>firewalld</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable firewalld.service</pre>
 </td>
 <td xml:lang="en-US">Access control methods provide the ability to enhance system security posture
 by restricting services and known good IP addresses and address ranges. This
@@ -4818,8 +4718,8 @@ enabled on the console or console port that has been let unattended.</td>
 </td>
 </tr>
 <tr>
-<td>CCE-27082-7</td>
-<td>Set SSH Client Alive Count Max</td>
+<td>CCE-83399-6</td>
+<td>Set SSH Client Alive Count Max to zero</td>
 <td xml:lang="en-US">The SSH server sends at most <code>ClientAliveCountMax</code> messages
 during a SSH session and waits for a response from the SSH client.
 The option <code>ClientAliveInterval</code> configures timeout after
@@ -5029,6 +4929,39 @@ is critical that the user re-authenticate.</td>
 <td></td>
 <td>IA-11<br>CM-6(a)<br>
 </td>
+</tr>
+<tr>
+<td>CCE-83423-4</td>
+<td>The operating system must restrict privilege elevation to authorized personnel</td>
+<td xml:lang="en-US">The sudo command allows a user to execute programs with elevated
+(administrator) privileges. It prompts the user for their password
+and confirms your request to execute a command by checking a file,
+called sudoers.
+Restrict privileged actions by removing the following entries from the sudoers file:
+<code>ALL ALL=(ALL) ALL</code>
+<code>ALL ALL=(ALL:ALL) ALL</code>
+</td>
+<td xml:lang="en-US">If the "sudoers" file is not configured correctly, any user defined
+on the system can initiate privileged actions on the target system.</td>
+<td></td>
+<td>CM-6(b)<br>CM-6(iv)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-83421-8</td>
+<td>Ensure invoking users password for privilege escalation when using sudo</td>
+<td xml:lang="en-US">The sudoers security policy requires that users authenticate themselves before they can use sudo.
+When sudoers requires authentication, it validates the invoking user's credentials.
+The expected output for:
+<pre>sudo egrep -i '(!rootpw|!targetpw|!runaspw)' /etc/sudoers /etc/sudoers.d/* | grep -v '#'</pre>
+<pre> /etc/sudoers:Defaults !targetpw
+      /etc/sudoers:Defaults !rootpw
+      /etc/sudoers:Defaults !runaspw </pre>
+</td>
+<td xml:lang="en-US">If the rootpw, targetpw, or runaspw flags are defined and not disabled, by default the operating system will prompt
+the invoking user for the "root" user password.</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>CCE-27127-0</td>
@@ -5245,23 +5178,30 @@ service to valid network resources.</td>
 </td>
 </tr>
 <tr>
-<td>CCE-27285-6</td>
-<td>Disable X Windows Startup By Setting Default Target</td>
-<td xml:lang="en-US">Systems that do not require a graphical user interface should only boot by
-default into <code>multi-user.target</code> mode. This prevents accidental booting of the system
-into a <code>graphical.target</code> mode. Setting the system's default target to
-<code>multi-user.target</code> will prevent automatic startup of the X server. To do so, run:
+<td>CCE-83410-1</td>
+<td>Disable graphical user interface</td>
+<td xml:lang="en-US">By removing the following packages,  the system no longer has X Windows installed.
+
+<code>xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils</code>
+
+If X Windows is not installed then the system cannot boot into graphical user mode.
+This prevents the system from being accidentally or maliciously booted into a <code>graphical.target</code>
+mode. To do so, run the following command:
+
+<pre>sudo yum remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils</pre>
+
+Additionally, setting the system's default target to
+<code>multi-user.target</code> will prevent automatic startup of the X server.
+To do so, run:
 <pre>$ systemctl set-default multi-user.target</pre>
 You should see the following output:
 <pre>Removed symlink /etc/systemd/system/default.target.
 Created symlink from /etc/systemd/system/default.target to /usr/lib/systemd/system/multi-user.target.</pre>
 </td>
-<td xml:lang="en-US">Services that are not required for system and application processes
-must not be active to decrease the attack surface of the system. X windows has a
-long history of security vulnerabilities and should not be used unless approved
-and documented.</td>
+<td xml:lang="en-US">Unnecessary service packages must not be installed to decrease the attack surface of the system. X windows has a long history of security
+vulnerabilities and should not be installed unless approved and documented.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
+<td>CM-6(b)<br>
 </td>
 </tr>
 </table>

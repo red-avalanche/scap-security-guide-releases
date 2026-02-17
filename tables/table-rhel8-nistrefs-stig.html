@@ -205,7 +205,7 @@ access to root privileges in an accountable manner.</td>
 <code>/etc/login.defs</code> and add or correct the following line:
 <pre>PASS_MIN_LEN <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_password_minlen_login_defs"></xccdf-1.1:sub></pre>
 <br><br>
-The DoD requirement is <code>15</code>. 
+The DoD requirement is <code>15</code>.
 The FISMA requirement is <code>12</code>.
 The profile requirement is
 <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_password_minlen_login_defs"></xccdf-1.1:sub></code>.
@@ -465,6 +465,34 @@ The DoD STIG requirement is 5 passwords.</td>
 <td></td>
 <td>IA-5(f)<br>IA-5(1)(e)<br>
 </td>
+</tr>
+<tr>
+<td>CCE-83403-6</td>
+<td>Set number of Password Hashing Rounds - password-auth</td>
+<td xml:lang="en-US">Configure the number or rounds for the password hashing algorithm. This can be
+accomplished by using the <code>rounds</code> option for the <code>pam_unix</code> PAM module.
+<br><br>
+In file <code>/etc/pam.d/password-auth</code> append <code>rounds=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_rounds"></xccdf-1.1:sub></code>
+to the <code>pam_unix.so</code> file, as shown below:
+<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_rounds"></xccdf-1.1:sub></pre>
+The system's default number of rounds is 5000.</td>
+<td xml:lang="en-US">Using a higher number of rounds makes password cracking attacks more difficult.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-83386-3</td>
+<td>Set number of Password Hashing Rounds - system-auth</td>
+<td xml:lang="en-US">Configure the number or rounds for the password hashing algorithm. This can be
+accomplished by using the <code>rounds</code> option for the <code>pam_unix</code> PAM module.
+<br><br>
+In file <code>/etc/pam.d/system-auth</code> append <code>rounds=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_rounds"></xccdf-1.1:sub></code>
+to the <code>pam_unix.so</code> file, as shown below:
+<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_rounds"></xccdf-1.1:sub></pre>
+The system's default number of rounds is 5000.</td>
+<td xml:lang="en-US">Using a higher number of rounds makes password cracking attacks more difficult.</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>CCE-82473-0</td>
@@ -741,7 +769,11 @@ to the appropriate ruleset.
 For example, add <code>acl</code> to the following line in <code>/etc/aide.conf</code>:
 <pre>FIPSR = p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha256</pre>
 AIDE rules can be configured in multiple ways; this is merely one example that is already
-configured by default.</td>
+configured by default.
+
+The remediation provided with this rule adds <code>acl</code> to all rule sets available in
+<code>/etc/aide.conf</code>
+</td>
 <td xml:lang="en-US">ACLs can provide permissions beyond those permitted through the file mode and must be
 verified by the file integrity tools.</td>
 <td></td>
@@ -757,7 +789,11 @@ to the appropriate ruleset.
 For example, add <code>xattrs</code> to the following line in <code>/etc/aide.conf</code>:
 <pre>FIPSR = p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha256</pre>
 AIDE rules can be configured in multiple ways; this is merely one example that is already
-configured by default.</td>
+configured by default.
+
+The remediation provided with this rule adds <code>xattrs</code> to all rule sets available in
+<code>/etc/aide.conf</code>
+</td>
 <td xml:lang="en-US">Extended attributes in file systems are used to contain arbitrary data and file metadata
 with security implications.</td>
 <td></td>
@@ -1148,6 +1184,20 @@ and makes system configuration more fragmented.</td>
 </td>
 </tr>
 <tr>
+<td>CCE-84255-9</td>
+<td>Configure OpenSSL library to use TLS Encryption</td>
+<td xml:lang="en-US">Crypto Policies are means of enforcing certain cryptographic settings for
+selected applications including OpenSSL. OpenSSL is by default configured to
+modify its configuration based on currently configured Crypto Policy.
+However, in certain cases it might be needed to override the Crypto Policy
+specific to OpenSSL and leave rest of the Crypto Policy intact.</td>
+<td xml:lang="en-US">Without cryptographic integrity protections, information can be altered by
+unauthorized users without detection.</td>
+<td></td>
+<td>AC-17(2)<br>
+</td>
+</tr>
+<tr>
 <td>CCE-80939-2</td>
 <td>Configure SSH to use System Crypto Policy</td>
 <td xml:lang="en-US">Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
@@ -1236,7 +1286,7 @@ and is generally useful only for developers or system operators trying to
 debug problems. Enabling core dumps on production systems is not recommended,
 however there may be overriding operational requirements to enable advanced
 debuging. Permitting temporary enablement of core dumps during such situations
-should be reviewed through local needs and policy. </td>
+should be reviewed through local needs and policy.</td>
 <td></td>
 <td></td>
 </tr>
@@ -1293,6 +1343,27 @@ loss of availability of systems due to unintentional reboot.</td>
 </td>
 </tr>
 <tr>
+<td>CCE-83910-0</td>
+<td>Enable the GNOME3 Screen Locking On Smartcard Removal</td>
+<td xml:lang="en-US">In the default graphical environment, screen locking on smartcard removal
+can be enabled by setting <code>removal-action</code>
+to <code>lock-screen</code>.
+<br><br>
+To enable, add or edit <code>removal-action</code> to
+<code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
+<pre>[org/gnome/settings-daemon/peripherals/smartcard]
+removal-action=lock-screen</pre>
+Once the setting has been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/settings-daemon/peripherals/smartcard/removal-action</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td xml:lang="en-US">Locking the screen automatically when removing the smartcard can
+prevent undesired access to system.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>CCE-80770-1</td>
 <td>Set the GNOME3 Login Warning Banner Text</td>
 <td xml:lang="en-US">In the default graphical environment, configuring the login warning banner text
@@ -1345,7 +1416,8 @@ a user's session has idled and take action to initiate a session lock.</td>
 <tr>
 <td>CCE-80777-6</td>
 <td>Enable GNOME3 Screensaver Lock After Idle Period</td>
-<td xml:lang="en-US">To activate locking of the screensaver in the GNOME3 desktop when it is activated,
+<td xml:lang="en-US">
+To activate locking of the screensaver in the GNOME3 desktop when it is activated,
 add or set <code>lock-enabled</code> to <code>true</code> in
 <code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
 <pre>[org/gnome/desktop/screensaver]
@@ -1428,6 +1500,7 @@ Otherwise, change the mode of the audit log files with the following command:
 key sequence is pressed Ctrl-Alt-Delete more than 7 times in 2 seconds.
 <br><br>
 To configure the system to ignore the <code>CtrlAltDelBurstAction</code>
+
 setting, add or modify the following to <code>/etc/systemd/system.conf</code>:
 <pre>CtrlAltDelBurstAction=none</pre>
 </td>
@@ -1446,6 +1519,7 @@ loss of availability of systems due to unintentional reboot.</td>
 key sequence is pressed.
 <br><br>
 To configure the system to ignore the <code>Ctrl-Alt-Del</code> key sequence from the
+
 command line instead of rebooting the system, do either of the following:
 <pre>ln -sf /dev/null /etc/systemd/system/ctrl-alt-del.target</pre>
 or
@@ -1624,6 +1698,27 @@ be signed with a certificate recognized and approved by the organization.</td>
 </td>
 </tr>
 <tr>
+<td>CCE-83659-3</td>
+<td>Verify Group Who Owns /var/log Directory</td>
+<td xml:lang="en-US"> To properly set the group owner of <code>/var/log</code>, run the command: <pre>$ sudo chgrp root /var/log</pre>
+</td>
+<td xml:lang="en-US">The <code>/var/log</code> directory contains files with logs of error
+messages in the system and should only be accessed by authorized
+personnel.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-83660-1</td>
+<td>Verify Group Who Owns /var/log/messages File</td>
+<td xml:lang="en-US"> To properly set the group owner of <code>/var/log/messages</code>, run the command: <pre>$ sudo chgrp root /var/log/messages</pre>
+</td>
+<td xml:lang="en-US">The <code>/var/log/messages</code> file contains logs of error messages in
+the system and should only be accessed by authorized personnel.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>CCE-83434-1</td>
 <td>All Interactive User Home Directories Must Be Group-Owned By The Primary User</td>
 <td xml:lang="en-US">Change the group owner of interactive users home directory to the
@@ -1635,6 +1730,27 @@ interactive users home directory, use the following command:
 not the same as the primary GID of the user, this would allow unauthorized
 access to the users files, and users that share the same group may not be
 able to access files that they legitimately should.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-83661-9</td>
+<td>Verify User Who Owns /var/log Directory</td>
+<td xml:lang="en-US"> To properly set the owner of <code>/var/log</code>, run the command: <pre>$ sudo chown root /var/log </pre>
+</td>
+<td xml:lang="en-US">The <code>/var/log</code> directory contains files with logs of error
+messages in the system and should only be accessed by authorized
+personnel.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-83662-7</td>
+<td>Verify User Who Owns /var/log/messages File</td>
+<td xml:lang="en-US"> To properly set the owner of <code>/var/log/messages</code>, run the command: <pre>$ sudo chown root /var/log/messages </pre>
+</td>
+<td xml:lang="en-US">The <code>/var/log/messages</code> file contains logs of error messages in
+the system and should only be accessed by authorized personnel.</td>
 <td></td>
 <td></td>
 </tr>
@@ -1810,7 +1926,13 @@ may be compromised.</td>
 <td xml:lang="en-US">If any files are not owned by a group, then the
 cause of their lack of group-ownership should be investigated.
 Following this, the files should be deleted or assigned to an
-appropriate group.</td>
+appropriate group. The following command will discover and print
+any files on local partitions which do not belong to a valid group:
+<pre>$ df --local -P | awk '{if (NR!=1) print $6}' | sudo xargs -I '{}' find '{}' -xdev -nogroup</pre>
+To search all filesystems on a system including network mounted
+filesystems the following command can be run manually for each partition:
+<pre>$ sudo find PARTITION -xdev -nogroup</pre>
+</td>
 <td xml:lang="en-US">Unowned files do not directly imply a security problem, but they are generally
 a sign that something is amiss. They may
 be caused by an intruder, by incorrect software installation or
@@ -1821,6 +1943,19 @@ and the cause should be discovered and addressed.</td>
 <td></td>
 <td>CM-6(a)<br>AC-6(1)<br>
 </td>
+</tr>
+<tr>
+<td>CCE-83663-5</td>
+<td>Verify Permissions on /var/log Directory</td>
+<td xml:lang="en-US">
+To properly set the permissions of <code>/var/log</code>, run the command:
+<pre>$ sudo chmod 0755 /var/log</pre>
+</td>
+<td xml:lang="en-US">The <code>/var/log</code> directory contains files with logs of error
+messages in the system and should only be accessed by authorized
+personnel.</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>CCE-80819-6</td>
@@ -1836,6 +1971,18 @@ Otherwise, change the mode of the audit log files with the following command:
 <td></td>
 <td>CM-6(a)<br>AC-6(1)<br>AU-9(4)<br>
 </td>
+</tr>
+<tr>
+<td>CCE-83665-0</td>
+<td>Verify Permissions on /var/log/messages File</td>
+<td xml:lang="en-US">
+To properly set the permissions of <code>/var/log/messages</code>, run the command:
+<pre>$ sudo chmod 0640 /var/log/messages</pre>
+</td>
+<td xml:lang="en-US">The <code>/var/log/messages</code> file contains logs of error messages in
+the system and should only be accessed by authorized personnel.</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>CCE-80823-8</td>
@@ -2686,7 +2833,13 @@ empty passwords should never be used in operational environments.</td>
 <td xml:lang="en-US">If any files are not owned by a user, then the
 cause of their lack of ownership should be investigated.
 Following this, the files should be deleted or assigned to an
-appropriate user.</td>
+appropriate user. The following command will discover and print
+any files on local partitions which do not belong to a valid user:
+<pre>$ df --local -P | awk {'if (NR!=1) print $6'} | sudo xargs -I '{}' find '{}' -xdev -nouser</pre>
+To search all filesystems on a system including network mounted
+filesystems the following command can be run manually for each partition:
+<pre>$ sudo find PARTITION -xdev -nouser</pre>
+</td>
 <td xml:lang="en-US">Unowned files do not directly imply a security problem, but they are generally
 a sign that something is amiss. They may
 be caused by an intruder, by incorrect software installation or
@@ -2900,6 +3053,18 @@ $ sudo yum install firewalld</pre>
 </td>
 </tr>
 <tr>
+<td>CCE-82943-2</td>
+<td>Uninstall gssproxy Package</td>
+<td xml:lang="en-US">The <code>gssproxy</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase gssproxy</pre>
+</td>
+<td xml:lang="en-US">
+<code>gssproxy</code> is a proxy for GSS API credential handling.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>CCE-82946-5</td>
 <td>Uninstall iprutils Package</td>
 <td xml:lang="en-US">The <code>iprutils</code> package can be removed with the following command:
@@ -2976,13 +3141,12 @@ The Security-enhanced Linux kernel contains new architectural components origina
 developed to improve security of the Flask operating system. These architectural components
 provide general support for the enforcement of many kinds of mandatory access control
 policies, including those based on the concepts of Type Enforcement, Role-based Access
-Control, and Multi-level Security. 
+Control, and Multi-level Security.
 
 <code>policycoreutils</code> contains the policy core utilities that are required for
 basic operation of an SELinux-enabled system. These utilities include <code>load_policy</code>
 to load SELinux policies, <code>setfiles</code> to label filesystems, <code>newrole</code> to
-switch roles, and <code>run_init</code> to run <code>/etc/init.d</code> scripts in the proper
-context.</td>
+switch roles, and so on.</td>
 <td></td>
 <td></td>
 </tr>
@@ -3137,7 +3301,8 @@ modes to adapt to the current usage.</td>
 <tr>
 <td>CCE-82959-8</td>
 <td>Install usbguard Package</td>
-<td xml:lang="en-US">The <code>usbguard</code> package can be installed with the following command:
+<td xml:lang="en-US">
+The <code>usbguard</code> package can be installed with the following command:
 <pre>
 $ sudo yum install usbguard</pre>
 </td>
@@ -3490,7 +3655,9 @@ implements application whitelisting to decide file access rights.</td>
 <tr>
 <td>CCE-80877-4</td>
 <td>Verify firewalld Enabled</td>
-<td xml:lang="en-US"> The <code>firewalld</code> service can be enabled with the following command: <pre>$ sudo systemctl enable firewalld.service</pre>
+<td xml:lang="en-US">
+The <code>firewalld</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable firewalld.service</pre>
 </td>
 <td xml:lang="en-US">Access control methods provide the ability to enhance system security posture
 by restricting services and known good IP addresses and address ranges. This
@@ -3589,7 +3756,8 @@ The <code>usbguard</code> service can be enabled with the following command:
 <td xml:lang="en-US">The <code>usbguard</code> service must be running in order to
 enforce the USB device authorization policy for all USB devices.</td>
 <td></td>
-<td></td>
+<td>CM-8(3)(a)<br>IA-3<br>
+</td>
 </tr>
 <tr>
 <td>CCE-80892-3</td>
@@ -3663,23 +3831,6 @@ time-based limit, effects of potential attacks against
 encryption keys are limited.</td>
 <td></td>
 <td></td>
-</tr>
-<tr>
-<td>CCE-80894-9</td>
-<td>Allow Only SSH Protocol 2</td>
-<td xml:lang="en-US">Only SSH protocol version 2 connections should be
-permitted. The default setting in
-<code>/etc/ssh/sshd_config</code> is correct, and can be
-verified by ensuring that the following
-line appears:
-<pre>Protocol 2</pre>
-</td>
-<td xml:lang="en-US">SSH protocol version 1 is an insecure implementation of the SSH protocol and
-has many well-known vulnerability exploits. Exploits of the SSH daemon could provide
-immediate root access to the system.</td>
-<td></td>
-<td>CM-6(a)<br>AC-17(a)<br>AC-17(2)<br>IA-5(1)(c)<br>SC-13<br>MA-4(6)<br>
-</td>
 </tr>
 <tr>
 <td>CCE-80895-6</td>
@@ -3900,8 +4051,8 @@ enabled on the console or console port that has been let unattended.</td>
 </td>
 </tr>
 <tr>
-<td>CCE-80907-9</td>
-<td>Set SSH Client Alive Count Max</td>
+<td>CCE-83405-1</td>
+<td>Set SSH Client Alive Count Max to zero</td>
 <td xml:lang="en-US">The SSH server sends at most <code>ClientAliveCountMax</code> messages
 during a SSH session and waits for a response from the SSH client.
 The option <code>ClientAliveInterval</code> configures timeout after
@@ -4022,6 +4173,39 @@ is critical that the user re-authenticate.</td>
 <td></td>
 <td>IA-11<br>CM-6(a)<br>
 </td>
+</tr>
+<tr>
+<td>CCE-83425-9</td>
+<td>The operating system must restrict privilege elevation to authorized personnel</td>
+<td xml:lang="en-US">The sudo command allows a user to execute programs with elevated
+(administrator) privileges. It prompts the user for their password
+and confirms your request to execute a command by checking a file,
+called sudoers.
+Restrict privileged actions by removing the following entries from the sudoers file:
+<code>ALL ALL=(ALL) ALL</code>
+<code>ALL ALL=(ALL:ALL) ALL</code>
+</td>
+<td xml:lang="en-US">If the "sudoers" file is not configured correctly, any user defined
+on the system can initiate privileged actions on the target system.</td>
+<td></td>
+<td>CM-6(b)<br>CM-6(iv)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-83422-6</td>
+<td>Ensure invoking users password for privilege escalation when using sudo</td>
+<td xml:lang="en-US">The sudoers security policy requires that users authenticate themselves before they can use sudo.
+When sudoers requires authentication, it validates the invoking user's credentials.
+The expected output for:
+<pre>sudo egrep -i '(!rootpw|!targetpw|!runaspw)' /etc/sudoers /etc/sudoers.d/* | grep -v '#'</pre>
+<pre> /etc/sudoers:Defaults !targetpw
+      /etc/sudoers:Defaults !rootpw
+      /etc/sudoers:Defaults !runaspw </pre>
+</td>
+<td xml:lang="en-US">If the rootpw, targetpw, or runaspw flags are defined and not disabled, by default the operating system will prompt
+the invoking user for the "root" user password.</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>CCE-84027-2</td>
@@ -4449,6 +4633,33 @@ serve to create a man-in-the-middle attack or be used to create a denial of
 service to valid network resources.</td>
 <td></td>
 <td>AC-18(a)<br>AC-18(3)<br>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>MP-7<br>
+</td>
+</tr>
+<tr>
+<td>CCE-83411-9</td>
+<td>Disable graphical user interface</td>
+<td xml:lang="en-US">By removing the following packages,  the system no longer has X Windows installed.
+ 
+<code>xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</code>
+
+If X Windows is not installed then the system cannot boot into graphical user mode.
+This prevents the system from being accidentally or maliciously booted into a <code>graphical.target</code>
+mode. To do so, run the following command:
+ 
+<pre>sudo yum remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</pre>
+
+Additionally, setting the system's default target to
+<code>multi-user.target</code> will prevent automatic startup of the X server.
+To do so, run:
+<pre>$ systemctl set-default multi-user.target</pre>
+You should see the following output:
+<pre>Removed symlink /etc/systemd/system/default.target.
+Created symlink from /etc/systemd/system/default.target to /usr/lib/systemd/system/multi-user.target.</pre>
+</td>
+<td xml:lang="en-US">Unnecessary service packages must not be installed to decrease the attack surface of the system. X windows has a long history of security
+vulnerabilities and should not be installed unless approved and documented.</td>
+<td></td>
+<td>CM-6(b)<br>
 </td>
 </tr>
 </table>

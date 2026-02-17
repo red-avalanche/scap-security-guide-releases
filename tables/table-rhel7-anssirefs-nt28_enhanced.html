@@ -71,7 +71,7 @@ location subject to physical compromise.</td>
 <code>/etc/login.defs</code> and add or correct the following line:
 <pre>PASS_MIN_LEN <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_password_minlen_login_defs"></xccdf-1.1:sub></pre>
 <br><br>
-The DoD requirement is <code>15</code>. 
+The DoD requirement is <code>15</code>.
 The FISMA requirement is <code>12</code>.
 The profile requirement is
 <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_password_minlen_login_defs"></xccdf-1.1:sub></code>.
@@ -379,7 +379,8 @@ directories being world-writable.</td>
 <td xml:lang="en-US">Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
 all user sessions will terminate based on inactivity. The <code>TMOUT</code>
 
-setting in <code>/etc/profile</code> should read as follows:
+setting in a file loaded by <code>/etc/profile</code>, e.g.
+<code>/etc/profile.d/tmout.sh</code> should read as follows:
 <pre>TMOUT=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></xccdf-1.1:sub></pre>
 </td>
 <td xml:lang="en-US">Terminating an idle session within a short time period reduces
@@ -1580,10 +1581,12 @@ The option <code>ClientAliveInterval</code> configures timeout after
 each <code>ClientAliveCountMax</code> message. If the SSH server does not
 receive a response from the client, then the connection is considered idle
 and terminated.
-
-To ensure the SSH idle timeout occurs precisely when the
-<code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
-value of <code>0</code>.</td>
+For SSH earlier than v8.2, a <code>ClientAliveCountMax</code> value of <code>0</code>
+causes an idle timeout precisely when the <code>ClientAliveInterval</code> is set.
+Starting with v8.2, a value of <code>0</code> disables the timeout functionality
+completely. If the option is set to a number greater than <code>0</code>, then
+the idle session will be disconnected after
+<code>ClientAliveInterval * ClientAliveCountMax</code> seconds.</td>
 <td xml:lang="en-US">This ensures a user login will be terminated as soon as the <code>ClientAliveInterval</code>
 is reached.</td>
 <td></td>

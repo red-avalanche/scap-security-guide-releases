@@ -702,6 +702,9 @@ The key derivation function (KDF) in Kerberos is not FIPS compatible.  Ensuring 
 FIPS 140-2 is the current standard for validating that mechanisms used to access cryptographic modules utilize authentication that meets DoD requirements. This allows for Security Levels 1, 2, 3, or 4 for use on a general-purpose computing system.</td>
 <td>Verify that RHEL 8 prevents system daemons from using Kerberos for authentication.
 
+If the system is a server utilizing krb5-server-1.17-18.el8.x86_64 or newer, this requirement is not applicable.
+If the system is a workstation utilizing krb5-workstation-1.17-18.el8.x86_64 or newer, this requirement is not applicable.
+
 Check if there are available keytabs with the following command:
 
 $ sudo ls -al /etc/*.keytab
@@ -725,6 +728,8 @@ Currently, Kerberos does not utilize FIPS 140-2 cryptography.
 
 FIPS 140-2 is the current standard for validating that mechanisms used to access cryptographic modules utilize authentication that meets DoD requirements. This allows for Security Levels 1, 2, 3, or 4 for use on a general-purpose computing system.</td>
 <td>Verify the krb5-workstation package has not been installed on the system with the following commands:
+
+If the system is a server or is utilizing krb5-workstation-1.17-18.el8.x86_64 or newer, this is Not Applicable.
 
 $ sudo yum list installed krb5-workstation
 
@@ -1009,7 +1014,7 @@ $ sudo grep -i crypto_policy /etc/sysconfig/sshd
 
 # crypto_policy=
 
-If the "crypto_policy" is not commented out and is defined, this is a finding.
+If the "crypto_policy" is uncommented, this is a finding.
 
 Verify which system-wide crypto policy is in use:
 
@@ -1064,7 +1069,7 @@ $ sudo grep -i crypto_policy /etc/sysconfig/sshd
 
 # crypto_policy=
 
-If the "crypto_policy" is not commented out and is defined, this is a finding.
+If the "crypto_policy" is uncommented, this is a finding.
 
 Verify which system-wide crypto policy is in use:
 
@@ -3044,8 +3049,8 @@ AutomaticLoginEnable=false</td>
 <td>V-230330</td>
 <td>CCI-000366</td>
 <td>medium</td>
-<td>Unattended or automatic logon to RHEL 8 via ssh must not be allowed.</td>
-<td>Failure to restrict system access to authenticated users negatively impacts RHEL 8 security.</td>
+<td>RHEL 8 must not allow users to override SSH environment variables.</td>
+<td>SSH environment options potentially allow users to bypass access restriction in some configurations.</td>
 <td>Verify that unattended or automatic logon via ssh is disabled with the following command:
 
 $ sudo grep -i PermitUserEnvironment /etc/ssh/sshd_config
@@ -3582,8 +3587,12 @@ RHEL 8 can utilize the "pam_faillock.so" for this purpose. Note that manual chan
 
 From "Pam_Faillock" man pages: Note that the default directory that "pam_faillock" uses is usually cleared on system boot so the access will be reenabled after system reboot. If that is undesirable a different tally directory must be set with the "dir" option.
 
+In RHEL 8.2 the "/etc/security/faillock.conf" file was incorporated to centralize the configuration of the pam_faillock.so module. Also introduced is a "local_users_only" option that will only track failed user authentication attempts for local users in /etc/passwd and ignore centralized (AD, IdM, LDAP, etc.) users to allow the centralized platform to solely manage user lockout.
+
 Satisfies: SRG-OS-000021-GPOS-00005, SRG-OS-000329-GPOS-00128</td>
 <td>Check that the system logs user name information when unsuccessful logon attempts occur with the following commands:
+
+If the system is RHEL version 8.2 or newer, this check is not applicable.
 
 Note: If the System Administrator demonstrates the use of an approved centralized account management method that locks an account after three unsuccessful logon attempts within a period of 15 minutes, this requirement is not applicable.
 
@@ -3675,8 +3684,12 @@ RHEL 8 can utilize the "pam_faillock.so" for this purpose. Note that manual chan
 
 From "Pam_Faillock" man pages: Note that the default directory that "pam_faillock" uses is usually cleared on system boot so the access will be reenabled after system reboot. If that is undesirable a different tally directory must be set with the "dir" option.
 
+In RHEL 8.2 the "/etc/security/faillock.conf" file was incorporated to centralize the configuration of the pam_faillock.so module. Also introduced is a "local_users_only" option that will only track failed user authentication attempts for local users in /etc/passwd and ignore centralized (AD, IdM, LDAP, etc.) users to allow the centralized platform to solely manage user lockout.
+
 Satisfies: SRG-OS-000021-GPOS-00005, SRG-OS-000329-GPOS-00128</td>
 <td>Check that the system includes the root account when locking an account after three unsuccessful logon attempts within a period of 15 minutes with the following commands:
+
+If the system is RHEL version 8.2 or newer, this check is not applicable.
 
 Note: If the System Administrator demonstrates the use of an approved centralized account management method that locks an account after three unsuccessful logon attempts within a period of 15 minutes, this requirement is not applicable.
 
@@ -3949,18 +3962,16 @@ $ sudo dconf update</td>
 
 The session lock is implemented at the point where session activity can be determined. Rather than be forced to wait for a period of time to expire before the user session can be locked, RHEL 8 needs to provide users with the ability to manually invoke a session lock so users can secure their session if it is necessary to temporarily vacate the immediate physical vicinity.
 
-Tmux is a terminal multiplexer that enables a number of terminals to be created, accessed, and controlled from a single screen.  Red Hat endorses tmux as the recommended session controlling package.
-
 Satisfies: SRG-OS-000029-GPOS-00010, SRG-OS-000031-GPOS-00012</td>
 <td>Verify the operating system initiates a session lock after a 15-minute period of inactivity for graphical user interfaces with the following commands:
+
+This requirement assumes the use of the RHEL 8 default graphical user interface, Gnome Shell. If the system does not have any graphical user interface installed, this requirement is Not Applicable.
 
 $ sudo gsettings get org.gnome.desktop.session idle-delay
 
 uint32 900
 
-If "idle-delay" is set to "0" or a value greater than "900", this is a finding.
-
-Note: This requirement assumes the use of the RHEL 8 default graphical user interface, Gnome Shell. If the system does not have any graphical user interface installed, this requirement is Not Applicable.</td>
+If "idle-delay" is set to "0" or a value greater than "900", this is a finding.</td>
 <td>Configure the operating system to initiate a screensaver after a 15-minute period of inactivity for graphical user interfaces.
 
 Create a database to contain the system-wide screensaver settings (if it does not already exist) with the following command:
@@ -4352,7 +4363,7 @@ PASS_MIN_DAYS 1</td>
 $ sudo grep -i pass_max_days /etc/login.defs
 PASS_MAX_DAYS 60
 
-If the "PASS_MAX_DAYS" parameter value is less than "60", or commented out, this is a finding.</td>
+If the "PASS_MAX_DAYS" parameter value is greater than "60", or commented out, this is a finding.</td>
 <td>Configure RHEL 8 to enforce a 60-day maximum password lifetime.
 
 Add, or modify the following line in the "/etc/login.defs" file:
@@ -5575,28 +5586,12 @@ Check that the audit service is installed properly with the following command:
 
 $ sudo yum list installed audit
 
-If the "audit" package is not installed, this is a finding.
-
-Check that the audit service is properly running and active on the system with the following command:
-
-$ sudo systemctl is-active auditd.service
-
-active
-
-If the command above returns "inactive", this is a finding.</td>
+If the "audit" package is not installed, this is a finding.</td>
 <td>Configure the audit service to produce audit records containing the information needed to establish when (date and time) an event occurred.
 
 Install the audit service (if the audit service is not already installed) with the following command:
 
-$ sudo yum install audit
-
-Enable the audit service with the following command:
-
-$ sudo systemctl enable auditd.service
-
-Start the audit service with the following command:
-
-$ sudo systemctl start auditd.service</td>
+$ sudo yum install audit</td>
 <td>RHEL-08-030180</td>
 </tr>
 <tr>
@@ -7919,28 +7914,6 @@ $ sudo yum remove sendmail</td>
 <td>RHEL-08-040002</td>
 </tr>
 <tr>
-<td>V-230490</td>
-<td>CCI-000381</td>
-<td>medium</td>
-<td>RHEL 8 must not have the gssproxy package installed.</td>
-<td>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore may remain unsecured. They increase the risk to the platform by providing additional attack vectors.
-
-Operating systems are capable of providing a wide variety of functions and services. Some of the functions and services, provided by default, may not be necessary to support essential organizational operations (e.g., key missions, functions).
-
-Examples of non-essential capabilities include, but are not limited to, games, software packages, tools, and demonstration software not related to requirements or providing a wide array of functionality not required for every mission, but which cannot be disabled.
-
-Verify the operating system is configured to disable non-essential capabilities. The most secure way of ensuring a non-essential capability is disabled is to not have the capability installed.</td>
-<td>Check to see if the gssproxy package is installed with the following command:
-
-$ sudo yum list installed gssproxy
-
-If the gssproxy package is installed, this is a finding.</td>
-<td>Configure the operating system to disable non-essential capabilities by removing the gssproxy package from the system with the following command:
-
-$ sudo yum remove gssproxy</td>
-<td>RHEL-08-040003</td>
-</tr>
-<tr>
 <td>V-230491</td>
 <td>CCI-000381</td>
 <td>low</td>
@@ -8316,56 +8289,6 @@ Ask the System Administrator for the site or program Ports, Protocols, and Servi
 If there are additional ports, protocols, or services that are not in the PPSM CLSA, or there are ports, protocols, or services that are prohibited by the PPSM Category Assurance List (CAL), this is a finding.</td>
 <td>Update the host's firewall settings and/or running services to comply with the PPSM Component Local Service Assessment (CLSA) for the site or program and the PPSM CAL.</td>
 <td>RHEL-08-040030</td>
-</tr>
-<tr>
-<td>V-230501</td>
-<td>CCI-001941</td>
-<td>high</td>
-<td>RHEL 8 must enforce SSHv2 for network access to all accounts.</td>
-<td>A replay attack may enable an unauthorized user to gain access to RHEL 8. Authentication sessions between the authenticator and RHEL 8 validating the user credentials must not be vulnerable to a replay attack.
-
-An authentication process resists replay attacks if it is impractical to achieve a successful authentication by recording and replaying a previous authentication message.
-
-A privileged account is any information system account with authorizations of a privileged user.
-
-Techniques used to address this include protocols using nonces (e.g., numbers generated for a specific one-time use) or challenges (e.g., TLS, WS_Security). Additional techniques include time-synchronous or challenge-response one-time authenticators.
-
-RHEL 8 incorporates OpenSSH as a default ssh provider. OpenSSH has been a 100 percent SSHv2 implementation since version 7.6 in late 2017 and dropped support of SSH protocol version 1.
-
-Satisfies: SRG-OS-000112-GPOS-00057, SRG-OS-000113-GPOS-00058</td>
-<td>Verify that RHEL 8 enforces SSH protocol 2 for network access.
-
-Check the SSH version that RHEL 8 is using with the following command:
-
-$ sudo yum list installed openssh
-
-openssh.x86_64    8.0p1-3.el8
-
-If the version of OpenSSH is newer than 7.6 the system is utilizing SSHv2 and is compliant.
-
-If the version of OpenSSH is older than 7.6 or is a different SSH package, check the protocol versions that SSH allows with the following command:
-
-$ sudo grep -i protocol /etc/ssh/sshd_config
-
-Protocol 2
-
-If the returned line allows for use of protocol "1", is commented out, or the line is missing, this is a finding.</td>
-<td>Configure RHEL 8 to enforce SSHv2 for network access to all accounts via OpenSSH or by updating the SSH configuration to enforce SSHv2.
-
-Install OpenSSH with the following command:
-
-$ sudo yum -y install openssh.x86_64
-
-or
-
-Add or update the following line in the "/etc/ssh/sshd_config" file:
-
-Protocol 2
-
-Restart the ssh service.
-
-$ sudo systemctl restart sshd.service</td>
-<td>RHEL-08-040060</td>
 </tr>
 <tr>
 <td>V-230502</td>
@@ -9299,6 +9222,8 @@ $ sudo systemctl daemon-reload</td>
 <td>A locally logged-on user, who presses Ctrl-Alt-Delete, when at the console, can reboot the system. If accidentally pressed, as could happen in the case of a mixed OS environment, this can create the risk of short-term loss of availability of systems due to unintentional reboot. In a graphical user environment, risk of unintentional reboot from the Ctrl-Alt-Delete sequence is reduced because the user will be prompted before any action is taken.</td>
 <td>Verify RHEL 8 is not configured to reboot the system when Ctrl-Alt-Delete is pressed when using a graphical user interface with the following command:
 
+This requirement assumes the use of the RHEL 8 default graphical user interface, Gnome Shell. If the system does not have any graphical user interface installed, this requirement is Not Applicable.
+
 $ sudo grep logout /etc/dconf/db/local.d/*
 
 logout=''
@@ -9914,23 +9839,27 @@ If AIDE is installed, ensure the "acl" rule is present on all file and directory
 <td>Internet services that are not required for system or application processes must not be active to decrease the attack surface of the system. Graphical display managers have a long history of security vulnerabilities and must not be used, unless approved and documented.</td>
 <td>Verify that the system is configured to boot to the command line:
 
-$ sudo systemctl get-default
+$ systemctl get-default
 multi-user.target
 
 If the system default target is not set to "multi-user.target" and the Information System Security Officer (ISSO) lacks a documented requirement for a graphical user interface, this is a finding.
 
 Verify that a graphical user interface is not installed:
 
-$ sudo rpm -qa | grep xorg | grep server
+$ rpm -qa | grep xorg | grep server
 
 Ask the System Administrator if use of a graphical user interface is an operational requirement.
 
 If the use of a graphical user interface on the system is not documented with the ISSO, this is a finding.</td>
-<td>Document the requirement for a graphical user interface with the ISSO or remove the related packages with the following commands:
+<td>Document the requirement for a graphical user interface with the ISSO or reinstall the operating system without the graphical user interface. If reinstallation is not feasible, then continue with the following procedure:
 
-$ sudo rpm -e xorg-x11-server-common
+Open an SSH session and enter the following commands:
 
-$ sudo systemctl set-default multi-user.target</td>
+$ sudo systemctl set-default multi-user.target
+
+$ sudo yum remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland
+
+A reboot is required for the changes to take effect.</td>
 <td>RHEL-08-040320</td>
 </tr>
 <tr>
@@ -10048,7 +9977,7 @@ $ sudo yum remove vsftpd</td>
 </tr>
 <tr>
 <td>V-230559</td>
-<td>CCI-000366</td>
+<td>CCI-000381</td>
 <td>medium</td>
 <td>The gssproxy package must not be installed unless mission essential on RHEL 8.</td>
 <td>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore may remain unsecured. They increase the risk to the platform by providing additional attack vectors.
@@ -10111,6 +10040,99 @@ If the tuned package is installed and is not documented with the Information Sys
 
 $ sudo yum remove tuned</td>
 <td>RHEL-08-040390</td>
+</tr>
+<tr>
+<td>V-237640</td>
+<td>CCI-000803</td>
+<td>medium</td>
+<td>The krb5-server package must not be installed on RHEL 8.</td>
+<td>Unapproved mechanisms that are used for authentication to the cryptographic module are not verified and therefore cannot be relied upon to provide confidentiality or integrity, and DoD data may be compromised.
+
+RHEL 8 systems utilizing encryption are required to use FIPS-compliant mechanisms for authenticating to cryptographic modules.
+
+Currently, Kerberos does not utilize FIPS 140-2 cryptography.
+
+FIPS 140-2 is the current standard for validating that mechanisms used to access cryptographic modules utilize authentication that meets DoD requirements. This allows for Security Levels 1, 2, 3, or 4 for use on a general-purpose computing system.</td>
+<td>Verify the krb5-server package has not been installed on the system with the following commands:
+
+If the system is a workstation or is utilizing krb5-server-1.17-18.el8.x86_64 or newer, this is Not Applicable
+
+$ sudo yum list installed krb5-server
+
+krb5-server.x86_64 1.17-9.el8 repository
+
+If the krb5-server package is installed and is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</td>
+<td>Document the krb5-server package with the ISSO as an operational requirement or remove it from the system with the following command:
+
+$ sudo yum remove krb5-server</td>
+<td>RHEL-08-010163</td>
+</tr>
+<tr>
+<td>V-237641</td>
+<td>CCI-000366</td>
+<td>medium</td>
+<td>RHEL 8 must restrict privilege elevation to authorized personnel.</td>
+<td>The sudo command allows a user to execute programs with elevated (administrator) privileges. It prompts the user for their password and confirms your request to execute a command by checking a file, called sudoers. If the "sudoers" file is not configured correctly, any user defined on the system can initiate privileged actions on the target system.</td>
+<td>Verify the "sudoers" file restricts sudo access to authorized personnel.
+$ sudo grep -iw 'ALL' /etc/sudoers /etc/sudoers.d/*
+
+If the either of the following entries are returned, this is a finding:
+ALL     ALL=(ALL) ALL
+ALL     ALL=(ALL:ALL) ALL</td>
+<td>Remove the following entries from the sudoers file:
+ALL     ALL=(ALL) ALL
+ALL     ALL=(ALL:ALL) ALL</td>
+<td>RHEL-08-010382</td>
+</tr>
+<tr>
+<td>V-237642</td>
+<td>CCI-002227</td>
+<td>medium</td>
+<td>RHEL 8 must use the invoking user's password for privilege escalation when using "sudo".</td>
+<td>The sudoers security policy requires that users authenticate themselves before they can use sudo. When sudoers requires authentication, it validates the invoking user's credentials. If the rootpw, targetpw, or runaspw flags are defined and not disabled, by default the operating system will prompt the invoking user for the "root" user password. 
+For more information on each of the listed configurations, reference the sudoers(5) manual page.</td>
+<td>Verify that the sudoers security policy is configured to use the invoking user's password for privilege escalation.
+
+$ sudo egrep -i '(!rootpw|!targetpw|!runaspw)' /etc/sudoers /etc/sudoers.d/* | grep -v '#'
+
+/etc/sudoers:Defaults !targetpw
+/etc/sudoers:Defaults !rootpw
+/etc/sudoers:Defaults !runaspw
+
+If no results are returned, this is a finding
+If "Defaults !targetpw" is not defined, this is a finding.
+If "Defaults !rootpw" is not defined, this is a finding.
+If "Defaults !runaspw" is not defined, this is a finding.</td>
+<td>Define the following in the Defaults section of the /etc/sudoers file or a configuration file in the /etc/sudoers.d/ directory:
+Defaults !targetpw
+Defaults !rootpw
+Defaults !runaspw</td>
+<td>RHEL-08-010383</td>
+</tr>
+<tr>
+<td>V-237643</td>
+<td>CCI-002038</td>
+<td>medium</td>
+<td>RHEL 8 must require re-authentication when using the "sudo" command.</td>
+<td>Without re-authentication, users may access resources or perform tasks for which they do not have authorization. 
+
+When operating systems provide the capability to escalate a functional capability, it is critical the organization requires the user to re-authenticate when using the "sudo" command.
+
+If the value is set to an integer less than 0, the user's time stamp will not expire and the user will not have to re-authenticate for privileged actions until the user's session is terminated.</td>
+<td>Verify the operating system requires re-authentication when using the "sudo" command to elevate privileges.
+
+$ sudo grep -i 'timestamp_timeout' /etc/sudoers /etc/sudoers.d/*
+/etc/sudoers:Defaults timestamp_timout=0
+
+If "timestamp_timeout" is set to a negative number, is commented out, or no results are returned, this is a finding.</td>
+<td>Configure the "sudo" command to require re-authentication.
+Edit the /etc/sudoers file:
+$ sudo visudo
+
+Add or modify the following line:
+Defaults timestamp_timeout=[value]
+Note: The "[value]" must be a number that is greater than or equal to "0".</td>
+<td>RHEL-08-010384</td>
 </tr>
 </table>
 </body>

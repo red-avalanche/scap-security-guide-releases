@@ -564,7 +564,8 @@ situations.</td>
 <td xml:lang="en-US">Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
 all user sessions will terminate based on inactivity. The <code>TMOUT</code>
 
-setting in <code>/etc/profile</code> should read as follows:
+setting in a file loaded by <code>/etc/profile</code>, e.g.
+<code>/etc/profile.d/tmout.sh</code> should read as follows:
 <pre>TMOUT=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></xccdf-1.1:sub></pre>
 </td>
 <td xml:lang="en-US">Terminating an idle session within a short time period reduces
@@ -794,7 +795,11 @@ to the appropriate ruleset.
 For example, add <code>acl</code> to the following line in <code>/etc/aide.conf</code>:
 <pre>FIPSR = p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha256</pre>
 AIDE rules can be configured in multiple ways; this is merely one example that is already
-configured by default.</td>
+configured by default.
+
+The remediation provided with this rule adds <code>acl</code> to all rule sets available in
+<code>/etc/aide.conf</code>
+</td>
 <td xml:lang="en-US">ACLs can provide permissions beyond those permitted through the file mode and must be
 verified by the file integrity tools.</td>
 <td></td>
@@ -810,7 +815,11 @@ to the appropriate ruleset.
 For example, add <code>xattrs</code> to the following line in <code>/etc/aide.conf</code>:
 <pre>FIPSR = p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha256</pre>
 AIDE rules can be configured in multiple ways; this is merely one example that is already
-configured by default.</td>
+configured by default.
+
+The remediation provided with this rule adds <code>xattrs</code> to all rule sets available in
+<code>/etc/aide.conf</code>
+</td>
 <td xml:lang="en-US">Extended attributes in file systems are used to contain arbitrary data and file metadata
 with security implications.</td>
 <td></td>
@@ -2937,7 +2946,8 @@ of the information system but does not want to logout because of the temporary n
 <tr>
 <td></td>
 <td>Enable GNOME3 Screensaver Lock After Idle Period</td>
-<td xml:lang="en-US">To activate locking of the screensaver in the GNOME3 desktop when it is activated,
+<td xml:lang="en-US">
+To activate locking of the screensaver in the GNOME3 desktop when it is activated,
 add or set <code>lock-enabled</code> to <code>true</code> in
 <code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
 <pre>[org/gnome/desktop/screensaver]
@@ -3046,6 +3056,7 @@ users.</td>
 key sequence is pressed.
 <br><br>
 To configure the system to ignore the <code>Ctrl-Alt-Del</code> key sequence from the
+
 command line instead of rebooting the system, do either of the following:
 <pre>ln -sf /dev/null /etc/systemd/system/ctrl-alt-del.target</pre>
 or
@@ -3276,7 +3287,13 @@ may be compromised.</td>
 <td xml:lang="en-US">If any files are not owned by a group, then the
 cause of their lack of group-ownership should be investigated.
 Following this, the files should be deleted or assigned to an
-appropriate group.</td>
+appropriate group. The following command will discover and print
+any files on local partitions which do not belong to a valid group:
+<pre>$ df --local -P | awk '{if (NR!=1) print $6}' | sudo xargs -I '{}' find '{}' -xdev -nogroup</pre>
+To search all filesystems on a system including network mounted
+filesystems the following command can be run manually for each partition:
+<pre>$ sudo find PARTITION -xdev -nogroup</pre>
+</td>
 <td xml:lang="en-US">Unowned files do not directly imply a security problem, but they are generally
 a sign that something is amiss. They may
 be caused by an intruder, by incorrect software installation or
@@ -3790,7 +3807,13 @@ empty passwords should never be used in operational environments.</td>
 <td xml:lang="en-US">If any files are not owned by a user, then the
 cause of their lack of ownership should be investigated.
 Following this, the files should be deleted or assigned to an
-appropriate user.</td>
+appropriate user. The following command will discover and print
+any files on local partitions which do not belong to a valid user:
+<pre>$ df --local -P | awk {'if (NR!=1) print $6'} | sudo xargs -I '{}' find '{}' -xdev -nouser</pre>
+To search all filesystems on a system including network mounted
+filesystems the following command can be run manually for each partition:
+<pre>$ sudo find PARTITION -xdev -nouser</pre>
+</td>
 <td xml:lang="en-US">Unowned files do not directly imply a security problem, but they are generally
 a sign that something is amiss. They may
 be caused by an intruder, by incorrect software installation or
@@ -4393,7 +4416,9 @@ unknown devices, thereby facilitating malicious activity.</td>
 <tr>
 <td></td>
 <td>Verify firewalld Enabled</td>
-<td xml:lang="en-US"> The <code>firewalld</code> service can be enabled with the following command: <pre>$ sudo systemctl enable firewalld.service</pre>
+<td xml:lang="en-US">
+The <code>firewalld</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable firewalld.service</pre>
 </td>
 <td xml:lang="en-US">Access control methods provide the ability to enhance system security posture
 by restricting services and known good IP addresses and address ranges. This
@@ -4539,7 +4564,7 @@ difficult.</td>
 <td></td>
 <td>Enable Smart Card Login</td>
 <td xml:lang="en-US">To enable smart card authentication, consult the documentation at:
-<ul><li><b><a href="https://docs.oracle.com/cd/E52668_01/E54669/html/ol7-s4-auth.html">https://docs.oracle.com/cd/E52668_01/E54669/html/ol7-s4-auth.html</a></b></li></ul>
+<ul><li><b><a href="https://docs.oracle.com/en/operating-systems/oracle-linux/7/userauth/ol7-auth.html#ol7-s4-auth">https://docs.oracle.com/en/operating-systems/oracle-linux/7/userauth/ol7-auth.html#ol7-s4-auth</a></b></li></ul>
 </td>
 <td xml:lang="en-US">Smart card login provides two-factor authentication stronger than
 that provided by a username and password combination. Smart cards leverage PKI
@@ -4844,7 +4869,7 @@ enabled on the console or console port that has been let unattended.</td>
 </tr>
 <tr>
 <td></td>
-<td>Set SSH Client Alive Count Max</td>
+<td>Set SSH Client Alive Count Max to zero</td>
 <td xml:lang="en-US">The SSH server sends at most <code>ClientAliveCountMax</code> messages
 during a SSH session and waits for a response from the SSH client.
 The option <code>ClientAliveInterval</code> configures timeout after
