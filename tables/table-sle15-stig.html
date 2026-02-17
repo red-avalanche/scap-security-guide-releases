@@ -49,9 +49,9 @@
 		<tbody>
 		<tr>
 			<td>232</td>
-			<td>27</td>
-			<td>205</td>
-			<td>88.36%</td>
+			<td>26</td>
+			<td>206</td>
+			<td>88.79%</td>
 			<td>
 				
 					SLES-15-010001
@@ -59,8 +59,6 @@
 					SLES-15-010250
 				
 					SLES-15-010370
-				
-					SLES-15-010570
 				
 					SLES-15-030160
 				
@@ -1097,6 +1095,14 @@ system, by users for temporary file storage (such as /tmp), and
 for directories requiring global read/write access.</pre></td>
 	<td><pre>To find world-writable directories that lack the sticky bit, run the following command:
 $ sudo find / -type d \( -perm -0002 -a ! -perm -1000 \) -print 2>/dev/null
+fixtext: |-
+Configure all world-writable directories to have the sticky bit set to prevent unauthorized and unintended information transferred via shared system resources.
+
+Set the sticky bit on all world-writable directories using the command, replace "[World-Writable Directory]" with any directory path missing the sticky bit:
+
+$ chmod a+t [World-Writable Directory]
+srg_requirement:
+A sticky bit must be set on all SUSE Linux Enterprise 15 public directories to prevent unauthorized and unintended information transferred via shared system resources.
       Is it the case that any world-writable directories are missing the sticky bit?
       </pre></td>
 	<td><pre>When the so-called 'sticky bit' is set on a directory,
@@ -1151,14 +1157,14 @@ To make sure that the setting is persistent, add the following line to a file in
 	<td><pre>This ensures a user login will be terminated as soon as the ClientAliveInterval
 is reached.</pre></td>
 	<td><pre>To ensure ClientAliveInterval is set correctly, run the following command:
-
 $ sudo grep ClientAliveCountMax /etc/ssh/sshd_config
-
 If properly configured, the output should be:
-ClientAliveCountMax 0
-
-In this case, the SSH timeout occurs precisely when
-the ClientAliveInterval is set.
+ClientAliveCountMax 
+For SSH earlier than v8.2, a ClientAliveCountMax value of 0 causes a timeout precisely when
+the ClientAliveInterval is set.  Starting with v8.2, a value of 0 disables the timeout
+functionality completely.
+If the option is set to a number greater than 0, then the session will be disconnected after
+ClientAliveInterval * ClientAliveCountMax seconds without receiving a keep alive message.
       Is it the case that it is commented out or not configured properly?
       </pre></td>
 	<td><pre>The SSH server sends at most ClientAliveCountMax messages
@@ -1167,15 +1173,15 @@ The option ClientAliveInterval configures timeout after
 each ClientAliveCountMax message. If the SSH server does not
 receive a response from the client, then the connection is considered unresponsive
 and terminated.
-
-To ensure the SSH timeout occurs precisely when the
-ClientAliveInterval is set, set the ClientAliveCountMax to
-value of 0 in
-
-
-/etc/ssh/sshd_config:</pre></td>
+For SSH earlier than v8.2, a ClientAliveCountMax value of 0
+causes a timeout precisely when the ClientAliveInterval is set.
+Starting with v8.2, a value of 0 disables the timeout functionality
+completely. If the option is set to a number greater than 0, then
+the session will be disconnected after
+ClientAliveInterval * ClientAliveCountMax seconds without receiving
+a keep alive message.</pre></td>
 	<td>SLES-15-010320</td>
-	<td>sshd_set_keepalive_0</td>
+	<td>sshd_set_keepalive</td>
 </tr>
 
 <tr>
@@ -2360,15 +2366,37 @@ to 1 in /etc/zypp/zypp.conf.</pre></td>
 
 <tr>
 	<td>V-234864</td>
-	<td></td>
+	<td>2702</td>
 	<td>medium</td>
 	<td>The SUSE operating system must notify the System Administrator (SA) when Advanced Intrusion Detection Environment (AIDE) discovers anomalies in the operation of any security functions.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>Unauthorized changes to the baseline configuration could make the system vulnerable
+to various attacks or allow unauthorized access to the operating system. Changes to
+operating system configurations can have unintended side effects, some of which may
+be relevant to security.
+
+Detecting such changes and providing an automated response can help avoid unintended,
+negative consequences that could ultimately affect the security state of the operating
+system. The operating system's Information Management Officer (IMO)/Information System
+Security Officer (ISSO) and System Administrators (SAs) must be notified via email and/or
+monitoring system trap when there is an unauthorized modification of a configuration item.</pre></td>
+	<td><pre>To determine that periodic AIDE execution has been scheduled, run the following command:
+$ grep aide /etc/crontab
+The output should return something similar to the following:
+05 4 * * * root /usr/sbin/aide --check | /bin/mail -s "$(hostname) - AIDE Integrity Check" root@localhost
+The email address that the notifications are sent to can be changed by overriding
+.
+      Is it the case that AIDE has not been configured or has not been configured to notify personnel of scan details?
+      </pre></td>
+	<td><pre>AIDE should notify appropriate personnel of the details of a scan after the scan has been run.
+If AIDE has already been configured for periodic execution in /etc/crontab, append the
+following line to the existing AIDE line:
+ | /bin/mail -s "$(hostname) - AIDE Integrity Check" root@localhost
+Otherwise, add the following line to /etc/crontab:
+05 4 * * * root /usr/sbin/aide --check | /bin/mail -s "$(hostname) - AIDE Integrity Check" root@localhost
+AIDE can be executed periodically through other means; this is merely one example.</pre></td>
 	<td>SLES-15-010570</td>
-	<td>Missing Rule</td>
+	<td>aide_scan_notification</td>
 </tr>
 
 <tr>
@@ -2464,18 +2492,18 @@ attacks, is reduced. Limits are imposed by locking the account.
 
 To configure the operating system to lock an account after three
 unsuccessful consecutive access attempts using pam_tally2.so,
-modify the content of both /etc/pam.d/common-auth and
+modify the content of both /etc/pam.d/login and
 /etc/pam.d/common-account as follows:
 
  add or modify the pam_tally2.so module line in
-/etc/pam.d/common-auth to ensure both onerr=fail and
+/etc/pam.d/login to ensure both onerr=fail and
 deny= are present. For example:
 auth required pam_tally2.so onerr=fail silent audit deny= add or modify the following line in /etc/pam.d/common-account:
 account required pam_tally2.so</pre></td>
 	<td><pre>Check that the systems locks a user account after - at most - 
 consecutive failed login attempts with the following command:
 
-# grep pam_tally2.so /etc/pam.d/common-auth
+# grep -E '^\s*auth\s+\S+\s+pam_(tally2|unix)\.so' /etc/pam.d/login
 auth required pam_tally2.so onerr=fail deny=
 
 If no line is returned, the line is commented out, or the line is missing
@@ -3485,7 +3513,7 @@ will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
 	<td><pre>Verify SUSE Linux Enterprise 15 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -3519,7 +3547,7 @@ will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
 	<td><pre>Verify SUSE Linux Enterprise 15 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -3553,7 +3581,7 @@ will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
 	<td><pre>Verify SUSE Linux Enterprise 15 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity
       Is it the case that command does not return a line, or the line is commented out?
@@ -3587,7 +3615,7 @@ will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
 	<td><pre>Verify SUSE Linux Enterprise 15 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -3621,7 +3649,7 @@ will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
 	<td><pre>Verify SUSE Linux Enterprise 15 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -5978,20 +6006,16 @@ $ sudo find / -name '.shosts' -type f -delete</pre></td>
 	<td>high</td>
 	<td>There must be no shosts.equiv files on the SUSE operating system.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>The shosts.equiv files are used to configure host-based authentication for the
-system via SSH. Host-based authentication is not sufficient for preventing
-unauthorized access to the system, as it does not require interactive
-identification and authentication of a connection request, or for the use of
-two-factor authentication.</pre></td>
-	<td><pre>Verify that there are no shosts.equiv files
-on the system, run the following command:
+	<td><pre>The shosts.equiv files are used to configure host-based authentication for the system via SSH.
+Host-based authentication is not sufficient for preventing unauthorized access to the system,
+as it does not require interactive identification and authentication of a connection request,
+or for the use of two-factor authentication.</pre></td>
+	<td><pre>Verify that there are no shosts.equiv files on the system, run the following command:
 $ find / -name shosts.equiv
       Is it the case that shosts.equiv files exist?
       </pre></td>
-	<td><pre>The shosts.equiv file list remote hosts
-and users that are trusted by the local system.
-To remove these files, run the following command to delete them from any
-location:
+	<td><pre>The shosts.equiv file lists remote hosts and users that are trusted by the local
+system. To remove these files, run the following command to delete them from any location:
 $ sudo rm /[path]/[to]/[file]/shosts.equiv</pre></td>
 	<td>SLES-15-040030</td>
 	<td>no_host_based_files</td>
@@ -6141,7 +6165,7 @@ place for the storage and control of files they should own.</pre></td>
 
 $ sudo awk -F: '($3>=1000)&&($7 !~ /nologin/){print $1, $3, $6}' /etc/passwd
 
-Inspect the output and verify that all interactive users (normally users with a UID greater that 1000) have a home directory defined.
+Inspect the output and verify that all interactive users (normally users with a UID greater than 1000) have a home directory defined.
       Is it the case that users home directory is not defined?
       </pre></td>
 	<td><pre>Assign home directories to all interactive users that currently do not
@@ -6175,7 +6199,7 @@ user 'mailnull': directory 'var/spool/mqueue' does not exist
 The output should not return any interactive users.
       Is it the case that users home directory does not exist?
       </pre></td>
-	<td><pre>Create home directories to all interactive users that currently do not
+	<td><pre>Create home directories to all local interactive users that currently do not
 have a home directory assigned. Use the following commands to create the user
 home directory assigned in /etc/passwd:
 $ sudo mkdir /home/USER</pre></td>

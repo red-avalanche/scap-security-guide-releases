@@ -80,15 +80,14 @@ To address access requirements, many operating systems may be integrated with en
 
       <table>
         <tr>
-          <td>Assign Expiration Date to Emergency Accounts</td>
-          <td>Emergency accounts are privileged accounts established in response to
-crisis situations where the need for rapid account activation is required.
-In the event emergency accounts are required, configure the system to
-terminate them after a documented time period. For every emergency account,
-run the following command to set an expiration date on it, substituting
-<tt><i>ACCOUNT_NAME</i></tt> and <tt><i>YYYY-MM-DD</i></tt>
+          <td>Assign Expiration Date to Temporary Accounts</td>
+          <td>Temporary accounts are established as part of normal account activation
+procedures when there is a need for short-term accounts. In the event
+temporary accounts are required, configure the system to
+terminate them after a documented time period. For every temporary account, run the following command to set an expiration date on
+it, substituting <tt><i>USER</i></tt> and <tt><i>YYYY-MM-DD</i></tt>
 appropriately:
-<pre>$ sudo chage -E <i>YYYY-MM-DD ACCOUNT_NAME</i></pre>
+<pre>$ sudo chage -E <i>YYYY-MM-DD USER</i></pre>
 <tt><i>YYYY-MM-DD</i></tt> indicates the documented expiration date for the
 account. For U.S. Government systems, the operating system must be
 configured to automatically terminate these types of accounts after a
@@ -247,9 +246,14 @@ account changes:
           <td>Lock Accounts After Failed Password Attempts</td>
           <td>This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <tt>pam_faillock.so</tt>.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that pam_faillock.so module entries in
+<tt>/etc/pam.d/password-auth</tt> and <tt>/etc/pam.d/system-auth</tt> are
+followed by the assignment <tt>deny=&lt;count&gt;</tt> where count should be less than or equal to 
+<sub idref="var_accounts_passwords_pam_faillock_deny" /> and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -275,7 +279,18 @@ depending on the OS version.</td>
           <td>Set Interval For Counting Failed Password Attempts</td>
           <td>Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
-period.</td>
+period.
+
+Ensure that pam_faillock.so module entries in
+<tt>/etc/pam.d/password-auth</tt> and <tt>/etc/pam.d/system-auth</tt> are
+followed by the assignment
+<tt>fail_interval=&lt;interval-in-seconds&gt;</tt> where
+<tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_fail_interval" /></tt> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
         </tr>
       </table>
 
@@ -284,6 +299,14 @@ period.</td>
           <td>Set Lockout Time for Failed Password Attempts</td>
           <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
+
+
+Ensure that pam_faillock.so module entries in
+<tt>/etc/pam.d/password-auth</tt> and <tt>/etc/pam.d/system-auth</tt> are
+followed by the assignment
+<tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
+<tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_unlock_time" /></tt> or greater.
+
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -5563,7 +5586,7 @@ Do not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 <br /><br />
 Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<pre>$ sed -i 's/\(set superusers=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
 <br /><br />
 Once the superuser account has been added,
 update the
@@ -6343,15 +6366,14 @@ To address access requirements, many operating systems can be integrated with en
 
       <table>
         <tr>
-          <td>Assign Expiration Date to Emergency Accounts</td>
-          <td>Emergency accounts are privileged accounts established in response to
-crisis situations where the need for rapid account activation is required.
-In the event emergency accounts are required, configure the system to
-terminate them after a documented time period. For every emergency account,
-run the following command to set an expiration date on it, substituting
-<tt><i>ACCOUNT_NAME</i></tt> and <tt><i>YYYY-MM-DD</i></tt>
+          <td>Assign Expiration Date to Temporary Accounts</td>
+          <td>Temporary accounts are established as part of normal account activation
+procedures when there is a need for short-term accounts. In the event
+temporary accounts are required, configure the system to
+terminate them after a documented time period. For every temporary account, run the following command to set an expiration date on
+it, substituting <tt><i>USER</i></tt> and <tt><i>YYYY-MM-DD</i></tt>
 appropriately:
-<pre>$ sudo chage -E <i>YYYY-MM-DD ACCOUNT_NAME</i></pre>
+<pre>$ sudo chage -E <i>YYYY-MM-DD USER</i></pre>
 <tt><i>YYYY-MM-DD</i></tt> indicates the documented expiration date for the
 account. For U.S. Government systems, the operating system must be
 configured to automatically terminate these types of accounts after a
@@ -8421,6 +8443,19 @@ To disable the <code>ssh_sysadm_login</code> SELinux boolean, run the following 
 
       <table>
         <tr>
+          <td>Confine SELinux Users To Roles That Conform To Least Privilege</td>
+          <td>Configure the operating system to confine SELinux users to roles that conform
+to least privilege. Use the following command to map the "staff_u" SELinux user
+to the "staff_r" and "sysadm_r" roles:
+<pre>$ sudo semanage user -m staff_u -R staff_r -R sysadm_r</pre>
+<br /><br />
+Use the following command to map the "user_u" SELinux user to the "user_r" role:
+<pre>$ sudo semanage -m user_u -R user_r</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Elevate The SELinux Context When An Administrator Calls The Sudo Command</td>
           <td>Configure the operating system to elevate the SELinux context when an administrator calls
 the sudo command.
@@ -8547,9 +8582,14 @@ If both the "b32" and "b64" audit rules for "SGID" files are not defined, this i
           <td>Lock Accounts After Failed Password Attempts</td>
           <td>This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <tt>pam_faillock.so</tt>.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that pam_faillock.so module entries in
+<tt>/etc/pam.d/password-auth</tt> and <tt>/etc/pam.d/system-auth</tt> are
+followed by the assignment <tt>deny=&lt;count&gt;</tt> where count should be less than or equal to 
+<sub idref="var_accounts_passwords_pam_faillock_deny" /> and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -8575,7 +8615,18 @@ depending on the OS version.</td>
           <td>Set Interval For Counting Failed Password Attempts</td>
           <td>Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
-period.</td>
+period.
+
+Ensure that pam_faillock.so module entries in
+<tt>/etc/pam.d/password-auth</tt> and <tt>/etc/pam.d/system-auth</tt> are
+followed by the assignment
+<tt>fail_interval=&lt;interval-in-seconds&gt;</tt> where
+<tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_fail_interval" /></tt> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
         </tr>
       </table>
 
@@ -8584,6 +8635,14 @@ period.</td>
           <td>Set Lockout Time for Failed Password Attempts</td>
           <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
+
+
+Ensure that pam_faillock.so module entries in
+<tt>/etc/pam.d/password-auth</tt> and <tt>/etc/pam.d/system-auth</tt> are
+followed by the assignment
+<tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
+<tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_unlock_time" /></tt> or greater.
+
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -9278,6 +9337,16 @@ AIDE can be executed periodically through other means; this is merely one exampl
         </tr>
       </table>
 
+      <table>
+        <tr>
+          <td>The mailx Package Is Installed</td>
+          <td>A mail server is required for sending emails.
+The <code>mailx</code> package can be installed with the following command:
+<pre>
+$ sudo yum install mailx</pre></td>
+        </tr>
+      </table>
+
     </td>
 </tr>
 
@@ -9420,6 +9489,28 @@ packages, set the <tt>localpkg_gpgcheck</tt> to <tt>1</tt> in <tt>/etc/yum.conf<
         </tr>
       </table>
 
+      <table>
+        <tr>
+          <td>Ensure Red Hat GPG Key Installed</td>
+          <td>To ensure the system can cryptographically verify base software packages
+come from Red Hat (and to connect to the Red Hat Network to receive them),
+the Red Hat GPG key must properly be installed. To install the Red Hat GPG
+key, run:
+<pre>$ sudo subscription-manager register</pre>
+
+If the system is not connected to the Internet or an RHN Satellite, then
+install the Red Hat GPG key from trusted media such as the Red Hat
+installation CD-ROM or DVD. Assuming the disc is mounted in
+<tt>/media/cdrom</tt>, use the following command as the root user to import
+it into the keyring:
+<pre>$ sudo rpm --import /media/cdrom/RPM-GPG-KEY</pre>
+
+Alternatively, the key may be pre-loaded during the RHEL installation. In
+such cases, the key can be installed by running the following command:
+<pre>sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release</pre></td>
+        </tr>
+      </table>
+
     </td>
 </tr>
 
@@ -9520,6 +9611,16 @@ When operating systems provide the capability to escalate a functional capabilit
 
       <table>
         <tr>
+          <td>Disallow Configuration to Bypass Password Requirements for Privilege Escalation</td>
+          <td>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre>
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Ensure Users Re-Authenticate for Privilege Escalation - sudo !authenticate</td>
           <td>The sudo <tt>!authenticate</tt> option, when specified, allows a user to execute commands using
 sudo without having to authenticate. This should be disabled by making sure that the
@@ -9570,6 +9671,16 @@ When operating systems provide the capability to change security roles, it is cr
 
       <table>
         <tr>
+          <td>Disallow Configuration to Bypass Password Requirements for Privilege Escalation</td>
+          <td>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre>
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Ensure Users Re-Authenticate for Privilege Escalation - sudo !authenticate</td>
           <td>The sudo <tt>!authenticate</tt> option, when specified, allows a user to execute commands using
 sudo without having to authenticate. This should be disabled by making sure that the
@@ -9617,6 +9728,16 @@ When operating systems provide the capability to change user authenticators, it 
 
 
     <td>
+
+      <table>
+        <tr>
+          <td>Disallow Configuration to Bypass Password Requirements for Privilege Escalation</td>
+          <td>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre>
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.</td>
+        </tr>
+      </table>
 
       <table>
         <tr>
@@ -17001,7 +17122,7 @@ directory other than the users home directory.</td>
       <table>
         <tr>
           <td>All Interactive Users Home Directories Must Exist</td>
-          <td>Create home directories to all interactive users that currently do not
+          <td>Create home directories to all local interactive users that currently do not
 have a home directory assigned. Use the following commands to create the user
 home directory assigned in <tt>/etc/passwd</tt>:
 <pre>$ sudo mkdir /home/<i>USER</i></pre></td>
@@ -17172,6 +17293,26 @@ Once the settings have been added, add a lock to
 <tt>/etc/dconf/db/local.d/locks/00-security-settings-lock</tt> to prevent
 user modification. For example:
 <pre>/org/gnome/settings-daemon/plugins/media-keys/logout</pre>
+After the settings have been set, run <tt>dconf update</tt>.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Disable the GNOME3 Login User List</td>
+          <td>In the default graphical environment, users logging directly into the
+system are greeted with a login screen that displays all known users.
+This functionality should be disabled by setting <tt>disable-user-list</tt>
+to <tt>true</tt>.
+<br /><br />
+To disable, add or edit <tt>disable-user-list</tt> to
+<tt>/etc/dconf/db/gdm.d/00-security-settings</tt>. For example:
+<pre>[org/gnome/login-screen]
+disable-user-list=true</pre>
+Once the setting has been added, add a lock to
+<tt>/etc/dconf/db/gdm.d/locks/00-security-settings-lock</tt> to prevent
+user modification. For example:
+<pre>/org/gnome/login-screen/disable-user-list</pre>
 After the settings have been set, run <tt>dconf update</tt>.</td>
         </tr>
       </table>
@@ -17496,6 +17637,22 @@ to prevent logins with empty passwords.</td>
 
       <table>
         <tr>
+          <td>Ensure There Are No Accounts With Blank or Null Passwords</td>
+          <td>Check the "/etc/shadow" file for blank passwords with the
+following command:
+<pre>$ sudo awk -F: '!$2 {print $1}' /etc/shadow</pre>
+If the command returns any results, this is a finding.
+Configure all accounts on the system to have a password or lock
+the account with the following commands:
+Perform a password reset:
+<pre>$ sudo passwd [username]</pre>
+Lock an account:
+<pre>$ sudo passwd -l [username]</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Ensure All Files Are Owned by a User</td>
           <td>If any files are not owned by a user, then the
 cause of their lack of ownership should be investigated.
@@ -17512,10 +17669,8 @@ filesystems the following command can be run manually for each partition:
       <table>
         <tr>
           <td>Remove Host-Based Authentication Files</td>
-          <td>The <tt>shosts.equiv</tt> file list remote hosts
-and users that are trusted by the local system.
-To remove these files, run the following command to delete them from any
-location:
+          <td>The <tt>shosts.equiv</tt> file lists remote hosts and users that are trusted by the local
+system. To remove these files, run the following command to delete them from any location:
 <pre>$ sudo rm /[path]/[to]/[file]/shosts.equiv</pre></td>
         </tr>
       </table>

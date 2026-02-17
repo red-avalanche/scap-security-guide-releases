@@ -80,24 +80,6 @@ To address access requirements, many operating systems may be integrated with en
 
       <table>
         <tr>
-          <td>Assign Expiration Date to Emergency Accounts</td>
-          <td>Emergency accounts are privileged accounts established in response to
-crisis situations where the need for rapid account activation is required.
-In the event emergency accounts are required, configure the system to
-terminate them after a documented time period. For every emergency account,
-run the following command to set an expiration date on it, substituting
-<tt><i>ACCOUNT_NAME</i></tt> and <tt><i>YYYY-MM-DD</i></tt>
-appropriately:
-<pre>$ sudo chage -E <i>YYYY-MM-DD ACCOUNT_NAME</i></pre>
-<tt><i>YYYY-MM-DD</i></tt> indicates the documented expiration date for the
-account. For U.S. Government systems, the operating system must be
-configured to automatically terminate these types of accounts after a
-period of 72 hours.</td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Assign Expiration Date to Temporary Accounts</td>
           <td>Temporary accounts are established as part of normal account activation
 procedures when there is a need for short-term accounts. In the event
@@ -293,9 +275,14 @@ records is stored. The configured directory must have the correct SELinux contex
           <td>Lock Accounts After Failed Password Attempts</td>
           <td>This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <tt>pam_faillock.so</tt>.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>deny = &lt;count&gt;</tt>
+Where count should be less than or equal to 
+<sub idref="var_accounts_passwords_pam_faillock_deny" /> and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -328,7 +315,9 @@ tally directory must be set with the "dir" option.</pre>
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
-depending on the OS version.</td>
+depending on the OS version.
+
+The chosen profile expects the directory to be <tt><sub idref="var_accounts_passwords_pam_faillock_dir" /></tt>.</td>
         </tr>
       </table>
 
@@ -337,7 +326,15 @@ depending on the OS version.</td>
           <td>Set Interval For Counting Failed Password Attempts</td>
           <td>Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
-period.</td>
+period.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>fail_interval = &lt;interval-in-seconds&gt;</tt> where <tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_fail_interval" /></tt> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
         </tr>
       </table>
 
@@ -360,6 +357,12 @@ depending on the OS version.</td>
           <td>Set Lockout Time for Failed Password Attempts</td>
           <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
+
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
+<tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_unlock_time" /></tt> or greater.
+
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -6181,7 +6184,16 @@ When there is a chain of trust, usually the top entity to be trusted becomes the
 This requirement verifies that a certification path to an accepted trust anchor is used for certificate validation and that the path includes status information. Path validation is necessary for a relying party to make an informed trust decision when presented with any certificate not already explicitly trusted. Status information for certification paths includes certificate revocation lists or online certificate status protocol responses. Validation of the certificate status information is out of scope for this requirement.</td>
 
 
-    <td></td>
+    <td>
+
+      <table>
+        <tr>
+          <td>SSSD Has a Correct Trust Anchor</td>
+          <td>SSSD must have acceptable trust anchor present.</td>
+        </tr>
+      </table>
+
+    </td>
 </tr>
 
   <tr>
@@ -6690,6 +6702,24 @@ Password complexity, or strength, is a measure of the effectiveness of a passwor
 
       <table>
         <tr>
+          <td>Set Password Minimum Length in login.defs</td>
+          <td>To specify password length requirements for new accounts, edit the file
+<tt>/etc/login.defs</tt> and add or correct the following line:
+<pre>PASS_MIN_LEN <sub idref="var_accounts_password_minlen_login_defs" /></pre>
+<br /><br />
+The DoD requirement is <tt>15</tt>.
+The FISMA requirement is <tt>12</tt>.
+The profile requirement is
+<tt><sub idref="var_accounts_password_minlen_login_defs" /></tt>.
+If a program consults <tt>/etc/login.defs</tt> and also another PAM module
+(such as <tt>pam_pwquality</tt>) during a password change operation, then
+the most restrictive must be satisfied. See PAM section for more
+information about enforcing password quality requirements.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Ensure PAM Enforces Password Requirements - Minimum Length</td>
           <td>The pam_pwquality module's <tt>minlen</tt> parameter controls requirements for
 minimum characters required in a password. Add <tt>minlen=<sub idref="var_password_pam_minlen" /></tt>
@@ -6740,7 +6770,7 @@ Do not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 <br /><br />
 Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<pre>$ sed -i 's/\(set superusers=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
 <br /><br />
 Once the superuser account has been added,
 update the
@@ -7828,24 +7858,6 @@ To address access requirements, many operating systems can be integrated with en
 
       <table>
         <tr>
-          <td>Assign Expiration Date to Emergency Accounts</td>
-          <td>Emergency accounts are privileged accounts established in response to
-crisis situations where the need for rapid account activation is required.
-In the event emergency accounts are required, configure the system to
-terminate them after a documented time period. For every emergency account,
-run the following command to set an expiration date on it, substituting
-<tt><i>ACCOUNT_NAME</i></tt> and <tt><i>YYYY-MM-DD</i></tt>
-appropriately:
-<pre>$ sudo chage -E <i>YYYY-MM-DD ACCOUNT_NAME</i></pre>
-<tt><i>YYYY-MM-DD</i></tt> indicates the documented expiration date for the
-account. For U.S. Government systems, the operating system must be
-configured to automatically terminate these types of accounts after a
-period of 72 hours.</td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Assign Expiration Date to Temporary Accounts</td>
           <td>Temporary accounts are established as part of normal account activation
 procedures when there is a need for short-term accounts. In the event
@@ -7960,7 +7972,7 @@ set up incorrectly.
 To check that Crypto Policies settings are configured correctly, ensure that
 <tt>/etc/crypto-policies/back-ends/opensshserver.config</tt> contains the following
 text and is not commented out:
-<tt>-oMACS=hmac-sha2-512,hmac-sha2-256</tt></td>
+<tt>-oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</tt></td>
         </tr>
       </table>
 
@@ -8173,11 +8185,10 @@ There may be shared resources with configurable protections (e.g., files in stor
 
       <table>
         <tr>
-          <td>Ensure All World-Writable Directories Are Owned by root user</td>
-          <td>All directories in local partitions which are world-writable should be owned
-by root. If any world-writable directories are not owned by root, this
-should be investigated. Following this, the files should be deleted or
-assigned to root user.</td>
+          <td>Ensure All World-Writable Directories Are Owned by root User</td>
+          <td>All directories in local partitions which are world-writable should be owned by root.
+If any world-writable directories are not owned by root, this should be investigated.
+Following this, the files should be deleted or assigned to root user.</td>
         </tr>
       </table>
 
@@ -8244,6 +8255,17 @@ Terminating network connections associated with communications sessions includes
 
 
     <td>
+
+      <table>
+        <tr>
+          <td>Configure Logind to terminate idle sessions after certain time of inactivity</td>
+          <td>To configure <tt>logind</tt> service to terminate inactive user sessions
+after <sub idref="var_logind_session_timeout" /> seconds, edit the file
+<tt>/etc/systemd/logind.conf</tt>. Ensure that there is a section
+<pre>[Login]</pre> which contains the configuration
+<pre>StopIdleSessionSec=<sub idref="var_logind_session_timeout" /></pre>.</td>
+        </tr>
+      </table>
 
       <table>
         <tr>
@@ -9234,7 +9256,7 @@ set up incorrectly.
 To check that Crypto Policies settings are configured correctly, ensure that
 <tt>/etc/crypto-policies/back-ends/opensshserver.config</tt> contains the following
 text and is not commented out:
-<tt>-oMACS=hmac-sha2-512,hmac-sha2-256</tt></td>
+<tt>-oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</tt></td>
         </tr>
       </table>
 
@@ -10750,9 +10772,14 @@ If both the "b32" and "b64" audit rules for "SGID" files are not defined, this i
           <td>Lock Accounts After Failed Password Attempts</td>
           <td>This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <tt>pam_faillock.so</tt>.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>deny = &lt;count&gt;</tt>
+Where count should be less than or equal to 
+<sub idref="var_accounts_passwords_pam_faillock_deny" /> and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -10785,7 +10812,9 @@ tally directory must be set with the "dir" option.</pre>
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
-depending on the OS version.</td>
+depending on the OS version.
+
+The chosen profile expects the directory to be <tt><sub idref="var_accounts_passwords_pam_faillock_dir" /></tt>.</td>
         </tr>
       </table>
 
@@ -10794,7 +10823,15 @@ depending on the OS version.</td>
           <td>Set Interval For Counting Failed Password Attempts</td>
           <td>Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
-period.</td>
+period.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>fail_interval = &lt;interval-in-seconds&gt;</tt> where <tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_fail_interval" /></tt> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
         </tr>
       </table>
 
@@ -10817,6 +10854,12 @@ depending on the OS version.</td>
           <td>Set Lockout Time for Failed Password Attempts</td>
           <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
+
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
+<tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_unlock_time" /></tt> or greater.
+
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -11585,6 +11628,16 @@ AIDE can be executed periodically through other means; this is merely one exampl
         </tr>
       </table>
 
+      <table>
+        <tr>
+          <td>The mailx Package Is Installed</td>
+          <td>A mail server is required for sending emails.
+The <code>mailx</code> package can be installed with the following command:
+<pre>
+$ sudo yum install mailx</pre></td>
+        </tr>
+      </table>
+
     </td>
 </tr>
 
@@ -12075,6 +12128,16 @@ When operating systems provide the capability to escalate a functional capabilit
 
       <table>
         <tr>
+          <td>Disallow Configuration to Bypass Password Requirements for Privilege Escalation</td>
+          <td>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre>
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Ensure Users Re-Authenticate for Privilege Escalation - sudo !authenticate</td>
           <td>The sudo <tt>!authenticate</tt> option, when specified, allows a user to execute commands using
 sudo without having to authenticate. This should be disabled by making sure that the
@@ -12125,6 +12188,16 @@ When operating systems provide the capability to change security roles, it is cr
 
       <table>
         <tr>
+          <td>Disallow Configuration to Bypass Password Requirements for Privilege Escalation</td>
+          <td>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre>
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Ensure Users Re-Authenticate for Privilege Escalation - sudo !authenticate</td>
           <td>The sudo <tt>!authenticate</tt> option, when specified, allows a user to execute commands using
 sudo without having to authenticate. This should be disabled by making sure that the
@@ -12172,6 +12245,16 @@ When operating systems provide the capability to change user authenticators, it 
 
 
     <td>
+
+      <table>
+        <tr>
+          <td>Disallow Configuration to Bypass Password Requirements for Privilege Escalation</td>
+          <td>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre>
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.</td>
+        </tr>
+      </table>
 
       <table>
         <tr>
@@ -12516,7 +12599,16 @@ offline_credentials_expiration = 1
     <td>Without configuring a local cache of revocation data, there is the potential to allow access to users who are no longer authorized (users with revoked certificates).</td>
 
 
-    <td></td>
+    <td>
+
+      <table>
+        <tr>
+          <td>SSSD Has a Correct Trust Anchor</td>
+          <td>SSSD must have acceptable trust anchor present.</td>
+        </tr>
+      </table>
+
+    </td>
 </tr>
 
   <tr>
@@ -13073,6 +13165,24 @@ to use the <tt>augenrules</tt> program (the default), add the line to a file wit
 
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
 add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Record Attempts to Alter Logon and Logout Events - faillock</td>
+          <td>The audit system already collects login information for all users
+and root. If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to watch for attempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt> file in order to watch for unattempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre></td>
         </tr>
       </table>
 
@@ -17882,6 +17992,24 @@ Audit records can be generated from various components within the information sy
 
       <table>
         <tr>
+          <td>Record Attempts to Alter Logon and Logout Events - faillock</td>
+          <td>The audit system already collects login information for all users
+and root. If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to watch for attempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt> file in order to watch for unattempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Record Attempts to Alter Logon and Logout Events - lastlog</td>
           <td>The audit system already collects login information for all users
 and root. If the <tt>auditd</tt> daemon is configured to use the
@@ -19399,6 +19527,24 @@ Audit records can be generated from various components within the information sy
 
       <table>
         <tr>
+          <td>Record Attempts to Alter Logon and Logout Events - faillock</td>
+          <td>The audit system already collects login information for all users
+and root. If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to watch for attempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt> file in order to watch for unattempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Record Attempts to Alter Logon and Logout Events - lastlog</td>
           <td>The audit system already collects login information for all users
 and root. If the <tt>auditd</tt> daemon is configured to use the
@@ -20318,7 +20464,7 @@ Therefore, this rule will report a finding for home directories like <tt>/users<
       <table>
         <tr>
           <td>All Interactive Users Home Directories Must Exist</td>
-          <td>Create home directories to all interactive users that currently do not
+          <td>Create home directories to all local interactive users that currently do not
 have a home directory assigned. Use the following commands to create the user
 home directory assigned in <tt>/etc/passwd</tt>:
 <pre>$ sudo mkdir /home/<i>USER</i></pre></td>
@@ -20413,8 +20559,7 @@ be generated.</td>
       <table>
         <tr>
           <td>Disable storing core dump</td>
-          <td>The <tt>Storage</tt> option in <tt>[Coredump]</tt> section
-of <tt>/etc/systemd/coredump.conf</tt>
+          <td>The <tt>Storage</tt> option in <tt>[Coredump]</tt> sectionof <tt>/etc/systemd/coredump.conf</tt>
 can be set to <tt>none</tt> to disable storing core dumps permanently.</td>
         </tr>
       </table>
@@ -20461,11 +20606,10 @@ After the settings have been set, run <tt>dconf update</tt>.</td>
 
       <table>
         <tr>
-          <td>Ensure All World-Writable Directories Are Owned by root user</td>
-          <td>All directories in local partitions which are world-writable should be owned
-by root. If any world-writable directories are not owned by root, this
-should be investigated. Following this, the files should be deleted or
-assigned to root user.</td>
+          <td>Ensure All World-Writable Directories Are Owned by root User</td>
+          <td>All directories in local partitions which are world-writable should be owned by root.
+If any world-writable directories are not owned by root, this should be investigated.
+Following this, the files should be deleted or assigned to root user.</td>
         </tr>
       </table>
 
@@ -20906,6 +21050,22 @@ to prevent logins with empty passwords.</td>
 
       <table>
         <tr>
+          <td>Ensure There Are No Accounts With Blank or Null Passwords</td>
+          <td>Check the "/etc/shadow" file for blank passwords with the
+following command:
+<pre>$ sudo awk -F: '!$2 {print $1}' /etc/shadow</pre>
+If the command returns any results, this is a finding.
+Configure all accounts on the system to have a password or lock
+the account with the following commands:
+Perform a password reset:
+<pre>$ sudo passwd [username]</pre>
+Lock an account:
+<pre>$ sudo passwd -l [username]</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Ensure All Files Are Owned by a User</td>
           <td>If any files are not owned by a user, then the
 cause of their lack of ownership should be investigated.
@@ -20922,10 +21082,8 @@ filesystems the following command can be run manually for each partition:
       <table>
         <tr>
           <td>Remove Host-Based Authentication Files</td>
-          <td>The <tt>shosts.equiv</tt> file list remote hosts
-and users that are trusted by the local system.
-To remove these files, run the following command to delete them from any
-location:
+          <td>The <tt>shosts.equiv</tt> file lists remote hosts and users that are trusted by the local
+system. To remove these files, run the following command to delete them from any location:
 <pre>$ sudo rm /[path]/[to]/[file]/shosts.equiv</pre></td>
         </tr>
       </table>
@@ -21214,6 +21372,16 @@ crash, which can load information from the crashed kernel for analysis.
 
 The <code>kdump</code> service can be disabled with the following command:
 <pre>$ sudo systemctl mask --now kdump.service</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Enable the Hardware RNG Entropy Gatherer Service</td>
+          <td>The Hardware RNG Entropy Gatherer service should be enabled.
+
+The <code>rngd</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable rngd.service</pre></td>
         </tr>
       </table>
 

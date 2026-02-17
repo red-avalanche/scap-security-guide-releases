@@ -91,61 +91,6 @@ Account management functions include: assigning group or role membership; identi
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must automatically remove or disable temporary user accounts after 72 hours.</td>
 
-    <td>CCE-85910-8: Assign Expiration Date to Emergency Accounts</td>
-
-    <td>If temporary user accounts remain active when no longer needed or for an excessive period, these accounts may be used to gain unauthorized access. To mitigate this risk, automated termination of all temporary accounts must be set upon account creation.
-
-Temporary accounts are established as part of normal account activation procedures when there is a need for short-term accounts without the demand for immediacy in account activation.
-
-If temporary accounts are used, the operating system must be configured to automatically terminate these types of accounts after a DoD-defined time period of 72 hours.
-
-To address access requirements, many operating systems may be integrated with enterprise-level authentication/access mechanisms that meet or exceed access control policy requirements.</td>
-    <td>Emergency accounts are privileged accounts established in response to
-crisis situations where the need for rapid account activation is required.
-In the event emergency accounts are required, configure the system to
-terminate them after a documented time period. For every emergency account,
-run the following command to set an expiration date on it, substituting
-<tt><i>ACCOUNT_NAME</i></tt> and <tt><i>YYYY-MM-DD</i></tt>
-appropriately:
-<pre>$ sudo chage -E <i>YYYY-MM-DD ACCOUNT_NAME</i></pre>
-<tt><i>YYYY-MM-DD</i></tt> indicates the documented expiration date for the
-account. For U.S. Government systems, the operating system must be
-configured to automatically terminate these types of accounts after a
-period of 72 hours.</td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system automatically removes or disables local temporary user accounts after 72 hours. If it does not, this is a finding.</td>
-    <td>Verify emergency accounts have been provisioned with an expiration date of 72 hours.
-
-For every emergency account, run the following command to obtain its account aging and expiration information:
-
-$ sudo chage -l emergency_account_name
-
-Verify each of these accounts has an expiration date set within 72 hours or as documented. Is it the case that any emergency accounts have no expiration date set or do not expire within 72 hours?</td>
-    <td>Configure the operating system to automatically remove or disable local temporary user accounts after 72 hours.</td>
-    <td>Emergency accounts are privileged accounts established in response to
-crisis situations where the need for rapid account activation is required.
-In the event emergency accounts are required, configure the system to
-terminate them after a documented time period. For every emergency account,
-run the following command to set an expiration date on it, substituting
-<tt><i>ACCOUNT_NAME</i></tt> and <tt><i>YYYY-MM-DD</i></tt>
-appropriately:
-<pre>$ sudo chage -E <i>YYYY-MM-DD ACCOUNT_NAME</i></pre>
-<tt><i>YYYY-MM-DD</i></tt> indicates the documented expiration date for the
-account. For U.S. Government systems, the operating system must be
-configured to automatically terminate these types of accounts after a
-period of 72 hours.</td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
-  <tr>
-    <td>CCI-000016</td>
-    <td>SRG-OS-000002-GPOS-00002</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must automatically remove or disable temporary user accounts after 72 hours.</td>
-
     <td>CCE-82474-8: Assign Expiration Date to Temporary Accounts</td>
 
     <td>If temporary user accounts remain active when no longer needed or for an excessive period, these accounts may be used to gain unauthorized access. To mitigate this risk, automated termination of all temporary accounts must be set upon account creation.
@@ -316,7 +261,7 @@ account changes:
     <td>Verify the operating system automatically audits account creation. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to automatically audit account creation.</td>
@@ -369,7 +314,7 @@ account changes:
     <td>Verify the operating system automatically audits account creation. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -424,7 +369,7 @@ account changes:
     <td>Verify the operating system automatically audits account creation. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to automatically audit account creation.</td>
@@ -477,7 +422,7 @@ account changes:
     <td>Verify the operating system automatically audits account creation. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to automatically audit account creation.</td>
@@ -530,7 +475,7 @@ account changes:
     <td>Verify the operating system automatically audits account creation. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity Is it the case that command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to automatically audit account creation.</td>
@@ -632,9 +577,14 @@ audit Is it the case that the "audit" option is not set, is missing or commented
     <td>By limiting the number of failed logon attempts, the risk of unauthorized system access via user password guessing, otherwise known as brute-force attacks, is reduced. Limits are imposed by locking the account.</td>
     <td>This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <tt>pam_faillock.so</tt>.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>deny = &lt;count&gt;</tt>
+Where count should be less than or equal to 
+<sub idref="var_accounts_passwords_pam_faillock_deny" /> and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -651,9 +601,14 @@ or less (but not "0"), is missing or commented out?</td>
     <td>Configure the operating system to enforce the limit of three consecutive invalid logon attempts by a user during a 15-minute time period.</td>
     <td>This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <tt>pam_faillock.so</tt>.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>deny = &lt;count&gt;</tt>
+Where count should be less than or equal to 
+<sub idref="var_accounts_passwords_pam_faillock_deny" /> and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -720,7 +675,9 @@ tally directory must be set with the "dir" option.</pre>
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
-depending on the OS version.</td>
+depending on the OS version.
+
+The chosen profile expects the directory to be <tt><sub idref="var_accounts_passwords_pam_faillock_dir" /></tt>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify that the operating system enforces the limit of three consecutive invalid logon attempts by a user during a 15-minute time period. If it does not, this is a finding.</td>
     <td>To ensure the tally directory is configured correctly, run the following command:
@@ -736,7 +693,9 @@ tally directory must be set with the "dir" option.</pre>
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
-depending on the OS version.</td>
+depending on the OS version.
+
+The chosen profile expects the directory to be <tt><sub idref="var_accounts_passwords_pam_faillock_dir" /></tt>.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -754,7 +713,15 @@ depending on the OS version.</td>
     <td>By limiting the number of failed logon attempts, the risk of unauthorized system access via user password guessing, otherwise known as brute-force attacks, is reduced. Limits are imposed by locking the account.</td>
     <td>Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
-period.</td>
+period.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>fail_interval = &lt;interval-in-seconds&gt;</tt> where <tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_fail_interval" /></tt> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
     <td>Applicable - Configurable</td>
     <td>Verify that the operating system enforces the limit of three consecutive invalid logon attempts by a user during a 15-minute time period. If it does not, this is a finding.</td>
     <td>To ensure the failed password attempt policy is configured correctly, run the following command:
@@ -765,7 +732,15 @@ or less (but not "0"), the line is commented out, or the line is missing?</td>
     <td>Configure the operating system to enforce the limit of three consecutive invalid logon attempts by a user during a 15-minute time period.</td>
     <td>Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
-period.</td>
+period.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>fail_interval = &lt;interval-in-seconds&gt;</tt> where <tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_fail_interval" /></tt> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -822,6 +797,12 @@ depending on the OS version.</td>
     <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
 
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
+<tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_unlock_time" /></tt> or greater.
+
+
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
 it is recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -842,6 +823,12 @@ the line is missing, or commented out?</td>
     <td>Configure the operating system to enforce the limit of three consecutive invalid logon attempts by a user during a 15-minute time period.</td>
     <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
+
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
+<tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_unlock_time" /></tt> or greater.
+
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -5917,7 +5904,7 @@ account changes:
     <td>Verify the operating system produces audit records containing information to establish what type of events occurred. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to produce audit records containing information to establish what type of events occurred.</td>
@@ -5972,7 +5959,7 @@ account changes:
     <td>Verify the operating system produces audit records containing information to establish what type of events occurred. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -6029,7 +6016,7 @@ account changes:
     <td>Verify the operating system produces audit records containing information to establish what type of events occurred. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to produce audit records containing information to establish what type of events occurred.</td>
@@ -6084,7 +6071,7 @@ account changes:
     <td>Verify the operating system produces audit records containing information to establish what type of events occurred. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to produce audit records containing information to establish what type of events occurred.</td>
@@ -6139,7 +6126,7 @@ account changes:
     <td>Verify the operating system produces audit records containing information to establish what type of events occurred. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity Is it the case that command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to produce audit records containing information to establish what type of events occurred.</td>
@@ -9709,7 +9696,7 @@ account changes:
     <td>Verify the operating system generates audit records containing the full-text recording of privileged commands. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records containing the full-text recording of privileged commands.</td>
@@ -9762,7 +9749,7 @@ account changes:
     <td>Verify the operating system generates audit records containing the full-text recording of privileged commands. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -9817,7 +9804,7 @@ account changes:
     <td>Verify the operating system generates audit records containing the full-text recording of privileged commands. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records containing the full-text recording of privileged commands.</td>
@@ -9870,7 +9857,7 @@ account changes:
     <td>Verify the operating system generates audit records containing the full-text recording of privileged commands. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records containing the full-text recording of privileged commands.</td>
@@ -9923,7 +9910,7 @@ account changes:
     <td>Verify the operating system generates audit records containing the full-text recording of privileged commands. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity Is it the case that command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records containing the full-text recording of privileged commands.</td>
@@ -16766,7 +16753,7 @@ DoD has defined the list of events for which the operating system will provide a
 If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to provide audit record generation capability for DoD-defined auditable events for all operating system components.
@@ -16853,7 +16840,7 @@ DoD has defined the list of events for which the operating system will provide a
 If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -16942,7 +16929,7 @@ DoD has defined the list of events for which the operating system will provide a
 If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to provide audit record generation capability for DoD-defined auditable events for all operating system components.
@@ -17029,7 +17016,7 @@ DoD has defined the list of events for which the operating system will provide a
 If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to provide audit record generation capability for DoD-defined auditable events for all operating system components.
@@ -17116,7 +17103,7 @@ DoD has defined the list of events for which the operating system will provide a
 If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity Is it the case that command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to provide audit record generation capability for DoD-defined auditable events for all operating system components.
@@ -18947,12 +18934,15 @@ If the system is 64 bit then also add the following lines:
 
 
 
+
   <tr>
-    <td>V-56683</td>
+    <td>CCI-000185</td>
     <td>SRG-OS-000066-GPOS-00034</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system, for PKI-based authentication, must validate certificates by constructing a certification path (which includes status information) to an accepted trust anchor.</td>
-    <td></td>
+
+    <td>CCE-86312-6: SSSD Has a Correct Trust Anchor</td>
+
     <td>Without path validation, an informed trust decision by the relying party cannot be made when presented with any certificate not already explicitly trusted.
 
 A trust anchor is an authoritative entity represented via a public key and associated data. It is used in the context of public key infrastructures, X.509 digital certificates, and DNSSEC.
@@ -18960,17 +18950,36 @@ A trust anchor is an authoritative entity represented via a public key and assoc
 When there is a chain of trust, usually the top entity to be trusted becomes the trust anchor; it can be, for example, a Certification Authority (CA). A certification path starts with the subject certificate and proceeds through a number of intermediate certificates up to a trusted root certificate, typically issued by a trusted CA.
 
 This requirement verifies that a certification path to an accepted trust anchor is used for certificate validation and that the path includes status information. Path validation is necessary for a relying party to make an informed trust decision when presented with any certificate not already explicitly trusted. Status information for certification paths includes certificate revocation lists or online certificate status protocol responses. Validation of the certificate status information is out of scope for this requirement.</td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
+    <td>SSSD must have acceptable trust anchor present.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system, for PKI-based authentication, validates certificates by constructing a certification path (which includes status information) to an accepted trust anchor. If it does not, this is a finding.</td>
+    <td>Verify Red Hat Enterprise Linux 8 for PKI-based authentication has valid certificates by constructing a
+certification path (which includes status information) to an accepted trust anchor.
+
+Check that the system has a valid DoD root CA installed with the following command:
+
+$ sudo openssl x509 -text -in /etc/sssd/pki/sssd_auth_ca_db.pem
+
+Certificate:
+Data:
+Version: 3 (0x2)
+Serial Number: 1 (0x1)
+Signature Algorithm: sha256WithRSAEncryption
+Issuer: C = US, O = U.S. Government, OU = DoD, OU = PKI, CN = DoD Root CA 3
+Validity
+Not Before: Mar 20 18:46:41 2012 GMT
+Not After : Dec 30 18:46:41 2029 GMT
+Subject: C = US, O = U.S. Government, OU = DoD, OU = PKI, CN = DoD Root CA 3
+Subject Public Key Info:
+Public Key Algorithm: rsaEncryption Is it the case that root CA file is not a DoD-issued certificate with a valid date and installed in the /etc/sssd/pki/sssd_auth_ca_db.pem location?</td>
+    <td>Configure the operating system, for PKI-based authentication, to validate certificates by constructing a certification path (which includes status information) to an accepted trust anchor.</td>
+    <td>SSSD must have acceptable trust anchor present.</td>
+    <td>medium</td>
     <td></td>
     <td></td>
     <td></td>
   </tr>
+
 
 
 
@@ -20051,6 +20060,53 @@ The value for <tt>remember</tt> option must be equal or greater than
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must enforce a minimum 15-character password length.</td>
 
+    <td>CCE-80652-1: Set Password Minimum Length in login.defs</td>
+
+    <td>The shorter the password, the lower the number of possible combinations that need to be tested before the password is compromised.
+
+Password complexity, or strength, is a measure of the effectiveness of a password in resisting attempts at guessing and brute-force attacks. Password length is one factor of several that helps to determine strength and how long it takes to crack a password. Use of more characters in a password helps to exponentially increase the time and/or resources required to compromise the password.</td>
+    <td>To specify password length requirements for new accounts, edit the file
+<tt>/etc/login.defs</tt> and add or correct the following line:
+<pre>PASS_MIN_LEN <sub idref="var_accounts_password_minlen_login_defs" /></pre>
+<br /><br />
+The DoD requirement is <tt>15</tt>.
+The FISMA requirement is <tt>12</tt>.
+The profile requirement is
+<tt><sub idref="var_accounts_password_minlen_login_defs" /></tt>.
+If a program consults <tt>/etc/login.defs</tt> and also another PAM module
+(such as <tt>pam_pwquality</tt>) during a password change operation, then
+the most restrictive must be satisfied. See PAM section for more
+information about enforcing password quality requirements.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system enforces a minimum 15-character password length. If it does not, this is a finding.</td>
+    <td>To check the minimum password length, run the command:
+<pre>$ grep PASS_MIN_LEN /etc/login.defs</pre>
+The DoD requirement is <tt>15</tt>. Is it the case that it is not set to the required value?</td>
+    <td>Configure the operating system to enforce a minimum 15-character password length.</td>
+    <td>To specify password length requirements for new accounts, edit the file
+<tt>/etc/login.defs</tt> and add or correct the following line:
+<pre>PASS_MIN_LEN <sub idref="var_accounts_password_minlen_login_defs" /></pre>
+<br /><br />
+The DoD requirement is <tt>15</tt>.
+The FISMA requirement is <tt>12</tt>.
+The profile requirement is
+<tt><sub idref="var_accounts_password_minlen_login_defs" /></tt>.
+If a program consults <tt>/etc/login.defs</tt> and also another PAM module
+(such as <tt>pam_pwquality</tt>) during a password change operation, then
+the most restrictive must be satisfied. See PAM section for more
+information about enforcing password quality requirements.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-000205</td>
+    <td>SRG-OS-000078-GPOS-00046</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must enforce a minimum 15-character password length.</td>
+
     <td>CCE-80656-2: Ensure PAM Enforces Password Requirements - Minimum Length</td>
 
     <td>The shorter the password, the lower the number of possible combinations that need to be tested before the password is compromised.
@@ -20128,7 +20184,7 @@ Do not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 <br /><br />
 Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<pre>$ sed -i 's/\(set superusers=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
 <br /><br />
 Once the superuser account has been added,
 update the
@@ -20155,7 +20211,7 @@ Do not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 <br /><br />
 Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<pre>$ sed -i 's/\(set superusers=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
 <br /><br />
 Once the superuser account has been added,
 update the
@@ -22807,59 +22863,6 @@ The <code>auditd</code> service can be enabled with the following command:
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The information system must automatically remove or disable emergency accounts after the crisis is resolved or 72 hours.</td>
 
-    <td>CCE-85910-8: Assign Expiration Date to Emergency Accounts</td>
-
-    <td>Emergency accounts are privileged accounts that are established in response to crisis situations where the need for rapid account activation is required. Therefore, emergency account activation may bypass normal account authorization processes. If these accounts are automatically disabled, system maintenance during emergencies may not be possible, thus adversely affecting system availability. 
-
-Emergency accounts are different from infrequently used accounts (i.e., local logon accounts used by the organization's system administrators when network or normal logon/access is not available). Infrequently used accounts are not subject to automatic termination dates.  Emergency accounts are accounts created in response to crisis situations, usually for use by maintenance personnel. The automatic expiration or disabling time period may be extended as needed until the crisis is resolved; however, it must not be extended indefinitely. A permanent account should be established for privileged users who need long-term maintenance accounts.
-
-To address access requirements, many operating systems can be integrated with enterprise-level authentication/access mechanisms that meet or exceed access control policy requirements. </td>
-    <td>Emergency accounts are privileged accounts established in response to
-crisis situations where the need for rapid account activation is required.
-In the event emergency accounts are required, configure the system to
-terminate them after a documented time period. For every emergency account,
-run the following command to set an expiration date on it, substituting
-<tt><i>ACCOUNT_NAME</i></tt> and <tt><i>YYYY-MM-DD</i></tt>
-appropriately:
-<pre>$ sudo chage -E <i>YYYY-MM-DD ACCOUNT_NAME</i></pre>
-<tt><i>YYYY-MM-DD</i></tt> indicates the documented expiration date for the
-account. For U.S. Government systems, the operating system must be
-configured to automatically terminate these types of accounts after a
-period of 72 hours.</td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system is configured such that emergency administrator accounts are automatically removed or disabled within 72 hours. If it is not, this is a finding.</td>
-    <td>Verify emergency accounts have been provisioned with an expiration date of 72 hours.
-
-For every emergency account, run the following command to obtain its account aging and expiration information:
-
-$ sudo chage -l emergency_account_name
-
-Verify each of these accounts has an expiration date set within 72 hours or as documented. Is it the case that any emergency accounts have no expiration date set or do not expire within 72 hours?</td>
-    <td>Configure the operating system such that emergency administrator accounts are automatically removed or disabled within 72 hours.</td>
-    <td>Emergency accounts are privileged accounts established in response to
-crisis situations where the need for rapid account activation is required.
-In the event emergency accounts are required, configure the system to
-terminate them after a documented time period. For every emergency account,
-run the following command to set an expiration date on it, substituting
-<tt><i>ACCOUNT_NAME</i></tt> and <tt><i>YYYY-MM-DD</i></tt>
-appropriately:
-<pre>$ sudo chage -E <i>YYYY-MM-DD ACCOUNT_NAME</i></pre>
-<tt><i>YYYY-MM-DD</i></tt> indicates the documented expiration date for the
-account. For U.S. Government systems, the operating system must be
-configured to automatically terminate these types of accounts after a
-period of 72 hours.</td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
-  <tr>
-    <td>CCI-001682</td>
-    <td>SRG-OS-000123-GPOS-00064</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The information system must automatically remove or disable emergency accounts after the crisis is resolved or 72 hours.</td>
-
     <td>CCE-82474-8: Assign Expiration Date to Temporary Accounts</td>
 
     <td>Emergency accounts are privileged accounts that are established in response to crisis situations where the need for rapid account activation is required. Therefore, emergency account activation may bypass normal account authorization processes. If these accounts are automatically disabled, system maintenance during emergencies may not be possible, thus adversely affecting system availability. 
@@ -23129,13 +23132,13 @@ set up incorrectly.
 To check that Crypto Policies settings are configured correctly, ensure that
 <tt>/etc/crypto-policies/back-ends/opensshserver.config</tt> contains the following
 text and is not commented out:
-<tt>-oMACS=hmac-sha2-512,hmac-sha2-256</tt></td>
+<tt>-oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</tt></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system employs strong authenticators in the establishment of nonlocal maintenance and diagnostic sessions. If it does not, this is a finding.</td>
     <td>To verify if the OpenSSH server uses defined MACs in the Crypto Policy, run:
 <pre>$ grep -Po '(-oMACs=\S+)' /etc/crypto-policies/back-ends/opensshserver.config</pre>
 and verify that the line matches:
-<pre>-oMACS=hmac-sha2-512,hmac-sha2-256</pre> Is it the case that Crypto Policy for OpenSSH Server is not configured correctly?</td>
+<pre>-oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</pre> Is it the case that Crypto Policy for OpenSSH Server is not configured correctly?</td>
     <td>Configure the operating system to employ strong authenticators in the establishment of nonlocal maintenance and diagnostic sessions.</td>
     <td>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
 OpenSSH is supported by system crypto policy, but the OpenSSH configuration may be
@@ -23144,7 +23147,7 @@ set up incorrectly.
 To check that Crypto Policies settings are configured correctly, ensure that
 <tt>/etc/crypto-policies/back-ends/opensshserver.config</tt> contains the following
 text and is not commented out:
-<tt>-oMACS=hmac-sha2-512,hmac-sha2-256</tt></td>
+<tt>-oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</tt></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -23675,27 +23678,25 @@ following line to configure the system to boot into enforcing mode:
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>Operating systems must prevent unauthorized and unintended information transfer via shared system resources.</td>
 
-    <td>CCE-83375-6: Ensure All World-Writable Directories Are Owned by root user</td>
+    <td>CCE-83375-6: Ensure All World-Writable Directories Are Owned by root User</td>
 
     <td>Preventing unauthorized information transfers mitigates the risk of information, including encrypted representations of information, produced by the actions of prior users/roles (or the actions of processes acting on behalf of prior users/roles) from being available to any current users/roles (or current processes) that obtain access to shared system resources (e.g., registers, main memory, hard disks) after those resources have been released back to information systems. The control of information in shared resources is also commonly referred to as object reuse and residual information protection.
 
 This requirement generally applies to the design of an information technology product, but it can also apply to the configuration of particular information system components that are, or use, such products. This can be verified by acceptance/validation processes in DoD or other government agencies.
 
 There may be shared resources with configurable protections (e.g., files in storage) that may be assessed on specific information system components.</td>
-    <td>All directories in local partitions which are world-writable should be owned
-by root. If any world-writable directories are not owned by root, this
-should be investigated. Following this, the files should be deleted or
-assigned to root user.</td>
+    <td>All directories in local partitions which are world-writable should be owned by root.
+If any world-writable directories are not owned by root, this should be investigated.
+Following this, the files should be deleted or assigned to root user.</td>
     <td>Applicable - Configurable</td>
     <td>Verify operating systems prevents unauthorized and unintended information transfer via shared system resources. If it does not, this is a finding.</td>
     <td>The following command will discover and print world-writable directories that
-are not owned by root.  Run it once for each local partition <i>PART</i>:
-<pre>$ sudo find <i>PART</i> -xdev -type d -perm -0002 -uid +0 -print</pre> Is it the case that there is output?</td>
+are not owned by root. Run it once for each local partition <i>PART</i>:
+<pre>$ sudo find <i>PART</i> -xdev -type d -perm -0002 -uid +0 -print</pre> Is it the case that there are world-writable directories not owned by root?</td>
     <td>Configure operating systems to prevent unauthorized and unintended information transfer via shared system resources.</td>
-    <td>All directories in local partitions which are world-writable should be owned
-by root. If any world-writable directories are not owned by root, this
-should be investigated. Following this, the files should be deleted or
-assigned to root user.</td>
+    <td>All directories in local partitions which are world-writable should be owned by root.
+If any world-writable directories are not owned by root, this should be investigated.
+Following this, the files should be deleted or assigned to root user.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -23732,7 +23733,15 @@ following command:
     <td>Applicable - Configurable</td>
     <td>Verify operating systems prevents unauthorized and unintended information transfer via shared system resources. If it does not, this is a finding.</td>
     <td>To find world-writable directories that lack the sticky bit, run the following command:
-<pre>$ sudo find / -type d \( -perm -0002 -a ! -perm -1000 \) -print 2>/dev/null</pre> Is it the case that any world-writable directories are missing the sticky bit?</td>
+<pre>$ sudo find / -type d \( -perm -0002 -a ! -perm -1000 \) -print 2>/dev/null</pre>
+fixtext: |-
+Configure all world-writable directories to have the sticky bit set to prevent unauthorized and unintended information transferred via shared system resources.
+
+Set the sticky bit on all world-writable directories using the command, replace "[World-Writable Directory]" with any directory path missing the sticky bit:
+
+$ chmod a+t [World-Writable Directory]
+srg_requirement:
+A sticky bit must be set on all Red Hat Enterprise Linux 8 public directories to prevent unauthorized and unintended information transferred via shared system resources. Is it the case that any world-writable directories are missing the sticky bit?</td>
     <td>Configure operating systems to prevent unauthorized and unintended information transfer via shared system resources.</td>
     <td>When the so-called 'sticky bit' is set on a directory,
 only the owner of a given file may remove that file from the
@@ -23844,6 +23853,42 @@ Managing excess capacity ensures that sufficient capacity is available to counte
 
 
 
+
+  <tr>
+    <td>CCI-001133</td>
+    <td>SRG-OS-000163-GPOS-00072</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must terminate all network connections associated with a communications session at the end of the session, or as follows: for in-band management sessions (privileged sessions), the session must be terminated after 10 minutes of inactivity; and for user sessions (non-privileged session), the session must be terminated after 15 minutes of inactivity, except to fulfill documented and validated mission requirements.</td>
+
+    <td>CCE-90784-0: Configure Logind to terminate idle sessions after certain time of inactivity</td>
+
+    <td>Terminating an idle session within a short time period reduces the window of opportunity for unauthorized personnel to take control of a management session enabled on the console or console port that has been left unattended. In addition, quickly terminating an idle session will also free up resources committed by the managed network element. 
+
+Terminating network connections associated with communications sessions includes, for example, de-allocating associated TCP/IP address/port pairs at the operating system level, and de-allocating networking assignments at the application level if multiple application sessions are using a single operating system-level network connection. This does not mean that the operating system terminates all sessions or network access; it only ends the inactive session and releases the resources associated with that session.</td>
+    <td>To configure <tt>logind</tt> service to terminate inactive user sessions
+after <sub idref="var_logind_session_timeout" /> seconds, edit the file
+<tt>/etc/systemd/logind.conf</tt>. Ensure that there is a section
+<pre>[Login]</pre> which contains the configuration
+<pre>StopIdleSessionSec=<sub idref="var_logind_session_timeout" /></pre>.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system terminates all network connections associated with a communications session at the end of the session, or as follows: for in-band management sessions (privileged sessions), the session must be terminated after 10 minutes of inactivity; and for user sessions (non-privileged session), the session must be terminated after 15 minutes of inactivity, except to fulfill documented and validated mission requirements. 
+
+If it does not, this is a finding.</td>
+    <td>Display the contents of the file <tt>/etc/systemd/logind.conf</tt>:
+<pre>cat /etc/systemd/logind.conf</pre>
+Ensure that there is a section <tt>[login]</tt> which contains the
+configuration <tt>StopIdleSessionSec=<sub idref="var_logind_session_timeout" /></tt>. Is it the case that the option is not configured?</td>
+    <td>Configure the operating system to terminate all network connections associated with a communications session at the end of the session, or as follows: for in-band management sessions (privileged sessions), the session must be terminated after 10 minutes of inactivity; and for user sessions (non-privileged session), the session must be terminated after 15 minutes of inactivity, except to fulfill documented and validated mission requirements.</td>
+    <td>To configure <tt>logind</tt> service to terminate inactive user sessions
+after <sub idref="var_logind_session_timeout" /> seconds, edit the file
+<tt>/etc/systemd/logind.conf</tt>. Ensure that there is a section
+<pre>[Login]</pre> which contains the configuration
+<pre>StopIdleSessionSec=<sub idref="var_logind_session_timeout" /></pre>.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
 
   <tr>
     <td>CCI-001133</td>
@@ -25202,7 +25247,7 @@ account changes:
     <td>Verify the operating system automatically audits account modification. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to automatically audit account modification.</td>
@@ -25255,7 +25300,7 @@ account changes:
     <td>Verify the operating system automatically audits account modification. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -25310,7 +25355,7 @@ account changes:
     <td>Verify the operating system automatically audits account modification. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to automatically audit account modification.</td>
@@ -25363,7 +25408,7 @@ account changes:
     <td>Verify the operating system automatically audits account modification. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to automatically audit account modification.</td>
@@ -25416,7 +25461,7 @@ account changes:
     <td>Verify the operating system automatically audits account modification. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity Is it the case that command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to automatically audit account modification.</td>
@@ -25564,7 +25609,7 @@ account changes:
     <td>Verify the operating system automatically audits account disabling actions. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to automatically audit account disabling actions.</td>
@@ -25617,7 +25662,7 @@ account changes:
     <td>Verify the operating system automatically audits account disabling actions. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -25672,7 +25717,7 @@ account changes:
     <td>Verify the operating system automatically audits account disabling actions. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to automatically audit account disabling actions.</td>
@@ -25725,7 +25770,7 @@ account changes:
     <td>Verify the operating system automatically audits account disabling actions. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to automatically audit account disabling actions.</td>
@@ -25778,7 +25823,7 @@ account changes:
     <td>Verify the operating system automatically audits account disabling actions. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity Is it the case that command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to automatically audit account disabling actions.</td>
@@ -25926,7 +25971,7 @@ account changes:
     <td>Verify the operating system automatically audits account removal actions. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to automatically audit account removal actions.</td>
@@ -25979,7 +26024,7 @@ account changes:
     <td>Verify the operating system automatically audits account removal actions. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -26034,7 +26079,7 @@ account changes:
     <td>Verify the operating system automatically audits account removal actions. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to automatically audit account removal actions.</td>
@@ -26087,7 +26132,7 @@ account changes:
     <td>Verify the operating system automatically audits account removal actions. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to automatically audit account removal actions.</td>
@@ -26140,7 +26185,7 @@ account changes:
     <td>Verify the operating system automatically audits account removal actions. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity Is it the case that command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to automatically audit account removal actions.</td>
@@ -26515,13 +26560,13 @@ set up incorrectly.
 To check that Crypto Policies settings are configured correctly, ensure that
 <tt>/etc/crypto-policies/back-ends/opensshserver.config</tt> contains the following
 text and is not commented out:
-<tt>-oMACS=hmac-sha2-512,hmac-sha2-256</tt></td>
+<tt>-oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</tt></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system implements cryptography to protect the integrity of remote access sessions. If it does not, this is a finding.</td>
     <td>To verify if the OpenSSH server uses defined MACs in the Crypto Policy, run:
 <pre>$ grep -Po '(-oMACs=\S+)' /etc/crypto-policies/back-ends/opensshserver.config</pre>
 and verify that the line matches:
-<pre>-oMACS=hmac-sha2-512,hmac-sha2-256</pre> Is it the case that Crypto Policy for OpenSSH Server is not configured correctly?</td>
+<pre>-oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</pre> Is it the case that Crypto Policy for OpenSSH Server is not configured correctly?</td>
     <td>Configure the operating system to implement cryptography to protect the integrity of remote access sessions.</td>
     <td>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
 OpenSSH is supported by system crypto policy, but the OpenSSH configuration may be
@@ -26530,7 +26575,7 @@ set up incorrectly.
 To check that Crypto Policies settings are configured correctly, ensure that
 <tt>/etc/crypto-policies/back-ends/opensshserver.config</tt> contains the following
 text and is not commented out:
-<tt>-oMACS=hmac-sha2-512,hmac-sha2-256</tt></td>
+<tt>-oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</tt></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -27867,7 +27912,7 @@ account changes:
     <td>Verify the operating system notifies System Administrators and Information System Security Officers when accounts are created. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to notify System Administrators and Information System Security Officers when accounts are created.</td>
@@ -27925,7 +27970,7 @@ account changes:
     <td>Verify the operating system notifies System Administrators and Information System Security Officers when accounts are modified. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to notify System Administrators and Information System Security Officers when accounts are modified.</td>
@@ -27983,7 +28028,7 @@ account changes:
     <td>Verify the operating system notifies System Administrators and Information System Security Officers when accounts are disabled. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to notify System Administrators and Information System Security Officers when accounts are disabled.</td>
@@ -28041,7 +28086,7 @@ account changes:
     <td>Verify the operating system notifies System Administrators and Information System Security Officers for account removal actions. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to notify System Administrators and Information System Security Officers for account removal actions.</td>
@@ -28693,7 +28738,7 @@ account changes:
     <td>Verify the operating system automatically audits account enabling actions. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to automatically audit account enabling actions.</td>
@@ -28746,7 +28791,7 @@ account changes:
     <td>Verify the operating system automatically audits account enabling actions. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -28801,7 +28846,7 @@ account changes:
     <td>Verify the operating system automatically audits account enabling actions. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to automatically audit account enabling actions.</td>
@@ -28854,7 +28899,7 @@ account changes:
     <td>Verify the operating system automatically audits account enabling actions. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to automatically audit account enabling actions.</td>
@@ -28907,7 +28952,7 @@ account changes:
     <td>Verify the operating system automatically audits account enabling actions. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity Is it the case that command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to automatically audit account enabling actions.</td>
@@ -29061,7 +29106,7 @@ account changes:
     <td>Verify the operating system notifies the System Administrator and Information System Security Officer(s) when accounts are created, or enabled when previously disabled. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to notify the System Administrator(s) and Information System Security Officer(s) when accounts are created, or enabled when previously disabled.</td>
@@ -29116,7 +29161,7 @@ account changes:
     <td>Verify the operating system notifies the System Administrator and Information System Security Officer(s) when accounts are created, or enabled when previously disabled. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -29173,7 +29218,7 @@ account changes:
     <td>Verify the operating system notifies the System Administrator and Information System Security Officer(s) when accounts are created, or enabled when previously disabled. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to notify the System Administrator(s) and Information System Security Officer(s) when accounts are created, or enabled when previously disabled.</td>
@@ -29228,7 +29273,7 @@ account changes:
     <td>Verify the operating system notifies the System Administrator and Information System Security Officer(s) when accounts are created, or enabled when previously disabled. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to notify the System Administrator(s) and Information System Security Officer(s) when accounts are created, or enabled when previously disabled.</td>
@@ -29283,7 +29328,7 @@ account changes:
     <td>Verify the operating system notifies the System Administrator and Information System Security Officer(s) when accounts are created, or enabled when previously disabled. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to notify the System Administrator(s) and Information System Security Officer(s) when accounts are created, or enabled when previously disabled.</td>
@@ -29338,7 +29383,7 @@ account changes:
     <td>Verify the operating system notifies the System Administrator and Information System Security Officer(s) when accounts are created, or enabled when previously disabled. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity Is it the case that command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to notify the System Administrator(s) and Information System Security Officer(s) when accounts are created, or enabled when previously disabled.</td>
@@ -29981,9 +30026,14 @@ If both the "b32" and "b64" audit rules for "SGID" files are not defined, this i
     <td>By limiting the number of failed logon attempts, the risk of unauthorized system access via user password guessing, otherwise known as brute-forcing, is reduced. Limits are imposed by locking the account.</td>
     <td>This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <tt>pam_faillock.so</tt>.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>deny = &lt;count&gt;</tt>
+Where count should be less than or equal to 
+<sub idref="var_accounts_passwords_pam_faillock_deny" /> and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -30000,9 +30050,14 @@ or less (but not "0"), is missing or commented out?</td>
     <td>Configure the operating system to automatically lock an account until the locked account is released by an administrator when three unsuccessful logon attempts in 15 minutes are made.</td>
     <td>This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <tt>pam_faillock.so</tt>.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>deny = &lt;count&gt;</tt>
+Where count should be less than or equal to 
+<sub idref="var_accounts_passwords_pam_faillock_deny" /> and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -30069,7 +30124,9 @@ tally directory must be set with the "dir" option.</pre>
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
-depending on the OS version.</td>
+depending on the OS version.
+
+The chosen profile expects the directory to be <tt><sub idref="var_accounts_passwords_pam_faillock_dir" /></tt>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system automatically locks an account until the locked account is released by an administrator when three unsuccessful logon attempts in 15 minutes are made. If it does not, this is a finding.</td>
     <td>To ensure the tally directory is configured correctly, run the following command:
@@ -30085,7 +30142,9 @@ tally directory must be set with the "dir" option.</pre>
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
-depending on the OS version.</td>
+depending on the OS version.
+
+The chosen profile expects the directory to be <tt><sub idref="var_accounts_passwords_pam_faillock_dir" /></tt>.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -30103,7 +30162,15 @@ depending on the OS version.</td>
     <td>By limiting the number of failed logon attempts, the risk of unauthorized system access via user password guessing, otherwise known as brute-forcing, is reduced. Limits are imposed by locking the account.</td>
     <td>Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
-period.</td>
+period.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>fail_interval = &lt;interval-in-seconds&gt;</tt> where <tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_fail_interval" /></tt> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system automatically locks an account until the locked account is released by an administrator when three unsuccessful logon attempts in 15 minutes are made. If it does not, this is a finding.</td>
     <td>To ensure the failed password attempt policy is configured correctly, run the following command:
@@ -30114,7 +30181,15 @@ or less (but not "0"), the line is commented out, or the line is missing?</td>
     <td>Configure the operating system to automatically lock an account until the locked account is released by an administrator when three unsuccessful logon attempts in 15 minutes are made.</td>
     <td>Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
-period.</td>
+period.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>fail_interval = &lt;interval-in-seconds&gt;</tt> where <tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_fail_interval" /></tt> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -30171,6 +30246,12 @@ depending on the OS version.</td>
     <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
 
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
+<tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_unlock_time" /></tt> or greater.
+
+
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
 it is recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -30191,6 +30272,12 @@ the line is missing, or commented out?</td>
     <td>Configure the operating system to automatically lock an account until the locked account is released by an administrator when three unsuccessful logon attempts in 15 minutes are made.</td>
     <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
+
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
+<tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_unlock_time" /></tt> or greater.
+
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -31815,6 +31902,35 @@ AIDE can be executed periodically through other means; this is merely one exampl
     <td></td>
   </tr>
 
+  <tr>
+    <td>CCI-001744</td>
+    <td>SRG-OS-000363-GPOS-00150</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must notify designated personnel if baseline configurations are changed in an unauthorized manner.</td>
+
+    <td>CCE-87036-0: The mailx Package Is Installed</td>
+
+    <td>Unauthorized changes to the baseline configuration could make the system vulnerable to various attacks or allow unauthorized access to the operating system. Changes to operating system configurations can have unintended side effects, some of which may be relevant to security.
+
+Detecting such changes and providing an automated response can help avoid unintended, negative consequences that could ultimately affect the security state of the operating system. The operating system's IMO/ISSO and SAs must be notified via email and/or monitoring system trap when there is an unauthorized modification of a configuration item.</td>
+    <td>A mail server is required for sending emails.
+The <code>mailx</code> package can be installed with the following command:
+<pre>
+$ sudo yum install mailx</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system notifies designated personnel if baseline configurations are changed in an unauthorized manner. If it does not, this is a finding.</td>
+    <td>Run the following command to determine if the <code>mailx</code> package is installed: <pre>$ rpm -q mailx</pre> Is it the case that the package is not installed?</td>
+    <td>Configure the operating system to notify designated personnel if baseline configurations are changed in an unauthorized manner.</td>
+    <td>A mail server is required for sending emails.
+The <code>mailx</code> package can be installed with the following command:
+<pre>
+$ sudo yum install mailx</pre></td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
 
 
 
@@ -33148,6 +33264,37 @@ The <code>fapolicyd</code> service can be enabled with the following command:
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must require users to re-authenticate for privilege escalation.</td>
 
+    <td>CCE-86319-1: Disallow Configuration to Bypass Password Requirements for Privilege Escalation</td>
+
+    <td>Without re-authentication, users may access resources or perform tasks for which they do not have authorization. 
+
+When operating systems provide the capability to escalate a functional capability, it is critical the user re-authenticate.</td>
+    <td>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre>
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system requires users to re-authenticate for privilege escalation. If it does not, this is a finding.</td>
+    <td>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre> Is it the case that system is configured to bypass password requirements for privilege escalation?</td>
+    <td>Configure the operating system to require users to re-authenticate for privilege escalation.</td>
+    <td>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre>
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-002038</td>
+    <td>SRG-OS-000373-GPOS-00156</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must require users to re-authenticate for privilege escalation.</td>
+
     <td>CCE-82202-3: Ensure Users Re-Authenticate for Privilege Escalation - sudo !authenticate</td>
 
     <td>Without re-authentication, users may access resources or perform tasks for which they do not have authorization. 
@@ -33259,6 +33406,37 @@ and the user will not have to re-authenticate for privileged actions until the u
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must require users to re-authenticate when changing roles.</td>
 
+    <td>CCE-86319-1: Disallow Configuration to Bypass Password Requirements for Privilege Escalation</td>
+
+    <td>Without re-authentication, users may access resources or perform tasks for which they do not have authorization. 
+
+When operating systems provide the capability to change security roles, it is critical the user re-authenticate.</td>
+    <td>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre>
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system requires users to re-authenticate when changing roles. If it does not, this is a finding.</td>
+    <td>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre> Is it the case that system is configured to bypass password requirements for privilege escalation?</td>
+    <td>Configure the operating system to require users to re-authenticate when changing roles.</td>
+    <td>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre>
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-002038</td>
+    <td>SRG-OS-000373-GPOS-00157</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must require users to re-authenticate when changing roles.</td>
+
     <td>CCE-82202-3: Ensure Users Re-Authenticate for Privilege Escalation - sudo !authenticate</td>
 
     <td>Without re-authentication, users may access resources or perform tasks for which they do not have authorization. 
@@ -33363,6 +33541,37 @@ and the user will not have to re-authenticate for privileged actions until the u
 
 
 
+
+  <tr>
+    <td>CCI-002038</td>
+    <td>SRG-OS-000373-GPOS-00158</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must require users to re-authenticate when changing authenticators.</td>
+
+    <td>CCE-86319-1: Disallow Configuration to Bypass Password Requirements for Privilege Escalation</td>
+
+    <td>Without re-authentication, users may access resources or perform tasks for which they do not have authorization. 
+
+When operating systems provide the capability to change user authenticators, it is critical the user re-authenticate.</td>
+    <td>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre>
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system requires users to re-authenticate when changing authenticators. If it does not, this is a finding.</td>
+    <td>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre> Is it the case that system is configured to bypass password requirements for privilege escalation?</td>
+    <td>Configure the operating system to require users to re-authenticate when changing authenticators.</td>
+    <td>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre>
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
 
   <tr>
     <td>CCI-002038</td>
@@ -34148,24 +34357,46 @@ offline_credentials_expiration = 1
 
 
 
+
   <tr>
-    <td>V-56797</td>
+    <td>CCI-001991</td>
     <td>SRG-OS-000384-GPOS-00167</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system, for PKI-based authentication, must implement a local cache of revocation data to support path discovery and validation in case of the inability to access revocation information via the network.</td>
-    <td></td>
+
+    <td>CCE-86312-6: SSSD Has a Correct Trust Anchor</td>
+
     <td>Without configuring a local cache of revocation data, there is the potential to allow access to users who are no longer authorized (users with revoked certificates).</td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
+    <td>SSSD must have acceptable trust anchor present.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system, for PKI-based authentication, implements a local cache of revocation data to support path discovery and validation in case of the inability to access revocation information via the network. If it does not, this is a finding.</td>
+    <td>Verify Red Hat Enterprise Linux 8 for PKI-based authentication has valid certificates by constructing a
+certification path (which includes status information) to an accepted trust anchor.
+
+Check that the system has a valid DoD root CA installed with the following command:
+
+$ sudo openssl x509 -text -in /etc/sssd/pki/sssd_auth_ca_db.pem
+
+Certificate:
+Data:
+Version: 3 (0x2)
+Serial Number: 1 (0x1)
+Signature Algorithm: sha256WithRSAEncryption
+Issuer: C = US, O = U.S. Government, OU = DoD, OU = PKI, CN = DoD Root CA 3
+Validity
+Not Before: Mar 20 18:46:41 2012 GMT
+Not After : Dec 30 18:46:41 2029 GMT
+Subject: C = US, O = U.S. Government, OU = DoD, OU = PKI, CN = DoD Root CA 3
+Subject Public Key Info:
+Public Key Algorithm: rsaEncryption Is it the case that root CA file is not a DoD-issued certificate with a valid date and installed in the /etc/sssd/pki/sssd_auth_ca_db.pem location?</td>
+    <td>Configure the operating system, for PKI-based authentication, to implement a local cache of revocation data to support path discovery and validation in case of the inability to access revocation information via the network.</td>
+    <td>SSSD must have acceptable trust anchor present.</td>
+    <td>medium</td>
     <td></td>
     <td></td>
     <td></td>
   </tr>
+
 
 
 
@@ -35706,6 +35937,59 @@ to use the <tt>augenrules</tt> program (the default), add the line to a file wit
 
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility,
 add the line to file <tt>/etc/audit/audit.rules</tt>.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-002884</td>
+    <td>SRG-OS-000392-GPOS-00172</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must audit all activities performed during nonlocal maintenance and diagnostic sessions.</td>
+
+    <td>CCE-80718-0: Record Attempts to Alter Logon and Logout Events - faillock</td>
+
+    <td>If events associated with nonlocal administrative access or diagnostic sessions are not logged, a major tool for assessing and investigating attacks would not be available.
+
+This requirement addresses auditing-related issues associated with maintenance tools used specifically for diagnostic and repair actions on organizational information systems.
+
+Nonlocal maintenance and diagnostic activities are those activities conducted by individuals communicating through a network, either an external network (e.g., the Internet) or an internal network. Local maintenance and diagnostic activities are those activities carried out by individuals physically present at the information system or information system component and not communicating across a network connection.
+
+This requirement applies to hardware/software diagnostic test equipment or tools. This requirement does not cover hardware/software components that may support information system maintenance, yet are a part of the system, for example, the software implementing "ping," "ls," "ipconfig," or the hardware and software implementing the monitoring port of an Ethernet switch.</td>
+    <td>The audit system already collects login information for all users
+and root. If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to watch for attempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt> file in order to watch for unattempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system audits all activities performed during nonlocal maintenance and diagnostic sessions. If it does not, this is a finding.</td>
+    <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
+
+$ sudo auditctl -l | grep /var/log/faillock
+
+-w /var/log/faillock -p wa -k logins Is it the case that the command does not return a line, or the line is commented out?</td>
+    <td>Configure the operating system to audit all activities performed during nonlocal maintenance and diagnostic sessions.</td>
+    <td>The audit system already collects login information for all users
+and root. If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to watch for attempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt> file in order to watch for unattempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -37437,7 +37721,7 @@ account changes:
     <td>Verify the operating system audits all activities performed during nonlocal maintenance and diagnostic sessions. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to audit all activities performed during nonlocal maintenance and diagnostic sessions.</td>
@@ -37494,7 +37778,7 @@ account changes:
     <td>Verify the operating system audits all activities performed during nonlocal maintenance and diagnostic sessions. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -37553,7 +37837,7 @@ account changes:
     <td>Verify the operating system audits all activities performed during nonlocal maintenance and diagnostic sessions. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to audit all activities performed during nonlocal maintenance and diagnostic sessions.</td>
@@ -37610,7 +37894,7 @@ account changes:
     <td>Verify the operating system audits all activities performed during nonlocal maintenance and diagnostic sessions. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to audit all activities performed during nonlocal maintenance and diagnostic sessions.</td>
@@ -37667,7 +37951,7 @@ account changes:
     <td>Verify the operating system audits all activities performed during nonlocal maintenance and diagnostic sessions. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity Is it the case that command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to audit all activities performed during nonlocal maintenance and diagnostic sessions.</td>
@@ -44672,7 +44956,7 @@ account changes:
     <td>Verify the operating system generates audit records when successful/unsuccessful attempts to modify privileges occur. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to modify privileges occur.</td>
@@ -44725,7 +45009,7 @@ account changes:
     <td>Verify the operating system generates audit records when successful/unsuccessful attempts to modify privileges occur. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -44780,7 +45064,7 @@ account changes:
     <td>Verify the operating system generates audit records when successful/unsuccessful attempts to modify privileges occur. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to modify privileges occur.</td>
@@ -44833,7 +45117,7 @@ account changes:
     <td>Verify the operating system generates audit records when successful/unsuccessful attempts to modify privileges occur. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to modify privileges occur.</td>
@@ -44886,7 +45170,7 @@ account changes:
     <td>Verify the operating system generates audit records when successful/unsuccessful attempts to modify privileges occur. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity Is it the case that command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to modify privileges occur.</td>
@@ -47033,7 +47317,7 @@ account changes:
     <td>Verify the operating system generates audit records when successful/unsuccessful attempts to delete privileges occur. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to delete privileges occur.</td>
@@ -47086,7 +47370,7 @@ account changes:
     <td>Verify the operating system generates audit records when successful/unsuccessful attempts to delete privileges occur. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -47141,7 +47425,7 @@ account changes:
     <td>Verify the operating system generates audit records when successful/unsuccessful attempts to delete privileges occur. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to delete privileges occur.</td>
@@ -47194,7 +47478,7 @@ account changes:
     <td>Verify the operating system generates audit records when successful/unsuccessful attempts to delete privileges occur. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to delete privileges occur.</td>
@@ -47247,7 +47531,7 @@ account changes:
     <td>Verify the operating system generates audit records when successful/unsuccessful attempts to delete privileges occur. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity Is it the case that command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to delete privileges occur.</td>
@@ -48205,6 +48489,55 @@ form to <tt>/etc/audit/audit.rules</tt>:
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must generate audit records when successful/unsuccessful logon attempts occur.</td>
 
+    <td>CCE-80718-0: Record Attempts to Alter Logon and Logout Events - faillock</td>
+
+    <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
+
+Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
+    <td>The audit system already collects login information for all users
+and root. If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to watch for attempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt> file in order to watch for unattempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system generates audit records when successful/unsuccessful logon attempts occur. If it does not, this is a finding.</td>
+    <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
+
+$ sudo auditctl -l | grep /var/log/faillock
+
+-w /var/log/faillock -p wa -k logins Is it the case that the command does not return a line, or the line is commented out?</td>
+    <td>Configure the operating system to generate audit records when successful/unsuccessful logon attempts occur.</td>
+    <td>The audit system already collects login information for all users
+and root. If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to watch for attempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt> file in order to watch for unattempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre></td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-000172</td>
+    <td>SRG-OS-000470-GPOS-00214</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must generate audit records when successful/unsuccessful logon attempts occur.</td>
+
     <td>CCE-80719-8: Record Attempts to Alter Logon and Logout Events - lastlog</td>
 
     <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -48367,7 +48700,7 @@ account changes:
     <td>Verify the operating system generates audit records when successful/unsuccessful logon attempts occur. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records when successful/unsuccessful logon attempts occur.</td>
@@ -48420,7 +48753,7 @@ account changes:
     <td>Verify the operating system generates audit records when successful/unsuccessful logon attempts occur. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -48475,7 +48808,7 @@ account changes:
     <td>Verify the operating system generates audit records when successful/unsuccessful logon attempts occur. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records when successful/unsuccessful logon attempts occur.</td>
@@ -48528,7 +48861,7 @@ account changes:
     <td>Verify the operating system generates audit records when successful/unsuccessful logon attempts occur. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records when successful/unsuccessful logon attempts occur.</td>
@@ -48581,7 +48914,7 @@ account changes:
     <td>Verify the operating system generates audit records when successful/unsuccessful logon attempts occur. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity Is it the case that command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records when successful/unsuccessful logon attempts occur.</td>
@@ -51644,7 +51977,7 @@ account changes:
     <td>Verify the operating system generates audit records for privileged activities or other system-level access. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records for privileged activities or other system-level access.</td>
@@ -51697,7 +52030,7 @@ account changes:
     <td>Verify the operating system generates audit records for privileged activities or other system-level access. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -51752,7 +52085,7 @@ account changes:
     <td>Verify the operating system generates audit records for privileged activities or other system-level access. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records for privileged activities or other system-level access.</td>
@@ -51805,7 +52138,7 @@ account changes:
     <td>Verify the operating system generates audit records for privileged activities or other system-level access. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records for privileged activities or other system-level access.</td>
@@ -51858,7 +52191,7 @@ account changes:
     <td>Verify the operating system generates audit records for privileged activities or other system-level access. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity Is it the case that command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records for privileged activities or other system-level access.</td>
@@ -52240,6 +52573,55 @@ Audit records can be generated from various components within the information sy
 
 
 
+
+  <tr>
+    <td>CCI-000172</td>
+    <td>SRG-OS-000473-GPOS-00218</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must generate audit records when concurrent logons to the same account occur from different sources.</td>
+
+    <td>CCE-80718-0: Record Attempts to Alter Logon and Logout Events - faillock</td>
+
+    <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
+
+Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
+    <td>The audit system already collects login information for all users
+and root. If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to watch for attempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt> file in order to watch for unattempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system generates audit records when concurrent logons to the same account occur from different sources. If it does not, this is a finding.</td>
+    <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
+
+$ sudo auditctl -l | grep /var/log/faillock
+
+-w /var/log/faillock -p wa -k logins Is it the case that the command does not return a line, or the line is commented out?</td>
+    <td>Configure the operating system to generate audit records when concurrent logons to the same account occur from different sources.</td>
+    <td>The audit system already collects login information for all users
+and root. If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to watch for attempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt> file in order to watch for unattempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre></td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
 
   <tr>
     <td>CCI-000172</td>
@@ -53145,7 +53527,7 @@ account changes:
     <td>Verify the operating system generates audit records for all account creations, modifications, disabling, and termination events. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records for all account creations, modifications, disabling, and termination events.</td>
@@ -53198,7 +53580,7 @@ account changes:
     <td>Verify the operating system generates audit records for all account creations, modifications, disabling, and termination events. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -53253,7 +53635,7 @@ account changes:
     <td>Verify the operating system generates audit records for all account creations, modifications, disabling, and termination events. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records for all account creations, modifications, disabling, and termination events.</td>
@@ -53306,7 +53688,7 @@ account changes:
     <td>Verify the operating system generates audit records for all account creations, modifications, disabling, and termination events. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity Is it the case that the command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records for all account creations, modifications, disabling, and termination events.</td>
@@ -53359,7 +53741,7 @@ account changes:
     <td>Verify the operating system generates audit records for all account creations, modifications, disabling, and termination events. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity Is it the case that command does not return a line, or the line is commented out?</td>
     <td>Configure the operating system to generate audit records for all account creations, modifications, disabling, and termination events.</td>
@@ -54513,7 +54895,7 @@ Therefore, this rule will report a finding for home directories like <tt>/users<
 
 <pre>$ sudo awk -F: '($3&gt;=1000)&amp;&amp;($7 !~ /nologin/){print $1, $3, $6}' /etc/passwd</pre>
 
-Inspect the output and verify that all interactive users (normally users with a UID greater that 1000) have a home directory defined. Is it the case that users home directory is not defined?</td>
+Inspect the output and verify that all interactive users (normally users with a UID greater than 1000) have a home directory defined. Is it the case that users home directory is not defined?</td>
     <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
     <td>Assign home directories to all interactive users that currently do not
 have a home directory assigned.
@@ -54539,7 +54921,7 @@ Therefore, this rule will report a finding for home directories like <tt>/users<
     <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
 
 Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
-    <td>Create home directories to all interactive users that currently do not
+    <td>Create home directories to all local interactive users that currently do not
 have a home directory assigned. Use the following commands to create the user
 home directory assigned in <tt>/etc/passwd</tt>:
 <pre>$ sudo mkdir /home/<i>USER</i></pre></td>
@@ -54553,7 +54935,7 @@ user 'mailnull': directory 'var/spool/mqueue' does not exist</pre>
 
 The output should not return any interactive users. Is it the case that users home directory does not exist?</td>
     <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-    <td>Create home directories to all interactive users that currently do not
+    <td>Create home directories to all local interactive users that currently do not
 have a home directory assigned. Use the following commands to create the user
 home directory assigned in <tt>/etc/passwd</tt>:
 <pre>$ sudo mkdir /home/<i>USER</i></pre></td>
@@ -54830,8 +55212,7 @@ be generated.</td>
     <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
 
 Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
-    <td>The <tt>Storage</tt> option in <tt>[Coredump]</tt> section
-of <tt>/etc/systemd/coredump.conf</tt>
+    <td>The <tt>Storage</tt> option in <tt>[Coredump]</tt> sectionof <tt>/etc/systemd/coredump.conf</tt>
 can be set to <tt>none</tt> to disable storing core dumps permanently.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
@@ -54841,8 +55222,7 @@ $ grep -i storage /etc/systemd/coredump.conf
 
 Storage=none Is it the case that Storage is not set to none or is commented out and the need for core dumps is not documented with the Information System Security Officer (ISSO) as an operational requirement for all domains that have the "core" item assigned?</td>
     <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-    <td>The <tt>Storage</tt> option in <tt>[Coredump]</tt> section
-of <tt>/etc/systemd/coredump.conf</tt>
+    <td>The <tt>Storage</tt> option in <tt>[Coredump]</tt> sectionof <tt>/etc/systemd/coredump.conf</tt>
 can be set to <tt>none</tt> to disable storing core dumps permanently.</td>
     <td>medium</td>
     <td></td>
@@ -54964,25 +55344,23 @@ After the settings have been set, run <tt>dconf update</tt>.</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
 
-    <td>CCE-83375-6: Ensure All World-Writable Directories Are Owned by root user</td>
+    <td>CCE-83375-6: Ensure All World-Writable Directories Are Owned by root User</td>
 
     <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
 
 Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
-    <td>All directories in local partitions which are world-writable should be owned
-by root. If any world-writable directories are not owned by root, this
-should be investigated. Following this, the files should be deleted or
-assigned to root user.</td>
+    <td>All directories in local partitions which are world-writable should be owned by root.
+If any world-writable directories are not owned by root, this should be investigated.
+Following this, the files should be deleted or assigned to root user.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
     <td>The following command will discover and print world-writable directories that
-are not owned by root.  Run it once for each local partition <i>PART</i>:
-<pre>$ sudo find <i>PART</i> -xdev -type d -perm -0002 -uid +0 -print</pre> Is it the case that there is output?</td>
+are not owned by root. Run it once for each local partition <i>PART</i>:
+<pre>$ sudo find <i>PART</i> -xdev -type d -perm -0002 -uid +0 -print</pre> Is it the case that there are world-writable directories not owned by root?</td>
     <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-    <td>All directories in local partitions which are world-writable should be owned
-by root. If any world-writable directories are not owned by root, this
-should be investigated. Following this, the files should be deleted or
-assigned to root user.</td>
+    <td>All directories in local partitions which are world-writable should be owned by root.
+If any world-writable directories are not owned by root, this should be investigated.
+Following this, the files should be deleted or assigned to root user.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -56315,6 +56693,50 @@ to prevent logins with empty passwords.</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
 
+    <td>CCE-85953-8: Ensure There Are No Accounts With Blank or Null Passwords</td>
+
+    <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
+
+Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
+    <td>Check the "/etc/shadow" file for blank passwords with the
+following command:
+<pre>$ sudo awk -F: '!$2 {print $1}' /etc/shadow</pre>
+If the command returns any results, this is a finding.
+Configure all accounts on the system to have a password or lock
+the account with the following commands:
+Perform a password reset:
+<pre>$ sudo passwd [username]</pre>
+Lock an account:
+<pre>$ sudo passwd -l [username]</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
+    <td>To verify that null passwords cannot be used, run the following command:
+<pre>$ sudo awk -F: '!$2 {print $1}' /etc/shadow</pre>
+If this produces any output, it may be possible to log into accounts
+with empty passwords. Is it the case that Blank or NULL passwords can be used?</td>
+    <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
+    <td>Check the "/etc/shadow" file for blank passwords with the
+following command:
+<pre>$ sudo awk -F: '!$2 {print $1}' /etc/shadow</pre>
+If the command returns any results, this is a finding.
+Configure all accounts on the system to have a password or lock
+the account with the following commands:
+Perform a password reset:
+<pre>$ sudo passwd [username]</pre>
+Lock an account:
+<pre>$ sudo passwd -l [username]</pre></td>
+    <td>high</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-000366</td>
+    <td>SRG-OS-000480-GPOS-00227</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
+
     <td>CCE-83499-4: Ensure All Files Are Owned by a User</td>
 
     <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
@@ -56366,21 +56788,16 @@ filesystems the following command can be run manually for each partition:
     <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
 
 Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
-    <td>The <tt>shosts.equiv</tt> file list remote hosts
-and users that are trusted by the local system.
-To remove these files, run the following command to delete them from any
-location:
+    <td>The <tt>shosts.equiv</tt> file lists remote hosts and users that are trusted by the local
+system. To remove these files, run the following command to delete them from any location:
 <pre>$ sudo rm /[path]/[to]/[file]/shosts.equiv</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
-    <td>Verify that there are no <tt>shosts.equiv</tt> files
-on the system, run the following command:
+    <td>Verify that there are no <tt>shosts.equiv</tt> files on the system, run the following command:
 <pre>$ find / -name shosts.equiv</pre> Is it the case that shosts.equiv files exist?</td>
     <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-    <td>The <tt>shosts.equiv</tt> file list remote hosts
-and users that are trusted by the local system.
-To remove these files, run the following command to delete them from any
-location:
+    <td>The <tt>shosts.equiv</tt> file lists remote hosts and users that are trusted by the local
+system. To remove these files, run the following command to delete them from any location:
 <pre>$ sudo rm /[path]/[to]/[file]/shosts.equiv</pre></td>
     <td>high</td>
     <td></td>
@@ -57316,6 +57733,40 @@ crash, which can load information from the crashed kernel for analysis.
 The <code>kdump</code> service can be disabled with the following command:
 <pre>$ sudo systemctl mask --now kdump.service</pre></td>
     <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-000366</td>
+    <td>SRG-OS-000480-GPOS-00227</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
+
+    <td>CCE-82831-9: Enable the Hardware RNG Entropy Gatherer Service</td>
+
+    <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
+
+Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
+    <td>The Hardware RNG Entropy Gatherer service should be enabled.
+
+The <code>rngd</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable rngd.service</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
+    <td>
+
+Run the following command to determine the current status of the
+<code>rngd</code> service:
+<pre>$ sudo systemctl is-active rngd</pre>
+If the service is running, it should return the following: <pre>active</pre> Is it the case that the "rngd" service is disabled, masked, or not started.?</td>
+    <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
+    <td>The Hardware RNG Entropy Gatherer service should be enabled.
+
+The <code>rngd</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable rngd.service</pre></td>
+    <td>low</td>
     <td></td>
     <td></td>
     <td></td>

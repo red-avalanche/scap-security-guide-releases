@@ -1755,7 +1755,7 @@ $ sudo yum install libpwquality</pre>
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86408-2</td>
 <td>Disallow Configuration to Bypass Password Requirements for Privilege Escalation</td>
 <td>Verify the operating system is not configured to bypass password requirements for privilege
 escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
@@ -1836,9 +1836,14 @@ For example:
 <td>Lock Accounts After Failed Password Attempts</td>
 <td>This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <code>pam_faillock.so</code>.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that pam_faillock.so module entries in
+<code>/etc/pam.d/password-auth</code> and <code>/etc/pam.d/system-auth</code> are
+followed by the assignment <code>deny=&lt;count&gt;</code> where count should be less than or equal to 
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_deny" use="legacy"></xccdf-1.2:sub> and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
@@ -1860,13 +1865,32 @@ depending on the OS version.</td>
 <td>Set Interval For Counting Failed Password Attempts</td>
 <td>Utilizing <code>pam_faillock.so</code>, the <code>fail_interval</code> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
-period.</td>
+period.
+
+Ensure that pam_faillock.so module entries in
+<code>/etc/pam.d/password-auth</code> and <code>/etc/pam.d/system-auth</code> are
+followed by the assignment
+<code>fail_interval=&lt;interval-in-seconds&gt;</code> where
+<code>interval-in-seconds</code> is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_fail_interval" use="legacy"></xccdf-1.2:sub></code> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
+depending on the OS version.</td>
 </tr>
 <tr>
 <td>CCE-26884-7</td>
 <td>Set Lockout Time for Failed Password Attempts</td>
 <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <code>pam_faillock.so</code>.
+
+
+Ensure that pam_faillock.so module entries in
+<code>/etc/pam.d/password-auth</code> and <code>/etc/pam.d/system-auth</code> are
+followed by the assignment
+<code>unlock_time=&lt;interval-in-seconds&gt;</code> where
+<code>interval-in-seconds</code> is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_unlock_time" use="legacy"></xccdf-1.2:sub></code> or greater.
+
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -2758,7 +2782,7 @@ Therefore, this rule will report a finding for home directories like <code>/user
 <tr>
 <td>CCE-80529-1</td>
 <td>All Interactive Users Home Directories Must Exist</td>
-<td>Create home directories to all interactive users that currently do not
+<td>Create home directories to all local interactive users that currently do not
 have a home directory assigned. Use the following commands to create the user
 home directory assigned in <code>/etc/passwd</code>:
 <pre>$ sudo mkdir /home/<i>USER</i></pre>
@@ -2922,6 +2946,11 @@ $ sudo yum install audispd-plugins</pre>
 <td></td>
 <td>Ensure the default plugins for the audit dispatcher are Installed</td>
 <td>The audit-audispd-plugins package should be installed.</td>
+</tr>
+<tr>
+<td>CCE-86531-1</td>
+<td>Ensure the audit-libs package as a part of audit Subsystem is Installed</td>
+<td>The audit-libs package should be installed.</td>
 </tr>
 <tr>
 <td>CCE-81042-4</td>
@@ -6939,7 +6968,7 @@ Do not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 <br><br>
 Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<pre>$ sed -i 's/\(set superusers=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
 <br><br>
 Once the superuser account has been added,
 update the
@@ -8188,7 +8217,7 @@ modify the following line in
 <tr>
 <td>CCE-80170-4</td>
 <td>Install libreswan Package</td>
-<td>The Libreswan package provides an implementation of IPsec
+<td>The libreswan package provides an implementation of IPsec
 and IKE, which permits the creation of secure tunnels over
 untrusted networks. The <code>libreswan</code> package can be installed with the following command:
 <pre>
@@ -8211,6 +8240,14 @@ exists is an approved organizational connection.</td>
 <td>The <code>iptables</code> package can be installed with the following command:
 <pre>
 $ sudo yum install iptables</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86678-0</td>
+<td>Remove iptables-services Package</td>
+<td>The <code>iptables-services</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase iptables-services</pre>
 </td>
 </tr>
 <tr>
@@ -8712,6 +8749,28 @@ To make sure that the setting is persistent, add the following line to a file in
 </td>
 </tr>
 <tr>
+<td>CCE-86682-2</td>
+<td>Install nftables Package</td>
+<td>nftables provides a new in-kernel packet classification framework that is based on a
+network-specific Virtual Machine (VM) and a new nft userspace command line tool.
+nftables reuses the existing Netfilter subsystems such as the existing hook infrastructure,
+the connection tracking system, NAT, userspace queuing and logging subsystem.
+The <code>nftables</code> package can be installed with the following command:
+<pre>
+$ sudo yum install nftables</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86680-6</td>
+<td>Uninstall nftables package</td>
+<td>nftables is a subsystem of the Linux kernel providing filtering and classification of network
+packets/datagrams/frames and is the successor to iptables.
+The <code>nftables</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase nftables</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-86723-4</td>
 <td>Verify nftables Service is Enabled</td>
 <td>The nftables service allows for the loading of nftables rulesets during boot,
@@ -8719,6 +8778,15 @@ or starting on the nftables service
 
 The <code>nftables</code> service can be enabled with the following command:
 <pre>$ sudo systemctl enable nftables.service</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86683-0</td>
+<td>Verify nftables Service is Disabled</td>
+<td>nftables is a subsystem of the Linux kernel providing filtering and classification of network
+packets/datagrams/frames and is the successor to iptables.
+The <code>nftables</code> service can be disabled with the following command:
+<pre>systemctl disable nftables</pre>
 </td>
 </tr>
 <tr>
@@ -8887,11 +8955,10 @@ Configure the system to disable all wireless network interfaces with the followi
 </tr>
 <tr>
 <td>CCE-83374-9</td>
-<td>Ensure All World-Writable Directories Are Owned by root user</td>
-<td>All directories in local partitions which are world-writable should be owned
-by root. If any world-writable directories are not owned by root, this
-should be investigated. Following this, the files should be deleted or
-assigned to root user.</td>
+<td>Ensure All World-Writable Directories Are Owned by root User</td>
+<td>All directories in local partitions which are world-writable should be owned by root.
+If any world-writable directories are not owned by root, this should be investigated.
+Following this, the files should be deleted or assigned to root user.</td>
 </tr>
 <tr>
 <td>CCE-80130-8</td>
@@ -9890,7 +9957,7 @@ Add the <code>nodev</code> option to the fourth column of
 <td>CCE-83329-3</td>
 <td>Add noexec Option to /var</td>
 <td>The <code>noexec</code> mount option can be used to prevent binaries from being
-executed out of <code>/var</code>. 
+executed out of <code>/var</code>.
 Add the <code>noexec</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
 <code>/var</code>.</td>
@@ -10038,8 +10105,7 @@ be generated.</td>
 <tr>
 <td>CCE-83428-3</td>
 <td>Disable storing core dump</td>
-<td>The <code>Storage</code> option in <code>[Coredump]</code> section
-of <code>/etc/systemd/coredump.conf</code>
+<td>The <code>Storage</code> option in <code>[Coredump]</code> sectionof <code>/etc/systemd/coredump.conf</code>
 can be set to <code>none</code> to disable storing core dumps permanently.</td>
 </tr>
 <tr>
@@ -10230,6 +10296,18 @@ To check for incorrectly labeled device files, run following commands:
 <pre>$ sudo find /dev -context *:device_t:* \( -type c -o -type b \) -printf "%p %Z\n"</pre>
 <pre>$ sudo find /dev -context *:unlabeled_t:* \( -type c -o -type b \) -printf "%p %Z\n"</pre>
 It should produce no output in a well-configured system.</td>
+</tr>
+<tr>
+<td>CCE-86544-4</td>
+<td>Confine SELinux Users To Roles That Conform To Least Privilege</td>
+<td>Configure the operating system to confine SELinux users to roles that conform
+to least privilege. Use the following command to map the "staff_u" SELinux user
+to the "staff_r" and "sysadm_r" roles:
+<pre>$ sudo semanage user -m staff_u -R staff_r -R sysadm_r</pre>
+<br><br>
+Use the following command to map the "user_u" SELinux user to the "user_r" role:
+<pre>$ sudo semanage -m user_u -R user_r</pre>
+</td>
 </tr>
 <tr>
 <td>CCE-27288-0</td>
@@ -14956,7 +15034,7 @@ clients which use LDAP for authentication. If the system is not
 intended for use as an LDAP Server it should be removed.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86611-1</td>
 <td>The mailx Package Is Installed</td>
 <td>A mail server is required for sending emails.
 The <code>mailx</code> package can be installed with the following command:
@@ -15693,10 +15771,8 @@ The <code>rsh</code> socket can be disabled with the following command:
 <tr>
 <td>CCE-80513-5</td>
 <td>Remove Host-Based Authentication Files</td>
-<td>The <code>shosts.equiv</code> file list remote hosts
-and users that are trusted by the local system.
-To remove these files, run the following command to delete them from any
-location:
+<td>The <code>shosts.equiv</code> file lists remote hosts and users that are trusted by the local
+system. To remove these files, run the following command to delete them from any location:
 <pre>$ sudo rm /[path]/[to]/[file]/shosts.equiv</pre>
 </td>
 </tr>
@@ -16007,14 +16083,10 @@ The <code>sshd</code> service can be enabled with the following command:
 </tr>
 <tr>
 <td>CCE-80217-3</td>
-<td>Disable SSH Server If Possible (Unusual)</td>
-<td>The SSH server service, sshd, is commonly needed.
+<td>Disable SSH Server If Possible</td>
+<td>
+The SSH server service, sshd, is commonly needed.
 However, if it can be disabled, do so.
-
-
-The <code>sshd</code> service can be disabled with the following command:
-<pre>$ sudo systemctl mask --now sshd.service</pre>
-
 This is unusual, as SSH is a common method for encrypted and authenticated
 remote access.</td>
 </tr>
@@ -16025,6 +16097,18 @@ remote access.</td>
 To properly set the group owner of <code>/etc/ssh/sshd_config</code>, run the command:
 <pre>$ sudo chgrp root /etc/ssh/sshd_config</pre>
 </td>
+</tr>
+<tr>
+<td>CCE-86125-2</td>
+<td>Verify Group Ownership on SSH Server Private *_key Key Files</td>
+<td>SSH server private keys, files that match the <code>/etc/ssh/*_key</code> glob, must be
+group-owned by <code>ssh_keys</code> group.</td>
+</tr>
+<tr>
+<td>CCE-86132-8</td>
+<td>Verify Group Ownership on SSH Server Public *.pub Key Files</td>
+<td>SSH server public keys, files that match the <code>/etc/ssh/*.pub</code> glob, must be
+group-owned by <code>root</code> group.</td>
 </tr>
 <tr>
 <td>CCE-82899-6</td>

@@ -304,26 +304,17 @@ records is stored. The configured directory must have the correct SELinux contex
 
       <table>
         <tr>
-          <td>Account Lockouts Must Persist</td>
-          <td>By setting a `dir` in the faillock configuration account lockouts will persist across reboots.</td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
-          <td>Account Lockouts Must Be Logged</td>
-          <td>PAM faillock locks an account due to excessive password failures, this event must be logged.</td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Lock Accounts After Failed Password Attempts</td>
           <td>This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <tt>pam_faillock.so</tt>.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>deny = &lt;count&gt;</tt>
+Where count should be less than or equal to 
+<sub idref="var_accounts_passwords_pam_faillock_deny" /> and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -356,7 +347,9 @@ tally directory must be set with the "dir" option.</pre>
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
-depending on the OS version.</td>
+depending on the OS version.
+
+The chosen profile expects the directory to be <tt><sub idref="var_accounts_passwords_pam_faillock_dir" /></tt>.</td>
         </tr>
       </table>
 
@@ -365,7 +358,15 @@ depending on the OS version.</td>
           <td>Set Interval For Counting Failed Password Attempts</td>
           <td>Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
-period.</td>
+period.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>fail_interval = &lt;interval-in-seconds&gt;</tt> where <tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_fail_interval" /></tt> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
         </tr>
       </table>
 
@@ -374,6 +375,12 @@ period.</td>
           <td>Set Lockout Time for Failed Password Attempts</td>
           <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
+
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
+<tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_unlock_time" /></tt> or greater.
+
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -475,6 +482,30 @@ For example:
 <pre>/org/gnome/login-screen/banner-message-enable</pre>
 After the settings have been set, run <tt>dconf update</tt>.
 The banner text must also be set.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Set the GNOME3 Login Warning Banner Text</td>
+          <td>In the default graphical environment, configuring the login warning banner text
+in the GNOME Display Manager's login screen can be configured on the login
+screen by setting <tt>banner-message-text</tt> to <tt>'<i>APPROVED_BANNER</i>'</tt>
+where <i>APPROVED_BANNER</i> is the approved banner for your environment.
+<br /><br />
+To enable, add or edit <tt>banner-message-text</tt> to
+
+<tt>/etc/dconf/db/distro.d/00-security-settings</tt>. For example:
+<pre>[org/gnome/login-screen]
+banner-message-text='<i>APPROVED_BANNER</i>'</pre>
+Once the setting has been added, add a lock to
+<tt>/etc/dconf/db/distro.d/locks/00-security-settings-lock</tt> to prevent user modification.
+For example:
+<pre>/org/gnome/login-screen/banner-message-text</pre>
+
+After the settings have been set, run <tt>dconf update</tt>.
+When entering a warning banner that spans several lines, remember
+to begin and end the string with <tt>'</tt> and use <tt>\n</tt> for new lines.</td>
         </tr>
       </table>
 
@@ -4187,6 +4218,19 @@ To properly set the owner of <code>/var/log/audit</code>, run the command:
 
       <table>
         <tr>
+          <td>System Audit Logs Must Have Mode 0750 or Less Permissive</td>
+          <td>
+If <tt>log_group</tt> in <tt>/etc/audit/auditd.conf</tt> is set to a group other than the <tt>root</tt>
+group account, change the mode of the audit log files with the following command:
+<pre>$ sudo chmod 0750 /var/log/audit</pre>
+<br />
+Otherwise, change the mode of the audit log files with the following command:
+<pre>$ sudo chmod 0700 /var/log/audit</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>System Audit Logs Must Be Group Owned By Root</td>
           <td>All audit logs must be group owned by root user. The path for audit log can
 be configured via <tt>log_file</tt> parameter in <pre>/etc/audit/auditd.conf</pre>
@@ -4303,6 +4347,19 @@ To properly set the owner of <code>/var/log/audit</code>, run the command:
 
       <table>
         <tr>
+          <td>System Audit Logs Must Have Mode 0750 or Less Permissive</td>
+          <td>
+If <tt>log_group</tt> in <tt>/etc/audit/auditd.conf</tt> is set to a group other than the <tt>root</tt>
+group account, change the mode of the audit log files with the following command:
+<pre>$ sudo chmod 0750 /var/log/audit</pre>
+<br />
+Otherwise, change the mode of the audit log files with the following command:
+<pre>$ sudo chmod 0700 /var/log/audit</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>System Audit Logs Must Be Group Owned By Root</td>
           <td>All audit logs must be group owned by root user. The path for audit log can
 be configured via <tt>log_file</tt> parameter in <pre>/etc/audit/auditd.conf</pre>
@@ -4414,6 +4471,19 @@ group account, change the group ownership of the audit directories to this speci
 
 To properly set the owner of <code>/var/log/audit</code>, run the command:
 <pre>$ sudo chown root /var/log/audit </pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>System Audit Logs Must Have Mode 0750 or Less Permissive</td>
+          <td>
+If <tt>log_group</tt> in <tt>/etc/audit/auditd.conf</tt> is set to a group other than the <tt>root</tt>
+group account, change the mode of the audit log files with the following command:
+<pre>$ sudo chmod 0750 /var/log/audit</pre>
+<br />
+Otherwise, change the mode of the audit log files with the following command:
+<pre>$ sudo chmod 0700 /var/log/audit</pre></td>
         </tr>
       </table>
 
@@ -7094,7 +7164,7 @@ Do not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 <br /><br />
 Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<pre>$ sed -i 's/\(set superusers=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
 <br /><br />
 Once the superuser account has been added,
 update the
@@ -8108,7 +8178,7 @@ this is a finding.</td>
       <table>
         <tr>
           <td>Install libreswan Package</td>
-          <td>The Libreswan package provides an implementation of IPsec
+          <td>The libreswan package provides an implementation of IPsec
 and IKE, which permits the creation of secure tunnels over
 untrusted networks. The <code>libreswan</code> package can be installed with the following command:
 <pre>
@@ -8353,20 +8423,6 @@ line and is not commented out:
 
       <table>
         <tr>
-          <td>Configure SSH Server to Use FIPS 140-2 Validated Ciphers: opensshserver.config</td>
-          <td>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
-OpenSSH is supported by system crypto policy, but the OpenSSH configuration may be
-set up incorrectly.
-
-To check that Crypto Policies settings for ciphers are configured correctly, ensure that
-<tt>/etc/crypto-policies/back-ends/opensshserver.config</tt> contains the following
-text and is not commented out:
-<pre>-oCiphers=<sub idref="sshd_approved_ciphers" /></pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Configure SSH Client to Use FIPS 140-2 Validated MACs: openssh.config</td>
           <td>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
 OpenSSH is supported by system crypto policy, but the OpenSSH configuration may be
@@ -8376,20 +8432,6 @@ To check that Crypto Policies settings are configured correctly, ensure that
 <tt>/etc/crypto-policies/back-ends/openssh.config</tt> contains the following
 line and is not commented out:
 <tt>MACs hmac-sha2-512,hmac-sha2-256</tt></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
-          <td>Configure SSH Server to Use FIPS 140-2 Validated MACs: opensshserver.config</td>
-          <td>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
-OpenSSH is supported by system crypto policy, but the OpenSSH configuration may be
-set up incorrectly.
-
-To check that Crypto Policies settings are configured correctly, ensure that
-<tt>/etc/crypto-policies/back-ends/opensshserver.config</tt> contains the following
-text and is not commented out:
-<tt>-oMACS=hmac-sha2-512,hmac-sha2-256</tt></td>
         </tr>
       </table>
 
@@ -8619,11 +8661,10 @@ There may be shared resources with configurable protections (e.g., files in stor
 
       <table>
         <tr>
-          <td>Ensure All World-Writable Directories Are Owned by root user</td>
-          <td>All directories in local partitions which are world-writable should be owned
-by root. If any world-writable directories are not owned by root, this
-should be investigated. Following this, the files should be deleted or
-assigned to root user.</td>
+          <td>Ensure All World-Writable Directories Are Owned by root User</td>
+          <td>All directories in local partitions which are world-writable should be owned by root.
+If any world-writable directories are not owned by root, this should be investigated.
+Following this, the files should be deleted or assigned to root user.</td>
         </tr>
       </table>
 
@@ -9069,6 +9110,30 @@ For example:
 <pre>/org/gnome/login-screen/banner-message-enable</pre>
 After the settings have been set, run <tt>dconf update</tt>.
 The banner text must also be set.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Set the GNOME3 Login Warning Banner Text</td>
+          <td>In the default graphical environment, configuring the login warning banner text
+in the GNOME Display Manager's login screen can be configured on the login
+screen by setting <tt>banner-message-text</tt> to <tt>'<i>APPROVED_BANNER</i>'</tt>
+where <i>APPROVED_BANNER</i> is the approved banner for your environment.
+<br /><br />
+To enable, add or edit <tt>banner-message-text</tt> to
+
+<tt>/etc/dconf/db/distro.d/00-security-settings</tt>. For example:
+<pre>[org/gnome/login-screen]
+banner-message-text='<i>APPROVED_BANNER</i>'</pre>
+Once the setting has been added, add a lock to
+<tt>/etc/dconf/db/distro.d/locks/00-security-settings-lock</tt> to prevent user modification.
+For example:
+<pre>/org/gnome/login-screen/banner-message-text</pre>
+
+After the settings have been set, run <tt>dconf update</tt>.
+When entering a warning banner that spans several lines, remember
+to begin and end the string with <tt>'</tt> and use <tt>\n</tt> for new lines.</td>
         </tr>
       </table>
 
@@ -9616,20 +9681,6 @@ line and is not commented out:
 
       <table>
         <tr>
-          <td>Configure SSH Server to Use FIPS 140-2 Validated Ciphers: opensshserver.config</td>
-          <td>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
-OpenSSH is supported by system crypto policy, but the OpenSSH configuration may be
-set up incorrectly.
-
-To check that Crypto Policies settings for ciphers are configured correctly, ensure that
-<tt>/etc/crypto-policies/back-ends/opensshserver.config</tt> contains the following
-text and is not commented out:
-<pre>-oCiphers=<sub idref="sshd_approved_ciphers" /></pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Configure SSH Client to Use FIPS 140-2 Validated MACs: openssh.config</td>
           <td>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
 OpenSSH is supported by system crypto policy, but the OpenSSH configuration may be
@@ -9639,20 +9690,6 @@ To check that Crypto Policies settings are configured correctly, ensure that
 <tt>/etc/crypto-policies/back-ends/openssh.config</tt> contains the following
 line and is not commented out:
 <tt>MACs hmac-sha2-512,hmac-sha2-256</tt></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
-          <td>Configure SSH Server to Use FIPS 140-2 Validated MACs: opensshserver.config</td>
-          <td>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
-OpenSSH is supported by system crypto policy, but the OpenSSH configuration may be
-set up incorrectly.
-
-To check that Crypto Policies settings are configured correctly, ensure that
-<tt>/etc/crypto-policies/back-ends/opensshserver.config</tt> contains the following
-text and is not commented out:
-<tt>-oMACS=hmac-sha2-512,hmac-sha2-256</tt></td>
         </tr>
       </table>
 
@@ -11187,9 +11224,14 @@ If both the "b32" and "b64" audit rules for "SGID" files are not defined, this i
           <td>Lock Accounts After Failed Password Attempts</td>
           <td>This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <tt>pam_faillock.so</tt>.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>deny = &lt;count&gt;</tt>
+Where count should be less than or equal to 
+<sub idref="var_accounts_passwords_pam_faillock_deny" /> and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -11222,7 +11264,9 @@ tally directory must be set with the "dir" option.</pre>
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
-depending on the OS version.</td>
+depending on the OS version.
+
+The chosen profile expects the directory to be <tt><sub idref="var_accounts_passwords_pam_faillock_dir" /></tt>.</td>
         </tr>
       </table>
 
@@ -11231,7 +11275,15 @@ depending on the OS version.</td>
           <td>Set Interval For Counting Failed Password Attempts</td>
           <td>Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
-period.</td>
+period.
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>fail_interval = &lt;interval-in-seconds&gt;</tt> where <tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_fail_interval" /></tt> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
         </tr>
       </table>
 
@@ -11240,6 +11292,12 @@ period.</td>
           <td>Set Lockout Time for Failed Password Attempts</td>
           <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
+
+
+Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
+<tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
+<tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_unlock_time" /></tt> or greater.
+
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -21742,7 +21800,7 @@ Therefore, this rule will report a finding for home directories like <tt>/users<
       <table>
         <tr>
           <td>All Interactive Users Home Directories Must Exist</td>
-          <td>Create home directories to all interactive users that currently do not
+          <td>Create home directories to all local interactive users that currently do not
 have a home directory assigned. Use the following commands to create the user
 home directory assigned in <tt>/etc/passwd</tt>:
 <pre>$ sudo mkdir /home/<i>USER</i></pre></td>
@@ -21823,8 +21881,7 @@ be generated.</td>
       <table>
         <tr>
           <td>Disable storing core dump</td>
-          <td>The <tt>Storage</tt> option in <tt>[Coredump]</tt> section
-of <tt>/etc/systemd/coredump.conf</tt>
+          <td>The <tt>Storage</tt> option in <tt>[Coredump]</tt> sectionof <tt>/etc/systemd/coredump.conf</tt>
 can be set to <tt>none</tt> to disable storing core dumps permanently.</td>
         </tr>
       </table>
@@ -21940,11 +21997,10 @@ After the settings have been set, run <tt>dconf update</tt>.</td>
 
       <table>
         <tr>
-          <td>Ensure All World-Writable Directories Are Owned by root user</td>
-          <td>All directories in local partitions which are world-writable should be owned
-by root. If any world-writable directories are not owned by root, this
-should be investigated. Following this, the files should be deleted or
-assigned to root user.</td>
+          <td>Ensure All World-Writable Directories Are Owned by root User</td>
+          <td>All directories in local partitions which are world-writable should be owned by root.
+If any world-writable directories are not owned by root, this should be investigated.
+Following this, the files should be deleted or assigned to root user.</td>
         </tr>
       </table>
 
@@ -22834,10 +22890,8 @@ filesystems the following command can be run manually for each partition:
       <table>
         <tr>
           <td>Remove Host-Based Authentication Files</td>
-          <td>The <tt>shosts.equiv</tt> file list remote hosts
-and users that are trusted by the local system.
-To remove these files, run the following command to delete them from any
-location:
+          <td>The <tt>shosts.equiv</tt> file lists remote hosts and users that are trusted by the local
+system. To remove these files, run the following command to delete them from any location:
 <pre>$ sudo rm /[path]/[to]/[file]/shosts.equiv</pre></td>
         </tr>
       </table>
@@ -22915,7 +22969,7 @@ $ sudo dnf erase iprutils</pre></td>
       <table>
         <tr>
           <td>Install libreswan Package</td>
-          <td>The Libreswan package provides an implementation of IPsec
+          <td>The libreswan package provides an implementation of IPsec
 and IKE, which permits the creation of secure tunnels over
 untrusted networks. The <code>libreswan</code> package can be installed with the following command:
 <pre>

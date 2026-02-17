@@ -545,9 +545,14 @@ from Red Hat.
   <td xml:lang="en-US">
 This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <tt>pam_faillock.so</tt>.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that pam_faillock.so module entries in
+<tt>/etc/pam.d/password-auth</tt> and <tt>/etc/pam.d/system-auth</tt> are
+followed by the assignment <tt>deny=&lt;count&gt;</tt> where count should be less than or equal to 
+<tt>3</tt> and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -558,7 +563,7 @@ By limiting the number of failed logon attempts, the risk of unauthorized system
 user password guessing, also known as brute-forcing, is reduced. Limits are imposed by locking
 the account.
   </td>
-  <td></td>
+  <td>var_accounts_passwords_pam_faillock_deny=3</td>
 </tr>
 <tr>
   <td>CM-6(a)<br/>AC-7(a)</td>
@@ -568,13 +573,24 @@ the account.
 Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
 period.
+
+Ensure that pam_faillock.so module entries in
+<tt>/etc/pam.d/password-auth</tt> and <tt>/etc/pam.d/system-auth</tt> are
+followed by the assignment
+<tt>fail_interval=&lt;interval-in-seconds&gt;</tt> where
+<tt>interval-in-seconds</tt> is <tt><tt>900</tt></tt> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.
   </td>
   <td xml:lang="en-US">
 By limiting the number of failed logon attempts the risk of unauthorized system
 access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.
   </td>
-  <td></td>
+  <td>var_accounts_passwords_pam_faillock_fail_interval=900</td>
 </tr>
 <tr>
   <td>CM-6(a)<br/>AC-7(b)</td>
@@ -583,6 +599,14 @@ Limits are imposed by locking the account.
   <td xml:lang="en-US">
 This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
+
+
+Ensure that pam_faillock.so module entries in
+<tt>/etc/pam.d/password-auth</tt> and <tt>/etc/pam.d/system-auth</tt> are
+followed by the assignment
+<tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
+<tt>interval-in-seconds</tt> is <tt><tt>never</tt></tt> or greater.
+
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -597,7 +621,7 @@ By limiting the number of failed logon attempts the risk of unauthorized system
 access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.
   </td>
-  <td></td>
+  <td>var_accounts_passwords_pam_faillock_unlock_time=never</td>
 </tr>
 <tr>
   <td>CM-6(a)<br/>AC-6(1)<br/>CM-6(a)</td>

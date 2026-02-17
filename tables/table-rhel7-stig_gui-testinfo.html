@@ -6,7 +6,7 @@
 <body>
 <br><br><div style="text-align: center; font-size: x-large; font-weight:bold">DISA STIG with GUI for Red Hat Enterprise Linux 7</div>
 <div style="text-align: center; font-size: normal ">This profile contains configuration checks that align to the
-DISA STIG with GUI for Red Hat Enterprise Linux V3R10.
+DISA STIG with GUI for Red Hat Enterprise Linux V3R12.
 
 In addition to being applicable to Red Hat Enterprise Linux 7, DISA recognizes this
 configuration baseline as applicable to the operating system tier of
@@ -97,35 +97,33 @@ INACTIVE=
 </td>
 </tr>
 <tr>
-<td>xccdf_org.ssgproject.content_rule_account_emergency_expire_date</td>
+<td>xccdf_org.ssgproject.content_rule_account_temp_expire_date</td>
 <td>medium</td>
-<td>Assign Expiration Date to Emergency Accounts</td>
-<td>If emergency user accounts remain active when no longer needed or for
+<td>Assign Expiration Date to Temporary Accounts</td>
+<td>If temporary user accounts remain active when no longer needed or for
 an excessive period, these accounts may be used to gain unauthorized access.
-To mitigate this risk, automated termination of all emergency accounts
+To mitigate this risk, automated termination of all temporary accounts
 must be set upon account creation.
 <br>
 </td>
-<td>Emergency accounts are privileged accounts established in response to
-crisis situations where the need for rapid account activation is required.
-In the event emergency accounts are required, configure the system to
-terminate them after a documented time period. For every emergency account,
-run the following command to set an expiration date on it, substituting
-<code><i>ACCOUNT_NAME</i></code> and <code><i>YYYY-MM-DD</i></code>
+<td>Temporary accounts are established as part of normal account activation
+procedures when there is a need for short-term accounts. In the event
+temporary accounts are required, configure the system to
+terminate them after a documented time period. For every temporary account, run the following command to set an expiration date on
+it, substituting <code><i>USER</i></code> and <code><i>YYYY-MM-DD</i></code>
 appropriately:
-<pre>$ sudo chage -E <i>YYYY-MM-DD ACCOUNT_NAME</i></pre>
+<pre>$ sudo chage -E <i>YYYY-MM-DD USER</i></pre>
 <code><i>YYYY-MM-DD</i></code> indicates the documented expiration date for the
 account. For U.S. Government systems, the operating system must be
 configured to automatically terminate these types of accounts after a
 period of 72 hours.</td>
-<td><pre>Verify emergency accounts have been provisioned with an expiration date of 72 hours.
-
-For every emergency account, run the following command to obtain its account aging and expiration information:
-
-$ sudo chage -l emergency_account_name
-
-Verify each of these accounts has an expiration date set within 72 hours or as documented.
-      Is it the case that any emergency accounts have no expiration date set or do not expire within 72 hours?
+<td><pre>Verify that temporary accounts have been provisioned with an expiration date
+of 72 hours. For every temporary account, run the following command to
+obtain its account aging and expiration information:
+$ sudo chage -l temporary_account_name
+Verify each of these accounts has an expiration date set within 72 hours or
+as documented.
+      Is it the case that any temporary accounts have no expiration date set or do not expire within 72 hours?
       </pre></td>
 <td>SRG-OS-000002-GPOS-00002<br>SRG-OS-000123-GPOS-00064<br>
 </td>
@@ -828,9 +826,14 @@ user password guessing, also known as brute-forcing, is reduced. Limits are impo
 the account.</td>
 <td>This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <code>pam_faillock.so</code>.
-
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
+
+Ensure that pam_faillock.so module entries in
+<code>/etc/pam.d/password-auth</code> and <code>/etc/pam.d/system-auth</code> are
+followed by the assignment <code>deny=&lt;count&gt;</code> where count should be less than or equal to 
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_deny" use="legacy"></xccdf-1.2:sub> and greater than 0.
+
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
@@ -889,7 +892,18 @@ access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.</td>
 <td>Utilizing <code>pam_faillock.so</code>, the <code>fail_interval</code> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
-period.</td>
+period.
+
+Ensure that pam_faillock.so module entries in
+<code>/etc/pam.d/password-auth</code> and <code>/etc/pam.d/system-auth</code> are
+followed by the assignment
+<code>fail_interval=&lt;interval-in-seconds&gt;</code> where
+<code>interval-in-seconds</code> is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_fail_interval" use="legacy"></xccdf-1.2:sub></code> or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
+depending on the OS version.</td>
 <td><pre>To ensure the failed password attempt policy is configured correctly, run the following command:
 
 $ grep pam_faillock /etc/pam.d/system-auth /etc/pam.d/password-auth
@@ -913,6 +927,14 @@ access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.</td>
 <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <code>pam_faillock.so</code>.
+
+
+Ensure that pam_faillock.so module entries in
+<code>/etc/pam.d/password-auth</code> and <code>/etc/pam.d/system-auth</code> are
+followed by the assignment
+<code>unlock_time=&lt;interval-in-seconds&gt;</code> where
+<code>interval-in-seconds</code> is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_unlock_time" use="legacy"></xccdf-1.2:sub></code> or greater.
+
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -1148,7 +1170,7 @@ the user may be given access to the / directory as the current working directory
 upon logon. This could create a Denial of Service because the user would not be
 able to access their logon configuration files, and it may give them visibility
 to system files they normally would not be able to access.</td>
-<td>Create home directories to all interactive users that currently do not
+<td>Create home directories to all local interactive users that currently do not
 have a home directory assigned. Use the following commands to create the user
 home directory assigned in <code>/etc/passwd</code>:
 <pre>$ sudo mkdir /home/<i>USER</i></pre>
@@ -3639,7 +3661,7 @@ account changes:
 </td>
 <td><pre>Verify Red Hat Enterprise Linux 7 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/group)'
+$ sudo auditctl -l | grep -E '(/etc/group)'
 
 -w /etc/group -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -3675,7 +3697,7 @@ account changes:
 </td>
 <td><pre>Verify Red Hat Enterprise Linux 7 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/gshadow)'
+$ sudo auditctl -l | grep -E '(/etc/gshadow)'
 
 -w /etc/gshadow -p wa -k identity
 
@@ -3713,7 +3735,7 @@ account changes:
 </td>
 <td><pre>Verify Red Hat Enterprise Linux 7 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | egrep '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
 
 -w /etc/security/opasswd -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -3749,7 +3771,7 @@ account changes:
 </td>
 <td><pre>Verify Red Hat Enterprise Linux 7 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/passwd)'
+$  sudo auditctl -l | grep -E '(/etc/passwd)'
 
 -w /etc/passwd -p wa -k identity
       Is it the case that the command does not return a line, or the line is commented out?
@@ -3785,7 +3807,7 @@ account changes:
 </td>
 <td><pre>Verify Red Hat Enterprise Linux 7 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
 
-$  sudo auditctl -l | egrep '(/etc/shadow)'
+$  sudo auditctl -l | grep -E '(/etc/shadow)'
 
 -w /etc/shadow -p wa -k identity
       Is it the case that command does not return a line, or the line is commented out?
@@ -4548,6 +4570,39 @@ If properly configured, the output should be
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_dconf_gnome_disable_user_list</td>
+<td>medium</td>
+<td>Disable the GNOME3 Login User List</td>
+<td>Leaving the user list enabled is a security risk since it allows anyone
+with physical access to the system to quickly enumerate known user accounts
+without logging in.</td>
+<td>In the default graphical environment, users logging directly into the
+system are greeted with a login screen that displays all known users.
+This functionality should be disabled by setting <code>disable-user-list</code>
+to <code>true</code>.
+<br><br>
+To disable, add or edit <code>disable-user-list</code> to
+<code>/etc/dconf/db/gdm.d/00-security-settings</code>. For example:
+<pre>[org/gnome/login-screen]
+disable-user-list=true</pre>
+Once the setting has been added, add a lock to
+<code>/etc/dconf/db/gdm.d/locks/00-security-settings-lock</code> to prevent
+user modification. For example:
+<pre>/org/gnome/login-screen/disable-user-list</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td><pre>To ensure the user list is disabled, run the following command:
+$ grep disable-user-list /etc/dconf/db/gdm.d/*
+The output should be true.
+To ensure that users cannot enable displaying the user list, run the following:
+$ grep disable-user-list /etc/dconf/db/gdm.d/locks/*
+If properly configured, the output should be /org/gnome/login-screen/disable-user-list
+      Is it the case that disable-user-list has not been configured or is not disabled?
+      </pre></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_dconf_gnome_enable_smartcard_auth</td>
 <td>medium</td>
 <td>Enable the GNOME3 Login Smartcard Authentication</td>
@@ -4988,6 +5043,28 @@ If a line indicating no is returned, then the required value is set.
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_disallow_bypass_password_sudo</td>
+<td>medium</td>
+<td>Disallow Configuration to Bypass Password Requirements for Privilege Escalation</td>
+<td>Without re-authentication, users may access resources or perform tasks for which they do not
+have authorization. When operating systems provide the capability to escalate a functional
+capability, it is critical the user re-authenticate.</td>
+<td>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre>
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.</td>
+<td><pre>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+$ sudo grep pam_succeed_if /etc/pam.d/sudo
+      Is it the case that system is configured to bypass password requirements for privilege escalation?
+      </pre></td>
+<td>SRG-OS-000373-GPOS-00156<br>SRG-OS-000373-GPOS-00157<br>SRG-OS-000373-GPOS-00158<br>
+</td>
+<td>CCI-002038<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_display_login_attempts</td>
 <td>low</td>
 <td>Ensure PAM Displays Last Logon/Access Notification</td>
@@ -5078,6 +5155,44 @@ localpkg_gpgcheck=1
 
 If "localpkg_gpgcheck" is not set to "1", or if the option is missing or commented out, ask the System Administrator how the certificates for patches and other operating system components are verified.
       Is it the case that there is no process to validate certificates for local packages that is approved by the organization?
+      </pre></td>
+<td>SRG-OS-000366-GPOS-00153<br>
+</td>
+<td>CCI-001749<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_ensure_redhat_gpgkey_installed</td>
+<td>high</td>
+<td>Ensure Red Hat GPG Key Installed</td>
+<td>Changes to software components can have significant effects on the overall
+security of the operating system. This requirement ensures the software has
+not been tampered with and that it has been provided by a trusted vendor.
+The Red Hat GPG key is necessary to cryptographically verify packages are
+from Red Hat.</td>
+<td>To ensure the system can cryptographically verify base software packages
+come from Red Hat (and to connect to the Red Hat Network to receive them),
+the Red Hat GPG key must properly be installed. To install the Red Hat GPG
+key, run:
+<pre>$ sudo subscription-manager register</pre>
+
+If the system is not connected to the Internet or an RHN Satellite, then
+install the Red Hat GPG key from trusted media such as the Red Hat
+installation CD-ROM or DVD. Assuming the disc is mounted in
+<code>/media/cdrom</code>, use the following command as the root user to import
+it into the keyring:
+<pre>$ sudo rpm --import /media/cdrom/RPM-GPG-KEY</pre>
+
+Alternatively, the key may be pre-loaded during the RHEL installation. In
+such cases, the key can be installed by running the following command:
+<pre>sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release</pre>
+</td>
+<td><pre>To ensure that the GPG key is installed, run:
+$ rpm -q --queryformat "%{SUMMARY}\n" gpg-pubkey
+The command should return the string below:
+gpg(Red Hat, Inc. (release key 2)  &lt;security@redhat.com&gt;
+      Is it the case that the Red Hat GPG Key is not installed?
       </pre></td>
 <td>SRG-OS-000366-GPOS-00153<br>
 </td>
@@ -5468,7 +5583,7 @@ Do not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 <br><br>
 Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<pre>$ sed -i 's/\(set superusers=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
 <br><br>
 Once the superuser account has been added,
 update the
@@ -6186,6 +6301,37 @@ prevent logins with empty passwords.
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_no_empty_passwords_etc_shadow</td>
+<td>high</td>
+<td>Ensure There Are No Accounts With Blank or Null Passwords</td>
+<td>If an account has an empty password, anyone could log in and
+run commands with the privileges of that account. Accounts with
+empty passwords should never be used in operational environments.</td>
+<td>Check the "/etc/shadow" file for blank passwords with the
+following command:
+<pre>$ sudo awk -F: '!$2 {print $1}' /etc/shadow</pre>
+If the command returns any results, this is a finding.
+Configure all accounts on the system to have a password or lock
+the account with the following commands:
+Perform a password reset:
+<pre>$ sudo passwd [username]</pre>
+Lock an account:
+<pre>$ sudo passwd -l [username]</pre>
+</td>
+<td><pre>To verify that null passwords cannot be used, run the following command:
+$ sudo awk -F: '!$2 {print $1}' /etc/shadow
+If this produces any output, it may be possible to log into accounts
+with empty passwords.
+      Is it the case that Blank or NULL passwords can be used?
+      </pre></td>
+<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td>CM-6 b<br>
+</td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_no_files_unowned_by_user</td>
 <td>medium</td>
 <td>Ensure All Files Are Owned by a User</td>
@@ -6227,19 +6373,15 @@ $ sudo chown user file
 <td>xccdf_org.ssgproject.content_rule_no_host_based_files</td>
 <td>high</td>
 <td>Remove Host-Based Authentication Files</td>
-<td>The shosts.equiv files are used to configure host-based authentication for the
-system via SSH. Host-based authentication is not sufficient for preventing
-unauthorized access to the system, as it does not require interactive
-identification and authentication of a connection request, or for the use of
-two-factor authentication.</td>
-<td>The <code>shosts.equiv</code> file list remote hosts
-and users that are trusted by the local system.
-To remove these files, run the following command to delete them from any
-location:
+<td>The shosts.equiv files are used to configure host-based authentication for the system via SSH.
+Host-based authentication is not sufficient for preventing unauthorized access to the system,
+as it does not require interactive identification and authentication of a connection request,
+or for the use of two-factor authentication.</td>
+<td>The <code>shosts.equiv</code> file lists remote hosts and users that are trusted by the local
+system. To remove these files, run the following command to delete them from any location:
 <pre>$ sudo rm /[path]/[to]/[file]/shosts.equiv</pre>
 </td>
-<td><pre>Verify that there are no shosts.equiv files
-on the system, run the following command:
+<td><pre>Verify that there are no shosts.equiv files on the system, run the following command:
 $ find / -name shosts.equiv
       Is it the case that shosts.equiv files exist?
       </pre></td>
@@ -6292,6 +6434,26 @@ $ sudo yum install aide</pre>
 <td>SRG-OS-000445-GPOS-00199<br>SRG-OS-000446-GPOS-00200<br>SRG-OS-000363-GPOS-00150<br>
 </td>
 <td>CCI-002696<br>CCI-002699<br>CCI-001744<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_package_mailx_installed</td>
+<td>medium</td>
+<td>The mailx Package Is Installed</td>
+<td>Emails can be used to notify designated personnel about important
+system events such as failures or warnings.</td>
+<td>A mail server is required for sending emails.
+The <code>mailx</code> package can be installed with the following command:
+<pre>
+$ sudo yum install mailx</pre>
+</td>
+<td><pre>Run the following command to determine if the mailx package is installed: $ rpm -q mailx
+      Is it the case that the package is not installed?
+      </pre></td>
+<td>SRG-OS-000363-GPOS-00150<br>
+</td>
+<td>CCI-001744<br>
 </td>
 <td></td>
 </tr>
@@ -6990,6 +7152,51 @@ It should produce no output in a well-configured system.
 </td>
 <td>AC-3 (3) (a)<br>AC-4 (8)<br>CM-3 e<br>CM-6 b<br>CM-6 c<br>
 </td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_selinux_confine_to_least_privilege</td>
+<td>medium</td>
+<td>Confine SELinux Users To Roles That Conform To Least Privilege</td>
+<td>Preventing non-privileged users from executing privileged functions mitigates
+the risk that unauthorized individuals or processes may gain unnecessary access
+to information or privileges.
+<br><br>
+Privileged functions include, for example,
+establishing accounts, performing system integrity checks, or administering
+cryptographic key management activities. Non-privileged users are individuals
+who do not possess appropriate authorizations. Circumventing intrusion detection
+and prevention mechanisms or malicious code protection mechanisms are examples
+of privileged functions that require protection from non-privileged users.</td>
+<td>Configure the operating system to confine SELinux users to roles that conform
+to least privilege. Use the following command to map the "staff_u" SELinux user
+to the "staff_r" and "sysadm_r" roles:
+<pre>$ sudo semanage user -m staff_u -R staff_r -R sysadm_r</pre>
+<br><br>
+Use the following command to map the "user_u" SELinux user to the "user_r" role:
+<pre>$ sudo semanage -m user_u -R user_r</pre>
+</td>
+<td><pre>Verify the operating system confines SELinux users to roles that conform to least
+privilege. Check the SELinux User list to SELinux Roles mapping by using the
+following command:
+sudo semanage user -l
+The output should look like this:
+SELinuxUser LabelingPrefix MLS/MCSLevel MLS/MCSRange SELinuxRoles
+guest_u            user  s0  s0  guest_r
+root                   user  s0  s0-s0:c0.c1023  staff_r sysadm_r system_r unconfined_r
+staff_u              user  s0  s0-s0:c0.c1023  staff_r sysadm_r
+sysadm_u         user  s0  s0-s0:c0.c1023  sysadm_r
+system_u          user  s0  s0-s0:c0.c1023  system_r unconfined_r
+unconfined_u  user  s0  s0-s0:c0.c1023  system_r unconfined_r
+user_u               user  s0  s0  user_r
+xguest_u           user  s0  s0  xguest_r
+
+      Is it the case that selinux users are not confined to least privilege?
+      </pre></td>
+<td>SRG-OS-000312-GPOS-00122<br>SRG-OS-000312-GPOS-00123<br>SRG-OS-000312-GPOS-00124<br>SRG-OS-000324-GPOS-00125<br>
+</td>
+<td>CCI-002165<br>CCI-002235<br>
+</td>
+<td></td>
 </tr>
 <tr>
 <td>xccdf_org.ssgproject.content_rule_selinux_context_elevation_for_sudo</td>
