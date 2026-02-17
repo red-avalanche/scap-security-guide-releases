@@ -2399,11 +2399,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
           </td>
 <td><pre>Verify that SUSE Linux Enterprise Micro 5 is configured to audit the execution of the "unix_chkpwd" command with the following command:
 
@@ -3079,11 +3079,11 @@ substituting <i>ACTION</i> appropriately:
 <pre>disk_full_action = <i>ACTION</i>
           </pre>
 Set this value to <code>single</code> to cause the system to switch to single-user
-mode for corrective action. Acceptable values also include <code>syslog</code>,
+mode for corrective action. Acceptable values also include
 
-<code>exec</code>,
+<code>syslog</code>, <code>exec</code>, <code>single</code>, and <code>halt</code>
 
-<code>single</code>, and <code>halt</code>. For certain systems, the need for availability
+For certain systems, the need for availability
 outweighs the need to log all actions, and a different setting should be
 determined. Details regarding all possible values for <i>ACTION</i> are described in the
 <code>auditd.conf</code> man page.</td>
@@ -3098,8 +3098,7 @@ disk_full_action =
 If the value of the "disk_full_action" option is not "SYSLOG", "SINGLE", or "HALT", or the line is commented out, ask the system administrator to indicate how the system takes appropriate action when an audit storage volume is full.
       Is it the case that there is no evidence of appropriate action?
       </pre></td>
-<td>SRG-OS-000047-GPOS-00023<br>
-</td>
+<td></td>
 <td>CCI-000140<br>
 </td>
 <td>AU-5 b<br>
@@ -4436,9 +4435,11 @@ something is amiss. They may be caused by an intruder, by incorrect software ins
 draft software removal, or by failure to remove all files belonging to a deleted account, or
 other similar cases. The files should be repaired so they will not cause problems when
 accounts are created in the future, and the cause should be discovered and addressed.</td>
-<td>If any file is not group-owned by a group present in /etc/group, the cause of the lack of
+<td>If any file is not group-owned by a valid defined group, the cause of the lack of
 group-ownership must be investigated. Following this, those files should be deleted or
-assigned to an appropriate group.
+assigned to an appropriate group. The groups need to be defined in <code>/etc/group</code>
+or in <code>/usr/lib/group</code> if <code>nss-altfiles</code> are configured to be used
+in <code>/etc/nsswitch.conf</code>.
 
 Locate the mount points related to local devices by the following command:
 <pre>$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)</pre>
@@ -6015,15 +6016,18 @@ they are kept in plain text.
               <br>
 Using more hashing rounds makes password cracking attacks more difficult.</td>
 <td>In <code>/etc/login.defs</code>, ensure <code>SHA_CRYPT_MIN_ROUNDS</code> and
-<code>SHA_CRYPT_MAX_ROUNDS</code> has the minimum value of <code>5000</code>.
+<code>SHA_CRYPT_MAX_ROUNDS</code> has the minimum value of <code>
+                <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_min_rounds_login_defs" use="legacy"></xccdf-1.2:sub>
+              </code>.
 For example:
-<pre>SHA_CRYPT_MIN_ROUNDS 5000
-SHA_CRYPT_MAX_ROUNDS 5000</pre>
+<pre>SHA_CRYPT_MIN_ROUNDS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_min_rounds_login_defs" use="legacy"></xccdf-1.2:sub>
+SHA_CRYPT_MAX_ROUNDS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_min_rounds_login_defs" use="legacy"></xccdf-1.2:sub>
+              </pre>
 Notice that if neither are set, they already have the default value of 5000.
-If either is set, they must have the minimum value of 5000.</td>
-<td><pre>Inspect /etc/login.defs and ensure that if eihter
+If either is set, they must have the minimum value of <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_min_rounds_login_defs" use="legacy"></xccdf-1.2:sub>.</td>
+<td><pre>Inspect /etc/login.defs and ensure that if either
 SHA_CRYPT_MIN_ROUNDS or SHA_CRYPT_MAX_ROUNDS
-are set, they must have the minimum value of 5000.
+are set, they must have the minimum value of .
       Is it the case that it does not?
       </pre></td>
 <td>SRG-OS-000120-GPOS-00061<br>SRG-OS-000073-GPOS-00041<br>
@@ -6872,7 +6876,8 @@ $ sudo grep -ri "nopasswd\|\!authenticate" /etc/sudoers /etc/sudoers.d/
 The command should return no output.
       Is it the case that nopasswd and/or !authenticate is enabled in sudo?
       </pre></td>
-<td></td>
+<td>SRG-OS-000373-GPOS-00156<br>SRG-OS-000373-GPOS-00157<br>SRG-OS-000373-GPOS-00158<br>
+</td>
 <td>CCI-002038<br>CCI-004895<br>
 </td>
 <td></td>
@@ -7470,13 +7475,13 @@ The ability to forward packets is only appropriate for routers.
 <tr>
 <td>xccdf_org.ssgproject.content_rule_systemd_journal_upload_server_tls</td>
 <td>medium</td>
-<td>Configure systemd-journal-upload TLS parameters: ServerKeyFile,ServerCertificateFile and TrustedCertificateFile</td>
+<td>Configure systemd-journal-upload TLS parameters: ServerKeyFile, ServerCertificateFile and TrustedCertificateFile</td>
 <td>Information stored in one location is vulnerable to accidental or incidental deletion or alteration.
 Offloading is a common process in information systems with limited audit storage capacity</td>
 <td>SUSE Linux Enterprise Micro 5 must offload rsyslog messages for networked systems in real time and
 offload standalone systems at least weekly</td>
 <td><pre>To ensure logs are sent securely to a remote host, examine the file
-/etc/systemd/journal-upload.conf.
+/etc/systemd/journal-upload.conf(.d/*.conf).
 ServerKeyFile should be present:
 ServerKeyFile=
 ServerCertificateFile should be present:
@@ -7498,7 +7503,7 @@ Offloading is a common process in information systems with limited audit storage
 <td>SUSE Linux Enterprise Micro 5 must offload rsyslog messages for networked systems in real time and
 offload standalone systems at least weekly</td>
 <td><pre>To ensure logs are sent to a remote host, examine the file
-/etc/systemd/journal-upload.conf.
+/etc/systemd/journal-upload.conf(.d/*.conf).
 URL should be present:
 URL=
       Is it the case that systemd-journal-upload URL is missing or commented in /etc/systemd/journal-upload.conf?

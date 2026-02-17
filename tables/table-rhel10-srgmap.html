@@ -1085,8 +1085,14 @@ To decrease the default limits, add or correct the following line in
           <td>Set kernel parameter 'crypto.fips_enabled' to 1</td>
           <td>System running in FIPS mode is indicated by kernel parameter
 <tt>'crypto.fips_enabled'</tt>. This parameter should be set to <tt>1</tt> in FIPS mode.
-To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
+
+Red Hat Enterprise Linux 10 has an installation-time kernel flag that can enable FIPS mode.
+The installer must be booted with <tt>fips=1</tt> for the system to have FIPS mode
+enabled. Enabling FIPS mode on a preexisting system is not supported. If
+this rule fails on an installed system, then this is a permanent
+finding and cannot be fixed.
+
+
 
 To enable strict FIPS compliance, the fips=1 kernel option needs to be added to the kernel boot
 parameters during system installation so key generation is done with FIPS-approved algorithms
@@ -1888,6 +1894,22 @@ form to <tt>/etc/audit/audit.rules</tt>:
 
       <table>
         <tr>
+          <td>Ensure auditd Collects Information on the Use of Privileged Commands - pkexec</td>
+          <td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <tt>auditd</tt> daemon is
+configured to use the <tt>augenrules</tt> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+<pre>-a always,exit -F path=/usr/bin/pkexec -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add a line of the following
+form to <tt>/etc/audit/audit.rules</tt>:
+<pre>-a always,exit -F path=/usr/bin/pkexec -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Ensure auditd Collects Information on the Use of Privileged Commands - postdrop</td>
           <td>At a minimum, the audit system should collect the execution of
 privileged commands for all users and root. If the <tt>auditd</tt> daemon is
@@ -2034,11 +2056,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -2401,7 +2423,14 @@ argument to newly installed kernels, add <tt>audit=1</tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit=1 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit=1"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit=1"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["audit=1"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -2416,7 +2445,14 @@ argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to th
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["audit_backlog_limit=8192"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -3481,11 +3517,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -3848,7 +3884,14 @@ argument to newly installed kernels, add <tt>audit=1</tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit=1 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit=1"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit=1"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["audit=1"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -3863,7 +3906,14 @@ argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to th
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["audit_backlog_limit=8192"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -3965,95 +4015,6 @@ Check that the "/etc/aliases" file has a defined value for "root".
 <pre>$ sudo grep "postmaster:\s*root$" /etc/aliases
 
 postmaster: root</pre></td>
-        </tr>
-      </table>
-
-    </td>
-</tr>
-
-  <tr>
-    <td>CCI-000140</td>
-    <td>SRG-OS-000047-GPOS-00023</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must shut down by default upon audit failure (unless availability is an overriding concern).</td>
-    <td>It is critical that when the operating system is at risk of failing to process audit logs as required, it takes action to mitigate the failure. Audit processing failures include: software/hardware errors; failures in the audit capturing mechanisms; and audit storage capacity being reached or exceeded. Responses to audit failure depend upon the nature of the failure mode.
-
-When availability is an overriding concern, other approved actions in response to an audit failure are as follows: 
-
-1) If the failure was caused by the lack of audit record storage capacity, the operating system must continue generating audit records if possible (automatically restarting the audit service if necessary), overwriting the oldest audit records in a first-in-first-out manner.
-
-2) If audit records are sent to a centralized collection server and communication with this server is lost or the server fails, the operating system must queue audit records locally until communication is restored or until the audit records are retrieved manually. Upon restoration of the connection to the centralized collection server, action should be taken to synchronize the local audit data with the collection server.</td>
-
-
-    <td>
-
-      <table>
-        <tr>
-          <td>Shutdown System When Auditing Failures Occur</td>
-          <td>If the <tt>auditd</tt> daemon is configured to use the
-<tt>augenrules</tt> program to read audit rules during daemon startup (the
-default), add the following line to to the bottom of a file with suffix
-<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-f <sub idref="var_audit_failure_mode" /></pre>
-If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add the following line to the
-bottom of the <tt>/etc/audit/audit.rules</tt> file:
-<pre>-f <sub idref="var_audit_failure_mode" /></pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
-          <td>Configure auditd Disk Error Action on Disk Error</td>
-          <td>The <tt>auditd</tt> service can be configured to take an action
-when there is a disk error.
-Edit the file <tt>/etc/audit/auditd.conf</tt>. Add or modify the following line,
-substituting <i>ACTION</i> appropriately:
-<pre>disk_error_action = <i>ACTION</i></pre>
-Set this value to <tt>single</tt> to cause the system to switch to single-user
-mode for corrective action. Acceptable values also include <tt>syslog</tt>,
-<tt>exec</tt>, <tt>single</tt>, and <tt>halt</tt>. For certain systems, the need for availability
-outweighs the need to log all actions, and a different setting should be
-determined. Details regarding all possible values for <i>ACTION</i> are described in the
-<tt>auditd.conf</tt> man page.</td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
-          <td>Configure auditd Disk Full Action when Disk Space Is Full</td>
-          <td>The <tt>auditd</tt> service can be configured to take an action
-when disk space is running low but prior to running out of space completely.
-Edit the file <tt>/etc/audit/auditd.conf</tt>. Add or modify the following line,
-substituting <i>ACTION</i> appropriately:
-<pre>disk_full_action = <i>ACTION</i></pre>
-Set this value to <tt>single</tt> to cause the system to switch to single-user
-mode for corrective action. Acceptable values also include <tt>syslog</tt>,
-<tt>single</tt>, and <tt>halt</tt>. For certain systems, the need for availability
-outweighs the need to log all actions, and a different setting should be
-determined. Details regarding all possible values for <i>ACTION</i> are described in the
-<tt>auditd.conf</tt> man page.</td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
-          <td>Configure auditd max_log_file_action Upon Reaching Maximum Log Size</td>
-          <td>The default action to take when the logs reach their maximum size
-is to rotate the log files, discarding the oldest one. To configure the action taken
-by <tt>auditd</tt>, add or correct the line in <tt>/etc/audit/auditd.conf</tt>:
-<pre>max_log_file_action = <i>ACTION</i></pre>
-Possible values for <i>ACTION</i> are described in the <tt>auditd.conf</tt> man
-page. These include:
-<ul>
-<li><tt>ignore</tt></li>
-<li><tt>syslog</tt></li>
-<li><tt>suspend</tt></li>
-<li><tt>rotate</tt></li>
-<li><tt>keep_logs</tt></li>
-</ul>
-Set the <tt><i>ACTION</i></tt> to <tt>rotate</tt> to ensure log rotation
-occurs. This is the default. The setting is case-insensitive.</td>
         </tr>
       </table>
 
@@ -4175,22 +4136,6 @@ Audit information includes all information (e.g., audit records, audit settings,
 
       <table>
         <tr>
-          <td>Configure immutable Audit login UIDs</td>
-          <td>Configure kernel to prevent modification of login UIDs once they are set.
-Changing login UIDs while this configuration is enforced requires special capabilities which
-are not available to unprivileged users.
-
-The following rules configure audit as described above:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre>
-
-Load new Audit rules into kernel by running:
-<pre>augenrules --load</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Make the auditd Configuration Immutable</td>
           <td>If the <tt>auditd</tt> daemon is configured to use the
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
@@ -4304,22 +4249,6 @@ Audit information includes all information (e.g., audit records, audit settings,
 
       <table>
         <tr>
-          <td>Configure immutable Audit login UIDs</td>
-          <td>Configure kernel to prevent modification of login UIDs once they are set.
-Changing login UIDs while this configuration is enforced requires special capabilities which
-are not available to unprivileged users.
-
-The following rules configure audit as described above:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre>
-
-Load new Audit rules into kernel by running:
-<pre>augenrules --load</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Make the auditd Configuration Immutable</td>
           <td>If the <tt>auditd</tt> daemon is configured to use the
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
@@ -4430,22 +4359,6 @@ Audit information includes all information (e.g., audit records, audit settings,
 
 
     <td>
-
-      <table>
-        <tr>
-          <td>Configure immutable Audit login UIDs</td>
-          <td>Configure kernel to prevent modification of login UIDs once they are set.
-Changing login UIDs while this configuration is enforced requires special capabilities which
-are not available to unprivileged users.
-
-The following rules configure audit as described above:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre>
-
-Load new Audit rules into kernel by running:
-<pre>augenrules --load</pre></td>
-        </tr>
-      </table>
 
       <table>
         <tr>
@@ -5493,11 +5406,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -5879,7 +5792,14 @@ argument to newly installed kernels, add <tt>audit=1</tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit=1 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit=1"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit=1"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["audit=1"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -5894,7 +5814,14 @@ argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to th
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["audit_backlog_limit=8192"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -5944,7 +5871,7 @@ To properly set the permissions of <code>/etc/audit/auditd.conf</code>, run the 
           <td>Verify Permissions on /etc/audit/rules.d/*.rules</td>
           <td>
 To properly set the permissions of <code>/etc/audit/rules.d/*.rules</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/audit/rules.d/*.rules</pre></td>
+<pre>$ sudo chmod 0600 /etc/audit/rules.d/*.rules</pre></td>
         </tr>
       </table>
 
@@ -6656,14 +6583,9 @@ Edit the <tt>password</tt> section in
 
       <table>
         <tr>
-          <td>Ensure PAM Enforces Password Requirements - Authentication Retry Prompts Permitted Per-Session</td>
+          <td>Ensure PAM Enforces Password Requirements - Authentication Retry Prompts Permitted Per-Session in /etc/security/pwquality.conf</td>
           <td>To configure the number of retry prompts that are permitted per-session:
-
-Edit the <tt>pam_pwquality.so</tt> statement in
-
-<tt>/etc/pam.d/system-auth</tt> to show
-
-
+Edit the <tt>/etc/security/pwquality.conf</tt> to include
 <tt>retry=<sub idref="var_password_pam_retry" /></tt>, or a lower value if site
 policy is more restrictive. The DoD requirement is a maximum of 3 prompts
 per session.</td>
@@ -6880,23 +6802,6 @@ differing categories of characters when changing passwords.</td>
 
       <table>
         <tr>
-          <td>Verify All Account Password Hashes are Shadowed with SHA512</td>
-          <td>Verify the operating system requires the shadow password suite
-configuration be set to encrypt interactive user passwords using a strong
-cryptographic hash.
-Check that the interactive user account passwords are using a strong
-password hash with the following command:
-<pre>$ sudo cut -d: -f2 /etc/shadow
-$6$kcOnRq/5$NUEYPuyL.wghQwWssXRcLRFiiru7f5JPV6GaJhNC2aK5F3PZpE/BCCtwrxRc/AInKMNX3CdMw11m9STiql12f/</pre>
-Password hashes <tt>!</tt> or <tt>*</tt> indicate inactive accounts not
-available for logon and are not evaluated.
-If any interactive user password hash does not begin with <tt>$6</tt>,
-this is a finding.</td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Set number of Password Hashing Rounds - password-auth</td>
           <td>Configure the number or rounds for the password hashing algorithm. This can be
 accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
@@ -6984,12 +6889,12 @@ This will help ensure that new passwords for local users will be stored using th
         <tr>
           <td>Set Password Hashing Rounds in /etc/login.defs</td>
           <td>In <tt>/etc/login.defs</tt>, ensure <tt>SHA_CRYPT_MIN_ROUNDS</tt> and
-<tt>SHA_CRYPT_MAX_ROUNDS</tt> has the minimum value of <tt>5000</tt>.
+<tt>SHA_CRYPT_MAX_ROUNDS</tt> has the minimum value of <tt><sub idref="var_password_hashing_min_rounds_login_defs" /></tt>.
 For example:
-<pre>SHA_CRYPT_MIN_ROUNDS 5000
-SHA_CRYPT_MAX_ROUNDS 5000</pre>
+<pre>SHA_CRYPT_MIN_ROUNDS <sub idref="var_password_hashing_min_rounds_login_defs" />
+SHA_CRYPT_MAX_ROUNDS <sub idref="var_password_hashing_min_rounds_login_defs" /></pre>
 Notice that if neither are set, they already have the default value of 5000.
-If either is set, they must have the minimum value of 5000.</td>
+If either is set, they must have the minimum value of <sub idref="var_password_hashing_min_rounds_login_defs" />.</td>
         </tr>
       </table>
 
@@ -7008,8 +6913,33 @@ If either is set, they must have the minimum value of 5000.</td>
 
       <table>
         <tr>
+          <td>Remove tftp Daemon</td>
+          <td>Trivial File Transfer Protocol (TFTP) is a simple file transfer protocol,
+typically used to automatically transfer configuration or boot files between systems.
+TFTP does not support authentication and can be easily hacked. The package
+<tt>tftp</tt> is a client program that allows for connections to a <tt>tftp</tt> server.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Uninstall vsftpd Package</td>
           <td>The <code>vsftpd</code> package can be removed with the following command: <pre> $ sudo dnf remove vsftpd</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure tftp systemd Service Uses Secure Mode</td>
+          <td>If running the Trivial File Transfer Protocol (TFTP) service is necessary,
+it should be configured to change its root directory at startup. To do so,
+find the path for the <tt>tftp</tt> systemd service:
+<pre>$ sudo systemctl show tftp | grep ExecStart=
+ExecStart={ path=/usr/sbin/in.tftpd ; argv[]=/usr/sbin/in.tftpd -s /var/lib/tftpboot ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }e
+</pre>
+
+and ensure the <tt>ExecStart</tt> line on that file includes the <tt>-s</tt> option with a subdirectory:
+<pre>ExecStart=/usr/sbin/in.tftpd -s <sub idref="var_tftpd_secure_directory" /></pre></td>
         </tr>
       </table>
 
@@ -7281,7 +7211,14 @@ argument to newly installed kernels, add <tt>pti=on</tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... pti=on ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="pti=on"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="pti=on"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["pti=on"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -7558,7 +7495,11 @@ The DoD CAC with DoD-approved PKI is an example of multifactor authentication.</
         <tr>
           <td>Install Smart Card Packages For Multifactor Authentication</td>
           <td>Configure the operating system to implement multifactor authentication by
-installing the required package with the following command:</td>
+installing the required package with the following command:
+
+The <code>pkcs11-provider</code> package can be installed with the following command:
+<pre>
+$ sudo dnf install pkcs11-provider</pre></td>
         </tr>
       </table>
 
@@ -7587,7 +7528,16 @@ To enable smart cards in SSSD, set <tt>pam_cert_auth</tt> to <tt>True</tt> under
 <tt>[pam]</tt> section in <tt>/etc/sssd/sssd.conf</tt>. For example:
 <pre>[pam]
 pam_cert_auth = True
-</pre></td>
+</pre>
+
+Add or update "pam_sss.so" line in auth section of "/etc/pam.d/system-auth" file to include
+"try_cert_auth" or "require_cert_auth" option, like in the following example:
+<pre>
+/etc/pam.d/system-auth:auth [success=done authinfo_unavail=ignore ignore=ignore default=die] pam_sss.so try_cert_auth
+</pre>
+Also add or update "pam_sss.so" line in auth section of "/etc/pam.d/smartcard-auth" file to
+include the "allow_missing_name" option, like in the following example:
+<pre>/etc/pam.d/smartcard-auth:auth sufficient pam_sss.so allow_missing_name</pre></td>
         </tr>
       </table>
 
@@ -7682,7 +7632,16 @@ To enable smart cards in SSSD, set <tt>pam_cert_auth</tt> to <tt>True</tt> under
 <tt>[pam]</tt> section in <tt>/etc/sssd/sssd.conf</tt>. For example:
 <pre>[pam]
 pam_cert_auth = True
-</pre></td>
+</pre>
+
+Add or update "pam_sss.so" line in auth section of "/etc/pam.d/system-auth" file to include
+"try_cert_auth" or "require_cert_auth" option, like in the following example:
+<pre>
+/etc/pam.d/system-auth:auth [success=done authinfo_unavail=ignore ignore=ignore default=die] pam_sss.so try_cert_auth
+</pre>
+Also add or update "pam_sss.so" line in auth section of "/etc/pam.d/smartcard-auth" file to
+include the "allow_missing_name" option, like in the following example:
+<pre>/etc/pam.d/smartcard-auth:auth sufficient pam_sss.so allow_missing_name</pre></td>
         </tr>
       </table>
 
@@ -7757,7 +7716,16 @@ To enable smart cards in SSSD, set <tt>pam_cert_auth</tt> to <tt>True</tt> under
 <tt>[pam]</tt> section in <tt>/etc/sssd/sssd.conf</tt>. For example:
 <pre>[pam]
 pam_cert_auth = True
-</pre></td>
+</pre>
+
+Add or update "pam_sss.so" line in auth section of "/etc/pam.d/system-auth" file to include
+"try_cert_auth" or "require_cert_auth" option, like in the following example:
+<pre>
+/etc/pam.d/system-auth:auth [success=done authinfo_unavail=ignore ignore=ignore default=die] pam_sss.so try_cert_auth
+</pre>
+Also add or update "pam_sss.so" line in auth section of "/etc/pam.d/smartcard-auth" file to
+include the "allow_missing_name" option, like in the following example:
+<pre>/etc/pam.d/smartcard-auth:auth sufficient pam_sss.so allow_missing_name</pre></td>
         </tr>
       </table>
 
@@ -7832,7 +7800,16 @@ To enable smart cards in SSSD, set <tt>pam_cert_auth</tt> to <tt>True</tt> under
 <tt>[pam]</tt> section in <tt>/etc/sssd/sssd.conf</tt>. For example:
 <pre>[pam]
 pam_cert_auth = True
-</pre></td>
+</pre>
+
+Add or update "pam_sss.so" line in auth section of "/etc/pam.d/system-auth" file to include
+"try_cert_auth" or "require_cert_auth" option, like in the following example:
+<pre>
+/etc/pam.d/system-auth:auth [success=done authinfo_unavail=ignore ignore=ignore default=die] pam_sss.so try_cert_auth
+</pre>
+Also add or update "pam_sss.so" line in auth section of "/etc/pam.d/smartcard-auth" file to
+include the "allow_missing_name" option, like in the following example:
+<pre>/etc/pam.d/smartcard-auth:auth sufficient pam_sss.so allow_missing_name</pre></td>
         </tr>
       </table>
 
@@ -8060,23 +8037,6 @@ FIPS 140-2/140-3 is the current standard for validating that mechanisms used to 
 
       <table>
         <tr>
-          <td>Verify All Account Password Hashes are Shadowed with SHA512</td>
-          <td>Verify the operating system requires the shadow password suite
-configuration be set to encrypt interactive user passwords using a strong
-cryptographic hash.
-Check that the interactive user account passwords are using a strong
-password hash with the following command:
-<pre>$ sudo cut -d: -f2 /etc/shadow
-$6$kcOnRq/5$NUEYPuyL.wghQwWssXRcLRFiiru7f5JPV6GaJhNC2aK5F3PZpE/BCCtwrxRc/AInKMNX3CdMw11m9STiql12f/</pre>
-Password hashes <tt>!</tt> or <tt>*</tt> indicate inactive accounts not
-available for logon and are not evaluated.
-If any interactive user password hash does not begin with <tt>$6</tt>,
-this is a finding.</td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Configure Kerberos to use System Crypto Policy</td>
           <td>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
 Kerberos is supported by crypto policy, but it's configuration may be
@@ -8151,12 +8111,12 @@ This will help ensure that new passwords for local users will be stored using th
         <tr>
           <td>Set Password Hashing Rounds in /etc/login.defs</td>
           <td>In <tt>/etc/login.defs</tt>, ensure <tt>SHA_CRYPT_MIN_ROUNDS</tt> and
-<tt>SHA_CRYPT_MAX_ROUNDS</tt> has the minimum value of <tt>5000</tt>.
+<tt>SHA_CRYPT_MAX_ROUNDS</tt> has the minimum value of <tt><sub idref="var_password_hashing_min_rounds_login_defs" /></tt>.
 For example:
-<pre>SHA_CRYPT_MIN_ROUNDS 5000
-SHA_CRYPT_MAX_ROUNDS 5000</pre>
+<pre>SHA_CRYPT_MIN_ROUNDS <sub idref="var_password_hashing_min_rounds_login_defs" />
+SHA_CRYPT_MAX_ROUNDS <sub idref="var_password_hashing_min_rounds_login_defs" /></pre>
 Notice that if neither are set, they already have the default value of 5000.
-If either is set, they must have the minimum value of 5000.</td>
+If either is set, they must have the minimum value of <sub idref="var_password_hashing_min_rounds_login_defs" />.</td>
         </tr>
       </table>
 
@@ -8321,8 +8281,14 @@ To enable PAM authentication, add or correct the following line in
           <td>Set kernel parameter 'crypto.fips_enabled' to 1</td>
           <td>System running in FIPS mode is indicated by kernel parameter
 <tt>'crypto.fips_enabled'</tt>. This parameter should be set to <tt>1</tt> in FIPS mode.
-To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
+
+Red Hat Enterprise Linux 10 has an installation-time kernel flag that can enable FIPS mode.
+The installer must be booted with <tt>fips=1</tt> for the system to have FIPS mode
+enabled. Enabling FIPS mode on a preexisting system is not supported. If
+this rule fails on an installed system, then this is a permanent
+finding and cannot be fixed.
+
+
 
 To enable strict FIPS compliance, the fips=1 kernel option needs to be added to the kernel boot
 parameters during system installation so key generation is done with FIPS-approved algorithms
@@ -8417,7 +8383,14 @@ argument to newly installed kernels, add <tt>page_poison=1</tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... page_poison=1 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="page_poison=1"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="page_poison=1"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["page_poison=1"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -8432,7 +8405,14 @@ argument to newly installed kernels, add <tt>slub_debug=<sub idref="var_slub_deb
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... slub_debug=<sub idref="var_slub_debug_options" /> ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="slub_debug=<sub idref="var_slub_debug_options" />"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="slub_debug=<sub idref="var_slub_debug_options" />"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["slub_debug=<sub idref="var_slub_debug_options" />"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -8447,7 +8427,14 @@ argument to newly installed kernels, add <tt>vsyscall=none</tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... vsyscall=none ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="vsyscall=none"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="vsyscall=none"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["vsyscall=none"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -8820,7 +8807,7 @@ By default, <i>audit_log_file</i> is "/var/log/audit/audit.log".</td>
           <td>Verify Permissions on /var/log/messages File</td>
           <td>
 To properly set the permissions of <code>/var/log/messages</code>, run the command:
-<pre>$ sudo chmod 0640 /var/log/messages</pre></td>
+<pre>$ sudo chmod 0600 /var/log/messages</pre></td>
         </tr>
       </table>
 
@@ -9474,8 +9461,14 @@ in the <tt>/etc/sysconfig/sshd</tt>.</td>
           <td>Set kernel parameter 'crypto.fips_enabled' to 1</td>
           <td>System running in FIPS mode is indicated by kernel parameter
 <tt>'crypto.fips_enabled'</tt>. This parameter should be set to <tt>1</tt> in FIPS mode.
-To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
+
+Red Hat Enterprise Linux 10 has an installation-time kernel flag that can enable FIPS mode.
+The installer must be booted with <tt>fips=1</tt> for the system to have FIPS mode
+enabled. Enabling FIPS mode on a preexisting system is not supported. If
+this rule fails on an installed system, then this is a permanent
+finding and cannot be fixed.
+
+
 
 To enable strict FIPS compliance, the fips=1 kernel option needs to be added to the kernel boot
 parameters during system installation so key generation is done with FIPS-approved algorithms
@@ -9507,7 +9500,14 @@ argument to newly installed kernels, add <tt>audit=1</tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit=1 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit=1"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit=1"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["audit=1"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -9522,7 +9522,14 @@ argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to th
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["audit_backlog_limit=8192"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -11171,7 +11178,14 @@ argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to th
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["audit_backlog_limit=8192"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -11699,7 +11713,7 @@ The <code>auditd</code> service can be enabled with the following command:
     <td>CCI-004923</td>
     <td>SRG-OS-000355-GPOS-00143</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must, for networked systems, compare internal information system clocks at least every 24 hours with a server which is synchronized to one of the redundant United States Naval Observatory (USNO) time servers, or a time server designated for the appropriate DOD network (NIPRNet/SIPRNet), and/or the Global Positioning System (GPS).</td>
+    <td>The operating system must, for networked systems, compare internal information system clocks at least every 24 hours with an authoritative time source.</td>
     <td>Inaccurate time stamps make it more difficult to correlate events and can lead to an inaccurate analysis. Determining the correct time a particular event occurred on a system is critical when conducting forensic analysis and investigating system events. Sources outside the configured acceptable allowance (drift) may be inaccurate.
 
 Synchronizing internal information system clocks provides uniformity of time stamps for information systems with multiple system clocks and systems connected over a network.
@@ -12474,6 +12488,196 @@ The <code>fapolicyd</code> service can be enabled with the following command:
 </tr>
 
   <tr>
+    <td>CCI-002038</td>
+    <td>SRG-OS-000373-GPOS-00156</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must require users to reauthenticate for privilege escalation.</td>
+    <td>Without reauthentication, users may access resources or perform tasks for which they do not have authorization. 
+
+When operating systems provide the capability to escalate a functional capability, it is critical the user reauthenticate.</td>
+
+
+    <td>
+
+      <table>
+        <tr>
+          <td>Disallow Configuration to Bypass Password Requirements for Privilege Escalation</td>
+          <td>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre>
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure Users Re-Authenticate for Privilege Escalation - sudo !authenticate</td>
+          <td>The sudo <tt>!authenticate</tt> option, when specified, allows a user to execute commands using
+sudo without having to authenticate. This should be disabled by making sure that the
+<tt>!authenticate</tt> option does not exist in <tt>/etc/sudoers</tt> configuration file or
+any sudo configuration snippets in <tt>/etc/sudoers.d/</tt>.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD</td>
+          <td>The sudo <tt>NOPASSWD</tt> tag, when specified, allows a user to execute
+commands using sudo without having to authenticate. This should be disabled
+by making sure that the <tt>NOPASSWD</tt> tag does not exist in
+<tt>/etc/sudoers</tt> configuration file or any sudo configuration snippets
+in <tt>/etc/sudoers.d/</tt>.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Require Re-Authentication When Using the sudo Command</td>
+          <td>The sudo <tt>timestamp_timeout</tt> tag sets the amount of time sudo password prompt waits.
+The default <tt>timestamp_timeout</tt> value is 5 minutes.
+The timestamp_timeout should be configured by making sure that the
+<tt>timestamp_timeout</tt> tag exists in
+<tt>/etc/sudoers</tt> configuration file or any sudo configuration snippets
+in <tt>/etc/sudoers.d/</tt>.
+If the value is set to an integer less than 0, the user's time stamp will not expire
+and the user will not have to re-authenticate for privileged actions until the user's session is terminated.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Enforce usage of pam_wheel for su authentication</td>
+          <td>To ensure that only users who are members of the <tt>wheel</tt> group can
+run commands with altered privileges through the <tt>su</tt> command, make
+sure that the following line exists in the file <tt>/etc/pam.d/su</tt>:
+<pre>auth required pam_wheel.so use_uid</pre></td>
+        </tr>
+      </table>
+
+    </td>
+</tr>
+
+  <tr>
+    <td>CCI-002038</td>
+    <td>SRG-OS-000373-GPOS-00157</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must require users to reauthenticate when changing roles.</td>
+    <td>Without reauthentication, users may access resources or perform tasks for which they do not have authorization. 
+
+When operating systems provide the capability to change security roles, it is critical the user reauthenticate.</td>
+
+
+    <td>
+
+      <table>
+        <tr>
+          <td>Disallow Configuration to Bypass Password Requirements for Privilege Escalation</td>
+          <td>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre>
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure Users Re-Authenticate for Privilege Escalation - sudo !authenticate</td>
+          <td>The sudo <tt>!authenticate</tt> option, when specified, allows a user to execute commands using
+sudo without having to authenticate. This should be disabled by making sure that the
+<tt>!authenticate</tt> option does not exist in <tt>/etc/sudoers</tt> configuration file or
+any sudo configuration snippets in <tt>/etc/sudoers.d/</tt>.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD</td>
+          <td>The sudo <tt>NOPASSWD</tt> tag, when specified, allows a user to execute
+commands using sudo without having to authenticate. This should be disabled
+by making sure that the <tt>NOPASSWD</tt> tag does not exist in
+<tt>/etc/sudoers</tt> configuration file or any sudo configuration snippets
+in <tt>/etc/sudoers.d/</tt>.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Require Re-Authentication When Using the sudo Command</td>
+          <td>The sudo <tt>timestamp_timeout</tt> tag sets the amount of time sudo password prompt waits.
+The default <tt>timestamp_timeout</tt> value is 5 minutes.
+The timestamp_timeout should be configured by making sure that the
+<tt>timestamp_timeout</tt> tag exists in
+<tt>/etc/sudoers</tt> configuration file or any sudo configuration snippets
+in <tt>/etc/sudoers.d/</tt>.
+If the value is set to an integer less than 0, the user's time stamp will not expire
+and the user will not have to re-authenticate for privileged actions until the user's session is terminated.</td>
+        </tr>
+      </table>
+
+    </td>
+</tr>
+
+  <tr>
+    <td>CCI-002038</td>
+    <td>SRG-OS-000373-GPOS-00158</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must require users to reauthenticate when changing authenticators.</td>
+    <td>Without reauthentication, users may access resources or perform tasks for which they do not have authorization. 
+
+When operating systems provide the capability to change user authenticators, it is critical the user reauthenticate.</td>
+
+
+    <td>
+
+      <table>
+        <tr>
+          <td>Disallow Configuration to Bypass Password Requirements for Privilege Escalation</td>
+          <td>Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre>
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure Users Re-Authenticate for Privilege Escalation - sudo !authenticate</td>
+          <td>The sudo <tt>!authenticate</tt> option, when specified, allows a user to execute commands using
+sudo without having to authenticate. This should be disabled by making sure that the
+<tt>!authenticate</tt> option does not exist in <tt>/etc/sudoers</tt> configuration file or
+any sudo configuration snippets in <tt>/etc/sudoers.d/</tt>.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD</td>
+          <td>The sudo <tt>NOPASSWD</tt> tag, when specified, allows a user to execute
+commands using sudo without having to authenticate. This should be disabled
+by making sure that the <tt>NOPASSWD</tt> tag does not exist in
+<tt>/etc/sudoers</tt> configuration file or any sudo configuration snippets
+in <tt>/etc/sudoers.d/</tt>.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Require Re-Authentication When Using the sudo Command</td>
+          <td>The sudo <tt>timestamp_timeout</tt> tag sets the amount of time sudo password prompt waits.
+The default <tt>timestamp_timeout</tt> value is 5 minutes.
+The timestamp_timeout should be configured by making sure that the
+<tt>timestamp_timeout</tt> tag exists in
+<tt>/etc/sudoers</tt> configuration file or any sudo configuration snippets
+in <tt>/etc/sudoers.d/</tt>.
+If the value is set to an integer less than 0, the user's time stamp will not expire
+and the user will not have to re-authenticate for privileged actions until the user's session is terminated.</td>
+        </tr>
+      </table>
+
+    </td>
+</tr>
+
+  <tr>
     <td>CCI-004046</td>
     <td>SRG-OS-000375-GPOS-00160</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
@@ -12495,7 +12699,11 @@ This requirement only applies to components where this is specific to the functi
         <tr>
           <td>Install Smart Card Packages For Multifactor Authentication</td>
           <td>Configure the operating system to implement multifactor authentication by
-installing the required package with the following command:</td>
+installing the required package with the following command:
+
+The <code>pkcs11-provider</code> package can be installed with the following command:
+<pre>
+$ sudo dnf install pkcs11-provider</pre></td>
         </tr>
       </table>
 
@@ -12506,6 +12714,15 @@ installing the required package with the following command:</td>
 The <code>opensc</code> package can be installed with the following command:
 <pre>
 $ sudo dnf install opensc</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Install the pcsc-lite-ccid package</td>
+          <td>The <code>pcsc-lite-ccid</code> package can be installed with the following command:
+<pre>
+$ sudo dnf install pcsc-lite-ccid</pre></td>
         </tr>
       </table>
 
@@ -12545,7 +12762,16 @@ To enable smart cards in SSSD, set <tt>pam_cert_auth</tt> to <tt>True</tt> under
 <tt>[pam]</tt> section in <tt>/etc/sssd/sssd.conf</tt>. For example:
 <pre>[pam]
 pam_cert_auth = True
-</pre></td>
+</pre>
+
+Add or update "pam_sss.so" line in auth section of "/etc/pam.d/system-auth" file to include
+"try_cert_auth" or "require_cert_auth" option, like in the following example:
+<pre>
+/etc/pam.d/system-auth:auth [success=done authinfo_unavail=ignore ignore=ignore default=die] pam_sss.so try_cert_auth
+</pre>
+Also add or update "pam_sss.so" line in auth section of "/etc/pam.d/smartcard-auth" file to
+include the "allow_missing_name" option, like in the following example:
+<pre>/etc/pam.d/smartcard-auth:auth sufficient pam_sss.so allow_missing_name</pre></td>
         </tr>
       </table>
 
@@ -12593,7 +12819,11 @@ DoD has mandated the use of the CAC to support identity management and personal 
         <tr>
           <td>Install Smart Card Packages For Multifactor Authentication</td>
           <td>Configure the operating system to implement multifactor authentication by
-installing the required package with the following command:</td>
+installing the required package with the following command:
+
+The <code>pkcs11-provider</code> package can be installed with the following command:
+<pre>
+$ sudo dnf install pkcs11-provider</pre></td>
         </tr>
       </table>
 
@@ -13779,11 +14009,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -14233,7 +14463,14 @@ argument to newly installed kernels, add <tt>audit=1</tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit=1 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit=1"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit=1"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["audit=1"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -14248,7 +14485,14 @@ argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to th
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["audit_backlog_limit=8192"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -14343,8 +14587,14 @@ $ sudo dnf install crypto-policies</pre></td>
           <td>Set kernel parameter 'crypto.fips_enabled' to 1</td>
           <td>System running in FIPS mode is indicated by kernel parameter
 <tt>'crypto.fips_enabled'</tt>. This parameter should be set to <tt>1</tt> in FIPS mode.
-To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
+
+Red Hat Enterprise Linux 10 has an installation-time kernel flag that can enable FIPS mode.
+The installer must be booted with <tt>fips=1</tt> for the system to have FIPS mode
+enabled. Enabling FIPS mode on a preexisting system is not supported. If
+this rule fails on an installed system, then this is a permanent
+finding and cannot be fixed.
+
+
 
 To enable strict FIPS compliance, the fips=1 kernel option needs to be added to the kernel boot
 parameters during system installation so key generation is done with FIPS-approved algorithms
@@ -14426,8 +14676,14 @@ $ sudo dnf install crypto-policies</pre></td>
           <td>Set kernel parameter 'crypto.fips_enabled' to 1</td>
           <td>System running in FIPS mode is indicated by kernel parameter
 <tt>'crypto.fips_enabled'</tt>. This parameter should be set to <tt>1</tt> in FIPS mode.
-To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
+
+Red Hat Enterprise Linux 10 has an installation-time kernel flag that can enable FIPS mode.
+The installer must be booted with <tt>fips=1</tt> for the system to have FIPS mode
+enabled. Enabling FIPS mode on a preexisting system is not supported. If
+this rule fails on an installed system, then this is a permanent
+finding and cannot be fixed.
+
+
 
 To enable strict FIPS compliance, the fips=1 kernel option needs to be added to the kernel boot
 parameters during system installation so key generation is done with FIPS-approved algorithms
@@ -14495,17 +14751,19 @@ Crypto policies may be customized by crypto policy modules, in which case it is 
         <tr>
           <td>Enable FIPS Mode</td>
           <td>
-To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
+Red Hat Enterprise Linux 10 has an installation-time kernel flag that can enable FIPS mode.
+The installer must be booted with <tt>fips=1</tt> for the system to have FIPS mode
+enabled. Enabling FIPS mode on a preexisting system is not supported. If
+this rule fails on an installed system, then this is a permanent
+finding and cannot be fixed.
+
+
 <br />
-The <tt>fips-mode-setup</tt> command will configure the system in
-FIPS mode by automatically configuring the following:
-<ul>
-<li>Setting the kernel FIPS mode flag (<tt>/proc/sys/crypto/fips_enabled</tt>) to <tt>1</tt></li>
-<li>Creating <tt>/etc/system-fips</tt></li>
-<li>Setting the system crypto policy in <tt>/etc/crypto-policies/config</tt> to <tt><sub idref="var_system_crypto_policy" /></tt></li>
-<li>Loading the Dracut <tt>fips</tt> module</li>
-</ul></td>
+To enable FIPS mode at bootable container build time configure <tt>fips=1</tt> kernel argument
+in <tt>/usr/lib/bootc/kargs.d/01-fips.toml</tt>:
+<pre>kargs = ["fips=1"]</pre>
+Then set the cryptographic policy to <tt><sub idref="var_system_crypto_policy" /></tt>:
+<pre>update-crypto-policies --no-reload --set <sub idref="var_system_crypto_policy" /></pre></td>
         </tr>
       </table>
 
@@ -14523,12 +14781,32 @@ $ sudo dnf install crypto-policies</pre></td>
           <td>Set kernel parameter 'crypto.fips_enabled' to 1</td>
           <td>System running in FIPS mode is indicated by kernel parameter
 <tt>'crypto.fips_enabled'</tt>. This parameter should be set to <tt>1</tt> in FIPS mode.
-To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
+
+Red Hat Enterprise Linux 10 has an installation-time kernel flag that can enable FIPS mode.
+The installer must be booted with <tt>fips=1</tt> for the system to have FIPS mode
+enabled. Enabling FIPS mode on a preexisting system is not supported. If
+this rule fails on an installed system, then this is a permanent
+finding and cannot be fixed.
+
+
 
 To enable strict FIPS compliance, the fips=1 kernel option needs to be added to the kernel boot
 parameters during system installation so key generation is done with FIPS-approved algorithms
 and continuous monitoring tests in place.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Verify that the system was booted with fips=1</td>
+          <td>On a system where FIPS 140 mode is enabled, the system must be booted with the
+The file <tt>/proc/sys/crypto/fips_enabled</tt> must have the contents of <tt>1</tt>
+
+To verify the system has been booted in FIPS mode, run the following command:
+<pre>
+# cat /proc/sys/crypto/fips_enabled
+1
+</pre></td>
         </tr>
       </table>
 
@@ -14764,8 +15042,14 @@ processed before <tt>02-rekey-limit.conf</tt> containing definition of
           <td>Set kernel parameter 'crypto.fips_enabled' to 1</td>
           <td>System running in FIPS mode is indicated by kernel parameter
 <tt>'crypto.fips_enabled'</tt>. This parameter should be set to <tt>1</tt> in FIPS mode.
-To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
+
+Red Hat Enterprise Linux 10 has an installation-time kernel flag that can enable FIPS mode.
+The installer must be booted with <tt>fips=1</tt> for the system to have FIPS mode
+enabled. Enabling FIPS mode on a preexisting system is not supported. If
+this rule fails on an installed system, then this is a permanent
+finding and cannot be fixed.
+
+
 
 To enable strict FIPS compliance, the fips=1 kernel option needs to be added to the kernel boot
 parameters during system installation so key generation is done with FIPS-approved algorithms
@@ -14978,7 +15262,14 @@ argument to newly installed kernels, add <tt>slub_debug=<sub idref="var_slub_deb
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... slub_debug=<sub idref="var_slub_debug_options" /> ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="slub_debug=<sub idref="var_slub_debug_options" />"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="slub_debug=<sub idref="var_slub_debug_options" />"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["slub_debug=<sub idref="var_slub_debug_options" />"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -15025,7 +15316,14 @@ argument to newly installed kernels, add <tt>pti=on</tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... pti=on ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="pti=on"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="pti=on"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["pti=on"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -16083,22 +16381,6 @@ Audit records can be generated from various components within the information sy
 
       <table>
         <tr>
-          <td>Configure immutable Audit login UIDs</td>
-          <td>Configure kernel to prevent modification of login UIDs once they are set.
-Changing login UIDs while this configuration is enforced requires special capabilities which
-are not available to unprivileged users.
-
-The following rules configure audit as described above:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre>
-
-Load new Audit rules into kernel by running:
-<pre>augenrules --load</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Record Events that Modify the System's Discretionary Access Controls - chmod</td>
           <td>At a minimum, the audit system should collect file permission
 changes for all users and root. If the <tt>auditd</tt> daemon is configured to
@@ -17020,11 +17302,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -17387,7 +17669,14 @@ argument to newly installed kernels, add <tt>audit=1</tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit=1 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit=1"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit=1"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["audit=1"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -17402,7 +17691,14 @@ argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to th
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["audit_backlog_limit=8192"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -19918,11 +20214,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -20295,7 +20591,14 @@ argument to newly installed kernels, add <tt>audit=1</tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit=1 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit=1"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit=1"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["audit=1"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -20310,7 +20613,14 @@ argument to newly installed kernels, add <tt>audit_backlog_limit=8192</tt> to th
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["audit_backlog_limit=8192"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -20492,7 +20802,14 @@ argument to newly installed kernels, add <tt>audit=1</tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit=1 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit=1"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit=1"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["audit=1"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -20742,22 +21059,6 @@ Audit records can be generated from various components within the information sy
 
 
     <td>
-
-      <table>
-        <tr>
-          <td>Configure immutable Audit login UIDs</td>
-          <td>Configure kernel to prevent modification of login UIDs once they are set.
-Changing login UIDs while this configuration is enforced requires special capabilities which
-are not available to unprivileged users.
-
-The following rules configure audit as described above:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre>
-
-Load new Audit rules into kernel by running:
-<pre>augenrules --load</pre></td>
-        </tr>
-      </table>
 
       <table>
         <tr>
@@ -21091,17 +21392,19 @@ form to <tt>/etc/audit/audit.rules</tt>:
         <tr>
           <td>Enable FIPS Mode</td>
           <td>
-To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
+Red Hat Enterprise Linux 10 has an installation-time kernel flag that can enable FIPS mode.
+The installer must be booted with <tt>fips=1</tt> for the system to have FIPS mode
+enabled. Enabling FIPS mode on a preexisting system is not supported. If
+this rule fails on an installed system, then this is a permanent
+finding and cannot be fixed.
+
+
 <br />
-The <tt>fips-mode-setup</tt> command will configure the system in
-FIPS mode by automatically configuring the following:
-<ul>
-<li>Setting the kernel FIPS mode flag (<tt>/proc/sys/crypto/fips_enabled</tt>) to <tt>1</tt></li>
-<li>Creating <tt>/etc/system-fips</tt></li>
-<li>Setting the system crypto policy in <tt>/etc/crypto-policies/config</tt> to <tt><sub idref="var_system_crypto_policy" /></tt></li>
-<li>Loading the Dracut <tt>fips</tt> module</li>
-</ul></td>
+To enable FIPS mode at bootable container build time configure <tt>fips=1</tt> kernel argument
+in <tt>/usr/lib/bootc/kargs.d/01-fips.toml</tt>:
+<pre>kargs = ["fips=1"]</pre>
+Then set the cryptographic policy to <tt><sub idref="var_system_crypto_policy" /></tt>:
+<pre>update-crypto-policies --no-reload --set <sub idref="var_system_crypto_policy" /></pre></td>
         </tr>
       </table>
 
@@ -21110,12 +21413,32 @@ FIPS mode by automatically configuring the following:
           <td>Set kernel parameter 'crypto.fips_enabled' to 1</td>
           <td>System running in FIPS mode is indicated by kernel parameter
 <tt>'crypto.fips_enabled'</tt>. This parameter should be set to <tt>1</tt> in FIPS mode.
-To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
+
+Red Hat Enterprise Linux 10 has an installation-time kernel flag that can enable FIPS mode.
+The installer must be booted with <tt>fips=1</tt> for the system to have FIPS mode
+enabled. Enabling FIPS mode on a preexisting system is not supported. If
+this rule fails on an installed system, then this is a permanent
+finding and cannot be fixed.
+
+
 
 To enable strict FIPS compliance, the fips=1 kernel option needs to be added to the kernel boot
 parameters during system installation so key generation is done with FIPS-approved algorithms
 and continuous monitoring tests in place.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Verify that the system was booted with fips=1</td>
+          <td>On a system where FIPS 140 mode is enabled, the system must be booted with the
+The file <tt>/proc/sys/crypto/fips_enabled</tt> must have the contents of <tt>1</tt>
+
+To verify the system has been booted in FIPS mode, run the following command:
+<pre>
+# cat /proc/sys/crypto/fips_enabled
+1
+</pre></td>
         </tr>
       </table>
 
@@ -21377,22 +21700,6 @@ Edit the <tt>password</tt> section in
 
       <table>
         <tr>
-          <td>Ensure PAM Enforces Password Requirements - Authentication Retry Prompts Permitted Per-Session</td>
-          <td>To configure the number of retry prompts that are permitted per-session:
-
-Edit the <tt>pam_pwquality.so</tt> statement in
-
-<tt>/etc/pam.d/system-auth</tt> to show
-
-
-<tt>retry=<sub idref="var_password_pam_retry" /></tt>, or a lower value if site
-policy is more restrictive. The DoD requirement is a maximum of 3 prompts
-per session.</td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Ensure the Default Bash Umask is Set Correctly</td>
           <td>To ensure the default umask for users of the Bash shell is set properly,
 add or correct the <tt>umask</tt> setting in <tt>/etc/bashrc</tt> to read
@@ -21543,6 +21850,15 @@ in <tt>/etc/audit/auditd.conf</tt>.</td>
           <td>To configure Audit daemon to write Audit logs to the disk, set
 <tt>write_logs</tt> to <tt>yes</tt> in <tt>/etc/audit/auditd.conf</tt>.
 This is the default setting.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Configure Time Service to use NTS</td>
+          <td>The system should be configured to use time servers that support Network Time Security (NTS).
+The specified time server must support NTS and must be configured to use NTS.
+To configure NTS for given time server add <tt>nts</tt> to each <tt>server</tt> or <tt>pool</tt> line in <tt>/etc/chrony.conf</tt>.</td>
         </tr>
       </table>
 
@@ -22253,9 +22569,11 @@ If those files are owned by the <code>root</code> user and the <code>root</code>
       <table>
         <tr>
           <td>Ensure All Files Are Owned by a Group</td>
-          <td>If any file is not group-owned by a group present in /etc/group, the cause of the lack of
+          <td>If any file is not group-owned by a valid defined group, the cause of the lack of
 group-ownership must be investigated. Following this, those files should be deleted or
-assigned to an appropriate group.
+assigned to an appropriate group. The groups need to be defined in <tt>/etc/group</tt>
+or in <tt>/usr/lib/group</tt> if <tt>nss-altfiles</tt> are configured to be used
+in <tt>/etc/nsswitch.conf</tt>.
 
 Locate the mount points related to local devices by the following command:
 <pre>$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)</pre>
@@ -22297,7 +22615,14 @@ argument to newly installed kernels, add <tt>page_poison=1</tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... page_poison=1 ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="page_poison=1"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="page_poison=1"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["page_poison=1"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -22312,7 +22637,14 @@ argument to newly installed kernels, add <tt>vsyscall=none</tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... vsyscall=none ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="vsyscall=none"</pre></td>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="vsyscall=none"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <tt>/usr/lib/bootc/kargs.d</tt> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["vsyscall=none"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a xmlns='http://www.w3.org/1999/xhtml' href='https://containers.github.io/bootc/building/kernel-arguments.html'>Bootc documentation</a>.</td>
         </tr>
       </table>
 
@@ -22637,10 +22969,31 @@ to delete them from any location:
 
       <table>
         <tr>
+          <td>Install the cron service</td>
+          <td>The Cron service should be installed.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Install firewalld Package</td>
           <td>The <code>firewalld</code> package can be installed with the following command:
 <pre>
 $ sudo dnf install firewalld</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Remove the GDM Package Group</td>
+          <td>
+By removing the <tt>gdm</tt> package, the system no longer has GNOME installed
+
+installed. If X Windows is not installed then the system cannot boot into graphical user mode.
+This prevents the system from being accidentally or maliciously booted into a <tt>graphical.target</tt>
+mode. To do so, run the following command:
+
+<pre>$ sudo yum remove gdm</pre></td>
         </tr>
       </table>
 
@@ -22720,13 +23073,6 @@ $ sudo dnf install policycoreutils</pre></td>
 
       <table>
         <tr>
-          <td>Uninstall quagga Package</td>
-          <td>The <code>quagga</code> package can be removed with the following command: <pre> $ sudo dnf remove quagga</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Ensure rsyslog-gnutls is installed</td>
           <td>TLS protocol support for rsyslog is installed.
 
@@ -22761,20 +23107,18 @@ $ sudo dnf remove tuned</pre></td>
 
       <table>
         <tr>
-          <td>Uninstall vsftpd Package</td>
-          <td>The <code>vsftpd</code> package can be removed with the following command: <pre> $ sudo dnf remove vsftpd</pre></td>
+          <td>Uninstall unbound Package</td>
+          <td>The <tt>named</tt> service is provided by the <tt>unbound</tt> package.
+The <code>unbound</code> package can be removed with the following command:
+<pre>
+$ sudo dnf remove unbound</pre></td>
         </tr>
       </table>
 
       <table>
         <tr>
-          <td>Remove the X Windows Package Group</td>
-          <td>By removing the xorg-x11-server-common package, the system no longer has X Windows
-installed. If X Windows is not installed then the system cannot boot into graphical user mode.
-This prevents the system from being accidentally or maliciously booted into a <tt>graphical.target</tt>
-mode. To do so, run the following command:
-<pre>$ sudo dnf groupremove "X Window System"</pre>
-<pre>$ sudo dnf remove xorg-x11-server-common</pre></td>
+          <td>Uninstall vsftpd Package</td>
+          <td>The <code>vsftpd</code> package can be removed with the following command: <pre> $ sudo dnf remove vsftpd</pre></td>
         </tr>
       </table>
 
@@ -23495,26 +23839,12 @@ add <tt>sec=krb5:krb5i:krb5p</tt> to each export in <tt>/etc/exports</tt>.</td>
 
       <table>
         <tr>
-          <td>Disable graphical user interface</td>
-          <td>By removing the following packages,  the system no longer has X Windows installed.
-
-<tt>xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</tt>
-
-If X Windows is not installed then the system cannot boot into graphical user mode.
-This prevents the system from being accidentally or maliciously booted into a <tt>graphical.target</tt>
-mode. To do so, run the following command:
-
-<pre>sudo dnf remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
-          <td>Disable X Windows Startup By Setting Default Target</td>
+          <td>Disable Graphical Environment Startup By Setting Default Target</td>
           <td>Systems that do not require a graphical user interface should only boot by
 default into <tt>multi-user.target</tt> mode. This prevents accidental booting of the system
 into a <tt>graphical.target</tt> mode. Setting the system's default target to
-<tt>multi-user.target</tt> will prevent automatic startup of the X server. To do so, run:
+<tt>multi-user.target</tt> will prevent automatic startup of the graphical environment.
+To do so, run:
 <pre>$ systemctl set-default multi-user.target</pre>
 You should see the following output:
 <pre>Removed symlink /etc/systemd/system/default.target.
@@ -23977,26 +24307,6 @@ If both the "b32" and "b64" audit rules for "SGID" files are not defined, this i
 
 
     <td></td>
-</tr>
-
-  <tr>
-    <td>CCI-004961</td>
-    <td>SRG-OS-000805-GPOS-00260</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must employ automated patch management tools to facilitate flaw remediation to the organization-defined system components.</td>
-    <td>Using automated tools to support patch management helps to ensure the timeliness and completeness of system patching operations.</td>
-
-
-    <td>
-
-      <table>
-        <tr>
-          <td>Configure dnf-automatic to Install Available Updates Automatically</td>
-          <td>To ensure that the packages comprising the available updates will be automatically installed by <tt>dnf-automatic</tt>, set <tt>apply_updates</tt> to <tt>yes</tt> under <tt>[commands]</tt> section in <tt>/etc/dnf/automatic.conf</tt>.</td>
-        </tr>
-      </table>
-
-    </td>
 </tr>
 </table>
 

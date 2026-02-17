@@ -6,7 +6,7 @@
 <body>
 <br><br><div style="text-align: center; font-size: x-large; font-weight:bold">DISA STIG for Oracle Linux 8</div>
 <div style="text-align: center; font-size: normal ">This profile contains configuration checks that align to the
-DISA STIG for Oracle Linux 8 V2R2.</div>
+DISA STIG for Oracle Linux 8 V2R3.</div>
 <br><br><style type="text/css">
 		table
 		{
@@ -1406,10 +1406,10 @@ Check all local interactive user initialization files for interactive users with
 
 Note: The example is for a system that is configured to create users home directories in the "/home" directory.
 
-# grep -ri umask /home/
+$ sudo find /home -maxdepth 2 -type f -name ".[^.]*" -exec grep -iH -d skip --exclude=.bash_history umask {} \;
 
-/home/smithj/.bash_history:grep -i umask /etc/bashrc /etc/csh.cshrc /etc/profile
-/home/smithj/.bash_history:grep -i umask /etc/login.defs
+/home/wadea/.bash_history:grep -i umask /etc/bashrc /etc/csh.cshrc /etc/profile
+/home/wadea/.bash_history:grep -i umask /etc/login.defs
       Is it the case that any local interactive user initialization files are found to have a umask statement that sets a value less restrictive than "077"?
       </pre></td>
 <td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
@@ -3633,11 +3633,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
           </td>
 <td><pre>Verify that Oracle Linux 8 is configured to audit the execution of the "unix_chkpwd" command with the following command:
 
@@ -4483,8 +4483,11 @@ substituting <i>ACTION</i> appropriately:
 <pre>disk_error_action = <i>ACTION</i>
           </pre>
 Set this value to <code>single</code> to cause the system to switch to single-user
-mode for corrective action. Acceptable values also include <code>syslog</code>,
-<code>exec</code>, <code>single</code>, and <code>halt</code>. For certain systems, the need for availability
+mode for corrective action. Acceptable values also include
+
+<code>syslog</code>, <code>exec</code>, <code>single</code>, and <code>halt</code>
+
+For certain systems, the need for availability
 outweighs the need to log all actions, and a different setting should be
 determined. Details regarding all possible values for <i>ACTION</i> are described in the
 <code>auditd.conf</code> man page.</td>
@@ -4499,8 +4502,7 @@ disk_error_action =
 If the value of the "disk_error_action" option is not "SYSLOG", "SINGLE", or "HALT", or the line is commented out, ask the system administrator to indicate how the system takes appropriate action when an audit process failure occurs.
       Is it the case that there is no evidence of appropriate action?
       </pre></td>
-<td>SRG-OS-000047-GPOS-00023<br>
-</td>
+<td></td>
 <td>CCI-000140<br>
 </td>
 <td>AU-5 b<br>
@@ -4519,11 +4521,11 @@ substituting <i>ACTION</i> appropriately:
 <pre>disk_full_action = <i>ACTION</i>
           </pre>
 Set this value to <code>single</code> to cause the system to switch to single-user
-mode for corrective action. Acceptable values also include <code>syslog</code>,
+mode for corrective action. Acceptable values also include
 
-<code>exec</code>,
+<code>syslog</code>, <code>exec</code>, <code>single</code>, and <code>halt</code>
 
-<code>single</code>, and <code>halt</code>. For certain systems, the need for availability
+For certain systems, the need for availability
 outweighs the need to log all actions, and a different setting should be
 determined. Details regarding all possible values for <i>ACTION</i> are described in the
 <code>auditd.conf</code> man page.</td>
@@ -4538,8 +4540,7 @@ disk_full_action =
 If the value of the "disk_full_action" option is not "SYSLOG", "SINGLE", or "HALT", or the line is commented out, ask the system administrator to indicate how the system takes appropriate action when an audit storage volume is full.
       Is it the case that there is no evidence of appropriate action?
       </pre></td>
-<td>SRG-OS-000047-GPOS-00023<br>
-</td>
+<td></td>
 <td>CCI-000140<br>
 </td>
 <td>AU-5 b<br>
@@ -6370,8 +6371,10 @@ If authselect is enabled on the system, the output should show the ID of the pro
 protect data. The operating system must implement cryptographic modules adhering to the higher
 standards approved by the federal government since this provides assurance they have been tested
 and validated.</td>
-<td>To enable FIPS mode, run the following command:
+<td>
+To enable FIPS mode, run the following command:
 <pre>fips-mode-setup --enable</pre>
+
 To enable FIPS, the system requires that the <code>fips</code> module is added in <code>dracut</code> configuration.
 Check if <code>/etc/dracut.conf.d/40-fips.conf</code> contain <code>add_dracutmodules+=" fips "</code>
             </td>
@@ -6415,13 +6418,9 @@ FIPS mode by automatically configuring the following:
               </ul>
             </td>
 <td><pre>To verify that FIPS mode is enabled properly, run the following command:
-fips-mode-setup --check
-The output should contain the following:
-FIPS mode is enabled.
-To verify that the cryptographic policy has been configured correctly, run the
-following command:
-$ update-crypto-policies --show
-The output should return .
+cat /proc/sys/crypto/fips_enabled
+The output be must:
+1
       Is it the case that FIPS mode is not enabled?
       </pre></td>
 <td>SRG-OS-000396-GPOS-00176<br>SRG-OS-000478-GPOS-00223<br>SRG-OS-000033-GPOS-00014<br>SRG-OS-000423-GPOS-00187<br>SRG-OS-000481-GPOS-00481<br>SRG-OS-000125-GPOS-00065<br>
@@ -7102,15 +7101,17 @@ If the log_file isn't defined in /etc/audit/auditd.conf, check all files in /var
 </td>
 </tr>
 <tr>
-<td>xccdf_org.ssgproject.content_rule_file_permission_user_init_files</td>
+<td>xccdf_org.ssgproject.content_rule_file_permission_user_init_files_root</td>
 <td>medium</td>
 <td>Ensure All User Initialization Files Have Mode 0740 Or Less Permissive</td>
 <td>Local initialization files are used to configure the user's shell environment
 upon logon. Malicious modification of these files could compromise accounts upon
 logon.</td>
-<td>Set the mode of the user initialization files to <code>0740</code> with the
-following command:
-<pre>$ sudo chmod 0740 /home/<i>USER</i>/.<i>INIT_FILE</i>
+<td>Set the mode of the user initialization files, including the <code>root</code> user,
+to <code>0740</code> with the following commands:
+<pre>
+$ sudo chmod 0740 /root/.<i>INIT_FILE</i>
+$ sudo chmod 0740 /home/<i>USER</i>/.<i>INIT_FILE</i>
             </pre>
           </td>
 <td><pre>To verify that all user initialization files have a mode of 0740 or
@@ -7173,7 +7174,7 @@ those responsible for one.</td>
 <td>
 To properly set the permissions of <code>/etc/audit/auditd.conf</code>, run the command:
 <pre>$ sudo chmod 0640 /etc/audit/auditd.conf</pre>
-          </td>
+        </td>
 <td><pre>To check the permissions of /etc/audit/auditd.conf,
 run the command:
 $ ls -l /etc/audit/auditd.conf
@@ -7200,14 +7201,14 @@ correlate, and investigate the events relating to an incident or identify
 those responsible for one.</td>
 <td>
 To properly set the permissions of <code>/etc/audit/rules.d/*.rules</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/audit/rules.d/*.rules</pre>
-          </td>
+<pre>$ sudo chmod 0600 /etc/audit/rules.d/*.rules</pre>
+        </td>
 <td><pre>To check the permissions of /etc/audit/rules.d/*.rules,
 run the command:
 $ ls -l /etc/audit/rules.d/*.rules
 If properly configured, the output should indicate the following permissions:
--rw-r-----
-      Is it the case that /etc/audit/rules.d/*.rules does not have unix mode -rw-r-----?
+-rw-------
+      Is it the case that /etc/audit/rules.d/*.rules does not have unix mode -rw-------?
       </pre></td>
 <td>SRG-OS-000063-GPOS-00032<br>
 </td>
@@ -7354,9 +7355,11 @@ something is amiss. They may be caused by an intruder, by incorrect software ins
 draft software removal, or by failure to remove all files belonging to a deleted account, or
 other similar cases. The files should be repaired so they will not cause problems when
 accounts are created in the future, and the cause should be discovered and addressed.</td>
-<td>If any file is not group-owned by a group present in /etc/group, the cause of the lack of
+<td>If any file is not group-owned by a valid defined group, the cause of the lack of
 group-ownership must be investigated. Following this, those files should be deleted or
-assigned to an appropriate group.
+assigned to an appropriate group. The groups need to be defined in <code>/etc/group</code>
+or in <code>/usr/lib/group</code> if <code>nss-altfiles</code> are configured to be used
+in <code>/etc/nsswitch.conf</code>.
 
 Locate the mount points related to local devices by the following command:
 <pre>$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)</pre>
@@ -7445,14 +7448,14 @@ Audit logs must be mode 0640 or less permissive.
 the system and should only be accessed by authorized personnel.</td>
 <td>
 To properly set the permissions of <code>/var/log/messages</code>, run the command:
-<pre>$ sudo chmod 0640 /var/log/messages</pre>
+<pre>$ sudo chmod 0600 /var/log/messages</pre>
             </td>
 <td><pre>To check the permissions of /var/log/messages,
 run the command:
 $ ls -l /var/log/messages
 If properly configured, the output should indicate the following permissions:
--rw-r-----
-      Is it the case that /var/log/messages does not have unix mode -rw-r-----?
+-rw-------
+      Is it the case that /var/log/messages does not have unix mode -rw-------?
       </pre></td>
 <td>SRG-OS-000206-GPOS-00084<br>
 </td>
@@ -7645,7 +7648,13 @@ personal photos, emails, and instant messages; and business-critical documents.<
 <td>Verify that Meltdown mitigations are not disabled:
 <pre>$ sudo grubby --info=ALL | grep mitigations</pre>
 
-The mitigations must not be set to "off".</td>
+The mitigations must not be set to "off".
+
+Check that the line <pre>GRUB_CMDLINE_LINUX="..."</pre> within <code>/etc/default/grub</code>
+doesn't contain the argument <code>mitigations=off</code>.
+Run the following command to update command line for already installed kernels:
+<pre># grubby --update-kernel=ALL --remove-args="mitigations=off"</pre>
+        </td>
 <td><pre>Verify that Meltdown mitigations are not disabled in any kernel:
 
 $ sudo grubby --info=ALL | grep mitigations
@@ -7939,7 +7948,7 @@ The command should not return any output.
 <tr>
 <td>xccdf_org.ssgproject.content_rule_harden_sshd_ciphers_openssh_conf_crypto_policy</td>
 <td>high</td>
-<td>Configure SSH Client to Use FIPS 140-2 Validated Ciphers: openssh.config</td>
+<td>Configure SSH Client to Use FIPS 140 Validated Ciphers: openssh.config</td>
 <td>Overriding the system crypto policy makes the behavior of the OpenSSH client
 violate expectations, and makes system configuration more fragmented. By
 specifying a cipher list with the order of ciphers being in a “strongest to
@@ -8126,10 +8135,9 @@ Oracle Linux 8
 <td>xccdf_org.ssgproject.content_rule_kerberos_disable_no_keytab</td>
 <td>medium</td>
 <td>Disable Kerberos by removing host keytab</td>
-<td>The key derivation function (KDF) in Kerberos is not FIPS compatible.</td>
-<td>Kerberos is not an approved key distribution method for
-Common Criteria. To prevent using Kerberos by system daemons,
-remove the Kerberos keytab files, especially
+<td>Some key derivation functions (KDF) in Kerberos are not FIPS-compatible</td>
+<td>Kerberos may rely on key distribution functions unapproved by Common Criteria.
+To prevent using Kerberos by system daemons, remove the Kerberos keytab files, especially
 <code>/etc/krb5.keytab</code>.</td>
 <td><pre>Run the following command to see if there are some keytabs
 that would potentially allow the use of Kerberos by system daemons.
@@ -9565,7 +9573,9 @@ $ sudo yum install firewalld</pre>
 <td>medium</td>
 <td>Uninstall gssproxy Package</td>
 <td>
-            <code>gssproxy</code> is a proxy for GSS API credential handling.</td>
+            <code>gssproxy</code> is a proxy for GSS API credential handling.
+Kerberos relies on some key derivation functions that may not
+be compatible with some site policies such as FIPS 140.</td>
 <td>The <code>gssproxy</code> package can be removed with the following command:
 <pre>
 $ sudo yum erase gssproxy</pre>
@@ -9656,7 +9666,7 @@ $ rpm -q krb5-workstation
 <td>Uninstall libreport-plugin-logger Package</td>
 <td>
             <code>libreport-plugin-logger</code> is a ABRT plugin to report bugs into the
-Red Hat Support system.</td>
+Oracle Linux Support system.</td>
 <td>The <code>libreport-plugin-logger</code> package can be removed with the following command:
 <pre>
 $ sudo yum erase libreport-plugin-logger</pre>
@@ -10304,6 +10314,12 @@ $ grep sulogin /usr/lib/systemd/system/rescue.service
 The output should be similar to the following, and the line must begin with
 ExecStart and /usr/lib/systemd/systemd-sulogin-shell.
     ExecStart=-/usr/lib/systemd/systemd-sulogin-shell rescue
+
+In case the output does not match, check if the ExecStart directive is not overridden:
+grep ExecStart /etc/systemd/system/rescue.service.d/*.conf
+The output should contain two lines:
+ExecStart=
+ExecStart=-/usr/lib/systemd/systemd-sulogin-shell rescue
       Is it the case that the output is different?
       </pre></td>
 <td>SRG-OS-000080-GPOS-00048<br>
@@ -11240,15 +11256,18 @@ they are kept in plain text.
               <br>
 Using more hashing rounds makes password cracking attacks more difficult.</td>
 <td>In <code>/etc/login.defs</code>, ensure <code>SHA_CRYPT_MIN_ROUNDS</code> and
-<code>SHA_CRYPT_MAX_ROUNDS</code> has the minimum value of <code>5000</code>.
+<code>SHA_CRYPT_MAX_ROUNDS</code> has the minimum value of <code>
+                <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_min_rounds_login_defs" use="legacy"></xccdf-1.2:sub>
+              </code>.
 For example:
-<pre>SHA_CRYPT_MIN_ROUNDS 5000
-SHA_CRYPT_MAX_ROUNDS 5000</pre>
+<pre>SHA_CRYPT_MIN_ROUNDS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_min_rounds_login_defs" use="legacy"></xccdf-1.2:sub>
+SHA_CRYPT_MAX_ROUNDS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_min_rounds_login_defs" use="legacy"></xccdf-1.2:sub>
+              </pre>
 Notice that if neither are set, they already have the default value of 5000.
-If either is set, they must have the minimum value of 5000.</td>
-<td><pre>Inspect /etc/login.defs and ensure that if eihter
+If either is set, they must have the minimum value of <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_min_rounds_login_defs" use="legacy"></xccdf-1.2:sub>.</td>
+<td><pre>Inspect /etc/login.defs and ensure that if either
 SHA_CRYPT_MIN_ROUNDS or SHA_CRYPT_MAX_ROUNDS
-are set, they must have the minimum value of 5000.
+are set, they must have the minimum value of .
       Is it the case that it does not?
       </pre></td>
 <td>SRG-OS-000120-GPOS-00061<br>SRG-OS-000073-GPOS-00041<br>
@@ -12222,8 +12241,11 @@ standards approved by the federal government since this provides assurance they 
 and validated.</td>
 <td>System running in FIPS mode is indicated by kernel parameter
 <code>'crypto.fips_enabled'</code>. This parameter should be set to <code>1</code> in FIPS mode.
+
 To enable FIPS mode, run the following command:
 <pre>fips-mode-setup --enable</pre>
+
+
 
 To enable strict FIPS compliance, the fips=1 kernel option needs to be added to the kernel boot
 parameters during system installation so key generation is done with FIPS-approved algorithms
@@ -13172,15 +13194,14 @@ package &lt;package&gt; is not installed
 <tr>
 <td>xccdf_org.ssgproject.content_rule_xwindows_runlevel_target</td>
 <td>medium</td>
-<td>Disable X Windows Startup By Setting Default Target</td>
+<td>Disable Graphical Environment Startup By Setting Default Target</td>
 <td>Services that are not required for system and application processes
-must not be active to decrease the attack surface of the system. X windows has a
-long history of security vulnerabilities and should not be used unless approved
-and documented.</td>
+must not be active to decrease the attack surface of the system.</td>
 <td>Systems that do not require a graphical user interface should only boot by
 default into <code>multi-user.target</code> mode. This prevents accidental booting of the system
 into a <code>graphical.target</code> mode. Setting the system's default target to
-<code>multi-user.target</code> will prevent automatic startup of the X server. To do so, run:
+<code>multi-user.target</code> will prevent automatic startup of the graphical environment.
+To do so, run:
 <pre>$ systemctl set-default multi-user.target</pre>
 You should see the following output:
 <pre>Removed symlink /etc/systemd/system/default.target.

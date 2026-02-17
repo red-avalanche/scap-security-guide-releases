@@ -48,17 +48,15 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>450</td>
-			<td>5</td>
-			<td>445</td>
-			<td>98.89%</td>
+			<td>452</td>
+			<td>4</td>
+			<td>448</td>
+			<td>99.12%</td>
 			<td>
 				
 					RHEL-09-211035
 				
 					RHEL-09-214030
-				
-					RHEL-09-255075
 				
 					RHEL-09-654270
 				
@@ -83,6 +81,46 @@
 		<td>Version</td>
 		<td>Mapped Rule</td>
 	</thead>
+
+<tr>
+	<td>V-270174</td>
+	<td>48</td>
+	<td>medium</td>
+	<td>RHEL 9 must display the Standard Mandatory DOD Notice and Consent Banner before granting local or remote access to the system via a graphical user logon.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>An appropriate warning message reinforces policy awareness during the logon
+process and facilitates possible legal action against attackers.</pre></td>
+	<td><pre>
+To ensure the login warning banner text is properly set, run the following:
+$ grep banner-message-text /etc/dconf/db/distro.d/*
+If properly configured, the proper banner text will appear.
+To ensure the login warning banner text is locked and cannot be changed by a user, run the following:
+$ grep banner-message-text /etc/dconf/db/distro.d/locks/*
+If properly configured, the output should be /org/gnome/login-screen/banner-message-text.
+      Is it the case that it does not?
+      </pre></td>
+	<td><pre>In the default graphical environment, configuring the login warning banner text
+in the GNOME Display Manager's login screen can be configured on the login
+screen by setting banner-message-text to 'APPROVED_BANNER'
+where APPROVED_BANNER is the approved banner for your environment.
+
+              
+To enable, add or edit banner-message-text to
+
+/etc/dconf/db/distro.d/00-security-settings. For example:
+[org/gnome/login-screen]
+banner-message-text='APPROVED_BANNER'
+Once the setting has been added, add a lock to
+/etc/dconf/db/distro.d/locks/00-security-settings-lock to prevent user modification.
+For example:
+/org/gnome/login-screen/banner-message-text
+
+After the settings have been set, run dconf update.
+When entering a warning banner that spans several lines, remember
+to begin and end the string with ' and use \n for new lines.</pre></td>
+	<td>RHEL-09-171011</td>
+	<td>dconf_gnome_login_banner_text</td>
+</tr>
 
 <tr>
 	<td>V-257777</td>
@@ -205,9 +243,7 @@ OR:
 	<td>The graphical display manager must not be the default target on RHEL 9 unless approved.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Services that are not required for system and application processes
-must not be active to decrease the attack surface of the system. X windows has a
-long history of security vulnerabilities and should not be used unless approved
-and documented.</pre></td>
+must not be active to decrease the attack surface of the system.</pre></td>
 	<td><pre>Verify that Red Hat Enterprise Linux 9 is configured to boot to the command line:
 $ systemctl get-default
 multi-user.target
@@ -216,7 +252,8 @@ multi-user.target
 	<td><pre>Systems that do not require a graphical user interface should only boot by
 default into multi-user.target mode. This prevents accidental booting of the system
 into a graphical.target mode. Setting the system's default target to
-multi-user.target will prevent automatic startup of the X server. To do so, run:
+multi-user.target will prevent automatic startup of the graphical environment.
+To do so, run:
 $ systemctl set-default multi-user.target
 You should see the following output:
 Removed symlink /etc/systemd/system/default.target.
@@ -577,7 +614,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 /etc/default/grub as shown below:
 GRUB_CMDLINE_LINUX="... vsyscall=none ..."
 Run the following command to update command line for already installed kernels:# grubby --update-kernel=ALL --args="vsyscall=none"
-        </pre></td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in /usr/lib/bootc/kargs.d in a TOML file that has the following form:
+
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["vsyscall=none"]
+
+For more details on configuring kernel arguments in bootable container images, please refer to Bootc documentation.</pre></td>
 	<td>RHEL-09-212035</td>
 	<td>grub2_vsyscall_argument</td>
 </tr>
@@ -616,7 +659,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 /etc/default/grub as shown below:
 GRUB_CMDLINE_LINUX="... page_poison=1 ..."
 Run the following command to update command line for already installed kernels:# grubby --update-kernel=ALL --args="page_poison=1"
-            </pre></td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in /usr/lib/bootc/kargs.d in a TOML file that has the following form:
+
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["page_poison=1"]
+
+For more details on configuring kernel arguments in bootable container images, please refer to Bootc documentation.</pre></td>
 	<td>RHEL-09-212040</td>
 	<td>grub2_page_poison_argument</td>
 </tr>
@@ -658,7 +707,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 /etc/default/grub as shown below:
 GRUB_CMDLINE_LINUX="... slub_debug= ..."
 Run the following command to update command line for already installed kernels:# grubby --update-kernel=ALL --args="slub_debug="
-            </pre></td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in /usr/lib/bootc/kargs.d in a TOML file that has the following form:
+
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["slub_debug="]
+
+For more details on configuring kernel arguments in bootable container images, please refer to Bootc documentation.</pre></td>
 	<td>RHEL-09-212045</td>
 	<td>grub2_slub_debug_argument</td>
 </tr>
@@ -696,7 +751,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 /etc/default/grub as shown below:
 GRUB_CMDLINE_LINUX="... pti=on ..."
 Run the following command to update command line for already installed kernels:# grubby --update-kernel=ALL --args="pti=on"
-        </pre></td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in /usr/lib/bootc/kargs.d in a TOML file that has the following form:
+
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["pti=on"]
+
+For more details on configuring kernel arguments in bootable container images, please refer to Bootc documentation.</pre></td>
 	<td>RHEL-09-212050</td>
 	<td>grub2_pti_argument</td>
 </tr>
@@ -734,7 +795,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 /etc/default/grub as shown below:
 GRUB_CMDLINE_LINUX="... audit=1 ..."
 Run the following command to update command line for already installed kernels:# grubby --update-kernel=ALL --args="audit=1"
-      </pre></td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in /usr/lib/bootc/kargs.d in a TOML file that has the following form:
+
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["audit=1"]
+
+For more details on configuring kernel arguments in bootable container images, please refer to Bootc documentation.</pre></td>
 	<td>RHEL-09-212055</td>
 	<td>grub2_audit_argument</td>
 </tr>
@@ -1722,7 +1789,9 @@ $ sudo dnf remove telnet-server
 	<td>RHEL 9 must not have the gssproxy package installed.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>
-            gssproxy is a proxy for GSS API credential handling.</pre></td>
+            gssproxy is a proxy for GSS API credential handling.
+Kerberos relies on some key derivation functions that may not
+be compatible with some site policies such as FIPS 140.</pre></td>
 	<td><pre>Run the following command to determine if the gssproxy package is installed:
 $ rpm -q gssproxy
       Is it the case that the package is installed?
@@ -1973,6 +2042,62 @@ $ sudo dnf install s-nail
         </pre></td>
 	<td>RHEL-09-215095</td>
 	<td>package_s-nail_installed</td>
+</tr>
+
+<tr>
+	<td>V-258234</td>
+	<td>3123</td>
+	<td>medium</td>
+	<td>RHEL 9 must have the crypto-policies package installed.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>Centralized cryptographic policies simplify applying secure ciphers across an operating system and
+the applications that run on that operating system. Use of weak or untested encryption algorithms
+undermines the purposes of utilizing encryption to protect data.</pre></td>
+	<td><pre>Run the following command to determine if the crypto-policies package is installed: $ rpm -q crypto-policies
+      Is it the case that the package is not installed?
+      </pre></td>
+	<td><pre>The crypto-policies package can be installed with the following command:
+
+$ sudo dnf install crypto-policies
+            </pre></td>
+	<td>RHEL-09-215100</td>
+	<td>package_crypto-policies_installed</td>
+</tr>
+
+<tr>
+	<td>V-258241</td>
+	<td>3123</td>
+	<td>medium</td>
+	<td>RHEL 9 must implement a FIPS 140-3 compliant systemwide cryptographic policy.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>Centralized cryptographic policies simplify applying secure ciphers across an operating system and
+the applications that run on that operating system. Use of weak or untested encryption algorithms
+undermines the purposes of utilizing encryption to protect data.</pre></td>
+	<td><pre>To verify that cryptography policy has been configured correctly, run the
+following command:
+$ update-crypto-policies --show
+The output should return .
+Run the command to check if the policy is correctly applied:
+$ update-crypto-policies --is-applied
+The output should be The configured policy is applied.
+Moreover, check if settings for selected crypto policy are as expected.
+List all libraries for which it holds that their crypto policies do not have symbolic link in /etc/crypto-policies/back-ends.
+$ ls -l /etc/crypto-policies/back-ends/ | grep '^[^l]' | tail -n +2 | awk -F' ' '{print $NF}' | awk -F'.' '{print $1}' | sort
+Subsequently, check if matching libraries have drop in files in the /etc/crypto-policies/local.d directory.
+$ ls /etc/crypto-policies/local.d/ | awk -F'-' '{print $1}' | uniq | sort
+Outputs of two previous commands should match.
+      Is it the case that cryptographic policy is not configured or is configured incorrectly?
+      </pre></td>
+	<td><pre>To configure the system cryptography policy to use ciphers only from the 
+                
+              
+policy, run the following command:
+$ sudo update-crypto-policies --set 
+              
+The rule checks if settings for selected crypto policy are configured as expected. Configuration files in the /etc/crypto-policies/back-ends are either symlinks to correct files provided by Crypto-policies package or they are regular files in case crypto policy customizations are applied.
+Crypto policies may be customized by crypto policy modules, in which case it is delimited from the base policy using a colon.</pre></td>
+	<td>RHEL-09-215105</td>
+	<td>configure_crypto_policy</td>
 </tr>
 
 <tr>
@@ -3150,12 +3275,12 @@ the system and should only be accessed by authorized personnel.</pre></td>
 run the command:
 $ ls -l /var/log/messages
 If properly configured, the output should indicate the following permissions:
--rw-r-----
-      Is it the case that /var/log/messages does not have unix mode -rw-r-----?
+-rw-------
+      Is it the case that /var/log/messages does not have unix mode -rw-------?
       </pre></td>
 	<td><pre>
 To properly set the permissions of /var/log/messages, run the command:
-$ sudo chmod 0640 /var/log/messages
+$ sudo chmod 0600 /var/log/messages
             </pre></td>
 	<td>RHEL-09-232030</td>
 	<td>file_permissions_var_log_messages</td>
@@ -3487,6 +3612,67 @@ root
             </pre></td>
 	<td>RHEL-09-232100</td>
 	<td>file_owner_backup_etc_group</td>
+</tr>
+
+<tr>
+	<td>V-270175</td>
+	<td>162</td>
+	<td>medium</td>
+	<td>RHEL 9 "/etc/audit/" must be owned by root.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>Without the capability to restrict which roles and individuals can
+select which events are audited, unauthorized personnel may be able
+to prevent the auditing of critical events.
+Misconfigured audits may degrade the system's performance by
+overwhelming the audit log. Misconfigured audits may also make it more
+difficult to establish, correlate, and investigate the events relating
+to an incident or identify those responsible for one.</pre></td>
+	<td><pre>
+To properly set the owner of /etc/audit/, run the command:
+$ sudo chown root /etc/audit/ 
+
+To properly set the owner of /etc/audit/rules.d/, run the command:
+$ sudo chown root /etc/audit/rules.d/ 
+      Is it the case that ?
+      </pre></td>
+	<td><pre>All audit configuration files must be owned by root user.
+
+To properly set the owner of /etc/audit/, run the command:
+$ sudo chown root /etc/audit/ 
+
+To properly set the owner of /etc/audit/rules.d/, run the command:
+$ sudo chown root /etc/audit/rules.d/ 
+        </pre></td>
+	<td>RHEL-09-232103</td>
+	<td>file_ownership_audit_configuration</td>
+</tr>
+
+<tr>
+	<td>V-270176</td>
+	<td>162</td>
+	<td>medium</td>
+	<td>RHEL 9 "/etc/audit/" must be group-owned by root.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>Without the capability to restrict which roles and individuals can
+select which events are audited, unauthorized personnel may be able
+to prevent the auditing of critical events.
+Misconfigured audits may degrade the system's performance by
+overwhelming the audit log. Misconfigured audits may also make it more
+difficult to establish, correlate, and investigate the events relating
+to an incident or identify those responsible for one.</pre></td>
+	<td><pre>
+To properly set the group owner of /etc/audit/, run the command:
+$ sudo chgrp root /etc/audit/
+
+To properly set the group owner of /etc/audit/rules.d/, run the command:
+$ sudo chgrp root /etc/audit/rules.d/
+      Is it the case that ?
+      </pre></td>
+	<td><pre>All audit configuration files must be owned by group root.
+chown :root /etc/audit/audit*.{rules,conf} /etc/audit/rules.d/*
+        </pre></td>
+	<td>RHEL-09-232104</td>
+	<td>file_groupownership_audit_configuration</td>
 </tr>
 
 <tr>
@@ -4270,9 +4456,11 @@ Replace MOUNTPOINT by the mount points listed by the fist command.
 No files without a valid group should be located.
       Is it the case that there is output?
       </pre></td>
-	<td><pre>If any file is not group-owned by a group present in /etc/group, the cause of the lack of
+	<td><pre>If any file is not group-owned by a valid defined group, the cause of the lack of
 group-ownership must be investigated. Following this, those files should be deleted or
-assigned to an appropriate group.
+assigned to an appropriate group. The groups need to be defined in /etc/group
+or in /usr/lib/group if nss-altfiles are configured to be used
+in /etc/nsswitch.conf.
 
 Locate the mount points related to local devices by the following command:
 $ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)
@@ -5763,7 +5951,10 @@ UsePAM yes
 	<td><pre>Without cryptographic integrity protections, information can be altered by unauthorized users without detection.</pre></td>
 	<td><pre></pre></td>
 	<td><pre>SSHD should follow the system cryptographic policy.
-In order to accomplish this the SSHD configuration should include the system</pre></td>
+In order to accomplish this the SSHD configuration should include the configuration file provided by the system crypto policy.
+The following line should be present in /etc/ssh/sshd_config or in a file included by this file (a file within the /etc/ssh/sshd_config.d directory):
+Include /etc/crypto-policies/back-ends/opensshserver.config
+          </pre></td>
 	<td>RHEL-09-255055</td>
 	<td>sshd_include_crypto_policy</td>
 </tr>
@@ -5772,7 +5963,24 @@ In order to accomplish this the SSHD configuration should include the system</pr
 	<td>V-257988</td>
 	<td>1453</td>
 	<td>medium</td>
-	<td>RHEL 9 must implement DOD-approved encryption ciphers to protect the confidentiality of SSH client connections.</td>
+	<td>RHEL 9 must implement DOD-approved encryption ciphers to protect the confidentiality of SSH connections.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>Without cryptographic integrity protections, information can be altered by unauthorized users without detection.</pre></td>
+	<td><pre></pre></td>
+	<td><pre>SSHD should follow the system cryptographic policy.
+In order to accomplish this the SSHD configuration should include the configuration file provided by the system crypto policy.
+The following line should be present in /etc/ssh/sshd_config or in a file included by this file (a file within the /etc/ssh/sshd_config.d directory):
+Include /etc/crypto-policies/back-ends/opensshserver.config
+          </pre></td>
+	<td>RHEL-09-255060</td>
+	<td>sshd_include_crypto_policy</td>
+</tr>
+
+<tr>
+	<td>V-270177</td>
+	<td>1453</td>
+	<td>medium</td>
+	<td>The RHEL 9 SSH client must be configured to use only DOD-approved encryption ciphers employing FIPS 140-3 validated cryptographic hash algorithms to protect the confidentiality of SSH client connections.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Overriding the system crypto policy makes the behavior of the OpenSSH client
 violate expectations, and makes system configuration more fragmented. By
@@ -5795,7 +6003,7 @@ line and is not commented out:
 Ciphers 
               
             </pre></td>
-	<td>RHEL-09-255060</td>
+	<td>RHEL-09-255064</td>
 	<td>harden_sshd_ciphers_openssh_conf_crypto_policy</td>
 </tr>
 
@@ -5803,7 +6011,7 @@ Ciphers
 	<td>V-257989</td>
 	<td>1453</td>
 	<td>medium</td>
-	<td>RHEL 9 must implement DOD-approved encryption ciphers to protect the confidentiality of SSH server connections.</td>
+	<td>The RHEL 9 SSH server must be configured to use only DOD-approved encryption ciphers employing FIPS 140-3 validated cryptographic hash algorithms to protect the confidentiality of SSH server connections.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Overriding the system crypto policy makes the behavior of the OpenSSH server
 violate expectations, and makes system configuration more fragmented. By
@@ -5831,16 +6039,59 @@ text and is not commented out:
 </tr>
 
 <tr>
-	<td>V-257991</td>
-	<td></td>
+	<td>V-270178</td>
+	<td>1453</td>
 	<td>medium</td>
-	<td>RHEL 9 SSH server must be configured to use only Message Authentication Codes (MACs) employing FIPS 140-3 validated cryptographic hash algorithms.</td>
+	<td>The RHEL 9 SSH client must be configured to use only DOD-approved Message Authentication Codes (MACs) employing FIPS 140-3 validated cryptographic hash algorithms to protect the confidentiality of SSH client connections.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>MD5 and 96-bit MAC algorithms are considered weak and have been shown to increase
+exploitability in SSH downgrade attacks. Weak algorithms continue to have a great deal of
+attention as a weak spot that can be exploited with expanded computing power. An
+attacker that breaks the algorithm could take advantage of a MiTM position to decrypt the
+SSH tunnel and capture credentials and information</pre></td>
+	<td><pre>Only strong MACs should be used. To verify that only strong
+MACs are in use, run the following command:
+$ sudo grep -i macs /etc/ssh/sshd_config
+The output should contain only those MACs which are strong, namely,
+ hash functions.
+      Is it the case that MACs option is commented out or not using strong hash algorithms?
+      </pre></td>
+	<td><pre>Limit the MACs to strong hash algorithms.
+The following line in /etc/ssh/sshd_config demonstrates use
+of those MACs:
+MACs 
+            
+          </pre></td>
+	<td>RHEL-09-255070</td>
+	<td>sshd_use_strong_macs</td>
+</tr>
+
+<tr>
+	<td>V-257991</td>
+	<td>1453</td>
+	<td>medium</td>
+	<td>The RHEL 9 SSH server must be configured to use only Message Authentication Codes (MACs) employing FIPS 140-3 validated cryptographic hash algorithms to protect the confidentiality of SSH server connections.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>Overriding the system crypto policy makes the behavior of the SSH service violate expectations,
+and makes system configuration more fragmented.</pre></td>
+	<td><pre>Verify that sshd isn't configured to ignore the system wide cryptographic policy.
+
+Check that the CRYPTO_POLICY variable is not set or is commented out in the
+/etc/sysconfig/sshd.
+
+Run the following command:
+
+$ sudo grep CRYPTO_POLICY /etc/sysconfig/sshd
+      Is it the case that the CRYPTO_POLICY variable is set or is not commented out in the /etc/sysconfig/sshd?
+      </pre></td>
+	<td><pre>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
+SSH is supported by crypto policy, but the SSH configuration may be
+set up to ignore it.
+To check that Crypto Policies settings are configured correctly, ensure that
+the CRYPTO_POLICY variable is either commented or not set at all
+in the /etc/sysconfig/sshd.</pre></td>
 	<td>RHEL-09-255075</td>
-	<td>Missing Rule</td>
+	<td>configure_ssh_crypto_policy</td>
 </tr>
 
 <tr>
@@ -6032,19 +6283,19 @@ some processes may stop SSH from correctly detecting that the user is idle.</pre
 services that if configured incorrectly can lead to insecure and vulnerable
 configurations. Therefore, service configuration files should be owned by the
 correct group to prevent unauthorized changes.</pre></td>
-	<td><pre>To check the group ownership of /etc/ssh/sshd_config,
+	<td><pre>To check the group ownership of files in the /etc/ssh/sshd_config.d directory,
 run the command:
-$ ls -lL /etc/ssh/sshd_config
+$ ls -lL /etc/ssh/sshd_config.d
 If properly configured, the output should indicate the following group-owner:
 root
-      Is it the case that /etc/ssh/sshd_config does not have a group owner of root?
+      Is it the case that files in the /etc/ssh/sshd_config.d directory do not have a group owner of root?
       </pre></td>
 	<td><pre>
-To properly set the group owner of /etc/ssh/sshd_config, run the command:
-$ sudo chgrp root /etc/ssh/sshd_config
+To properly set the group owner of files in /etc/ssh/sshd_config.d, run the command:
+find -H /etc/ssh/sshd_config.d -type d -exec chgrp -L root {} \;
         </pre></td>
 	<td>RHEL-09-255105</td>
-	<td>file_groupowner_sshd_config</td>
+	<td>file_groupowner_sshd_drop_in_config</td>
 </tr>
 
 <tr>
@@ -6057,19 +6308,19 @@ $ sudo chgrp root /etc/ssh/sshd_config
 services that if configured incorrectly can lead to insecure and vulnerable
 configurations. Therefore, service configuration files should be owned by the
 correct group to prevent unauthorized changes.</pre></td>
-	<td><pre>To check the ownership of /etc/ssh/sshd_config,
+	<td><pre>To check the ownership of files in the /etc/ssh/sshd_config.d directory,
 run the command:
-$ ls -lL /etc/ssh/sshd_config
+$ ls -lL /etc/ssh/sshd_config.d
 If properly configured, the output should indicate the following owner:
 root
-      Is it the case that /etc/ssh/sshd_config does not have an owner of root?
+      Is it the case that files in the /etc/ssh/sshd_config.d directory do not have a owner of root?
       </pre></td>
 	<td><pre>
-To properly set the owner of /etc/ssh/sshd_config, run the command:
-$ sudo chown root /etc/ssh/sshd_config 
+To properly set the owner of files in /etc/ssh/sshd_config.d, run the command:
+find -H /etc/ssh/sshd_config.d -type d -exec chown -L root {} \;
         </pre></td>
 	<td>RHEL-09-255110</td>
-	<td>file_owner_sshd_config</td>
+	<td>file_owner_sshd_drop_in_config</td>
 </tr>
 
 <tr>
@@ -6082,19 +6333,19 @@ $ sudo chown root /etc/ssh/sshd_config
 services that if configured incorrectly can lead to insecure and vulnerable
 configurations. Therefore, service configuration files should be owned by the
 correct group to prevent unauthorized changes.</pre></td>
-	<td><pre>To check the permissions of /etc/ssh/sshd_config,
+	<td><pre>To check the permissions of files in the /etc/ssh/sshd_config.d directory,
 run the command:
-$ ls -l /etc/ssh/sshd_config
+$ ls -lL /etc/ssh/sshd_config.d
 If properly configured, the output should indicate the following permissions:
 -rw-------
-      Is it the case that /etc/ssh/sshd_config does not have unix mode -rw-------?
+      Is it the case that files in the /etc/ssh/sshd_config.d directory do not have unix mode -rw-------?
       </pre></td>
 	<td><pre>
-To properly set the permissions of /etc/ssh/sshd_config, run the command:
-$ sudo chmod 0600 /etc/ssh/sshd_config
+To properly set the permissions of files in /etc/ssh/sshd_config.d, run the command:
+find -H /etc/ssh/sshd_config.d -type d -exec chown 0600 {} \;
         </pre></td>
 	<td>RHEL-09-255115</td>
-	<td>file_permissions_sshd_config</td>
+	<td>file_permissions_sshd_drop_in_config</td>
 </tr>
 
 <tr>
@@ -7227,20 +7478,23 @@ insmod program to load the module manually.</pre></td>
 	<td>medium</td>
 	<td>RHEL 9 must have the USBGuard package installed.</td>
 	<td>SRG-OS-ID</td>
+	<td><pre>The usbguard service must be running in order to
+enforce the USB device authorization policy for all USB devices.</pre></td>
 	<td><pre>
-          usbguard is a software framework that helps to protect
-against rogue USB devices by implementing basic whitelisting/blacklisting
-capabilities based on USB device attributes.</pre></td>
-	<td><pre>Run the following command to determine if the usbguard package is installed: $ rpm -q usbguard
-      Is it the case that the package is not installed?
-      </pre></td>
-	<td><pre>
-The usbguard package can be installed with the following command:
 
-$ sudo dnf install usbguard
+Run the following command to determine the current status of the
+usbguard service:
+$ sudo systemctl is-active usbguard
+If the service is running, it should return the following: active
+      Is it the case that the service is not enabled?
+      </pre></td>
+	<td><pre>The USBGuard service should be enabled.
+
+The usbguard service can be enabled with the following command:
+$ sudo systemctl enable usbguard.service
         </pre></td>
 	<td>RHEL-09-291015</td>
-	<td>package_usbguard_installed</td>
+	<td>service_usbguard_enabled</td>
 </tr>
 
 <tr>
@@ -7496,10 +7750,10 @@ Check all local interactive user initialization files for interactive users with
 
 Note: The example is for a system that is configured to create users home directories in the "/home" directory.
 
-# grep -ri umask /home/
+$ sudo find /home -maxdepth 2 -type f -name ".[^.]*" -exec grep -iH -d skip --exclude=.bash_history umask {} \;
 
-/home/smithj/.bash_history:grep -i umask /etc/bashrc /etc/csh.cshrc /etc/profile
-/home/smithj/.bash_history:grep -i umask /etc/login.defs
+/home/wadea/.bash_history:grep -i umask /etc/bashrc /etc/csh.cshrc /etc/profile
+/home/wadea/.bash_history:grep -i umask /etc/login.defs
       Is it the case that any local interactive user initialization files are found to have a umask statement that sets a value less restrictive than "077"?
       </pre></td>
 	<td><pre>Remove the UMASK environment variable from all interactive users initialization files.</pre></td>
@@ -8669,6 +8923,39 @@ $ sudo systemctl enable fapolicyd.service
 </tr>
 
 <tr>
+	<td>V-270180</td>
+	<td>1764</td>
+	<td>medium</td>
+	<td>The RHEL 9 fapolicy module must be configured to employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>Utilizing a whitelist provides a configuration management method for allowing the execution of only authorized software.
+Using only authorized software decreases risk by limiting the number of potential vulnerabilities. Verification of whitelisted software occurs prior to execution or at system startup.
+
+Proceed with caution with enforcing the use of this daemon.
+Improper configuration may render the system non-functional.
+The "fapolicyd" API is not namespace aware and can cause issues when launching or running containers.</pre></td>
+	<td><pre>Verify the Red Hat Enterprise Linux 9 "fapolicyd" employs a deny-all, permit-by-exception policy.
+
+Check that "fapolicyd" is in enforcement mode with the following command:
+
+$ sudo grep permissive /etc/fapolicyd/fapolicyd.conf
+
+permissive = 0
+
+Check that fapolicyd employs a deny-all policy on system mounts with the following commands:
+$ sudo tail /etc/fapolicyd/compiled.rules
+
+allow exe=/usr/bin/python3.7 : ftype=text/x-python
+deny_audit perm=any pattern=ld_so : all
+deny perm=any all : all
+      Is it the case that fapolicyd is not running in enforcement mode with a deny-all, permit-by-exception policy?
+      </pre></td>
+	<td><pre>The Fapolicy module must be configured to employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs and to prevent unauthorized software from running.</pre></td>
+	<td>RHEL-09-433016</td>
+	<td>fapolicy_default_deny</td>
+</tr>
+
+<tr>
 	<td>V-258091</td>
 	<td>192</td>
 	<td>medium</td>
@@ -8680,21 +8967,18 @@ draw additional attention to some types of password-guessing attacks. Note that 
 is different from account lockout, which is provided by the pam_faillock module.</pre></td>
 	<td><pre>Verify Red Hat Enterprise Linux 9 is configured to limit the "pwquality" retry option to .
 
-
 Check for the use of the "pwquality" retry option in the pwquality.conf file with the following command:
 $ grep retry /etc/security/pwquality.conf
       Is it the case that the value of "retry" is set to "0" or greater than "<sub idref="var_password_pam_retry" />", or is missing?
       </pre></td>
 	<td><pre>To configure the number of retry prompts that are permitted per-session:
-
 Edit the /etc/security/pwquality.conf to include
-
 retry=
                 , or a lower value if site
 policy is more restrictive. The DoD requirement is a maximum of 3 prompts
 per session.</pre></td>
 	<td>RHEL-09-611010</td>
-	<td>accounts_password_pam_retry</td>
+	<td>accounts_password_pam_pwquality_retry</td>
 </tr>
 
 <tr>
@@ -9733,6 +10017,13 @@ The output should be similar to the following, and the line must begin with
 ExecStart and /usr/lib/systemd/systemd-sulogin-shell.
     ExecStart=-/usr/lib/systemd/systemd-sulogin-shell rescue
 
+In case the output does not match, check if the ExecStart directive is not overridden:
+grep ExecStart /etc/systemd/system/rescue.service.d/*.conf
+The output should contain two lines:
+ExecStart=
+ExecStart=-/usr/lib/systemd/systemd-sulogin-shell rescue
+
+
 
 Then, verify that the rescue service is in the runlevel1.target.
 Run the following command:
@@ -9768,7 +10059,7 @@ in /usr/lib/systemd/system/rescue.service.</pre></td>
 	<td>medium</td>
 	<td>RHEL 9 must prevent system daemons from using Kerberos for authentication.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>The key derivation function (KDF) in Kerberos is not FIPS compatible.</pre></td>
+	<td><pre>Some key derivation functions (KDF) in Kerberos are not FIPS-compatible</pre></td>
 	<td><pre>Run the following command to see if there are some keytabs
 that would potentially allow the use of Kerberos by system daemons.
 $ ls -la /etc/*.keytab
@@ -9776,9 +10067,8 @@ The expected result is
 ls: cannot access '/etc/*.keytab': No such file or directory
       Is it the case that a keytab file is present on the system?
       </pre></td>
-	<td><pre>Kerberos is not an approved key distribution method for
-Common Criteria. To prevent using Kerberos by system daemons,
-remove the Kerberos keytab files, especially
+	<td><pre>Kerberos may rely on key distribution functions unapproved by Common Criteria.
+To prevent using Kerberos by system daemons, remove the Kerberos keytab files, especially
 /etc/krb5.keytab.</pre></td>
 	<td>RHEL-09-611205</td>
 	<td>kerberos_disable_no_keytab</td>
@@ -10266,31 +10556,6 @@ not, use the following as an example configuration:
           </pre></td>
 	<td>RHEL-09-652030</td>
 	<td>rsyslog_remote_access_monitoring</td>
-</tr>
-
-<tr>
-	<td>V-258145</td>
-	<td>1851</td>
-	<td>medium</td>
-	<td>RHEL 9 must be configured to offload audit records onto a different system from the system being audited via syslog.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre>The auditd service does not include the ability to send audit
-records to a centralized server for management directly. It does, however,
-include a plug-in for audit event multiplexor (audispd) to pass audit records
-to the local syslog server.</pre></td>
-	<td><pre>To verify the audispd's syslog plugin is active, run the following command:
-$ sudo grep active /etc/audit/plugins.d/syslog.conf
-If the plugin is active, the output will show yes.
-      Is it the case that it is not activated?
-      </pre></td>
-	<td><pre>To configure the auditd service to use the
-syslog plug-in of the audispd audit event multiplexor, set
-the active line in /etc/audit/plugins.d/syslog.conf to yes.
-Restart the auditd service:
-$ sudo service auditd restart
-        </pre></td>
-	<td>RHEL-09-652035</td>
-	<td>auditd_audispd_syslog_plugin_activated</td>
 </tr>
 
 <tr>
@@ -10940,7 +11205,7 @@ action_mail_acct =
 
 <tr>
 	<td>V-258164</td>
-	<td>366</td>
+	<td>169</td>
 	<td>medium</td>
 	<td>RHEL 9 audit system must audit local events.</td>
 	<td>SRG-OS-ID</td>
@@ -11133,25 +11398,26 @@ This is the default setting.</pre></td>
 	<td>medium</td>
 	<td>RHEL 9 must allow only the information system security manager (ISSM) (or individuals or roles appointed by the ISSM) to select which auditable events are to be audited.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Without the capability to restrict the roles and individuals that can select which events
-are audited, unauthorized personnel may be able to prevent the auditing of critical
-events. Misconfigured audits may degrade the system's performance by overwhelming
-the audit log. Misconfigured audits may also make it more difficult to establish,
-correlate, and investigate the events relating to an incident or identify
-those responsible for one.</pre></td>
-	<td><pre>To check the permissions of /etc/audit/rules.d/*.rules,
-run the command:
-$ ls -l /etc/audit/rules.d/*.rules
-If properly configured, the output should indicate the following permissions:
--rw-r-----
-      Is it the case that /etc/audit/rules.d/*.rules does not have unix mode -rw-r-----?
-      </pre></td>
+	<td><pre>Without the capability to restrict which roles and individuals can
+select which events are audited, unauthorized personnel may be able
+to prevent the auditing of critical events.
+Misconfigured audits may degrade the system's performance by
+overwhelming the audit log. Misconfigured audits may also make it more
+difficult to establish, correlate, and investigate the events relating
+to an incident or identify those responsible for one.</pre></td>
 	<td><pre>
-To properly set the permissions of /etc/audit/rules.d/*.rules, run the command:
-$ sudo chmod 0640 /etc/audit/rules.d/*.rules
-          </pre></td>
+To properly set the permissions of /etc/audit/, run the command:
+$ sudo chmod 0640 /etc/audit/
+
+To properly set the permissions of /etc/audit/rules.d/, run the command:
+$ sudo chmod 0640 /etc/audit/rules.d/
+      Is it the case that ?
+      </pre></td>
+	<td><pre>All audit configuration files permissions must be 640 or more restrictive.
+chmod 0640 /etc/audit/audit*.{rules,conf} /etc/audit/rules.d/*
+        </pre></td>
 	<td>RHEL-09-653110</td>
-	<td>file_permissions_etc_audit_rulesd</td>
+	<td>file_permissions_audit_configuration</td>
 </tr>
 
 <tr>
@@ -11176,7 +11442,7 @@ If properly configured, the output should indicate the following permissions:
 	<td><pre>
 To properly set the permissions of /etc/audit/auditd.conf, run the command:
 $ sudo chmod 0640 /etc/audit/auditd.conf
-          </pre></td>
+        </pre></td>
 	<td>RHEL-09-653115</td>
 	<td>file_permissions_etc_audit_auditd</td>
 </tr>
@@ -11214,7 +11480,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 /etc/default/grub as shown below:
 GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."
 Run the following command to update command line for already installed kernels:# grubby --update-kernel=ALL --args="audit_backlog_limit=8192"
-      </pre></td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in /usr/lib/bootc/kargs.d in a TOML file that has the following form:
+
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["audit_backlog_limit=8192"]
+
+For more details on configuring kernel arguments in bootable container images, please refer to Bootc documentation.</pre></td>
 	<td>RHEL-09-653120</td>
 	<td>grub2_audit_backlog_limit_argument</td>
 </tr>
@@ -12450,11 +12722,11 @@ privileged commands for all users and root. If the auditd daemon is
 configured to use the augenrules program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix .rules in the directory /etc/audit/rules.d:
--a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
--a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>RHEL-09-654160</td>
 	<td>audit_rules_privileged_commands_unix_chkpwd</td>
@@ -13314,7 +13586,7 @@ this is a finding.</pre></td>
 	<td>V-258232</td>
 	<td>68</td>
 	<td>medium</td>
-	<td>RHEL 9 IP tunnels must use FIPS 140-2/140-3 approved cryptographic algorithms.</td>
+	<td>RHEL 9 IP tunnels must use FIPS 140-3 approved cryptographic algorithms.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Overriding the system crypto policy makes the behavior of the Libreswan
 service violate expectations, and makes system configuration more
@@ -13396,30 +13668,10 @@ This will help ensure that new passwords for local users will be stored using th
 </tr>
 
 <tr>
-	<td>V-258234</td>
-	<td>3123</td>
-	<td>medium</td>
-	<td>RHEL 9 must have the crypto-policies package installed.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre>Centralized cryptographic policies simplify applying secure ciphers across an operating system and
-the applications that run on that operating system. Use of weak or untested encryption algorithms
-undermines the purposes of utilizing encryption to protect data.</pre></td>
-	<td><pre>Run the following command to determine if the crypto-policies package is installed: $ rpm -q crypto-policies
-      Is it the case that the package is not installed?
-      </pre></td>
-	<td><pre>The crypto-policies package can be installed with the following command:
-
-$ sudo dnf install crypto-policies
-            </pre></td>
-	<td>RHEL-09-672010</td>
-	<td>package_crypto-policies_installed</td>
-</tr>
-
-<tr>
 	<td>V-258236</td>
 	<td></td>
-	<td>medium</td>
-	<td>RHEL 9 crypto policy must not be overridden.</td>
+	<td>high</td>
+	<td>RHEL 9 cryptographic policy must not be overridden.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre></pre></td>
 	<td><pre></pre></td>
@@ -13450,148 +13702,6 @@ To check that Crypto Policies settings for Kerberos are configured correctly, ex
 If the symlink exists, Kerberos is configured to use the system-wide crypto policy settings.</pre></td>
 	<td>RHEL-09-672025</td>
 	<td>configure_kerberos_crypto_policy</td>
-</tr>
-
-<tr>
-	<td>V-258238</td>
-	<td>2418</td>
-	<td>high</td>
-	<td>RHEL 9 must implement DOD-approved TLS encryption in the GnuTLS package.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre>Centralized cryptographic policies simplify applying secure ciphers across an operating system and
-the applications that run on that operating system. Use of weak or untested encryption algorithms
-undermines the purposes of utilizing encryption to protect data.</pre></td>
-	<td><pre>To verify that cryptography policy has been configured correctly, run the
-following command:
-$ update-crypto-policies --show
-The output should return .
-Run the command to check if the policy is correctly applied:
-$ update-crypto-policies --is-applied
-The output should be The configured policy is applied.
-Moreover, check if settings for selected crypto policy are as expected.
-List all libraries for which it holds that their crypto policies do not have symbolic link in /etc/crypto-policies/back-ends.
-$ ls -l /etc/crypto-policies/back-ends/ | grep '^[^l]' | tail -n +2 | awk -F' ' '{print $NF}' | awk -F'.' '{print $1}' | sort
-Subsequently, check if matching libraries have drop in files in the /etc/crypto-policies/local.d directory.
-$ ls /etc/crypto-policies/local.d/ | awk -F'-' '{print $1}' | uniq | sort
-Outputs of two previous commands should match.
-      Is it the case that cryptographic policy is not configured or is configured incorrectly?
-      </pre></td>
-	<td><pre>To configure the system cryptography policy to use ciphers only from the 
-                
-              
-policy, run the following command:
-$ sudo update-crypto-policies --set 
-              
-The rule checks if settings for selected crypto policy are configured as expected. Configuration files in the /etc/crypto-policies/back-ends are either symlinks to correct files provided by Crypto-policies package or they are regular files in case crypto policy customizations are applied.
-Crypto policies may be customized by crypto policy modules, in which case it is delimited from the base policy using a colon.</pre></td>
-	<td>RHEL-09-672030</td>
-	<td>configure_crypto_policy</td>
-</tr>
-
-<tr>
-	<td>V-258239</td>
-	<td>1453</td>
-	<td>medium</td>
-	<td>RHEL 9 must implement DOD-approved encryption in the OpenSSL package.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre>Overriding the system crypto policy makes the behavior of the Java runtime violates expectations,
-and makes system configuration more fragmented.</pre></td>
-	<td><pre>To verify that OpenSSL uses the system crypto policy, check out that the OpenSSL config file
-/etc/pki/tls/openssl.cnf contains the [ crypto_policy ] section with the
-.include = /etc/crypto-policies/back-ends/opensslcnf.config directive:
-
-$ sudo grep '\.include\s* /etc/crypto-policies/back-ends/opensslcnf.config$' /etc/pki/tls/openssl.cnf.
-      Is it the case that the OpenSSL config file doesn't contain the whole section,
-or the section doesn't contain the <pre>.include = /etc/crypto-policies/back-ends/opensslcnf.config</pre> directive?
-      </pre></td>
-	<td><pre>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
-OpenSSL is supported by crypto policy, but the OpenSSL configuration may be
-set up to ignore it.
-To check that Crypto Policies settings are configured correctly, you have to examine the OpenSSL config file
-available under /etc/pki/tls/openssl.cnf.
-This file has the ini format, and it enables crypto policy support
-if there is a [ crypto_policy ] section that contains the .include = /etc/crypto-policies/back-ends/opensslcnf.config directive.</pre></td>
-	<td>RHEL-09-672035</td>
-	<td>configure_openssl_crypto_policy</td>
-</tr>
-
-<tr>
-	<td>V-258240</td>
-	<td>1453</td>
-	<td>medium</td>
-	<td>RHEL 9 must implement DOD-approved TLS encryption in the OpenSSL package.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre>Without cryptographic integrity protections, information can be altered by
-unauthorized users without detection.</pre></td>
-	<td><pre>To verify if the OpenSSL uses defined TLS Crypto Policy, run:
-$ grep -P '^(TLS\.)?MinProtocol' /etc/crypto-policies/back-ends/opensslcnf.config
-and verify that the value is
-TLSv1.2
-      Is it the case that cryptographic policy for openssl is not configured or is configured incorrectly?
-      </pre></td>
-	<td><pre>Crypto Policies are means of enforcing certain cryptographic settings for
-selected applications including OpenSSL. OpenSSL is by default configured to
-modify its configuration based on currently configured Crypto Policy.
-Editing the Crypto Policy back-end is not recommended.
-
-Check the crypto-policies(7) man page and choose a policy that configures TLS
-protocol to version 1.2 or higher, for example DEFAULT, FUTURE or FIPS policy.
-Or create and apply a custom policy that restricts minimum TLS version to 1.2.
-
-For example for versions prior to crypto-policies-20210617-1.gitc776d3e.el8.noarch
-this is expected:
-
-$ sudo grep -i MinProtocol /etc/crypto-policies/back-ends/opensslcnf.config
-
-MinProtocol = TLSv1.2
-
-
-Or for version crypto-policies-20210617-1.gitc776d3e.el8.noarch and newer this is
-expected:
-
-$ sudo grep -i MinProtocol /etc/crypto-policies/back-ends/opensslcnf.config
-
-TLS.MinProtocol = TLSv1.2
-DTLS.MinProtocol = DTLSv1.2
-            </pre></td>
-	<td>RHEL-09-672040</td>
-	<td>configure_openssl_tls_crypto_policy</td>
-</tr>
-
-<tr>
-	<td>V-258241</td>
-	<td>3123</td>
-	<td>medium</td>
-	<td>RHEL 9 must implement a systemwide encryption policy.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre>Centralized cryptographic policies simplify applying secure ciphers across an operating system and
-the applications that run on that operating system. Use of weak or untested encryption algorithms
-undermines the purposes of utilizing encryption to protect data.</pre></td>
-	<td><pre>To verify that cryptography policy has been configured correctly, run the
-following command:
-$ update-crypto-policies --show
-The output should return .
-Run the command to check if the policy is correctly applied:
-$ update-crypto-policies --is-applied
-The output should be The configured policy is applied.
-Moreover, check if settings for selected crypto policy are as expected.
-List all libraries for which it holds that their crypto policies do not have symbolic link in /etc/crypto-policies/back-ends.
-$ ls -l /etc/crypto-policies/back-ends/ | grep '^[^l]' | tail -n +2 | awk -F' ' '{print $NF}' | awk -F'.' '{print $1}' | sort
-Subsequently, check if matching libraries have drop in files in the /etc/crypto-policies/local.d directory.
-$ ls /etc/crypto-policies/local.d/ | awk -F'-' '{print $1}' | uniq | sort
-Outputs of two previous commands should match.
-      Is it the case that cryptographic policy is not configured or is configured incorrectly?
-      </pre></td>
-	<td><pre>To configure the system cryptography policy to use ciphers only from the 
-                
-              
-policy, run the following command:
-$ sudo update-crypto-policies --set 
-              
-The rule checks if settings for selected crypto policy are configured as expected. Configuration files in the /etc/crypto-policies/back-ends are either symlinks to correct files provided by Crypto-policies package or they are regular files in case crypto policy customizations are applied.
-Crypto policies may be customized by crypto policy modules, in which case it is delimited from the base policy using a colon.</pre></td>
-	<td>RHEL-09-672045</td>
-	<td>configure_crypto_policy</td>
 </tr>
 
 <tr>

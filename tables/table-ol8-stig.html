@@ -643,18 +643,21 @@ they are kept in plain text.
 
               
 Using more hashing rounds makes password cracking attacks more difficult.</pre></td>
-	<td><pre>Inspect /etc/login.defs and ensure that if eihter
+	<td><pre>Inspect /etc/login.defs and ensure that if either
 SHA_CRYPT_MIN_ROUNDS or SHA_CRYPT_MAX_ROUNDS
-are set, they must have the minimum value of 5000.
+are set, they must have the minimum value of .
       Is it the case that it does not?
       </pre></td>
 	<td><pre>In /etc/login.defs, ensure SHA_CRYPT_MIN_ROUNDS and
-SHA_CRYPT_MAX_ROUNDS has the minimum value of 5000.
+SHA_CRYPT_MAX_ROUNDS has the minimum value of 
+                
+              .
 For example:
-SHA_CRYPT_MIN_ROUNDS 5000
-SHA_CRYPT_MAX_ROUNDS 5000
+SHA_CRYPT_MIN_ROUNDS 
+SHA_CRYPT_MAX_ROUNDS 
+              
 Notice that if neither are set, they already have the default value of 5000.
-If either is set, they must have the minimum value of 5000.</pre></td>
+If either is set, they must have the minimum value of .</pre></td>
 	<td>OL08-00-010130</td>
 	<td>set_password_hashing_min_rounds_logindefs</td>
 </tr>
@@ -831,6 +834,12 @@ $ grep sulogin /usr/lib/systemd/system/rescue.service
 The output should be similar to the following, and the line must begin with
 ExecStart and /usr/lib/systemd/systemd-sulogin-shell.
     ExecStart=-/usr/lib/systemd/systemd-sulogin-shell rescue
+
+In case the output does not match, check if the ExecStart directive is not overridden:
+grep ExecStart /etc/systemd/system/rescue.service.d/*.conf
+The output should contain two lines:
+ExecStart=
+ExecStart=-/usr/lib/systemd/systemd-sulogin-shell rescue
       Is it the case that the output is different?
       </pre></td>
 	<td><pre>Single-user mode is intended as a system recovery
@@ -981,7 +990,7 @@ This will help ensure that new passwords for local users will be stored using th
 	<td>medium</td>
 	<td>OL 8 must prevent system daemons from using Kerberos for authentication.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>The key derivation function (KDF) in Kerberos is not FIPS compatible.</pre></td>
+	<td><pre>Some key derivation functions (KDF) in Kerberos are not FIPS-compatible</pre></td>
 	<td><pre>Run the following command to see if there are some keytabs
 that would potentially allow the use of Kerberos by system daemons.
 $ ls -la /etc/*.keytab
@@ -989,9 +998,8 @@ The expected result is
 ls: cannot access '/etc/*.keytab': No such file or directory
       Is it the case that a keytab file is present on the system?
       </pre></td>
-	<td><pre>Kerberos is not an approved key distribution method for
-Common Criteria. To prevent using Kerberos by system daemons,
-remove the Kerberos keytab files, especially
+	<td><pre>Kerberos may rely on key distribution functions unapproved by Common Criteria.
+To prevent using Kerberos by system daemons, remove the Kerberos keytab files, especially
 /etc/krb5.keytab.</pre></td>
 	<td>OL08-00-010161</td>
 	<td>kerberos_disable_no_keytab</td>
@@ -1229,12 +1237,12 @@ the system and should only be accessed by authorized personnel.</pre></td>
 run the command:
 $ ls -l /var/log/messages
 If properly configured, the output should indicate the following permissions:
--rw-r-----
-      Is it the case that /var/log/messages does not have unix mode -rw-r-----?
+-rw-------
+      Is it the case that /var/log/messages does not have unix mode -rw-------?
       </pre></td>
 	<td><pre>
 To properly set the permissions of /var/log/messages, run the command:
-$ sudo chmod 0640 /var/log/messages
+$ sudo chmod 0600 /var/log/messages
             </pre></td>
 	<td>OL08-00-010210</td>
 	<td>file_permissions_var_log_messages</td>
@@ -2610,7 +2618,13 @@ $ sudo grubby --info=ALL | grep mitigations
 	<td><pre>Verify that Meltdown mitigations are not disabled:
 $ sudo grubby --info=ALL | grep mitigations
 
-The mitigations must not be set to "off".</pre></td>
+The mitigations must not be set to "off".
+
+Check that the line GRUB_CMDLINE_LINUX="..." within /etc/default/grub
+doesn't contain the argument mitigations=off.
+Run the following command to update command line for already installed kernels:
+# grubby --update-kernel=ALL --remove-args="mitigations=off"
+        </pre></td>
 	<td>OL08-00-010424</td>
 	<td>grub2_mitigation_argument</td>
 </tr>
@@ -4020,9 +4034,11 @@ Replace MOUNTPOINT by the mount points listed by the fist command.
 No files without a valid group should be located.
       Is it the case that there is output?
       </pre></td>
-	<td><pre>If any file is not group-owned by a group present in /etc/group, the cause of the lack of
+	<td><pre>If any file is not group-owned by a valid defined group, the cause of the lack of
 group-ownership must be investigated. Following this, those files should be deleted or
-assigned to an appropriate group.
+assigned to an appropriate group. The groups need to be defined in /etc/group
+or in /usr/lib/group if nss-altfiles are configured to be used
+in /etc/nsswitch.conf.
 
 Locate the mount points related to local devices by the following command:
 $ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)
@@ -6408,10 +6424,10 @@ Check all local interactive user initialization files for interactive users with
 
 Note: The example is for a system that is configured to create users home directories in the "/home" directory.
 
-# grep -ri umask /home/
+$ sudo find /home -maxdepth 2 -type f -name ".[^.]*" -exec grep -iH -d skip --exclude=.bash_history umask {} \;
 
-/home/smithj/.bash_history:grep -i umask /etc/bashrc /etc/csh.cshrc /etc/profile
-/home/smithj/.bash_history:grep -i umask /etc/login.defs
+/home/wadea/.bash_history:grep -i umask /etc/bashrc /etc/csh.cshrc /etc/profile
+/home/wadea/.bash_history:grep -i umask /etc/login.defs
       Is it the case that any local interactive user initialization files are found to have a umask statement that sets a value less restrictive than "077"?
       </pre></td>
 	<td><pre>Remove the UMASK environment variable from all interactive users initialization files.</pre></td>
@@ -6607,8 +6623,11 @@ substituting ACTION appropriately:
 disk_error_action = ACTION
           
 Set this value to single to cause the system to switch to single-user
-mode for corrective action. Acceptable values also include syslog,
-exec, single, and halt. For certain systems, the need for availability
+mode for corrective action. Acceptable values also include
+
+syslog, exec, single, and halt
+
+For certain systems, the need for availability
 outweighs the need to log all actions, and a different setting should be
 determined. Details regarding all possible values for ACTION are described in the
 auditd.conf man page.</pre></td>
@@ -6642,11 +6661,11 @@ substituting ACTION appropriately:
 disk_full_action = ACTION
           
 Set this value to single to cause the system to switch to single-user
-mode for corrective action. Acceptable values also include syslog,
+mode for corrective action. Acceptable values also include
 
-exec,
+syslog, exec, single, and halt
 
-single, and halt. For certain systems, the need for availability
+For certain systems, the need for availability
 outweighs the need to log all actions, and a different setting should be
 determined. Details regarding all possible values for ACTION are described in the
 auditd.conf man page.</pre></td>
@@ -7957,11 +7976,11 @@ privileged commands for all users and root. If the auditd daemon is
 configured to use the augenrules program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix .rules in the directory /etc/audit/rules.d:
--a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
--a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030317</td>
 	<td>audit_rules_privileged_commands_unix_chkpwd</td>
@@ -8786,13 +8805,13 @@ those responsible for one.</pre></td>
 run the command:
 $ ls -l /etc/audit/rules.d/*.rules
 If properly configured, the output should indicate the following permissions:
--rw-r-----
-      Is it the case that /etc/audit/rules.d/*.rules does not have unix mode -rw-r-----?
+-rw-------
+      Is it the case that /etc/audit/rules.d/*.rules does not have unix mode -rw-------?
       </pre></td>
 	<td><pre>
 To properly set the permissions of /etc/audit/rules.d/*.rules, run the command:
-$ sudo chmod 0640 /etc/audit/rules.d/*.rules
-          </pre></td>
+$ sudo chmod 0600 /etc/audit/rules.d/*.rules
+        </pre></td>
 	<td>OL08-00-030610</td>
 	<td>file_permissions_etc_audit_rulesd</td>
 </tr>
@@ -11538,9 +11557,7 @@ sudo yum remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-util
 	<td>The graphical display manager must not be the default target on OL 8 unless approved.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Services that are not required for system and application processes
-must not be active to decrease the attack surface of the system. X windows has a
-long history of security vulnerabilities and should not be used unless approved
-and documented.</pre></td>
+must not be active to decrease the attack surface of the system.</pre></td>
 	<td><pre>Verify that Oracle Linux 8 is configured to boot to the command line:
 $ systemctl get-default
 multi-user.target
@@ -11549,7 +11566,8 @@ multi-user.target
 	<td><pre>Systems that do not require a graphical user interface should only boot by
 default into multi-user.target mode. This prevents accidental booting of the system
 into a graphical.target mode. Setting the system's default target to
-multi-user.target will prevent automatic startup of the X server. To do so, run:
+multi-user.target will prevent automatic startup of the graphical environment.
+To do so, run:
 $ systemctl set-default multi-user.target
 You should see the following output:
 Removed symlink /etc/systemd/system/default.target.
@@ -11753,7 +11771,9 @@ $ rpm -q vsftpd
 	<td>OL 8 must not have the "gssproxy" package installed if not required for operational support.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>
-            gssproxy is a proxy for GSS API credential handling.</pre></td>
+            gssproxy is a proxy for GSS API credential handling.
+Kerberos relies on some key derivation functions that may not
+be compatible with some site policies such as FIPS 140.</pre></td>
 	<td><pre>Run the following command to determine if the gssproxy package is installed:
 $ rpm -q gssproxy
       Is it the case that the package is installed?

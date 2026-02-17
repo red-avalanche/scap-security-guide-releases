@@ -145,8 +145,10 @@ $ sudo dnf install dracut-fips</pre>
 <tr>
 <td>CCE-82548-9</td>
 <td>Enable Dracut FIPS Module</td>
-<td>To enable FIPS mode, run the following command:
+<td>
+To enable FIPS mode, run the following command:
 <pre>fips-mode-setup --enable</pre>
+
 To enable FIPS, the system requires that the <code>fips</code> module is added in <code>dracut</code> configuration.
 Check if <code>/etc/dracut.conf.d/40-fips.conf</code> contain <code>add_dracutmodules+=" fips "</code>
         </td>
@@ -165,6 +167,7 @@ finding and cannot be fixed.</td>
 <td></td>
 <td>Ensure '/etc/system-fips' exists</td>
 <td>On a system where FIPS mode is enabled, <code>/etc/system-fips</code> must exist.
+
 To enable FIPS mode, run the following command:
 <pre>fips-mode-setup --enable</pre>
         </td>
@@ -172,7 +175,8 @@ To enable FIPS mode, run the following command:
 <tr>
 <td></td>
 <td>Enable FIPS Mode in GRUB2</td>
-<td>To ensure FIPS mode is enabled, install package <code>dracut-fips</code>, and rebuild <code>initramfs</code> by running the following commands:
+<td>
+To ensure FIPS mode is enabled, install package <code>dracut-fips</code>, and rebuild <code>initramfs</code> by running the following commands:
 <pre>
 $ sudo dnf install dracut-fips
 dracut -f</pre>
@@ -190,6 +194,12 @@ Finally, rebuild the <code>grub.cfg</code> file by using the
 <pre>~]# grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
           </li>
 </ul>
+
+To ensure FIPS mode is enabled, run the following commands:
+<pre>
+
+$ sudo dnf install dracut-fips
+</pre>
         </td>
 </tr>
 <tr>
@@ -197,8 +207,11 @@ Finally, rebuild the <code>grub.cfg</code> file by using the
 <td>Set kernel parameter 'crypto.fips_enabled' to 1</td>
 <td>System running in FIPS mode is indicated by kernel parameter
 <code>'crypto.fips_enabled'</code>. This parameter should be set to <code>1</code> in FIPS mode.
+
 To enable FIPS mode, run the following command:
 <pre>fips-mode-setup --enable</pre>
+
+
 
 To enable strict FIPS compliance, the fips=1 kernel option needs to be added to the kernel boot
 parameters during system installation so key generation is done with FIPS-approved algorithms
@@ -1881,10 +1894,10 @@ for systemd related issues and should otherwise be disabled.
 By default, the <code>debug-shell</code> systemd service is already disabled.
 
 Ensure the debug-shell is not enabled by the <code>systemd.debug-shel=1</code>
-boot paramenter option.
+boot parameter option.
 
 Check that the line <pre>GRUB_CMDLINE_LINUX="..."</pre> within <code>/etc/default/grub</code>
-doesn't contain the argument <code>systemd.debug-shell=1</code>.
+doesn't contain the argument <code>systemd.debug-shell</code>.
 Run the following command to update command line for already installed kernels:
 <pre># grubby --update-kernel=ALL --remove-args="systemd.debug-shell"</pre>
       </td>
@@ -3322,7 +3335,9 @@ Operator see
 <td>To set the default policy to DROP (instead of ACCEPT) for
 the built-in INPUT chain which processes incoming packets,
 add or correct the following line in
+
 <code>/etc/sysconfig/ip6tables</code>:
+
 <pre>:INPUT DROP [0:0]</pre>
 If changes were required, reload the ip6tables rules:
 <pre>$ sudo service ip6tables reload</pre>
@@ -4207,7 +4222,7 @@ To properly set the permissions of <code>/var/log</code>, run the command:
 <td>Verify Permissions on /var/log/messages File</td>
 <td>
 To properly set the permissions of <code>/var/log/messages</code>, run the command:
-<pre>$ sudo chmod 0640 /var/log/messages</pre>
+<pre>$ sudo chmod 0600 /var/log/messages</pre>
         </td>
 </tr>
 <tr>
@@ -5388,9 +5403,8 @@ ftp</pre>
 <tr>
 <td></td>
 <td>Disable Kerberos by removing host keytab</td>
-<td>Kerberos is not an approved key distribution method for
-Common Criteria. To prevent using Kerberos by system daemons,
-remove the Kerberos keytab files, especially
+<td>Kerberos may rely on key distribution functions unapproved by Common Criteria.
+To prevent using Kerberos by system daemons, remove the Kerberos keytab files, especially
 <code>/etc/krb5.keytab</code>.</td>
 </tr>
 <tr>
@@ -7062,10 +7076,13 @@ With this setting, a reboot will be required to change any audit rules.</td>
 <code>augenrules</code> program to read audit rules during daemon startup (the
 default), add the following line to a file with suffix <code>.rules</code> in the
 directory <code>/etc/audit/rules.d</code>:
+
 <pre>-w /etc/selinux/ -p wa -k MAC-policy</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
+
 <pre>-w /etc/selinux/ -p wa -k MAC-policy</pre>
       </td>
 </tr>
@@ -7112,6 +7129,7 @@ appropriate for your system:
 -w /etc/issue -p wa -k audit_rules_networkconfig_modification
 -w /etc/issue.net -p wa -k audit_rules_networkconfig_modification
 -w /etc/hosts -p wa -k audit_rules_networkconfig_modification
+
 -w /etc/sysconfig/network -p wa -k audit_rules_networkconfig_modification</pre>
 
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
@@ -9369,11 +9387,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
@@ -9621,8 +9639,11 @@ substituting <i>ACTION</i> appropriately:
 <pre>disk_error_action = <i>ACTION</i>
        </pre>
 Set this value to <code>single</code> to cause the system to switch to single-user
-mode for corrective action. Acceptable values also include <code>syslog</code>,
-<code>exec</code>, <code>single</code>, and <code>halt</code>. For certain systems, the need for availability
+mode for corrective action. Acceptable values also include
+
+<code>syslog</code>, <code>exec</code>, <code>single</code>, and <code>halt</code>
+
+For certain systems, the need for availability
 outweighs the need to log all actions, and a different setting should be
 determined. Details regarding all possible values for <i>ACTION</i> are described in the
 <code>auditd.conf</code> man page.</td>
@@ -9653,11 +9674,11 @@ substituting <i>ACTION</i> appropriately:
 <pre>disk_full_action = <i>ACTION</i>
        </pre>
 Set this value to <code>single</code> to cause the system to switch to single-user
-mode for corrective action. Acceptable values also include <code>syslog</code>,
+mode for corrective action. Acceptable values also include
 
-<code>exec</code>,
+<code>syslog</code>, <code>exec</code>, <code>single</code>, and <code>halt</code>
 
-<code>single</code>, and <code>halt</code>. For certain systems, the need for availability
+For certain systems, the need for availability
 outweighs the need to log all actions, and a different setting should be
 determined. Details regarding all possible values for <i>ACTION</i> are described in the
 <code>auditd.conf</code> man page.</td>
@@ -10090,9 +10111,6 @@ The following rules configure audit as described above:
 ## 30-ospp-v42-5-perm-change-success.rules,
 ## 30-ospp-v42-6-owner-change-failed.rules,
 ## 30-ospp-v42-6-owner-change-success.rules
-##
-## original copies may be found in /usr/share/audit/sample-rules/
-
 
 ## User add delete modify. This is covered by pam. However, someone could
 ## open a file and directly create or modify a user, so we'll watch passwd and

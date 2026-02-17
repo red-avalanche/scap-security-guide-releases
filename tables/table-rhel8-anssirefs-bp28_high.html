@@ -5426,9 +5426,11 @@ may be compromised.
   <td>CCE-83497-8</td>
   <td>Ensure All Files Are Owned by a Group</td>
   <td xml:lang="en-US">
-If any file is not group-owned by a group present in /etc/group, the cause of the lack of
+If any file is not group-owned by a valid defined group, the cause of the lack of
 group-ownership must be investigated. Following this, those files should be deleted or
-assigned to an appropriate group.
+assigned to an appropriate group. The groups need to be defined in <tt>/etc/group</tt>
+or in <tt>/usr/lib/group</tt> if <tt>nss-altfiles</tt> are configured to be used
+in <tt>/etc/nsswitch.conf</tt>.
 
 Locate the mount points related to local devices by the following command:
 <pre>$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)</pre>
@@ -7374,14 +7376,17 @@ If the <tt>auditd</tt> daemon is configured to use the
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
 default), add the following line to a file with suffix <tt>.rules</tt> in the
 directory <tt>/etc/audit/rules.d</tt>:
+
 <pre>-w /etc/selinux/ -p wa -k MAC-policy</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to
 <tt>/etc/audit/audit.rules</tt> file:
+
 <pre>-w /etc/selinux/ -p wa -k MAC-policy</pre>
   </td>
   <td xml:lang="en-US">
-The system's mandatory access policy (SELinux) should not be
+The system's mandatory access policy (SELinux or Apparmor) should not be
 arbitrarily changed by anything other than administrator action. All changes to
 MAC policy should be audited.
   </td>
@@ -7427,6 +7432,7 @@ appropriate for your system:
 -w /etc/issue -p wa -k audit_rules_networkconfig_modification
 -w /etc/issue.net -p wa -k audit_rules_networkconfig_modification
 -w /etc/hosts -p wa -k audit_rules_networkconfig_modification
+
 -w /etc/sysconfig/network -p wa -k audit_rules_networkconfig_modification</pre>
 
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>

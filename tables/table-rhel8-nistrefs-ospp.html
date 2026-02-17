@@ -351,9 +351,6 @@ The following rules configure audit as described above:
 ## 30-ospp-v42-5-perm-change-success.rules,
 ## 30-ospp-v42-6-owner-change-failed.rules,
 ## 30-ospp-v42-6-owner-change-success.rules
-##
-## original copies may be found in /usr/share/audit/sample-rules/
-
 
 ## User add delete modify. This is covered by pam. However, someone could
 ## open a file and directly create or modify a user, so we'll watch passwd and
@@ -786,17 +783,11 @@ privileges.
   <td>Enable FIPS Mode</td>
   <td xml:lang="en-US">
 
-To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
-<br />
-The <tt>fips-mode-setup</tt> command will configure the system in
-FIPS mode by automatically configuring the following:
-<ul>
-<li>Setting the kernel FIPS mode flag (<tt>/proc/sys/crypto/fips_enabled</tt>) to <tt>1</tt></li>
-<li>Creating <tt>/etc/system-fips</tt></li>
-<li>Setting the system crypto policy in <tt>/etc/crypto-policies/config</tt> to <tt><tt>fips_ospp</tt></tt></li>
-<li>Loading the Dracut <tt>fips</tt> module</li>
-</ul>
+Red Hat Enterprise Linux 8 has an installation-time kernel flag that can enable FIPS mode.
+The installer must be booted with <tt>fips=1</tt> for the system to have FIPS mode
+enabled. Enabling FIPS mode on a preexisting system is not supported. If
+this rule fails on an installed system, then this is a permanent
+finding and cannot be fixed.
   </td>
   <td xml:lang="en-US">
 Use of weak or untested encryption algorithms undermines the purposes of utilizing encryption to
@@ -804,7 +795,7 @@ protect data. The operating system must implement cryptographic modules adhering
 standards approved by the federal government since this provides assurance they have been tested
 and validated.
   </td>
-  <td>var_system_crypto_policy=fips_ospp</td>
+  <td></td>
 </tr>
 <tr>
   <td>AC-4<br/>CM-7(b)<br/>CA-3(5)<br/>SC-7(21)<br/>CM-6(a)</td>
@@ -3110,8 +3101,13 @@ address information.
   <td>CCE-82155-3</td>
   <td>Enable Dracut FIPS Module</td>
   <td xml:lang="en-US">
-To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
+
+Red Hat Enterprise Linux 8 has an installation-time kernel flag that can enable FIPS mode.
+The installer must be booted with <tt>fips=1</tt> for the system to have FIPS mode
+enabled. Enabling FIPS mode on a preexisting system is not supported. If
+this rule fails on an installed system, then this is a permanent
+finding and cannot be fixed.
+
 To enable FIPS, the system requires that the <tt>fips</tt> module is added in <tt>dracut</tt> configuration.
 Check if <tt>/etc/dracut.conf.d/40-fips.conf</tt> contain <tt>add_dracutmodules+=" fips "</tt>
   </td>
@@ -3528,13 +3524,12 @@ slow because there is not yet enough entropy in the system.
   <td>CCE-82175-1</td>
   <td>Disable Kerberos by removing host keytab</td>
   <td xml:lang="en-US">
-Kerberos is not an approved key distribution method for
-Common Criteria. To prevent using Kerberos by system daemons,
-remove the Kerberos keytab files, especially
+Kerberos may rely on key distribution functions unapproved by Common Criteria.
+To prevent using Kerberos by system daemons, remove the Kerberos keytab files, especially
 <tt>/etc/krb5.keytab</tt>.
   </td>
   <td xml:lang="en-US">
-The key derivation function (KDF) in Kerberos is not FIPS compatible.
+Some key derivation functions (KDF) in Kerberos are not FIPS-compatible
   </td>
   <td></td>
 </tr>
@@ -3836,6 +3831,8 @@ $ sudo yum erase gssproxy</pre>
   </td>
   <td xml:lang="en-US">
 <tt>gssproxy</tt> is a proxy for GSS API credential handling.
+Kerberos relies on some key derivation functions that may not
+be compatible with some site policies such as FIPS 140.
   </td>
   <td></td>
 </tr>
@@ -4145,7 +4142,7 @@ By decreasing the limit based on the amount of data and enabling
 time-based limit, effects of potential attacks against
 encryption keys are limited.
   </td>
-  <td>var_rekey_limit_size=1G<br/>var_rekey_limit_time=1hour</td>
+  <td>var_rekey_limit_time=1hour<br/>var_rekey_limit_size=1G</td>
 </tr>
 <tr>
   <td></td>
