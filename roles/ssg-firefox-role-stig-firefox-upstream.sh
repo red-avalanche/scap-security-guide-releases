@@ -18,7 +18,7 @@
 # 
 #
 # Benchmark ID:  FIREFOX
-# Benchmark Version:  0.1.37
+# Benchmark Version:  0.1.38
 #
 # XCCDF Version:  1.1
 #

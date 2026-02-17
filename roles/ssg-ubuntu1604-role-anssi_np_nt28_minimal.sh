@@ -6,7 +6,7 @@
 # This profile contains items to be applied systematically.
 #
 # Benchmark ID:  UBUNTU-XENIAL
-# Benchmark Version:  0.1.37
+# Benchmark Version:  0.1.38
 #
 # XCCDF Version:  1.1
 #

@@ -11,7 +11,7 @@
 # 
 #
 # Benchmark ID:  RHEL-7
-# Benchmark Version:  0.1.37
+# Benchmark Version:  0.1.38
 #
 # XCCDF Version:  1.1
 #
@@ -29,6 +29,13 @@
 
 
  - hosts: all
+   pre_tasks:
+     - name: Verify Ansible meets SCAP-Security-Guide version requirements.
+       assert:
+         that: "ansible_version.full | version_compare('2.3', '>=')"
+         msg: >
+           "You must update Ansible to at least version 2.3 to use this role."
+          
    vars:
       var_selinux_state: enforcing
       var_selinux_policy_name: targeted
@@ -69,15 +76,6 @@
         - low_complexity
         - low_disruption
         - CCE-27334-2
-        - NIST-800-53-AC-3
-        - NIST-800-53-AC-3(3)
-        - NIST-800-53-AC-3(4)
-        - NIST-800-53-AC-4
-        - NIST-800-53-AC-6
-        - NIST-800-53-AU-9
-        - NIST-800-53-SI-6(a)
-        - NIST-800-171-3.1.2
-        - NIST-800-171-3.7.2
         - DISA-STIG-RHEL-07-020210
     
     
@@ -95,15 +93,6 @@
         - low_complexity
         - low_disruption
         - CCE-27279-9
-        - NIST-800-53-AC-3
-        - NIST-800-53-AC-3(3)
-        - NIST-800-53-AC-3(4)
-        - NIST-800-53-AC-4
-        - NIST-800-53-AC-6
-        - NIST-800-53-AU-9
-        - NIST-800-53-SI-6(a)
-        - NIST-800-171-3.1.2
-        - NIST-800-171-3.7.2
         - DISA-STIG-RHEL-07-020220
     
     - name: Enable service docker

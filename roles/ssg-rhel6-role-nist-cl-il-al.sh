@@ -10,7 +10,7 @@ Enterprise Linux 6
 # low confidentiality, low integrity, and low assurance."
 #
 # Benchmark ID:  RHEL-6
-# Benchmark Version:  0.1.37
+# Benchmark Version:  0.1.38
 #
 # XCCDF Version:  1.1
 #
@@ -79,6 +79,8 @@ then
   # (to ensure there won't be e.g. CRC error).
   IFS=$'\n' GPG_OUT=($(gpg --with-fingerprint "${REDHAT_RELEASE_KEY}" | grep 'Key fingerprint ='))
   GPG_RESULT=$?
+  # Reset IFS back to default
+  unset IFS
   # No CRC error, safe to proceed
   if [ "${GPG_RESULT}" -eq "0" ]
   then
@@ -378,7 +380,7 @@ declare -a SETPERMS_RPM_LIST
 
 # Create a list of files on the system having permissions different from what
 # is expected by the RPM database
-FILES_WITH_INCORRECT_PERMS=($(rpm -Va --nofiledigest | grep '^.M' | cut -d ' ' -f5-))
+FILES_WITH_INCORRECT_PERMS=($(rpm -Va --nofiledigest | grep '^.M' | cut -d ' ' -f4-))
 
 # For each file path from that list:
 # * Determine the RPM package the file path is shipped by,
@@ -1984,20 +1986,33 @@ done
 
 var_password_pam_unix_remember="5"
 
-if grep -q "remember=" /etc/pam.d/system-auth; then   
-	sed -i --follow-symlinks "s/\(^password.*sufficient.*pam_unix.so.*\)\(\(remember *= *\)[^ $]*\)/\1remember=$var_password_pam_unix_remember/" /etc/pam.d/system-auth
-else
-	sed -i --follow-symlinks "/^password[[:space:]]\+sufficient[[:space:]]\+pam_unix.so/ s/$/ remember=$var_password_pam_unix_remember/" /etc/pam.d/system-auth
-fi
+AUTH_FILES[0]="/etc/pam.d/system-auth"
+AUTH_FILES[1]="/etc/pam.d/password-auth"
+
+for pamFile in "${AUTH_FILES[@]}"
+do
+	if grep -q "remember=" $pamFile; then
+		sed -i --follow-symlinks "s/\(^password.*sufficient.*pam_unix.so.*\)\(\(remember *= *\)[^ $]*\)/\1remember=$var_password_pam_unix_remember/" $pamFile
+	else
+		sed -i --follow-symlinks "/^password[[:space:]]\+sufficient[[:space:]]\+pam_unix.so/ s/$/ remember=$var_password_pam_unix_remember/" $pamFile
+	fi
+done
 # END fix for 'accounts_password_pam_unix_remember'
 
 ###############################################################################
 # BEGIN fix (96 / 267) for 'set_password_hashing_algorithm_systemauth'
 ###############################################################################
 (>&2 echo "Remediating rule 96/267: 'set_password_hashing_algorithm_systemauth'")
-if ! grep -q "^password.*sufficient.*pam_unix.so.*sha512" /etc/pam.d/system-auth; then   
-	sed -i --follow-symlinks "/^password.*sufficient.*pam_unix.so/ s/$/ sha512/" /etc/pam.d/system-auth
-fi
+
+AUTH_FILES[0]="/etc/pam.d/system-auth"
+AUTH_FILES[1]="/etc/pam.d/password-auth"
+
+for pamFile in "${AUTH_FILES[@]}"
+do
+	if ! grep -q "^password.*sufficient.*pam_unix.so.*sha512" $pamFile; then
+		sed -i --follow-symlinks "/^password.*sufficient.*pam_unix.so/ s/$/ sha512/" $pamFile
+	fi
+done
 # END fix for 'set_password_hashing_algorithm_systemauth'
 
 ###############################################################################
@@ -4885,7 +4900,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -5144,7 +5159,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -5403,7 +5418,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -5673,7 +5688,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -6458,7 +6473,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -7149,7 +7164,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -7389,7 +7404,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -7629,7 +7644,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -7869,7 +7884,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -8109,7 +8124,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -8349,7 +8364,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -8589,7 +8604,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -8829,7 +8844,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -9069,7 +9084,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -9309,7 +9324,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -9549,7 +9564,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -9789,7 +9804,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -10029,7 +10044,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -10816,7 +10831,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -11043,7 +11058,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -11285,10 +11300,10 @@ do
 		# * existing rule contains all arguments from expected rule form (though can contain
 		#   them in arbitrary order)
 	
-		base_search=$(sed -e "/-a always,exit/!d" -e "/-F path=${sbinary_esc}$/!d"   \
-		    		  -e "/-F path=[^[:space:]]\+/!d" -e "/-F perm=.*/!d"       \
-				  -e "/-F auid>=${min_auid}/!d" -e "/-F auid!=4294967295/!d"  \
-				  -e "/-k privileged/!d" $afile)
+		base_search=$(sed -e '/-a always,exit/!d' -e '/-F path='"${sbinary_esc}"'/!d' \
+				-e '/-F path=[^[:space:]]\+/!d'   -e '/-F perm=.*/!d'                 \
+				-e '/-F auid>='"${min_auid}"'/!d' -e '/-F auid!=4294967295/!d'        \
+				-e '/-k privileged/!d' $afile)
 
 		# Increase the count of inspected files for this sbinary
 		count_of_inspected_files=$((count_of_inspected_files + 1))
@@ -11460,7 +11475,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -11701,7 +11716,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -12086,7 +12101,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -12818,7 +12833,10 @@ package_command remove rsh
 ###############################################################################
 (>&2 echo "Remediating rule 201/267: 'no_rsh_trust_files'")
 find /home -maxdepth 2 -type f -name .rhosts -exec rm -f '{}' \;
-rm -f /etc/hosts.equiv
+
+if [ -f /etc/hosts.equiv ]; then
+	/bin/rm -f /etc/hosts.equiv
+fi
 # END fix for 'no_rsh_trust_files'
 
 ###############################################################################

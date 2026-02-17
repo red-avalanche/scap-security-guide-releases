@@ -7,7 +7,7 @@
 # This is a *draft* profile for PCI-DSS v3.
 #
 # Benchmark ID:  RHEL-6
-# Benchmark Version:  0.1.37
+# Benchmark Version:  0.1.38
 #
 # XCCDF Version:  1.1
 #
@@ -25,10 +25,20 @@
 
 
  - hosts: all
+   pre_tasks:
+     - name: Verify Ansible meets SCAP-Security-Guide version requirements.
+       assert:
+         that: "ansible_version.full | version_compare('2.3', '>=')"
+         msg: >
+           "You must update Ansible to at least version 2.3 to use this role."
+          
    vars:
       var_accounts_maximum_age_login_defs: 90
       var_account_disable_post_pw_expiration: 90
       var_password_pam_minlen: 7
+      var_accounts_passwords_pam_faillock_deny: 6
+      var_accounts_passwords_pam_faillock_unlock_time: 1800
+      var_accounts_passwords_pam_faillock_fail_interval: 900
       var_password_pam_unix_remember: 4
       var_auditd_max_log_file: 6
       var_auditd_max_log_file_action: rotate
@@ -204,11 +214,28 @@
         - DISA-STIG-RHEL-06-000011
     
     
+    - name: Does prelink file exist
+      stat:
+        path=/etc/sysconfig/prelink
+      register: prelink_exists
+      tags:
+        - disable_prelink
+        - low_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-27221-1
+        - NIST-800-53-CM-6(d)
+        - NIST-800-53-SC-28
+        - NIST-800-53-SI-7
+        - PCI-DSS-Req-11.5  
+    
     - name: disable prelinking
       lineinfile:
         path: /etc/sysconfig/prelink
         regexp: '^PRELINKING='
         line: 'PRELINKING=no'
+      when: prelink_exists.stat.exists == True
       tags:
         - disable_prelink
         - low_severity
@@ -772,6 +799,98 @@
         - CCE-26615-5
         - NIST-800-53-IA-5(1)(a)
         - PCI-DSS-Req-8.2.3
+    
+    
+    - name: XCCDF Value var_accounts_passwords_pam_faillock_unlock_time # promote to variable
+      set_fact:
+        var_accounts_passwords_pam_faillock_unlock_time: 1800
+      ta
+    - name: XCCDF Value var_accounts_passwords_pam_faillock_fail_interval # promote to variable
+      set_fact:
+        var_accounts_passwords_pam_faillock_fail_interval: 900
+      tags:
+        - always
+    
+    - name: set auth pam_faillock before pam_unix.so
+      pamd:
+        name: system-auth
+        type: auth
+        control: sufficient
+        module_path: pam_unix.so
+        new_type:
+    
+    - name: set auth pam_faillock before pam_unix.so
+      pamd:
+        name: system-auth
+        type: auth
+        control: sufficient
+        module_path: pam_unix.so
+        new_type: auth
+        new_control: required
+        new_module_path: pam_faillock.so
+        module_arguments: 'preauth
+            silent
+            deny={{ var_accounts_passwords_pam_faillock_deny }}
+            unlock_time={{ var_accounts_passwords_pam_faillock_unlock_time }}
+            fail_interval={{ var_accounts_passwords_pam_faillock_fail_interval }}'
+        state: before
+      tags:
+        - accounts_passwords_pam_faillock_deny
+        - medium_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26844-1
+        - NIST-800-53-AC-7(a)
+        - PCI-DSS-Req-8.1.6
+        - DISA-STIG-RHEL-06-000061
+    
+    - name: set auth pam_faillock after pam_unix.so
+      pamd:
+        name: system-auth
+        type: auth
+        control: sufficient
+        module_path: pam_unix.so
+        new_type: auth
+        new_control: '[default=die]'
+        new_module_path: pam_faillock.so
+        module_arguments: 'preauth
+            silent
+            deny={{ var_accounts_passwords_pam_faillock_deny }}
+            unlock_time={{ var_accounts_passwords_pam_faillock_unlock_time }}
+            fail_interval={{ var_accounts_passwords_pam_faillock_fail_interval }}'
+        state: after
+      tags:
+        - accounts_passwords_pam_faillock_deny
+        - medium_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26844-1
+        - NIST-800-53-AC-7(a)
+        - PCI-DSS-Req-8.1.6
+        - DISA-STIG-RHEL-06-000061
+    
+    - name: set account pam_faillock before pam_unix.so
+      pamd:
+        name: system-auth
+        type: account
+        control: required
+        module_path: pam_unix.so
+        new_type: account
+        new_control: required
+        new_module_path: pam_faillock.so
+        state: before
+      tags:
+        - accounts_passwords_pam_faillock_deny
+        - medium_severity
+        - restrict_strategy
+        - low_complexity
+        - low_disruption
+        - CCE-26844-1
+        - NIST-800-53-AC-7(a)
+        - PCI-DSS-Req-8.1.6
+        - DISA-STIG-RHEL-06-000061
     
     
     

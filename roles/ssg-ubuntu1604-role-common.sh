@@ -6,7 +6,7 @@
 # This profile contains items common to general-purpose Ubuntu 1604 installations.
 #
 # Benchmark ID:  UBUNTU-XENIAL
-# Benchmark Version:  0.1.37
+# Benchmark Version:  0.1.38
 #
 # XCCDF Version:  1.1
 #

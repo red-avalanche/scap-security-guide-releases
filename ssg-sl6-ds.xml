@@ -29,13 +29,13 @@
       <ns0:component-ref id="scap_org.open-scap_cref_ssg-rhel6-ocil.xml000" ns1:href="#scap_org.open-scap_comp_ssg-rhel6-ocil.xml000" />
     </ns0:checks>
   </ns0:data-stream>
-  <ns0:component id="scap_org.open-scap_comp_ssg-rhel6-oval.xml" timestamp="2018-01-03T14:21:22">
+  <ns0:component id="scap_org.open-scap_comp_ssg-rhel6-oval.xml" timestamp="2018-03-02T14:08:14">
     <ns3:oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
       <ns3:generator>
         <ns5:product_name>combine-ovals.py from SCAP Security Guide</ns5:product_name>
-        <ns5:product_version>ssg: 0.1.37, python: 2.7.14</ns5:product_version>
+        <ns5:product_version>ssg: 0.1.38, python: 2.7.14</ns5:product_version>
         <ns5:schema_version>5.11</ns5:schema_version>
-        <ns5:timestamp>2018-01-03T14:21:02</ns5:timestamp>
+        <ns5:timestamp>2018-03-02T14:07:54</ns5:timestamp>
       </ns3:generator>
       <ns3:definitions>
         <ns3:definition class="compliance" id="oval:ssg-accounts_password_pam_dcredit:def:1" version="1">
@@ -7395,6 +7395,20 @@
             <ns3:criterion comment="Check all files and make sure they are owned by a user" test_ref="oval:ssg-no_files_unowned_by_user_test:tst:1" />
           </ns3:criteria>
         </ns3:definition>
+        <ns3:definition class="compliance" id="oval:ssg-no_host_based_files:def:1" version="1">
+          <ns3:metadata>
+            <ns3:title>No shosts.equiv file deployed on the system</ns3:title>
+            <ns3:affected family="unix">
+              <ns3:platform>Red Hat Enterprise Linux 7</ns3:platform>
+              <ns3:platform>Red Hat Enterprise Linux 6</ns3:platform>
+            </ns3:affected>
+            <ns3:description>There should not be any shosts.equiv files on the system.</ns3:description>
+            <reference ref_id="no_host_based_files" source="ssg" />
+          </ns3:metadata>
+          <ns3:criteria>
+            <ns3:criterion test_ref="oval:ssg-test_no_shosts_equiv:tst:1" />
+          </ns3:criteria>
+        </ns3:definition>
         <ns3:definition class="compliance" id="oval:ssg-no_insecure_locks_exports:def:1" version="1">
           <ns3:metadata>
             <ns3:title>Ensure insecure_locks is disabled</ns3:title>
@@ -7457,6 +7471,20 @@
               <ns3:criterion comment="Test shell defined for reserved system UIDs" test_ref="oval:ssg-test_shell_defined_reserved_uid_range:tst:1" />
               <ns3:criterion comment="Test shell defined for dynamically allocated system UIDs" test_ref="oval:ssg-test_shell_defined_dynalloc_uid_range:tst:1" />
             </ns3:criteria>
+          </ns3:criteria>
+        </ns3:definition>
+        <ns3:definition class="compliance" id="oval:ssg-no_user_host_based_files:def:1" version="1">
+          <ns3:metadata>
+            <ns3:title>No .shosts file deployed on the system</ns3:title>
+            <ns3:affected family="unix">
+              <ns3:platform>Red Hat Enterprise Linux 7</ns3:platform>
+              <ns3:platform>Red Hat Enterprise Linux 6</ns3:platform>
+            </ns3:affected>
+            <ns3:description>There should not be any .shosts files on the system.</ns3:description>
+            <reference ref_id="no_user_host_based_files" source="ssg" />
+          </ns3:metadata>
+          <ns3:criteria>
+            <ns3:criterion test_ref="oval:ssg-test_no_shosts:tst:1" />
           </ns3:criteria>
         </ns3:definition>
         <ns3:definition class="compliance" id="oval:ssg-package_dracut-fips_installed:def:1" version="1">
@@ -17227,6 +17255,9 @@ and date.</ns3:description>
         <ns7:file_test check="all" check_existence="none_exist" comment="Check user ids on all files on the system" id="oval:ssg-no_files_unowned_by_user_test:tst:1" version="1">
           <ns7:object object_ref="oval:ssg-file_permissions_unowned_object:obj:1" />
         </ns7:file_test>
+        <ns7:file_test check="all" check_existence="none_exist" comment="look for shosts.equiv in /" id="oval:ssg-test_no_shosts_equiv:tst:1" version="1">
+          <ns7:object object_ref="oval:ssg-object_no_shosts_equiv_files_root:obj:1" />
+        </ns7:file_test>
         <ns6:textfilecontent54_test check="all" check_existence="none_exist" comment="Tests the value of the insecure locks in /etc/exports" id="oval:ssg-test_no_insecure_locks_exports:tst:1" version="1">
           <ns6:object object_ref="oval:ssg-obj_no_insecure_locks_exports:obj:1" />
         </ns6:textfilecontent54_test>
@@ -17260,6 +17291,9 @@ and date.</ns3:description>
           <ns6:object object_ref="oval:ssg-object_shell_defined_dynalloc_uid_range:obj:1" />
           <ns6:state state_ref="oval:ssg-state_shell_defined_dynalloc_uid_range:ste:1" />
         </ns6:variable_test>
+        <ns7:file_test check="all" check_existence="none_exist" comment="look for .shosts in /" id="oval:ssg-test_no_shosts:tst:1" version="1">
+          <ns7:object object_ref="oval:ssg-object_no_shosts_files_root:obj:1" />
+        </ns7:file_test>
         <ns8:rpminfo_test check="all" check_existence="all_exist" comment="package dracut-fips is installed" id="oval:ssg-test_package_dracut-fips_installed:tst:1" version="1">
           <ns8:object object_ref="oval:ssg-obj_package_dracut-fips_installed:obj:1" />
         </ns8:rpminfo_test>
@@ -22445,18 +22479,18 @@ and date.</ns3:description>
         </ns6:textfilecontent54_object>
         <ns6:textfilecontent54_object comment="notify personnel when aide completes" id="oval:ssg-object_test_aide_scan_notification:obj:1" version="1">
           <ns6:filepath>/etc/crontab</ns6:filepath>
-          <ns6:pattern operation="pattern match">^.*/usr/sbin/aide[\s]*\-\-check.*\|.*/bin/mail[\s]*-s[\s]*".*"[\s]*root@.*$</ns6:pattern>
+          <ns6:pattern operation="pattern match">^.*/usr/sbin/aide[\s]*\-\-check.*\|.*/bin/mail[\s]*-s[\s]*".*"[\s]*.+@.+$</ns6:pattern>
           <ns6:instance datatype="int" operation="greater than or equal">1</ns6:instance>
         </ns6:textfilecontent54_object>
         <ns6:textfilecontent54_object comment="notify personnel when aide completes" id="oval:ssg-object_aide_var_cron_notification:obj:1" version="1">
           <ns6:filepath>/var/spool/cron/root</ns6:filepath>
-          <ns6:pattern operation="pattern match">^.*/usr/sbin/aide[\s]*\-\-check.*\|.*/bin/mail[\s]*-s[\s]*".*"[\s]*root@.*$</ns6:pattern>
+          <ns6:pattern operation="pattern match">^.*/usr/sbin/aide[\s]*\-\-check.*\|.*/bin/mail[\s]*-s[\s]*".*"[\s]*.+@.+$</ns6:pattern>
           <ns6:instance datatype="int" operation="greater than or equal">1</ns6:instance>
         </ns6:textfilecontent54_object>
         <ns6:textfilecontent54_object comment="notify personnel when aide completes in cron.(d|daily|weekly|monthly)" id="oval:ssg-object_aide_crontabs_notification:obj:1" version="1">
           <ns6:path operation="pattern match">/etc/cron.(d|daily|weekly|monthly)</ns6:path>
           <ns6:filename operation="pattern match">^.*$</ns6:filename>
-          <ns6:pattern operation="pattern match">^.*/usr/sbin/aide[\s]*\-\-check.*\|.*/bin/mail[\s]*-s[\s]*".*"[\s]*root@.*$</ns6:pattern>
+          <ns6:pattern operation="pattern match">^.*/usr/sbin/aide[\s]*\-\-check.*\|.*/bin/mail[\s]*-s[\s]*".*"[\s]*.+@.+$</ns6:pattern>
           <ns6:instance datatype="int" operation="greater than or equal">1</ns6:instance>
         </ns6:textfilecontent54_object>
         <ns6:textfilecontent54_object id="oval:ssg-object_aide_non_fips_hashes:obj:1" version="1">
@@ -23112,6 +23146,11 @@ and date.</ns3:description>
           <ns7:filename operation="pattern match">.*</ns7:filename>
           <ns3:filter action="exclude">oval:ssg-file_permissions_unowned_userid_list_match:ste:1</ns3:filter>
         </ns7:file_object>
+        <ns7:file_object comment="look for any shosts.equiv file on the system" id="oval:ssg-object_no_shosts_equiv_files_root:obj:1" version="1">
+          <ns7:behaviors max_depth="-1" recurse="directories" recurse_direction="down" recurse_file_system="local" />
+          <ns7:path operation="equals">/</ns7:path>
+          <ns7:filename operation="pattern match">shosts\.equiv$</ns7:filename>
+        </ns7:file_object>
         <ns6:textfilecontent54_object id="oval:ssg-obj_no_insecure_locks_exports:obj:1" version="2">
           <ns6:filepath>/etc/exports</ns6:filepath>
           <ns6:pattern operation="pattern match">^(.*?(\binsecure_locks\b)[^$]*)$</ns6:pattern>
@@ -23167,6 +23206,11 @@ and date.</ns3:description>
         <ns6:variable_object id="oval:ssg-object_shell_defined_dynalloc_uid_range:obj:1" version="1">
           <ns6:var_ref>oval:ssg-variable_dynalloc_range_quad_expr:var:1</ns6:var_ref>
         </ns6:variable_object>
+        <ns7:file_object comment="look for any .shosts file on the system" id="oval:ssg-object_no_shosts_files_root:obj:1" version="1">
+          <ns7:behaviors max_depth="-1" recurse="directories" recurse_direction="down" recurse_file_system="local" />
+          <ns7:path operation="equals">/</ns7:path>
+          <ns7:filename operation="pattern match">\.shosts</ns7:filename>
+        </ns7:file_object>
         <ns8:rpminfo_object id="oval:ssg-obj_package_dracut-fips_installed:obj:1" version="1">
           <ns8:name>dracut-fips</ns8:name>
         </ns8:rpminfo_object>
@@ -27709,15 +27753,15 @@ and date.</ns3:description>
             <ns3:object_component item_field="subexpression" object_ref="oval:ssg-object_rfg_rsyslog_include_config_value:obj:1" />
           </ns3:glob_to_regex>
         </ns3:local_variable>
-        <ns3:local_variable comment="Locations of all rsyslog configuration files concatenated into string" datatype="string" id="oval:ssg-var_rfg_all_log_files_as_string:var:1" version="1">
+        <ns3:local_variable comment="Locations of all rsyslog configuration files concatenated into string" datatype="string" id="oval:ssg-var_rfg_all_log_files_as_string_regex:var:1" version="1">
           <ns3:concat>
             <ns3:variable_component var_ref="oval:ssg-var_rfg_include_config_regex:var:1" />
-            <ns3:literal_component datatype="string">%/etc/rsyslog.conf</ns3:literal_component>
+            <ns3:literal_component datatype="string">%^/etc/rsyslog.conf$</ns3:literal_component>
           </ns3:concat>
         </ns3:local_variable>
         <ns3:local_variable comment="Locations of all rsyslog configuration files as collection" datatype="string" id="oval:ssg-var_rfg_all_log_files_as_collection:var:1" version="1">
           <ns3:split delimiter="%">
-            <ns3:variable_component var_ref="oval:ssg-var_rfg_all_log_files_as_string:var:1" />
+            <ns3:variable_component var_ref="oval:ssg-var_rfg_all_log_files_as_string_regex:var:1" />
           </ns3:split>
         </ns3:local_variable>
         <ns3:local_variable comment="File paths of all rsyslog configuration files" datatype="string" id="oval:ssg-var_rfg_log_files_paths:var:1" version="1">
@@ -27728,15 +27772,15 @@ and date.</ns3:description>
             <ns3:object_component item_field="subexpression" object_ref="oval:ssg-object_rfo_rsyslog_include_config_value:obj:1" />
           </ns3:glob_to_regex>
         </ns3:local_variable>
-        <ns3:local_variable comment="Locations of all rsyslog configuration files concatenated into string" datatype="string" id="oval:ssg-var_rfo_all_log_files_as_string:var:1" version="1">
+        <ns3:local_variable comment="Locations of all rsyslog configuration files concatenated into string" datatype="string" id="oval:ssg-var_rfo_all_log_files_as_string_regex:var:1" version="1">
           <ns3:concat>
             <ns3:variable_component var_ref="oval:ssg-var_rfo_include_config_regex:var:1" />
-            <ns3:literal_component datatype="string">%/etc/rsyslog.conf</ns3:literal_component>
+            <ns3:literal_component datatype="string">%^/etc/rsyslog.conf$</ns3:literal_component>
           </ns3:concat>
         </ns3:local_variable>
         <ns3:local_variable comment="Locations of all rsyslog configuration files as collection" datatype="string" id="oval:ssg-var_rfo_all_log_files_as_collection:var:1" version="1">
           <ns3:split delimiter="%">
-            <ns3:variable_component var_ref="oval:ssg-var_rfo_all_log_files_as_string:var:1" />
+            <ns3:variable_component var_ref="oval:ssg-var_rfo_all_log_files_as_string_regex:var:1" />
           </ns3:split>
         </ns3:local_variable>
         <ns3:local_variable comment="File paths of all rsyslog configuration files" datatype="string" id="oval:ssg-var_rfo_log_files_paths:var:1" version="1">
@@ -27747,15 +27791,15 @@ and date.</ns3:description>
             <ns3:object_component item_field="subexpression" object_ref="oval:ssg-object_rfp_rsyslog_include_config_value:obj:1" />
           </ns3:glob_to_regex>
         </ns3:local_variable>
-        <ns3:local_variable comment="Locations of all rsyslog configuration files concatenated into string" datatype="string" id="oval:ssg-var_rfp_all_log_files_as_string:var:1" version="1">
+        <ns3:local_variable comment="Locations of all rsyslog configuration files concatenated into string" datatype="string" id="oval:ssg-var_rfp_all_log_files_as_string_regex:var:1" version="1">
           <ns3:concat>
             <ns3:variable_component var_ref="oval:ssg-var_rfp_include_config_regex:var:1" />
-            <ns3:literal_component datatype="string">%/etc/rsyslog.conf</ns3:literal_component>
+            <ns3:literal_component datatype="string">%^/etc/rsyslog.conf$</ns3:literal_component>
           </ns3:concat>
         </ns3:local_variable>
         <ns3:local_variable comment="Locations of all rsyslog configuration files as collection" datatype="string" id="oval:ssg-var_rfp_all_log_files_as_collection:var:1" version="1">
           <ns3:split delimiter="%">
-            <ns3:variable_component var_ref="oval:ssg-var_rfp_all_log_files_as_string:var:1" />
+            <ns3:variable_component var_ref="oval:ssg-var_rfp_all_log_files_as_string_regex:var:1" />
           </ns3:split>
         </ns3:local_variable>
         <ns3:local_variable comment="File paths of all rsyslog configuration files" datatype="string" id="oval:ssg-var_rfp_log_files_paths:var:1" version="1">
@@ -28166,13 +28210,13 @@ and date.</ns3:description>
       </ns3:variables>
     </ns3:oval_definitions>
   </ns0:component>
-  <ns0:component id="scap_org.open-scap_comp_ssg-rhel6-ocil.xml" timestamp="2018-01-03T14:21:23">
+  <ns0:component id="scap_org.open-scap_comp_ssg-rhel6-ocil.xml" timestamp="2018-03-02T14:08:15">
     <ns9:ocil>
       <ns9:generator>
         <ns9:product_name>xccdf-create-ocil.xslt from SCAP Security Guide</ns9:product_name>
-        <ns9:product_version>ssg: 0.1.37</ns9:product_version>
+        <ns9:product_version>ssg: 0.1.38</ns9:product_version>
         <ns9:schema_version>2.0</ns9:schema_version>
-        <ns9:timestamp>2018-01-03T14:21:12Z</ns9:timestamp>
+        <ns9:timestamp>2018-03-02T14:08:09Z</ns9:timestamp>
       </ns9:generator>
       <ns9:questionnaires>
         <ns9:questionnaire id="ocil:ssg-partition_for_tmp_ocil:questionnaire:1">
@@ -36916,9 +36960,9 @@ windows, but still within IAVM-dictated timeframes, this is not a finding.
       </ns9:questions>
     </ns9:ocil>
   </ns0:component>
-  <ns0:component id="scap_org.open-scap_comp_ssg-rhel6-xccdf-1.2.xml" timestamp="2018-01-03T14:21:22">
+  <ns0:component id="scap_org.open-scap_comp_ssg-rhel6-xccdf-1.2.xml" timestamp="2018-03-02T14:08:14">
     <ns10:Benchmark id="xccdf_org.ssgproject.content_benchmark_RHEL-6" resolved="1" style="SCAP_1.2" xml:lang="en-US">
-      <ns10:status date="2018-01-03">draft</ns10:status>
+      <ns10:status date="2018-03-02">draft</ns10:status>
       <ns10:title xml:lang="en-US">Guide to the Secure Configuration of Red Hat Enterprise Linux 6</ns10:title>
       <ns10:description xml:lang="en-US">This guide presents a catalog of security-relevant
 configuration settings for Red Hat Enterprise Linux 6. It is a rendering of
@@ -37001,13 +37045,14 @@ respective companies.</ns10:rear-matter>
       <ns10:platform idref="cpe:/o:scientificlinux:scientificlinux:6" />
       <ns10:platform idref="cpe:/o:redhat:enterprise_linux:6::client" />
       <ns10:platform idref="cpe:/o:redhat:enterprise_linux:6::computenode" />
-      <ns10:version update="https://github.com/OpenSCAP/scap-security-guide/releases/latest">0.1.37</ns10:version>
+      <ns10:version update="https://github.com/OpenSCAP/scap-security-guide/releases/latest">0.1.38</ns10:version>
       <ns10:metadata>
         <dc:publisher>SCAP Security Guide Project</dc:publisher>
         <dc:creator>SCAP Security Guide Project</dc:creator>
         <dc:contributor>Frank J Cameron (CAM1244) &lt;cameron@ctc.com&gt;</dc:contributor>
         <dc:contributor>0x66656c6978 &lt;0x66656c6978@users.noreply.github.com&gt;</dc:contributor>
         <dc:contributor>Gabe Alford &lt;redhatrises@gmail.com&gt;</dc:contributor>
+        <dc:contributor>Firas AlShafei &lt;firas.alshafei@us.abb.com&gt;</dc:contributor>
         <dc:contributor>Christopher Anderson &lt;cba@fedoraproject.org&gt;</dc:contributor>
         <dc:contributor>Chuck Atkins &lt;chuck.atkins@kitware.com&gt;</dc:contributor>
         <dc:contributor>Ryan Ballanger &lt;root@rballang-admin-2.fastenal.com&gt;</dc:contributor>
@@ -37037,7 +37082,7 @@ respective companies.</ns10:rear-matter>
         <dc:contributor>Rebekah Hayes &lt;rhayes@corp.rivierautilities.com&gt;</dc:contributor>
         <dc:contributor>Trey Henefield &lt;thenefield@gmail.com&gt;</dc:contributor>
         <dc:contributor>hex2a &lt;hex2a@users.noreply.github.com&gt;</dc:contributor>
-        <dc:contributor>John Hooks &lt;jhooks@starscream.pa.jhbcomputers.com&gt;</dc:contributor>
+        <dc:contributor>John Hooks &lt;hooksie11@gmail.com&gt;</dc:contributor>
         <dc:contributor>Robin Price II &lt;robin@redhat.com&gt;</dc:contributor>
         <dc:contributor>Jeremiah Jahn &lt;jeremiah@goodinassociates.com&gt;</dc:contributor>
         <dc:contributor>Stephan Joerrens &lt;Stephan.Joerrens@fiduciagad.de&gt;</dc:contributor>
@@ -37054,6 +37099,7 @@ respective companies.</ns10:rear-matter>
         <dc:contributor>Michael McConachie &lt;michael@redhat.com&gt;</dc:contributor>
         <dc:contributor>Khary Mendez &lt;kharyam@gmail.com&gt;</dc:contributor>
         <dc:contributor>Rodney Mercer &lt;rmercer@harris.com&gt;</dc:contributor>
+        <dc:contributor>Matt Micene &lt;nzwulfin@gmail.com&gt;</dc:contributor>
         <dc:contributor>Brian Millett &lt;bmillett@gmail.com&gt;</dc:contributor>
         <dc:contributor>mmosel &lt;mmosel@kde.example.com&gt;</dc:contributor>
         <dc:contributor>Zbynek Moravec &lt;zmoravec@redhat.com&gt;</dc:contributor>
@@ -37062,12 +37108,13 @@ respective companies.</ns10:rear-matter>
         <dc:contributor>Joe Nall &lt;joe@nall.com&gt;</dc:contributor>
         <dc:contributor>Neiloy &lt;neiloy@redhat.com&gt;</dc:contributor>
         <dc:contributor>Michele Newman &lt;mnewman@redhat.com&gt;</dc:contributor>
+        <dc:contributor>OnceUponALoop &lt;firas.alshafei@gmail.com&gt;</dc:contributor>
         <dc:contributor>Kaustubh Padegaonkar &lt;theTuxRacer@gmail.com&gt;</dc:contributor>
         <dc:contributor>Michael Palmiotto &lt;mpalmiotto@tresys.com&gt;</dc:contributor>
         <dc:contributor>Max R.D. Parmer &lt;maxp@trystero.is&gt;</dc:contributor>
         <dc:contributor>pcactr &lt;paul.c.arnold4.ctr@mail.mil&gt;</dc:contributor>
         <dc:contributor>Kenneth Peeples &lt;kennethwpeeples@gmail.com&gt;</dc:contributor>
-        <dc:contributor>Nathan Peters &lt;petna01@ca.com&gt;</dc:contributor>
+        <dc:contributor>Nathan Peters &lt;Nathaniel.Peters@ca.com&gt;</dc:contributor>
         <dc:contributor>Frank Lin PIAT &lt;fpiat@klabs.be&gt;</dc:contributor>
         <dc:contributor>Stefan Pietsch &lt;mail.ipv4v6+gh@gmail.com&gt;</dc:contributor>
         <dc:contributor>Martin Preisler &lt;mpreisle@redhat.com&gt;</dc:contributor>
@@ -37077,6 +37124,7 @@ respective companies.</ns10:rear-matter>
         <dc:contributor>Rick Renshaw &lt;Richard_Renshaw@xtoenergy.com&gt;</dc:contributor>
         <dc:contributor>Chris Reynolds &lt;c.reynolds82@gmail.com&gt;</dc:contributor>
         <dc:contributor>Pat Riehecky &lt;riehecky@fnal.gov&gt;</dc:contributor>
+        <dc:contributor>rlucente-se-jboss &lt;rlucente@redhat.com&gt;</dc:contributor>
         <dc:contributor>Joshua Roys &lt;roysjosh@gmail.com&gt;</dc:contributor>
         <dc:contributor>rrenshaw &lt;bofh69@yahoo.com&gt;</dc:contributor>
         <dc:contributor>Chris Ruffalo &lt;chris.ruffalo@gmail.com&gt;</dc:contributor>
@@ -37109,8 +37157,8 @@ respective companies.</ns10:rear-matter>
       </ns10:metadata>
       <ns10:model system="urn:xccdf:scoring:default" />
       <ns10:Profile id="xccdf_org.ssgproject.content_profile_standard">
-        <ns10:title xml:lang="en-US">Standard System Security Profile</ns10:title>
-        <ns10:description xml:lang="en-US">This profile contains rules to ensure standard security 
+        <ns10:title override="true" xml:lang="en-US">Standard System Security Profile</ns10:title>
+        <ns10:description override="true" xml:lang="en-US">This profile contains rules to ensure standard security 
 baseline of Red Hat Enterprise Linux 6 system. Regardless of your system's
 workload all of these checks should pass.</ns10:description>
         <ns10:select idref="xccdf_org.ssgproject.content_rule_ensure_redhat_gpgkey_installed" selected="true" />
@@ -37318,8 +37366,8 @@ workload all of these checks should pass.</ns10:description>
         <ns10:select idref="xccdf_org.ssgproject.content_group_snmp_configure_server" selected="false" />
       </ns10:Profile>
       <ns10:Profile id="xccdf_org.ssgproject.content_profile_CS2">
-        <ns10:title xml:lang="en-US">Example Server Profile</ns10:title>
-        <ns10:description xml:lang="en-US">
+        <ns10:title override="true" xml:lang="en-US">Example Server Profile</ns10:title>
+        <ns10:description override="true" xml:lang="en-US">
   This profile is an example of a customized server profile.
 </ns10:description>
         <ns10:select idref="xccdf_org.ssgproject.content_rule_accounts_password_minlen_login_defs" selected="true" />
@@ -37725,8 +37773,8 @@ workload all of these checks should pass.</ns10:description>
         <ns10:refine-value idref="xccdf_org.ssgproject.content_value_sshd_idle_timeout_value" selector="60_minutes" />
       </ns10:Profile>
       <ns10:Profile id="xccdf_org.ssgproject.content_profile_common">
-        <ns10:title xml:lang="en-US">Common Profile for General-Purpose Systems</ns10:title>
-        <ns10:description xml:lang="en-US">This profile contains items common to general-purpose
+        <ns10:title override="true" xml:lang="en-US">Common Profile for General-Purpose Systems</ns10:title>
+        <ns10:description override="true" xml:lang="en-US">This profile contains items common to general-purpose
 desktop and server installations.</ns10:description>
         <ns10:select idref="xccdf_org.ssgproject.content_rule_partition_for_tmp" selected="true" />
         <ns10:select idref="xccdf_org.ssgproject.content_rule_partition_for_var" selected="true" />
@@ -39104,10 +39152,9 @@ acting as a server.</ns10:description>
         <ns10:refine-value idref="xccdf_org.ssgproject.content_value_file_groupowner_logfiles_value" selector="root" />
         <ns10:refine-value idref="xccdf_org.ssgproject.content_value_sshd_idle_timeout_value" selector="5_minutes" />
       </ns10:Profile>
-      <ns10:Profile id="xccdf_org.ssgproject.content_profile_stig-rhel6-server-upstream">
+      <ns10:Profile id="xccdf_org.ssgproject.content_profile_stig-rhel6-disa">
         <ns10:title override="true" xml:lang="en-US">DISA STIG for Red Hat Enterprise Linux 6</ns10:title>
-        <ns10:description xml:lang="en-US">This profile contains items common to general-purpose
-desktop and server installations.
+        <ns10:description override="true" xml:lang="en-US">
 This profile contains configuration checks that align to the
 DISA STIG for Red Hat Enterprise Linux 6.
 
@@ -39512,8 +39559,8 @@ Storage deployments.
         <ns10:refine-value idref="xccdf_org.ssgproject.content_value_sshd_idle_timeout_value" selector="15_minutes" />
       </ns10:Profile>
       <ns10:Profile id="xccdf_org.ssgproject.content_profile_usgcb-rhel6-server">
-        <ns10:title xml:lang="en-US">United States Government Configuration Baseline (USGCB)</ns10:title>
-        <ns10:description xml:lang="en-US">This profile is a working draft for a USGCB submission against
+        <ns10:title override="true" xml:lang="en-US">United States Government Configuration Baseline (USGCB)</ns10:title>
+        <ns10:description override="true" xml:lang="en-US">This profile is a working draft for a USGCB submission against
 RHEL6 Server.</ns10:description>
         <ns10:select idref="xccdf_org.ssgproject.content_rule_kernel_disable_entropy_contribution_for_solid_state_drives" selected="true" />
         <ns10:select idref="xccdf_org.ssgproject.content_rule_partition_for_tmp" selected="true" />
@@ -39872,8 +39919,8 @@ RHEL6 Server.</ns10:description>
         <ns10:refine-value idref="xccdf_org.ssgproject.content_value_var_account_disable_post_pw_expiration" selector="30" />
       </ns10:Profile>
       <ns10:Profile id="xccdf_org.ssgproject.content_profile_rht-ccp">
-        <ns10:title xml:lang="en-US">Red Hat Corporate Profile for Certified Cloud Providers (RH CCP)</ns10:title>
-        <ns10:description xml:lang="en-US">This is a *draft* SCAP profile for Red Hat Certified Cloud Providers</ns10:description>
+        <ns10:title override="true" xml:lang="en-US">Red Hat Corporate Profile for Certified Cloud Providers (RH CCP)</ns10:title>
+        <ns10:description override="true" xml:lang="en-US">This is a *draft* SCAP profile for Red Hat Certified Cloud Providers</ns10:description>
         <ns10:select idref="xccdf_org.ssgproject.content_rule_partition_for_tmp" selected="true" />
         <ns10:select idref="xccdf_org.ssgproject.content_rule_partition_for_var" selected="true" />
         <ns10:select idref="xccdf_org.ssgproject.content_rule_partition_for_var_log" selected="true" />
@@ -40145,8 +40192,8 @@ RHEL6 Server.</ns10:description>
         <ns10:refine-value idref="xccdf_org.ssgproject.content_value_login_banner_text" selector="usgcb_default" />
       </ns10:Profile>
       <ns10:Profile id="xccdf_org.ssgproject.content_profile_CSCF-RHEL6-MLS">
-        <ns10:title xml:lang="en-US">CSCF RHEL6 MLS Core Baseline</ns10:title>
-        <ns10:description xml:lang="en-US"> This profile reflects the Centralized Super Computing Facility 
+        <ns10:title override="true" xml:lang="en-US">CSCF RHEL6 MLS Core Baseline</ns10:title>
+        <ns10:description override="true" xml:lang="en-US"> This profile reflects the Centralized Super Computing Facility 
 (CSCF) baseline for Red Hat Enterprise Linux 6. This baseline has received 
 government ATO through the ICD 503 process, utilizing the CNSSI 1253 cross 
 domain overlay. This profile should be considered in active development. 
@@ -40524,8 +40571,8 @@ for production deployment.</ns10:description>
         <ns10:refine-value idref="xccdf_org.ssgproject.content_value_var_selinux_policy_name" selector="mls" />
       </ns10:Profile>
       <ns10:Profile id="xccdf_org.ssgproject.content_profile_C2S">
-        <ns10:title xml:lang="en-US">C2S for Red Hat Enterprise Linux 6</ns10:title>
-        <ns10:description xml:lang="en-US">This profile demonstrates compliance against the 
+        <ns10:title override="true" xml:lang="en-US">C2S for Red Hat Enterprise Linux 6</ns10:title>
+        <ns10:description override="true" xml:lang="en-US">This profile demonstrates compliance against the 
 U.S. Government Commercial Cloud Services (C2S) baseline.
 
 This baseline was inspired by the Center for Internet Security
@@ -40839,8 +40886,8 @@ baseline.
         <ns10:refine-value idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" selector="90" />
       </ns10:Profile>
       <ns10:Profile id="xccdf_org.ssgproject.content_profile_pci-dss">
-        <ns10:title xml:lang="en-US">PCI-DSS v3 Control Baseline for Red Hat Enterprise Linux 6</ns10:title>
-        <ns10:description xml:lang="en-US">This is a *draft* profile for PCI-DSS v3.</ns10:description>
+        <ns10:title override="true" xml:lang="en-US">PCI-DSS v3 Control Baseline for Red Hat Enterprise Linux 6</ns10:title>
+        <ns10:description override="true" xml:lang="en-US">This is a *draft* profile for PCI-DSS v3.</ns10:description>
         <ns10:select idref="xccdf_org.ssgproject.content_rule_service_auditd_enabled" selected="true" />
         <ns10:select idref="xccdf_org.ssgproject.content_rule_bootloader_audit_argument" selected="true" />
         <ns10:select idref="xccdf_org.ssgproject.content_rule_auditd_data_retention_num_logs" selected="true" />
@@ -41537,8 +41584,8 @@ low confidentiality, low integrity, and low assurance."</ns10:description>
         <ns10:refine-value idref="xccdf_org.ssgproject.content_value_sysctl_net_ipv4_icmp_ignore_bogus_error_responses_value" selector="enabled" />
       </ns10:Profile>
       <ns10:Profile id="xccdf_org.ssgproject.content_profile_fisma-medium-rhel6-server">
-        <ns10:title xml:lang="en-US">FISMA Medium for Red Hat Enterprise Linux 6</ns10:title>
-        <ns10:description xml:lang="en-US">FISMA Medium for Red Hat Enterprise Linux 6.</ns10:description>
+        <ns10:title override="true" xml:lang="en-US">FISMA Medium for Red Hat Enterprise Linux 6</ns10:title>
+        <ns10:description override="true" xml:lang="en-US">FISMA Medium for Red Hat Enterprise Linux 6.</ns10:description>
         <ns10:select idref="xccdf_org.ssgproject.content_rule_account_disable_post_pw_expiration" selected="true" />
         <ns10:select idref="xccdf_org.ssgproject.content_rule_account_temp_expire_date" selected="true" />
         <ns10:select idref="xccdf_org.ssgproject.content_rule_audit_rules_usergroup_modification" selected="true" />
@@ -41997,10 +42044,10 @@ do
 		# * existing rule contains all arguments from expected rule form (though can contain
 		#   them in arbitrary order)
 	
-		base_search=$(sed -e "/-a always,exit/!d" -e "/-F path=${sbinary_esc}$/!d"   \
-		    		  -e "/-F path=[^[:space:]]\+/!d" -e "/-F perm=.*/!d"       \
-				  -e "/-F auid&gt;=${min_auid}/!d" -e "/-F auid!=4294967295/!d"  \
-				  -e "/-k privileged/!d" $afile)
+		base_search=$(sed -e '/-a always,exit/!d' -e '/-F path='"${sbinary_esc}"'/!d' \
+				-e '/-F path=[^[:space:]]\+/!d'   -e '/-F perm=.*/!d'                 \
+				-e '/-F auid&gt;='"${min_auid}"'/!d' -e '/-F auid!=4294967295/!d'        \
+				-e '/-k privileged/!d' $afile)
 
 		# Increase the count of inspected files for this sbinary
 		count_of_inspected_files=$((count_of_inspected_files + 1))
@@ -42378,7 +42425,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -42565,6 +42612,19 @@ fi
 }
 </ns10:value>
         </ns10:Value>
+        <ns10:Value hidden="true" id="xccdf_org.ssgproject.content_value_function_die" operator="equals" prohibitChanges="true" type="string">
+          <ns10:title xml:lang="en-US">Remediation function die</ns10:title>
+          <ns10:description xml:lang="en-US">Shared bash remediation function. Not intended to be changed by tailoring.</ns10:description>
+          <ns10:value># Print a message to stderr and exit the shell
+# $1: The message to print.
+# $2: The error code (optional, default is 1)
+function die {
+	local _message="$1" _rc="${2:-1}"
+	printf '%s\n' "$_message" &gt;&amp;2
+	exit "$_rc"
+}
+</ns10:value>
+        </ns10:Value>
         <ns10:Value hidden="true" id="xccdf_org.ssgproject.content_value_function_firefox_js_setting" operator="equals" prohibitChanges="true" type="string">
           <ns10:title xml:lang="en-US">Remediation function firefox_js_setting</ns10:title>
           <ns10:description xml:lang="en-US">Shared bash remediation function. Not intended to be changed by tailoring.</ns10:description>
@@ -42724,7 +42784,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -43130,7 +43190,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -43680,7 +43740,10 @@ Any <html:i>PASSPHRASE</html:i> is stored in the Kickstart in plaintext, and the
 Omitting the <html:code>--passphrase=</html:code> option from the partition definition will cause the
 installer to pause and interactively ask for the passphrase during installation.
 <html:br /><html:br />
-Detailed information on encrypting partitions using LUKS can be found on
+By default, the <html:code>Anaconda</html:code> installer uses <html:code>aes-xts-plain64</html:code> cipher
+with a minimum <html:code>512</html:code> bit key size which should be compatible with FIPS enabled.
+<html:br /><html:br />
+Detailed information on encrypting partitions using LUKS or LUKS ciphers can be found on
 the Red Hat Documentation web site:<html:br />
 <html:a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Security_Guide/chap-Security_Guide-Encryption.html#sect-Security_Guide-LUKS_Disk_Encryption">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Security_Guide/chap-Security_Guide-Encryption.html#sect-Security_Guide-LUKS_Disk_Encryption</html:a>
 </ns10:description>
@@ -43756,6 +43819,8 @@ then
   # (to ensure there won't be e.g. CRC error).
   IFS=$'\n' GPG_OUT=($(gpg --with-fingerprint "${REDHAT_RELEASE_KEY}" | grep 'Key fingerprint ='))
   GPG_RESULT=$?
+  # Reset IFS back to default
+  unset IFS
   # No CRC error, safe to proceed
   if [ "${GPG_RESULT}" -eq "0" ]
   then
@@ -44080,11 +44145,28 @@ fi
 #
 /usr/sbin/prelink -ua
 </ns10:fix>
-              <ns10:fix complexity="low" disruption="low" id="disable_prelink" strategy="restrict" system="urn:xccdf:fix:script:ansible">- name: disable prelinking
+              <ns10:fix complexity="low" disruption="low" id="disable_prelink" strategy="restrict" system="urn:xccdf:fix:script:ansible">- name: Does prelink file exist
+  stat:
+    path=/etc/sysconfig/prelink
+  register: prelink_exists
+  tags:
+    - disable_prelink
+    - low_severity
+    - restrict_strategy
+    - low_complexity
+    - low_disruption
+    - CCE-27221-1
+    - NIST-800-53-CM-6(d)
+    - NIST-800-53-SC-28
+    - NIST-800-53-SI-7
+    - PCI-DSS-Req-11.5  
+
+- name: disable prelinking
   lineinfile:
     path: /etc/sysconfig/prelink
     regexp: '^PRELINKING='
     line: 'PRELINKING=no'
+  when: prelink_exists.stat.exists == True
   tags:
     - disable_prelink
     - low_severity
@@ -44414,7 +44496,7 @@ declare -a SETPERMS_RPM_LIST
 
 # Create a list of files on the system having permissions different from what
 # is expected by the RPM database
-FILES_WITH_INCORRECT_PERMS=($(rpm -Va --nofiledigest | grep '^.M' | cut -d ' ' -f5-))
+FILES_WITH_INCORRECT_PERMS=($(rpm -Va --nofiledigest | grep '^.M' | cut -d ' ' -f4-))
 
 # For each file path from that list:
 # * Determine the RPM package the file path is shipped by,
@@ -44894,7 +44976,7 @@ system security.
     dest: /etc/gdm/custom.conf
     section: daemon
     option: AutomaticLoginEnable
-    value: false
+    value: "false"
     no_extra_spaces: yes
     create: yes
   tags:
@@ -44934,7 +45016,7 @@ system security.
     dest: /etc/gdm/custom.conf
     section: daemon
     option: TimedLoginEnable
-    value: false
+    value: "false"
     no_extra_spaces: yes
     create: yes
   tags:
@@ -46581,6 +46663,8 @@ service_command disable autofs
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - autofs
   tags:
@@ -46594,7 +46678,6 @@ service_command disable autofs
     - NIST-800-53-AC-19(d)
     - NIST-800-53-AC-19(e)
     - DISA-STIG-RHEL-06-000526
-
 </ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_autofs_disabled:def:1" />
@@ -47862,8 +47945,9 @@ requiring global read/write access.
 access to a file when it is discovered. However, check with
 documentation for specific applications before making changes.
 Also, monitor for recurring world-writable files, as these may be
-symptoms of a misconfigured application or user
-account.</ns10:description>
+symptoms of a misconfigured application or user account. Finally,
+this applies to real files and not virtual files that are a part of
+pseudo file systems such as <html:code>sysfs</html:code> or <html:code>procfs</html:code>.</ns10:description>
               <ns10:reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">AC-6</ns10:reference>
               <ns10:reference href="http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx">SV-50444r3_rule</ns10:reference>
               <ns10:reference href="http://iase.disa.mil/stigs/os/general/Pages/index.aspx">SRG-OS-999999</ns10:reference>
@@ -49775,7 +49859,7 @@ most users.</ns10:warning>
 files, destroying any manually made changes and replacing them with
 a series of system defaults. One reference to the configuration
 file syntax can be found at
-<html:a href="http://www.kernel.org/pub/linux/libs/pam/Linux-PAM-html/sag-configuration-file.html">http://www.kernel.org/pub/linux/libs/pam/Linux-PAM-html/sag-configuration-file.html</html:a>.</ns10:warning>
+<html:a href="http://www.linux-pam.org/Linux-PAM-html/sag-configuration-file.html">http://www.linux-pam.org/Linux-PAM-html/sag-configuration-file.html</html:a>.</ns10:warning>
             <ns10:Value id="xccdf_org.ssgproject.content_value_var_password_pam_unix_remember" operator="equals" type="number">
               <ns10:title xml:lang="en-US">remember</ns10:title>
               <ns10:description xml:lang="en-US">The last n passwords for each user are saved in
@@ -50432,6 +50516,95 @@ do
 	fi
 done
 </ns10:fix>
+                <ns10:fix complexity="low" disruption="low" id="accounts_passwords_pam_faillock_deny" strategy="restrict" system="urn:xccdf:fix:script:ansible">- name: XCCDF Value var_accounts_passwords_pam_faillock_deny # promote to variable
+  set_fact:
+    var_accounts_passwords_pam_faillock_deny: <ns10:sub idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_deny" use="legacy" />
+  tags:
+    - always
+- name: XCCDF Value var_accounts_passwords_pam_faillock_unlock_time # promote to variable
+  set_fact:
+    var_accounts_passwords_pam_faillock_unlock_time: <ns10:sub idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_unlock_time" use="legacy" />
+  tags:
+    - always
+- name: XCCDF Value var_accounts_passwords_pam_faillock_fail_interval # promote to variable
+  set_fact:
+    var_accounts_passwords_pam_faillock_fail_interval: <ns10:sub idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_fail_interval" use="legacy" />
+  tags:
+    - always
+
+- name: set auth pam_faillock before pam_unix.so
+  pamd:
+    name: system-auth
+    type: auth
+    control: sufficient
+    module_path: pam_unix.so
+    new_type: auth
+    new_control: required
+    new_module_path: pam_faillock.so
+    module_arguments: 'preauth
+        silent
+        deny={{ var_accounts_passwords_pam_faillock_deny }}
+        unlock_time={{ var_accounts_passwords_pam_faillock_unlock_time }}
+        fail_interval={{ var_accounts_passwords_pam_faillock_fail_interval }}'
+    state: before
+  tags:
+    - accounts_passwords_pam_faillock_deny
+    - medium_severity
+    - restrict_strategy
+    - low_complexity
+    - low_disruption
+    - CCE-26844-1
+    - NIST-800-53-AC-7(a)
+    - PCI-DSS-Req-8.1.6
+    - DISA-STIG-RHEL-06-000061
+
+- name: set auth pam_faillock after pam_unix.so
+  pamd:
+    name: system-auth
+    type: auth
+    control: sufficient
+    module_path: pam_unix.so
+    new_type: auth
+    new_control: '[default=die]'
+    new_module_path: pam_faillock.so
+    module_arguments: 'preauth
+        silent
+        deny={{ var_accounts_passwords_pam_faillock_deny }}
+        unlock_time={{ var_accounts_passwords_pam_faillock_unlock_time }}
+        fail_interval={{ var_accounts_passwords_pam_faillock_fail_interval }}'
+    state: after
+  tags:
+    - accounts_passwords_pam_faillock_deny
+    - medium_severity
+    - restrict_strategy
+    - low_complexity
+    - low_disruption
+    - CCE-26844-1
+    - NIST-800-53-AC-7(a)
+    - PCI-DSS-Req-8.1.6
+    - DISA-STIG-RHEL-06-000061
+
+- name: set account pam_faillock before pam_unix.so
+  pamd:
+    name: system-auth
+    type: account
+    control: required
+    module_path: pam_unix.so
+    new_type: account
+    new_control: required
+    new_module_path: pam_faillock.so
+    state: before
+  tags:
+    - accounts_passwords_pam_faillock_deny
+    - medium_severity
+    - restrict_strategy
+    - low_complexity
+    - low_disruption
+    - CCE-26844-1
+    - NIST-800-53-AC-7(a)
+    - PCI-DSS-Req-8.1.6
+    - DISA-STIG-RHEL-06-000061
+</ns10:fix>
                 <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                   <ns10:check-export export-name="oval:ssg-var_accounts_passwords_pam_faillock_deny:var:1" value-id="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_deny" />
                   <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-accounts_passwords_pam_faillock_deny:def:1" />
@@ -50598,11 +50771,17 @@ Preventing re-use of previous passwords helps ensure that a compromised password
                 <ns10:fix id="accounts_password_pam_unix_remember" system="urn:xccdf:fix:script:sh">
 var_password_pam_unix_remember="<ns10:sub idref="xccdf_org.ssgproject.content_value_var_password_pam_unix_remember" use="legacy" />"
 
-if grep -q "remember=" /etc/pam.d/system-auth; then   
-	sed -i --follow-symlinks "s/\(^password.*sufficient.*pam_unix.so.*\)\(\(remember *= *\)[^ $]*\)/\1remember=$var_password_pam_unix_remember/" /etc/pam.d/system-auth
-else
-	sed -i --follow-symlinks "/^password[[:space:]]\+sufficient[[:space:]]\+pam_unix.so/ s/$/ remember=$var_password_pam_unix_remember/" /etc/pam.d/system-auth
-fi
+AUTH_FILES[0]="/etc/pam.d/system-auth"
+AUTH_FILES[1]="/etc/pam.d/password-auth"
+
+for pamFile in "${AUTH_FILES[@]}"
+do
+	if grep -q "remember=" $pamFile; then
+		sed -i --follow-symlinks "s/\(^password.*sufficient.*pam_unix.so.*\)\(\(remember *= *\)[^ $]*\)/\1remember=$var_password_pam_unix_remember/" $pamFile
+	else
+		sed -i --follow-symlinks "/^password[[:space:]]\+sufficient[[:space:]]\+pam_unix.so/ s/$/ remember=$var_password_pam_unix_remember/" $pamFile
+	fi
+done
 </ns10:fix>
                 <ns10:fix complexity="low" disruption="medium" id="accounts_password_pam_unix_remember" strategy="configure" system="urn:xccdf:fix:script:ansible">- name: XCCDF Value var_password_pam_unix_remember # promote to variable
   set_fact:
@@ -50683,9 +50862,16 @@ This is the default.
                 <ns10:rationale xml:lang="en-US">
 Using a stronger hashing algorithm makes password cracking attacks more difficult.
 </ns10:rationale>
-                <ns10:fix id="set_password_hashing_algorithm_systemauth" system="urn:xccdf:fix:script:sh">if ! grep -q "^password.*sufficient.*pam_unix.so.*sha512" /etc/pam.d/system-auth; then   
-	sed -i --follow-symlinks "/^password.*sufficient.*pam_unix.so/ s/$/ sha512/" /etc/pam.d/system-auth
-fi
+                <ns10:fix id="set_password_hashing_algorithm_systemauth" system="urn:xccdf:fix:script:sh">
+AUTH_FILES[0]="/etc/pam.d/system-auth"
+AUTH_FILES[1]="/etc/pam.d/password-auth"
+
+for pamFile in "${AUTH_FILES[@]}"
+do
+	if ! grep -q "^password.*sufficient.*pam_unix.so.*sha512" $pamFile; then
+		sed -i --follow-symlinks "/^password.*sufficient.*pam_unix.so/ s/$/ sha512/" $pamFile
+	fi
+done
 </ns10:fix>
                 <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                   <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-set_password_hashing_algorithm_systemauth:def:1" />
@@ -53228,6 +53414,8 @@ service_command disable bluetooth
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - bluetooth
   tags:
@@ -53242,7 +53430,6 @@ service_command disable bluetooth
     - NIST-800-53-AC-18(3)
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000331
-
 </ns10:fix>
                 <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                   <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_bluetooth_disabled:def:1" />
@@ -54196,8 +54383,8 @@ communications, and many network services include support for it.  TLS or SSL
 can be leveraged to avoid any plaintext transmission of sensitive data.
 <html:br />
 For information on how to use OpenSSL, see
-<html:b><html:a href="http://www.openssl.org/docs/HOWTO/">http://www.openssl.org/docs/HOWTO/</html:a></html:b>.  Information on FIPS validation
-of OpenSSL is available at <html:b><html:a href="http://www.openssl.org/docs/fips/fipsvalidation.html">http://www.openssl.org/docs/fips/fipsvalidation.html</html:a></html:b>
+<html:b><html:a href="http://www.openssl.org/docs/">http://www.openssl.org/docs/</html:a></html:b>.  Information on FIPS validation
+of OpenSSL is available at <html:b><html:a href="http://www.openssl.org/docs/fips.html">http://www.openssl.org/docs/fips.html</html:a></html:b>
 and <html:b><html:a href="http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140val-all.htm">http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140val-all.htm</html:a></html:b>.
 
 </ns10:description>
@@ -55737,7 +55924,7 @@ take corrective action prior to any disruption.
 var_auditd_space_left="<ns10:sub idref="xccdf_org.ssgproject.content_value_var_auditd_space_left" use="legacy" />"
 
 grep -q ^space_left /etc/audit/auditd.conf &amp;&amp; \
-  sed -i "s/space_left.*/space_left = $var_auditd_space_left/g" /etc/audit/auditd.conf
+  sed -i "s/^space_left[[:space:]]*=.*/space_left = $var_auditd_space_left/g" /etc/audit/auditd.conf
 if ! [ $? -eq 0 ]; then
     echo "space_left = $var_auditd_space_left" &gt;&gt; /etc/audit/auditd.conf
 fi
@@ -59577,6 +59764,8 @@ service_command disable xinetd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - xinetd
   tags:
@@ -59588,7 +59777,6 @@ service_command disable xinetd
     - CCE-27046-2
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000203
-
 </ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_xinetd_disabled:def:1" />
@@ -59986,7 +60174,10 @@ location:
 used in conjunction with the R-services, they can allow
 unauthenticated access to a system.</ns10:rationale>
               <ns10:fix id="no_rsh_trust_files" system="urn:xccdf:fix:script:sh">find /home -maxdepth 2 -type f -name .rhosts -exec rm -f '{}' \;
-rm -f /etc/hosts.equiv
+
+if [ -f /etc/hosts.equiv ]; then
+	/bin/rm -f /etc/hosts.equiv
+fi
 </ns10:fix>
               <ns10:fix complexity="low" disruption="low" id="no_rsh_trust_files" strategy="restrict" system="urn:xccdf:fix:script:ansible">- block:
     - name: "Detect shosts.equiv Files on the System"
@@ -60105,6 +60296,8 @@ service_command disable ypbind
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - ypbind
   tags:
@@ -60116,7 +60309,6 @@ service_command disable ypbind
     - CCE-26894-6
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000221
-
 </ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_ypbind_disabled:def:1" />
@@ -60205,6 +60397,8 @@ service_command disable tftp
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - tftp
   tags:
@@ -60216,7 +60410,6 @@ service_command disable tftp
     - CCE-27055-3
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000223
-
 </ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_tftp_disabled:def:1" />
@@ -60486,6 +60679,8 @@ service_command disable abrtd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - abrtd
   tags:
@@ -60497,7 +60692,6 @@ service_command disable abrtd
     - CCE-27247-6
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000261
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_abrtd_disabled:def:1" />
@@ -60528,6 +60722,8 @@ service_command disable acpid
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - acpid
   tags:
@@ -60538,7 +60734,6 @@ service_command disable acpid
     - low_disruption
     - CCE-27061-1
     - NIST-800-53-CM-7
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_acpid_disabled:def:1" />
@@ -60569,6 +60764,8 @@ service_command disable certmonger
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - certmonger
   tags:
@@ -60579,7 +60776,6 @@ service_command disable certmonger
     - low_disruption
     - CCE-27267-4
     - NIST-800-53-CM-7
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_certmonger_disabled:def:1" />
@@ -60609,6 +60805,8 @@ service_command disable cgconfig
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - cgconfig
   tags:
@@ -60619,7 +60817,6 @@ service_command disable cgconfig
     - low_disruption
     - CCE-27250-0
     - NIST-800-53-CM-7
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_cgconfig_disabled:def:1" />
@@ -60648,6 +60845,8 @@ service_command disable cgred
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - cgred
   tags:
@@ -60658,7 +60857,6 @@ service_command disable cgred
     - low_disruption
     - CCE-27252-6
     - NIST-800-53-CM-7
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_cgred_disabled:def:1" />
@@ -60689,6 +60887,8 @@ service_command disable cpuspeed
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - cpuspeed
   tags:
@@ -60699,7 +60899,6 @@ service_command disable cpuspeed
     - low_disruption
     - CCE-26973-8
     - NIST-800-53-CM-7
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_cpuspeed_disabled:def:1" />
@@ -60732,6 +60931,8 @@ service_command disable haldaemon
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - haldaemon
   tags:
@@ -60742,7 +60943,6 @@ service_command disable haldaemon
     - low_disruption
     - CCE-27086-8
     - NIST-800-53-CM-7
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_haldaemon_disabled:def:1" />
@@ -60812,6 +61012,8 @@ service_command disable kdump
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - kdump
   tags:
@@ -60822,7 +61024,6 @@ service_command disable kdump
     - low_disruption
     - CCE-26850-8
     - NIST-800-53-CM-7
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_kdump_disabled:def:1" />
@@ -60850,6 +61051,8 @@ service_command disable mdmonitor
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - mdmonitor
   tags:
@@ -60860,7 +61063,6 @@ service_command disable mdmonitor
     - low_disruption
     - CCE-27193-2
     - NIST-800-53-CM-7
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_mdmonitor_disabled:def:1" />
@@ -60894,6 +61096,8 @@ service_command disable messagebus
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - messagebus
   tags:
@@ -60904,7 +61108,6 @@ service_command disable messagebus
     - low_disruption
     - CCE-26913-4
     - NIST-800-53-CM-7
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_messagebus_disabled:def:1" />
@@ -60938,6 +61141,8 @@ service_command disable netconsole
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - netconsole
   tags:
@@ -60949,7 +61154,6 @@ service_command disable netconsole
     - CCE-27254-2
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000289
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_netconsole_disabled:def:1" />
@@ -60985,6 +61189,8 @@ service_command disable ntpdate
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - ntpdate
   tags:
@@ -60996,7 +61202,6 @@ service_command disable ntpdate
     - CCE-27256-7
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000265
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_ntpdate_disabled:def:1" />
@@ -61031,6 +61236,8 @@ service_command disable oddjobd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - oddjobd
   tags:
@@ -61042,7 +61249,6 @@ service_command disable oddjobd
     - CCE-27257-5
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000266
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_oddjobd_disabled:def:1" />
@@ -61072,6 +61278,8 @@ service_command disable portreserve
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - portreserve
   tags:
@@ -61082,7 +61290,6 @@ service_command disable portreserve
     - low_disruption
     - CCE-27258-3
     - NIST-800-53-CM-7
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_portreserve_disabled:def:1" />
@@ -61161,6 +61368,8 @@ service_command disable qpidd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - qpidd
   tags:
@@ -61172,7 +61381,6 @@ service_command disable qpidd
     - CCE-26928-2
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000267
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_qpidd_disabled:def:1" />
@@ -61206,6 +61414,8 @@ service_command disable quota_nld
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - quota_nld
   tags:
@@ -61216,7 +61426,6 @@ service_command disable quota_nld
     - low_disruption
     - CCE-27260-9
     - NIST-800-53-CM-7
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_quota_nld_disabled:def:1" />
@@ -61252,6 +61461,8 @@ service_command disable rdisc
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - rdisc
   tags:
@@ -61264,7 +61475,6 @@ service_command disable rdisc
     - NIST-800-53-AC-4
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000268
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_rdisc_disabled:def:1" />
@@ -61299,6 +61509,8 @@ service_command disable rhnsd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - rhnsd
   tags:
@@ -61310,7 +61522,6 @@ service_command disable rhnsd
     - CCE-26846-6
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000009
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_rhnsd_disabled:def:1" />
@@ -61342,6 +61553,8 @@ service_command disable rhsmcertd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - rhsmcertd
   tags:
@@ -61352,7 +61565,6 @@ service_command disable rhsmcertd
     - low_disruption
     - CCE-27262-5
     - NIST-800-53-CM-7
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_rhsmcertd_disabled:def:1" />
@@ -61385,6 +61597,8 @@ service_command disable saslauthd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - saslauthd
   tags:
@@ -61395,7 +61609,6 @@ service_command disable saslauthd
     - low_disruption
     - CCE-27263-3
     - NIST-800-53-CM-7
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_saslauthd_disabled:def:1" />
@@ -61426,6 +61639,8 @@ service_command disable smartd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - smartd
   tags:
@@ -61436,7 +61651,6 @@ service_command disable smartd
     - low_disruption
     - CCE-26853-2
     - NIST-800-53-CM-7
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_smartd_disabled:def:1" />
@@ -61467,6 +61681,8 @@ service_command disable sysstat
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - sysstat
   tags:
@@ -61477,7 +61693,6 @@ service_command disable sysstat
     - low_disruption
     - CCE-27265-8
     - NIST-800-53-CM-7
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_sysstat_disabled:def:1" />
@@ -61586,6 +61801,8 @@ service_command disable atd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - atd
   tags:
@@ -61597,7 +61814,6 @@ service_command disable atd
     - CCE-27249-2
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000262
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_atd_disabled:def:1" />
@@ -61674,6 +61890,8 @@ service_command disable sshd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - sshd
   tags:
@@ -61683,7 +61901,6 @@ service_command disable sshd
     - low_complexity
     - low_disruption
     - CCE-27054-6
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_sshd_disabled:def:1" />
@@ -62534,9 +62751,6 @@ For example:
 memcache_timeout = 86400
 </html:pre>
 </ns10:description>
-            <ns10:reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">IA-5(13)</ns10:reference>
-            <ns10:reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx">CCI-002007</ns10:reference>
-            <ns10:reference href="http://iase.disa.mil/stigs/os/general/Pages/index.aspx">SRG-OS-000383-GPOS-00166</ns10:reference>
             <ns10:reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">IA-5(10)</ns10:reference>
             <ns10:reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx">CCI-002007</ns10:reference>
             <ns10:rationale xml:lang="en-US">
@@ -62556,7 +62770,6 @@ authentication information may be questionable.
     - unknown_strategy
     - low_complexity
     - medium_disruption
-    - NIST-800-53-IA-5(13)
     - NIST-800-53-IA-5(10)
 </ns10:fix>
             <ns10:check system="http://scap.nist.gov/schema/ocil/2">
@@ -62576,9 +62789,6 @@ offline_credentials_expiration = 1
 </ns10:description>
             <ns10:reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">IA-5(13)</ns10:reference>
             <ns10:reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx">CCI-002007</ns10:reference>
-            <ns10:reference href="http://iase.disa.mil/stigs/os/general/Pages/index.aspx">SRG-OS-000383-GPOS-00166</ns10:reference>
-            <ns10:reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">IA-5(13)</ns10:reference>
-            <ns10:reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx">CCI-002007</ns10:reference>
             <ns10:rationale xml:lang="en-US">
 If cached authentication information is out-of-date, the validity of the
 authentication information may be questionable.
@@ -62596,7 +62806,6 @@ authentication information may be questionable.
     - unknown_strategy
     - low_complexity
     - medium_disruption
-    - NIST-800-53-IA-5(13)
     - NIST-800-53-IA-5(13)
 </ns10:fix>
             <ns10:check system="http://scap.nist.gov/schema/ocil/2">
@@ -62762,6 +62971,8 @@ service_command disable avahi-daemon
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - avahi-daemon
   tags:
@@ -62773,7 +62984,6 @@ service_command disable avahi-daemon
     - CCE-27087-6
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000246
-
 </ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_avahi-daemon_disabled:def:1" />
@@ -62919,6 +63129,8 @@ service_command disable cups
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - cups
   tags:
@@ -62929,7 +63141,6 @@ service_command disable cups
     - low_disruption
     - CCE-26899-5
     - NIST-800-53-CM-7
-
 </ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_cups_disabled:def:1" />
@@ -63035,6 +63246,8 @@ service_command disable dhcpd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - dhcpd
   tags:
@@ -63045,7 +63258,6 @@ service_command disable dhcpd
     - low_disruption
     - CCE-27074-4
     - NIST-800-53-CM-7
-
 </ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_dhcpd_disabled:def:1" />
@@ -64007,6 +64219,8 @@ service_command disable nfslock
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - nfslock
   tags:
@@ -64016,7 +64230,6 @@ service_command disable nfslock
     - low_complexity
     - low_disruption
     - CCE-27104-9
-
 </ns10:fix>
                 <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                   <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_nfslock_disabled:def:1" />
@@ -64041,6 +64254,8 @@ service_command disable rpcgssd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - rpcgssd
   tags:
@@ -64050,7 +64265,6 @@ service_command disable rpcgssd
     - low_complexity
     - low_disruption
     - CCE-26864-9
-
 </ns10:fix>
                 <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                   <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_rpcgssd_disabled:def:1" />
@@ -64073,6 +64287,8 @@ service_command disable rpcidmapd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - rpcidmapd
   tags:
@@ -64082,7 +64298,6 @@ service_command disable rpcidmapd
     - low_complexity
     - low_disruption
     - CCE-26870-6
-
 </ns10:fix>
                 <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                   <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_rpcidmapd_disabled:def:1" />
@@ -64105,6 +64320,8 @@ service_command disable rpcbind
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - rpcbind
   tags:
@@ -64114,7 +64331,6 @@ service_command disable rpcbind
     - low_complexity
     - low_disruption
     - CCE-27430-8
-
 </ns10:fix>
                 <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                   <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_rpcbind_disabled:def:1" />
@@ -64147,6 +64363,8 @@ service_command disable netfs
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - netfs
   tags:
@@ -64156,7 +64374,6 @@ service_command disable netfs
     - low_complexity
     - low_disruption
     - CCE-27137-9
-
 </ns10:fix>
                 <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                   <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_netfs_disabled:def:1" />
@@ -64298,6 +64515,8 @@ service_command disable nfs
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - nfs
   tags:
@@ -64307,7 +64526,6 @@ service_command disable nfs
     - low_complexity
     - low_disruption
     - CCE-27199-9
-
 </ns10:fix>
                 <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                   <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_nfs_disabled:def:1" />
@@ -64335,6 +64553,8 @@ service_command disable rpcsvcgssd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - rpcsvcgssd
   tags:
@@ -64344,7 +64564,6 @@ service_command disable rpcsvcgssd
     - low_complexity
     - low_disruption
     - CCE-27122-1
-
 </ns10:fix>
                 <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                   <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_rpcsvcgssd_disabled:def:1" />
@@ -64565,6 +64784,8 @@ service_command disable named
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - named
   tags:
@@ -64575,7 +64796,6 @@ service_command disable named
     - low_disruption
     - CCE-26873-0
     - NIST-800-53-CM-7
-
 </ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_named_disabled:def:1" />
@@ -64909,6 +65129,8 @@ service_command disable vsftpd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - vsftpd
   tags:
@@ -64919,7 +65141,6 @@ service_command disable vsftpd
     - low_disruption
     - CCE-26948-0
     - NIST-800-53-CM-7
-
 </ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_vsftpd_disabled:def:1" />
@@ -65194,6 +65415,8 @@ service_command disable httpd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - httpd
   tags:
@@ -65204,7 +65427,6 @@ service_command disable httpd
     - low_disruption
     - CCE-27075-1
     - NIST-800-53-CM-7
-
 </ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_httpd_disabled:def:1" />
@@ -65976,6 +66198,8 @@ service_command disable dovecot
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - dovecot
   tags:
@@ -65985,7 +66209,6 @@ service_command disable dovecot
     - low_complexity
     - low_disruption
     - CCE-26922-5
-
 </ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_dovecot_disabled:def:1" />
@@ -66205,6 +66428,8 @@ service_command disable smb
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - smb
   tags:
@@ -66214,7 +66439,6 @@ service_command disable smb
     - low_complexity
     - low_disruption
     - CCE-27143-7
-
 </ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_smb_disabled:def:1" />
@@ -66533,6 +66757,8 @@ service_command disable squid
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - squid
   tags:
@@ -66542,7 +66768,6 @@ service_command disable squid
     - low_complexity
     - low_disruption
     - CCE-27146-0
-
 </ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_squid_disabled:def:1" />
@@ -66633,6 +66858,8 @@ service_command disable snmpd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - snmpd
   tags:
@@ -66642,7 +66869,6 @@ service_command disable snmpd
     - low_complexity
     - low_disruption
     - CCE-26906-8
-
 </ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_snmpd_disabled:def:1" />
@@ -66755,13 +66981,13 @@ aspects and could result in unauthorized knowledge of the system.
       </ns10:Group>
     </ns10:Benchmark>
   </ns0:component>
-  <ns0:component id="scap_org.open-scap_comp_ssg-rhel6-cpe-oval.xml" timestamp="2018-01-03T14:21:21">
+  <ns0:component id="scap_org.open-scap_comp_ssg-rhel6-cpe-oval.xml" timestamp="2018-03-02T14:08:14">
     <ns3:oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
       <ns3:generator>
         <ns5:product_name>combine-ovals.py from SCAP Security Guide</ns5:product_name>
-        <ns5:product_version>ssg: 0.1.37, python: 2.7.14</ns5:product_version>
+        <ns5:product_version>ssg: 0.1.38, python: 2.7.14</ns5:product_version>
         <ns5:schema_version>5.11</ns5:schema_version>
-        <ns5:timestamp>2018-01-03T14:21:02</ns5:timestamp>
+        <ns5:timestamp>2018-03-02T14:07:54</ns5:timestamp>
       </ns3:generator>
       <ns3:definitions>
         <ns3:definition class="inventory" id="oval:ssg-installed_OS_is_centos6:def:1" version="2">
@@ -67347,7 +67573,7 @@ aspects and could result in unauthorized knowledge of the system.
       </ns3:states>
     </ns3:oval_definitions>
   </ns0:component>
-  <ns0:component id="scap_org.open-scap_comp_ssg-rhel6-cpe-dictionary.xml" timestamp="2018-01-03T14:21:21">
+  <ns0:component id="scap_org.open-scap_comp_ssg-rhel6-cpe-dictionary.xml" timestamp="2018-03-02T14:08:14">
     <ns14:cpe-list xsi:schemaLocation="http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd">
       <ns14:cpe-item name="cpe:/o:redhat:enterprise_linux:6">
         <ns14:title xml:lang="en-us">Red Hat Enterprise Linux 6</ns14:title>
@@ -67379,13 +67605,13 @@ aspects and could result in unauthorized knowledge of the system.
       </ns14:cpe-item>
     </ns14:cpe-list>
   </ns0:component>
-  <ns0:component id="scap_org.open-scap_comp_ssg-rhel6-oval.xml000" timestamp="2018-01-03T14:21:22">
+  <ns0:component id="scap_org.open-scap_comp_ssg-rhel6-oval.xml000" timestamp="2018-03-02T14:08:14">
     <ns3:oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
       <ns3:generator>
         <ns5:product_name>combine-ovals.py from SCAP Security Guide</ns5:product_name>
-        <ns5:product_version>ssg: 0.1.37, python: 2.7.14</ns5:product_version>
+        <ns5:product_version>ssg: 0.1.38, python: 2.7.14</ns5:product_version>
         <ns5:schema_version>5.11</ns5:schema_version>
-        <ns5:timestamp>2018-01-03T14:21:02</ns5:timestamp>
+        <ns5:timestamp>2018-03-02T14:07:54</ns5:timestamp>
       </ns3:generator>
       <ns3:definitions>
         <ns3:definition class="compliance" id="oval:ssg-accounts_password_pam_dcredit:def:1" version="1">
@@ -74745,6 +74971,20 @@ aspects and could result in unauthorized knowledge of the system.
             <ns3:criterion comment="Check all files and make sure they are owned by a user" test_ref="oval:ssg-no_files_unowned_by_user_test:tst:1" />
           </ns3:criteria>
         </ns3:definition>
+        <ns3:definition class="compliance" id="oval:ssg-no_host_based_files:def:1" version="1">
+          <ns3:metadata>
+            <ns3:title>No shosts.equiv file deployed on the system</ns3:title>
+            <ns3:affected family="unix">
+              <ns3:platform>Red Hat Enterprise Linux 7</ns3:platform>
+              <ns3:platform>Red Hat Enterprise Linux 6</ns3:platform>
+            </ns3:affected>
+            <ns3:description>There should not be any shosts.equiv files on the system.</ns3:description>
+            <reference ref_id="no_host_based_files" source="ssg" />
+          </ns3:metadata>
+          <ns3:criteria>
+            <ns3:criterion test_ref="oval:ssg-test_no_shosts_equiv:tst:1" />
+          </ns3:criteria>
+        </ns3:definition>
         <ns3:definition class="compliance" id="oval:ssg-no_insecure_locks_exports:def:1" version="1">
           <ns3:metadata>
             <ns3:title>Ensure insecure_locks is disabled</ns3:title>
@@ -74807,6 +75047,20 @@ aspects and could result in unauthorized knowledge of the system.
               <ns3:criterion comment="Test shell defined for reserved system UIDs" test_ref="oval:ssg-test_shell_defined_reserved_uid_range:tst:1" />
               <ns3:criterion comment="Test shell defined for dynamically allocated system UIDs" test_ref="oval:ssg-test_shell_defined_dynalloc_uid_range:tst:1" />
             </ns3:criteria>
+          </ns3:criteria>
+        </ns3:definition>
+        <ns3:definition class="compliance" id="oval:ssg-no_user_host_based_files:def:1" version="1">
+          <ns3:metadata>
+            <ns3:title>No .shosts file deployed on the system</ns3:title>
+            <ns3:affected family="unix">
+              <ns3:platform>Red Hat Enterprise Linux 7</ns3:platform>
+              <ns3:platform>Red Hat Enterprise Linux 6</ns3:platform>
+            </ns3:affected>
+            <ns3:description>There should not be any .shosts files on the system.</ns3:description>
+            <reference ref_id="no_user_host_based_files" source="ssg" />
+          </ns3:metadata>
+          <ns3:criteria>
+            <ns3:criterion test_ref="oval:ssg-test_no_shosts:tst:1" />
           </ns3:criteria>
         </ns3:definition>
         <ns3:definition class="compliance" id="oval:ssg-package_dracut-fips_installed:def:1" version="1">
@@ -84577,6 +84831,9 @@ and date.</ns3:description>
         <ns7:file_test check="all" check_existence="none_exist" comment="Check user ids on all files on the system" id="oval:ssg-no_files_unowned_by_user_test:tst:1" version="1">
           <ns7:object object_ref="oval:ssg-file_permissions_unowned_object:obj:1" />
         </ns7:file_test>
+        <ns7:file_test check="all" check_existence="none_exist" comment="look for shosts.equiv in /" id="oval:ssg-test_no_shosts_equiv:tst:1" version="1">
+          <ns7:object object_ref="oval:ssg-object_no_shosts_equiv_files_root:obj:1" />
+        </ns7:file_test>
         <ns6:textfilecontent54_test check="all" check_existence="none_exist" comment="Tests the value of the insecure locks in /etc/exports" id="oval:ssg-test_no_insecure_locks_exports:tst:1" version="1">
           <ns6:object object_ref="oval:ssg-obj_no_insecure_locks_exports:obj:1" />
         </ns6:textfilecontent54_test>
@@ -84610,6 +84867,9 @@ and date.</ns3:description>
           <ns6:object object_ref="oval:ssg-object_shell_defined_dynalloc_uid_range:obj:1" />
           <ns6:state state_ref="oval:ssg-state_shell_defined_dynalloc_uid_range:ste:1" />
         </ns6:variable_test>
+        <ns7:file_test check="all" check_existence="none_exist" comment="look for .shosts in /" id="oval:ssg-test_no_shosts:tst:1" version="1">
+          <ns7:object object_ref="oval:ssg-object_no_shosts_files_root:obj:1" />
+        </ns7:file_test>
         <ns8:rpminfo_test check="all" check_existence="all_exist" comment="package dracut-fips is installed" id="oval:ssg-test_package_dracut-fips_installed:tst:1" version="1">
           <ns8:object object_ref="oval:ssg-obj_package_dracut-fips_installed:obj:1" />
         </ns8:rpminfo_test>
@@ -89795,18 +90055,18 @@ and date.</ns3:description>
         </ns6:textfilecontent54_object>
         <ns6:textfilecontent54_object comment="notify personnel when aide completes" id="oval:ssg-object_test_aide_scan_notification:obj:1" version="1">
           <ns6:filepath>/etc/crontab</ns6:filepath>
-          <ns6:pattern operation="pattern match">^.*/usr/sbin/aide[\s]*\-\-check.*\|.*/bin/mail[\s]*-s[\s]*".*"[\s]*root@.*$</ns6:pattern>
+          <ns6:pattern operation="pattern match">^.*/usr/sbin/aide[\s]*\-\-check.*\|.*/bin/mail[\s]*-s[\s]*".*"[\s]*.+@.+$</ns6:pattern>
           <ns6:instance datatype="int" operation="greater than or equal">1</ns6:instance>
         </ns6:textfilecontent54_object>
         <ns6:textfilecontent54_object comment="notify personnel when aide completes" id="oval:ssg-object_aide_var_cron_notification:obj:1" version="1">
           <ns6:filepath>/var/spool/cron/root</ns6:filepath>
-          <ns6:pattern operation="pattern match">^.*/usr/sbin/aide[\s]*\-\-check.*\|.*/bin/mail[\s]*-s[\s]*".*"[\s]*root@.*$</ns6:pattern>
+          <ns6:pattern operation="pattern match">^.*/usr/sbin/aide[\s]*\-\-check.*\|.*/bin/mail[\s]*-s[\s]*".*"[\s]*.+@.+$</ns6:pattern>
           <ns6:instance datatype="int" operation="greater than or equal">1</ns6:instance>
         </ns6:textfilecontent54_object>
         <ns6:textfilecontent54_object comment="notify personnel when aide completes in cron.(d|daily|weekly|monthly)" id="oval:ssg-object_aide_crontabs_notification:obj:1" version="1">
           <ns6:path operation="pattern match">/etc/cron.(d|daily|weekly|monthly)</ns6:path>
           <ns6:filename operation="pattern match">^.*$</ns6:filename>
-          <ns6:pattern operation="pattern match">^.*/usr/sbin/aide[\s]*\-\-check.*\|.*/bin/mail[\s]*-s[\s]*".*"[\s]*root@.*$</ns6:pattern>
+          <ns6:pattern operation="pattern match">^.*/usr/sbin/aide[\s]*\-\-check.*\|.*/bin/mail[\s]*-s[\s]*".*"[\s]*.+@.+$</ns6:pattern>
           <ns6:instance datatype="int" operation="greater than or equal">1</ns6:instance>
         </ns6:textfilecontent54_object>
         <ns6:textfilecontent54_object id="oval:ssg-object_aide_non_fips_hashes:obj:1" version="1">
@@ -90462,6 +90722,11 @@ and date.</ns3:description>
           <ns7:filename operation="pattern match">.*</ns7:filename>
           <ns3:filter action="exclude">oval:ssg-file_permissions_unowned_userid_list_match:ste:1</ns3:filter>
         </ns7:file_object>
+        <ns7:file_object comment="look for any shosts.equiv file on the system" id="oval:ssg-object_no_shosts_equiv_files_root:obj:1" version="1">
+          <ns7:behaviors max_depth="-1" recurse="directories" recurse_direction="down" recurse_file_system="local" />
+          <ns7:path operation="equals">/</ns7:path>
+          <ns7:filename operation="pattern match">shosts\.equiv$</ns7:filename>
+        </ns7:file_object>
         <ns6:textfilecontent54_object id="oval:ssg-obj_no_insecure_locks_exports:obj:1" version="2">
           <ns6:filepath>/etc/exports</ns6:filepath>
           <ns6:pattern operation="pattern match">^(.*?(\binsecure_locks\b)[^$]*)$</ns6:pattern>
@@ -90517,6 +90782,11 @@ and date.</ns3:description>
         <ns6:variable_object id="oval:ssg-object_shell_defined_dynalloc_uid_range:obj:1" version="1">
           <ns6:var_ref>oval:ssg-variable_dynalloc_range_quad_expr:var:1</ns6:var_ref>
         </ns6:variable_object>
+        <ns7:file_object comment="look for any .shosts file on the system" id="oval:ssg-object_no_shosts_files_root:obj:1" version="1">
+          <ns7:behaviors max_depth="-1" recurse="directories" recurse_direction="down" recurse_file_system="local" />
+          <ns7:path operation="equals">/</ns7:path>
+          <ns7:filename operation="pattern match">\.shosts</ns7:filename>
+        </ns7:file_object>
         <ns8:rpminfo_object id="oval:ssg-obj_package_dracut-fips_installed:obj:1" version="1">
           <ns8:name>dracut-fips</ns8:name>
         </ns8:rpminfo_object>
@@ -95059,15 +95329,15 @@ and date.</ns3:description>
             <ns3:object_component item_field="subexpression" object_ref="oval:ssg-object_rfg_rsyslog_include_config_value:obj:1" />
           </ns3:glob_to_regex>
         </ns3:local_variable>
-        <ns3:local_variable comment="Locations of all rsyslog configuration files concatenated into string" datatype="string" id="oval:ssg-var_rfg_all_log_files_as_string:var:1" version="1">
+        <ns3:local_variable comment="Locations of all rsyslog configuration files concatenated into string" datatype="string" id="oval:ssg-var_rfg_all_log_files_as_string_regex:var:1" version="1">
           <ns3:concat>
             <ns3:variable_component var_ref="oval:ssg-var_rfg_include_config_regex:var:1" />
-            <ns3:literal_component datatype="string">%/etc/rsyslog.conf</ns3:literal_component>
+            <ns3:literal_component datatype="string">%^/etc/rsyslog.conf$</ns3:literal_component>
           </ns3:concat>
         </ns3:local_variable>
         <ns3:local_variable comment="Locations of all rsyslog configuration files as collection" datatype="string" id="oval:ssg-var_rfg_all_log_files_as_collection:var:1" version="1">
           <ns3:split delimiter="%">
-            <ns3:variable_component var_ref="oval:ssg-var_rfg_all_log_files_as_string:var:1" />
+            <ns3:variable_component var_ref="oval:ssg-var_rfg_all_log_files_as_string_regex:var:1" />
           </ns3:split>
         </ns3:local_variable>
         <ns3:local_variable comment="File paths of all rsyslog configuration files" datatype="string" id="oval:ssg-var_rfg_log_files_paths:var:1" version="1">
@@ -95078,15 +95348,15 @@ and date.</ns3:description>
             <ns3:object_component item_field="subexpression" object_ref="oval:ssg-object_rfo_rsyslog_include_config_value:obj:1" />
           </ns3:glob_to_regex>
         </ns3:local_variable>
-        <ns3:local_variable comment="Locations of all rsyslog configuration files concatenated into string" datatype="string" id="oval:ssg-var_rfo_all_log_files_as_string:var:1" version="1">
+        <ns3:local_variable comment="Locations of all rsyslog configuration files concatenated into string" datatype="string" id="oval:ssg-var_rfo_all_log_files_as_string_regex:var:1" version="1">
           <ns3:concat>
             <ns3:variable_component var_ref="oval:ssg-var_rfo_include_config_regex:var:1" />
-            <ns3:literal_component datatype="string">%/etc/rsyslog.conf</ns3:literal_component>
+            <ns3:literal_component datatype="string">%^/etc/rsyslog.conf$</ns3:literal_component>
           </ns3:concat>
         </ns3:local_variable>
         <ns3:local_variable comment="Locations of all rsyslog configuration files as collection" datatype="string" id="oval:ssg-var_rfo_all_log_files_as_collection:var:1" version="1">
           <ns3:split delimiter="%">
-            <ns3:variable_component var_ref="oval:ssg-var_rfo_all_log_files_as_string:var:1" />
+            <ns3:variable_component var_ref="oval:ssg-var_rfo_all_log_files_as_string_regex:var:1" />
           </ns3:split>
         </ns3:local_variable>
         <ns3:local_variable comment="File paths of all rsyslog configuration files" datatype="string" id="oval:ssg-var_rfo_log_files_paths:var:1" version="1">
@@ -95097,15 +95367,15 @@ and date.</ns3:description>
             <ns3:object_component item_field="subexpression" object_ref="oval:ssg-object_rfp_rsyslog_include_config_value:obj:1" />
           </ns3:glob_to_regex>
         </ns3:local_variable>
-        <ns3:local_variable comment="Locations of all rsyslog configuration files concatenated into string" datatype="string" id="oval:ssg-var_rfp_all_log_files_as_string:var:1" version="1">
+        <ns3:local_variable comment="Locations of all rsyslog configuration files concatenated into string" datatype="string" id="oval:ssg-var_rfp_all_log_files_as_string_regex:var:1" version="1">
           <ns3:concat>
             <ns3:variable_component var_ref="oval:ssg-var_rfp_include_config_regex:var:1" />
-            <ns3:literal_component datatype="string">%/etc/rsyslog.conf</ns3:literal_component>
+            <ns3:literal_component datatype="string">%^/etc/rsyslog.conf$</ns3:literal_component>
           </ns3:concat>
         </ns3:local_variable>
         <ns3:local_variable comment="Locations of all rsyslog configuration files as collection" datatype="string" id="oval:ssg-var_rfp_all_log_files_as_collection:var:1" version="1">
           <ns3:split delimiter="%">
-            <ns3:variable_component var_ref="oval:ssg-var_rfp_all_log_files_as_string:var:1" />
+            <ns3:variable_component var_ref="oval:ssg-var_rfp_all_log_files_as_string_regex:var:1" />
           </ns3:split>
         </ns3:local_variable>
         <ns3:local_variable comment="File paths of all rsyslog configuration files" datatype="string" id="oval:ssg-var_rfp_log_files_paths:var:1" version="1">
@@ -95516,13 +95786,13 @@ and date.</ns3:description>
       </ns3:variables>
     </ns3:oval_definitions>
   </ns0:component>
-  <ns0:component id="scap_org.open-scap_comp_ssg-rhel6-ocil.xml000" timestamp="2018-01-03T14:21:23">
+  <ns0:component id="scap_org.open-scap_comp_ssg-rhel6-ocil.xml000" timestamp="2018-03-02T14:08:15">
     <ns9:ocil>
       <ns9:generator>
         <ns9:product_name>xccdf-create-ocil.xslt from SCAP Security Guide</ns9:product_name>
-        <ns9:product_version>ssg: 0.1.37</ns9:product_version>
+        <ns9:product_version>ssg: 0.1.38</ns9:product_version>
         <ns9:schema_version>2.0</ns9:schema_version>
-        <ns9:timestamp>2018-01-03T14:21:12Z</ns9:timestamp>
+        <ns9:timestamp>2018-03-02T14:08:09Z</ns9:timestamp>
       </ns9:generator>
       <ns9:questionnaires>
         <ns9:questionnaire id="ocil:ssg-partition_for_tmp_ocil:questionnaire:1">
@@ -104266,9 +104536,9 @@ windows, but still within IAVM-dictated timeframes, this is not a finding.
       </ns9:questions>
     </ns9:ocil>
   </ns0:component>
-  <ns0:component id="scap_org.open-scap_comp_ssg-rhel6-pcidss-xccdf-1.2.xml" timestamp="2018-01-03T14:21:22">
+  <ns0:component id="scap_org.open-scap_comp_ssg-rhel6-pcidss-xccdf-1.2.xml" timestamp="2018-03-02T14:08:15">
     <ns10:Benchmark id="xccdf_org.ssgproject.content_benchmark_PCIDSS-RHEL-6" resolved="1" style="SCAP_1.2" xml:lang="en-US">
-      <ns10:status date="2018-01-03">draft</ns10:status>
+      <ns10:status date="2018-03-02">draft</ns10:status>
       <ns10:title xml:lang="en-US">Guide to the Secure Configuration of Red Hat Enterprise Linux 6 (PCI-DSS centric)</ns10:title>
       <ns10:description xml:lang="en-US">This guide presents a catalog of security-relevant
 configuration settings for Red Hat Enterprise Linux 6. It is a rendering of
@@ -104351,13 +104621,14 @@ respective companies.</ns10:rear-matter>
       <ns10:platform idref="cpe:/o:scientificlinux:scientificlinux:6" />
       <ns10:platform idref="cpe:/o:redhat:enterprise_linux:6::client" />
       <ns10:platform idref="cpe:/o:redhat:enterprise_linux:6::computenode" />
-      <ns10:version update="https://github.com/OpenSCAP/scap-security-guide/releases/latest">0.1.37</ns10:version>
+      <ns10:version update="https://github.com/OpenSCAP/scap-security-guide/releases/latest">0.1.38</ns10:version>
       <ns10:metadata>
         <dc:publisher>SCAP Security Guide Project</dc:publisher>
         <dc:creator>SCAP Security Guide Project</dc:creator>
         <dc:contributor>Frank J Cameron (CAM1244) &lt;cameron@ctc.com&gt;</dc:contributor>
         <dc:contributor>0x66656c6978 &lt;0x66656c6978@users.noreply.github.com&gt;</dc:contributor>
         <dc:contributor>Gabe Alford &lt;redhatrises@gmail.com&gt;</dc:contributor>
+        <dc:contributor>Firas AlShafei &lt;firas.alshafei@us.abb.com&gt;</dc:contributor>
         <dc:contributor>Christopher Anderson &lt;cba@fedoraproject.org&gt;</dc:contributor>
         <dc:contributor>Chuck Atkins &lt;chuck.atkins@kitware.com&gt;</dc:contributor>
         <dc:contributor>Ryan Ballanger &lt;root@rballang-admin-2.fastenal.com&gt;</dc:contributor>
@@ -104387,7 +104658,7 @@ respective companies.</ns10:rear-matter>
         <dc:contributor>Rebekah Hayes &lt;rhayes@corp.rivierautilities.com&gt;</dc:contributor>
         <dc:contributor>Trey Henefield &lt;thenefield@gmail.com&gt;</dc:contributor>
         <dc:contributor>hex2a &lt;hex2a@users.noreply.github.com&gt;</dc:contributor>
-        <dc:contributor>John Hooks &lt;jhooks@starscream.pa.jhbcomputers.com&gt;</dc:contributor>
+        <dc:contributor>John Hooks &lt;hooksie11@gmail.com&gt;</dc:contributor>
         <dc:contributor>Robin Price II &lt;robin@redhat.com&gt;</dc:contributor>
         <dc:contributor>Jeremiah Jahn &lt;jeremiah@goodinassociates.com&gt;</dc:contributor>
         <dc:contributor>Stephan Joerrens &lt;Stephan.Joerrens@fiduciagad.de&gt;</dc:contributor>
@@ -104404,6 +104675,7 @@ respective companies.</ns10:rear-matter>
         <dc:contributor>Michael McConachie &lt;michael@redhat.com&gt;</dc:contributor>
         <dc:contributor>Khary Mendez &lt;kharyam@gmail.com&gt;</dc:contributor>
         <dc:contributor>Rodney Mercer &lt;rmercer@harris.com&gt;</dc:contributor>
+        <dc:contributor>Matt Micene &lt;nzwulfin@gmail.com&gt;</dc:contributor>
         <dc:contributor>Brian Millett &lt;bmillett@gmail.com&gt;</dc:contributor>
         <dc:contributor>mmosel &lt;mmosel@kde.example.com&gt;</dc:contributor>
         <dc:contributor>Zbynek Moravec &lt;zmoravec@redhat.com&gt;</dc:contributor>
@@ -104412,12 +104684,13 @@ respective companies.</ns10:rear-matter>
         <dc:contributor>Joe Nall &lt;joe@nall.com&gt;</dc:contributor>
         <dc:contributor>Neiloy &lt;neiloy@redhat.com&gt;</dc:contributor>
         <dc:contributor>Michele Newman &lt;mnewman@redhat.com&gt;</dc:contributor>
+        <dc:contributor>OnceUponALoop &lt;firas.alshafei@gmail.com&gt;</dc:contributor>
         <dc:contributor>Kaustubh Padegaonkar &lt;theTuxRacer@gmail.com&gt;</dc:contributor>
         <dc:contributor>Michael Palmiotto &lt;mpalmiotto@tresys.com&gt;</dc:contributor>
         <dc:contributor>Max R.D. Parmer &lt;maxp@trystero.is&gt;</dc:contributor>
         <dc:contributor>pcactr &lt;paul.c.arnold4.ctr@mail.mil&gt;</dc:contributor>
         <dc:contributor>Kenneth Peeples &lt;kennethwpeeples@gmail.com&gt;</dc:contributor>
-        <dc:contributor>Nathan Peters &lt;petna01@ca.com&gt;</dc:contributor>
+        <dc:contributor>Nathan Peters &lt;Nathaniel.Peters@ca.com&gt;</dc:contributor>
         <dc:contributor>Frank Lin PIAT &lt;fpiat@klabs.be&gt;</dc:contributor>
         <dc:contributor>Stefan Pietsch &lt;mail.ipv4v6+gh@gmail.com&gt;</dc:contributor>
         <dc:contributor>Martin Preisler &lt;mpreisle@redhat.com&gt;</dc:contributor>
@@ -104427,6 +104700,7 @@ respective companies.</ns10:rear-matter>
         <dc:contributor>Rick Renshaw &lt;Richard_Renshaw@xtoenergy.com&gt;</dc:contributor>
         <dc:contributor>Chris Reynolds &lt;c.reynolds82@gmail.com&gt;</dc:contributor>
         <dc:contributor>Pat Riehecky &lt;riehecky@fnal.gov&gt;</dc:contributor>
+        <dc:contributor>rlucente-se-jboss &lt;rlucente@redhat.com&gt;</dc:contributor>
         <dc:contributor>Joshua Roys &lt;roysjosh@gmail.com&gt;</dc:contributor>
         <dc:contributor>rrenshaw &lt;bofh69@yahoo.com&gt;</dc:contributor>
         <dc:contributor>Chris Ruffalo &lt;chris.ruffalo@gmail.com&gt;</dc:contributor>
@@ -104459,8 +104733,8 @@ respective companies.</ns10:rear-matter>
       </ns10:metadata>
       <ns10:model system="urn:xccdf:scoring:default" />
       <ns10:Profile id="xccdf_org.ssgproject.content_profile_pci-dss_centric">
-        <ns10:title xml:lang="en-US">PCI-DSS v3 Control Baseline for Red Hat Enterprise Linux 6</ns10:title>
-        <ns10:description xml:lang="en-US">This is a *draft* profile for PCI-DSS v3.</ns10:description>
+        <ns10:title override="true" xml:lang="en-US">PCI-DSS v3 Control Baseline for Red Hat Enterprise Linux 6</ns10:title>
+        <ns10:description override="true" xml:lang="en-US">This is a *draft* profile for PCI-DSS v3.</ns10:description>
         <ns10:select idref="xccdf_org.ssgproject.content_rule_service_auditd_enabled" selected="true" />
         <ns10:select idref="xccdf_org.ssgproject.content_rule_bootloader_audit_argument" selected="true" />
         <ns10:select idref="xccdf_org.ssgproject.content_rule_auditd_data_retention_num_logs" selected="true" />
@@ -105207,6 +105481,8 @@ then
   # (to ensure there won't be e.g. CRC error).
   IFS=$'\n' GPG_OUT=($(gpg --with-fingerprint "${REDHAT_RELEASE_KEY}" | grep 'Key fingerprint ='))
   GPG_RESULT=$?
+  # Reset IFS back to default
+  unset IFS
   # No CRC error, safe to proceed
   if [ "${GPG_RESULT}" -eq "0" ]
   then
@@ -105959,6 +106235,95 @@ do
 	fi
 done
 </ns10:fix>
+              <ns10:fix complexity="low" disruption="low" id="accounts_passwords_pam_faillock_deny" strategy="restrict" system="urn:xccdf:fix:script:ansible">- name: XCCDF Value var_accounts_passwords_pam_faillock_deny # promote to variable
+  set_fact:
+    var_accounts_passwords_pam_faillock_deny: <ns10:sub idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_deny" use="legacy" />
+  tags:
+    - always
+- name: XCCDF Value var_accounts_passwords_pam_faillock_unlock_time # promote to variable
+  set_fact:
+    var_accounts_passwords_pam_faillock_unlock_time: <ns10:sub idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_unlock_time" use="legacy" />
+  tags:
+    - always
+- name: XCCDF Value var_accounts_passwords_pam_faillock_fail_interval # promote to variable
+  set_fact:
+    var_accounts_passwords_pam_faillock_fail_interval: <ns10:sub idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_fail_interval" use="legacy" />
+  tags:
+    - always
+
+- name: set auth pam_faillock before pam_unix.so
+  pamd:
+    name: system-auth
+    type: auth
+    control: sufficient
+    module_path: pam_unix.so
+    new_type: auth
+    new_control: required
+    new_module_path: pam_faillock.so
+    module_arguments: 'preauth
+        silent
+        deny={{ var_accounts_passwords_pam_faillock_deny }}
+        unlock_time={{ var_accounts_passwords_pam_faillock_unlock_time }}
+        fail_interval={{ var_accounts_passwords_pam_faillock_fail_interval }}'
+    state: before
+  tags:
+    - accounts_passwords_pam_faillock_deny
+    - medium_severity
+    - restrict_strategy
+    - low_complexity
+    - low_disruption
+    - CCE-26844-1
+    - NIST-800-53-AC-7(a)
+    - PCI-DSS-Req-8.1.6
+    - DISA-STIG-RHEL-06-000061
+
+- name: set auth pam_faillock after pam_unix.so
+  pamd:
+    name: system-auth
+    type: auth
+    control: sufficient
+    module_path: pam_unix.so
+    new_type: auth
+    new_control: '[default=die]'
+    new_module_path: pam_faillock.so
+    module_arguments: 'preauth
+        silent
+        deny={{ var_accounts_passwords_pam_faillock_deny }}
+        unlock_time={{ var_accounts_passwords_pam_faillock_unlock_time }}
+        fail_interval={{ var_accounts_passwords_pam_faillock_fail_interval }}'
+    state: after
+  tags:
+    - accounts_passwords_pam_faillock_deny
+    - medium_severity
+    - restrict_strategy
+    - low_complexity
+    - low_disruption
+    - CCE-26844-1
+    - NIST-800-53-AC-7(a)
+    - PCI-DSS-Req-8.1.6
+    - DISA-STIG-RHEL-06-000061
+
+- name: set account pam_faillock before pam_unix.so
+  pamd:
+    name: system-auth
+    type: account
+    control: required
+    module_path: pam_unix.so
+    new_type: account
+    new_control: required
+    new_module_path: pam_faillock.so
+    state: before
+  tags:
+    - accounts_passwords_pam_faillock_deny
+    - medium_severity
+    - restrict_strategy
+    - low_complexity
+    - low_disruption
+    - CCE-26844-1
+    - NIST-800-53-AC-7(a)
+    - PCI-DSS-Req-8.1.6
+    - DISA-STIG-RHEL-06-000061
+</ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-export export-name="oval:ssg-var_accounts_passwords_pam_faillock_deny:var:1" value-id="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_deny" />
                 <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-accounts_passwords_pam_faillock_deny:def:1" />
@@ -106285,9 +106650,16 @@ This is the default.
               <ns10:rationale xml:lang="en-US">
 Using a stronger hashing algorithm makes password cracking attacks more difficult.
 </ns10:rationale>
-              <ns10:fix id="set_password_hashing_algorithm_systemauth" system="urn:xccdf:fix:script:sh">if ! grep -q "^password.*sufficient.*pam_unix.so.*sha512" /etc/pam.d/system-auth; then   
-	sed -i --follow-symlinks "/^password.*sufficient.*pam_unix.so/ s/$/ sha512/" /etc/pam.d/system-auth
-fi
+              <ns10:fix id="set_password_hashing_algorithm_systemauth" system="urn:xccdf:fix:script:sh">
+AUTH_FILES[0]="/etc/pam.d/system-auth"
+AUTH_FILES[1]="/etc/pam.d/password-auth"
+
+for pamFile in "${AUTH_FILES[@]}"
+do
+	if ! grep -q "^password.*sufficient.*pam_unix.so.*sha512" $pamFile; then
+		sed -i --follow-symlinks "/^password.*sufficient.*pam_unix.so/ s/$/ sha512/" $pamFile
+	fi
+done
 </ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-set_password_hashing_algorithm_systemauth:def:1" />
@@ -106764,11 +107136,17 @@ Preventing re-use of previous passwords helps ensure that a compromised password
               <ns10:fix id="accounts_password_pam_unix_remember" system="urn:xccdf:fix:script:sh">
 var_password_pam_unix_remember="<ns10:sub idref="xccdf_org.ssgproject.content_value_var_password_pam_unix_remember" use="legacy" />"
 
-if grep -q "remember=" /etc/pam.d/system-auth; then   
-	sed -i --follow-symlinks "s/\(^password.*sufficient.*pam_unix.so.*\)\(\(remember *= *\)[^ $]*\)/\1remember=$var_password_pam_unix_remember/" /etc/pam.d/system-auth
-else
-	sed -i --follow-symlinks "/^password[[:space:]]\+sufficient[[:space:]]\+pam_unix.so/ s/$/ remember=$var_password_pam_unix_remember/" /etc/pam.d/system-auth
-fi
+AUTH_FILES[0]="/etc/pam.d/system-auth"
+AUTH_FILES[1]="/etc/pam.d/password-auth"
+
+for pamFile in "${AUTH_FILES[@]}"
+do
+	if grep -q "remember=" $pamFile; then
+		sed -i --follow-symlinks "s/\(^password.*sufficient.*pam_unix.so.*\)\(\(remember *= *\)[^ $]*\)/\1remember=$var_password_pam_unix_remember/" $pamFile
+	else
+		sed -i --follow-symlinks "/^password[[:space:]]\+sufficient[[:space:]]\+pam_unix.so/ s/$/ remember=$var_password_pam_unix_remember/" $pamFile
+	fi
+done
 </ns10:fix>
               <ns10:fix complexity="low" disruption="medium" id="accounts_password_pam_unix_remember" strategy="configure" system="urn:xccdf:fix:script:ansible">- name: XCCDF Value var_password_pam_unix_remember # promote to variable
   set_fact:
@@ -112124,7 +112502,7 @@ take corrective action prior to any disruption.
 var_auditd_space_left="<ns10:sub idref="xccdf_org.ssgproject.content_value_var_auditd_space_left" use="legacy" />"
 
 grep -q ^space_left /etc/audit/auditd.conf &amp;&amp; \
-  sed -i "s/space_left.*/space_left = $var_auditd_space_left/g" /etc/audit/auditd.conf
+  sed -i "s/^space_left[[:space:]]*=.*/space_left = $var_auditd_space_left/g" /etc/audit/auditd.conf
 if ! [ $? -eq 0 ]; then
     echo "space_left = $var_auditd_space_left" &gt;&gt; /etc/audit/auditd.conf
 fi
@@ -112422,11 +112800,28 @@ fi
 #
 /usr/sbin/prelink -ua
 </ns10:fix>
-            <ns10:fix complexity="low" disruption="low" id="disable_prelink" strategy="restrict" system="urn:xccdf:fix:script:ansible">- name: disable prelinking
+            <ns10:fix complexity="low" disruption="low" id="disable_prelink" strategy="restrict" system="urn:xccdf:fix:script:ansible">- name: Does prelink file exist
+  stat:
+    path=/etc/sysconfig/prelink
+  register: prelink_exists
+  tags:
+    - disable_prelink
+    - low_severity
+    - restrict_strategy
+    - low_complexity
+    - low_disruption
+    - CCE-27221-1
+    - NIST-800-53-CM-6(d)
+    - NIST-800-53-SC-28
+    - NIST-800-53-SI-7
+    - PCI-DSS-Req-11.5  
+
+- name: disable prelinking
   lineinfile:
     path: /etc/sysconfig/prelink
     regexp: '^PRELINKING='
     line: 'PRELINKING=no'
+  when: prelink_exists.stat.exists == True
   tags:
     - disable_prelink
     - low_severity
@@ -112735,7 +113130,7 @@ declare -a SETPERMS_RPM_LIST
 
 # Create a list of files on the system having permissions different from what
 # is expected by the RPM database
-FILES_WITH_INCORRECT_PERMS=($(rpm -Va --nofiledigest | grep '^.M' | cut -d ' ' -f5-))
+FILES_WITH_INCORRECT_PERMS=($(rpm -Va --nofiledigest | grep '^.M' | cut -d ' ' -f4-))
 
 # For each file path from that list:
 # * Determine the RPM package the file path is shipped by,
@@ -113020,10 +113415,10 @@ do
 		# * existing rule contains all arguments from expected rule form (though can contain
 		#   them in arbitrary order)
 	
-		base_search=$(sed -e "/-a always,exit/!d" -e "/-F path=${sbinary_esc}$/!d"   \
-		    		  -e "/-F path=[^[:space:]]\+/!d" -e "/-F perm=.*/!d"       \
-				  -e "/-F auid&gt;=${min_auid}/!d" -e "/-F auid!=4294967295/!d"  \
-				  -e "/-k privileged/!d" $afile)
+		base_search=$(sed -e '/-a always,exit/!d' -e '/-F path='"${sbinary_esc}"'/!d' \
+				-e '/-F path=[^[:space:]]\+/!d'   -e '/-F perm=.*/!d'                 \
+				-e '/-F auid&gt;='"${min_auid}"'/!d' -e '/-F auid!=4294967295/!d'        \
+				-e '/-k privileged/!d' $afile)
 
 		# Increase the count of inspected files for this sbinary
 		count_of_inspected_files=$((count_of_inspected_files + 1))
@@ -113401,7 +113796,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -113588,6 +113983,19 @@ fi
 }
 </ns10:value>
         </ns10:Value>
+        <ns10:Value hidden="true" id="xccdf_org.ssgproject.content_value_function_die" operator="equals" prohibitChanges="true" type="string">
+          <ns10:title xml:lang="en-US">Remediation function die</ns10:title>
+          <ns10:description xml:lang="en-US">Shared bash remediation function. Not intended to be changed by tailoring.</ns10:description>
+          <ns10:value># Print a message to stderr and exit the shell
+# $1: The message to print.
+# $2: The error code (optional, default is 1)
+function die {
+	local _message="$1" _rc="${2:-1}"
+	printf '%s\n' "$_message" &gt;&amp;2
+	exit "$_rc"
+}
+</ns10:value>
+        </ns10:Value>
         <ns10:Value hidden="true" id="xccdf_org.ssgproject.content_value_function_firefox_js_setting" operator="equals" prohibitChanges="true" type="string">
           <ns10:title xml:lang="en-US">Remediation function firefox_js_setting</ns10:title>
           <ns10:description xml:lang="en-US">Shared bash remediation function. Not intended to be changed by tailoring.</ns10:description>
@@ -113747,7 +114155,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -114153,7 +114561,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -115084,7 +115492,10 @@ Any <html:i>PASSPHRASE</html:i> is stored in the Kickstart in plaintext, and the
 Omitting the <html:code>--passphrase=</html:code> option from the partition definition will cause the
 installer to pause and interactively ask for the passphrase during installation.
 <html:br /><html:br />
-Detailed information on encrypting partitions using LUKS can be found on
+By default, the <html:code>Anaconda</html:code> installer uses <html:code>aes-xts-plain64</html:code> cipher
+with a minimum <html:code>512</html:code> bit key size which should be compatible with FIPS enabled.
+<html:br /><html:br />
+Detailed information on encrypting partitions using LUKS or LUKS ciphers can be found on
 the Red Hat Documentation web site:<html:br />
 <html:a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Security_Guide/chap-Security_Guide-Encryption.html#sect-Security_Guide-LUKS_Disk_Encryption">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/6/html/Security_Guide/chap-Security_Guide-Encryption.html#sect-Security_Guide-LUKS_Disk_Encryption</html:a>
 </ns10:description>
@@ -115330,7 +115741,7 @@ system security.
     dest: /etc/gdm/custom.conf
     section: daemon
     option: AutomaticLoginEnable
-    value: false
+    value: "false"
     no_extra_spaces: yes
     create: yes
   tags:
@@ -115370,7 +115781,7 @@ system security.
     dest: /etc/gdm/custom.conf
     section: daemon
     option: TimedLoginEnable
-    value: false
+    value: "false"
     no_extra_spaces: yes
     create: yes
   tags:
@@ -116731,6 +117142,8 @@ service_command disable autofs
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - autofs
   tags:
@@ -116744,7 +117157,6 @@ service_command disable autofs
     - NIST-800-53-AC-19(d)
     - NIST-800-53-AC-19(e)
     - DISA-STIG-RHEL-06-000526
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_autofs_disabled:def:1" />
@@ -117536,8 +117948,9 @@ requiring global read/write access.
 access to a file when it is discovered. However, check with
 documentation for specific applications before making changes.
 Also, monitor for recurring world-writable files, as these may be
-symptoms of a misconfigured application or user
-account.</ns10:description>
+symptoms of a misconfigured application or user account. Finally,
+this applies to real files and not virtual files that are a part of
+pseudo file systems such as <html:code>sysfs</html:code> or <html:code>procfs</html:code>.</ns10:description>
           <ns10:reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">AC-6</ns10:reference>
           <ns10:reference href="http://iase.disa.mil/stigs/Pages/stig-viewing-guidance.aspx">SV-50444r3_rule</ns10:reference>
           <ns10:reference href="http://iase.disa.mil/stigs/os/general/Pages/index.aspx">SRG-OS-999999</ns10:reference>
@@ -121125,6 +121538,8 @@ service_command disable bluetooth
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - bluetooth
   tags:
@@ -121139,7 +121554,6 @@ service_command disable bluetooth
     - NIST-800-53-AC-18(3)
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000331
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_bluetooth_disabled:def:1" />
@@ -122588,6 +123002,8 @@ service_command disable xinetd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - xinetd
   tags:
@@ -122599,7 +123015,6 @@ service_command disable xinetd
     - CCE-27046-2
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000203
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_xinetd_disabled:def:1" />
@@ -122984,7 +123399,10 @@ location:
 used in conjunction with the R-services, they can allow
 unauthenticated access to a system.</ns10:rationale>
           <ns10:fix id="no_rsh_trust_files" system="urn:xccdf:fix:script:sh">find /home -maxdepth 2 -type f -name .rhosts -exec rm -f '{}' \;
-rm -f /etc/hosts.equiv
+
+if [ -f /etc/hosts.equiv ]; then
+	/bin/rm -f /etc/hosts.equiv
+fi
 </ns10:fix>
           <ns10:fix complexity="low" disruption="low" id="no_rsh_trust_files" strategy="restrict" system="urn:xccdf:fix:script:ansible">- block:
     - name: "Detect shosts.equiv Files on the System"
@@ -123094,6 +123512,8 @@ service_command disable ypbind
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - ypbind
   tags:
@@ -123105,7 +123525,6 @@ service_command disable ypbind
     - CCE-26894-6
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000221
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_ypbind_disabled:def:1" />
@@ -123183,6 +123602,8 @@ service_command disable tftp
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - tftp
   tags:
@@ -123194,7 +123615,6 @@ service_command disable tftp
     - CCE-27055-3
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000223
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_tftp_disabled:def:1" />
@@ -123447,6 +123867,8 @@ service_command disable abrtd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - abrtd
   tags:
@@ -123458,7 +123880,6 @@ service_command disable abrtd
     - CCE-27247-6
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000261
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_abrtd_disabled:def:1" />
@@ -123489,6 +123910,8 @@ service_command disable acpid
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - acpid
   tags:
@@ -123499,7 +123922,6 @@ service_command disable acpid
     - low_disruption
     - CCE-27061-1
     - NIST-800-53-CM-7
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_acpid_disabled:def:1" />
@@ -123530,6 +123952,8 @@ service_command disable certmonger
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - certmonger
   tags:
@@ -123540,7 +123964,6 @@ service_command disable certmonger
     - low_disruption
     - CCE-27267-4
     - NIST-800-53-CM-7
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_certmonger_disabled:def:1" />
@@ -123570,6 +123993,8 @@ service_command disable cgconfig
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - cgconfig
   tags:
@@ -123580,7 +124005,6 @@ service_command disable cgconfig
     - low_disruption
     - CCE-27250-0
     - NIST-800-53-CM-7
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_cgconfig_disabled:def:1" />
@@ -123609,6 +124033,8 @@ service_command disable cgred
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - cgred
   tags:
@@ -123619,7 +124045,6 @@ service_command disable cgred
     - low_disruption
     - CCE-27252-6
     - NIST-800-53-CM-7
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_cgred_disabled:def:1" />
@@ -123650,6 +124075,8 @@ service_command disable cpuspeed
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - cpuspeed
   tags:
@@ -123660,7 +124087,6 @@ service_command disable cpuspeed
     - low_disruption
     - CCE-26973-8
     - NIST-800-53-CM-7
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_cpuspeed_disabled:def:1" />
@@ -123693,6 +124119,8 @@ service_command disable haldaemon
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - haldaemon
   tags:
@@ -123703,7 +124131,6 @@ service_command disable haldaemon
     - low_disruption
     - CCE-27086-8
     - NIST-800-53-CM-7
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_haldaemon_disabled:def:1" />
@@ -123773,6 +124200,8 @@ service_command disable kdump
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - kdump
   tags:
@@ -123783,7 +124212,6 @@ service_command disable kdump
     - low_disruption
     - CCE-26850-8
     - NIST-800-53-CM-7
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_kdump_disabled:def:1" />
@@ -123811,6 +124239,8 @@ service_command disable mdmonitor
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - mdmonitor
   tags:
@@ -123821,7 +124251,6 @@ service_command disable mdmonitor
     - low_disruption
     - CCE-27193-2
     - NIST-800-53-CM-7
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_mdmonitor_disabled:def:1" />
@@ -123855,6 +124284,8 @@ service_command disable messagebus
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - messagebus
   tags:
@@ -123865,7 +124296,6 @@ service_command disable messagebus
     - low_disruption
     - CCE-26913-4
     - NIST-800-53-CM-7
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_messagebus_disabled:def:1" />
@@ -123899,6 +124329,8 @@ service_command disable netconsole
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - netconsole
   tags:
@@ -123910,7 +124342,6 @@ service_command disable netconsole
     - CCE-27254-2
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000289
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_netconsole_disabled:def:1" />
@@ -123946,6 +124377,8 @@ service_command disable ntpdate
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - ntpdate
   tags:
@@ -123957,7 +124390,6 @@ service_command disable ntpdate
     - CCE-27256-7
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000265
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_ntpdate_disabled:def:1" />
@@ -123992,6 +124424,8 @@ service_command disable oddjobd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - oddjobd
   tags:
@@ -124003,7 +124437,6 @@ service_command disable oddjobd
     - CCE-27257-5
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000266
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_oddjobd_disabled:def:1" />
@@ -124033,6 +124466,8 @@ service_command disable portreserve
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - portreserve
   tags:
@@ -124043,7 +124478,6 @@ service_command disable portreserve
     - low_disruption
     - CCE-27258-3
     - NIST-800-53-CM-7
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_portreserve_disabled:def:1" />
@@ -124122,6 +124556,8 @@ service_command disable qpidd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - qpidd
   tags:
@@ -124133,7 +124569,6 @@ service_command disable qpidd
     - CCE-26928-2
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000267
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_qpidd_disabled:def:1" />
@@ -124167,6 +124602,8 @@ service_command disable quota_nld
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - quota_nld
   tags:
@@ -124177,7 +124614,6 @@ service_command disable quota_nld
     - low_disruption
     - CCE-27260-9
     - NIST-800-53-CM-7
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_quota_nld_disabled:def:1" />
@@ -124213,6 +124649,8 @@ service_command disable rdisc
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - rdisc
   tags:
@@ -124225,7 +124663,6 @@ service_command disable rdisc
     - NIST-800-53-AC-4
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000268
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_rdisc_disabled:def:1" />
@@ -124260,6 +124697,8 @@ service_command disable rhnsd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - rhnsd
   tags:
@@ -124271,7 +124710,6 @@ service_command disable rhnsd
     - CCE-26846-6
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000009
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_rhnsd_disabled:def:1" />
@@ -124303,6 +124741,8 @@ service_command disable rhsmcertd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - rhsmcertd
   tags:
@@ -124313,7 +124753,6 @@ service_command disable rhsmcertd
     - low_disruption
     - CCE-27262-5
     - NIST-800-53-CM-7
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_rhsmcertd_disabled:def:1" />
@@ -124346,6 +124785,8 @@ service_command disable saslauthd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - saslauthd
   tags:
@@ -124356,7 +124797,6 @@ service_command disable saslauthd
     - low_disruption
     - CCE-27263-3
     - NIST-800-53-CM-7
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_saslauthd_disabled:def:1" />
@@ -124387,6 +124827,8 @@ service_command disable smartd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - smartd
   tags:
@@ -124397,7 +124839,6 @@ service_command disable smartd
     - low_disruption
     - CCE-26853-2
     - NIST-800-53-CM-7
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_smartd_disabled:def:1" />
@@ -124428,6 +124869,8 @@ service_command disable sysstat
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - sysstat
   tags:
@@ -124438,7 +124881,6 @@ service_command disable sysstat
     - low_disruption
     - CCE-27265-8
     - NIST-800-53-CM-7
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_sysstat_disabled:def:1" />
@@ -124539,6 +124981,8 @@ service_command disable atd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - atd
   tags:
@@ -124550,7 +124994,6 @@ service_command disable atd
     - CCE-27249-2
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000262
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_atd_disabled:def:1" />
@@ -124577,6 +125020,8 @@ service_command disable sshd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - sshd
   tags:
@@ -124586,7 +125031,6 @@ service_command disable sshd
     - low_complexity
     - low_disruption
     - CCE-27054-6
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_sshd_disabled:def:1" />
@@ -125321,9 +125765,6 @@ For example:
 memcache_timeout = 86400
 </html:pre>
 </ns10:description>
-          <ns10:reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">IA-5(13)</ns10:reference>
-          <ns10:reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx">CCI-002007</ns10:reference>
-          <ns10:reference href="http://iase.disa.mil/stigs/os/general/Pages/index.aspx">SRG-OS-000383-GPOS-00166</ns10:reference>
           <ns10:reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">IA-5(10)</ns10:reference>
           <ns10:reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx">CCI-002007</ns10:reference>
           <ns10:rationale xml:lang="en-US">
@@ -125343,7 +125784,6 @@ authentication information may be questionable.
     - unknown_strategy
     - low_complexity
     - medium_disruption
-    - NIST-800-53-IA-5(13)
     - NIST-800-53-IA-5(10)
 </ns10:fix>
           <ns10:check system="http://scap.nist.gov/schema/ocil/2">
@@ -125363,9 +125803,6 @@ offline_credentials_expiration = 1
 </ns10:description>
           <ns10:reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">IA-5(13)</ns10:reference>
           <ns10:reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx">CCI-002007</ns10:reference>
-          <ns10:reference href="http://iase.disa.mil/stigs/os/general/Pages/index.aspx">SRG-OS-000383-GPOS-00166</ns10:reference>
-          <ns10:reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">IA-5(13)</ns10:reference>
-          <ns10:reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx">CCI-002007</ns10:reference>
           <ns10:rationale xml:lang="en-US">
 If cached authentication information is out-of-date, the validity of the
 authentication information may be questionable.
@@ -125383,7 +125820,6 @@ authentication information may be questionable.
     - unknown_strategy
     - low_complexity
     - medium_disruption
-    - NIST-800-53-IA-5(13)
     - NIST-800-53-IA-5(13)
 </ns10:fix>
           <ns10:check system="http://scap.nist.gov/schema/ocil/2">
@@ -125519,6 +125955,8 @@ service_command disable avahi-daemon
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - avahi-daemon
   tags:
@@ -125530,7 +125968,6 @@ service_command disable avahi-daemon
     - CCE-27087-6
     - NIST-800-53-CM-7
     - DISA-STIG-RHEL-06-000246
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_avahi-daemon_disabled:def:1" />
@@ -125654,6 +126091,8 @@ service_command disable cups
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - cups
   tags:
@@ -125664,7 +126103,6 @@ service_command disable cups
     - low_disruption
     - CCE-26899-5
     - NIST-800-53-CM-7
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_cups_disabled:def:1" />
@@ -125739,6 +126177,8 @@ service_command disable dhcpd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - dhcpd
   tags:
@@ -125749,7 +126189,6 @@ service_command disable dhcpd
     - low_disruption
     - CCE-27074-4
     - NIST-800-53-CM-7
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_dhcpd_disabled:def:1" />
@@ -126266,6 +126705,8 @@ service_command disable nfslock
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - nfslock
   tags:
@@ -126275,7 +126716,6 @@ service_command disable nfslock
     - low_complexity
     - low_disruption
     - CCE-27104-9
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_nfslock_disabled:def:1" />
@@ -126300,6 +126740,8 @@ service_command disable rpcgssd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - rpcgssd
   tags:
@@ -126309,7 +126751,6 @@ service_command disable rpcgssd
     - low_complexity
     - low_disruption
     - CCE-26864-9
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_rpcgssd_disabled:def:1" />
@@ -126332,6 +126773,8 @@ service_command disable rpcidmapd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - rpcidmapd
   tags:
@@ -126341,7 +126784,6 @@ service_command disable rpcidmapd
     - low_complexity
     - low_disruption
     - CCE-26870-6
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_rpcidmapd_disabled:def:1" />
@@ -126364,6 +126806,8 @@ service_command disable rpcbind
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - rpcbind
   tags:
@@ -126373,7 +126817,6 @@ service_command disable rpcbind
     - low_complexity
     - low_disruption
     - CCE-27430-8
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_rpcbind_disabled:def:1" />
@@ -126398,6 +126841,8 @@ service_command disable netfs
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - netfs
   tags:
@@ -126407,7 +126852,6 @@ service_command disable netfs
     - low_complexity
     - low_disruption
     - CCE-27137-9
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_netfs_disabled:def:1" />
@@ -126499,6 +126943,8 @@ service_command disable nfs
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - nfs
   tags:
@@ -126508,7 +126954,6 @@ service_command disable nfs
     - low_complexity
     - low_disruption
     - CCE-27199-9
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_nfs_disabled:def:1" />
@@ -126536,6 +126981,8 @@ service_command disable rpcsvcgssd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - rpcsvcgssd
   tags:
@@ -126545,7 +126992,6 @@ service_command disable rpcsvcgssd
     - low_complexity
     - low_disruption
     - CCE-27122-1
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_rpcsvcgssd_disabled:def:1" />
@@ -126692,6 +127138,8 @@ service_command disable named
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - named
   tags:
@@ -126702,7 +127150,6 @@ service_command disable named
     - low_disruption
     - CCE-26873-0
     - NIST-800-53-CM-7
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_named_disabled:def:1" />
@@ -126873,6 +127320,8 @@ service_command disable vsftpd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - vsftpd
   tags:
@@ -126883,7 +127332,6 @@ service_command disable vsftpd
     - low_disruption
     - CCE-26948-0
     - NIST-800-53-CM-7
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_vsftpd_disabled:def:1" />
@@ -127120,6 +127568,8 @@ service_command disable httpd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - httpd
   tags:
@@ -127130,7 +127580,6 @@ service_command disable httpd
     - low_disruption
     - CCE-27075-1
     - NIST-800-53-CM-7
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_httpd_disabled:def:1" />
@@ -127590,6 +128039,8 @@ service_command disable dovecot
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - dovecot
   tags:
@@ -127599,7 +128050,6 @@ service_command disable dovecot
     - low_complexity
     - low_disruption
     - CCE-26922-5
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_dovecot_disabled:def:1" />
@@ -127743,6 +128193,8 @@ service_command disable smb
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - smb
   tags:
@@ -127752,7 +128204,6 @@ service_command disable smb
     - low_complexity
     - low_disruption
     - CCE-27143-7
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_smb_disabled:def:1" />
@@ -127985,6 +128436,8 @@ service_command disable squid
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - squid
   tags:
@@ -127994,7 +128447,6 @@ service_command disable squid
     - low_complexity
     - low_disruption
     - CCE-27146-0
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_squid_disabled:def:1" />
@@ -128069,6 +128521,8 @@ service_command disable snmpd
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - snmpd
   tags:
@@ -128078,7 +128532,6 @@ service_command disable snmpd
     - low_complexity
     - low_disruption
     - CCE-26906-8
-
 </ns10:fix>
           <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
             <ns10:check-content-ref href="ssg-rhel6-oval.xml" name="oval:ssg-service_snmpd_disabled:def:1" />

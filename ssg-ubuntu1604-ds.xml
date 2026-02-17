@@ -22,13 +22,13 @@
       <ds:component-ref id="scap_org.open-scap_cref_ssg-ubuntu1604-cpe-oval.xml" xlink:href="#scap_org.open-scap_comp_ssg-ubuntu1604-cpe-oval.xml"/>
     </ds:checks>
   </ds:data-stream>
-  <ds:component id="scap_org.open-scap_comp_ssg-ubuntu1604-oval.xml" timestamp="2018-01-03T14:23:04">
+  <ds:component id="scap_org.open-scap_comp_ssg-ubuntu1604-oval.xml" timestamp="2018-03-02T14:09:58">
     <ns0:oval_definitions xmlns:ns0="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ns2="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ns3="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:ns4="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:ns5="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
       <ns0:generator>
         <ns2:product_name>combine-ovals.py from SCAP Security Guide</ns2:product_name>
-        <ns2:product_version>ssg: 0.1.37, python: 2.7.14</ns2:product_version>
+        <ns2:product_version>ssg: 0.1.38, python: 2.7.14</ns2:product_version>
         <ns2:schema_version>5.11</ns2:schema_version>
-        <ns2:timestamp>2018-01-03T14:22:52</ns2:timestamp>
+        <ns2:timestamp>2018-03-02T14:09:47</ns2:timestamp>
       </ns0:generator>
       <ns0:definitions>
         <ns0:definition class="compliance" id="oval:ssg-grub2_enable_iommu_force:def:1" version="1">
@@ -3775,12 +3775,12 @@ This should be disabled.</ns0:description>
           <ns0:filter action="exclude">oval:ssg-state_accounts_root_path_dirs_symlink:ste:1</ns0:filter>
         </ns5:file_object>
         <ns3:textfilecontent54_object id="oval:ssg-obj_unauthenticated_apt_conf:obj:1" version="1">
-          <ns3:filepath operation="pattern match">/etc/apt/apt/apt.conf</ns3:filepath>
+          <ns3:filepath operation="equals">/etc/apt/apt/apt.conf</ns3:filepath>
           <ns3:pattern operation="pattern match">^[\s]*APT::Get::AllowUnauthenticated(=|[\s]+)(yes|true|True);.*$</ns3:pattern>
           <ns3:instance datatype="int">1</ns3:instance>
         </ns3:textfilecontent54_object>
         <ns3:textfilecontent54_object id="oval:ssg-obj_unauthenticated_apt_conf_d:obj:1" version="1">
-          <ns3:filepath operation="pattern match">/etc/apt/apt.conf.d/\*</ns3:filepath>
+          <ns3:filepath operation="pattern match">^/etc/apt/apt.conf.d/.*</ns3:filepath>
           <ns3:pattern operation="pattern match">^[\s]*APT::Get::AllowUnauthenticated(=|[\s]+)(yes|true|True);.*$</ns3:pattern>
           <ns3:instance datatype="int">1</ns3:instance>
         </ns3:textfilecontent54_object>
@@ -4643,15 +4643,15 @@ This should be disabled.</ns0:description>
             <ns0:object_component item_field="subexpression" object_ref="oval:ssg-object_rfg_rsyslog_include_config_value:obj:1"/>
           </ns0:glob_to_regex>
         </ns0:local_variable>
-        <ns0:local_variable comment="Locations of all rsyslog configuration files concatenated into string" datatype="string" id="oval:ssg-var_rfg_all_log_files_as_string:var:1" version="1">
+        <ns0:local_variable comment="Locations of all rsyslog configuration files concatenated into string" datatype="string" id="oval:ssg-var_rfg_all_log_files_as_string_regex:var:1" version="1">
           <ns0:concat>
             <ns0:variable_component var_ref="oval:ssg-var_rfg_include_config_regex:var:1"/>
-            <ns0:literal_component datatype="string">%/etc/rsyslog.conf</ns0:literal_component>
+            <ns0:literal_component datatype="string">%^/etc/rsyslog.conf$</ns0:literal_component>
           </ns0:concat>
         </ns0:local_variable>
         <ns0:local_variable comment="Locations of all rsyslog configuration files as collection" datatype="string" id="oval:ssg-var_rfg_all_log_files_as_collection:var:1" version="1">
           <ns0:split delimiter="%">
-            <ns0:variable_component var_ref="oval:ssg-var_rfg_all_log_files_as_string:var:1"/>
+            <ns0:variable_component var_ref="oval:ssg-var_rfg_all_log_files_as_string_regex:var:1"/>
           </ns0:split>
         </ns0:local_variable>
         <ns0:local_variable comment="File paths of all rsyslog configuration files" datatype="string" id="oval:ssg-var_rfg_log_files_paths:var:1" version="1">
@@ -4662,15 +4662,15 @@ This should be disabled.</ns0:description>
             <ns0:object_component item_field="subexpression" object_ref="oval:ssg-object_rfp_rsyslog_include_config_value:obj:1"/>
           </ns0:glob_to_regex>
         </ns0:local_variable>
-        <ns0:local_variable comment="Locations of all rsyslog configuration files concatenated into string" datatype="string" id="oval:ssg-var_rfp_all_log_files_as_string:var:1" version="1">
+        <ns0:local_variable comment="Locations of all rsyslog configuration files concatenated into string" datatype="string" id="oval:ssg-var_rfp_all_log_files_as_string_regex:var:1" version="1">
           <ns0:concat>
             <ns0:variable_component var_ref="oval:ssg-var_rfp_include_config_regex:var:1"/>
-            <ns0:literal_component datatype="string">%/etc/rsyslog.conf</ns0:literal_component>
+            <ns0:literal_component datatype="string">%^/etc/rsyslog.conf$</ns0:literal_component>
           </ns0:concat>
         </ns0:local_variable>
         <ns0:local_variable comment="Locations of all rsyslog configuration files as collection" datatype="string" id="oval:ssg-var_rfp_all_log_files_as_collection:var:1" version="1">
           <ns0:split delimiter="%">
-            <ns0:variable_component var_ref="oval:ssg-var_rfp_all_log_files_as_string:var:1"/>
+            <ns0:variable_component var_ref="oval:ssg-var_rfp_all_log_files_as_string_regex:var:1"/>
           </ns0:split>
         </ns0:local_variable>
         <ns0:local_variable comment="File paths of all rsyslog configuration files" datatype="string" id="oval:ssg-var_rfp_log_files_paths:var:1" version="1">
@@ -4810,15 +4810,15 @@ This should be disabled.</ns0:description>
             <ns0:object_component item_field="subexpression" object_ref="oval:ssg-object_rfo_rsyslog_include_config_value:obj:1"/>
           </ns0:glob_to_regex>
         </ns0:local_variable>
-        <ns0:local_variable comment="Locations of all rsyslog configuration files concatenated into string" datatype="string" id="oval:ssg-var_rfo_all_log_files_as_string:var:1" version="1">
+        <ns0:local_variable comment="Locations of all rsyslog configuration files concatenated into string" datatype="string" id="oval:ssg-var_rfo_all_log_files_as_string_regex:var:1" version="1">
           <ns0:concat>
             <ns0:variable_component var_ref="oval:ssg-var_rfo_include_config_regex:var:1"/>
-            <ns0:literal_component datatype="string">%/etc/rsyslog.conf</ns0:literal_component>
+            <ns0:literal_component datatype="string">%^/etc/rsyslog.conf$</ns0:literal_component>
           </ns0:concat>
         </ns0:local_variable>
         <ns0:local_variable comment="Locations of all rsyslog configuration files as collection" datatype="string" id="oval:ssg-var_rfo_all_log_files_as_collection:var:1" version="1">
           <ns0:split delimiter="%">
-            <ns0:variable_component var_ref="oval:ssg-var_rfo_all_log_files_as_string:var:1"/>
+            <ns0:variable_component var_ref="oval:ssg-var_rfo_all_log_files_as_string_regex:var:1"/>
           </ns0:split>
         </ns0:local_variable>
         <ns0:local_variable comment="File paths of all rsyslog configuration files" datatype="string" id="oval:ssg-var_rfo_log_files_paths:var:1" version="1">
@@ -4831,13 +4831,13 @@ This should be disabled.</ns0:description>
       </ns0:variables>
     </ns0:oval_definitions>
   </ds:component>
-  <ds:component id="scap_org.open-scap_comp_ssg-ubuntu1604-ocil.xml" timestamp="2018-01-03T14:23:04">
+  <ds:component id="scap_org.open-scap_comp_ssg-ubuntu1604-ocil.xml" timestamp="2018-03-02T14:09:59">
     <ns0:ocil xmlns:ns0="http://scap.nist.gov/schema/ocil/2.0">
       <ns0:generator>
         <ns0:product_name>xccdf-create-ocil.xslt from SCAP Security Guide</ns0:product_name>
-        <ns0:product_version>ssg: 0.1.37</ns0:product_version>
+        <ns0:product_version>ssg: 0.1.38</ns0:product_version>
         <ns0:schema_version>2.0</ns0:schema_version>
-        <ns0:timestamp>2018-01-03T14:23:02Z</ns0:timestamp>
+        <ns0:timestamp>2018-03-02T14:09:50Z</ns0:timestamp>
       </ns0:generator>
       <ns0:questionnaires>
         <ns0:questionnaire id="ocil:ssg-file_permissions_boot_system_map_ocil:questionnaire:1">
@@ -5777,9 +5777,9 @@ ClientAliveCountMax 0
       </ns0:questions>
     </ns0:ocil>
   </ds:component>
-  <ds:component id="scap_org.open-scap_comp_ssg-ubuntu1604-xccdf-1.2.xml" timestamp="2018-01-03T14:23:04">
+  <ds:component id="scap_org.open-scap_comp_ssg-ubuntu1604-xccdf-1.2.xml" timestamp="2018-03-02T14:09:58">
     <Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_org.ssgproject.content_benchmark_UBUNTU-XENIAL" resolved="1" xml:lang="en-US" style="SCAP_1.2">
-      <status date="2018-01-03">draft</status>
+      <status date="2018-03-02">draft</status>
       <title xml:lang="en-US">Guide to the Secure Configuration of Ubuntu 1604</title>
       <description xml:lang="en-US">This guide presents a catalog of security-relevant
 configuration settings for Ubuntu 1604. It is a rendering of
@@ -5850,13 +5850,14 @@ trademarks or trademarks of Red Hat, Inc. in the United States and other
 countries. All other names are registered trademarks or trademarks of their
 respective companies.</rear-matter>
       <platform idref="cpe:/o:canonical:ubuntu_linux:16.04"/>
-      <version update="https://github.com/OpenSCAP/scap-security-guide/releases/latest">0.1.37</version>
+      <version update="https://github.com/OpenSCAP/scap-security-guide/releases/latest">0.1.38</version>
       <metadata>
         <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">SCAP Security Guide Project</dc:publisher>
         <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">SCAP Security Guide Project</dc:creator>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Frank J Cameron (CAM1244) &lt;cameron@ctc.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">0x66656c6978 &lt;0x66656c6978@users.noreply.github.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Gabe Alford &lt;redhatrises@gmail.com&gt;</dc:contributor>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Firas AlShafei &lt;firas.alshafei@us.abb.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Christopher Anderson &lt;cba@fedoraproject.org&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Chuck Atkins &lt;chuck.atkins@kitware.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Ryan Ballanger &lt;root@rballang-admin-2.fastenal.com&gt;</dc:contributor>
@@ -5886,7 +5887,7 @@ respective companies.</rear-matter>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Rebekah Hayes &lt;rhayes@corp.rivierautilities.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Trey Henefield &lt;thenefield@gmail.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">hex2a &lt;hex2a@users.noreply.github.com&gt;</dc:contributor>
-        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">John Hooks &lt;jhooks@starscream.pa.jhbcomputers.com&gt;</dc:contributor>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">John Hooks &lt;hooksie11@gmail.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Robin Price II &lt;robin@redhat.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Jeremiah Jahn &lt;jeremiah@goodinassociates.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Stephan Joerrens &lt;Stephan.Joerrens@fiduciagad.de&gt;</dc:contributor>
@@ -5903,6 +5904,7 @@ respective companies.</rear-matter>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Michael McConachie &lt;michael@redhat.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Khary Mendez &lt;kharyam@gmail.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Rodney Mercer &lt;rmercer@harris.com&gt;</dc:contributor>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Matt Micene &lt;nzwulfin@gmail.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Brian Millett &lt;bmillett@gmail.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">mmosel &lt;mmosel@kde.example.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Zbynek Moravec &lt;zmoravec@redhat.com&gt;</dc:contributor>
@@ -5911,12 +5913,13 @@ respective companies.</rear-matter>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Joe Nall &lt;joe@nall.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Neiloy &lt;neiloy@redhat.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Michele Newman &lt;mnewman@redhat.com&gt;</dc:contributor>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">OnceUponALoop &lt;firas.alshafei@gmail.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Kaustubh Padegaonkar &lt;theTuxRacer@gmail.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Michael Palmiotto &lt;mpalmiotto@tresys.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Max R.D. Parmer &lt;maxp@trystero.is&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">pcactr &lt;paul.c.arnold4.ctr@mail.mil&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Kenneth Peeples &lt;kennethwpeeples@gmail.com&gt;</dc:contributor>
-        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Nathan Peters &lt;petna01@ca.com&gt;</dc:contributor>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Nathan Peters &lt;Nathaniel.Peters@ca.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Frank Lin PIAT &lt;fpiat@klabs.be&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Stefan Pietsch &lt;mail.ipv4v6+gh@gmail.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Martin Preisler &lt;mpreisle@redhat.com&gt;</dc:contributor>
@@ -5926,6 +5929,7 @@ respective companies.</rear-matter>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Rick Renshaw &lt;Richard_Renshaw@xtoenergy.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Chris Reynolds &lt;c.reynolds82@gmail.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Pat Riehecky &lt;riehecky@fnal.gov&gt;</dc:contributor>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">rlucente-se-jboss &lt;rlucente@redhat.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Joshua Roys &lt;roysjosh@gmail.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">rrenshaw &lt;bofh69@yahoo.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Chris Ruffalo &lt;chris.ruffalo@gmail.com&gt;</dc:contributor>
@@ -5958,8 +5962,8 @@ respective companies.</rear-matter>
       </metadata>
       <model system="urn:xccdf:scoring:default"/>
       <Profile id="xccdf_org.ssgproject.content_profile_common">
-        <title xml:lang="en-US">Common Profile for General-Purpose Ubuntu Systems</title>
-        <description xml:lang="en-US">This profile contains items common to general-purpose Ubuntu 1604 installations.</description>
+        <title xml:lang="en-US" override="true">Common Profile for General-Purpose Ubuntu Systems</title>
+        <description xml:lang="en-US" override="true">This profile contains items common to general-purpose Ubuntu 1604 installations.</description>
         <select idref="xccdf_org.ssgproject.content_rule_partition_for_tmp" selected="true"/>
         <select idref="xccdf_org.ssgproject.content_rule_partition_for_var" selected="true"/>
         <select idref="xccdf_org.ssgproject.content_rule_partition_for_var_log" selected="true"/>
@@ -6022,8 +6026,8 @@ respective companies.</rear-matter>
         <refine-value idref="xccdf_org.ssgproject.content_value_sshd_idle_timeout_value" selector="5_minutes"/>
       </Profile>
       <Profile id="xccdf_org.ssgproject.content_profile_anssi_np_nt28_minimal">
-        <title xml:lang="en-US">Profile for ANSSI DAT-NT28 Minimal Level</title>
-        <description xml:lang="en-US">This profile contains items to be applied systematically.</description>
+        <title xml:lang="en-US" override="true">Profile for ANSSI DAT-NT28 Minimal Level</title>
+        <description xml:lang="en-US" override="true">This profile contains items to be applied systematically.</description>
         <select idref="xccdf_org.ssgproject.content_rule_sudo_remove_nopasswd" selected="true"/>
         <select idref="xccdf_org.ssgproject.content_rule_sudo_remove_no_authenticate" selected="true"/>
         <select idref="xccdf_org.ssgproject.content_rule_package_telnetd_removed" selected="true"/>
@@ -6349,10 +6353,10 @@ do
 		# * existing rule contains all arguments from expected rule form (though can contain
 		#   them in arbitrary order)
 	
-		base_search=$(sed -e "/-a always,exit/!d" -e "/-F path=${sbinary_esc}$/!d"   \
-		    		  -e "/-F path=[^[:space:]]\+/!d" -e "/-F perm=.*/!d"       \
-				  -e "/-F auid&gt;=${min_auid}/!d" -e "/-F auid!=4294967295/!d"  \
-				  -e "/-k privileged/!d" $afile)
+		base_search=$(sed -e '/-a always,exit/!d' -e '/-F path='"${sbinary_esc}"'/!d' \
+				-e '/-F path=[^[:space:]]\+/!d'   -e '/-F perm=.*/!d'                 \
+				-e '/-F auid&gt;='"${min_auid}"'/!d' -e '/-F auid!=4294967295/!d'        \
+				-e '/-k privileged/!d' $afile)
 
 		# Increase the count of inspected files for this sbinary
 		count_of_inspected_files=$((count_of_inspected_files + 1))
@@ -6730,7 +6734,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -6917,6 +6921,19 @@ fi
 }
 </value>
         </Value>
+        <Value id="xccdf_org.ssgproject.content_value_function_die" hidden="true" prohibitChanges="true" operator="equals" type="string">
+          <title xml:lang="en-US">Remediation function die</title>
+          <description xml:lang="en-US">Shared bash remediation function. Not intended to be changed by tailoring.</description>
+          <value># Print a message to stderr and exit the shell
+# $1: The message to print.
+# $2: The error code (optional, default is 1)
+function die {
+	local _message="$1" _rc="${2:-1}"
+	printf '%s\n' "$_message" &gt;&amp;2
+	exit "$_rc"
+}
+</value>
+        </Value>
         <Value id="xccdf_org.ssgproject.content_value_function_firefox_js_setting" hidden="true" prohibitChanges="true" operator="equals" type="string">
           <title xml:lang="en-US">Remediation function firefox_js_setting</title>
           <description xml:lang="en-US">Shared bash remediation function. Not intended to be changed by tailoring.</description>
@@ -7076,7 +7093,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -7482,7 +7499,7 @@ then
 elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
-	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
 	# Check if particular audit rule is already defined
 	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
@@ -8098,7 +8115,7 @@ value of 0 is recommended.</description>
     <html:pre xmlns:html="http://www.w3.org/1999/xhtml" xml:space="preserve">fs.suid_dumpable = 0</html:pre>
             </description>
                 <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">SI-11</reference>
-                <reference href="fixme">1.6.1</reference>
+                <reference href="https://www.cisecurity.org/benchmark/ubuntu_linux/">1.6.1</reference>
                 <reference href="http://www.ssi.gouv.fr/administration/bonnes-pratiques/">NT28(R23)</reference>
                 <rationale xml:lang="en-US">The core dump of a setuid program is more likely to contain
 wve data, as the program itself runs with greater privileges than the
@@ -8151,7 +8168,7 @@ on 32-bit systems and controlled through <html:code xmlns:html="http://www.w3.or
     <html:pre xmlns:html="http://www.w3.org/1999/xhtml" xml:space="preserve">kernel.randomize_va_space = 2</html:pre>
             </description>
                 <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">SC-30(2)</reference>
-                <reference href="fixme">1.6.1</reference>
+                <reference href="https://www.cisecurity.org/benchmark/ubuntu_linux/">1.6.1</reference>
                 <reference href="http://www.ssi.gouv.fr/administration/bonnes-pratiques/">NT28(R23)</reference>
                 <rationale xml:lang="en-US"> Address space layout randomization (ASLR) makes it more difficult
 for an attacker to predict the location of attack code they have introduced
@@ -8394,7 +8411,7 @@ partitioning.</description>
     <html:pre xmlns:html="http://www.w3.org/1999/xhtml" xml:space="preserve">fs.protected_symlinks = 1</html:pre>
           </description>
               <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">SI-11</reference>
-              <reference href="fixme">1.6.1</reference>
+              <reference href="https://www.cisecurity.org/benchmark/ubuntu_linux/">1.6.1</reference>
               <reference href="http://www.ssi.gouv.fr/administration/bonnes-pratiques/">NT28(R23)</reference>
               <rationale xml:lang="en-US">Disallowing such symlink mitigate vulnerabilities based on insecure file system
 accessed by privilegied programs, avoiding an exploitation vector exploiting unsafe use of
@@ -8432,7 +8449,7 @@ accessed by privilegied programs, avoiding an exploitation vector exploiting uns
     <html:pre xmlns:html="http://www.w3.org/1999/xhtml" xml:space="preserve">fs.protected_hardlinks = 1</html:pre>
           </description>
               <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">SI-11</reference>
-              <reference href="fixme">1.6.1</reference>
+              <reference href="https://www.cisecurity.org/benchmark/ubuntu_linux/">1.6.1</reference>
               <reference href="http://www.ssi.gouv.fr/administration/bonnes-pratiques/">NT28(R23)</reference>
               <rationale xml:lang="en-US">Disallowing such hardlink mitigate vulnerabilities based on insecure file system
 accessed by privilegied programs, avoiding an exploitation vector exploiting unsafe use of
@@ -8581,7 +8598,7 @@ Rsyslog is installed by default.
             <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">AU-9(2)</reference>
             <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx">CCI-001311</reference>
             <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx">CCI-001312</reference>
-            <reference href="fixme">5.1.1</reference>
+            <reference href="https://www.cisecurity.org/benchmark/ubuntu_linux/">5.1.1</reference>
             <reference href="http://www.ssi.gouv.fr/administration/bonnes-pratiques/">NT28(R46)</reference>
             <reference href="http://www.ssi.gouv.fr/administration/bonnes-pratiques/">NT28(R5)</reference>
             <rationale xml:lang="en-US">
@@ -8635,7 +8652,7 @@ class install_rsyslog {
             <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx">CCI-001312</reference>
             <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx">CCI-001557</reference>
             <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx">CCI-001851</reference>
-            <reference href="fixme">5.1.2</reference>
+            <reference href="https://www.cisecurity.org/benchmark/ubuntu_linux/">5.1.2</reference>
             <reference href="http://www.ssi.gouv.fr/administration/bonnes-pratiques/">NT28(R46)</reference>
             <reference href="http://www.ssi.gouv.fr/administration/bonnes-pratiques/">NT28(R5)</reference>
             <rationale xml:lang="en-US">The <html:code xmlns:html="http://www.w3.org/1999/xhtml">rsyslog</html:code> service must be running in order to provide
@@ -8785,7 +8802,7 @@ run the following command to correct this:
               <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx">CCI-001314</reference>
               <reference href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf">Req-10.5.1</reference>
               <reference href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf">Req-10.5.2</reference>
-              <reference href="fixme">5.1.4</reference>
+              <reference href="https://www.cisecurity.org/benchmark/ubuntu_linux/">5.1.4</reference>
               <reference href="http://www.ssi.gouv.fr/administration/bonnes-pratiques/">NT28(R36)</reference>
               <rationale xml:lang="en-US">Log files can contain valuable information regarding system
 configuration. If the system log files are not protected unauthorized
@@ -8851,7 +8868,7 @@ To use RELP for log message delivery:
               <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx">CCI-001348</reference>
               <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx">CCI-000136</reference>
               <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx">CCI-001851</reference>
-              <reference href="fixme">5.1.5</reference>
+              <reference href="https://www.cisecurity.org/benchmark/ubuntu_linux/">5.1.5</reference>
               <reference href="http://www.ssi.gouv.fr/administration/bonnes-pratiques/">NT28(R5)</reference>
               <rationale xml:lang="en-US">A log server (loghost) receives syslog messages from one or more
 systems. This data can be used as an additional log source in the event a
@@ -8888,7 +8905,7 @@ If the system needs to act as a central log server, add the following lines to
 $InputTCPServerRun 514</html:pre>
 </description>
               <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">AU-9</reference>
-              <reference href="fixme">5.1.6</reference>
+              <reference href="https://www.cisecurity.org/benchmark/ubuntu_linux/">5.1.6</reference>
               <rationale xml:lang="en-US">
 If the system needs to act as a log server, this ensures that it can receive
 messages over a reliable TCP connection.
@@ -8904,7 +8921,7 @@ If the system needs to act as a central log server, add the following lines to
 $UDPServerRun 514</html:pre>
 </description>
               <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">AU-9</reference>
-              <reference href="fixme">5.1.6</reference>
+              <reference href="https://www.cisecurity.org/benchmark/ubuntu_linux/">5.1.6</reference>
               <rationale xml:lang="en-US">
 Many devices, such as switches, routers, and other Unix-like systems, may only support
 the traditional syslog transmission over UDP. If the system must act as a log server,
@@ -8922,7 +8939,7 @@ syslog-ng can be installed in replacement of rsyslog.
               <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">AU-9(2)</reference>
               <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx">CCI-001311</reference>
               <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx">CCI-001312</reference>
-              <reference href="fixme">5.1.1</reference>
+              <reference href="https://www.cisecurity.org/benchmark/ubuntu_linux/">5.1.1</reference>
               <reference href="http://www.ssi.gouv.fr/administration/bonnes-pratiques/">NT28(R46)</reference>
               <reference href="http://www.ssi.gouv.fr/administration/bonnes-pratiques/">NT28(R5)</reference>
               <rationale xml:lang="en-US">
@@ -8946,7 +8963,7 @@ system logging services.
               <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx">CCI-001312</reference>
               <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx">CCI-001557</reference>
               <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx">CCI-001851</reference>
-              <reference href="fixme">5.1.2</reference>
+              <reference href="https://www.cisecurity.org/benchmark/ubuntu_linux/">5.1.2</reference>
               <reference href="http://www.ssi.gouv.fr/administration/bonnes-pratiques/">NT28(R46)</reference>
               <reference href="http://www.ssi.gouv.fr/administration/bonnes-pratiques/">NT28(R5)</reference>
               <rationale xml:lang="en-US">The <html:code xmlns:html="http://www.w3.org/1999/xhtml">syslog-ng</html:code> service must be running in order to provide
@@ -9593,6 +9610,8 @@ remote access.
     name="{{item}}"
     enabled="no"
     state="stopped"
+  register: service_result
+  failed_when: "service_result|failed and ('Could not find the requested service' not in service_result.msg)"
   with_items:
     - sshd
   tags:
@@ -9601,7 +9620,6 @@ remote access.
     - disable_strategy
     - low_complexity
     - low_disruption
-
 </fix>
             <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <check-content-ref name="oval:ssg-service_sshd_disabled:def:1" href="ssg-ubuntu1604-oval.xml"/>
@@ -9752,13 +9770,13 @@ even in the event of misconfiguration elsewhere.
       </Group>
     </Benchmark>
   </ds:component>
-  <ds:component id="scap_org.open-scap_comp_ssg-ubuntu1604-cpe-oval.xml" timestamp="2018-01-03T14:23:04">
+  <ds:component id="scap_org.open-scap_comp_ssg-ubuntu1604-cpe-oval.xml" timestamp="2018-03-02T14:09:58">
     <ns0:oval_definitions xmlns:ns0="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ns2="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ns3="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:ns4="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:ns5="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
       <ns0:generator>
         <ns2:product_name>combine-ovals.py from SCAP Security Guide</ns2:product_name>
-        <ns2:product_version>ssg: 0.1.37, python: 2.7.14</ns2:product_version>
+        <ns2:product_version>ssg: 0.1.38, python: 2.7.14</ns2:product_version>
         <ns2:schema_version>5.11</ns2:schema_version>
-        <ns2:timestamp>2018-01-03T14:22:52</ns2:timestamp>
+        <ns2:timestamp>2018-03-02T14:09:47</ns2:timestamp>
       </ns0:generator>
       <ns0:definitions>
         <ns0:definition class="inventory" id="oval:ssg-installed_OS_is_centos6:def:1" version="2">
@@ -10344,7 +10362,7 @@ even in the event of misconfiguration elsewhere.
       </ns0:states>
     </ns0:oval_definitions>
   </ds:component>
-  <ds:component id="scap_org.open-scap_comp_ssg-ubuntu1604-cpe-dictionary.xml" timestamp="2018-01-03T14:23:04">
+  <ds:component id="scap_org.open-scap_comp_ssg-ubuntu1604-cpe-dictionary.xml" timestamp="2018-03-02T14:09:58">
     <ns0:cpe-list xmlns:ns0="http://cpe.mitre.org/dictionary/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd">
       <ns0:cpe-item name="cpe:/o:canonical:ubuntu_linux:16.04">
         <ns0:title xml:lang="en-us">Ubuntu release 16.04 (Xenial)</ns0:title>
