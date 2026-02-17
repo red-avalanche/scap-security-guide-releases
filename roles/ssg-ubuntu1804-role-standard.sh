@@ -6,7 +6,7 @@
 # This profile contains rules to ensure standard security baseline of an Ubuntu 18.04 system. Regardless of your system's workload all of these checks should pass.
 #
 # Benchmark ID:  UBUNTU-BIONIC
-# Benchmark Version:  0.1.42
+# Benchmark Version:  0.1.43
 #
 # XCCDF Version:  1.1
 #

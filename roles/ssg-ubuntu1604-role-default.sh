@@ -6,7 +6,7 @@
 # Not available
 #
 # Benchmark ID:  UBUNTU-XENIAL
-# Benchmark Version:  0.1.42
+# Benchmark Version:  0.1.43
 #
 # XCCDF Version:  1.1
 #

@@ -6,7 +6,7 @@
 # This profile contains items for GNU/Linux installations already protected by multiple higher level security stacks.
 #
 # Benchmark ID:  UBUNTU-TRUSTY
-# Benchmark Version:  0.1.42
+# Benchmark Version:  0.1.43
 #
 # XCCDF Version:  1.1
 #

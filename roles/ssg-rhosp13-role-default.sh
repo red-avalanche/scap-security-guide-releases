@@ -6,7 +6,7 @@
 # Not available
 #
 # Benchmark ID:  RHEL-13-OSP
-# Benchmark Version:  0.1.42
+# Benchmark Version:  0.1.43
 #
 # XCCDF Version:  1.1
 #

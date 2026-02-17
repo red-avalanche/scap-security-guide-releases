@@ -13,7 +13,7 @@
 # similar to the one mandated by US National Security Systems.
 #
 # Benchmark ID:  FEDORA
-# Benchmark Version:  0.1.42
+# Benchmark Version:  0.1.43
 #
 # XCCDF Version:  1.1
 #
@@ -29,9 +29,9 @@
 ###############################################################################
 
 ###############################################################################
-# BEGIN fix (1 / 175) for 'package_abrt_removed'
+# BEGIN fix (1 / 181) for 'package_abrt_removed'
 ###############################################################################
-(>&2 echo "Remediating rule 1/175: 'package_abrt_removed'")
+(>&2 echo "Remediating rule 1/181: 'package_abrt_removed'")
 # Function to remove packages on RHEL, Fedora, Debian, and possibly other systems.
 #
 # Example Call(s):
@@ -74,9 +74,9 @@ package_remove abrt
 # END fix for 'package_abrt_removed'
 
 ###############################################################################
-# BEGIN fix (2 / 175) for 'package_sendmail_removed'
+# BEGIN fix (2 / 181) for 'package_sendmail_removed'
 ###############################################################################
-(>&2 echo "Remediating rule 2/175: 'package_sendmail_removed'")
+(>&2 echo "Remediating rule 2/181: 'package_sendmail_removed'")
 # Function to remove packages on RHEL, Fedora, Debian, and possibly other systems.
 #
 # Example Call(s):
@@ -119,9 +119,9 @@ package_remove sendmail
 # END fix for 'package_sendmail_removed'
 
 ###############################################################################
-# BEGIN fix (3 / 175) for 'disable_host_auth'
+# BEGIN fix (3 / 181) for 'disable_host_auth'
 ###############################################################################
-(>&2 echo "Remediating rule 3/175: 'disable_host_auth'")
+(>&2 echo "Remediating rule 3/181: 'disable_host_auth'")
 grep -q ^HostbasedAuthentication /etc/ssh/sshd_config && \
   sed -i "s/HostbasedAuthentication.*/HostbasedAuthentication no/g" /etc/ssh/sshd_config
 if ! [ $? -eq 0 ]; then
@@ -131,9 +131,9 @@ fi
 # END fix for 'disable_host_auth'
 
 ###############################################################################
-# BEGIN fix (4 / 175) for 'sshd_disable_empty_passwords'
+# BEGIN fix (4 / 181) for 'sshd_disable_empty_passwords'
 ###############################################################################
-(>&2 echo "Remediating rule 4/175: 'sshd_disable_empty_passwords'")
+(>&2 echo "Remediating rule 4/181: 'sshd_disable_empty_passwords'")
 # Function to replace configuration setting in config file or add the configuration setting if
 # it does not exist.
 #
@@ -217,9 +217,9 @@ replace_or_append '/etc/ssh/sshd_config' '^PermitEmptyPasswords' 'no' '' '%s %s'
 # END fix for 'sshd_disable_empty_passwords'
 
 ###############################################################################
-# BEGIN fix (5 / 175) for 'sshd_disable_gssapi_auth'
+# BEGIN fix (5 / 181) for 'sshd_disable_gssapi_auth'
 ###############################################################################
-(>&2 echo "Remediating rule 5/175: 'sshd_disable_gssapi_auth'")
+(>&2 echo "Remediating rule 5/181: 'sshd_disable_gssapi_auth'")
 # Function to replace configuration setting in config file or add the configuration setting if
 # it does not exist.
 #
@@ -303,9 +303,9 @@ replace_or_append '/etc/ssh/sshd_config' '^GSSAPIAuthentication' 'no' '' '%s %s'
 # END fix for 'sshd_disable_gssapi_auth'
 
 ###############################################################################
-# BEGIN fix (6 / 175) for 'sshd_disable_kerb_auth'
+# BEGIN fix (6 / 181) for 'sshd_disable_kerb_auth'
 ###############################################################################
-(>&2 echo "Remediating rule 6/175: 'sshd_disable_kerb_auth'")
+(>&2 echo "Remediating rule 6/181: 'sshd_disable_kerb_auth'")
 # Function to replace configuration setting in config file or add the configuration setting if
 # it does not exist.
 #
@@ -389,9 +389,9 @@ replace_or_append '/etc/ssh/sshd_config' '^KerberosAuthentication' 'no' '' '%s %
 # END fix for 'sshd_disable_kerb_auth'
 
 ###############################################################################
-# BEGIN fix (7 / 175) for 'sshd_disable_rhosts'
+# BEGIN fix (7 / 181) for 'sshd_disable_rhosts'
 ###############################################################################
-(>&2 echo "Remediating rule 7/175: 'sshd_disable_rhosts'")
+(>&2 echo "Remediating rule 7/181: 'sshd_disable_rhosts'")
 # Function to replace configuration setting in config file or add the configuration setting if
 # it does not exist.
 #
@@ -475,95 +475,9 @@ replace_or_append '/etc/ssh/sshd_config' '^IgnoreRhosts' 'yes' '' '%s %s'
 # END fix for 'sshd_disable_rhosts'
 
 ###############################################################################
-# BEGIN fix (8 / 175) for 'sshd_disable_rhosts_rsa'
+# BEGIN fix (8 / 181) for 'sshd_disable_root_login'
 ###############################################################################
-(>&2 echo "Remediating rule 8/175: 'sshd_disable_rhosts_rsa'")
-# Function to replace configuration setting in config file or add the configuration setting if
-# it does not exist.
-#
-# Expects arguments:
-#
-# config_file:		Configuration file that will be modified
-# key:			Configuration option to change
-# value:		Value of the configuration option to change
-# cce:			The CCE identifier or '@CCENUM@' if no CCE identifier exists
-# format:		The printf-like format string that will be given stripped key and value as arguments,
-#			so e.g. '%s=%s' will result in key=value subsitution (i.e. without spaces around =)
-#
-# Optional arugments:
-#
-# format:		Optional argument to specify the format of how key/value should be
-# 			modified/appended in the configuration file. The default is key = value.
-#
-# Example Call(s):
-#
-#     With default format of 'key = value':
-#     replace_or_append '/etc/sysctl.conf' '^kernel.randomize_va_space' '2' '@CCENUM@'
-#
-#     With custom key/value format:
-#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' 'disabled' '@CCENUM@' '%s=%s'
-#
-#     With a variable:
-#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' $var_selinux_state '@CCENUM@' '%s=%s'
-#
-function replace_or_append {
-  local default_format='%s = %s' case_insensitive_mode=yes sed_case_insensitive_option='' grep_case_insensitive_option=''
-  local config_file=$1
-  local key=$2
-  local value=$3
-  local cce=$4
-  local format=$5
-
-  if [ "$case_insensitive_mode" = yes ]; then
-    sed_case_insensitive_option="i"
-    grep_case_insensitive_option="-i"
-  fi
-  [ -n "$format" ] || format="$default_format"
-  # Check sanity of the input
-  [ $# -ge "3" ] || { echo "Usage: replace_or_append <config_file_location> <key_to_search> <new_value> [<CCE number or literal '@CCENUM@' if unknown>] [printf-like format, default is '$default_format']" >&2; exit 1; }
-
-  # Test if the config_file is a symbolic link. If so, use --follow-symlinks with sed.
-  # Otherwise, regular sed command will do.
-  sed_command=('sed' '-i')
-  if test -L "$config_file"; then
-    sed_command+=('--follow-symlinks')
-  fi
-
-  # Test that the cce arg is not empty or does not equal @CCENUM@.
-  # If @CCENUM@ exists, it means that there is no CCE assigned.
-  if [ -n "$cce" ] && [ "$cce" != '@CCENUM@' ]; then
-    cce="CCE-${cce}"
-  else
-    cce="CCE"
-  fi
-
-  # Strip any search characters in the key arg so that the key can be replaced without
-  # adding any search characters to the config file.
-  stripped_key=$(sed 's/[\^=\$,;+]*//g' <<< "$key")
-
-  # shellcheck disable=SC2059
-  printf -v formatted_output "$format" "$stripped_key" "$value"
-
-  # If the key exists, change it. Otherwise, add it to the config_file.
-  # We search for the key string followed by a word boundary (matched by \>),
-  # so if we search for 'setting', 'setting2' won't match.
-  if LC_ALL=C grep -q -m 1 $grep_case_insensitive_option -e "${key}\\>" "$config_file"; then
-    "${sed_command[@]}" "s/${key}\\>.*/$formatted_output/g$sed_case_insensitive_option" "$config_file"
-  else
-    # \n is precaution for case where file ends without trailing newline
-    printf '\n# Per %s: Set %s in %s\n' "$cce" "$formatted_output" "$config_file" >> "$config_file"
-    printf '%s\n' "$formatted_output" >> "$config_file"
-  fi
-}
-
-replace_or_append '/etc/ssh/sshd_config' '^RhostsRSAAuthentication' 'no' '' '%s %s'
-
-# END fix for 'sshd_disable_rhosts_rsa'
-
-###############################################################################
-# BEGIN fix (9 / 175) for 'sshd_disable_root_login'
-###############################################################################
-(>&2 echo "Remediating rule 9/175: 'sshd_disable_root_login'")
+(>&2 echo "Remediating rule 8/181: 'sshd_disable_root_login'")
 
 SSHD_CONFIG='/etc/ssh/sshd_config'
 
@@ -623,9 +537,9 @@ fi
 # END fix for 'sshd_disable_root_login'
 
 ###############################################################################
-# BEGIN fix (10 / 175) for 'sshd_disable_user_known_hosts'
+# BEGIN fix (9 / 181) for 'sshd_disable_user_known_hosts'
 ###############################################################################
-(>&2 echo "Remediating rule 10/175: 'sshd_disable_user_known_hosts'")
+(>&2 echo "Remediating rule 9/181: 'sshd_disable_user_known_hosts'")
 # Function to replace configuration setting in config file or add the configuration setting if
 # it does not exist.
 #
@@ -709,9 +623,9 @@ replace_or_append '/etc/ssh/sshd_config' '^IgnoreUserKnownHosts' 'yes' '' '%s %s
 # END fix for 'sshd_disable_user_known_hosts'
 
 ###############################################################################
-# BEGIN fix (11 / 175) for 'sshd_enable_warning_banner'
+# BEGIN fix (10 / 181) for 'sshd_enable_warning_banner'
 ###############################################################################
-(>&2 echo "Remediating rule 11/175: 'sshd_enable_warning_banner'")
+(>&2 echo "Remediating rule 10/181: 'sshd_enable_warning_banner'")
 
 grep -q ^Banner /etc/ssh/sshd_config && \
   sed -i "s/Banner.*/Banner \/etc\/issue/g" /etc/ssh/sshd_config
@@ -722,9 +636,9 @@ fi
 # END fix for 'sshd_enable_warning_banner'
 
 ###############################################################################
-# BEGIN fix (12 / 175) for 'sssd_memcache_timeout'
+# BEGIN fix (11 / 181) for 'sssd_memcache_timeout'
 ###############################################################################
-(>&2 echo "Remediating rule 12/175: 'sssd_memcache_timeout'")
+(>&2 echo "Remediating rule 11/181: 'sssd_memcache_timeout'")
 
 var_sssd_memcache_timeout="86400"
 
@@ -748,9 +662,9 @@ fi
 # END fix for 'sssd_memcache_timeout'
 
 ###############################################################################
-# BEGIN fix (13 / 175) for 'sssd_offline_cred_expiration'
+# BEGIN fix (12 / 181) for 'sssd_offline_cred_expiration'
 ###############################################################################
-(>&2 echo "Remediating rule 13/175: 'sssd_offline_cred_expiration'")
+(>&2 echo "Remediating rule 12/181: 'sssd_offline_cred_expiration'")
 
 SSSD_CONF="/etc/sssd/sssd.conf"
 SSSD_OPT="offline_credentials_expiration"
@@ -774,9 +688,9 @@ fi
 # END fix for 'sssd_offline_cred_expiration'
 
 ###############################################################################
-# BEGIN fix (14 / 175) for 'dconf_gnome_banner_enabled'
+# BEGIN fix (13 / 181) for 'dconf_gnome_banner_enabled'
 ###############################################################################
-(>&2 echo "Remediating rule 14/175: 'dconf_gnome_banner_enabled'")
+(>&2 echo "Remediating rule 13/181: 'dconf_gnome_banner_enabled'")
 function include_dconf_settings {
 	:
 }
@@ -860,9 +774,9 @@ dconf_lock 'org/gnome/login-screen' 'banner-message-enable' 'gdm.d' '00-security
 # END fix for 'dconf_gnome_banner_enabled'
 
 ###############################################################################
-# BEGIN fix (15 / 175) for 'dconf_gnome_login_banner_text'
+# BEGIN fix (14 / 181) for 'dconf_gnome_login_banner_text'
 ###############################################################################
-(>&2 echo "Remediating rule 15/175: 'dconf_gnome_login_banner_text'")
+(>&2 echo "Remediating rule 14/181: 'dconf_gnome_login_banner_text'")
 
 login_banner_text="--[\s\n]+WARNING[\s\n]+--[\s\n]*This[\s\n]+system[\s\n]+is[\s\n]+for[\s\n]+the[\s\n]+use[\s\n]+of[\s\n]+authorized[\s\n]+users[\s\n]+only.[\s\n]+Individuals[\s\n]*using[\s\n]+this[\s\n]+computer[\s\n]+system[\s\n]+without[\s\n]+authority[\s\n]+or[\s\n]+in[\s\n]+excess[\s\n]+of[\s\n]+their[\s\n]*authority[\s\n]+are[\s\n]+subject[\s\n]+to[\s\n]+having[\s\n]+all[\s\n]+their[\s\n]+activities[\s\n]+on[\s\n]+this[\s\n]+system[\s\n]*monitored[\s\n]+and[\s\n]+recorded[\s\n]+by[\s\n]+system[\s\n]+personnel.[\s\n]+Anyone[\s\n]+using[\s\n]+this[\s\n]*system[\s\n]+expressly[\s\n]+consents[\s\n]+to[\s\n]+such[\s\n]+monitoring[\s\n]+and[\s\n]+is[\s\n]+advised[\s\n]+that[\s\n]*if[\s\n]+such[\s\n]+monitoring[\s\n]+reveals[\s\n]+possible[\s\n]+evidence[\s\n]+of[\s\n]+criminal[\s\n]+activity[\s\n]*system[\s\n]+personal[\s\n]+may[\s\n]+provide[\s\n]+the[\s\n]+evidence[\s\n]+of[\s\n]+such[\s\n]+monitoring[\s\n]+to[\s\n]+law[\s\n]*enforcement[\s\n]+officials."
 function include_dconf_settings {
@@ -950,9 +864,9 @@ dconf_lock 'org/gnome/login-screen' 'banner-message-text' 'gdm.d' '00-security-s
 # END fix for 'dconf_gnome_login_banner_text'
 
 ###############################################################################
-# BEGIN fix (16 / 175) for 'banner_etc_issue'
+# BEGIN fix (15 / 181) for 'banner_etc_issue'
 ###############################################################################
-(>&2 echo "Remediating rule 16/175: 'banner_etc_issue'")
+(>&2 echo "Remediating rule 15/181: 'banner_etc_issue'")
 
 login_banner_text="--[\s\n]+WARNING[\s\n]+--[\s\n]*This[\s\n]+system[\s\n]+is[\s\n]+for[\s\n]+the[\s\n]+use[\s\n]+of[\s\n]+authorized[\s\n]+users[\s\n]+only.[\s\n]+Individuals[\s\n]*using[\s\n]+this[\s\n]+computer[\s\n]+system[\s\n]+without[\s\n]+authority[\s\n]+or[\s\n]+in[\s\n]+excess[\s\n]+of[\s\n]+their[\s\n]*authority[\s\n]+are[\s\n]+subject[\s\n]+to[\s\n]+having[\s\n]+all[\s\n]+their[\s\n]+activities[\s\n]+on[\s\n]+this[\s\n]+system[\s\n]*monitored[\s\n]+and[\s\n]+recorded[\s\n]+by[\s\n]+system[\s\n]+personnel.[\s\n]+Anyone[\s\n]+using[\s\n]+this[\s\n]*system[\s\n]+expressly[\s\n]+consents[\s\n]+to[\s\n]+such[\s\n]+monitoring[\s\n]+and[\s\n]+is[\s\n]+advised[\s\n]+that[\s\n]*if[\s\n]+such[\s\n]+monitoring[\s\n]+reveals[\s\n]+possible[\s\n]+evidence[\s\n]+of[\s\n]+criminal[\s\n]+activity[\s\n]*system[\s\n]+personal[\s\n]+may[\s\n]+provide[\s\n]+the[\s\n]+evidence[\s\n]+of[\s\n]+such[\s\n]+monitoring[\s\n]+to[\s\n]+law[\s\n]*enforcement[\s\n]+officials."
 
@@ -969,9 +883,9 @@ printf "\n" >> /etc/issue
 # END fix for 'banner_etc_issue'
 
 ###############################################################################
-# BEGIN fix (17 / 175) for 'accounts_passwords_pam_faillock_deny'
+# BEGIN fix (16 / 181) for 'accounts_passwords_pam_faillock_deny'
 ###############################################################################
-(>&2 echo "Remediating rule 17/175: 'accounts_passwords_pam_faillock_deny'")
+(>&2 echo "Remediating rule 16/181: 'accounts_passwords_pam_faillock_deny'")
 
 var_accounts_passwords_pam_faillock_deny="3"
 function include_set_faillock_option {
@@ -1049,9 +963,9 @@ done
 # END fix for 'accounts_passwords_pam_faillock_deny'
 
 ###############################################################################
-# BEGIN fix (18 / 175) for 'accounts_passwords_pam_faillock_deny_root'
+# BEGIN fix (17 / 181) for 'accounts_passwords_pam_faillock_deny_root'
 ###############################################################################
-(>&2 echo "Remediating rule 18/175: 'accounts_passwords_pam_faillock_deny_root'")
+(>&2 echo "Remediating rule 17/181: 'accounts_passwords_pam_faillock_deny_root'")
 
 AUTH_FILES[0]="/etc/pam.d/system-auth"
 AUTH_FILES[1]="/etc/pam.d/password-auth"
@@ -1065,20 +979,10 @@ AUTH_FILES[1]="/etc/pam.d/password-auth"
 # The placement of pam_faillock.so entries will not be changed
 # if they are already present
 
-# ensure, that pam.d folder exists
-mkdir -p "/etc/pam.d"
-
 for pamFile in "${AUTH_FILES[@]}"
 do
-	# if auth file is missing, create it and add what this rule needs
+	# if PAM file is missing, system is not using PAM or broken
 	if [ ! -f $pamFile ]; then
-		touch $pamFile
-		echo "
-auth required pam_faillock.so preauth silent even_deny_root deny=3 unlock_time=never fail_interval=900
-auth sufficient pam_unix.so
-auth [default=die] pam_faillock.so authfail silent even_deny_root deny=3 unlock_time=never fail_interval=900
-" >> $pamFile
-		# everything is set, don't check it again
 		continue
 	fi
 
@@ -1110,9 +1014,9 @@ done
 # END fix for 'accounts_passwords_pam_faillock_deny_root'
 
 ###############################################################################
-# BEGIN fix (19 / 175) for 'accounts_passwords_pam_faillock_interval'
+# BEGIN fix (18 / 181) for 'accounts_passwords_pam_faillock_interval'
 ###############################################################################
-(>&2 echo "Remediating rule 19/175: 'accounts_passwords_pam_faillock_interval'")
+(>&2 echo "Remediating rule 18/181: 'accounts_passwords_pam_faillock_interval'")
 function include_set_faillock_option {
 	:
 }
@@ -1190,9 +1094,9 @@ done
 # END fix for 'accounts_passwords_pam_faillock_interval'
 
 ###############################################################################
-# BEGIN fix (20 / 175) for 'accounts_passwords_pam_faillock_unlock_time'
+# BEGIN fix (19 / 181) for 'accounts_passwords_pam_faillock_unlock_time'
 ###############################################################################
-(>&2 echo "Remediating rule 20/175: 'accounts_passwords_pam_faillock_unlock_time'")
+(>&2 echo "Remediating rule 19/181: 'accounts_passwords_pam_faillock_unlock_time'")
 
 var_accounts_passwords_pam_faillock_unlock_time="never"
 function include_set_faillock_option {
@@ -1270,9 +1174,9 @@ done
 # END fix for 'accounts_passwords_pam_faillock_unlock_time'
 
 ###############################################################################
-# BEGIN fix (21 / 175) for 'accounts_password_pam_dcredit'
+# BEGIN fix (20 / 181) for 'accounts_password_pam_dcredit'
 ###############################################################################
-(>&2 echo "Remediating rule 21/175: 'accounts_password_pam_dcredit'")
+(>&2 echo "Remediating rule 20/181: 'accounts_password_pam_dcredit'")
 
 var_password_pam_dcredit="-1"
 # Function to replace configuration setting in config file or add the configuration setting if
@@ -1358,9 +1262,9 @@ replace_or_append '/etc/security/pwquality.conf' '^dcredit' $var_password_pam_dc
 # END fix for 'accounts_password_pam_dcredit'
 
 ###############################################################################
-# BEGIN fix (22 / 175) for 'accounts_password_pam_lcredit'
+# BEGIN fix (21 / 181) for 'accounts_password_pam_lcredit'
 ###############################################################################
-(>&2 echo "Remediating rule 22/175: 'accounts_password_pam_lcredit'")
+(>&2 echo "Remediating rule 21/181: 'accounts_password_pam_lcredit'")
 
 var_password_pam_lcredit="-1"
 # Function to replace configuration setting in config file or add the configuration setting if
@@ -1446,9 +1350,9 @@ replace_or_append '/etc/security/pwquality.conf' '^lcredit' $var_password_pam_lc
 # END fix for 'accounts_password_pam_lcredit'
 
 ###############################################################################
-# BEGIN fix (23 / 175) for 'accounts_password_pam_minlen'
+# BEGIN fix (22 / 181) for 'accounts_password_pam_minlen'
 ###############################################################################
-(>&2 echo "Remediating rule 23/175: 'accounts_password_pam_minlen'")
+(>&2 echo "Remediating rule 22/181: 'accounts_password_pam_minlen'")
 
 var_password_pam_minlen="12"
 # Function to replace configuration setting in config file or add the configuration setting if
@@ -1534,9 +1438,9 @@ replace_or_append '/etc/security/pwquality.conf' '^minlen' $var_password_pam_min
 # END fix for 'accounts_password_pam_minlen'
 
 ###############################################################################
-# BEGIN fix (24 / 175) for 'accounts_password_pam_ocredit'
+# BEGIN fix (23 / 181) for 'accounts_password_pam_ocredit'
 ###############################################################################
-(>&2 echo "Remediating rule 24/175: 'accounts_password_pam_ocredit'")
+(>&2 echo "Remediating rule 23/181: 'accounts_password_pam_ocredit'")
 
 var_password_pam_ocredit="-1"
 # Function to replace configuration setting in config file or add the configuration setting if
@@ -1622,9 +1526,9 @@ replace_or_append '/etc/security/pwquality.conf' '^ocredit' $var_password_pam_oc
 # END fix for 'accounts_password_pam_ocredit'
 
 ###############################################################################
-# BEGIN fix (25 / 175) for 'accounts_password_pam_retry'
+# BEGIN fix (24 / 181) for 'accounts_password_pam_retry'
 ###############################################################################
-(>&2 echo "Remediating rule 25/175: 'accounts_password_pam_retry'")
+(>&2 echo "Remediating rule 24/181: 'accounts_password_pam_retry'")
 
 var_password_pam_retry="3"
 
@@ -1637,9 +1541,9 @@ fi
 # END fix for 'accounts_password_pam_retry'
 
 ###############################################################################
-# BEGIN fix (26 / 175) for 'accounts_password_pam_ucredit'
+# BEGIN fix (25 / 181) for 'accounts_password_pam_ucredit'
 ###############################################################################
-(>&2 echo "Remediating rule 26/175: 'accounts_password_pam_ucredit'")
+(>&2 echo "Remediating rule 25/181: 'accounts_password_pam_ucredit'")
 
 var_password_pam_ucredit="-1"
 # Function to replace configuration setting in config file or add the configuration setting if
@@ -1725,9 +1629,9 @@ replace_or_append '/etc/security/pwquality.conf' '^ucredit' $var_password_pam_uc
 # END fix for 'accounts_password_pam_ucredit'
 
 ###############################################################################
-# BEGIN fix (27 / 175) for 'package_screen_installed'
+# BEGIN fix (26 / 181) for 'package_screen_installed'
 ###############################################################################
-(>&2 echo "Remediating rule 27/175: 'package_screen_installed'")
+(>&2 echo "Remediating rule 26/181: 'package_screen_installed'")
 # Function to install packages on RHEL, Fedora, Debian, and possibly other systems.
 #
 # Example Call(s):
@@ -1770,9 +1674,9 @@ package_install screen
 # END fix for 'package_screen_installed'
 
 ###############################################################################
-# BEGIN fix (28 / 175) for 'grub2_disable_interactive_boot'
+# BEGIN fix (27 / 181) for 'grub2_disable_interactive_boot'
 ###############################################################################
-(>&2 echo "Remediating rule 28/175: 'grub2_disable_interactive_boot'")
+(>&2 echo "Remediating rule 27/181: 'grub2_disable_interactive_boot'")
 
 CONFIRM_SPAWN_YES="systemd.confirm_spawn=\(1\|yes\|true\|on\)"
 CONFIRM_SPAWN_NO="systemd.confirm_spawn=no"
@@ -1787,9 +1691,9 @@ fi
 # END fix for 'grub2_disable_interactive_boot'
 
 ###############################################################################
-# BEGIN fix (29 / 175) for 'require_singleuser_auth'
+# BEGIN fix (28 / 181) for 'require_singleuser_auth'
 ###############################################################################
-(>&2 echo "Remediating rule 29/175: 'require_singleuser_auth'")
+(>&2 echo "Remediating rule 28/181: 'require_singleuser_auth'")
 
 service_file="/usr/lib/systemd/system/rescue.service"
 
@@ -1804,9 +1708,9 @@ fi
 # END fix for 'require_singleuser_auth'
 
 ###############################################################################
-# BEGIN fix (30 / 175) for 'service_debug-shell_disabled'
+# BEGIN fix (29 / 181) for 'service_debug-shell_disabled'
 ###############################################################################
-(>&2 echo "Remediating rule 30/175: 'service_debug-shell_disabled'")
+(>&2 echo "Remediating rule 29/181: 'service_debug-shell_disabled'")
 
 SYSTEMCTL_EXEC='/usr/bin/systemctl'
 "$SYSTEMCTL_EXEC" stop 'debug-shell.service'
@@ -1821,9 +1725,9 @@ SYSTEMCTL_EXEC='/usr/bin/systemctl'
 # END fix for 'service_debug-shell_disabled'
 
 ###############################################################################
-# BEGIN fix (31 / 175) for 'accounts_password_minlen_login_defs'
+# BEGIN fix (30 / 181) for 'accounts_password_minlen_login_defs'
 ###############################################################################
-(>&2 echo "Remediating rule 31/175: 'accounts_password_minlen_login_defs'")
+(>&2 echo "Remediating rule 30/181: 'accounts_password_minlen_login_defs'")
 
 declare var_accounts_password_minlen_login_defs
 var_accounts_password_minlen_login_defs="15"
@@ -1838,18 +1742,18 @@ fi
 # END fix for 'accounts_password_minlen_login_defs'
 
 ###############################################################################
-# BEGIN fix (32 / 175) for 'no_empty_passwords'
+# BEGIN fix (31 / 181) for 'no_empty_passwords'
 ###############################################################################
-(>&2 echo "Remediating rule 32/175: 'no_empty_passwords'")
+(>&2 echo "Remediating rule 31/181: 'no_empty_passwords'")
 sed --follow-symlinks -i 's/\<nullok\>//g' /etc/pam.d/system-auth
 sed --follow-symlinks -i 's/\<nullok\>//g' /etc/pam.d/password-auth
 
 # END fix for 'no_empty_passwords'
 
 ###############################################################################
-# BEGIN fix (33 / 175) for 'accounts_tmout'
+# BEGIN fix (32 / 181) for 'accounts_tmout'
 ###############################################################################
-(>&2 echo "Remediating rule 33/175: 'accounts_tmout'")
+(>&2 echo "Remediating rule 32/181: 'accounts_tmout'")
 
 var_accounts_tmout="600"
 
@@ -1863,9 +1767,9 @@ fi
 # END fix for 'accounts_tmout'
 
 ###############################################################################
-# BEGIN fix (34 / 175) for 'audit_rules_dac_modification_chmod'
+# BEGIN fix (33 / 181) for 'audit_rules_dac_modification_chmod'
 ###############################################################################
-(>&2 echo "Remediating rule 34/175: 'audit_rules_dac_modification_chmod'")
+(>&2 echo "Remediating rule 33/181: 'audit_rules_dac_modification_chmod'")
 
 
 # First perform the remediation of the syscall rule
@@ -1963,14 +1867,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -1994,17 +1900,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -2047,11 +1955,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -2107,9 +2017,9 @@ done
 # END fix for 'audit_rules_dac_modification_chmod'
 
 ###############################################################################
-# BEGIN fix (35 / 175) for 'audit_rules_dac_modification_chown'
+# BEGIN fix (34 / 181) for 'audit_rules_dac_modification_chown'
 ###############################################################################
-(>&2 echo "Remediating rule 35/175: 'audit_rules_dac_modification_chown'")
+(>&2 echo "Remediating rule 34/181: 'audit_rules_dac_modification_chown'")
 
 
 # First perform the remediation of the syscall rule
@@ -2207,14 +2117,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -2238,17 +2150,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -2291,11 +2205,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -2351,9 +2267,9 @@ done
 # END fix for 'audit_rules_dac_modification_chown'
 
 ###############################################################################
-# BEGIN fix (36 / 175) for 'audit_rules_dac_modification_fchmod'
+# BEGIN fix (35 / 181) for 'audit_rules_dac_modification_fchmod'
 ###############################################################################
-(>&2 echo "Remediating rule 36/175: 'audit_rules_dac_modification_fchmod'")
+(>&2 echo "Remediating rule 35/181: 'audit_rules_dac_modification_fchmod'")
 
 
 # First perform the remediation of the syscall rule
@@ -2451,14 +2367,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -2482,17 +2400,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -2535,11 +2455,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -2595,9 +2517,9 @@ done
 # END fix for 'audit_rules_dac_modification_fchmod'
 
 ###############################################################################
-# BEGIN fix (37 / 175) for 'audit_rules_dac_modification_fchmodat'
+# BEGIN fix (36 / 181) for 'audit_rules_dac_modification_fchmodat'
 ###############################################################################
-(>&2 echo "Remediating rule 37/175: 'audit_rules_dac_modification_fchmodat'")
+(>&2 echo "Remediating rule 36/181: 'audit_rules_dac_modification_fchmodat'")
 
 
 # First perform the remediation of the syscall rule
@@ -2695,14 +2617,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -2726,17 +2650,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -2779,11 +2705,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -2839,9 +2767,9 @@ done
 # END fix for 'audit_rules_dac_modification_fchmodat'
 
 ###############################################################################
-# BEGIN fix (38 / 175) for 'audit_rules_dac_modification_fchown'
+# BEGIN fix (37 / 181) for 'audit_rules_dac_modification_fchown'
 ###############################################################################
-(>&2 echo "Remediating rule 38/175: 'audit_rules_dac_modification_fchown'")
+(>&2 echo "Remediating rule 37/181: 'audit_rules_dac_modification_fchown'")
 
 
 # First perform the remediation of the syscall rule
@@ -2939,14 +2867,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -2970,17 +2900,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -3023,11 +2955,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -3083,9 +3017,9 @@ done
 # END fix for 'audit_rules_dac_modification_fchown'
 
 ###############################################################################
-# BEGIN fix (39 / 175) for 'audit_rules_dac_modification_fchownat'
+# BEGIN fix (38 / 181) for 'audit_rules_dac_modification_fchownat'
 ###############################################################################
-(>&2 echo "Remediating rule 39/175: 'audit_rules_dac_modification_fchownat'")
+(>&2 echo "Remediating rule 38/181: 'audit_rules_dac_modification_fchownat'")
 
 
 # First perform the remediation of the syscall rule
@@ -3183,14 +3117,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -3214,17 +3150,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -3267,11 +3205,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -3327,9 +3267,9 @@ done
 # END fix for 'audit_rules_dac_modification_fchownat'
 
 ###############################################################################
-# BEGIN fix (40 / 175) for 'audit_rules_dac_modification_fremovexattr'
+# BEGIN fix (39 / 181) for 'audit_rules_dac_modification_fremovexattr'
 ###############################################################################
-(>&2 echo "Remediating rule 40/175: 'audit_rules_dac_modification_fremovexattr'")
+(>&2 echo "Remediating rule 39/181: 'audit_rules_dac_modification_fremovexattr'")
 
 
 # First perform the remediation of the syscall rule
@@ -3427,14 +3367,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -3458,17 +3400,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -3511,11 +3455,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -3571,9 +3517,9 @@ done
 # END fix for 'audit_rules_dac_modification_fremovexattr'
 
 ###############################################################################
-# BEGIN fix (41 / 175) for 'audit_rules_dac_modification_fsetxattr'
+# BEGIN fix (40 / 181) for 'audit_rules_dac_modification_fsetxattr'
 ###############################################################################
-(>&2 echo "Remediating rule 41/175: 'audit_rules_dac_modification_fsetxattr'")
+(>&2 echo "Remediating rule 40/181: 'audit_rules_dac_modification_fsetxattr'")
 
 
 # First perform the remediation of the syscall rule
@@ -3671,14 +3617,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -3702,17 +3650,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -3755,11 +3705,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -3815,9 +3767,9 @@ done
 # END fix for 'audit_rules_dac_modification_fsetxattr'
 
 ###############################################################################
-# BEGIN fix (42 / 175) for 'audit_rules_dac_modification_lchown'
+# BEGIN fix (41 / 181) for 'audit_rules_dac_modification_lchown'
 ###############################################################################
-(>&2 echo "Remediating rule 42/175: 'audit_rules_dac_modification_lchown'")
+(>&2 echo "Remediating rule 41/181: 'audit_rules_dac_modification_lchown'")
 
 
 # First perform the remediation of the syscall rule
@@ -3915,14 +3867,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -3946,17 +3900,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -3999,11 +3955,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -4059,9 +4017,9 @@ done
 # END fix for 'audit_rules_dac_modification_lchown'
 
 ###############################################################################
-# BEGIN fix (43 / 175) for 'audit_rules_dac_modification_lremovexattr'
+# BEGIN fix (42 / 181) for 'audit_rules_dac_modification_lremovexattr'
 ###############################################################################
-(>&2 echo "Remediating rule 43/175: 'audit_rules_dac_modification_lremovexattr'")
+(>&2 echo "Remediating rule 42/181: 'audit_rules_dac_modification_lremovexattr'")
 
 
 # First perform the remediation of the syscall rule
@@ -4159,14 +4117,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -4190,17 +4150,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -4243,11 +4205,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -4303,9 +4267,9 @@ done
 # END fix for 'audit_rules_dac_modification_lremovexattr'
 
 ###############################################################################
-# BEGIN fix (44 / 175) for 'audit_rules_dac_modification_lsetxattr'
+# BEGIN fix (43 / 181) for 'audit_rules_dac_modification_lsetxattr'
 ###############################################################################
-(>&2 echo "Remediating rule 44/175: 'audit_rules_dac_modification_lsetxattr'")
+(>&2 echo "Remediating rule 43/181: 'audit_rules_dac_modification_lsetxattr'")
 
 
 # First perform the remediation of the syscall rule
@@ -4403,14 +4367,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -4434,17 +4400,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -4487,11 +4455,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -4547,9 +4517,9 @@ done
 # END fix for 'audit_rules_dac_modification_lsetxattr'
 
 ###############################################################################
-# BEGIN fix (45 / 175) for 'audit_rules_dac_modification_removexattr'
+# BEGIN fix (44 / 181) for 'audit_rules_dac_modification_removexattr'
 ###############################################################################
-(>&2 echo "Remediating rule 45/175: 'audit_rules_dac_modification_removexattr'")
+(>&2 echo "Remediating rule 44/181: 'audit_rules_dac_modification_removexattr'")
 
 
 # First perform the remediation of the syscall rule
@@ -4647,14 +4617,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -4678,17 +4650,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -4731,11 +4705,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -4791,9 +4767,9 @@ done
 # END fix for 'audit_rules_dac_modification_removexattr'
 
 ###############################################################################
-# BEGIN fix (46 / 175) for 'audit_rules_dac_modification_setxattr'
+# BEGIN fix (45 / 181) for 'audit_rules_dac_modification_setxattr'
 ###############################################################################
-(>&2 echo "Remediating rule 46/175: 'audit_rules_dac_modification_setxattr'")
+(>&2 echo "Remediating rule 45/181: 'audit_rules_dac_modification_setxattr'")
 
 
 # First perform the remediation of the syscall rule
@@ -4891,14 +4867,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -4922,17 +4900,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -4975,11 +4955,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -5035,9 +5017,9 @@ done
 # END fix for 'audit_rules_dac_modification_setxattr'
 
 ###############################################################################
-# BEGIN fix (47 / 175) for 'audit_rules_execution_chcon'
+# BEGIN fix (46 / 181) for 'audit_rules_execution_chcon'
 ###############################################################################
-(>&2 echo "Remediating rule 47/175: 'audit_rules_execution_chcon'")
+(>&2 echo "Remediating rule 46/181: 'audit_rules_execution_chcon'")
 
 
 PATTERN="-a always,exit -F path=/usr/bin/chcon\\s\\+.*"
@@ -5128,14 +5110,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -5159,17 +5143,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -5212,11 +5198,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -5271,9 +5259,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_execution_chcon'
 
 ###############################################################################
-# BEGIN fix (48 / 175) for 'audit_rules_execution_restorecon'
+# BEGIN fix (47 / 181) for 'audit_rules_execution_restorecon'
 ###############################################################################
-(>&2 echo "Remediating rule 48/175: 'audit_rules_execution_restorecon'")
+(>&2 echo "Remediating rule 47/181: 'audit_rules_execution_restorecon'")
 
 
 PATTERN="-a always,exit -F path=/usr/sbin/restorecon\\s\\+.*"
@@ -5364,14 +5352,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -5395,17 +5385,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -5448,11 +5440,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -5507,9 +5501,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_execution_restorecon'
 
 ###############################################################################
-# BEGIN fix (49 / 175) for 'audit_rules_execution_semanage'
+# BEGIN fix (48 / 181) for 'audit_rules_execution_semanage'
 ###############################################################################
-(>&2 echo "Remediating rule 49/175: 'audit_rules_execution_semanage'")
+(>&2 echo "Remediating rule 48/181: 'audit_rules_execution_semanage'")
 
 
 PATTERN="-a always,exit -F path=/usr/sbin/semanage\\s\\+.*"
@@ -5600,14 +5594,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -5631,17 +5627,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -5684,11 +5682,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -5743,9 +5743,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_execution_semanage'
 
 ###############################################################################
-# BEGIN fix (50 / 175) for 'audit_rules_execution_setsebool'
+# BEGIN fix (49 / 181) for 'audit_rules_execution_setsebool'
 ###############################################################################
-(>&2 echo "Remediating rule 50/175: 'audit_rules_execution_setsebool'")
+(>&2 echo "Remediating rule 49/181: 'audit_rules_execution_setsebool'")
 
 
 PATTERN="-a always,exit -F path=/usr/sbin/setsebool\\s\\+.*"
@@ -5836,14 +5836,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -5867,17 +5869,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -5920,11 +5924,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -5979,9 +5985,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_execution_setsebool'
 
 ###############################################################################
-# BEGIN fix (51 / 175) for 'audit_rules_execution_seunshare'
+# BEGIN fix (50 / 181) for 'audit_rules_execution_seunshare'
 ###############################################################################
-(>&2 echo "Remediating rule 51/175: 'audit_rules_execution_seunshare'")
+(>&2 echo "Remediating rule 50/181: 'audit_rules_execution_seunshare'")
 
 
 PATTERN="-a always,exit -F path=/usr/sbin/seunshare\\s\\+.*"
@@ -6072,14 +6078,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -6103,17 +6111,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -6156,11 +6166,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -6215,9 +6227,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_execution_seunshare'
 
 ###############################################################################
-# BEGIN fix (52 / 175) for 'audit_rules_file_deletion_events_rename'
+# BEGIN fix (51 / 181) for 'audit_rules_file_deletion_events_rename'
 ###############################################################################
-(>&2 echo "Remediating rule 52/175: 'audit_rules_file_deletion_events_rename'")
+(>&2 echo "Remediating rule 51/181: 'audit_rules_file_deletion_events_rename'")
 
 
 # First perform the remediation of the syscall rule
@@ -6314,14 +6326,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -6345,17 +6359,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -6398,11 +6414,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -6458,9 +6476,9 @@ done
 # END fix for 'audit_rules_file_deletion_events_rename'
 
 ###############################################################################
-# BEGIN fix (53 / 175) for 'audit_rules_file_deletion_events_renameat'
+# BEGIN fix (52 / 181) for 'audit_rules_file_deletion_events_renameat'
 ###############################################################################
-(>&2 echo "Remediating rule 53/175: 'audit_rules_file_deletion_events_renameat'")
+(>&2 echo "Remediating rule 52/181: 'audit_rules_file_deletion_events_renameat'")
 
 
 # First perform the remediation of the syscall rule
@@ -6557,14 +6575,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -6588,17 +6608,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -6641,11 +6663,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -6701,9 +6725,9 @@ done
 # END fix for 'audit_rules_file_deletion_events_renameat'
 
 ###############################################################################
-# BEGIN fix (54 / 175) for 'audit_rules_file_deletion_events_rmdir'
+# BEGIN fix (53 / 181) for 'audit_rules_file_deletion_events_rmdir'
 ###############################################################################
-(>&2 echo "Remediating rule 54/175: 'audit_rules_file_deletion_events_rmdir'")
+(>&2 echo "Remediating rule 53/181: 'audit_rules_file_deletion_events_rmdir'")
 
 
 # First perform the remediation of the syscall rule
@@ -6800,14 +6824,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -6831,17 +6857,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -6884,11 +6912,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -6944,9 +6974,9 @@ done
 # END fix for 'audit_rules_file_deletion_events_rmdir'
 
 ###############################################################################
-# BEGIN fix (55 / 175) for 'audit_rules_file_deletion_events_unlink'
+# BEGIN fix (54 / 181) for 'audit_rules_file_deletion_events_unlink'
 ###############################################################################
-(>&2 echo "Remediating rule 55/175: 'audit_rules_file_deletion_events_unlink'")
+(>&2 echo "Remediating rule 54/181: 'audit_rules_file_deletion_events_unlink'")
 
 
 # First perform the remediation of the syscall rule
@@ -7043,14 +7073,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -7074,17 +7106,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -7127,11 +7161,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -7187,9 +7223,9 @@ done
 # END fix for 'audit_rules_file_deletion_events_unlink'
 
 ###############################################################################
-# BEGIN fix (56 / 175) for 'audit_rules_file_deletion_events_unlinkat'
+# BEGIN fix (55 / 181) for 'audit_rules_file_deletion_events_unlinkat'
 ###############################################################################
-(>&2 echo "Remediating rule 56/175: 'audit_rules_file_deletion_events_unlinkat'")
+(>&2 echo "Remediating rule 55/181: 'audit_rules_file_deletion_events_unlinkat'")
 
 
 # First perform the remediation of the syscall rule
@@ -7286,14 +7322,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -7317,17 +7355,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -7370,11 +7410,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -7430,9 +7472,9 @@ done
 # END fix for 'audit_rules_file_deletion_events_unlinkat'
 
 ###############################################################################
-# BEGIN fix (57 / 175) for 'audit_rules_kernel_module_loading_delete'
+# BEGIN fix (56 / 181) for 'audit_rules_kernel_module_loading_delete'
 ###############################################################################
-(>&2 echo "Remediating rule 57/175: 'audit_rules_kernel_module_loading_delete'")
+(>&2 echo "Remediating rule 56/181: 'audit_rules_kernel_module_loading_delete'")
 
 
 # First perform the remediation of the syscall rule
@@ -7533,14 +7575,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -7564,17 +7608,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -7617,11 +7663,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -7677,9 +7725,9 @@ done
 # END fix for 'audit_rules_kernel_module_loading_delete'
 
 ###############################################################################
-# BEGIN fix (58 / 175) for 'audit_rules_kernel_module_loading_init'
+# BEGIN fix (57 / 181) for 'audit_rules_kernel_module_loading_init'
 ###############################################################################
-(>&2 echo "Remediating rule 58/175: 'audit_rules_kernel_module_loading_init'")
+(>&2 echo "Remediating rule 57/181: 'audit_rules_kernel_module_loading_init'")
 
 
 # First perform the remediation of the syscall rule
@@ -7780,14 +7828,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -7811,17 +7861,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -7864,11 +7916,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -7924,9 +7978,9 @@ done
 # END fix for 'audit_rules_kernel_module_loading_init'
 
 ###############################################################################
-# BEGIN fix (59 / 175) for 'audit_rules_kernel_module_loading_insmod'
+# BEGIN fix (58 / 181) for 'audit_rules_kernel_module_loading_insmod'
 ###############################################################################
-(>&2 echo "Remediating rule 59/175: 'audit_rules_kernel_module_loading_insmod'")
+(>&2 echo "Remediating rule 58/181: 'audit_rules_kernel_module_loading_insmod'")
 
 
 # Perform the remediation for both possible tools: 'auditctl' and 'augenrules'
@@ -7991,11 +8045,15 @@ then
 # If rule isn't defined, add '/etc/audit/rules.d/$key.rules' to list of files for inspection.
 elif [ "$tool" == 'augenrules' ]
 then
+	# Backup IFS value
+	IFS_BKP="$IFS"
 	# Case when particular audit rule is already defined in some of /etc/audit/rules.d/*.rules file
 	# Get pair -- filepath : matching_row into @matches array
-	IFS=$'\n' matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
+
 	# For each of the matched entries
 	for match in "${matches[@]}"
 	do
@@ -8066,9 +8124,9 @@ fix_audit_watch_rule "augenrules" "/usr/sbin/insmod" "x" "modules"
 # END fix for 'audit_rules_kernel_module_loading_insmod'
 
 ###############################################################################
-# BEGIN fix (60 / 175) for 'audit_rules_kernel_module_loading_modprobe'
+# BEGIN fix (59 / 181) for 'audit_rules_kernel_module_loading_modprobe'
 ###############################################################################
-(>&2 echo "Remediating rule 60/175: 'audit_rules_kernel_module_loading_modprobe'")
+(>&2 echo "Remediating rule 59/181: 'audit_rules_kernel_module_loading_modprobe'")
 
 
 # Perform the remediation for both possible tools: 'auditctl' and 'augenrules'
@@ -8133,11 +8191,15 @@ then
 # If rule isn't defined, add '/etc/audit/rules.d/$key.rules' to list of files for inspection.
 elif [ "$tool" == 'augenrules' ]
 then
+	# Backup IFS value
+	IFS_BKP="$IFS"
 	# Case when particular audit rule is already defined in some of /etc/audit/rules.d/*.rules file
 	# Get pair -- filepath : matching_row into @matches array
-	IFS=$'\n' matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
+
 	# For each of the matched entries
 	for match in "${matches[@]}"
 	do
@@ -8208,9 +8270,9 @@ fix_audit_watch_rule "augenrules" "/usr/sbin/modprobe" "x" "modules"
 # END fix for 'audit_rules_kernel_module_loading_modprobe'
 
 ###############################################################################
-# BEGIN fix (61 / 175) for 'audit_rules_kernel_module_loading_rmmod'
+# BEGIN fix (60 / 181) for 'audit_rules_kernel_module_loading_rmmod'
 ###############################################################################
-(>&2 echo "Remediating rule 61/175: 'audit_rules_kernel_module_loading_rmmod'")
+(>&2 echo "Remediating rule 60/181: 'audit_rules_kernel_module_loading_rmmod'")
 
 
 # Perform the remediation for both possible tools: 'auditctl' and 'augenrules'
@@ -8275,11 +8337,15 @@ then
 # If rule isn't defined, add '/etc/audit/rules.d/$key.rules' to list of files for inspection.
 elif [ "$tool" == 'augenrules' ]
 then
+	# Backup IFS value
+	IFS_BKP="$IFS"
 	# Case when particular audit rule is already defined in some of /etc/audit/rules.d/*.rules file
 	# Get pair -- filepath : matching_row into @matches array
-	IFS=$'\n' matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
+
 	# For each of the matched entries
 	for match in "${matches[@]}"
 	do
@@ -8350,9 +8416,9 @@ fix_audit_watch_rule "augenrules" "/usr/sbin/rmmod" "x" "modules"
 # END fix for 'audit_rules_kernel_module_loading_rmmod'
 
 ###############################################################################
-# BEGIN fix (62 / 175) for 'audit_rules_login_events_faillock'
+# BEGIN fix (61 / 181) for 'audit_rules_login_events_faillock'
 ###############################################################################
-(>&2 echo "Remediating rule 62/175: 'audit_rules_login_events_faillock'")
+(>&2 echo "Remediating rule 61/181: 'audit_rules_login_events_faillock'")
 
 
 # Perform the remediation for both possible tools: 'auditctl' and 'augenrules'
@@ -8417,11 +8483,15 @@ then
 # If rule isn't defined, add '/etc/audit/rules.d/$key.rules' to list of files for inspection.
 elif [ "$tool" == 'augenrules' ]
 then
+	# Backup IFS value
+	IFS_BKP="$IFS"
 	# Case when particular audit rule is already defined in some of /etc/audit/rules.d/*.rules file
 	# Get pair -- filepath : matching_row into @matches array
-	IFS=$'\n' matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
+
 	# For each of the matched entries
 	for match in "${matches[@]}"
 	do
@@ -8492,9 +8562,9 @@ fix_audit_watch_rule "augenrules" "/var/run/faillock" "wa" "logins"
 # END fix for 'audit_rules_login_events_faillock'
 
 ###############################################################################
-# BEGIN fix (63 / 175) for 'audit_rules_login_events_lastlog'
+# BEGIN fix (62 / 181) for 'audit_rules_login_events_lastlog'
 ###############################################################################
-(>&2 echo "Remediating rule 63/175: 'audit_rules_login_events_lastlog'")
+(>&2 echo "Remediating rule 62/181: 'audit_rules_login_events_lastlog'")
 
 
 # Perform the remediation for both possible tools: 'auditctl' and 'augenrules'
@@ -8559,11 +8629,15 @@ then
 # If rule isn't defined, add '/etc/audit/rules.d/$key.rules' to list of files for inspection.
 elif [ "$tool" == 'augenrules' ]
 then
+	# Backup IFS value
+	IFS_BKP="$IFS"
 	# Case when particular audit rule is already defined in some of /etc/audit/rules.d/*.rules file
 	# Get pair -- filepath : matching_row into @matches array
-	IFS=$'\n' matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
+
 	# For each of the matched entries
 	for match in "${matches[@]}"
 	do
@@ -8634,9 +8708,9 @@ fix_audit_watch_rule "augenrules" "/var/log/lastlog" "wa" "logins"
 # END fix for 'audit_rules_login_events_lastlog'
 
 ###############################################################################
-# BEGIN fix (64 / 175) for 'audit_rules_login_events_tallylog'
+# BEGIN fix (63 / 181) for 'audit_rules_login_events_tallylog'
 ###############################################################################
-(>&2 echo "Remediating rule 64/175: 'audit_rules_login_events_tallylog'")
+(>&2 echo "Remediating rule 63/181: 'audit_rules_login_events_tallylog'")
 
 
 # Perform the remediation for both possible tools: 'auditctl' and 'augenrules'
@@ -8701,11 +8775,15 @@ then
 # If rule isn't defined, add '/etc/audit/rules.d/$key.rules' to list of files for inspection.
 elif [ "$tool" == 'augenrules' ]
 then
+	# Backup IFS value
+	IFS_BKP="$IFS"
 	# Case when particular audit rule is already defined in some of /etc/audit/rules.d/*.rules file
 	# Get pair -- filepath : matching_row into @matches array
-	IFS=$'\n' matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
+
 	# For each of the matched entries
 	for match in "${matches[@]}"
 	do
@@ -8776,9 +8854,9 @@ fix_audit_watch_rule "augenrules" "/var/log/tallylog" "wa" "logins"
 # END fix for 'audit_rules_login_events_tallylog'
 
 ###############################################################################
-# BEGIN fix (65 / 175) for 'audit_rules_privileged_commands_at'
+# BEGIN fix (64 / 181) for 'audit_rules_privileged_commands_at'
 ###############################################################################
-(>&2 echo "Remediating rule 65/175: 'audit_rules_privileged_commands_at'")
+(>&2 echo "Remediating rule 64/181: 'audit_rules_privileged_commands_at'")
 
 
 PATTERN="-a always,exit -F path=/usr/bin/at\\s\\+.*"
@@ -8869,14 +8947,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -8900,17 +8980,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -8953,11 +9035,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -9012,9 +9096,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_privileged_commands_at'
 
 ###############################################################################
-# BEGIN fix (66 / 175) for 'audit_rules_privileged_commands_chage'
+# BEGIN fix (65 / 181) for 'audit_rules_privileged_commands_chage'
 ###############################################################################
-(>&2 echo "Remediating rule 66/175: 'audit_rules_privileged_commands_chage'")
+(>&2 echo "Remediating rule 65/181: 'audit_rules_privileged_commands_chage'")
 
 
 PATTERN="-a always,exit -F path=/usr/bin/chage\\s\\+.*"
@@ -9105,14 +9189,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -9136,17 +9222,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -9189,11 +9277,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -9248,9 +9338,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_privileged_commands_chage'
 
 ###############################################################################
-# BEGIN fix (67 / 175) for 'audit_rules_privileged_commands_chsh'
+# BEGIN fix (66 / 181) for 'audit_rules_privileged_commands_chsh'
 ###############################################################################
-(>&2 echo "Remediating rule 67/175: 'audit_rules_privileged_commands_chsh'")
+(>&2 echo "Remediating rule 66/181: 'audit_rules_privileged_commands_chsh'")
 
 
 PATTERN="-a always,exit -F path=/usr/bin/chsh\\s\\+.*"
@@ -9341,14 +9431,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -9372,17 +9464,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -9425,11 +9519,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -9484,9 +9580,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_privileged_commands_chsh'
 
 ###############################################################################
-# BEGIN fix (68 / 175) for 'audit_rules_privileged_commands_crontab'
+# BEGIN fix (67 / 181) for 'audit_rules_privileged_commands_crontab'
 ###############################################################################
-(>&2 echo "Remediating rule 68/175: 'audit_rules_privileged_commands_crontab'")
+(>&2 echo "Remediating rule 67/181: 'audit_rules_privileged_commands_crontab'")
 
 
 PATTERN="-a always,exit -F path=/usr/bin/crontab\\s\\+.*"
@@ -9577,14 +9673,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -9608,17 +9706,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -9661,11 +9761,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -9720,9 +9822,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_privileged_commands_crontab'
 
 ###############################################################################
-# BEGIN fix (69 / 175) for 'audit_rules_privileged_commands_gpasswd'
+# BEGIN fix (68 / 181) for 'audit_rules_privileged_commands_gpasswd'
 ###############################################################################
-(>&2 echo "Remediating rule 69/175: 'audit_rules_privileged_commands_gpasswd'")
+(>&2 echo "Remediating rule 68/181: 'audit_rules_privileged_commands_gpasswd'")
 
 
 PATTERN="-a always,exit -F path=/usr/bin/gpasswd\\s\\+.*"
@@ -9813,14 +9915,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -9844,17 +9948,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -9897,11 +10003,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -9956,9 +10064,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_privileged_commands_gpasswd'
 
 ###############################################################################
-# BEGIN fix (70 / 175) for 'audit_rules_privileged_commands_mount'
+# BEGIN fix (69 / 181) for 'audit_rules_privileged_commands_mount'
 ###############################################################################
-(>&2 echo "Remediating rule 70/175: 'audit_rules_privileged_commands_mount'")
+(>&2 echo "Remediating rule 69/181: 'audit_rules_privileged_commands_mount'")
 
 
 PATTERN="-a always,exit -F path=/usr/bin/mount\\s\\+.*"
@@ -10049,14 +10157,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -10080,17 +10190,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -10133,11 +10245,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -10192,9 +10306,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_privileged_commands_mount'
 
 ###############################################################################
-# BEGIN fix (71 / 175) for 'audit_rules_privileged_commands_newgidmap'
+# BEGIN fix (70 / 181) for 'audit_rules_privileged_commands_newgidmap'
 ###############################################################################
-(>&2 echo "Remediating rule 71/175: 'audit_rules_privileged_commands_newgidmap'")
+(>&2 echo "Remediating rule 70/181: 'audit_rules_privileged_commands_newgidmap'")
 
 
 PATTERN="-a always,exit -F path=/usr/bin/newgidmap\\s\\+.*"
@@ -10285,14 +10399,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -10316,17 +10432,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -10369,11 +10487,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -10428,9 +10548,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_privileged_commands_newgidmap'
 
 ###############################################################################
-# BEGIN fix (72 / 175) for 'audit_rules_privileged_commands_newgrp'
+# BEGIN fix (71 / 181) for 'audit_rules_privileged_commands_newgrp'
 ###############################################################################
-(>&2 echo "Remediating rule 72/175: 'audit_rules_privileged_commands_newgrp'")
+(>&2 echo "Remediating rule 71/181: 'audit_rules_privileged_commands_newgrp'")
 
 
 PATTERN="-a always,exit -F path=/usr/bin/newgrp\\s\\+.*"
@@ -10521,14 +10641,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -10552,17 +10674,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -10605,11 +10729,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -10664,9 +10790,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_privileged_commands_newgrp'
 
 ###############################################################################
-# BEGIN fix (73 / 175) for 'audit_rules_privileged_commands_newuidmap'
+# BEGIN fix (72 / 181) for 'audit_rules_privileged_commands_newuidmap'
 ###############################################################################
-(>&2 echo "Remediating rule 73/175: 'audit_rules_privileged_commands_newuidmap'")
+(>&2 echo "Remediating rule 72/181: 'audit_rules_privileged_commands_newuidmap'")
 
 
 PATTERN="-a always,exit -F path=/usr/bin/newuidmap\\s\\+.*"
@@ -10757,14 +10883,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -10788,17 +10916,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -10841,11 +10971,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -10900,9 +11032,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_privileged_commands_newuidmap'
 
 ###############################################################################
-# BEGIN fix (74 / 175) for 'audit_rules_privileged_commands_passwd'
+# BEGIN fix (73 / 181) for 'audit_rules_privileged_commands_passwd'
 ###############################################################################
-(>&2 echo "Remediating rule 74/175: 'audit_rules_privileged_commands_passwd'")
+(>&2 echo "Remediating rule 73/181: 'audit_rules_privileged_commands_passwd'")
 
 
 PATTERN="-a always,exit -F path=/usr/bin/passwd\\s\\+.*"
@@ -10993,14 +11125,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -11024,17 +11158,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -11077,11 +11213,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -11136,9 +11274,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_privileged_commands_passwd'
 
 ###############################################################################
-# BEGIN fix (75 / 175) for 'audit_rules_privileged_commands_pt_chown'
+# BEGIN fix (74 / 181) for 'audit_rules_privileged_commands_pt_chown'
 ###############################################################################
-(>&2 echo "Remediating rule 75/175: 'audit_rules_privileged_commands_pt_chown'")
+(>&2 echo "Remediating rule 74/181: 'audit_rules_privileged_commands_pt_chown'")
 
 
 PATTERN="-a always,exit -F path=/usr/libexec/pt_chown\\s\\+.*"
@@ -11229,14 +11367,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -11260,17 +11400,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -11313,11 +11455,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -11372,9 +11516,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_privileged_commands_pt_chown'
 
 ###############################################################################
-# BEGIN fix (76 / 175) for 'audit_rules_privileged_commands_ssh_keysign'
+# BEGIN fix (75 / 181) for 'audit_rules_privileged_commands_ssh_keysign'
 ###############################################################################
-(>&2 echo "Remediating rule 76/175: 'audit_rules_privileged_commands_ssh_keysign'")
+(>&2 echo "Remediating rule 75/181: 'audit_rules_privileged_commands_ssh_keysign'")
 
 
 PATTERN="-a always,exit -F path=/usr/libexec/openssh/ssh-keysign\\s\\+.*"
@@ -11465,14 +11609,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -11496,17 +11642,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -11549,11 +11697,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -11608,9 +11758,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_privileged_commands_ssh_keysign'
 
 ###############################################################################
-# BEGIN fix (77 / 175) for 'audit_rules_privileged_commands_su'
+# BEGIN fix (76 / 181) for 'audit_rules_privileged_commands_su'
 ###############################################################################
-(>&2 echo "Remediating rule 77/175: 'audit_rules_privileged_commands_su'")
+(>&2 echo "Remediating rule 76/181: 'audit_rules_privileged_commands_su'")
 
 
 PATTERN="-a always,exit -F path=/usr/bin/su\\s\\+.*"
@@ -11701,14 +11851,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -11732,17 +11884,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -11785,11 +11939,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -11844,9 +12000,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_privileged_commands_su'
 
 ###############################################################################
-# BEGIN fix (78 / 175) for 'audit_rules_privileged_commands_sudo'
+# BEGIN fix (77 / 181) for 'audit_rules_privileged_commands_sudo'
 ###############################################################################
-(>&2 echo "Remediating rule 78/175: 'audit_rules_privileged_commands_sudo'")
+(>&2 echo "Remediating rule 77/181: 'audit_rules_privileged_commands_sudo'")
 
 
 PATTERN="-a always,exit -F path=/usr/bin/sudo\\s\\+.*"
@@ -11937,14 +12093,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -11968,17 +12126,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -12021,11 +12181,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -12080,9 +12242,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_privileged_commands_sudo'
 
 ###############################################################################
-# BEGIN fix (79 / 175) for 'audit_rules_privileged_commands_sudoedit'
+# BEGIN fix (78 / 181) for 'audit_rules_privileged_commands_sudoedit'
 ###############################################################################
-(>&2 echo "Remediating rule 79/175: 'audit_rules_privileged_commands_sudoedit'")
+(>&2 echo "Remediating rule 78/181: 'audit_rules_privileged_commands_sudoedit'")
 
 
 PATTERN="-a always,exit -F path=/usr/bin/sudoedit\\s\\+.*"
@@ -12173,14 +12335,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -12204,17 +12368,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -12257,11 +12423,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -12316,9 +12484,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_privileged_commands_sudoedit'
 
 ###############################################################################
-# BEGIN fix (80 / 175) for 'audit_rules_privileged_commands_umount'
+# BEGIN fix (79 / 181) for 'audit_rules_privileged_commands_umount'
 ###############################################################################
-(>&2 echo "Remediating rule 80/175: 'audit_rules_privileged_commands_umount'")
+(>&2 echo "Remediating rule 79/181: 'audit_rules_privileged_commands_umount'")
 
 
 PATTERN="-a always,exit -F path=/usr/bin/umount\\s\\+.*"
@@ -12409,14 +12577,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -12440,17 +12610,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -12493,11 +12665,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -12552,9 +12726,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_privileged_commands_umount'
 
 ###############################################################################
-# BEGIN fix (81 / 175) for 'audit_rules_privileged_commands_unix_chkpwd'
+# BEGIN fix (80 / 181) for 'audit_rules_privileged_commands_unix_chkpwd'
 ###############################################################################
-(>&2 echo "Remediating rule 81/175: 'audit_rules_privileged_commands_unix_chkpwd'")
+(>&2 echo "Remediating rule 80/181: 'audit_rules_privileged_commands_unix_chkpwd'")
 
 
 PATTERN="-a always,exit -F path=/usr/sbin/unix_chkpwd\\s\\+.*"
@@ -12645,14 +12819,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -12676,17 +12852,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -12729,11 +12907,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -12788,9 +12968,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_privileged_commands_unix_chkpwd'
 
 ###############################################################################
-# BEGIN fix (82 / 175) for 'audit_rules_privileged_commands_userhelper'
+# BEGIN fix (81 / 181) for 'audit_rules_privileged_commands_userhelper'
 ###############################################################################
-(>&2 echo "Remediating rule 82/175: 'audit_rules_privileged_commands_userhelper'")
+(>&2 echo "Remediating rule 81/181: 'audit_rules_privileged_commands_userhelper'")
 
 
 PATTERN="-a always,exit -F path=/usr/sbin/userhelper\\s\\+.*"
@@ -12881,14 +13061,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -12912,17 +13094,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -12965,11 +13149,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -13024,9 +13210,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_privileged_commands_userhelper'
 
 ###############################################################################
-# BEGIN fix (83 / 175) for 'audit_rules_privileged_commands_usernetctl'
+# BEGIN fix (82 / 181) for 'audit_rules_privileged_commands_usernetctl'
 ###############################################################################
-(>&2 echo "Remediating rule 83/175: 'audit_rules_privileged_commands_usernetctl'")
+(>&2 echo "Remediating rule 82/181: 'audit_rules_privileged_commands_usernetctl'")
 
 
 PATTERN="-a always,exit -F path=/usr/sbin/usernetctl\\s\\+.*"
@@ -13117,14 +13303,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -13148,17 +13336,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -13201,11 +13391,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -13260,9 +13452,9 @@ fix_audit_syscall_rule "augenrules" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 # END fix for 'audit_rules_privileged_commands_usernetctl'
 
 ###############################################################################
-# BEGIN fix (84 / 175) for 'audit_rules_unsuccessful_file_modification_chmod'
+# BEGIN fix (83 / 181) for 'audit_rules_unsuccessful_file_modification_chmod'
 ###############################################################################
-(>&2 echo "Remediating rule 84/175: 'audit_rules_unsuccessful_file_modification_chmod'")
+(>&2 echo "Remediating rule 83/181: 'audit_rules_unsuccessful_file_modification_chmod'")
 
 
 # First perform the remediation of the syscall rule
@@ -13359,14 +13551,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -13390,17 +13584,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -13443,11 +13639,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -13590,14 +13788,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -13621,17 +13821,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -13674,11 +13876,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -13734,9 +13938,9 @@ done
 # END fix for 'audit_rules_unsuccessful_file_modification_chmod'
 
 ###############################################################################
-# BEGIN fix (85 / 175) for 'audit_rules_unsuccessful_file_modification_chown'
+# BEGIN fix (84 / 181) for 'audit_rules_unsuccessful_file_modification_chown'
 ###############################################################################
-(>&2 echo "Remediating rule 85/175: 'audit_rules_unsuccessful_file_modification_chown'")
+(>&2 echo "Remediating rule 84/181: 'audit_rules_unsuccessful_file_modification_chown'")
 
 
 # First perform the remediation of the syscall rule
@@ -13833,14 +14037,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -13864,17 +14070,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -13917,11 +14125,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -14064,14 +14274,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -14095,17 +14307,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -14148,11 +14362,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -14208,9 +14424,9 @@ done
 # END fix for 'audit_rules_unsuccessful_file_modification_chown'
 
 ###############################################################################
-# BEGIN fix (86 / 175) for 'audit_rules_unsuccessful_file_modification_creat'
+# BEGIN fix (85 / 181) for 'audit_rules_unsuccessful_file_modification_creat'
 ###############################################################################
-(>&2 echo "Remediating rule 86/175: 'audit_rules_unsuccessful_file_modification_creat'")
+(>&2 echo "Remediating rule 85/181: 'audit_rules_unsuccessful_file_modification_creat'")
 
 
 # First perform the remediation of the syscall rule
@@ -14307,14 +14523,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -14338,17 +14556,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -14391,11 +14611,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -14538,14 +14760,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -14569,17 +14793,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -14622,11 +14848,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -14682,9 +14910,9 @@ done
 # END fix for 'audit_rules_unsuccessful_file_modification_creat'
 
 ###############################################################################
-# BEGIN fix (87 / 175) for 'audit_rules_unsuccessful_file_modification_fchmod'
+# BEGIN fix (86 / 181) for 'audit_rules_unsuccessful_file_modification_fchmod'
 ###############################################################################
-(>&2 echo "Remediating rule 87/175: 'audit_rules_unsuccessful_file_modification_fchmod'")
+(>&2 echo "Remediating rule 86/181: 'audit_rules_unsuccessful_file_modification_fchmod'")
 
 
 # First perform the remediation of the syscall rule
@@ -14781,14 +15009,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -14812,17 +15042,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -14865,11 +15097,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -15012,14 +15246,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -15043,17 +15279,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -15096,11 +15334,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -15156,9 +15396,9 @@ done
 # END fix for 'audit_rules_unsuccessful_file_modification_fchmod'
 
 ###############################################################################
-# BEGIN fix (88 / 175) for 'audit_rules_unsuccessful_file_modification_fchmodat'
+# BEGIN fix (87 / 181) for 'audit_rules_unsuccessful_file_modification_fchmodat'
 ###############################################################################
-(>&2 echo "Remediating rule 88/175: 'audit_rules_unsuccessful_file_modification_fchmodat'")
+(>&2 echo "Remediating rule 87/181: 'audit_rules_unsuccessful_file_modification_fchmodat'")
 
 
 # First perform the remediation of the syscall rule
@@ -15255,14 +15495,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -15286,17 +15528,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -15339,11 +15583,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -15486,14 +15732,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -15517,17 +15765,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -15570,11 +15820,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -15630,9 +15882,9 @@ done
 # END fix for 'audit_rules_unsuccessful_file_modification_fchmodat'
 
 ###############################################################################
-# BEGIN fix (89 / 175) for 'audit_rules_unsuccessful_file_modification_fchown'
+# BEGIN fix (88 / 181) for 'audit_rules_unsuccessful_file_modification_fchown'
 ###############################################################################
-(>&2 echo "Remediating rule 89/175: 'audit_rules_unsuccessful_file_modification_fchown'")
+(>&2 echo "Remediating rule 88/181: 'audit_rules_unsuccessful_file_modification_fchown'")
 
 
 # First perform the remediation of the syscall rule
@@ -15729,14 +15981,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -15760,17 +16014,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -15813,11 +16069,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -15960,14 +16218,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -15991,17 +16251,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -16044,11 +16306,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -16104,9 +16368,9 @@ done
 # END fix for 'audit_rules_unsuccessful_file_modification_fchown'
 
 ###############################################################################
-# BEGIN fix (90 / 175) for 'audit_rules_unsuccessful_file_modification_fchownat'
+# BEGIN fix (89 / 181) for 'audit_rules_unsuccessful_file_modification_fchownat'
 ###############################################################################
-(>&2 echo "Remediating rule 90/175: 'audit_rules_unsuccessful_file_modification_fchownat'")
+(>&2 echo "Remediating rule 89/181: 'audit_rules_unsuccessful_file_modification_fchownat'")
 
 
 # First perform the remediation of the syscall rule
@@ -16203,14 +16467,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -16234,17 +16500,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -16287,11 +16555,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -16434,14 +16704,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -16465,17 +16737,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -16518,11 +16792,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -16578,9 +16854,9 @@ done
 # END fix for 'audit_rules_unsuccessful_file_modification_fchownat'
 
 ###############################################################################
-# BEGIN fix (91 / 175) for 'audit_rules_unsuccessful_file_modification_fremovexattr'
+# BEGIN fix (90 / 181) for 'audit_rules_unsuccessful_file_modification_fremovexattr'
 ###############################################################################
-(>&2 echo "Remediating rule 91/175: 'audit_rules_unsuccessful_file_modification_fremovexattr'")
+(>&2 echo "Remediating rule 90/181: 'audit_rules_unsuccessful_file_modification_fremovexattr'")
 
 
 # First perform the remediation of the syscall rule
@@ -16677,14 +16953,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -16708,17 +16986,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -16761,11 +17041,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -16908,14 +17190,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -16939,17 +17223,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -16992,11 +17278,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -17052,9 +17340,9 @@ done
 # END fix for 'audit_rules_unsuccessful_file_modification_fremovexattr'
 
 ###############################################################################
-# BEGIN fix (92 / 175) for 'audit_rules_unsuccessful_file_modification_fsetxattr'
+# BEGIN fix (91 / 181) for 'audit_rules_unsuccessful_file_modification_fsetxattr'
 ###############################################################################
-(>&2 echo "Remediating rule 92/175: 'audit_rules_unsuccessful_file_modification_fsetxattr'")
+(>&2 echo "Remediating rule 91/181: 'audit_rules_unsuccessful_file_modification_fsetxattr'")
 
 
 # First perform the remediation of the syscall rule
@@ -17151,14 +17439,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -17182,17 +17472,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -17235,11 +17527,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -17382,14 +17676,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -17413,17 +17709,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -17466,11 +17764,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -17526,9 +17826,9 @@ done
 # END fix for 'audit_rules_unsuccessful_file_modification_fsetxattr'
 
 ###############################################################################
-# BEGIN fix (93 / 175) for 'audit_rules_unsuccessful_file_modification_ftruncate'
+# BEGIN fix (92 / 181) for 'audit_rules_unsuccessful_file_modification_ftruncate'
 ###############################################################################
-(>&2 echo "Remediating rule 93/175: 'audit_rules_unsuccessful_file_modification_ftruncate'")
+(>&2 echo "Remediating rule 92/181: 'audit_rules_unsuccessful_file_modification_ftruncate'")
 
 
 # First perform the remediation of the syscall rule
@@ -17625,14 +17925,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -17656,17 +17958,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -17709,11 +18013,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -17856,14 +18162,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -17887,17 +18195,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -17940,11 +18250,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -18000,9 +18312,9 @@ done
 # END fix for 'audit_rules_unsuccessful_file_modification_ftruncate'
 
 ###############################################################################
-# BEGIN fix (94 / 175) for 'audit_rules_unsuccessful_file_modification_lchown'
+# BEGIN fix (93 / 181) for 'audit_rules_unsuccessful_file_modification_lchown'
 ###############################################################################
-(>&2 echo "Remediating rule 94/175: 'audit_rules_unsuccessful_file_modification_lchown'")
+(>&2 echo "Remediating rule 93/181: 'audit_rules_unsuccessful_file_modification_lchown'")
 
 
 # First perform the remediation of the syscall rule
@@ -18099,14 +18411,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -18130,17 +18444,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -18183,11 +18499,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -18330,14 +18648,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -18361,17 +18681,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -18414,11 +18736,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -18474,9 +18798,9 @@ done
 # END fix for 'audit_rules_unsuccessful_file_modification_lchown'
 
 ###############################################################################
-# BEGIN fix (95 / 175) for 'audit_rules_unsuccessful_file_modification_lremovexattr'
+# BEGIN fix (94 / 181) for 'audit_rules_unsuccessful_file_modification_lremovexattr'
 ###############################################################################
-(>&2 echo "Remediating rule 95/175: 'audit_rules_unsuccessful_file_modification_lremovexattr'")
+(>&2 echo "Remediating rule 94/181: 'audit_rules_unsuccessful_file_modification_lremovexattr'")
 
 
 # First perform the remediation of the syscall rule
@@ -18573,14 +18897,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -18604,17 +18930,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -18657,11 +18985,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -18804,14 +19134,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -18835,17 +19167,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -18888,11 +19222,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -18948,9 +19284,9 @@ done
 # END fix for 'audit_rules_unsuccessful_file_modification_lremovexattr'
 
 ###############################################################################
-# BEGIN fix (96 / 175) for 'audit_rules_unsuccessful_file_modification_lsetxattr'
+# BEGIN fix (95 / 181) for 'audit_rules_unsuccessful_file_modification_lsetxattr'
 ###############################################################################
-(>&2 echo "Remediating rule 96/175: 'audit_rules_unsuccessful_file_modification_lsetxattr'")
+(>&2 echo "Remediating rule 95/181: 'audit_rules_unsuccessful_file_modification_lsetxattr'")
 
 
 # First perform the remediation of the syscall rule
@@ -19047,14 +19383,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -19078,17 +19416,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -19131,11 +19471,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -19278,14 +19620,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -19309,17 +19653,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -19362,11 +19708,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -19422,9 +19770,9 @@ done
 # END fix for 'audit_rules_unsuccessful_file_modification_lsetxattr'
 
 ###############################################################################
-# BEGIN fix (97 / 175) for 'audit_rules_unsuccessful_file_modification_open'
+# BEGIN fix (96 / 181) for 'audit_rules_unsuccessful_file_modification_open'
 ###############################################################################
-(>&2 echo "Remediating rule 97/175: 'audit_rules_unsuccessful_file_modification_open'")
+(>&2 echo "Remediating rule 96/181: 'audit_rules_unsuccessful_file_modification_open'")
 
 
 # First perform the remediation of the syscall rule
@@ -19521,14 +19869,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -19552,17 +19902,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -19605,11 +19957,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -19752,14 +20106,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -19783,17 +20139,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -19836,11 +20194,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -19896,9 +20256,9 @@ done
 # END fix for 'audit_rules_unsuccessful_file_modification_open'
 
 ###############################################################################
-# BEGIN fix (98 / 175) for 'audit_rules_unsuccessful_file_modification_open_by_handle_at'
+# BEGIN fix (97 / 181) for 'audit_rules_unsuccessful_file_modification_open_by_handle_at'
 ###############################################################################
-(>&2 echo "Remediating rule 98/175: 'audit_rules_unsuccessful_file_modification_open_by_handle_at'")
+(>&2 echo "Remediating rule 97/181: 'audit_rules_unsuccessful_file_modification_open_by_handle_at'")
 
 
 # First perform the remediation of the syscall rule
@@ -19995,14 +20355,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -20026,17 +20388,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -20079,11 +20443,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -20226,14 +20592,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -20257,17 +20625,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -20310,11 +20680,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -20370,57 +20742,57 @@ done
 # END fix for 'audit_rules_unsuccessful_file_modification_open_by_handle_at'
 
 ###############################################################################
-# BEGIN fix (99 / 175) for 'audit_rules_unsuccessful_file_modification_open_by_handle_at_o_creat'
+# BEGIN fix (98 / 181) for 'audit_rules_unsuccessful_file_modification_open_by_handle_at_o_creat'
 ###############################################################################
-(>&2 echo "Remediating rule 99/175: 'audit_rules_unsuccessful_file_modification_open_by_handle_at_o_creat'")
+(>&2 echo "Remediating rule 98/181: 'audit_rules_unsuccessful_file_modification_open_by_handle_at_o_creat'")
 (>&2 echo "FIX FOR THIS RULE 'audit_rules_unsuccessful_file_modification_open_by_handle_at_o_creat' IS MISSING!")
 
 # END fix for 'audit_rules_unsuccessful_file_modification_open_by_handle_at_o_creat'
 
 ###############################################################################
-# BEGIN fix (100 / 175) for 'audit_rules_unsuccessful_file_modification_open_by_handle_at_o_trunc_write'
+# BEGIN fix (99 / 181) for 'audit_rules_unsuccessful_file_modification_open_by_handle_at_o_trunc_write'
 ###############################################################################
-(>&2 echo "Remediating rule 100/175: 'audit_rules_unsuccessful_file_modification_open_by_handle_at_o_trunc_write'")
+(>&2 echo "Remediating rule 99/181: 'audit_rules_unsuccessful_file_modification_open_by_handle_at_o_trunc_write'")
 (>&2 echo "FIX FOR THIS RULE 'audit_rules_unsuccessful_file_modification_open_by_handle_at_o_trunc_write' IS MISSING!")
 
 # END fix for 'audit_rules_unsuccessful_file_modification_open_by_handle_at_o_trunc_write'
 
 ###############################################################################
-# BEGIN fix (101 / 175) for 'audit_rules_unsuccessful_file_modification_open_by_handle_at_rule_order'
+# BEGIN fix (100 / 181) for 'audit_rules_unsuccessful_file_modification_open_by_handle_at_rule_order'
 ###############################################################################
-(>&2 echo "Remediating rule 101/175: 'audit_rules_unsuccessful_file_modification_open_by_handle_at_rule_order'")
+(>&2 echo "Remediating rule 100/181: 'audit_rules_unsuccessful_file_modification_open_by_handle_at_rule_order'")
 (>&2 echo "FIX FOR THIS RULE 'audit_rules_unsuccessful_file_modification_open_by_handle_at_rule_order' IS MISSING!")
 
 # END fix for 'audit_rules_unsuccessful_file_modification_open_by_handle_at_rule_order'
 
 ###############################################################################
-# BEGIN fix (102 / 175) for 'audit_rules_unsuccessful_file_modification_open_o_creat'
+# BEGIN fix (101 / 181) for 'audit_rules_unsuccessful_file_modification_open_o_creat'
 ###############################################################################
-(>&2 echo "Remediating rule 102/175: 'audit_rules_unsuccessful_file_modification_open_o_creat'")
+(>&2 echo "Remediating rule 101/181: 'audit_rules_unsuccessful_file_modification_open_o_creat'")
 (>&2 echo "FIX FOR THIS RULE 'audit_rules_unsuccessful_file_modification_open_o_creat' IS MISSING!")
 
 # END fix for 'audit_rules_unsuccessful_file_modification_open_o_creat'
 
 ###############################################################################
-# BEGIN fix (103 / 175) for 'audit_rules_unsuccessful_file_modification_open_o_trunc_write'
+# BEGIN fix (102 / 181) for 'audit_rules_unsuccessful_file_modification_open_o_trunc_write'
 ###############################################################################
-(>&2 echo "Remediating rule 103/175: 'audit_rules_unsuccessful_file_modification_open_o_trunc_write'")
+(>&2 echo "Remediating rule 102/181: 'audit_rules_unsuccessful_file_modification_open_o_trunc_write'")
 (>&2 echo "FIX FOR THIS RULE 'audit_rules_unsuccessful_file_modification_open_o_trunc_write' IS MISSING!")
 
 # END fix for 'audit_rules_unsuccessful_file_modification_open_o_trunc_write'
 
 ###############################################################################
-# BEGIN fix (104 / 175) for 'audit_rules_unsuccessful_file_modification_open_rule_order'
+# BEGIN fix (103 / 181) for 'audit_rules_unsuccessful_file_modification_open_rule_order'
 ###############################################################################
-(>&2 echo "Remediating rule 104/175: 'audit_rules_unsuccessful_file_modification_open_rule_order'")
+(>&2 echo "Remediating rule 103/181: 'audit_rules_unsuccessful_file_modification_open_rule_order'")
 (>&2 echo "FIX FOR THIS RULE 'audit_rules_unsuccessful_file_modification_open_rule_order' IS MISSING!")
 
 # END fix for 'audit_rules_unsuccessful_file_modification_open_rule_order'
 
 ###############################################################################
-# BEGIN fix (105 / 175) for 'audit_rules_unsuccessful_file_modification_openat'
+# BEGIN fix (104 / 181) for 'audit_rules_unsuccessful_file_modification_openat'
 ###############################################################################
-(>&2 echo "Remediating rule 105/175: 'audit_rules_unsuccessful_file_modification_openat'")
+(>&2 echo "Remediating rule 104/181: 'audit_rules_unsuccessful_file_modification_openat'")
 
 
 # First perform the remediation of the syscall rule
@@ -20517,14 +20889,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -20548,17 +20922,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -20601,11 +20977,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -20748,14 +21126,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -20779,17 +21159,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -20832,11 +21214,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -20892,33 +21276,33 @@ done
 # END fix for 'audit_rules_unsuccessful_file_modification_openat'
 
 ###############################################################################
-# BEGIN fix (106 / 175) for 'audit_rules_unsuccessful_file_modification_openat_o_creat'
+# BEGIN fix (105 / 181) for 'audit_rules_unsuccessful_file_modification_openat_o_creat'
 ###############################################################################
-(>&2 echo "Remediating rule 106/175: 'audit_rules_unsuccessful_file_modification_openat_o_creat'")
+(>&2 echo "Remediating rule 105/181: 'audit_rules_unsuccessful_file_modification_openat_o_creat'")
 (>&2 echo "FIX FOR THIS RULE 'audit_rules_unsuccessful_file_modification_openat_o_creat' IS MISSING!")
 
 # END fix for 'audit_rules_unsuccessful_file_modification_openat_o_creat'
 
 ###############################################################################
-# BEGIN fix (107 / 175) for 'audit_rules_unsuccessful_file_modification_openat_o_trunc_write'
+# BEGIN fix (106 / 181) for 'audit_rules_unsuccessful_file_modification_openat_o_trunc_write'
 ###############################################################################
-(>&2 echo "Remediating rule 107/175: 'audit_rules_unsuccessful_file_modification_openat_o_trunc_write'")
+(>&2 echo "Remediating rule 106/181: 'audit_rules_unsuccessful_file_modification_openat_o_trunc_write'")
 (>&2 echo "FIX FOR THIS RULE 'audit_rules_unsuccessful_file_modification_openat_o_trunc_write' IS MISSING!")
 
 # END fix for 'audit_rules_unsuccessful_file_modification_openat_o_trunc_write'
 
 ###############################################################################
-# BEGIN fix (108 / 175) for 'audit_rules_unsuccessful_file_modification_openat_rule_order'
+# BEGIN fix (107 / 181) for 'audit_rules_unsuccessful_file_modification_openat_rule_order'
 ###############################################################################
-(>&2 echo "Remediating rule 108/175: 'audit_rules_unsuccessful_file_modification_openat_rule_order'")
+(>&2 echo "Remediating rule 107/181: 'audit_rules_unsuccessful_file_modification_openat_rule_order'")
 (>&2 echo "FIX FOR THIS RULE 'audit_rules_unsuccessful_file_modification_openat_rule_order' IS MISSING!")
 
 # END fix for 'audit_rules_unsuccessful_file_modification_openat_rule_order'
 
 ###############################################################################
-# BEGIN fix (109 / 175) for 'audit_rules_unsuccessful_file_modification_removexattr'
+# BEGIN fix (108 / 181) for 'audit_rules_unsuccessful_file_modification_removexattr'
 ###############################################################################
-(>&2 echo "Remediating rule 109/175: 'audit_rules_unsuccessful_file_modification_removexattr'")
+(>&2 echo "Remediating rule 108/181: 'audit_rules_unsuccessful_file_modification_removexattr'")
 
 
 # First perform the remediation of the syscall rule
@@ -21015,14 +21399,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -21046,17 +21432,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -21099,11 +21487,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -21246,14 +21636,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -21277,17 +21669,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -21330,11 +21724,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -21390,9 +21786,9 @@ done
 # END fix for 'audit_rules_unsuccessful_file_modification_removexattr'
 
 ###############################################################################
-# BEGIN fix (110 / 175) for 'audit_rules_unsuccessful_file_modification_rename'
+# BEGIN fix (109 / 181) for 'audit_rules_unsuccessful_file_modification_rename'
 ###############################################################################
-(>&2 echo "Remediating rule 110/175: 'audit_rules_unsuccessful_file_modification_rename'")
+(>&2 echo "Remediating rule 109/181: 'audit_rules_unsuccessful_file_modification_rename'")
 
 
 # First perform the remediation of the syscall rule
@@ -21489,14 +21885,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -21520,17 +21918,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -21573,11 +21973,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -21720,14 +22122,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -21751,17 +22155,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -21804,11 +22210,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -21864,9 +22272,9 @@ done
 # END fix for 'audit_rules_unsuccessful_file_modification_rename'
 
 ###############################################################################
-# BEGIN fix (111 / 175) for 'audit_rules_unsuccessful_file_modification_renameat'
+# BEGIN fix (110 / 181) for 'audit_rules_unsuccessful_file_modification_renameat'
 ###############################################################################
-(>&2 echo "Remediating rule 111/175: 'audit_rules_unsuccessful_file_modification_renameat'")
+(>&2 echo "Remediating rule 110/181: 'audit_rules_unsuccessful_file_modification_renameat'")
 
 
 # First perform the remediation of the syscall rule
@@ -21963,14 +22371,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -21994,17 +22404,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -22047,11 +22459,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -22194,14 +22608,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -22225,17 +22641,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -22278,11 +22696,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -22338,9 +22758,9 @@ done
 # END fix for 'audit_rules_unsuccessful_file_modification_renameat'
 
 ###############################################################################
-# BEGIN fix (112 / 175) for 'audit_rules_unsuccessful_file_modification_setxattr'
+# BEGIN fix (111 / 181) for 'audit_rules_unsuccessful_file_modification_setxattr'
 ###############################################################################
-(>&2 echo "Remediating rule 112/175: 'audit_rules_unsuccessful_file_modification_setxattr'")
+(>&2 echo "Remediating rule 111/181: 'audit_rules_unsuccessful_file_modification_setxattr'")
 
 
 # First perform the remediation of the syscall rule
@@ -22437,14 +22857,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -22468,17 +22890,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -22521,11 +22945,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -22668,14 +23094,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -22699,17 +23127,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -22752,11 +23182,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -22812,9 +23244,9 @@ done
 # END fix for 'audit_rules_unsuccessful_file_modification_setxattr'
 
 ###############################################################################
-# BEGIN fix (113 / 175) for 'audit_rules_unsuccessful_file_modification_truncate'
+# BEGIN fix (112 / 181) for 'audit_rules_unsuccessful_file_modification_truncate'
 ###############################################################################
-(>&2 echo "Remediating rule 113/175: 'audit_rules_unsuccessful_file_modification_truncate'")
+(>&2 echo "Remediating rule 112/181: 'audit_rules_unsuccessful_file_modification_truncate'")
 
 
 # First perform the remediation of the syscall rule
@@ -22911,14 +23343,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -22942,17 +23376,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -22995,11 +23431,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -23142,14 +23580,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -23173,17 +23613,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -23226,11 +23668,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -23286,9 +23730,9 @@ done
 # END fix for 'audit_rules_unsuccessful_file_modification_truncate'
 
 ###############################################################################
-# BEGIN fix (114 / 175) for 'audit_rules_unsuccessful_file_modification_unlink'
+# BEGIN fix (113 / 181) for 'audit_rules_unsuccessful_file_modification_unlink'
 ###############################################################################
-(>&2 echo "Remediating rule 114/175: 'audit_rules_unsuccessful_file_modification_unlink'")
+(>&2 echo "Remediating rule 113/181: 'audit_rules_unsuccessful_file_modification_unlink'")
 
 
 # First perform the remediation of the syscall rule
@@ -23385,14 +23829,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -23416,17 +23862,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -23469,11 +23917,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -23616,14 +24066,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -23647,17 +24099,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -23700,11 +24154,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -23760,9 +24216,9 @@ done
 # END fix for 'audit_rules_unsuccessful_file_modification_unlink'
 
 ###############################################################################
-# BEGIN fix (115 / 175) for 'audit_rules_unsuccessful_file_modification_unlinkat'
+# BEGIN fix (114 / 181) for 'audit_rules_unsuccessful_file_modification_unlinkat'
 ###############################################################################
-(>&2 echo "Remediating rule 115/175: 'audit_rules_unsuccessful_file_modification_unlinkat'")
+(>&2 echo "Remediating rule 114/181: 'audit_rules_unsuccessful_file_modification_unlinkat'")
 
 
 # First perform the remediation of the syscall rule
@@ -23859,14 +24315,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -23890,17 +24348,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -23943,11 +24403,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -24090,14 +24552,16 @@ elif [ "$tool" == 'augenrules' ]
 then
 	# Extract audit $key from audit rule so we can use it later
 	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)' '|' "$full_rule" : '.*-F[[:space:]]key=\([^[:space:]]\+\)')
+	IFS_BKP="$IFS"
 	# Check if particular audit rule is already defined
-	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 	for match in "${matches[@]}"
 	do
 		files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -24121,17 +24585,19 @@ local append_expected_rule=0
 for audit_file in "${files_to_inspect[@]}"
 do
 
+	IFS_BKP="$IFS"
 	# Filter existing $audit_file rules' definitions to select those that:
 	# * follow the rule pattern, and
 	# * meet the hardware architecture requirement, and
 	# * are current syscall group specific
-	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	IFS=$'\n'
+	existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
 	if [ $? -ne 0 ]
 	then
 		retval=1
 	fi
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
 
 	# Process rules found case-by-case
 	for rule in "${existing_rules[@]}"
@@ -24174,11 +24640,13 @@ do
 				then
 					retval=1
 				fi
+				IFS_BKP="$IFS"
 				# 2) Delete syscalls for this group, but keep those from other groups
 				# Convert current rule syscall's string into array splitting by '-S' delimiter
-				IFS=$'-S' read -a rule_syscalls_as_array <<< "$rule_syscalls"
+				IFS=$'-S'
+				read -a rule_syscalls_as_array <<< "$rule_syscalls"
 				# Reset IFS back to default
-				unset IFS
+				IFS="$IFS_BKP"
 				# Declare new empty string to hold '-S syscall' arguments from other groups
 				new_syscalls_for_rule=''
 				# Walk through existing '-S syscall' arguments
@@ -24234,57 +24702,57 @@ done
 # END fix for 'audit_rules_unsuccessful_file_modification_unlinkat'
 
 ###############################################################################
-# BEGIN fix (116 / 175) for 'audit_rules_etc_group_open'
+# BEGIN fix (115 / 181) for 'audit_rules_etc_group_open'
 ###############################################################################
-(>&2 echo "Remediating rule 116/175: 'audit_rules_etc_group_open'")
+(>&2 echo "Remediating rule 115/181: 'audit_rules_etc_group_open'")
 (>&2 echo "FIX FOR THIS RULE 'audit_rules_etc_group_open' IS MISSING!")
 
 # END fix for 'audit_rules_etc_group_open'
 
 ###############################################################################
-# BEGIN fix (117 / 175) for 'audit_rules_etc_group_open_by_handle_at'
+# BEGIN fix (116 / 181) for 'audit_rules_etc_group_open_by_handle_at'
 ###############################################################################
-(>&2 echo "Remediating rule 117/175: 'audit_rules_etc_group_open_by_handle_at'")
+(>&2 echo "Remediating rule 116/181: 'audit_rules_etc_group_open_by_handle_at'")
 (>&2 echo "FIX FOR THIS RULE 'audit_rules_etc_group_open_by_handle_at' IS MISSING!")
 
 # END fix for 'audit_rules_etc_group_open_by_handle_at'
 
 ###############################################################################
-# BEGIN fix (118 / 175) for 'audit_rules_etc_group_openat'
+# BEGIN fix (117 / 181) for 'audit_rules_etc_group_openat'
 ###############################################################################
-(>&2 echo "Remediating rule 118/175: 'audit_rules_etc_group_openat'")
+(>&2 echo "Remediating rule 117/181: 'audit_rules_etc_group_openat'")
 (>&2 echo "FIX FOR THIS RULE 'audit_rules_etc_group_openat' IS MISSING!")
 
 # END fix for 'audit_rules_etc_group_openat'
 
 ###############################################################################
-# BEGIN fix (119 / 175) for 'audit_rules_etc_passwd_open'
+# BEGIN fix (118 / 181) for 'audit_rules_etc_passwd_open'
 ###############################################################################
-(>&2 echo "Remediating rule 119/175: 'audit_rules_etc_passwd_open'")
+(>&2 echo "Remediating rule 118/181: 'audit_rules_etc_passwd_open'")
 (>&2 echo "FIX FOR THIS RULE 'audit_rules_etc_passwd_open' IS MISSING!")
 
 # END fix for 'audit_rules_etc_passwd_open'
 
 ###############################################################################
-# BEGIN fix (120 / 175) for 'audit_rules_etc_passwd_open_by_handle_at'
+# BEGIN fix (119 / 181) for 'audit_rules_etc_passwd_open_by_handle_at'
 ###############################################################################
-(>&2 echo "Remediating rule 120/175: 'audit_rules_etc_passwd_open_by_handle_at'")
+(>&2 echo "Remediating rule 119/181: 'audit_rules_etc_passwd_open_by_handle_at'")
 (>&2 echo "FIX FOR THIS RULE 'audit_rules_etc_passwd_open_by_handle_at' IS MISSING!")
 
 # END fix for 'audit_rules_etc_passwd_open_by_handle_at'
 
 ###############################################################################
-# BEGIN fix (121 / 175) for 'audit_rules_etc_passwd_openat'
+# BEGIN fix (120 / 181) for 'audit_rules_etc_passwd_openat'
 ###############################################################################
-(>&2 echo "Remediating rule 121/175: 'audit_rules_etc_passwd_openat'")
+(>&2 echo "Remediating rule 120/181: 'audit_rules_etc_passwd_openat'")
 (>&2 echo "FIX FOR THIS RULE 'audit_rules_etc_passwd_openat' IS MISSING!")
 
 # END fix for 'audit_rules_etc_passwd_openat'
 
 ###############################################################################
-# BEGIN fix (122 / 175) for 'audit_rules_immutable'
+# BEGIN fix (121 / 181) for 'audit_rules_immutable'
 ###############################################################################
-(>&2 echo "Remediating rule 122/175: 'audit_rules_immutable'")
+(>&2 echo "Remediating rule 121/181: 'audit_rules_immutable'")
 
 # Traverse all of:
 #
@@ -24311,9 +24779,9 @@ done
 # END fix for 'audit_rules_immutable'
 
 ###############################################################################
-# BEGIN fix (123 / 175) for 'audit_rules_mac_modification'
+# BEGIN fix (122 / 181) for 'audit_rules_mac_modification'
 ###############################################################################
-(>&2 echo "Remediating rule 123/175: 'audit_rules_mac_modification'")
+(>&2 echo "Remediating rule 122/181: 'audit_rules_mac_modification'")
 
 
 # Perform the remediation for both possible tools: 'auditctl' and 'augenrules'
@@ -24378,11 +24846,15 @@ then
 # If rule isn't defined, add '/etc/audit/rules.d/$key.rules' to list of files for inspection.
 elif [ "$tool" == 'augenrules' ]
 then
+	# Backup IFS value
+	IFS_BKP="$IFS"
 	# Case when particular audit rule is already defined in some of /etc/audit/rules.d/*.rules file
 	# Get pair -- filepath : matching_row into @matches array
-	IFS=$'\n' matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
+
 	# For each of the matched entries
 	for match in "${matches[@]}"
 	do
@@ -24453,9 +24925,9 @@ fix_audit_watch_rule "augenrules" "/etc/selinux/" "wa" "MAC-policy"
 # END fix for 'audit_rules_mac_modification'
 
 ###############################################################################
-# BEGIN fix (124 / 175) for 'audit_rules_session_events'
+# BEGIN fix (123 / 181) for 'audit_rules_session_events'
 ###############################################################################
-(>&2 echo "Remediating rule 124/175: 'audit_rules_session_events'")
+(>&2 echo "Remediating rule 123/181: 'audit_rules_session_events'")
 
 
 # Perform the remediation
@@ -24521,11 +24993,15 @@ then
 # If rule isn't defined, add '/etc/audit/rules.d/$key.rules' to list of files for inspection.
 elif [ "$tool" == 'augenrules' ]
 then
+	# Backup IFS value
+	IFS_BKP="$IFS"
 	# Case when particular audit rule is already defined in some of /etc/audit/rules.d/*.rules file
 	# Get pair -- filepath : matching_row into @matches array
-	IFS=$'\n' matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
+
 	# For each of the matched entries
 	for match in "${matches[@]}"
 	do
@@ -24653,11 +25129,15 @@ then
 # If rule isn't defined, add '/etc/audit/rules.d/$key.rules' to list of files for inspection.
 elif [ "$tool" == 'augenrules' ]
 then
+	# Backup IFS value
+	IFS_BKP="$IFS"
 	# Case when particular audit rule is already defined in some of /etc/audit/rules.d/*.rules file
 	# Get pair -- filepath : matching_row into @matches array
-	IFS=$'\n' matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
+
 	# For each of the matched entries
 	for match in "${matches[@]}"
 	do
@@ -24785,11 +25265,15 @@ then
 # If rule isn't defined, add '/etc/audit/rules.d/$key.rules' to list of files for inspection.
 elif [ "$tool" == 'augenrules' ]
 then
+	# Backup IFS value
+	IFS_BKP="$IFS"
 	# Case when particular audit rule is already defined in some of /etc/audit/rules.d/*.rules file
 	# Get pair -- filepath : matching_row into @matches array
-	IFS=$'\n' matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
+
 	# For each of the matched entries
 	for match in "${matches[@]}"
 	do
@@ -24860,9 +25344,9 @@ fix_audit_watch_rule "augenrules" "/var/log/wtmp" "wa" "session"
 # END fix for 'audit_rules_session_events'
 
 ###############################################################################
-# BEGIN fix (125 / 175) for 'audit_rules_sysadmin_actions'
+# BEGIN fix (124 / 181) for 'audit_rules_sysadmin_actions'
 ###############################################################################
-(>&2 echo "Remediating rule 125/175: 'audit_rules_sysadmin_actions'")
+(>&2 echo "Remediating rule 124/181: 'audit_rules_sysadmin_actions'")
 
 
 # Perform the remediation for both possible tools: 'auditctl' and 'augenrules'
@@ -24927,11 +25411,15 @@ then
 # If rule isn't defined, add '/etc/audit/rules.d/$key.rules' to list of files for inspection.
 elif [ "$tool" == 'augenrules' ]
 then
+	# Backup IFS value
+	IFS_BKP="$IFS"
 	# Case when particular audit rule is already defined in some of /etc/audit/rules.d/*.rules file
 	# Get pair -- filepath : matching_row into @matches array
-	IFS=$'\n' matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
+
 	# For each of the matched entries
 	for match in "${matches[@]}"
 	do
@@ -25059,11 +25547,15 @@ then
 # If rule isn't defined, add '/etc/audit/rules.d/$key.rules' to list of files for inspection.
 elif [ "$tool" == 'augenrules' ]
 then
+	# Backup IFS value
+	IFS_BKP="$IFS"
 	# Case when particular audit rule is already defined in some of /etc/audit/rules.d/*.rules file
 	# Get pair -- filepath : matching_row into @matches array
-	IFS=$'\n' matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
+
 	# For each of the matched entries
 	for match in "${matches[@]}"
 	do
@@ -25134,9 +25626,9 @@ fix_audit_watch_rule "augenrules" "/etc/sudoers.d" "wa" "actions"
 # END fix for 'audit_rules_sysadmin_actions'
 
 ###############################################################################
-# BEGIN fix (126 / 175) for 'audit_rules_usergroup_modification_group'
+# BEGIN fix (125 / 181) for 'audit_rules_usergroup_modification_group'
 ###############################################################################
-(>&2 echo "Remediating rule 126/175: 'audit_rules_usergroup_modification_group'")
+(>&2 echo "Remediating rule 125/181: 'audit_rules_usergroup_modification_group'")
 
 
 # Perform the remediation for both possible tools: 'auditctl' and 'augenrules'
@@ -25201,11 +25693,15 @@ then
 # If rule isn't defined, add '/etc/audit/rules.d/$key.rules' to list of files for inspection.
 elif [ "$tool" == 'augenrules' ]
 then
+	# Backup IFS value
+	IFS_BKP="$IFS"
 	# Case when particular audit rule is already defined in some of /etc/audit/rules.d/*.rules file
 	# Get pair -- filepath : matching_row into @matches array
-	IFS=$'\n' matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
+
 	# For each of the matched entries
 	for match in "${matches[@]}"
 	do
@@ -25276,9 +25772,9 @@ fix_audit_watch_rule "augenrules" "/etc/group" "wa" "audit_rules_usergroup_modif
 # END fix for 'audit_rules_usergroup_modification_group'
 
 ###############################################################################
-# BEGIN fix (127 / 175) for 'audit_rules_usergroup_modification_gshadow'
+# BEGIN fix (126 / 181) for 'audit_rules_usergroup_modification_gshadow'
 ###############################################################################
-(>&2 echo "Remediating rule 127/175: 'audit_rules_usergroup_modification_gshadow'")
+(>&2 echo "Remediating rule 126/181: 'audit_rules_usergroup_modification_gshadow'")
 
 
 # Perform the remediation for both possible tools: 'auditctl' and 'augenrules'
@@ -25343,11 +25839,15 @@ then
 # If rule isn't defined, add '/etc/audit/rules.d/$key.rules' to list of files for inspection.
 elif [ "$tool" == 'augenrules' ]
 then
+	# Backup IFS value
+	IFS_BKP="$IFS"
 	# Case when particular audit rule is already defined in some of /etc/audit/rules.d/*.rules file
 	# Get pair -- filepath : matching_row into @matches array
-	IFS=$'\n' matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
+
 	# For each of the matched entries
 	for match in "${matches[@]}"
 	do
@@ -25418,9 +25918,9 @@ fix_audit_watch_rule "augenrules" "/etc/gshadow" "wa" "audit_rules_usergroup_mod
 # END fix for 'audit_rules_usergroup_modification_gshadow'
 
 ###############################################################################
-# BEGIN fix (128 / 175) for 'audit_rules_usergroup_modification_opasswd'
+# BEGIN fix (127 / 181) for 'audit_rules_usergroup_modification_opasswd'
 ###############################################################################
-(>&2 echo "Remediating rule 128/175: 'audit_rules_usergroup_modification_opasswd'")
+(>&2 echo "Remediating rule 127/181: 'audit_rules_usergroup_modification_opasswd'")
 
 
 # Perform the remediation for both possible tools: 'auditctl' and 'augenrules'
@@ -25485,11 +25985,15 @@ then
 # If rule isn't defined, add '/etc/audit/rules.d/$key.rules' to list of files for inspection.
 elif [ "$tool" == 'augenrules' ]
 then
+	# Backup IFS value
+	IFS_BKP="$IFS"
 	# Case when particular audit rule is already defined in some of /etc/audit/rules.d/*.rules file
 	# Get pair -- filepath : matching_row into @matches array
-	IFS=$'\n' matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
+
 	# For each of the matched entries
 	for match in "${matches[@]}"
 	do
@@ -25560,9 +26064,9 @@ fix_audit_watch_rule "augenrules" "/etc/security/opasswd" "wa" "audit_rules_user
 # END fix for 'audit_rules_usergroup_modification_opasswd'
 
 ###############################################################################
-# BEGIN fix (129 / 175) for 'audit_rules_usergroup_modification_passwd'
+# BEGIN fix (128 / 181) for 'audit_rules_usergroup_modification_passwd'
 ###############################################################################
-(>&2 echo "Remediating rule 129/175: 'audit_rules_usergroup_modification_passwd'")
+(>&2 echo "Remediating rule 128/181: 'audit_rules_usergroup_modification_passwd'")
 
 
 # Perform the remediation for both possible tools: 'auditctl' and 'augenrules'
@@ -25627,11 +26131,15 @@ then
 # If rule isn't defined, add '/etc/audit/rules.d/$key.rules' to list of files for inspection.
 elif [ "$tool" == 'augenrules' ]
 then
+	# Backup IFS value
+	IFS_BKP="$IFS"
 	# Case when particular audit rule is already defined in some of /etc/audit/rules.d/*.rules file
 	# Get pair -- filepath : matching_row into @matches array
-	IFS=$'\n' matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
+
 	# For each of the matched entries
 	for match in "${matches[@]}"
 	do
@@ -25702,9 +26210,9 @@ fix_audit_watch_rule "augenrules" "/etc/passwd" "wa" "audit_rules_usergroup_modi
 # END fix for 'audit_rules_usergroup_modification_passwd'
 
 ###############################################################################
-# BEGIN fix (130 / 175) for 'audit_rules_usergroup_modification_shadow'
+# BEGIN fix (129 / 181) for 'audit_rules_usergroup_modification_shadow'
 ###############################################################################
-(>&2 echo "Remediating rule 130/175: 'audit_rules_usergroup_modification_shadow'")
+(>&2 echo "Remediating rule 129/181: 'audit_rules_usergroup_modification_shadow'")
 
 
 # Perform the remediation for both possible tools: 'auditctl' and 'augenrules'
@@ -25769,11 +26277,15 @@ then
 # If rule isn't defined, add '/etc/audit/rules.d/$key.rules' to list of files for inspection.
 elif [ "$tool" == 'augenrules' ]
 then
+	# Backup IFS value
+	IFS_BKP="$IFS"
 	# Case when particular audit rule is already defined in some of /etc/audit/rules.d/*.rules file
 	# Get pair -- filepath : matching_row into @matches array
-	IFS=$'\n' matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
+	IFS=$'\n'
+	matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
 	# Reset IFS back to default
-	unset IFS
+	IFS="$IFS_BKP"
+
 	# For each of the matched entries
 	for match in "${matches[@]}"
 	do
@@ -25844,17 +26356,17 @@ fix_audit_watch_rule "augenrules" "/etc/shadow" "wa" "audit_rules_usergroup_modi
 # END fix for 'audit_rules_usergroup_modification_shadow'
 
 ###############################################################################
-# BEGIN fix (131 / 175) for 'directory_access_var_log_audit'
+# BEGIN fix (130 / 181) for 'directory_access_var_log_audit'
 ###############################################################################
-(>&2 echo "Remediating rule 131/175: 'directory_access_var_log_audit'")
+(>&2 echo "Remediating rule 130/181: 'directory_access_var_log_audit'")
 (>&2 echo "FIX FOR THIS RULE 'directory_access_var_log_audit' IS MISSING!")
 
 # END fix for 'directory_access_var_log_audit'
 
 ###############################################################################
-# BEGIN fix (132 / 175) for 'auditd_audispd_configure_remote_server'
+# BEGIN fix (131 / 181) for 'auditd_audispd_configure_remote_server'
 ###############################################################################
-(>&2 echo "Remediating rule 132/175: 'auditd_audispd_configure_remote_server'")
+(>&2 echo "Remediating rule 131/181: 'auditd_audispd_configure_remote_server'")
 
 var_audispd_remote_server="myhost.mydomain.com"
 
@@ -25938,14 +26450,14 @@ function replace_or_append {
   fi
 }
 
-replace_or_append $AUDITCONFIG '^remote_server' "$var_audispd_remote_server" "CCE-80541-6"
+replace_or_append $AUDITCONFIG '^remote_server' "$var_audispd_remote_server" ""
 
 # END fix for 'auditd_audispd_configure_remote_server'
 
 ###############################################################################
-# BEGIN fix (133 / 175) for 'auditd_audispd_encrypt_sent_records'
+# BEGIN fix (132 / 181) for 'auditd_audispd_encrypt_sent_records'
 ###############################################################################
-(>&2 echo "Remediating rule 133/175: 'auditd_audispd_encrypt_sent_records'")
+(>&2 echo "Remediating rule 132/181: 'auditd_audispd_encrypt_sent_records'")
 
 
 
@@ -26030,14 +26542,14 @@ function replace_or_append {
   fi
 }
 
-replace_or_append $AUDISP_REMOTE_CONFIG "$option" "$value" "CCE-80540-8"
+replace_or_append $AUDISP_REMOTE_CONFIG "$option" "$value" ""
 
 # END fix for 'auditd_audispd_encrypt_sent_records'
 
 ###############################################################################
-# BEGIN fix (134 / 175) for 'auditd_audispd_syslog_plugin_activated'
+# BEGIN fix (133 / 181) for 'auditd_audispd_syslog_plugin_activated'
 ###############################################################################
-(>&2 echo "Remediating rule 134/175: 'auditd_audispd_syslog_plugin_activated'")
+(>&2 echo "Remediating rule 133/181: 'auditd_audispd_syslog_plugin_activated'")
 
 var_syslog_active="yes"
 
@@ -26126,9 +26638,9 @@ replace_or_append $AUDISP_SYSLOGCONFIG '^active' "$var_syslog_active" ""
 # END fix for 'auditd_audispd_syslog_plugin_activated'
 
 ###############################################################################
-# BEGIN fix (135 / 175) for 'grub2_audit_argument'
+# BEGIN fix (134 / 181) for 'grub2_audit_argument'
 ###############################################################################
-(>&2 echo "Remediating rule 135/175: 'grub2_audit_argument'")
+(>&2 echo "Remediating rule 134/181: 'grub2_audit_argument'")
 
 # Correct the form of default kernel command line in GRUB
 if grep -q '^GRUB_CMDLINE_LINUX=.*audit=.*"'  '/etc/default/grub' ; then
@@ -26145,9 +26657,9 @@ grubby --update-kernel=ALL --args="audit=1"
 # END fix for 'grub2_audit_argument'
 
 ###############################################################################
-# BEGIN fix (136 / 175) for 'grub2_audit_backlog_limit_argument'
+# BEGIN fix (135 / 181) for 'grub2_audit_backlog_limit_argument'
 ###############################################################################
-(>&2 echo "Remediating rule 136/175: 'grub2_audit_backlog_limit_argument'")
+(>&2 echo "Remediating rule 135/181: 'grub2_audit_backlog_limit_argument'")
 
 # Correct the form of default kernel command line in GRUB
 if grep -q '^GRUB_CMDLINE_LINUX=.*audit_backlog_limit=.*"'  '/etc/default/grub' ; then
@@ -26164,9 +26676,9 @@ grubby --update-kernel=ALL --args="audit_backlog_limit=8192"
 # END fix for 'grub2_audit_backlog_limit_argument'
 
 ###############################################################################
-# BEGIN fix (137 / 175) for 'service_auditd_enabled'
+# BEGIN fix (136 / 181) for 'service_auditd_enabled'
 ###############################################################################
-(>&2 echo "Remediating rule 137/175: 'service_auditd_enabled'")
+(>&2 echo "Remediating rule 136/181: 'service_auditd_enabled'")
 
 SYSTEMCTL_EXEC='/usr/bin/systemctl'
 "$SYSTEMCTL_EXEC" start 'auditd.service'
@@ -26175,25 +26687,25 @@ SYSTEMCTL_EXEC='/usr/bin/systemctl'
 # END fix for 'service_auditd_enabled'
 
 ###############################################################################
-# BEGIN fix (138 / 175) for 'grub2_password'
+# BEGIN fix (137 / 181) for 'grub2_password'
 ###############################################################################
-(>&2 echo "Remediating rule 138/175: 'grub2_password'")
+(>&2 echo "Remediating rule 137/181: 'grub2_password'")
 (>&2 echo "FIX FOR THIS RULE 'grub2_password' IS MISSING!")
 
 # END fix for 'grub2_password'
 
 ###############################################################################
-# BEGIN fix (139 / 175) for 'grub2_uefi_password'
+# BEGIN fix (138 / 181) for 'grub2_uefi_password'
 ###############################################################################
-(>&2 echo "Remediating rule 139/175: 'grub2_uefi_password'")
+(>&2 echo "Remediating rule 138/181: 'grub2_uefi_password'")
 (>&2 echo "FIX FOR THIS RULE 'grub2_uefi_password' IS MISSING!")
 
 # END fix for 'grub2_uefi_password'
 
 ###############################################################################
-# BEGIN fix (140 / 175) for 'rsyslog_cron_logging'
+# BEGIN fix (139 / 181) for 'rsyslog_cron_logging'
 ###############################################################################
-(>&2 echo "Remediating rule 140/175: 'rsyslog_cron_logging'")
+(>&2 echo "Remediating rule 139/181: 'rsyslog_cron_logging'")
 
 if ! grep -s "^\s*cron\.\*\s*/var/log/cron$" /etc/rsyslog.conf /etc/rsyslog.d/*.conf; then
 	mkdir -p /etc/rsyslog.d
@@ -26203,9 +26715,9 @@ fi
 # END fix for 'rsyslog_cron_logging'
 
 ###############################################################################
-# BEGIN fix (141 / 175) for 'rsyslog_remote_loghost'
+# BEGIN fix (140 / 181) for 'rsyslog_remote_loghost'
 ###############################################################################
-(>&2 echo "Remediating rule 141/175: 'rsyslog_remote_loghost'")
+(>&2 echo "Remediating rule 140/181: 'rsyslog_remote_loghost'")
 
 rsyslog_remote_loghost_address="logcollector"
 # Function to replace configuration setting in config file or add the configuration setting if
@@ -26291,9 +26803,9 @@ replace_or_append '/etc/rsyslog.conf' '^\*\.\*' "@@$rsyslog_remote_loghost_addre
 # END fix for 'rsyslog_remote_loghost'
 
 ###############################################################################
-# BEGIN fix (142 / 175) for 'service_firewalld_enabled'
+# BEGIN fix (141 / 181) for 'service_firewalld_enabled'
 ###############################################################################
-(>&2 echo "Remediating rule 142/175: 'service_firewalld_enabled'")
+(>&2 echo "Remediating rule 141/181: 'service_firewalld_enabled'")
 
 SYSTEMCTL_EXEC='/usr/bin/systemctl'
 "$SYSTEMCTL_EXEC" start 'firewalld.service'
@@ -26302,17 +26814,17 @@ SYSTEMCTL_EXEC='/usr/bin/systemctl'
 # END fix for 'service_firewalld_enabled'
 
 ###############################################################################
-# BEGIN fix (143 / 175) for 'set_firewalld_default_zone'
+# BEGIN fix (142 / 181) for 'set_firewalld_default_zone'
 ###############################################################################
-(>&2 echo "Remediating rule 143/175: 'set_firewalld_default_zone'")
+(>&2 echo "Remediating rule 142/181: 'set_firewalld_default_zone'")
 (>&2 echo "FIX FOR THIS RULE 'set_firewalld_default_zone' IS MISSING!")
 
 # END fix for 'set_firewalld_default_zone'
 
 ###############################################################################
-# BEGIN fix (144 / 175) for 'mount_option_dev_shm_nodev'
+# BEGIN fix (143 / 181) for 'mount_option_dev_shm_nodev'
 ###############################################################################
-(>&2 echo "Remediating rule 144/175: 'mount_option_dev_shm_nodev'")
+(>&2 echo "Remediating rule 143/181: 'mount_option_dev_shm_nodev'")
 function include_mount_options_functions {
 	:
 }
@@ -26393,9 +26905,9 @@ perform_remediation
 # END fix for 'mount_option_dev_shm_nodev'
 
 ###############################################################################
-# BEGIN fix (145 / 175) for 'mount_option_dev_shm_noexec'
+# BEGIN fix (144 / 181) for 'mount_option_dev_shm_noexec'
 ###############################################################################
-(>&2 echo "Remediating rule 145/175: 'mount_option_dev_shm_noexec'")
+(>&2 echo "Remediating rule 144/181: 'mount_option_dev_shm_noexec'")
 function include_mount_options_functions {
 	:
 }
@@ -26476,9 +26988,9 @@ perform_remediation
 # END fix for 'mount_option_dev_shm_noexec'
 
 ###############################################################################
-# BEGIN fix (146 / 175) for 'mount_option_dev_shm_nosuid'
+# BEGIN fix (145 / 181) for 'mount_option_dev_shm_nosuid'
 ###############################################################################
-(>&2 echo "Remediating rule 146/175: 'mount_option_dev_shm_nosuid'")
+(>&2 echo "Remediating rule 145/181: 'mount_option_dev_shm_nosuid'")
 function include_mount_options_functions {
 	:
 }
@@ -26559,9 +27071,9 @@ perform_remediation
 # END fix for 'mount_option_dev_shm_nosuid'
 
 ###############################################################################
-# BEGIN fix (147 / 175) for 'sysctl_kernel_kptr_restrict'
+# BEGIN fix (146 / 181) for 'sysctl_kernel_kptr_restrict'
 ###############################################################################
-(>&2 echo "Remediating rule 147/175: 'sysctl_kernel_kptr_restrict'")
+(>&2 echo "Remediating rule 146/181: 'sysctl_kernel_kptr_restrict'")
 
 
 #
@@ -26656,9 +27168,9 @@ replace_or_append '/etc/sysctl.conf' '^kernel.kptr_restrict' "1" ''
 # END fix for 'sysctl_kernel_kptr_restrict'
 
 ###############################################################################
-# BEGIN fix (148 / 175) for 'grub2_page_poison_argument'
+# BEGIN fix (147 / 181) for 'grub2_page_poison_argument'
 ###############################################################################
-(>&2 echo "Remediating rule 148/175: 'grub2_page_poison_argument'")
+(>&2 echo "Remediating rule 147/181: 'grub2_page_poison_argument'")
 
 # Correct the form of default kernel command line in GRUB
 if grep -q '^GRUB_CMDLINE_LINUX=.*page_poison=.*"'  '/etc/default/grub' ; then
@@ -26675,9 +27187,9 @@ grubby --update-kernel=ALL --args="page_poison=1"
 # END fix for 'grub2_page_poison_argument'
 
 ###############################################################################
-# BEGIN fix (149 / 175) for 'grub2_slub_debug_argument'
+# BEGIN fix (148 / 181) for 'grub2_slub_debug_argument'
 ###############################################################################
-(>&2 echo "Remediating rule 149/175: 'grub2_slub_debug_argument'")
+(>&2 echo "Remediating rule 148/181: 'grub2_slub_debug_argument'")
 
 # Correct the form of default kernel command line in GRUB
 if grep -q '^GRUB_CMDLINE_LINUX=.*slub_debug=.*"'  '/etc/default/grub' ; then
@@ -26694,9 +27206,9 @@ grubby --update-kernel=ALL --args="slub_debug=P"
 # END fix for 'grub2_slub_debug_argument'
 
 ###############################################################################
-# BEGIN fix (150 / 175) for 'grub2_vsyscall_argument'
+# BEGIN fix (149 / 181) for 'grub2_vsyscall_argument'
 ###############################################################################
-(>&2 echo "Remediating rule 150/175: 'grub2_vsyscall_argument'")
+(>&2 echo "Remediating rule 149/181: 'grub2_vsyscall_argument'")
 
 # Correct the form of default kernel command line in GRUB
 if grep -q '^GRUB_CMDLINE_LINUX=.*vsyscall=.*"'  '/etc/default/grub' ; then
@@ -26713,9 +27225,9 @@ grubby --update-kernel=ALL --args="vsyscall=none"
 # END fix for 'grub2_vsyscall_argument'
 
 ###############################################################################
-# BEGIN fix (151 / 175) for 'sysctl_kernel_dmesg_restrict'
+# BEGIN fix (150 / 181) for 'sysctl_kernel_dmesg_restrict'
 ###############################################################################
-(>&2 echo "Remediating rule 151/175: 'sysctl_kernel_dmesg_restrict'")
+(>&2 echo "Remediating rule 150/181: 'sysctl_kernel_dmesg_restrict'")
 
 
 #
@@ -26810,9 +27322,9 @@ replace_or_append '/etc/sysctl.conf' '^kernel.dmesg_restrict' "1" ''
 # END fix for 'sysctl_kernel_dmesg_restrict'
 
 ###############################################################################
-# BEGIN fix (152 / 175) for 'sysctl_kernel_kexec_load_disabled'
+# BEGIN fix (151 / 181) for 'sysctl_kernel_kexec_load_disabled'
 ###############################################################################
-(>&2 echo "Remediating rule 152/175: 'sysctl_kernel_kexec_load_disabled'")
+(>&2 echo "Remediating rule 151/181: 'sysctl_kernel_kexec_load_disabled'")
 
 
 #
@@ -26907,9 +27419,9 @@ replace_or_append '/etc/sysctl.conf' '^kernel.kexec_load_disabled' "1" ''
 # END fix for 'sysctl_kernel_kexec_load_disabled'
 
 ###############################################################################
-# BEGIN fix (153 / 175) for 'sysctl_kernel_yama_ptrace_scope'
+# BEGIN fix (152 / 181) for 'sysctl_kernel_yama_ptrace_scope'
 ###############################################################################
-(>&2 echo "Remediating rule 153/175: 'sysctl_kernel_yama_ptrace_scope'")
+(>&2 echo "Remediating rule 152/181: 'sysctl_kernel_yama_ptrace_scope'")
 
 
 #
@@ -27004,25 +27516,25 @@ replace_or_append '/etc/sysctl.conf' '^kernel.yama.ptrace_scope' "1" ''
 # END fix for 'sysctl_kernel_yama_ptrace_scope'
 
 ###############################################################################
-# BEGIN fix (154 / 175) for 'selinux_all_devicefiles_labeled'
+# BEGIN fix (153 / 181) for 'selinux_all_devicefiles_labeled'
 ###############################################################################
-(>&2 echo "Remediating rule 154/175: 'selinux_all_devicefiles_labeled'")
+(>&2 echo "Remediating rule 153/181: 'selinux_all_devicefiles_labeled'")
 (>&2 echo "FIX FOR THIS RULE 'selinux_all_devicefiles_labeled' IS MISSING!")
 
 # END fix for 'selinux_all_devicefiles_labeled'
 
 ###############################################################################
-# BEGIN fix (155 / 175) for 'selinux_confinement_of_daemons'
+# BEGIN fix (154 / 181) for 'selinux_confinement_of_daemons'
 ###############################################################################
-(>&2 echo "Remediating rule 155/175: 'selinux_confinement_of_daemons'")
+(>&2 echo "Remediating rule 154/181: 'selinux_confinement_of_daemons'")
 (>&2 echo "FIX FOR THIS RULE 'selinux_confinement_of_daemons' IS MISSING!")
 
 # END fix for 'selinux_confinement_of_daemons'
 
 ###############################################################################
-# BEGIN fix (156 / 175) for 'selinux_policytype'
+# BEGIN fix (155 / 181) for 'selinux_policytype'
 ###############################################################################
-(>&2 echo "Remediating rule 156/175: 'selinux_policytype'")
+(>&2 echo "Remediating rule 155/181: 'selinux_policytype'")
 
 var_selinux_policy_name="targeted"
 # Function to replace configuration setting in config file or add the configuration setting if
@@ -27108,9 +27620,9 @@ replace_or_append '/etc/sysconfig/selinux' '^SELINUXTYPE=' $var_selinux_policy_n
 # END fix for 'selinux_policytype'
 
 ###############################################################################
-# BEGIN fix (157 / 175) for 'selinux_state'
+# BEGIN fix (156 / 181) for 'selinux_state'
 ###############################################################################
-(>&2 echo "Remediating rule 157/175: 'selinux_state'")
+(>&2 echo "Remediating rule 156/181: 'selinux_state'")
 
 var_selinux_state="enforcing"
 # Function to replace configuration setting in config file or add the configuration setting if
@@ -27199,9 +27711,9 @@ fixfiles -f relabel
 # END fix for 'selinux_state'
 
 ###############################################################################
-# BEGIN fix (158 / 175) for 'dconf_gnome_login_retries'
+# BEGIN fix (157 / 181) for 'dconf_gnome_login_retries'
 ###############################################################################
-(>&2 echo "Remediating rule 158/175: 'dconf_gnome_login_retries'")
+(>&2 echo "Remediating rule 157/181: 'dconf_gnome_login_retries'")
 function include_dconf_settings {
 	:
 }
@@ -27285,9 +27797,9 @@ dconf_lock 'org/gnome/login-screen' 'allowed-failures' 'gdm.d' '00-security-sett
 # END fix for 'dconf_gnome_login_retries'
 
 ###############################################################################
-# BEGIN fix (159 / 175) for 'gnome_gdm_disable_automatic_login'
+# BEGIN fix (158 / 181) for 'gnome_gdm_disable_automatic_login'
 ###############################################################################
-(>&2 echo "Remediating rule 159/175: 'gnome_gdm_disable_automatic_login'")
+(>&2 echo "Remediating rule 158/181: 'gnome_gdm_disable_automatic_login'")
 
 if rpm --quiet -q gdm
 then
@@ -27303,9 +27815,9 @@ fi
 # END fix for 'gnome_gdm_disable_automatic_login'
 
 ###############################################################################
-# BEGIN fix (160 / 175) for 'gnome_gdm_disable_guest_login'
+# BEGIN fix (159 / 181) for 'gnome_gdm_disable_guest_login'
 ###############################################################################
-(>&2 echo "Remediating rule 160/175: 'gnome_gdm_disable_guest_login'")
+(>&2 echo "Remediating rule 159/181: 'gnome_gdm_disable_guest_login'")
 
 if rpm --quiet -q gdm
 then
@@ -27321,9 +27833,9 @@ fi
 # END fix for 'gnome_gdm_disable_guest_login'
 
 ###############################################################################
-# BEGIN fix (161 / 175) for 'dconf_gnome_screensaver_idle_activation_enabled'
+# BEGIN fix (160 / 181) for 'dconf_gnome_screensaver_idle_activation_enabled'
 ###############################################################################
-(>&2 echo "Remediating rule 161/175: 'dconf_gnome_screensaver_idle_activation_enabled'")
+(>&2 echo "Remediating rule 160/181: 'dconf_gnome_screensaver_idle_activation_enabled'")
 function include_dconf_settings {
 	:
 }
@@ -27407,9 +27919,9 @@ dconf_lock 'org/gnome/desktop/screensaver' 'idle-activation-enabled' 'local.d' '
 # END fix for 'dconf_gnome_screensaver_idle_activation_enabled'
 
 ###############################################################################
-# BEGIN fix (162 / 175) for 'dconf_gnome_screensaver_idle_delay'
+# BEGIN fix (161 / 181) for 'dconf_gnome_screensaver_idle_delay'
 ###############################################################################
-(>&2 echo "Remediating rule 162/175: 'dconf_gnome_screensaver_idle_delay'")
+(>&2 echo "Remediating rule 161/181: 'dconf_gnome_screensaver_idle_delay'")
 
 inactivity_timeout_value="900"
 function include_dconf_settings {
@@ -27495,9 +28007,9 @@ dconf_lock 'org/gnome/desktop/session' 'idle-delay' 'local.d' '00-security-setti
 # END fix for 'dconf_gnome_screensaver_idle_delay'
 
 ###############################################################################
-# BEGIN fix (163 / 175) for 'dconf_gnome_screensaver_lock_delay'
+# BEGIN fix (162 / 181) for 'dconf_gnome_screensaver_lock_delay'
 ###############################################################################
-(>&2 echo "Remediating rule 163/175: 'dconf_gnome_screensaver_lock_delay'")
+(>&2 echo "Remediating rule 162/181: 'dconf_gnome_screensaver_lock_delay'")
 
 var_screensaver_lock_delay="0"
 function include_dconf_settings {
@@ -27583,9 +28095,9 @@ dconf_lock 'org/gnome/desktop/screensaver' 'lock-delay' 'local.d' '00-security-s
 # END fix for 'dconf_gnome_screensaver_lock_delay'
 
 ###############################################################################
-# BEGIN fix (164 / 175) for 'dconf_gnome_screensaver_lock_enabled'
+# BEGIN fix (163 / 181) for 'dconf_gnome_screensaver_lock_enabled'
 ###############################################################################
-(>&2 echo "Remediating rule 164/175: 'dconf_gnome_screensaver_lock_enabled'")
+(>&2 echo "Remediating rule 163/181: 'dconf_gnome_screensaver_lock_enabled'")
 function include_dconf_settings {
 	:
 }
@@ -27669,9 +28181,9 @@ dconf_lock 'org/gnome/desktop/screensaver' 'lock-enabled' 'local.d' '00-security
 # END fix for 'dconf_gnome_screensaver_lock_enabled'
 
 ###############################################################################
-# BEGIN fix (165 / 175) for 'dconf_gnome_screensaver_mode_blank'
+# BEGIN fix (164 / 181) for 'dconf_gnome_screensaver_mode_blank'
 ###############################################################################
-(>&2 echo "Remediating rule 165/175: 'dconf_gnome_screensaver_mode_blank'")
+(>&2 echo "Remediating rule 164/181: 'dconf_gnome_screensaver_mode_blank'")
 function include_dconf_settings {
 	:
 }
@@ -27755,9 +28267,9 @@ dconf_lock 'org/gnome/desktop/screensaver' 'picture-uri' 'local.d' '00-security-
 # END fix for 'dconf_gnome_screensaver_mode_blank'
 
 ###############################################################################
-# BEGIN fix (166 / 175) for 'dconf_gnome_screensaver_user_info'
+# BEGIN fix (165 / 181) for 'dconf_gnome_screensaver_user_info'
 ###############################################################################
-(>&2 echo "Remediating rule 166/175: 'dconf_gnome_screensaver_user_info'")
+(>&2 echo "Remediating rule 165/181: 'dconf_gnome_screensaver_user_info'")
 function include_dconf_settings {
 	:
 }
@@ -27841,9 +28353,9 @@ dconf_lock 'org/gnome/desktop/screensaver' 'show-full-name-in-top-bar' 'local.d'
 # END fix for 'dconf_gnome_screensaver_user_info'
 
 ###############################################################################
-# BEGIN fix (167 / 175) for 'dconf_gnome_screensaver_user_locks'
+# BEGIN fix (166 / 181) for 'dconf_gnome_screensaver_user_locks'
 ###############################################################################
-(>&2 echo "Remediating rule 167/175: 'dconf_gnome_screensaver_user_locks'")
+(>&2 echo "Remediating rule 166/181: 'dconf_gnome_screensaver_user_locks'")
 function include_dconf_settings {
 	:
 }
@@ -27926,9 +28438,9 @@ dconf_lock 'org/gnome/desktop/screensaver' 'lock-delay' 'local.d' '00-security-s
 # END fix for 'dconf_gnome_screensaver_user_locks'
 
 ###############################################################################
-# BEGIN fix (168 / 175) for 'dconf_gnome_session_idle_user_locks'
+# BEGIN fix (167 / 181) for 'dconf_gnome_session_idle_user_locks'
 ###############################################################################
-(>&2 echo "Remediating rule 168/175: 'dconf_gnome_session_idle_user_locks'")
+(>&2 echo "Remediating rule 167/181: 'dconf_gnome_session_idle_user_locks'")
 function include_dconf_settings {
 	:
 }
@@ -28011,105 +28523,141 @@ dconf_lock 'org/gnome/desktop/session' 'idle-delay' 'local.d' '00-security-setti
 # END fix for 'dconf_gnome_session_idle_user_locks'
 
 ###############################################################################
-# BEGIN fix (169 / 175) for 'installed_OS_is_certified'
+# BEGIN fix (168 / 181) for 'dconf_use_text_backend'
 ###############################################################################
-(>&2 echo "Remediating rule 169/175: 'installed_OS_is_certified'")
-(>&2 echo "FIX FOR THIS RULE 'installed_OS_is_certified' IS MISSING!")
+(>&2 echo "Remediating rule 168/181: 'dconf_use_text_backend'")
 
-# END fix for 'installed_OS_is_certified'
+mkdir -p /etc/dconf/profile
 
-###############################################################################
-# BEGIN fix (170 / 175) for 'grub2_enable_fips_mode'
-###############################################################################
-(>&2 echo "Remediating rule 170/175: 'grub2_enable_fips_mode'")
-function disable_prelink {
-	# Disable prelinking and don't even check
-	# whether it is installed.
-	if grep -q ^PRELINKING /etc/sysconfig/prelink
-	then
-		sed -i 's/^PRELINKING[:blank:]*=[:blank:]*[:alpha:]*/PRELINKING=no/' /etc/sysconfig/prelink
-	else
-		printf '\n' >> /etc/sysconfig/prelink
-		printf '%s\n' '# Set PRELINKING=no per security requirements' 'PRELINKING=no' >> /etc/sysconfig/prelink
-	fi
-
-	# Undo previous prelink changes to binaries if prelink is available.
-	if test -x /usr/sbin/prelink; then
-		/usr/sbin/prelink -ua
-	fi
-}
-
-disable_prelink
-# Function to install packages on RHEL, Fedora, Debian, and possibly other systems.
-#
-# Example Call(s):
-#
-#     package_install aide
-#
-function package_install {
-
-# Load function arguments into local variables
-local package="$1"
-
-# Check sanity of the input
-if [ $# -ne "1" ]
+if test -f /etc/dconf/profile/user
 then
-  echo "Usage: package_install 'package_name'"
-  echo "Aborting."
-  exit 1
-fi
-
-if which dnf ; then
-  if ! rpm -q --quiet "$package"; then
-    dnf install -y "$package"
-  fi
-elif which yum ; then
-  if ! rpm -q --quiet "$package"; then
-    yum install -y "$package"
-  fi
-elif which apt-get ; then
-  apt-get install -y "$package"
+	sed -i '1s|^|service-db:keyfile/user\n|' /etc/dconf/profile/user
 else
-  echo "Failed to detect available packaging system, tried dnf, yum and apt-get!"
-  echo "Aborting."
-  exit 1
+	echo 'service-db:keyfile/user' > /etc/dconf/profile/user
 fi
 
+# END fix for 'dconf_use_text_backend'
+
+###############################################################################
+# BEGIN fix (169 / 181) for 'installed_OS_is_vendor_supported'
+###############################################################################
+(>&2 echo "Remediating rule 169/181: 'installed_OS_is_vendor_supported'")
+(>&2 echo "FIX FOR THIS RULE 'installed_OS_is_vendor_supported' IS MISSING!")
+
+# END fix for 'installed_OS_is_vendor_supported'
+
+###############################################################################
+# BEGIN fix (170 / 181) for 'configure_crypto_policy'
+###############################################################################
+(>&2 echo "Remediating rule 170/181: 'configure_crypto_policy'")
+
+var_system_crypto_policy="FIPS"
+
+update-crypto-policies --set ${var_system_crypto_policy}
+
+# END fix for 'configure_crypto_policy'
+
+###############################################################################
+# BEGIN fix (171 / 181) for 'configure_ssh_crypto_policy'
+###############################################################################
+(>&2 echo "Remediating rule 171/181: 'configure_ssh_crypto_policy'")
+
+SSH_CONF="/etc/sysconfig/sshd"
+
+sed -i "/^\s*CRYPTO_POLICY.*$/d" $SSH_CONF
+
+# END fix for 'configure_ssh_crypto_policy'
+
+###############################################################################
+# BEGIN fix (172 / 181) for 'configure_libreswan_crypto_policy'
+###############################################################################
+(>&2 echo "Remediating rule 172/181: 'configure_libreswan_crypto_policy'")
+
+function remediate_libreswan_crypto_policy() {
+    CONFIG_FILE="/etc/ipsec.conf"
+    if ! grep -qP "^\s*include\s+/etc/crypto-policies/back-ends/libreswan.config\s*(?:|(?:#.*))$" "$CONFIG_FILE" ; then
+        echo 'include /etc/crypto-policies/back-ends/libreswan.config' >> "$CONFIG_FILE"
+    fi
+    return 0
 }
 
-package_install dracut-fips
+remediate_libreswan_crypto_policy
 
-dracut -f
-
-# Correct the form of default kernel command line in  grub
-if grep -q '^GRUB_CMDLINE_LINUX=.*fips=.*"'  /etc/default/grub; then
-	# modify the GRUB command-line if a fips= arg already exists
-	sed -i 's/\(^GRUB_CMDLINE_LINUX=".*\)fips=[^[:space:]]*\(.*"\)/\1 fips=1 \2/'  /etc/default/grub
-else
-	# no existing fips=arg is present, append it
-	sed -i 's/\(^GRUB_CMDLINE_LINUX=".*\)"/\1 fips=1"/'  /etc/default/grub
-fi
-
-# Get the UUID of the device mounted at /boot.
-BOOT_UUID=$(findmnt --noheadings --output uuid --target /boot)
-
-if grep -q '^GRUB_CMDLINE_LINUX=".*boot=.*"'  /etc/default/grub; then
-	# modify the GRUB command-line if a boot= arg already exists
-	sed -i 's/\(^GRUB_CMDLINE_LINUX=".*\)boot=[^[:space:]]*\(.*"\)/\1 boot=UUID='"${BOOT_UUID} \2/" /etc/default/ grub
-else
-	# no existing boot=arg is present, append it
-	sed -i 's/\(^GRUB_CMDLINE_LINUX=".*\)"/\1 boot=UUID='${BOOT_UUID}'"/'  /etc/default/grub
-fi
-
-# Correct the form of kernel command line for each installed kernel in the bootloader
-/sbin/grubby --update-kernel=ALL --args="fips=1 boot=UUID=${BOOT_UUID}"
-
-# END fix for 'grub2_enable_fips_mode'
+# END fix for 'configure_libreswan_crypto_policy'
 
 ###############################################################################
-# BEGIN fix (171 / 175) for 'rpm_verify_hashes'
+# BEGIN fix (173 / 181) for 'configure_openssl_crypto_policy'
 ###############################################################################
-(>&2 echo "Remediating rule 171/175: 'rpm_verify_hashes'")
+(>&2 echo "Remediating rule 173/181: 'configure_openssl_crypto_policy'")
+
+OPENSSL_CRYPTO_POLICY_SECTION='[ crypto_policy ]'
+OPENSSL_CRYPTO_POLICY_SECTION_REGEX='\[\s*crypto_policy\s*\]'
+OPENSSL_CRYPTO_POLICY_INCLUSION='.include /etc/crypto-policies/back-ends/openssl.config'
+OPENSSL_CRYPTO_POLICY_INCLUSION_REGEX='^\s*\.include\s*/etc/crypto-policies/back-ends/openssl.config$'
+
+function remediate_openssl_crypto_policy() {
+	CONFIG_FILE="/etc/pki/tls/openssl.cnf"
+	if test -f "$CONFIG_FILE"; then
+		if ! grep -q "^\\s*$OPENSSL_CRYPTO_POLICY_SECTION_REGEX" "$CONFIG_FILE"; then
+			printf '\n%s\n\n%s' "$OPENSSL_CRYPTO_POLICY_SECTION" "$OPENSSL_CRYPTO_POLICY_INCLUSION" >> "$CONFIG_FILE"
+			return 0
+		elif ! grep -q "^\\s*$OPENSSL_CRYPTO_POLICY_INCLUSION_REGEX" "$CONFIG_FILE"; then
+			sed -i "s|$OPENSSL_CRYPTO_POLICY_SECTION_REGEX|&\\n\\n$OPENSSL_CRYPTO_POLICY_INCLUSION\\n|" "$CONFIG_FILE"
+			return 0
+		fi
+	else
+		echo "Aborting remediation as '$CONFIG_FILE' was not even found." >&2
+		return 1
+	fi
+}
+
+remediate_openssl_crypto_policy
+
+# END fix for 'configure_openssl_crypto_policy'
+
+###############################################################################
+# BEGIN fix (174 / 181) for 'configure_kerberos_crypto_policy'
+###############################################################################
+(>&2 echo "Remediating rule 174/181: 'configure_kerberos_crypto_policy'")
+
+rm -f /etc/krb5.conf.d/crypto-policies
+ln -s /etc/crypto-policies/back-ends/krb5.config /etc/krb5.conf.d/crypto-policies
+
+# END fix for 'configure_kerberos_crypto_policy'
+
+###############################################################################
+# BEGIN fix (175 / 181) for 'configure_bind_crypto_policy'
+###############################################################################
+(>&2 echo "Remediating rule 175/181: 'configure_bind_crypto_policy'")
+
+function remediate_bind_crypto_policy() {
+	CONFIG_FILE="/etc/named.conf"
+	if test -f "$CONFIG_FILE"; then
+		sed -i 's|options {|&\n\tinclude "/etc/crypto-policies/back-ends/bind.config";|' "$CONFIG_FILE"
+		return 0
+	else
+		echo "Aborting remediation as '$CONFIG_FILE' was not even found." >&2
+		return 1
+	fi
+}
+
+remediate_bind_crypto_policy
+
+# END fix for 'configure_bind_crypto_policy'
+
+###############################################################################
+# BEGIN fix (176 / 181) for 'enable_fips_mode'
+###############################################################################
+(>&2 echo "Remediating rule 176/181: 'enable_fips_mode'")
+
+fips-mode-setup --enable
+
+# END fix for 'enable_fips_mode'
+
+###############################################################################
+# BEGIN fix (177 / 181) for 'rpm_verify_hashes'
+###############################################################################
+(>&2 echo "Remediating rule 177/181: 'rpm_verify_hashes'")
 
 # Find which files have incorrect hash (not in /etc, because there are all system related config. files) and then get files names
 files_with_incorrect_hash="$(rpm -Va | grep -E '^..5.* /(bin|sbin|lib|lib64|usr)/' | awk '{print $NF}' )"
@@ -28121,9 +28669,9 @@ dnf reinstall -y $packages_to_reinstall
 # END fix for 'rpm_verify_hashes'
 
 ###############################################################################
-# BEGIN fix (172 / 175) for 'ensure_fedora_gpgkey_installed'
+# BEGIN fix (178 / 181) for 'ensure_fedora_gpgkey_installed'
 ###############################################################################
-(>&2 echo "Remediating rule 172/175: 'ensure_fedora_gpgkey_installed'")
+(>&2 echo "Remediating rule 178/181: 'ensure_fedora_gpgkey_installed'")
 
 dnf install -y gpg
 
@@ -28151,11 +28699,12 @@ then
   # If they are safe, try to obtain fingerprints from the key file
   # (to ensure there won't be e.g. CRC error).
   # Backup IFS value
-  IFS_BKP=$IFS
-  IFS=$'\n' GPG_OUT=($(gpg --with-fingerprint --with-colons "${REDHAT_RELEASE_KEY}" | grep '"^fpr' | cut -d ":" -f 10))
+  IFS_BKP="$IFS"
+  IFS=$'\n'
+  GPG_OUT=($(gpg --with-fingerprint --with-colons "${REDHAT_RELEASE_KEY}" | grep '"^fpr' | cut -d ":" -f 10))
   GPG_RESULT=$?
   # Reset IFS back to default
-  IFS=$IFS_BKP
+  IFS="$IFS_BKP"
   # No CRC error, safe to proceed
   if [ "${GPG_RESULT}" -eq "0" ]
   then
@@ -28169,9 +28718,9 @@ fi
 # END fix for 'ensure_fedora_gpgkey_installed'
 
 ###############################################################################
-# BEGIN fix (173 / 175) for 'ensure_gpgcheck_globally_activated'
+# BEGIN fix (179 / 181) for 'ensure_gpgcheck_globally_activated'
 ###############################################################################
-(>&2 echo "Remediating rule 173/175: 'ensure_gpgcheck_globally_activated'")
+(>&2 echo "Remediating rule 179/181: 'ensure_gpgcheck_globally_activated'")
 # Function to replace configuration setting in config file or add the configuration setting if
 # it does not exist.
 #
@@ -28255,9 +28804,9 @@ replace_or_append "/etc/dnf/dnf.conf" '^gpgcheck' '1' ''
 # END fix for 'ensure_gpgcheck_globally_activated'
 
 ###############################################################################
-# BEGIN fix (174 / 175) for 'ensure_gpgcheck_local_packages'
+# BEGIN fix (180 / 181) for 'ensure_gpgcheck_local_packages'
 ###############################################################################
-(>&2 echo "Remediating rule 174/175: 'ensure_gpgcheck_local_packages'")
+(>&2 echo "Remediating rule 180/181: 'ensure_gpgcheck_local_packages'")
 # Function to replace configuration setting in config file or add the configuration setting if
 # it does not exist.
 #
@@ -28341,9 +28890,9 @@ replace_or_append '/etc/dnf/dnf.conf' '^localpkg_gpgcheck' '1' ''
 # END fix for 'ensure_gpgcheck_local_packages'
 
 ###############################################################################
-# BEGIN fix (175 / 175) for 'ensure_gpgcheck_never_disabled'
+# BEGIN fix (181 / 181) for 'ensure_gpgcheck_never_disabled'
 ###############################################################################
-(>&2 echo "Remediating rule 175/175: 'ensure_gpgcheck_never_disabled'")
+(>&2 echo "Remediating rule 181/181: 'ensure_gpgcheck_never_disabled'")
 sed -i 's/gpgcheck\s*=.*/gpgcheck=1/g' /etc/yum.repos.d/*
 
 # END fix for 'ensure_gpgcheck_never_disabled'

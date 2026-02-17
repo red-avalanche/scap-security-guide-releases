@@ -7,7 +7,7 @@
 # Regardless of your system's workload all of these checks should pass.
 #
 # Benchmark ID:  OL-7
-# Benchmark Version:  0.1.42
+# Benchmark Version:  0.1.43
 #
 # XCCDF Version:  1.1
 #
@@ -116,7 +116,11 @@ package_remove ypserv
 # BEGIN fix (3 / 9) for 'no_rsh_trust_files'
 ###############################################################################
 (>&2 echo "Remediating rule 3/9: 'no_rsh_trust_files'")
-(>&2 echo "FIX FOR THIS RULE 'no_rsh_trust_files' IS MISSING!")
+find /home -maxdepth 2 -type f -name .rhosts -exec rm -f '{}' \;
+
+if [ -f /etc/hosts.equiv ]; then
+	/bin/rm -f /etc/hosts.equiv
+fi
 
 # END fix for 'no_rsh_trust_files'
 

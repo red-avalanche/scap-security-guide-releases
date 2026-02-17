@@ -7,7 +7,7 @@
 # Regardless of your system's deployment objective, all of these checks should pass.
 #
 # Benchmark ID:  WRLINUX
-# Benchmark Version:  0.1.42
+# Benchmark Version:  0.1.43
 #
 # XCCDF Version:  1.1
 #

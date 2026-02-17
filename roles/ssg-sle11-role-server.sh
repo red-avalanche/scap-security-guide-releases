@@ -6,7 +6,7 @@
 # This profile is for SUSE Enterprise Linux 11 acting as a server.
 #
 # Benchmark ID:  SUSE-11
-# Benchmark Version:  0.1.42
+# Benchmark Version:  0.1.43
 #
 # XCCDF Version:  1.1
 #
