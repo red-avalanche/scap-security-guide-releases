@@ -45,161 +45,20 @@
 <td>Variable Setting</td>
 </thead>
 <tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.4.3</a></td>
-<td>Specify Additional Remote NTP Servers</td>
-<td xml:lang="en-US">Depending on specific functional requirements of a concrete
-production environment, the Red Hat Enterprise Linux 8 system can be
-configured to utilize the services of the <code>chronyd</code> NTP daemon (the
-default), or services of the <code>ntpd</code> NTP daemon. Refer to
-
-    
-    <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html</a>
-
-for more detailed comparison of the features of both of the choices, and for
-further guidance how to choose between the two NTP daemons.
-<br>
-Additional NTP servers can be specified for time synchronization. To do so,
-perform the following:
-<ul>
-<li> if the system is configured to use the <code>chronyd</code> as the NTP daemon
-(the default), edit the file <code>/etc/chrony.conf</code> as follows,</li>
-<li> if the system is configured to use the <code>ntpd</code> as the NTP daemon,
-edit the file <code>/etc/ntp.conf</code> as documented below.</li>
-</ul>
-Add additional lines of the following form, substituting the IP address or
-hostname of a remote NTP server for <em>ntpserver</em>:
-<pre>server <i>ntpserver</i></pre>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
+<td>Ensure PAM Displays Last Logon/Access Notification</td>
+<td xml:lang="en-US">To configure the system to notify users of last logon/access
+using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code> settings in
+<code>/etc/pam.d/postlogin</code> to read as follows:
+<pre>session     [success=1 default=ignore] pam_succeed_if.so service !~ gdm* service !~ su* quiet
+session     [default=1]   pam_lastlog.so nowtmp showfailed
+session     optional      pam_lastlog.so silent noupdate showfailed</pre>
 </td>
-<td xml:lang="en-US">Specifying additional NTP servers increases the availability of
-accurate time data, in the event that one of the specified servers becomes
-unavailable. This is typical for a system acting as an NTP server for
-other systems.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.4.1</a></td>
-<td>Specify a Remote NTP Server</td>
-<td xml:lang="en-US">Depending on specific functional requirements of a concrete
-production environment, the Red Hat Enterprise Linux 8 system can be
-configured to utilize the services of the <code>chronyd</code> NTP daemon (the
-default), or services of the <code>ntpd</code> NTP daemon. Refer to
-
-    
-    <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html</a>
-
-for more detailed comparison of the features of both of the choices, and for
-further guidance how to choose between the two NTP daemons.
-<br>
-To specify a remote NTP server for time synchronization, perform the following:
-<ul>
-<li> if the system is configured to use the <code>chronyd</code> as the NTP daemon (the
-default), edit the file <code>/etc/chrony.conf</code> as follows,</li>
-<li> if the system is configured to use the <code>ntpd</code> as the NTP daemon,
-edit the file <code>/etc/ntp.conf</code> as documented below.</li>
-</ul>
-Add or correct the following lines, substituting the IP or hostname of a remote
-NTP server for <em>ntpserver</em>:
-<pre>server <i>ntpserver</i></pre>
-This instructs the NTP software to contact that remote server to obtain time
-data.</td>
-<td xml:lang="en-US">Synchronizing with an NTP server makes it possible to collate system
-logs from multiple sources or correlate computer events with real time events.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.4.3</a></td>
-<td>Specify a Remote NTP Server</td>
-<td xml:lang="en-US">Depending on specific functional requirements of a concrete
-production environment, the Red Hat Enterprise Linux 8 system can be
-configured to utilize the services of the <code>chronyd</code> NTP daemon (the
-default), or services of the <code>ntpd</code> NTP daemon. Refer to
-
-    
-    <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html</a>
-
-for more detailed comparison of the features of both of the choices, and for
-further guidance how to choose between the two NTP daemons.
-<br>
-To specify a remote NTP server for time synchronization, perform the following:
-<ul>
-<li> if the system is configured to use the <code>chronyd</code> as the NTP daemon (the
-default), edit the file <code>/etc/chrony.conf</code> as follows,</li>
-<li> if the system is configured to use the <code>ntpd</code> as the NTP daemon,
-edit the file <code>/etc/ntp.conf</code> as documented below.</li>
-</ul>
-Add or correct the following lines, substituting the IP or hostname of a remote
-NTP server for <em>ntpserver</em>:
-<pre>server <i>ntpserver</i></pre>
-This instructs the NTP software to contact that remote server to obtain time
-data.</td>
-<td xml:lang="en-US">Synchronizing with an NTP server makes it possible to collate system
-logs from multiple sources or correlate computer events with real time events.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.4.3</a></td>
-<td>Specify Additional Remote NTP Servers</td>
-<td xml:lang="en-US">Additional NTP servers can be specified for time synchronization
-in the file <code>/etc/ntp.conf</code>.  To do so, add additional lines of the
-following form, substituting the IP address or hostname of a remote NTP server for
-<em>ntpserver</em>:
-<pre>server <i>ntpserver</i></pre>
-</td>
-<td xml:lang="en-US">Specifying additional NTP servers increases the availability of
-accurate time data, in the event that one of the specified servers becomes
-unavailable. This is typical for a system acting as an NTP server for
-other systems.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.4.1</a></td>
-<td>Specify a Remote NTP Server</td>
-<td xml:lang="en-US">To specify a remote NTP server for time synchronization, edit
-the file <code>/etc/ntp.conf</code>. Add or correct the following lines,
-substituting the IP or hostname of a remote NTP server for <em>ntpserver</em>:
-<pre>server <i>ntpserver</i></pre>
-This instructs the NTP software to contact that remote server to obtain time
-data.</td>
-<td xml:lang="en-US">Synchronizing with an NTP server makes it possible
-to collate system logs from multiple sources or correlate computer events with
-real time events.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.4.3</a></td>
-<td>Specify a Remote NTP Server</td>
-<td xml:lang="en-US">To specify a remote NTP server for time synchronization, edit
-the file <code>/etc/ntp.conf</code>. Add or correct the following lines,
-substituting the IP or hostname of a remote NTP server for <em>ntpserver</em>:
-<pre>server <i>ntpserver</i></pre>
-This instructs the NTP software to contact that remote server to obtain time
-data.</td>
-<td xml:lang="en-US">Synchronizing with an NTP server makes it possible
-to collate system logs from multiple sources or correlate computer events with
-real time events.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=64">Req-8.1.8</a></td>
-<td>Set SSH Idle Timeout Interval</td>
-<td xml:lang="en-US">SSH allows administrators to set an idle timeout
-interval.
-After this interval has passed, the idle user will be
-automatically logged out.
-<br><br>
-To set an idle timeout interval, edit the following line in <code>/etc/ssh/sshd_config</code> as
-follows:
-<pre>ClientAliveInterval <b><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="sshd_idle_timeout_value"></ns0:sub></b></pre>
-The timeout <b>interval</b> is given in seconds. To have a timeout
-of e.g. 10 minutes, set <b>interval</b> to 600.
-<br><br>
-If a shorter timeout has already been set for the login
-shell, that value will preempt any SSH
-setting made here. Keep in mind that some processes may stop SSH
-from correctly detecting that the user is idle.</td>
-<td xml:lang="en-US">Terminating an idle ssh session within a short time period reduces the window of
-opportunity for unauthorized personnel to take control of a management session
-enabled on the console or console port that has been let unattended.</td>
+<td xml:lang="en-US">Users need to be aware of activity that occurs regarding
+their account. Providing users with information regarding the number
+of unsuccessful attempts that were made to login to their account
+allows the user to determine if any unauthorized activity has occurred
+and gives them an opportunity to notify administrators.</td>
 <td></td>
 </tr>
 <tr>
@@ -264,60 +123,11 @@ modify the content of both <code>/etc/pam.d/system-auth</code> and <code>/etc/pa
 <pre>account required pam_faillock.so</pre>
 </li>
 </ul>
-</td>
+If <code>unlock_time</code> is set to <code>0</code>, manual intervention by an administrator is required to unlock a user.</td>
 <td xml:lang="en-US">Locking out user accounts after a number of incorrect attempts
 prevents direct password guessing attacks. Ensuring that an administrator is
 involved in unlocking locked accounts draws appropriate attention to such
 situations.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=64">Req-8.2.3</a></td>
-<td>Set Password Strength Minimum Digit Characters</td>
-<td xml:lang="en-US">The pam_cracklib module's <code>dcredit</code> parameter controls requirements
-for usage of digits in a password. When set to a negative number, any
-password will be required to contain that many digits. When set to a
-positive number, pam_cracklib will grant +1 additional length credit for
-each digit. Add <code>dcredit=-1</code> after pam_cracklib.so to require use of
-a digit in passwords.</td>
-<td xml:lang="en-US">Requiring digits makes password guessing attacks more difficult by ensuring a larger
-search space.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=64">Req-8.2.3</a></td>
-<td>Set Password Strength Minimum Lowercase Characters</td>
-<td xml:lang="en-US">The pam_cracklib module's <code>lcredit=</code> parameter controls requirements for
-usage of lowercase letters in a password. When set to a negative number, any password will be required to
-contain that many lowercase characters. When set to a positive number, pam_cracklib will grant +1 additional
-length credit for each lowercase character.
-Add <code>lcredit=-1</code> after pam_cracklib.so to require use of a lowercase character in passwords.</td>
-<td xml:lang="en-US">Requiring a minimum number of lowercase characters makes password guessing attacks
-more difficult by ensuring a larger search space.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=64">Req-8.2.3</a></td>
-<td>Set Password Minimum Length</td>
-<td xml:lang="en-US">The pam_cracklib module's <code>minlen</code> parameter controls requirements for
-minimum characters required in a password. Add <code>minlen=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_minlen"></ns0:sub></code>
-after pam_pwquality to set minimum password length requirements.</td>
-<td xml:lang="en-US">Password length is one factor of several that helps to determine
-strength and how long it takes to crack a password. Use of more characters in
-a password helps to exponentially increase the time and/or resources
-required to compromise the password.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=64">Req-8.2.3</a></td>
-<td>Set Password Strength Minimum Uppercase Characters</td>
-<td xml:lang="en-US">The pam_cracklib module's <code>ucredit=</code> parameter controls requirements for
-usage of uppercase letters in a password. When set to a negative number, any password will be required to
-contain that many uppercase characters. When set to a positive number, pam_cracklib will grant +1 additional
-length credit for each uppercase character.
-Add <code>ucredit=-1</code> after pam_cracklib.so to require use of an upper case character in passwords.</td>
-<td xml:lang="en-US">Requiring a minimum number of uppercase characters makes password guessing attacks
-more difficult by ensuring a larger search space.</td>
 <td></td>
 </tr>
 <tr>
@@ -458,23 +268,6 @@ difficult.</td>
 <td></td>
 </tr>
 <tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
-<td>Ensure PAM Displays Last Logon/Access Notification</td>
-<td xml:lang="en-US">To configure the system to notify users of last logon/access
-using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code> settings in
-<code>/etc/pam.d/postlogin</code> to read as follows:
-<pre>session     [success=1 default=ignore] pam_succeed_if.so service !~ gdm* service !~ su* quiet
-session     [default=1]   pam_lastlog.so nowtmp showfailed
-session     optional      pam_lastlog.so silent noupdate showfailed</pre>
-</td>
-<td xml:lang="en-US">Users need to be aware of activity that occurs regarding
-their account. Providing users with information regarding the number
-of unsuccessful attempts that were made to login to their account
-allows the user to determine if any unauthorized activity has occurred
-and gives them an opportunity to notify administrators.</td>
-<td></td>
-</tr>
-<tr>
 <td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=64">Req-8.1.4</a></td>
 <td>Set Account Expiration Following Inactivity</td>
 <td xml:lang="en-US">To specify the number of days after a password expires (which
@@ -558,6 +351,318 @@ prevent logins with empty passwords.</td>
 <td xml:lang="en-US">If an account has an empty password, anyone could log in and
 run commands with the privileges of that account. Accounts with
 empty passwords should never be used in operational environments.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.5.2</a></td>
+<td>Make the auditd Configuration Immutable</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code> in order to make the auditd configuration
+immutable:
+<pre>-e 2</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following line to
+<code>/etc/audit/audit.rules</code> file in order to make the auditd configuration
+immutable:
+<pre>-e 2</pre>
+With this setting, a reboot will be required to change any audit rules.</td>
+<td xml:lang="en-US">Making the audit configuration immutable prevents accidental as
+well as malicious modification of the audit rules, although it may be
+problematic if legitimate changes are needed during system
+operation</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.5.5</a></td>
+<td>Record Events that Modify the System's Mandatory Access Controls</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+<pre>-w /etc/selinux/ -p wa -k MAC-policy</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following line to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-w /etc/selinux/ -p wa -k MAC-policy</pre>
+</td>
+<td xml:lang="en-US">The system's mandatory access policy (SELinux) should not be
+arbitrarily changed by anything other than administrator action. All changes to
+MAC policy should be audited.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.7</a></td>
+<td>Ensure auditd Collects Information on Exporting to Media (successful)</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect media exportation
+events for all users and root. If the <code>auditd</code> daemon is configured to
+use the <code>augenrules</code> program to read audit rules during daemon startup
+(the default), add the following line to a file with suffix <code>.rules</code> in
+the directory <code>/etc/audit/rules.d</code>, setting ARCH to either b32 or b64 as
+appropriate for your system:
+<pre>-a always,exit -F arch=ARCH -S mount -F auid&gt;=1000 -F auid!=unset -F key=export</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following line to
+<code>/etc/audit/audit.rules</code> file, setting ARCH to either b32 or b64 as
+appropriate for your system:
+<pre>-a always,exit -F arch=ARCH -S mount -F auid&gt;=1000 -F auid!=unset -F key=export</pre>
+</td>
+<td xml:lang="en-US">The unauthorized exportation of data to external media could result in an information leak
+where classified information, Privacy Act information, and intellectual property could be lost. An audit
+trail should be created each time a filesystem is mounted to help identify and guard against information
+loss.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.5.5</a></td>
+<td>Record Events that Modify the System's Network Environment</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, setting ARCH to either b32 or b64 as
+appropriate for your system:
+<pre>-a always,exit -F arch=ARCH -S sethostname,setdomainname -F key=audit_rules_networkconfig_modification
+-w /etc/issue -p wa -k audit_rules_networkconfig_modification
+-w /etc/issue.net -p wa -k audit_rules_networkconfig_modification
+-w /etc/hosts -p wa -k audit_rules_networkconfig_modification
+-w /etc/sysconfig/network -p wa -k audit_rules_networkconfig_modification</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, setting ARCH to either b32 or b64 as
+appropriate for your system:
+<pre>-a always,exit -F arch=ARCH -S sethostname,setdomainname -F key=audit_rules_networkconfig_modification
+-w /etc/issue -p wa -k audit_rules_networkconfig_modification
+-w /etc/issue.net -p wa -k audit_rules_networkconfig_modification
+-w /etc/hosts -p wa -k audit_rules_networkconfig_modification
+-w /etc/sysconfig/network -p wa -k audit_rules_networkconfig_modification</pre>
+</td>
+<td xml:lang="en-US">The network environment should not be modified by anything other
+than administrator action. Any change to network parameters should be
+audited.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.3</a></td>
+<td>Record Attempts to Alter Process and Session Initiation Information</td>
+<td xml:lang="en-US">The audit system already collects process information for all
+users and root. If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
+edits of files involved in storing such process information:
+<pre>-w /var/run/utmp -p wa -k session
+-w /var/log/btmp -p wa -k session
+-w /var/log/wtmp -p wa -k session</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file in order to watch for attempted manual
+edits of files involved in storing such process information:
+<pre>-w /var/run/utmp -p wa -k session
+-w /var/log/btmp -p wa -k session
+-w /var/log/wtmp -p wa -k session</pre>
+</td>
+<td xml:lang="en-US">Manual editing of these files may indicate nefarious activity, such
+as an attacker attempting to remove evidence of an intrusion.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.2</a></td>
+<td>Ensure auditd Collects System Administrator Actions</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect administrator actions
+for all users and root. If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the default),
+add the following line to a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>:
+<pre>-w /etc/sudoers -p wa -k actions
+-w /etc/sudoers.d/ -p wa -k actions</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following line to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-w /etc/sudoers -p wa -k actions
+-w /etc/sudoers.d/ -p wa -k actions</pre>
+</td>
+<td xml:lang="en-US">The actions taken by system administrators should be audited to keep a record
+of what was executed on the system, as well as, for accountability purposes.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.5.b</a></td>
+<td>Ensure auditd Collects System Administrator Actions</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect administrator actions
+for all users and root. If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the default),
+add the following line to a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>:
+<pre>-w /etc/sudoers -p wa -k actions
+-w /etc/sudoers.d/ -p wa -k actions</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following line to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-w /etc/sudoers -p wa -k actions
+-w /etc/sudoers.d/ -p wa -k actions</pre>
+</td>
+<td xml:lang="en-US">The actions taken by system administrators should be audited to keep a record
+of what was executed on the system, as well as, for accountability purposes.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.5</a></td>
+<td>Record Events that Modify User/Group Information</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<pre>-w /etc/group -p wa -k audit_rules_usergroup_modification
+-w /etc/passwd -p wa -k audit_rules_usergroup_modification
+-w /etc/gshadow -p wa -k audit_rules_usergroup_modification
+-w /etc/shadow -p wa -k audit_rules_usergroup_modification
+-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
+<br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<pre>-w /etc/group -p wa -k audit_rules_usergroup_modification
+-w /etc/passwd -p wa -k audit_rules_usergroup_modification
+-w /etc/gshadow -p wa -k audit_rules_usergroup_modification
+-w /etc/shadow -p wa -k audit_rules_usergroup_modification
+-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.5</a></td>
+<td>Record Events that Modify User/Group Information - /etc/group</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/group -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/group -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.5</a></td>
+<td>Record Events that Modify User/Group Information - /etc/gshadow</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/gshadow -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/gshadow -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.5</a></td>
+<td>Record Events that Modify User/Group Information - /etc/security/opasswd</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.5</a></td>
+<td>Record Events that Modify User/Group Information - /etc/passwd</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.5</a></td>
+<td>Record Events that Modify User/Group Information - /etc/shadow</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/shadow -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/shadow -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.5.1</a></td>
+<td>System Audit Logs Must Be Owned By Root</td>
+<td xml:lang="en-US">All audit logs must be owned by root user and group. By default, the path for audit log is <pre>/var/log/audit/</pre>.
+
+To properly set the owner of <code>/var/log/audit</code>, run the command:
+<pre>$ sudo chown root /var/log/audit </pre>
+
+To properly set the owner of <code>/var/log/audit/*</code>, run the command:
+<pre>$ sudo chown root /var/log/audit/* </pre>
+</td>
+<td xml:lang="en-US">Unauthorized disclosure of audit records can reveal system and configuration data to
+attackers, thus compromising its confidentiality.</td>
 <td></td>
 </tr>
 <tr>
@@ -2582,318 +2687,6 @@ to the system time should be audited.</td>
 <td></td>
 </tr>
 <tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.5.2</a></td>
-<td>Make the auditd Configuration Immutable</td>
-<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following line to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code> in order to make the auditd configuration
-immutable:
-<pre>-e 2</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file in order to make the auditd configuration
-immutable:
-<pre>-e 2</pre>
-With this setting, a reboot will be required to change any audit rules.</td>
-<td xml:lang="en-US">Making the audit configuration immutable prevents accidental as
-well as malicious modification of the audit rules, although it may be
-problematic if legitimate changes are needed during system
-operation</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.5.5</a></td>
-<td>Record Events that Modify the System's Mandatory Access Controls</td>
-<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following line to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>:
-<pre>-w /etc/selinux/ -p wa -k MAC-policy</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-w /etc/selinux/ -p wa -k MAC-policy</pre>
-</td>
-<td xml:lang="en-US">The system's mandatory access policy (SELinux) should not be
-arbitrarily changed by anything other than administrator action. All changes to
-MAC policy should be audited.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.7</a></td>
-<td>Ensure auditd Collects Information on Exporting to Media (successful)</td>
-<td xml:lang="en-US">At a minimum, the audit system should collect media exportation
-events for all users and root. If the <code>auditd</code> daemon is configured to
-use the <code>augenrules</code> program to read audit rules during daemon startup
-(the default), add the following line to a file with suffix <code>.rules</code> in
-the directory <code>/etc/audit/rules.d</code>, setting ARCH to either b32 or b64 as
-appropriate for your system:
-<pre>-a always,exit -F arch=ARCH -S mount -F auid&gt;=1000 -F auid!=unset -F key=export</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file, setting ARCH to either b32 or b64 as
-appropriate for your system:
-<pre>-a always,exit -F arch=ARCH -S mount -F auid&gt;=1000 -F auid!=unset -F key=export</pre>
-</td>
-<td xml:lang="en-US">The unauthorized exportation of data to external media could result in an information leak
-where classified information, Privacy Act information, and intellectual property could be lost. An audit
-trail should be created each time a filesystem is mounted to help identify and guard against information
-loss.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.5.5</a></td>
-<td>Record Events that Modify the System's Network Environment</td>
-<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, setting ARCH to either b32 or b64 as
-appropriate for your system:
-<pre>-a always,exit -F arch=ARCH -S sethostname,setdomainname -F key=audit_rules_networkconfig_modification
--w /etc/issue -p wa -k audit_rules_networkconfig_modification
--w /etc/issue.net -p wa -k audit_rules_networkconfig_modification
--w /etc/hosts -p wa -k audit_rules_networkconfig_modification
--w /etc/sysconfig/network -p wa -k audit_rules_networkconfig_modification</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file, setting ARCH to either b32 or b64 as
-appropriate for your system:
-<pre>-a always,exit -F arch=ARCH -S sethostname,setdomainname -F key=audit_rules_networkconfig_modification
--w /etc/issue -p wa -k audit_rules_networkconfig_modification
--w /etc/issue.net -p wa -k audit_rules_networkconfig_modification
--w /etc/hosts -p wa -k audit_rules_networkconfig_modification
--w /etc/sysconfig/network -p wa -k audit_rules_networkconfig_modification</pre>
-</td>
-<td xml:lang="en-US">The network environment should not be modified by anything other
-than administrator action. Any change to network parameters should be
-audited.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.3</a></td>
-<td>Record Attempts to Alter Process and Session Initiation Information</td>
-<td xml:lang="en-US">The audit system already collects process information for all
-users and root. If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
-edits of files involved in storing such process information:
-<pre>-w /var/run/utmp -p wa -k session
--w /var/log/btmp -p wa -k session
--w /var/log/wtmp -p wa -k session</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file in order to watch for attempted manual
-edits of files involved in storing such process information:
-<pre>-w /var/run/utmp -p wa -k session
--w /var/log/btmp -p wa -k session
--w /var/log/wtmp -p wa -k session</pre>
-</td>
-<td xml:lang="en-US">Manual editing of these files may indicate nefarious activity, such
-as an attacker attempting to remove evidence of an intrusion.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.2</a></td>
-<td>Ensure auditd Collects System Administrator Actions</td>
-<td xml:lang="en-US">At a minimum, the audit system should collect administrator actions
-for all users and root. If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the default),
-add the following line to a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code>:
-<pre>-w /etc/sudoers -p wa -k actions
--w /etc/sudoers.d/ -p wa -k actions</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-w /etc/sudoers -p wa -k actions
--w /etc/sudoers.d/ -p wa -k actions</pre>
-</td>
-<td xml:lang="en-US">The actions taken by system administrators should be audited to keep a record
-of what was executed on the system, as well as, for accountability purposes.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.5.b</a></td>
-<td>Ensure auditd Collects System Administrator Actions</td>
-<td xml:lang="en-US">At a minimum, the audit system should collect administrator actions
-for all users and root. If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the default),
-add the following line to a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code>:
-<pre>-w /etc/sudoers -p wa -k actions
--w /etc/sudoers.d/ -p wa -k actions</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-w /etc/sudoers -p wa -k actions
--w /etc/sudoers.d/ -p wa -k actions</pre>
-</td>
-<td xml:lang="en-US">The actions taken by system administrators should be audited to keep a record
-of what was executed on the system, as well as, for accountability purposes.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.5</a></td>
-<td>Record Events that Modify User/Group Information</td>
-<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
-account changes:
-<pre>-w /etc/group -p wa -k audit_rules_usergroup_modification
--w /etc/passwd -p wa -k audit_rules_usergroup_modification
--w /etc/gshadow -p wa -k audit_rules_usergroup_modification
--w /etc/shadow -p wa -k audit_rules_usergroup_modification
--w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
-<br>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
-account changes:
-<pre>-w /etc/group -p wa -k audit_rules_usergroup_modification
--w /etc/passwd -p wa -k audit_rules_usergroup_modification
--w /etc/gshadow -p wa -k audit_rules_usergroup_modification
--w /etc/shadow -p wa -k audit_rules_usergroup_modification
--w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
-</td>
-<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
-will alert the system administrator(s) to any modifications. Any unexpected
-users, groups, or modifications should be investigated for legitimacy.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.5</a></td>
-<td>Record Events that Modify User/Group Information - /etc/group</td>
-<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
-account changes:
-<br><br>
-<pre>-w /etc/group -p wa -k audit_rules_usergroup_modification</pre>
-<br><br>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
-account changes:
-<br><br>
-<pre>-w /etc/group -p wa -k audit_rules_usergroup_modification</pre>
-</td>
-<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
-will alert the system administrator(s) to any modifications. Any unexpected
-users, groups, or modifications should be investigated for legitimacy.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.5</a></td>
-<td>Record Events that Modify User/Group Information - /etc/gshadow</td>
-<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
-account changes:
-<br><br>
-<pre>-w /etc/gshadow -p wa -k audit_rules_usergroup_modification</pre>
-<br><br>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
-account changes:
-<br><br>
-<pre>-w /etc/gshadow -p wa -k audit_rules_usergroup_modification</pre>
-</td>
-<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
-will alert the system administrator(s) to any modifications. Any unexpected
-users, groups, or modifications should be investigated for legitimacy.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.5</a></td>
-<td>Record Events that Modify User/Group Information - /etc/security/opasswd</td>
-<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
-account changes:
-<br><br>
-<pre>-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
-<br><br>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
-account changes:
-<br><br>
-<pre>-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
-</td>
-<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
-will alert the system administrator(s) to any modifications. Any unexpected
-users, groups, or modifications should be investigated for legitimacy.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.5</a></td>
-<td>Record Events that Modify User/Group Information - /etc/passwd</td>
-<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
-account changes:
-<br><br>
-<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
-<br><br>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
-account changes:
-<br><br>
-<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
-</td>
-<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
-will alert the system administrator(s) to any modifications. Any unexpected
-users, groups, or modifications should be investigated for legitimacy.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.5</a></td>
-<td>Record Events that Modify User/Group Information - /etc/shadow</td>
-<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
-account changes:
-<br><br>
-<pre>-w /etc/shadow -p wa -k audit_rules_usergroup_modification</pre>
-<br><br>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
-account changes:
-<br><br>
-<pre>-w /etc/shadow -p wa -k audit_rules_usergroup_modification</pre>
-</td>
-<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
-will alert the system administrator(s) to any modifications. Any unexpected
-users, groups, or modifications should be investigated for legitimacy.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.5.1</a></td>
-<td>System Audit Logs Must Be Owned By Root</td>
-<td xml:lang="en-US">All audit logs must be owned by root user and group. By default, the path for audit log is <pre>/var/log/audit/</pre>.
-
-To properly set the owner of <code>/var/log/audit</code>, run the command:
-<pre>$ sudo chown root /var/log/audit </pre>
-
-To properly set the owner of <code>/var/log/audit/*</code>, run the command:
-<pre>$ sudo chown root /var/log/audit/* </pre>
-</td>
-<td xml:lang="en-US">Unauthorized disclosure of audit records can reveal system and configuration data to
-attackers, thus compromising its confidentiality.</td>
-<td></td>
-</tr>
-<tr>
 <td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.5.3</a></td>
 <td>Configure auditd to use audispd's syslog plugin</td>
 <td xml:lang="en-US">To configure the <code>auditd</code> service to use the
@@ -3119,7 +2912,7 @@ is critical for system security.</td>
 <td>Verify Permissions on shadow File</td>
 <td xml:lang="en-US">
 To properly set the permissions of <code>/etc/shadow</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/shadow</pre>
+<pre>$ sudo chmod 0000 /etc/shadow</pre>
 </td>
 <td xml:lang="en-US">The <code>/etc/shadow</code> file contains the list of local
 system accounts and stores password hashes. Protection of this file is
@@ -3317,6 +3110,164 @@ in the GNOME desktop to a blank screen:
 </td>
 <td xml:lang="en-US">Setting the screensaver mode to blank-only conceals the
 contents of the display from passersby.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.4.3</a></td>
+<td>Specify Additional Remote NTP Servers</td>
+<td xml:lang="en-US">Depending on specific functional requirements of a concrete
+production environment, the Red Hat Enterprise Linux 8 system can be
+configured to utilize the services of the <code>chronyd</code> NTP daemon (the
+default), or services of the <code>ntpd</code> NTP daemon. Refer to
+
+    
+    <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html</a>
+
+for more detailed comparison of the features of both of the choices, and for
+further guidance how to choose between the two NTP daemons.
+<br>
+Additional NTP servers can be specified for time synchronization. To do so,
+perform the following:
+<ul>
+<li> if the system is configured to use the <code>chronyd</code> as the NTP daemon
+(the default), edit the file <code>/etc/chrony.conf</code> as follows,</li>
+<li> if the system is configured to use the <code>ntpd</code> as the NTP daemon,
+edit the file <code>/etc/ntp.conf</code> as documented below.</li>
+</ul>
+Add additional lines of the following form, substituting the IP address or
+hostname of a remote NTP server for <em>ntpserver</em>:
+<pre>server <i>ntpserver</i></pre>
+</td>
+<td xml:lang="en-US">Specifying additional NTP servers increases the availability of
+accurate time data, in the event that one of the specified servers becomes
+unavailable. This is typical for a system acting as an NTP server for
+other systems.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.4.1</a></td>
+<td>Specify a Remote NTP Server</td>
+<td xml:lang="en-US">Depending on specific functional requirements of a concrete
+production environment, the Red Hat Enterprise Linux 8 system can be
+configured to utilize the services of the <code>chronyd</code> NTP daemon (the
+default), or services of the <code>ntpd</code> NTP daemon. Refer to
+
+    
+    <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html</a>
+
+for more detailed comparison of the features of both of the choices, and for
+further guidance how to choose between the two NTP daemons.
+<br>
+To specify a remote NTP server for time synchronization, perform the following:
+<ul>
+<li> if the system is configured to use the <code>chronyd</code> as the NTP daemon (the
+default), edit the file <code>/etc/chrony.conf</code> as follows,</li>
+<li> if the system is configured to use the <code>ntpd</code> as the NTP daemon,
+edit the file <code>/etc/ntp.conf</code> as documented below.</li>
+</ul>
+Add or correct the following lines, substituting the IP or hostname of a remote
+NTP server for <em>ntpserver</em>:
+<pre>server <i>ntpserver</i></pre>
+This instructs the NTP software to contact that remote server to obtain time
+data.</td>
+<td xml:lang="en-US">Synchronizing with an NTP server makes it possible to collate system
+logs from multiple sources or correlate computer events with real time events.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.4.3</a></td>
+<td>Specify a Remote NTP Server</td>
+<td xml:lang="en-US">Depending on specific functional requirements of a concrete
+production environment, the Red Hat Enterprise Linux 8 system can be
+configured to utilize the services of the <code>chronyd</code> NTP daemon (the
+default), or services of the <code>ntpd</code> NTP daemon. Refer to
+
+    
+    <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html</a>
+
+for more detailed comparison of the features of both of the choices, and for
+further guidance how to choose between the two NTP daemons.
+<br>
+To specify a remote NTP server for time synchronization, perform the following:
+<ul>
+<li> if the system is configured to use the <code>chronyd</code> as the NTP daemon (the
+default), edit the file <code>/etc/chrony.conf</code> as follows,</li>
+<li> if the system is configured to use the <code>ntpd</code> as the NTP daemon,
+edit the file <code>/etc/ntp.conf</code> as documented below.</li>
+</ul>
+Add or correct the following lines, substituting the IP or hostname of a remote
+NTP server for <em>ntpserver</em>:
+<pre>server <i>ntpserver</i></pre>
+This instructs the NTP software to contact that remote server to obtain time
+data.</td>
+<td xml:lang="en-US">Synchronizing with an NTP server makes it possible to collate system
+logs from multiple sources or correlate computer events with real time events.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.4.3</a></td>
+<td>Specify Additional Remote NTP Servers</td>
+<td xml:lang="en-US">Additional NTP servers can be specified for time synchronization
+in the file <code>/etc/ntp.conf</code>.  To do so, add additional lines of the
+following form, substituting the IP address or hostname of a remote NTP server for
+<em>ntpserver</em>:
+<pre>server <i>ntpserver</i></pre>
+</td>
+<td xml:lang="en-US">Specifying additional NTP servers increases the availability of
+accurate time data, in the event that one of the specified servers becomes
+unavailable. This is typical for a system acting as an NTP server for
+other systems.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.4.1</a></td>
+<td>Specify a Remote NTP Server</td>
+<td xml:lang="en-US">To specify a remote NTP server for time synchronization, edit
+the file <code>/etc/ntp.conf</code>. Add or correct the following lines,
+substituting the IP or hostname of a remote NTP server for <em>ntpserver</em>:
+<pre>server <i>ntpserver</i></pre>
+This instructs the NTP software to contact that remote server to obtain time
+data.</td>
+<td xml:lang="en-US">Synchronizing with an NTP server makes it possible
+to collate system logs from multiple sources or correlate computer events with
+real time events.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.4.3</a></td>
+<td>Specify a Remote NTP Server</td>
+<td xml:lang="en-US">To specify a remote NTP server for time synchronization, edit
+the file <code>/etc/ntp.conf</code>. Add or correct the following lines,
+substituting the IP or hostname of a remote NTP server for <em>ntpserver</em>:
+<pre>server <i>ntpserver</i></pre>
+This instructs the NTP software to contact that remote server to obtain time
+data.</td>
+<td xml:lang="en-US">Synchronizing with an NTP server makes it possible
+to collate system logs from multiple sources or correlate computer events with
+real time events.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=64">Req-8.1.8</a></td>
+<td>Set SSH Idle Timeout Interval</td>
+<td xml:lang="en-US">SSH allows administrators to set an idle timeout
+interval.
+After this interval has passed, the idle user will be
+automatically logged out.
+<br><br>
+To set an idle timeout interval, edit the following line in <code>/etc/ssh/sshd_config</code> as
+follows:
+<pre>ClientAliveInterval <b><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="sshd_idle_timeout_value"></ns0:sub></b></pre>
+The timeout <b>interval</b> is given in seconds. To have a timeout
+of e.g. 10 minutes, set <b>interval</b> to 600.
+<br><br>
+If a shorter timeout has already been set for the login
+shell, that value will preempt any SSH
+setting made here. Keep in mind that some processes may stop SSH
+from correctly detecting that the user is idle.</td>
+<td xml:lang="en-US">Terminating an idle ssh session within a short time period reduces the window of
+opportunity for unauthorized personnel to take control of a management session
+enabled on the console or console port that has been let unattended.</td>
 <td></td>
 </tr>
 <tr>
@@ -3565,8 +3516,9 @@ can be held accountable for their actions.</td>
 <td xml:lang="en-US">To ensure all processes can be audited, even those which start
 prior to the audit daemon, add the argument <code>audit=1</code> to the default
 GRUB 2 command line for the Linux operating system in
-<code>/etc/default/grub</code>, in the manner below:
-<pre>GRUB_CMDLINE_LINUX="crashkernel=auto rd.lvm.lv=VolGroup/LogVol06 rd.lvm.lv=VolGroup/lv_swap rhgb quiet rd.shell=0 audit=1"</pre>
+
+<code>/boot/grub2/grubenv</code>, in the manner below:
+<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"</pre>
 </td>
 <td xml:lang="en-US">Each process on the system carries an "auditable" flag which indicates whether
 its activities can be audited. Although <code>auditd</code> takes care of enabling
@@ -3656,23 +3608,6 @@ The NTP daemon offers all of the functionality of <code>ntpdate</code>, which is
 deprecated.  Additional information on this is available at
 
     <a href="http://support.ntp.org/bin/view/Dev/DeprecatingNtpdate">http://support.ntp.org/bin/view/Dev/DeprecatingNtpdate</a>.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.4</a></td>
-<td>Enable systemd_timesyncd Service</td>
-<td xml:lang="en-US"> The <code>systemd_timesyncd</code> service can be enabled with the following command: <pre>$ sudo systemctl enable systemd_timesyncd.service</pre>
-</td>
-<td xml:lang="en-US">Enabling the <code>systemd_timesyncd</code> service ensures that this host
-uses the ntp protocol to fetch time data from a ntp server.
-Synchronizing time is essential for authentication
-services such as Kerberos, but it is also important for maintaining accurate
-logs and auditing possible security breaches.
-<br><br>
-Additional information on Ubuntu network time protocol is
-available at
-
-    <a href="https://help.ubuntu.com/lts/serverguide/NTP.html.en">https://help.ubuntu.com/lts/serverguide/NTP.html.en</a>.</td>
 <td></td>
 </tr>
 <tr>
@@ -3818,6 +3753,17 @@ if the /var/log partition becomes full.</td>
 </tr>
 <tr>
 <td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=89">Req-11.4</a></td>
+<td>Install Intrusion Detection Software</td>
+<td xml:lang="en-US">The base Red Hat Enterprise Linux 8 platform already includes a sophisticated auditing system that
+can detect intruder activity, as well as SELinux, which provides host-based
+intrusion prevention capabilities by confining privileged programs and user
+sessions which may become compromised.</td>
+<td xml:lang="en-US">Host-based intrusion detection tools provide a system-level defense when an
+intruder gains access to a system or network.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=89">Req-11.4</a></td>
 <td>Install the Asset Configuration Compliance Module (ACCM)</td>
 <td xml:lang="en-US">Install the Asset Configuration Compliance Module (ACCM).</td>
 <td xml:lang="en-US">Without a host-based intrusion detection tool, there is no system-level defense
@@ -3848,14 +3794,27 @@ intrusion attempts.</td>
 <td></td>
 </tr>
 <tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=89">Req-11.4</a></td>
-<td>Install Intrusion Detection Software</td>
-<td xml:lang="en-US">The base Red Hat Enterprise Linux 8 platform already includes a sophisticated auditing system that
-can detect intruder activity, as well as SELinux, which provides host-based
-intrusion prevention capabilities by confining privileged programs and user
-sessions which may become compromised.</td>
-<td xml:lang="en-US">Host-based intrusion detection tools provide a system-level defense when an
-intruder gains access to a system or network.</td>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=89">Req-11.5</a></td>
+<td>Disable Prelinking</td>
+<td xml:lang="en-US">The prelinking feature changes binaries in an attempt to decrease their startup
+time. In order to disable it, change or add the following line inside the file
+<code>/etc/sysconfig/prelink</code>:
+<pre>PRELINKING=no</pre>
+Next, run the following command to return binaries to a normal, non-prelinked state:
+<pre>$ sudo /usr/sbin/prelink -ua</pre>
+</td>
+<td xml:lang="en-US">Because the prelinking feature changes binaries, it can interfere with the
+operation of certain software and/or modes such as AIDE, FIPS, etc.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=89">Req-11.5</a></td>
+<td>Install AIDE</td>
+<td xml:lang="en-US">The <code>aide</code> package can be installed with the following command:
+<pre>
+$ sudo yum install aide</pre>
+</td>
+<td xml:lang="en-US">The AIDE package must be installed if it is to be available for integrity checking.</td>
 <td></td>
 </tr>
 <tr>
@@ -3899,16 +3858,6 @@ negative consequences that could ultimately affect the security state of the ope
 system. The operating system's Information Management Officer (IMO)/Information System
 Security Officer (ISSO) and System Administrators (SAs) must be notified via email and/or
 monitoring system trap when there is an unauthorized modification of a configuration item.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=89">Req-11.5</a></td>
-<td>Install AIDE</td>
-<td xml:lang="en-US">The <code>aide</code> package can be installed with the following command:
-<pre>
-$ sudo yum install aide</pre>
-</td>
-<td xml:lang="en-US">The AIDE package must be installed if it is to be available for integrity checking.</td>
 <td></td>
 </tr>
 <tr>
@@ -3983,20 +3932,6 @@ the correct values:
 could allow an unauthorized user to gain privileges that they should not have.
 The permissions set by the vendor should be maintained. Any deviations from
 this baseline should be investigated.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=89">Req-11.5</a></td>
-<td>Disable Prelinking</td>
-<td xml:lang="en-US">The prelinking feature changes binaries in an attempt to decrease their startup
-time. In order to disable it, change or add the following line inside the file
-<code>/etc/sysconfig/prelink</code>:
-<pre>PRELINKING=no</pre>
-Next, run the following command to return binaries to a normal, non-prelinked state:
-<pre>$ sudo /usr/sbin/prelink -ua</pre>
-</td>
-<td xml:lang="en-US">Because the prelinking feature changes binaries, it can interfere with the
-operation of certain software and/or modes such as AIDE, FIPS, etc.</td>
 <td></td>
 </tr>
 </table>

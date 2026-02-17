@@ -85,23 +85,6 @@ deprecated.  Additional information on this is available at
 <td></td>
 </tr>
 <tr>
-<td>NT012(R03)</td>
-<td>Enable systemd_timesyncd Service</td>
-<td xml:lang="en-US"> The <code>systemd_timesyncd</code> service can be enabled with the following command: <pre>$ sudo systemctl enable systemd_timesyncd.service</pre>
-</td>
-<td xml:lang="en-US">Enabling the <code>systemd_timesyncd</code> service ensures that this host
-uses the ntp protocol to fetch time data from a ntp server.
-Synchronizing time is essential for authentication
-services such as Kerberos, but it is also important for maintaining accurate
-logs and auditing possible security breaches.
-<br><br>
-Additional information on Ubuntu network time protocol is
-available at
-
-    <a href="https://help.ubuntu.com/lts/serverguide/NTP.html.en">https://help.ubuntu.com/lts/serverguide/NTP.html.en</a>.</td>
-<td></td>
-</tr>
-<tr>
 <td>NT12(R5)</td>
 <td>Ensure Logs Sent To Remote Host</td>
 <td xml:lang="en-US">To configure rsyslog to send logs to a remote log server,
@@ -111,19 +94,19 @@ logging.
 Along with these other directives, the system can be configured
 to forward its logs to a particular log server by
 adding or correcting one of the following lines,
-substituting <code><i>loghost.example.com</i></code> appropriately.
+substituting <code><i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></code> appropriately.
 The choice of protocol depends on the environment of the system;
 although TCP and RELP provide more reliable message delivery,
 they may not be supported in all environments.
 <br>
 To use UDP for log message delivery:
-<pre>*.* @<i>loghost.example.com</i></pre>
+<pre>*.* @<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
 <br>
 To use TCP for log message delivery:
-<pre>*.* @@<i>loghost.example.com</i></pre>
+<pre>*.* @@<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
 <br>
 To use RELP for log message delivery:
-<pre>*.* :omrelp:<i>loghost.example.com</i></pre>
+<pre>*.* :omrelp:<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
 <br>
 There must be a resolvable DNS CNAME or Alias record set to "<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub>" for logs to be sent correctly to the centralized logging utility.</td>
 <td xml:lang="en-US">A log server (loghost) receives syslog messages from one or more
@@ -198,6 +181,27 @@ privileges.</td>
 </tr>
 <tr>
 <td>NT28(R5)</td>
+<td>Ensure rsyslog is Installed</td>
+<td xml:lang="en-US">Rsyslog is installed by default. The <code>rsyslog</code> package can be installed with the following command: <pre> $ sudo yum install rsyslog</pre>
+</td>
+<td xml:lang="en-US">The rsyslog package provides the rsyslog daemon, which provides
+system logging services.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R5)</td>
+<td>Enable rsyslog Service</td>
+<td xml:lang="en-US">The <code>rsyslog</code> service provides syslog-style logging by default on Red Hat Enterprise Linux 8.
+
+The <code>rsyslog</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable rsyslog.service</pre>
+</td>
+<td xml:lang="en-US">The <code>rsyslog</code> service must be running in order to provide
+logging services, which are essential to system administration.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R5)</td>
 <td>Ensure syslog-ng is Installed</td>
 <td xml:lang="en-US">syslog-ng can be installed in replacement of rsyslog.
 The <code>syslog-ng-core</code> package can be installed with the following command:
@@ -217,27 +221,6 @@ The <code>syslog-ng</code> service can be enabled with the following command:
 <pre>$ sudo systemctl enable syslog-ng.service</pre>
 </td>
 <td xml:lang="en-US">The <code>syslog-ng</code> service must be running in order to provide
-logging services, which are essential to system administration.</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R5)</td>
-<td>Ensure rsyslog is Installed</td>
-<td xml:lang="en-US">Rsyslog is installed by default. The <code>rsyslog</code> package can be installed with the following command: <pre> $ sudo yum install rsyslog</pre>
-</td>
-<td xml:lang="en-US">The rsyslog package provides the rsyslog daemon, which provides
-system logging services.</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R5)</td>
-<td>Enable rsyslog Service</td>
-<td xml:lang="en-US">The <code>rsyslog</code> service provides syslog-style logging by default on Red Hat Enterprise Linux 8.
-
-The <code>rsyslog</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable rsyslog.service</pre>
-</td>
-<td xml:lang="en-US">The <code>rsyslog</code> service must be running in order to provide
 logging services, which are essential to system administration.</td>
 <td></td>
 </tr>
@@ -280,19 +263,19 @@ logging.
 Along with these other directives, the system can be configured
 to forward its logs to a particular log server by
 adding or correcting one of the following lines,
-substituting <code><i>loghost.example.com</i></code> appropriately.
+substituting <code><i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></code> appropriately.
 The choice of protocol depends on the environment of the system;
 although TCP and RELP provide more reliable message delivery,
 they may not be supported in all environments.
 <br>
 To use UDP for log message delivery:
-<pre>*.* @<i>loghost.example.com</i></pre>
+<pre>*.* @<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
 <br>
 To use TCP for log message delivery:
-<pre>*.* @@<i>loghost.example.com</i></pre>
+<pre>*.* @@<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
 <br>
 To use RELP for log message delivery:
-<pre>*.* :omrelp:<i>loghost.example.com</i></pre>
+<pre>*.* :omrelp:<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
 <br>
 There must be a resolvable DNS CNAME or Alias record set to "<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub>" for logs to be sent correctly to the centralized logging utility.</td>
 <td xml:lang="en-US">A log server (loghost) receives syslog messages from one or more
@@ -499,25 +482,6 @@ To properly set the permissions of <code>/boot/System.map-*</code>, run the comm
 </tr>
 <tr>
 <td>NT28(R15)</td>
-<td>Disable unauthenticated repositories in APT configuration</td>
-<td xml:lang="en-US">Unauthenticated repositories should not be used for updates.</td>
-<td xml:lang="en-US">Repositories hosts all packages that will be intsalled on the system during update.
-    If a repository is not authenticated, the associated packages can't be trusted,
-    and then should not be installed localy.</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R15)</td>
-<td>Ensure that official distribution repositories are used</td>
-<td xml:lang="en-US">Check that official Debian repositories, including security repository, are configured in apt.</td>
-<td xml:lang="en-US">The Debian distribution deliver DSA (Debian Security Announce), through the official
-    Debian security repository, to correct various vulnerabilities impacting the Debian
-    packages. Using the official repositories is the best way to ensure that the Debian
-    updates are integrated soon enough.</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R15)</td>
 <td>Ensure gpgcheck Enabled In Main yum Configuration</td>
 <td xml:lang="en-US">The <code>gpgcheck</code> option controls whether
 RPM packages' signatures are always checked prior to installation.
@@ -669,22 +633,6 @@ and whether to enter single-user mode.</td>
 </tr>
 <tr>
 <td>NT28(R19)</td>
-<td>Disable SSH Root Login</td>
-<td xml:lang="en-US">The root user should never be allowed to login to a
-system directly over a network.
-To disable root login via SSH, add or correct the following line
-in <code>/etc/ssh/sshd_config</code>:
-<pre>PermitRootLogin no</pre>
-</td>
-<td xml:lang="en-US">Even though the communications channel may be encrypted, an additional layer of
-security is gained by extending the policy of not logging directly on as root.
-In addition, logging in with a user-specific account provides individual
-accountability of actions performed on the system and also helps to minimize
-direct attack attempts on root's password.</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R19)</td>
 <td>Direct root Logins Not Allowed</td>
 <td xml:lang="en-US">To further limit access to the <code>root</code> account, administrators
 can disable root logins at the console by editing the <code>/etc/securetty</code> file.
@@ -705,6 +653,22 @@ $ sudo echo &gt; /etc/securetty
 authentication to privileged accounts. Users will first login, then escalate
 to privileged (root) access via su / sudo. This is required for FISMA Low
 and FISMA Moderate systems.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R19)</td>
+<td>Disable SSH Root Login</td>
+<td xml:lang="en-US">The root user should never be allowed to login to a
+system directly over a network.
+To disable root login via SSH, add or correct the following line
+in <code>/etc/ssh/sshd_config</code>:
+<pre>PermitRootLogin no</pre>
+</td>
+<td xml:lang="en-US">Even though the communications channel may be encrypted, an additional layer of
+security is gained by extending the policy of not logging directly on as root.
+In addition, logging in with a user-specific account provides individual
+accountability of actions performed on the system and also helps to minimize
+direct attack attempts on root's password.</td>
 <td></td>
 </tr>
 <tr>
@@ -968,6 +932,25 @@ accessed by privileged programs, avoiding an exploitation vector exploiting unsa
 </tr>
 <tr>
 <td>NT28(R23)</td>
+<td>Restrict Access to Kernel Message Buffer</td>
+<td xml:lang="en-US">To set the runtime status of the <code>kernel.dmesg_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.dmesg_restrict=1</pre>
+If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.dmesg_restrict = 1</pre>
+</td>
+<td xml:lang="en-US">Unprivileged access to the kernel syslog can expose sensitive kernel
+address information.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R23)</td>
+<td>Disallow kernel profiling by unprivileged users</td>
+<td xml:lang="en-US">To set the runtime status of the <code>kernel.perf_event_paranoid</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.perf_event_paranoid=2</pre>
+If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.perf_event_paranoid = 2</pre>
+</td>
+<td xml:lang="en-US">Kernel profiling can reveal sensitive information about kernel behaviour.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R23)</td>
 <td>Disable Core Dumps for SUID programs</td>
 <td xml:lang="en-US">To set the runtime status of the <code>fs.suid_dumpable</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.suid_dumpable=0</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.suid_dumpable = 0</pre>
@@ -1007,25 +990,6 @@ existing code in order to re-purpose it using return oriented programming
 <td></td>
 </tr>
 <tr>
-<td>NT28(R23)</td>
-<td>Restrict Access to Kernel Message Buffer</td>
-<td xml:lang="en-US">To set the runtime status of the <code>kernel.dmesg_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.dmesg_restrict=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.dmesg_restrict = 1</pre>
-</td>
-<td xml:lang="en-US">Unprivileged access to the kernel syslog can expose sensitive kernel
-address information.</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R23)</td>
-<td>Disallow kernel profiling by unprivileged users</td>
-<td xml:lang="en-US">To set the runtime status of the <code>kernel.perf_event_paranoid</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.perf_event_paranoid=2</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.perf_event_paranoid = 2</pre>
-</td>
-<td xml:lang="en-US">Kernel profiling can reveal sensitive information about kernel behaviour.</td>
-<td></td>
-</tr>
-<tr>
 <td>NT28(R25)</td>
 <td>Restrict usage of ptrace to descendant processes</td>
 <td xml:lang="en-US">To set the runtime status of the <code>kernel.yama.ptrace_scope</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.yama.ptrace_scope=1</pre>
@@ -1036,6 +1000,20 @@ on another processes of the user. Like this, the attacker can steal
 sensitive information from the target processes (e.g. SSH sessions, web browser, ...)
 without any additional assistance from the user (i.e. without resorting to phishing).
 </td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R29)</td>
+<td>Set Interactive Session Timeout</td>
+<td xml:lang="en-US">Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
+all user sessions will terminate based on inactivity. The <code>TMOUT</code>
+setting in <code>/etc/profile</code> should read as follows:
+<pre>TMOUT=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></ns0:sub></pre>
+</td>
+<td xml:lang="en-US">Terminating an idle session within a short time period reduces
+the window of opportunity for unauthorized personnel to take control of a
+management session enabled on the console or console port that has been
+left unattended.</td>
 <td></td>
 </tr>
 <tr>
@@ -1059,20 +1037,6 @@ from correctly detecting that the user is idle.</td>
 <td xml:lang="en-US">Terminating an idle ssh session within a short time period reduces the window of
 opportunity for unauthorized personnel to take control of a management session
 enabled on the console or console port that has been let unattended.</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R29)</td>
-<td>Set Interactive Session Timeout</td>
-<td xml:lang="en-US">Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
-all user sessions will terminate based on inactivity. The <code>TMOUT</code>
-setting in <code>/etc/profile</code> should read as follows:
-<pre>TMOUT=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></ns0:sub></pre>
-</td>
-<td xml:lang="en-US">Terminating an idle session within a short time period reduces
-the window of opportunity for unauthorized personnel to take control of a
-management session enabled on the console or console port that has been
-left unattended.</td>
 <td></td>
 </tr>
 <tr>
@@ -1150,7 +1114,7 @@ is critical for system security.</td>
 <td>Verify Permissions on shadow File</td>
 <td xml:lang="en-US">
 To properly set the permissions of <code>/etc/shadow</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/shadow</pre>
+<pre>$ sudo chmod 0000 /etc/shadow</pre>
 </td>
 <td xml:lang="en-US">The <code>/etc/shadow</code> file contains the list of local
 system accounts and stores password hashes. Protection of this file is
@@ -1166,7 +1130,12 @@ which could weaken the system security posture.</td>
 installed via authorized means. A straightforward means of identifying
 unauthorized SGID files is determine if any were not installed as part of an
 RPM package, which is cryptographically verified. Investigate the origin
-of any unpackaged SGID files.</td>
+of any unpackaged SGID files.
+This configuration check considers authorized SGID files which were installed via RPM.
+It is assumed that when an individual has sudo access to install an RPM
+and all packages are signed with an organizationally-recognized GPG key,
+the software should be considered an approved package on the system.
+Any SGID file not deployed through an RPM will be flagged for further review.</td>
 <td xml:lang="en-US">Executable files with the SGID permission run with the privileges of
 the owner of the file. SGID files of uncertain provenance could allow for
 unprivileged users to elevate privileges. The presence of these files should be
@@ -1178,9 +1147,14 @@ strictly controlled on the system.</td>
 <td>Ensure All SUID Executables Are Authorized</td>
 <td xml:lang="en-US">The SUID (set user id) bit should be set only on files that were
 installed via authorized means. A straightforward means of identifying
-unauthorized SGID files is determine if any were not installed as part of an
+unauthorized SUID files is determine if any were not installed as part of an
 RPM package, which is cryptographically verified. Investigate the origin
-of any unpackaged SUID files.</td>
+of any unpackaged SUID files.
+This configuration check considers authorized SUID files which were installed via RPM.
+It is assumed that when an individual has sudo access to install an RPM
+and all packages are signed with an organizationally-recognized GPG key,
+the software should be considered an approved package on the system.
+Any SUID file not deployed through an RPM will be flagged for further review.</td>
 <td xml:lang="en-US">Executable files with the SUID permission run with the privileges of
 the owner of the file. SUID files of uncertain provenance could allow for
 unprivileged users to elevate privileges. The presence of these files should be
@@ -1194,7 +1168,12 @@ strictly controlled on the system.</td>
 installed via authorized means. A straightforward means of identifying
 unauthorized SGID files is determine if any were not installed as part of an
 RPM package, which is cryptographically verified. Investigate the origin
-of any unpackaged SGID files.</td>
+of any unpackaged SGID files.
+This configuration check considers authorized SGID files which were installed via RPM.
+It is assumed that when an individual has sudo access to install an RPM
+and all packages are signed with an organizationally-recognized GPG key,
+the software should be considered an approved package on the system.
+Any SGID file not deployed through an RPM will be flagged for further review.</td>
 <td xml:lang="en-US">Executable files with the SGID permission run with the privileges of
 the owner of the file. SGID files of uncertain provenance could allow for
 unprivileged users to elevate privileges. The presence of these files should be
@@ -1206,9 +1185,14 @@ strictly controlled on the system.</td>
 <td>Ensure All SUID Executables Are Authorized</td>
 <td xml:lang="en-US">The SUID (set user id) bit should be set only on files that were
 installed via authorized means. A straightforward means of identifying
-unauthorized SGID files is determine if any were not installed as part of an
+unauthorized SUID files is determine if any were not installed as part of an
 RPM package, which is cryptographically verified. Investigate the origin
-of any unpackaged SUID files.</td>
+of any unpackaged SUID files.
+This configuration check considers authorized SUID files which were installed via RPM.
+It is assumed that when an individual has sudo access to install an RPM
+and all packages are signed with an organizationally-recognized GPG key,
+the software should be considered an approved package on the system.
+Any SUID file not deployed through an RPM will be flagged for further review.</td>
 <td xml:lang="en-US">Executable files with the SUID permission run with the privileges of
 the owner of the file. SUID files of uncertain provenance could allow for
 unprivileged users to elevate privileges. The presence of these files should be
@@ -1240,19 +1224,19 @@ logging.
 Along with these other directives, the system can be configured
 to forward its logs to a particular log server by
 adding or correcting one of the following lines,
-substituting <code><i>loghost.example.com</i></code> appropriately.
+substituting <code><i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></code> appropriately.
 The choice of protocol depends on the environment of the system;
 although TCP and RELP provide more reliable message delivery,
 they may not be supported in all environments.
 <br>
 To use UDP for log message delivery:
-<pre>*.* @<i>loghost.example.com</i></pre>
+<pre>*.* @<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
 <br>
 To use TCP for log message delivery:
-<pre>*.* @@<i>loghost.example.com</i></pre>
+<pre>*.* @@<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
 <br>
 To use RELP for log message delivery:
-<pre>*.* :omrelp:<i>loghost.example.com</i></pre>
+<pre>*.* :omrelp:<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
 <br>
 There must be a resolvable DNS CNAME or Alias record set to "<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub>" for logs to be sent correctly to the centralized logging utility.</td>
 <td xml:lang="en-US">A log server (loghost) receives syslog messages from one or more
@@ -1260,6 +1244,27 @@ systems. This data can be used as an additional log source in the event a
 system is compromised and its local logs are suspect. Forwarding log messages
 to a remote loghost also provides system administrators with a centralized
 place to view the status of multiple hosts within the enterprise.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R46)</td>
+<td>Ensure rsyslog is Installed</td>
+<td xml:lang="en-US">Rsyslog is installed by default. The <code>rsyslog</code> package can be installed with the following command: <pre> $ sudo yum install rsyslog</pre>
+</td>
+<td xml:lang="en-US">The rsyslog package provides the rsyslog daemon, which provides
+system logging services.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R46)</td>
+<td>Enable rsyslog Service</td>
+<td xml:lang="en-US">The <code>rsyslog</code> service provides syslog-style logging by default on Red Hat Enterprise Linux 8.
+
+The <code>rsyslog</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable rsyslog.service</pre>
+</td>
+<td xml:lang="en-US">The <code>rsyslog</code> service must be running in order to provide
+logging services, which are essential to system administration.</td>
 <td></td>
 </tr>
 <tr>
@@ -1287,27 +1292,6 @@ logging services, which are essential to system administration.</td>
 <td></td>
 </tr>
 <tr>
-<td>NT28(R46)</td>
-<td>Ensure rsyslog is Installed</td>
-<td xml:lang="en-US">Rsyslog is installed by default. The <code>rsyslog</code> package can be installed with the following command: <pre> $ sudo yum install rsyslog</pre>
-</td>
-<td xml:lang="en-US">The rsyslog package provides the rsyslog daemon, which provides
-system logging services.</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R46)</td>
-<td>Enable rsyslog Service</td>
-<td xml:lang="en-US">The <code>rsyslog</code> service provides syslog-style logging by default on Red Hat Enterprise Linux 8.
-
-The <code>rsyslog</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable rsyslog.service</pre>
-</td>
-<td xml:lang="en-US">The <code>rsyslog</code> service must be running in order to provide
-logging services, which are essential to system administration.</td>
-<td></td>
-</tr>
-<tr>
 <td>NT28(R47)</td>
 <td>Ensure /var/log Located On Separate Partition</td>
 <td xml:lang="en-US">System logs are stored in the <code>/var/log</code> directory.
@@ -1320,16 +1304,26 @@ and other files in <code>/var/</code>.</td>
 </tr>
 <tr>
 <td>NT28(R50)</td>
+<td>Ensure the audit Subsystem is Installed</td>
+<td xml:lang="en-US">The audit package should be installed.</td>
+<td xml:lang="en-US">The auditd service is an access monitoring and accounting daemon, watching system calls to audit any access, in comparison with potential local access control policy such as SELinux policy.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R50)</td>
 <td>Install the cron service</td>
 <td xml:lang="en-US">The Cron service should be installed.</td>
 <td xml:lang="en-US">The cron service allow periodic job execution, needed for almost all administrative tasks and services (software update, log rotating, etc.). Access to cron service should be restricted to administrative accounts only.</td>
 <td></td>
 </tr>
 <tr>
-<td>NT28(R50)</td>
-<td>Ensure the audit Subsystem is Installed</td>
-<td xml:lang="en-US">The audit package should be installed.</td>
-<td xml:lang="en-US">The auditd service is an access monitoring and accounting daemon, watching system calls to audit any access, in comparision with potential local access control policy such as SELinux policy.</td>
+<td>NT28(R51)</td>
+<td>Install AIDE</td>
+<td xml:lang="en-US">The <code>aide</code> package can be installed with the following command:
+<pre>
+$ sudo yum install aide</pre>
+</td>
+<td xml:lang="en-US">The AIDE package must be installed if it is to be available for integrity checking.</td>
 <td></td>
 </tr>
 <tr>
@@ -1423,16 +1417,6 @@ AIDE rules can be configured in multiple ways; this is merely one example that i
 configured by default.</td>
 <td xml:lang="en-US">Extended attributes in file systems are used to contain arbitrary data and file metadata
 with security implications.</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R51)</td>
-<td>Install AIDE</td>
-<td xml:lang="en-US">The <code>aide</code> package can be installed with the following command:
-<pre>
-$ sudo yum install aide</pre>
-</td>
-<td xml:lang="en-US">The AIDE package must be installed if it is to be available for integrity checking.</td>
 <td></td>
 </tr>
 <tr>

@@ -45,762 +45,47 @@
 <td>Variable Setting</td>
 </thead>
 <tr>
-<td>2.2.3</td>
-<td>Disable Avahi Server Software</td>
-<td xml:lang="en-US"> The <code>avahi-daemon</code> service can be disabled with the following command: <pre>$ sudo systemctl disable avahi-daemon.service</pre> The <code>avahi-daemon</code> service can be masked with the following command: <pre>$ sudo systemctl mask avahi-daemon.service</pre>
-</td>
-<td xml:lang="en-US">Because the Avahi daemon service keeps an open network
-port, it is subject to network attacks. Its functionality
-is convenient but is only appropriate if the local network
-can be trusted.</td>
-<td></td>
-</tr>
-<tr>
-<td>1.2.5</td>
-<td>Disable Red Hat Network Service (rhnsd)</td>
-<td xml:lang="en-US">The Red Hat Network service automatically queries Red Hat Network
-servers to determine whether there are any actions that should be executed,
-such as package updates. This only occurs if the system was registered to an
-RHN server or satellite and managed as such.
+<td>1.7.1.2</td>
+<td>Modify the System Login Banner</td>
+<td xml:lang="en-US">To configure the system login banner edit <code>/etc/issue</code>. Replace the
+default text with a message compliant with the local site policy or a legal
+disclaimer.
 
-The <code>rhnsd</code> service can be disabled with the following command:
-<pre>$ sudo systemctl disable rhnsd.service</pre>
-The <code>rhnsd</code> service can be masked with the following command:
-<pre>$ sudo systemctl mask rhnsd.service</pre>
-</td>
-<td xml:lang="en-US">Although systems management and patching is extremely important to
-system security, management by a system outside the enterprise enclave is not
-desirable for some environments.  However, if the system is being managed by RHN or
- RHN Satellite Server the <code>rhnsd</code> daemon can remain on.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.1.1</td>
-<td>Enable cron Service</td>
-<td xml:lang="en-US">The <code>crond</code> service is used to execute commands at
-preconfigured times. It is required by almost all systems to perform necessary
-maintenance tasks, such as notifying root of system activity.
-
-The <code>crond</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable crond.service</pre>
-</td>
-<td xml:lang="en-US">Due to its usage for maintenance and security-supporting tasks,
-enabling the cron daemon is essential.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.2.5</td>
-<td>Disable DHCP Service</td>
-<td xml:lang="en-US">The <code>dhcpd</code> service should be disabled on
-any system that does not need to act as a DHCP server.
-
-The <code>dhcpd</code> service can be disabled with the following command:
-<pre>$ sudo systemctl disable dhcpd.service</pre>
-The <code>dhcpd</code> service can be masked with the following command:
-<pre>$ sudo systemctl mask dhcpd.service</pre>
-</td>
-<td xml:lang="en-US">Unmanaged or unintentionally activated DHCP servers may provide faulty information
-to clients, interfering with the operation of a legitimate site
-DHCP server if there is one.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.2.8</td>
-<td>Disable named Service</td>
-<td xml:lang="en-US"> The <code>named</code> service can be disabled with the following command: <pre>$ sudo systemctl disable named.service</pre> The <code>named</code> service can be masked with the following command: <pre>$ sudo systemctl mask named.service</pre>
-</td>
-<td xml:lang="en-US">All network services involve some risk of compromise due to
-implementation flaws and should be disabled if possible.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.2.9</td>
-<td>Disable vsftpd Service</td>
-<td xml:lang="en-US"> The <code>vsftpd</code> service can be disabled with the following command: <pre>$ sudo systemctl disable vsftpd.service</pre> The <code>vsftpd</code> service can be masked with the following command: <pre>$ sudo systemctl mask vsftpd.service</pre>
-</td>
-<td xml:lang="en-US">Running FTP server software provides a network-based avenue
-of attack, and should be disabled if not needed.
-Furthermore, the FTP protocol is unencrypted and creates
-a risk of compromising sensitive information.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.2.10</td>
-<td>Disable httpd Service</td>
-<td xml:lang="en-US"> The <code>httpd</code> service can be disabled with the following command: <pre>$ sudo systemctl disable httpd.service</pre> The <code>httpd</code> service can be masked with the following command: <pre>$ sudo systemctl mask httpd.service</pre>
-</td>
-<td xml:lang="en-US">Running web server software provides a network-based avenue
-of attack, and should be disabled if not needed.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.2.11</td>
-<td>Disable Dovecot Service</td>
-<td xml:lang="en-US"> The <code>dovecot</code> service can be disabled with the following command: <pre>$ sudo systemctl disable dovecot.service</pre> The <code>dovecot</code> service can be masked with the following command: <pre>$ sudo systemctl mask dovecot.service</pre>
-</td>
-<td xml:lang="en-US">Running an IMAP or POP3 server provides a network-based
-avenue of attack, and should be disabled if not needed.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.2.15</td>
-<td>Disable Postfix Network Listening</td>
-<td xml:lang="en-US">Edit the file <code>/etc/postfix/main.cf</code> to ensure that only the following
-<code>inet_interfaces</code> line appears:
-<pre>inet_interfaces = localhost</pre>
-</td>
-<td xml:lang="en-US">This ensures <code>postfix</code> accepts mail messages
-(such as cron job reports) from the local system only,
-and not from the network, which protects it from network attack.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.2.7</td>
-<td>Disable rpcbind Service</td>
-<td xml:lang="en-US">The rpcbind utility maps RPC services to the ports on which they listen.
-RPC processes notify rpcbind when they start, registering the ports they
-are listening on and the RPC program numbers they expect to serve. The
-rpcbind service redirects the client to the proper port number so it can
-communicate with the requested service. If the system does not require RPC
-(such as for NFS servers) then this service should be disabled.
-
-The <code>rpcbind</code> service can be disabled with the following command:
-<pre>$ sudo systemctl disable rpcbind.service</pre>
-The <code>rpcbind</code> service can be masked with the following command:
-<pre>$ sudo systemctl mask rpcbind.service</pre>
-</td>
-<td xml:lang="en-US"></td>
-<td></td>
-</tr>
-<tr>
-<td>2.2.7</td>
-<td>Disable Network File System (nfs)</td>
-<td xml:lang="en-US">The Network File System (NFS) service allows remote hosts to mount
-and interact with shared filesystems on the local system. If the local system
-is not designated as a NFS server then this service should be disabled.
-
-The <code>nfs</code> service can be disabled with the following command:
-<pre>$ sudo systemctl disable nfs.service</pre>
-The <code>nfs</code> service can be masked with the following command:
-<pre>$ sudo systemctl mask nfs.service</pre>
-</td>
-<td xml:lang="en-US">Unnecessary services should be disabled to decrease the attack surface of the system.</td>
-<td></td>
-</tr>
-<tr>
-<td>3.6</td>
-<td>Specify a Remote NTP Server</td>
-<td xml:lang="en-US">Depending on specific functional requirements of a concrete
-production environment, the Red Hat Enterprise Linux 7 system can be
-configured to utilize the services of the <code>chronyd</code> NTP daemon (the
-default), or services of the <code>ntpd</code> NTP daemon. Refer to
-
-    
-    <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html</a>
-
-for more detailed comparison of the features of both of the choices, and for
-further guidance how to choose between the two NTP daemons.
-<br>
-To specify a remote NTP server for time synchronization, perform the following:
-<ul>
-<li> if the system is configured to use the <code>chronyd</code> as the NTP daemon (the
-default), edit the file <code>/etc/chrony.conf</code> as follows,</li>
-<li> if the system is configured to use the <code>ntpd</code> as the NTP daemon,
-edit the file <code>/etc/ntp.conf</code> as documented below.</li>
-</ul>
-Add or correct the following lines, substituting the IP or hostname of a remote
-NTP server for <em>ntpserver</em>:
-<pre>server <i>ntpserver</i></pre>
-This instructs the NTP software to contact that remote server to obtain time
-data.</td>
-<td xml:lang="en-US">Synchronizing with an NTP server makes it possible to collate system
-logs from multiple sources or correlate computer events with real time events.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.2.1.1</td>
-<td>Enable the NTP Daemon</td>
-<td xml:lang="en-US">
-Run the following command to determine the current status of the
-<code>chronyd</code> service:
-<pre>$ systemctl is-active chronyd</pre>
-If the service is running, it should return the following: <pre>active</pre>
-Note: The <code>chronyd</code> daemon is enabled by default.
+The DoD required text is either:
 <br><br>
-
-Run the following command to determine the current status of the
-<code>ntpd</code> service:
-<pre>$ systemctl is-active ntpd</pre>
-If the service is running, it should return the following: <pre>active</pre>
-Note: The <code>ntpd</code> daemon is not enabled by default. Though as mentioned
-in the previous sections in certain environments the <code>ntpd</code> daemon might
-be preferred to be used rather than the <code>chronyd</code> one. Refer to:
-
-    
-    <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html</a>
-
-for guidance which NTP daemon to choose depending on the environment used.</td>
-<td xml:lang="en-US">Enabling some of <code>chronyd</code> or <code>ntpd</code> services ensures
-that the NTP daemon will be running and that the system will synchronize its
-time to any servers specified. This is important whether the system is
-configured to be a client (and synchronize only its own clock) or it is also
-acting as an NTP server to other systems.  Synchronizing time is essential for
-authentication services such as Kerberos, but it is also important for
-maintaining accurate logs and auditing possible security breaches.
+<code>You are accessing a U.S. Government (USG) Information System (IS) that
+is provided for USG-authorized use only. By using this IS (which includes
+any device attached to this IS), you consent to the following conditions:
+<br>-The USG routinely intercepts and monitors communications on this IS
+for purposes including, but not limited to, penetration testing, COMSEC
+monitoring, network operations and defense, personnel misconduct (PM), law
+enforcement (LE), and counterintelligence (CI) investigations.
+<br>-At any time, the USG may inspect and seize data stored on this IS.
+<br>-Communications using, or data stored on, this IS are not private,
+are subject to routine monitoring, interception, and search, and may be
+disclosed or used for any USG-authorized purpose.
+<br>-This IS includes security measures (e.g., authentication and access
+controls) to protect USG interests -- not for your personal benefit or
+privacy.
+<br>-Notwithstanding the above, using this IS does not constitute consent
+to PM, LE or CI investigative searching or monitoring of the content of
+privileged communications, or work product, related to personal
+representation or services by attorneys, psychotherapists, or clergy, and
+their assistants. Such communications and work product are private and
+confidential. See User Agreement for details.</code>
 <br><br>
-The <code>chronyd</code> and <code>ntpd</code> NTP daemons offer all of the
-functionality of <code>ntpdate</code>, which is now deprecated. Additional
-information on this is available at
-
-    <a href="http://support.ntp.org/bin/view/Dev/DeprecatingNtpdate">http://support.ntp.org/bin/view/Dev/DeprecatingNtpdate</a>
-</td>
-<td></td>
-</tr>
-<tr>
-<td>3.4.1</td>
-<td>Install tcp_wrappers Package</td>
-<td xml:lang="en-US">When network services are using the <code>xinetd</code> service, the
-<code>tcp_wrappers</code> package should be installed.
-The <code>tcp_wrappers</code> package can be installed with the following command:
-<pre>
-$ sudo yum install tcp_wrappers</pre>
-</td>
-<td xml:lang="en-US">Access control methods provide the ability to enhance system security posture
-by restricting services and known good IP addresses and address ranges. This
-prevents connections from unknown hosts and protocols.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.1.7</td>
-<td>Disable xinetd Service</td>
-<td xml:lang="en-US"> The <code>xinetd</code> service can be disabled with the following command: <pre>$ sudo systemctl disable xinetd.service</pre> The <code>xinetd</code> service can be masked with the following command: <pre>$ sudo systemctl mask xinetd.service</pre>
-</td>
-<td xml:lang="en-US">The xinetd service provides a dedicated listener service for some programs,
-which is no longer necessary for commonly-used network services. Disabling
-it ensures that these uncommon services are not running, and also prevents
-attacks against xinetd itself.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.3.1</td>
-<td>Remove NIS Client</td>
-<td xml:lang="en-US">The Network Information Service (NIS), formerly known as Yellow Pages,
-is a client-server directory service protocol used to distribute system configuration
-files. The NIS client (<code>ypbind</code>) was used to bind a system to an NIS server
-and receive the distributed configuration files.</td>
-<td xml:lang="en-US">The NIS service is inherently an insecure system that has been vulnerable
-to DOS attacks, buffer overflows and has poor authentication for querying
-NIS maps. NIS generally has been replaced by such protocols as Lightweight
-Directory Access Protocol (LDAP). It is recommended that the service be
-removed.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.2.16</td>
-<td>Uninstall ypserv Package</td>
-<td xml:lang="en-US">The <code>ypserv</code> package can be removed with the following command:
-<pre>
-$ sudo yum erase ypserv</pre>
-</td>
-<td xml:lang="en-US">The NIS service provides an unencrypted authentication service which does
-not provide for the confidentiality and integrity of user passwords or the
-remote session.
-
-Removing the <code>ypserv</code> package decreases the risk of the accidental
-(or intentional) activation of NIS or NIS+ services.</td>
-<td></td>
-</tr>
-<tr>
-<td>6.2.14</td>
-<td>Remove Rsh Trust Files</td>
-<td xml:lang="en-US">The files <code>/etc/hosts.equiv</code> and <code>~/.rhosts</code> (in
-each user's home directory) list remote hosts and users that are trusted by the
-local system when using the rshd daemon.
-To remove these files, run the following command to delete them from any
-location:
-<pre>$ sudo rm /etc/hosts.equiv</pre>
-<pre>$ rm ~/.rhosts</pre>
-</td>
-<td xml:lang="en-US">Trust files are convenient, but when
-used in conjunction with the R-services, they can allow
-unauthenticated access to a system.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.3.2</td>
-<td>Uninstall rsh Package</td>
-<td xml:lang="en-US">The <code>rsh</code> package contains the client commands
-for the rsh services</td>
-<td xml:lang="en-US">These legacy clients contain numerous security exposures and have
-been replaced with the more secure SSH package. Even if the server is removed,
-it is best to ensure the clients are also removed to prevent users from
-inadvertently attempting to use these commands and therefore exposing
-their credentials. Note that removing the <code>rsh</code> package removes
-the clients for <code>rsh</code>,<code>rcp</code>, and <code>rlogin</code>.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.2.17</td>
-<td>Disable rexec Service</td>
-<td xml:lang="en-US">The <code>rexec</code> service, which is available with the <code>rsh-server</code> package
-and runs as a service through xinetd or separately as a systemd socket, should be disabled.
-If using xinetd, set <code>disable</code> to <code>yes</code> in <code>/etc/xinetd.d/rexec</code>.
-
-The <code>rexec</code> socket can be disabled with the following command:
-<pre>$ sudo systemctl disable rexec.socket</pre>
-The <code>rexec</code> socket can be masked with the following command:
-<pre>$ sudo systemctl mask .socket</pre>
-</td>
-<td xml:lang="en-US">The rexec service uses unencrypted network communications, which
-means that data from the login session, including passwords and
-all other information transmitted during the session, can be
-stolen by eavesdroppers on the network.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.2.17</td>
-<td>Disable rlogin Service</td>
-<td xml:lang="en-US">The <code>rlogin</code> service, which is available with
-the <code>rsh-server</code> package and runs as a service through xinetd or separately
-as a systemd socket, should be disabled.
-If using xinetd, set <code>disable</code> to <code>yes</code> in <code>/etc/xinetd.d/rlogin</code>.
-
-The <code>rlogin</code> socket can be disabled with the following command:
-<pre>$ sudo systemctl disable rlogin.socket</pre>
-The <code>rlogin</code> socket can be masked with the following command:
-<pre>$ sudo systemctl mask .socket</pre>
-</td>
-<td xml:lang="en-US">The rlogin service uses unencrypted network communications, which
-means that data from the login session, including passwords and
-all other information transmitted during the session, can be
-stolen by eavesdroppers on the network.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.2.17</td>
-<td>Disable rsh Service</td>
-<td xml:lang="en-US">The <code>rsh</code> service, which is available with
-the <code>rsh-server</code> package and runs as a service through xinetd or separately
-as a systemd socket, should be disabled.
-If using xinetd, set <code>disable</code> to <code>yes</code> in <code>/etc/xinetd.d/rsh</code>.
-
-The <code>rsh</code> socket can be disabled with the following command:
-<pre>$ sudo systemctl disable rsh.socket</pre>
-The <code>rsh</code> socket can be masked with the following command:
-<pre>$ sudo systemctl mask .socket</pre>
-</td>
-<td xml:lang="en-US">The rsh service uses unencrypted network communications, which
-means that data from the login session, including passwords and
-all other information transmitted during the session, can be
-stolen by eavesdroppers on the network.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.2.21</td>
-<td>Uninstall talk-server Package</td>
-<td xml:lang="en-US">The <code>talk-server</code> package can be removed with the following command: <pre> $ sudo yum erase talk-server</pre>
-</td>
-<td xml:lang="en-US">The talk software presents a security risk as it uses unencrypted protocols
-for communications. Removing the <code>talk-server</code> package decreases the
-risk of the accidental (or intentional) activation of talk services.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.3.3</td>
-<td>Uninstall talk Package</td>
-<td xml:lang="en-US">The <code>talk</code> package contains the client program for the
-Internet talk protocol, which allows the user to chat with other users on
-different systems. Talk is a communication program which copies lines from one
-terminal to the terminal of another user.
-The <code>talk</code> package can be removed with the following command:
-<pre>
-$ sudo yum erase talk</pre>
-</td>
-<td xml:lang="en-US">The talk software presents a security risk as it uses unencrypted protocols
-for communications. Removing the <code>talk</code> package decreases the
-risk of the accidental (or intentional) activation of talk client program.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.1.1</td>
-<td>Uninstall telnet-server Package</td>
-<td xml:lang="en-US">The <code>telnet-server</code> package can be removed with the following command:
-<pre>
-$ sudo yum erase telnet-server</pre>
-</td>
-<td xml:lang="en-US">It is detrimental for operating systems to provide, or install by default,
-functionality exceeding requirements or mission objectives. These
-unnecessary capabilities are often overlooked and therefore may remain
-unsecure. They increase the risk to the platform by providing additional
-attack vectors.
-<br>
-The telnet service provides an unencrypted remote access service which does
-not provide for the confidentiality and integrity of user passwords or the
-remote session. If a privileged user were to login using this service, the
-privileged user password could be compromised.
-<br>
-Removing the <code>telnet-server</code> package decreases the risk of the
-telnet service's accidental (or intentional) activation.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.3.4</td>
-<td>Remove telnet Clients</td>
-<td xml:lang="en-US">The telnet client allows users to start connections to other systems via
-the telnet protocol.</td>
-<td xml:lang="en-US">The <code>telnet</code> protocol is insecure and unencrypted. The use
-of an unencrypted transmission medium could allow an unauthorized user
-to steal credentials. The <code>ssh</code> package provides an
-encrypted session and stronger security and is included in Red Hat Enterprise Linux 7.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.2.18</td>
-<td>Disable telnet Service</td>
-<td xml:lang="en-US">The <code>telnet</code> service configuration file <code>/etc/xinetd.d/telnet</code>
-is not created automatically. If it was created manually, check the
-<code>/etc/xinetd.d/telnet</code> file and ensure that <code>disable = no</code>
-is changed to read <code>disable = yes</code> as follows below:
-<pre>
-# description: The telnet server serves telnet sessions; it uses \\
-#       unencrypted username/password pairs for authentication.
-service telnet
-{
-        flags           = REUSE
-        socket_type     = stream
-
-        wait            = no
-        user            = root
-        server          = /usr/sbin/in.telnetd
-        log_on_failure  += USERID
-        disable         = yes
-}
-</pre>
-If the <code>/etc/xinetd.d/telnet</code> file does not exist, make sure that
-the activation of the <code>telnet</code> service on system boot is disabled
-via the following command:
-
-The <code>rexec</code> socket can be disabled with the following command:
-<pre>$ sudo systemctl disable rexec.socket</pre>
-The <code>rexec</code> socket can be masked with the following command:
-<pre>$ sudo systemctl mask .socket</pre>
-</td>
-<td xml:lang="en-US">The telnet protocol uses unencrypted network communication, which
-means that data from the login session, including passwords and
-all other information transmitted during the session, can be
-stolen by eavesdroppers on the network. The telnet protocol is also
-subject to man-in-the-middle attacks.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.1.6</td>
-<td>Disable tftp Service</td>
-<td xml:lang="en-US">The <code>tftp</code> service should be disabled.
-
-The <code>tftp</code> service can be disabled with the following command:
-<pre>$ sudo systemctl disable tftp.service</pre>
-The <code>tftp</code> service can be masked with the following command:
-<pre>$ sudo systemctl mask tftp.service</pre>
-</td>
-<td xml:lang="en-US">Disabling the <code>tftp</code> service ensures the system is not acting
-as a TFTP server, which does not provide encryption or authentication.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.2.4</td>
-<td>Disable the CUPS Service</td>
-<td xml:lang="en-US"> The <code>cups</code> service can be disabled with the following command: <pre>$ sudo systemctl disable cups.service</pre> The <code>cups</code> service can be masked with the following command: <pre>$ sudo systemctl mask cups.service</pre>
-</td>
-<td xml:lang="en-US">Turn off unneeded services to reduce attack surface.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.2.13</td>
-<td>Disable Squid</td>
-<td xml:lang="en-US"> The <code>squid</code> service can be disabled with the following command: <pre>$ sudo systemctl disable squid.service</pre> The <code>squid</code> service can be masked with the following command: <pre>$ sudo systemctl mask squid.service</pre>
-</td>
-<td xml:lang="en-US">Running proxy server software provides a network-based avenue
-of attack, and should be removed if not needed.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.2.12</td>
-<td>Disable Samba</td>
-<td xml:lang="en-US"> The <code>smb</code> service can be disabled with the following command: <pre>$ sudo systemctl disable smb.service</pre> The <code>smb</code> service can be masked with the following command: <pre>$ sudo systemctl mask smb.service</pre>
-</td>
-<td xml:lang="en-US">Running a Samba server provides a network-based avenue of attack, and
-should be disabled if not needed.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.2.14</td>
-<td>Disable snmpd Service</td>
-<td xml:lang="en-US"> The <code>snmpd</code> service can be disabled with the following command: <pre>$ sudo systemctl disable snmpd.service</pre> The <code>snmpd</code> service can be masked with the following command: <pre>$ sudo systemctl mask snmpd.service</pre>
-</td>
-<td xml:lang="en-US">Running SNMP software provides a network-based avenue of attack, and
-should be disabled if not needed.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.7</td>
-<td>Disable Host-Based Authentication</td>
-<td xml:lang="en-US">SSH's cryptographic host-based authentication is
-more secure than <code>.rhosts</code> authentication. However, it is
-not recommended that hosts unilaterally trust one another, even
-within an organization.
+OR:
 <br><br>
-To disable host-based authentication, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
-<pre>HostbasedAuthentication no</pre>
+<code>I've read &amp; consent to terms in IS user agreem't.</code>
 </td>
-<td xml:lang="en-US">SSH trust relationships mean a compromise on one host
-can allow an attacker to move trivially to other hosts.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.2</td>
-<td>Allow Only SSH Protocol 2</td>
-<td xml:lang="en-US">Only SSH protocol version 2 connections should be
-permitted. The default setting in
-<code>/etc/ssh/sshd_config</code> is correct, and can be
-verified by ensuring that the following
-line appears:
-<pre>Protocol 2</pre>
-</td>
-<td xml:lang="en-US">SSH protocol version 1 is an insecure implementation of the SSH protocol and
-has many well-known vulnerability exploits. Exploits of the SSH daemon could provide
-immediate root access to the system.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.9</td>
-<td>Disable SSH Access via Empty Passwords</td>
-<td xml:lang="en-US">To explicitly disallow SSH login from accounts with
-empty passwords, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
-<br>
-<pre>PermitEmptyPasswords no</pre>
-<br>
-Any accounts with empty passwords should be disabled immediately, and PAM configuration
-should prevent users from being able to assign themselves empty passwords.</td>
-<td xml:lang="en-US">Configuring this setting for the SSH daemon provides additional assurance
-that remote login via SSH will require a password, even in the event of 
-misconfiguration elsewhere.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.6</td>
-<td>Disable SSH Support for .rhosts Files</td>
-<td xml:lang="en-US">SSH can emulate the behavior of the obsolete rsh
-command in allowing users to enable insecure access to their
-accounts via <code>.rhosts</code> files.
+<td xml:lang="en-US">Display of a standardized and approved use notification before granting
+access to the operating system ensures privacy and security notification
+verbiage used is consistent with applicable federal laws, Executive Orders,
+directives, policies, regulations, standards, and guidance.
 <br><br>
-To ensure this behavior is disabled, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
-<pre>IgnoreRhosts yes</pre>
-</td>
-<td xml:lang="en-US">SSH trust relationships mean a compromise on one host
-can allow an attacker to move trivially to other hosts.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.8</td>
-<td>Disable SSH Root Login</td>
-<td xml:lang="en-US">The root user should never be allowed to login to a
-system directly over a network.
-To disable root login via SSH, add or correct the following line
-in <code>/etc/ssh/sshd_config</code>:
-<pre>PermitRootLogin no</pre>
-</td>
-<td xml:lang="en-US">Even though the communications channel may be encrypted, an additional layer of
-security is gained by extending the policy of not logging directly on as root.
-In addition, logging in with a user-specific account provides individual
-accountability of actions performed on the system and also helps to minimize
-direct attack attempts on root's password.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.10</td>
-<td>Do Not Allow SSH Environment Options</td>
-<td xml:lang="en-US">To ensure users are not able to override environment
-variables of the SSH daemon, add or correct the following line
-in <code>/etc/ssh/sshd_config</code>:
-<pre>PermitUserEnvironment no</pre>
-</td>
-<td xml:lang="en-US">SSH environment options potentially allow users to bypass
-access restriction in some configurations.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.16</td>
-<td>Enable SSH Warning Banner</td>
-<td xml:lang="en-US">To enable the warning banner and ensure it is consistent
-across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
-<pre>Banner /etc/issue</pre>
-Another section contains information on how to create an
-appropriate system-wide warning banner.</td>
-<td xml:lang="en-US">The warning message reinforces policy awareness during the logon process and
-facilitates possible legal action against attackers. Alternatively, systems
-whose ownership should not be obvious should ensure usage of a banner that does
-not provide easy attribution.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.4</td>
-<td>Enable Encrypted X11 Forwarding</td>
-<td xml:lang="en-US">By default, remote X11 connections are not encrypted when initiated
-by users. SSH has the capability to encrypt remote X11 connections when SSH's
-<code>X11Forwarding</code> option is enabled.
-<br><br>
-To enable X11 Forwarding, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
-<pre>X11Forwarding yes</pre>
-</td>
-<td xml:lang="en-US">Open X displays allow an attacker to capture keystrokes and to execute commands
-remotely.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.12</td>
-<td>Set SSH Idle Timeout Interval</td>
-<td xml:lang="en-US">SSH allows administrators to set an idle timeout
-interval.
-After this interval has passed, the idle user will be
-automatically logged out.
-<br><br>
-To set an idle timeout interval, edit the following line in <code>/etc/ssh/sshd_config</code> as
-follows:
-<pre>ClientAliveInterval <b><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="sshd_idle_timeout_value"></ns0:sub></b></pre>
-The timeout <b>interval</b> is given in seconds. To have a timeout
-of e.g. 10 minutes, set <b>interval</b> to 600.
-<br><br>
-If a shorter timeout has already been set for the login
-shell, that value will preempt any SSH
-setting made here. Keep in mind that some processes may stop SSH
-from correctly detecting that the user is idle.</td>
-<td xml:lang="en-US">Terminating an idle ssh session within a short time period reduces the window of
-opportunity for unauthorized personnel to take control of a management session
-enabled on the console or console port that has been let unattended.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.12</td>
-<td>Set SSH Client Alive Max Count</td>
-<td xml:lang="en-US">To ensure the SSH idle timeout occurs precisely when the <code>ClientAliveInterval</code> is set,
-edit <code>/etc/ssh/sshd_config</code> as follows:
-<pre>ClientAliveCountMax <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_set_keepalive"></ns0:sub></pre>
-</td>
-<td xml:lang="en-US">This ensures a user login will be terminated as soon as the <code>ClientAliveInterval</code>
-is reached.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.3</td>
-<td>Set LogLevel to INFO</td>
-<td xml:lang="en-US">The INFO parameter specifices that record login and logout activity will be logged.
-To specify the log level in
-SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
-<pre>LogLevel INFO</pre>
-</td>
-<td xml:lang="en-US">SSH provides several logging levels with varying amounts of verbosity. <code>DEBUG</code> is specifically
-not recommended other than strictly for debugging SSH communications since it provides
-so much data that it is difficult to identify important security information. <code>INFO</code> level is the
-basic level that only records login activity of SSH users. In many situations, such as Incident
-Response, it is important to determine when a particular user was active on a system. The
-logout record can eliminate those users who disconnected, which helps narrow the field.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.5</td>
-<td>Set SSH authentication attempt limit</td>
-<td xml:lang="en-US">The <code>MaxAuthTries</code> parameter specifies the maximum number of authentication attempts
-permitted per connection. Once the number of failures reaches half this value, additional failures are logged.
-to set MaxAUthTries edit <code>/etc/ssh/sshd_config</code> as follows:
-<pre>MaxAuthTries <b>tries</b></pre>
-</td>
-<td xml:lang="en-US">Setting the MaxAuthTries parameter to a low number will minimize the risk of successful
-brute force attacks to the SSH server.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.10</td>
-<td>Use Only FIPS 140-2 Validated Ciphers</td>
-<td xml:lang="en-US">Limit the ciphers to those algorithms which are FIPS-approved.
-Counter (CTR) mode is also preferred over cipher-block chaining (CBC) mode.
-The following line in <code>/etc/ssh/sshd_config</code>
-demonstrates use of FIPS-approved ciphers:
-<pre>Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc</pre>
-The man page <code>sshd_config(5)</code> contains a list of supported ciphers.
-
-<br><br>
-The following ciphers are FIPS 140-2 certified on Red Hat Enterprise Linux 7:
-<br>- aes128-ctr
-<br>- aes192-ctr
-<br>- aes256-ctr
-<br>- aes128-cbc
-<br>- aes192-cbc
-<br>- aes256-cbc
-<br>- 3des-cbc
-<br>- rijndael-cbc@lysator.liu.se
-<br><br>
-Any combination of the above ciphers will pass this check.
-Official FIPS 140-2 paperwork for Red Hat Enterprise Linux 7 can be found at
-
-
-    <a href="http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf">http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf</a>
-</td>
-<td xml:lang="en-US">Unapproved mechanisms that are used for authentication to the cryptographic module are not verified and therefore
-cannot be relied upon to provide confidentiality or integrity, and system data may be compromised.
-<br>
-Operating systems utilizing encryption are required to use FIPS-compliant mechanisms for authenticating to
-cryptographic modules.
-<br>
-FIPS 140-2 is the current standard for validating that mechanisms used to access cryptographic modules
-utilize authentication that meets industry and government requirements. For government systems, this allows
-Security Levels 1, 2, 3, or 4 for use on Red Hat Enterprise Linux 7.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.12</td>
-<td>Use Only FIPS 140-2 Validated MACs</td>
-<td xml:lang="en-US">Limit the MACs to those hash algorithms which are FIPS-approved.
-The following line in <code>/etc/ssh/sshd_config</code>
-demonstrates use of FIPS-approved MACs:
-
-<pre>MACs hmac-sha2-512,hmac-sha2-256,hmac-sha1</pre>
-
-The man page <code>sshd_config(5)</code> contains a list of supported MACs.
-
-<br><br>
-Only the following message authentication codes are FIPS 140-2 certified on Red Hat Enterprise Linux 7:
-<br>- hmac-sha1
-<br>- hmac-sha2-256
-<br>- hmac-sha2-512
-<br>- hmac-sha1-etm@openssh.com
-<br>- hmac-sha2-256-etm@openssh.com
-<br>- hmac-sha2-512-etm@openssh.com
-<br><br>
-Any combination of the above MACs will pass this check. Official FIPS 140-2 paperwork for
-Red Hat Enterprise Linux 7 can be found at
-
-
-    <a href="http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf">http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf</a>
-</td>
-<td xml:lang="en-US">DoD Information Systems are required to use FIPS-approved cryptographic hash
-functions. The only SSHv2 hash algorithms meeting this requirement is SHA2.</td>
-<td></td>
-</tr>
-<tr>
-<td>2.2.2</td>
-<td>Remove the X Windows Package Group</td>
-<td xml:lang="en-US">By removing the xorg-x11-server-common package, the system no longer has X Windows
-installed. If X Windows is not installed then the system cannot boot into graphical user mode.
-This prevents the system from being accidentally or maliciously booted into a <code>graphical.target</code>
-mode. To do so, run the following command:
-<pre>$ sudo yum groupremove "X Window System"</pre>
-<pre>$ sudo yum remove xorg-x11-server-common</pre>
-</td>
-<td xml:lang="en-US">Unnecessary service packages must not be installed to decrease the attack surface of the system. X windows has a long history of security
-vulnerabilities and should not be installed unless approved and documented.</td>
+System use notifications are required only for access via login interfaces
+with human users and are not required when such human interfaces do not
+exist.</td>
 <td></td>
 </tr>
 <tr>
@@ -849,50 +134,6 @@ When entering a warning banner that spans several lines, remember
 to begin and end the string with <code>'</code> and use <code>\n</code> for new lines.</td>
 <td xml:lang="en-US">An appropriate warning message reinforces policy awareness during the logon
 process and facilitates possible legal action against attackers.</td>
-<td></td>
-</tr>
-<tr>
-<td>1.7.1.2</td>
-<td>Modify the System Login Banner</td>
-<td xml:lang="en-US">To configure the system login banner edit <code>/etc/issue</code>. Replace the
-default text with a message compliant with the local site policy or a legal
-disclaimer.
-
-The DoD required text is either:
-<br><br>
-<code>You are accessing a U.S. Government (USG) Information System (IS) that
-is provided for USG-authorized use only. By using this IS (which includes
-any device attached to this IS), you consent to the following conditions:
-<br>-The USG routinely intercepts and monitors communications on this IS
-for purposes including, but not limited to, penetration testing, COMSEC
-monitoring, network operations and defense, personnel misconduct (PM), law
-enforcement (LE), and counterintelligence (CI) investigations.
-<br>-At any time, the USG may inspect and seize data stored on this IS.
-<br>-Communications using, or data stored on, this IS are not private,
-are subject to routine monitoring, interception, and search, and may be
-disclosed or used for any USG-authorized purpose.
-<br>-This IS includes security measures (e.g., authentication and access
-controls) to protect USG interests -- not for your personal benefit or
-privacy.
-<br>-Notwithstanding the above, using this IS does not constitute consent
-to PM, LE or CI investigative searching or monitoring of the content of
-privileged communications, or work product, related to personal
-representation or services by attorneys, psychotherapists, or clergy, and
-their assistants. Such communications and work product are private and
-confidential. See User Agreement for details.</code>
-<br><br>
-OR:
-<br><br>
-<code>I've read &amp; consent to terms in IS user agreem't.</code>
-</td>
-<td xml:lang="en-US">Display of a standardized and approved use notification before granting
-access to the operating system ensures privacy and security notification
-verbiage used is consistent with applicable federal laws, Executive Orders,
-directives, policies, regulations, standards, and guidance.
-<br><br>
-System use notifications are required only for access via login interfaces
-with human users and are not required when such human interfaces do not
-exist.</td>
 <td></td>
 </tr>
 <tr>
@@ -957,7 +198,7 @@ modify the content of both <code>/etc/pam.d/system-auth</code> and <code>/etc/pa
 <pre>account required pam_faillock.so</pre>
 </li>
 </ul>
-</td>
+If <code>unlock_time</code> is set to <code>0</code>, manual intervention by an administrator is required to unlock a user.</td>
 <td xml:lang="en-US">Locking out user accounts after a number of incorrect attempts
 prevents direct password guessing attacks. Ensuring that an administrator is
 involved in unlocking locked accounts draws appropriate attention to such
@@ -1072,6 +313,20 @@ configured to store only encrypted representations of passwords.
 Additionally, the <code>crypt_style</code> configuration option ensures the use
 of a strong hashing algorithm that makes password cracking attacks more
 difficult.</td>
+<td></td>
+</tr>
+<tr>
+<td>1.4.3</td>
+<td>Require Authentication for Emergency Systemd Target</td>
+<td xml:lang="en-US">Emergency mode is intended as a system recovery
+method, providing a single user root access to the system
+during a failed boot sequence.
+<br><br>
+By default, Emergency mode is protected by requiring a password and is set
+in <code>/usr/lib/systemd/system/emergency.service</code>.</td>
+<td xml:lang="en-US">This prevents attackers with physical access from trivially bypassing security
+on the machine and gaining root access. Such accesses are further prevented
+by configuring the bootloader password.</td>
 <td></td>
 </tr>
 <tr>
@@ -1196,6 +451,299 @@ add or correct the <code>umask</code> setting in <code>/etc/profile</code> to re
 <td xml:lang="en-US">The umask value influences the permissions assigned to files when they are created.
 A misconfigured umask value could result in files with excessive permissions that can be read or
 written to by unauthorized users.</td>
+<td></td>
+</tr>
+<tr>
+<td>4.1.2</td>
+<td>Enable auditd Service</td>
+<td xml:lang="en-US">The <code>auditd</code> service is an essential userspace component of
+the Linux Auditing System, as it is responsible for writing audit records to
+disk.
+
+The <code>auditd</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable auditd.service</pre>
+</td>
+<td xml:lang="en-US">Without establishing what type of events occurred, it would be difficult
+to establish, correlate, and investigate the events leading up to an outage or attack.
+Ensuring the <code>auditd</code> service is active ensures audit records
+generated by the kernel are appropriately recorded.
+<br><br>
+Additionally, a properly configured audit subsystem ensures that actions of
+individual system users can be uniquely traced to those users so they
+can be held accountable for their actions.</td>
+<td></td>
+</tr>
+<tr>
+<td>4.1.3</td>
+<td>Enable Auditing for Processes Which Start Prior to the Audit Daemon</td>
+<td xml:lang="en-US">To ensure all processes can be audited, even those which start
+prior to the audit daemon, add the argument <code>audit=1</code> to the default
+GRUB 2 command line for the Linux operating system in
+
+<code>/etc/default/grub</code>, so that the line looks similar to
+<pre>GRUB_CMDLINE_LINUX="... audit=1 ..."</pre>
+In case the <code>GRUB_DISABLE_RECOVERY</code> is set to true, then the parameter should be added to the <code>GRUB_CMDLINE_LINUX_DEFAULT</code> instead.</td>
+<td xml:lang="en-US">Each process on the system carries an "auditable" flag which indicates whether
+its activities can be audited. Although <code>auditd</code> takes care of enabling
+this for all processes which launch after it does, adding the kernel argument
+ensures it is set for every process during boot.</td>
+<td></td>
+</tr>
+<tr>
+<td>4.1.18</td>
+<td>Make the auditd Configuration Immutable</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code> in order to make the auditd configuration
+immutable:
+<pre>-e 2</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following line to
+<code>/etc/audit/audit.rules</code> file in order to make the auditd configuration
+immutable:
+<pre>-e 2</pre>
+With this setting, a reboot will be required to change any audit rules.</td>
+<td xml:lang="en-US">Making the audit configuration immutable prevents accidental as
+well as malicious modification of the audit rules, although it may be
+problematic if legitimate changes are needed during system
+operation</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.7</td>
+<td>Record Events that Modify the System's Mandatory Access Controls</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+<pre>-w /etc/selinux/ -p wa -k MAC-policy</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following line to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-w /etc/selinux/ -p wa -k MAC-policy</pre>
+</td>
+<td xml:lang="en-US">The system's mandatory access policy (SELinux) should not be
+arbitrarily changed by anything other than administrator action. All changes to
+MAC policy should be audited.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.13</td>
+<td>Ensure auditd Collects Information on Exporting to Media (successful)</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect media exportation
+events for all users and root. If the <code>auditd</code> daemon is configured to
+use the <code>augenrules</code> program to read audit rules during daemon startup
+(the default), add the following line to a file with suffix <code>.rules</code> in
+the directory <code>/etc/audit/rules.d</code>, setting ARCH to either b32 or b64 as
+appropriate for your system:
+<pre>-a always,exit -F arch=ARCH -S mount -F auid&gt;=1000 -F auid!=unset -F key=export</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following line to
+<code>/etc/audit/audit.rules</code> file, setting ARCH to either b32 or b64 as
+appropriate for your system:
+<pre>-a always,exit -F arch=ARCH -S mount -F auid&gt;=1000 -F auid!=unset -F key=export</pre>
+</td>
+<td xml:lang="en-US">The unauthorized exportation of data to external media could result in an information leak
+where classified information, Privacy Act information, and intellectual property could be lost. An audit
+trail should be created each time a filesystem is mounted to help identify and guard against information
+loss.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.6</td>
+<td>Record Events that Modify the System's Network Environment</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, setting ARCH to either b32 or b64 as
+appropriate for your system:
+<pre>-a always,exit -F arch=ARCH -S sethostname,setdomainname -F key=audit_rules_networkconfig_modification
+-w /etc/issue -p wa -k audit_rules_networkconfig_modification
+-w /etc/issue.net -p wa -k audit_rules_networkconfig_modification
+-w /etc/hosts -p wa -k audit_rules_networkconfig_modification
+-w /etc/sysconfig/network -p wa -k audit_rules_networkconfig_modification</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, setting ARCH to either b32 or b64 as
+appropriate for your system:
+<pre>-a always,exit -F arch=ARCH -S sethostname,setdomainname -F key=audit_rules_networkconfig_modification
+-w /etc/issue -p wa -k audit_rules_networkconfig_modification
+-w /etc/issue.net -p wa -k audit_rules_networkconfig_modification
+-w /etc/hosts -p wa -k audit_rules_networkconfig_modification
+-w /etc/sysconfig/network -p wa -k audit_rules_networkconfig_modification</pre>
+</td>
+<td xml:lang="en-US">The network environment should not be modified by anything other
+than administrator action. Any change to network parameters should be
+audited.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.9</td>
+<td>Record Attempts to Alter Process and Session Initiation Information</td>
+<td xml:lang="en-US">The audit system already collects process information for all
+users and root. If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
+edits of files involved in storing such process information:
+<pre>-w /var/run/utmp -p wa -k session
+-w /var/log/btmp -p wa -k session
+-w /var/log/wtmp -p wa -k session</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file in order to watch for attempted manual
+edits of files involved in storing such process information:
+<pre>-w /var/run/utmp -p wa -k session
+-w /var/log/btmp -p wa -k session
+-w /var/log/wtmp -p wa -k session</pre>
+</td>
+<td xml:lang="en-US">Manual editing of these files may indicate nefarious activity, such
+as an attacker attempting to remove evidence of an intrusion.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.5</td>
+<td>Record Events that Modify User/Group Information</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<pre>-w /etc/group -p wa -k audit_rules_usergroup_modification
+-w /etc/passwd -p wa -k audit_rules_usergroup_modification
+-w /etc/gshadow -p wa -k audit_rules_usergroup_modification
+-w /etc/shadow -p wa -k audit_rules_usergroup_modification
+-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
+<br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<pre>-w /etc/group -p wa -k audit_rules_usergroup_modification
+-w /etc/passwd -p wa -k audit_rules_usergroup_modification
+-w /etc/gshadow -p wa -k audit_rules_usergroup_modification
+-w /etc/shadow -p wa -k audit_rules_usergroup_modification
+-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.5</td>
+<td>Record Events that Modify User/Group Information - /etc/group</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/group -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/group -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.5</td>
+<td>Record Events that Modify User/Group Information - /etc/gshadow</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/gshadow -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/gshadow -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.5</td>
+<td>Record Events that Modify User/Group Information - /etc/security/opasswd</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.5</td>
+<td>Record Events that Modify User/Group Information - /etc/passwd</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.5</td>
+<td>Record Events that Modify User/Group Information - /etc/shadow</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/shadow -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/shadow -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</td>
 <td></td>
 </tr>
 <tr>
@@ -2571,263 +2119,6 @@ to the system time should be audited.</td>
 <td></td>
 </tr>
 <tr>
-<td>4.1.18</td>
-<td>Make the auditd Configuration Immutable</td>
-<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following line to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code> in order to make the auditd configuration
-immutable:
-<pre>-e 2</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file in order to make the auditd configuration
-immutable:
-<pre>-e 2</pre>
-With this setting, a reboot will be required to change any audit rules.</td>
-<td xml:lang="en-US">Making the audit configuration immutable prevents accidental as
-well as malicious modification of the audit rules, although it may be
-problematic if legitimate changes are needed during system
-operation</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.7</td>
-<td>Record Events that Modify the System's Mandatory Access Controls</td>
-<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following line to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>:
-<pre>-w /etc/selinux/ -p wa -k MAC-policy</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-w /etc/selinux/ -p wa -k MAC-policy</pre>
-</td>
-<td xml:lang="en-US">The system's mandatory access policy (SELinux) should not be
-arbitrarily changed by anything other than administrator action. All changes to
-MAC policy should be audited.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.13</td>
-<td>Ensure auditd Collects Information on Exporting to Media (successful)</td>
-<td xml:lang="en-US">At a minimum, the audit system should collect media exportation
-events for all users and root. If the <code>auditd</code> daemon is configured to
-use the <code>augenrules</code> program to read audit rules during daemon startup
-(the default), add the following line to a file with suffix <code>.rules</code> in
-the directory <code>/etc/audit/rules.d</code>, setting ARCH to either b32 or b64 as
-appropriate for your system:
-<pre>-a always,exit -F arch=ARCH -S mount -F auid&gt;=1000 -F auid!=unset -F key=export</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file, setting ARCH to either b32 or b64 as
-appropriate for your system:
-<pre>-a always,exit -F arch=ARCH -S mount -F auid&gt;=1000 -F auid!=unset -F key=export</pre>
-</td>
-<td xml:lang="en-US">The unauthorized exportation of data to external media could result in an information leak
-where classified information, Privacy Act information, and intellectual property could be lost. An audit
-trail should be created each time a filesystem is mounted to help identify and guard against information
-loss.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.6</td>
-<td>Record Events that Modify the System's Network Environment</td>
-<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, setting ARCH to either b32 or b64 as
-appropriate for your system:
-<pre>-a always,exit -F arch=ARCH -S sethostname,setdomainname -F key=audit_rules_networkconfig_modification
--w /etc/issue -p wa -k audit_rules_networkconfig_modification
--w /etc/issue.net -p wa -k audit_rules_networkconfig_modification
--w /etc/hosts -p wa -k audit_rules_networkconfig_modification
--w /etc/sysconfig/network -p wa -k audit_rules_networkconfig_modification</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file, setting ARCH to either b32 or b64 as
-appropriate for your system:
-<pre>-a always,exit -F arch=ARCH -S sethostname,setdomainname -F key=audit_rules_networkconfig_modification
--w /etc/issue -p wa -k audit_rules_networkconfig_modification
--w /etc/issue.net -p wa -k audit_rules_networkconfig_modification
--w /etc/hosts -p wa -k audit_rules_networkconfig_modification
--w /etc/sysconfig/network -p wa -k audit_rules_networkconfig_modification</pre>
-</td>
-<td xml:lang="en-US">The network environment should not be modified by anything other
-than administrator action. Any change to network parameters should be
-audited.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.9</td>
-<td>Record Attempts to Alter Process and Session Initiation Information</td>
-<td xml:lang="en-US">The audit system already collects process information for all
-users and root. If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
-edits of files involved in storing such process information:
-<pre>-w /var/run/utmp -p wa -k session
--w /var/log/btmp -p wa -k session
--w /var/log/wtmp -p wa -k session</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file in order to watch for attempted manual
-edits of files involved in storing such process information:
-<pre>-w /var/run/utmp -p wa -k session
--w /var/log/btmp -p wa -k session
--w /var/log/wtmp -p wa -k session</pre>
-</td>
-<td xml:lang="en-US">Manual editing of these files may indicate nefarious activity, such
-as an attacker attempting to remove evidence of an intrusion.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.5</td>
-<td>Record Events that Modify User/Group Information</td>
-<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
-account changes:
-<pre>-w /etc/group -p wa -k audit_rules_usergroup_modification
--w /etc/passwd -p wa -k audit_rules_usergroup_modification
--w /etc/gshadow -p wa -k audit_rules_usergroup_modification
--w /etc/shadow -p wa -k audit_rules_usergroup_modification
--w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
-<br>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
-account changes:
-<pre>-w /etc/group -p wa -k audit_rules_usergroup_modification
--w /etc/passwd -p wa -k audit_rules_usergroup_modification
--w /etc/gshadow -p wa -k audit_rules_usergroup_modification
--w /etc/shadow -p wa -k audit_rules_usergroup_modification
--w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
-</td>
-<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
-will alert the system administrator(s) to any modifications. Any unexpected
-users, groups, or modifications should be investigated for legitimacy.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.5</td>
-<td>Record Events that Modify User/Group Information - /etc/group</td>
-<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
-account changes:
-<br><br>
-<pre>-w /etc/group -p wa -k audit_rules_usergroup_modification</pre>
-<br><br>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
-account changes:
-<br><br>
-<pre>-w /etc/group -p wa -k audit_rules_usergroup_modification</pre>
-</td>
-<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
-will alert the system administrator(s) to any modifications. Any unexpected
-users, groups, or modifications should be investigated for legitimacy.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.5</td>
-<td>Record Events that Modify User/Group Information - /etc/gshadow</td>
-<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
-account changes:
-<br><br>
-<pre>-w /etc/gshadow -p wa -k audit_rules_usergroup_modification</pre>
-<br><br>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
-account changes:
-<br><br>
-<pre>-w /etc/gshadow -p wa -k audit_rules_usergroup_modification</pre>
-</td>
-<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
-will alert the system administrator(s) to any modifications. Any unexpected
-users, groups, or modifications should be investigated for legitimacy.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.5</td>
-<td>Record Events that Modify User/Group Information - /etc/security/opasswd</td>
-<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
-account changes:
-<br><br>
-<pre>-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
-<br><br>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
-account changes:
-<br><br>
-<pre>-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
-</td>
-<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
-will alert the system administrator(s) to any modifications. Any unexpected
-users, groups, or modifications should be investigated for legitimacy.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.5</td>
-<td>Record Events that Modify User/Group Information - /etc/passwd</td>
-<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
-account changes:
-<br><br>
-<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
-<br><br>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
-account changes:
-<br><br>
-<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
-</td>
-<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
-will alert the system administrator(s) to any modifications. Any unexpected
-users, groups, or modifications should be investigated for legitimacy.</td>
-<td></td>
-</tr>
-<tr>
-<td>5.2.5</td>
-<td>Record Events that Modify User/Group Information - /etc/shadow</td>
-<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
-account changes:
-<br><br>
-<pre>-w /etc/shadow -p wa -k audit_rules_usergroup_modification</pre>
-<br><br>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
-account changes:
-<br><br>
-<pre>-w /etc/shadow -p wa -k audit_rules_usergroup_modification</pre>
-</td>
-<td xml:lang="en-US">In addition to auditing new user and group accounts, these watches
-will alert the system administrator(s) to any modifications. Any unexpected
-users, groups, or modifications should be investigated for legitimacy.</td>
-<td></td>
-</tr>
-<tr>
 <td>5.2.1.2</td>
 <td>Configure auditd mail_acct Action on Low Disk Space</td>
 <td xml:lang="en-US">The <code>auditd</code> service can be configured to send email to
@@ -2922,41 +2213,6 @@ which is <code>suspend</code>) as it is more likely to get prompt attention. Acc
 also include <code>suspend</code>, <code>single</code>, and <code>halt</code>.</td>
 <td xml:lang="en-US">Notifying administrators of an impending disk space problem may
 allow them to take corrective action prior to any disruption.</td>
-<td></td>
-</tr>
-<tr>
-<td>4.1.3</td>
-<td>Enable Auditing for Processes Which Start Prior to the Audit Daemon</td>
-<td xml:lang="en-US">To ensure all processes can be audited, even those which start
-prior to the audit daemon, add the argument <code>audit=1</code> to the default
-GRUB 2 command line for the Linux operating system in
-<code>/etc/default/grub</code>, in the manner below:
-<pre>GRUB_CMDLINE_LINUX="crashkernel=auto rd.lvm.lv=VolGroup/LogVol06 rd.lvm.lv=VolGroup/lv_swap rhgb quiet rd.shell=0 audit=1"</pre>
-</td>
-<td xml:lang="en-US">Each process on the system carries an "auditable" flag which indicates whether
-its activities can be audited. Although <code>auditd</code> takes care of enabling
-this for all processes which launch after it does, adding the kernel argument
-ensures it is set for every process during boot.</td>
-<td></td>
-</tr>
-<tr>
-<td>4.1.2</td>
-<td>Enable auditd Service</td>
-<td xml:lang="en-US">The <code>auditd</code> service is an essential userspace component of
-the Linux Auditing System, as it is responsible for writing audit records to
-disk.
-
-The <code>auditd</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable auditd.service</pre>
-</td>
-<td xml:lang="en-US">Without establishing what type of events occurred, it would be difficult
-to establish, correlate, and investigate the events leading up to an outage or attack.
-Ensuring the <code>auditd</code> service is active ensures audit records
-generated by the kernel are appropriately recorded.
-<br><br>
-Additionally, a properly configured audit subsystem ensures that actions of
-individual system users can be uniquely traced to those users so they
-can be held accountable for their actions.</td>
 <td></td>
 </tr>
 <tr>
@@ -3120,6 +2376,27 @@ please refer to
 <td></td>
 </tr>
 <tr>
+<td>4.2.3</td>
+<td>Ensure rsyslog is Installed</td>
+<td xml:lang="en-US">Rsyslog is installed by default. The <code>rsyslog</code> package can be installed with the following command: <pre> $ sudo yum install rsyslog</pre>
+</td>
+<td xml:lang="en-US">The rsyslog package provides the rsyslog daemon, which provides
+system logging services.</td>
+<td></td>
+</tr>
+<tr>
+<td>4.2.1.1</td>
+<td>Enable rsyslog Service</td>
+<td xml:lang="en-US">The <code>rsyslog</code> service provides syslog-style logging by default on Red Hat Enterprise Linux 7.
+
+The <code>rsyslog</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable rsyslog.service</pre>
+</td>
+<td xml:lang="en-US">The <code>rsyslog</code> service must be running in order to provide
+logging services, which are essential to system administration.</td>
+<td></td>
+</tr>
+<tr>
 <td>4.2.1.3</td>
 <td>Ensure System Log Files Have Correct Permissions</td>
 <td xml:lang="en-US">The file permissions for all log files written by <code>rsyslog</code> should
@@ -3147,6 +2424,18 @@ $ sudo yum install syslog-ng-core</pre>
 </td>
 <td xml:lang="en-US">The syslog-ng-core package provides the syslog-ng daemon, which provides
 system logging services.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.1.2</td>
+<td>Enable syslog-ng Service</td>
+<td xml:lang="en-US">The <code>syslog-ng</code> service (in replacement of rsyslog) provides syslog-style logging by default on Debian 8.
+
+The <code>syslog-ng</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable syslog-ng.service</pre>
+</td>
+<td xml:lang="en-US">The <code>syslog-ng</code> service must be running in order to provide
+logging services, which are essential to system administration.</td>
 <td></td>
 </tr>
 <tr>
@@ -3179,18 +2468,6 @@ this enables it to receive their messages as well.</td>
 <td></td>
 </tr>
 <tr>
-<td>5.1.2</td>
-<td>Enable syslog-ng Service</td>
-<td xml:lang="en-US">The <code>syslog-ng</code> service (in replacement of rsyslog) provides syslog-style logging by default on Debian 8.
-
-The <code>syslog-ng</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable syslog-ng.service</pre>
-</td>
-<td xml:lang="en-US">The <code>syslog-ng</code> service must be running in order to provide
-logging services, which are essential to system administration.</td>
-<td></td>
-</tr>
-<tr>
 <td>4.2.1.4</td>
 <td>Ensure Logs Sent To Remote Host</td>
 <td xml:lang="en-US">To configure rsyslog to send logs to a remote log server,
@@ -3200,19 +2477,19 @@ logging.
 Along with these other directives, the system can be configured
 to forward its logs to a particular log server by
 adding or correcting one of the following lines,
-substituting <code><i>loghost.example.com</i></code> appropriately.
+substituting <code><i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></code> appropriately.
 The choice of protocol depends on the environment of the system;
 although TCP and RELP provide more reliable message delivery,
 they may not be supported in all environments.
 <br>
 To use UDP for log message delivery:
-<pre>*.* @<i>loghost.example.com</i></pre>
+<pre>*.* @<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
 <br>
 To use TCP for log message delivery:
-<pre>*.* @@<i>loghost.example.com</i></pre>
+<pre>*.* @@<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
 <br>
 To use RELP for log message delivery:
-<pre>*.* :omrelp:<i>loghost.example.com</i></pre>
+<pre>*.* :omrelp:<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
 <br>
 There must be a resolvable DNS CNAME or Alias record set to "<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub>" for logs to be sent correctly to the centralized logging utility.</td>
 <td xml:lang="en-US">A log server (loghost) receives syslog messages from one or more
@@ -3220,27 +2497,6 @@ systems. This data can be used as an additional log source in the event a
 system is compromised and its local logs are suspect. Forwarding log messages
 to a remote loghost also provides system administrators with a centralized
 place to view the status of multiple hosts within the enterprise.</td>
-<td></td>
-</tr>
-<tr>
-<td>4.2.3</td>
-<td>Ensure rsyslog is Installed</td>
-<td xml:lang="en-US">Rsyslog is installed by default. The <code>rsyslog</code> package can be installed with the following command: <pre> $ sudo yum install rsyslog</pre>
-</td>
-<td xml:lang="en-US">The rsyslog package provides the rsyslog daemon, which provides
-system logging services.</td>
-<td></td>
-</tr>
-<tr>
-<td>4.2.1.1</td>
-<td>Enable rsyslog Service</td>
-<td xml:lang="en-US">The <code>rsyslog</code> service provides syslog-style logging by default on Red Hat Enterprise Linux 7.
-
-The <code>rsyslog</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable rsyslog.service</pre>
-</td>
-<td xml:lang="en-US">The <code>rsyslog</code> service must be running in order to provide
-logging services, which are essential to system administration.</td>
 <td></td>
 </tr>
 <tr>
@@ -3561,6 +2817,147 @@ service to valid network resources.</td>
 <td></td>
 </tr>
 <tr>
+<td>1.1.21</td>
+<td>Verify that All World-Writable Directories Have Sticky Bits Set</td>
+<td xml:lang="en-US">When the so-called 'sticky bit' is set on a directory,
+only the owner of a given file may remove that file from the
+directory. Without the sticky bit, any user with write access to a
+directory may remove any file in the directory. Setting the sticky
+bit prevents users from removing each other's files. In cases where
+there is no reason for a directory to be world-writable, a better
+solution is to remove that permission rather than to set the sticky
+bit. However, if a directory is used by a particular application,
+consult that application's documentation instead of blindly
+changing modes.
+<br>
+To set the sticky bit on a world-writable directory <i>DIR</i>, run the
+following command:
+<pre>$ sudo chmod +t <i>DIR</i></pre>
+</td>
+<td xml:lang="en-US">Failing to set the sticky bit on public directories allows unauthorized
+users to delete files in the directory structure.
+<br><br>
+The only authorized public directories are those temporary directories
+supplied with the system, or those designed to be temporary file
+repositories. The setting is normally reserved for directories used by the
+system, by users for temporary file storage (such as <code>/tmp</code>), and
+for directories requiring global read/write access.</td>
+<td></td>
+</tr>
+<tr>
+<td>6.1.14</td>
+<td>Ensure All SGID Executables Are Authorized</td>
+<td xml:lang="en-US">The SGID (set group id) bit should be set only on files that were
+installed via authorized means. A straightforward means of identifying
+unauthorized SGID files is determine if any were not installed as part of an
+RPM package, which is cryptographically verified. Investigate the origin
+of any unpackaged SGID files.
+This configuration check considers authorized SGID files which were installed via RPM.
+It is assumed that when an individual has sudo access to install an RPM
+and all packages are signed with an organizationally-recognized GPG key,
+the software should be considered an approved package on the system.
+Any SGID file not deployed through an RPM will be flagged for further review.</td>
+<td xml:lang="en-US">Executable files with the SGID permission run with the privileges of
+the owner of the file. SGID files of uncertain provenance could allow for
+unprivileged users to elevate privileges. The presence of these files should be
+strictly controlled on the system.</td>
+<td></td>
+</tr>
+<tr>
+<td>6.1.13</td>
+<td>Ensure All SUID Executables Are Authorized</td>
+<td xml:lang="en-US">The SUID (set user id) bit should be set only on files that were
+installed via authorized means. A straightforward means of identifying
+unauthorized SUID files is determine if any were not installed as part of an
+RPM package, which is cryptographically verified. Investigate the origin
+of any unpackaged SUID files.
+This configuration check considers authorized SUID files which were installed via RPM.
+It is assumed that when an individual has sudo access to install an RPM
+and all packages are signed with an organizationally-recognized GPG key,
+the software should be considered an approved package on the system.
+Any SUID file not deployed through an RPM will be flagged for further review.</td>
+<td xml:lang="en-US">Executable files with the SUID permission run with the privileges of
+the owner of the file. SUID files of uncertain provenance could allow for
+unprivileged users to elevate privileges. The presence of these files should be
+strictly controlled on the system.</td>
+<td></td>
+</tr>
+<tr>
+<td>6.1.10</td>
+<td>Ensure No World-Writable Files Exist</td>
+<td xml:lang="en-US">It is generally a good idea to remove global (other) write
+access to a file when it is discovered. However, check with
+documentation for specific applications before making changes.
+Also, monitor for recurring world-writable files, as these may be
+symptoms of a misconfigured application or user account. Finally,
+this applies to real files and not virtual files that are a part of
+pseudo file systems such as <code>sysfs</code> or <code>procfs</code>.</td>
+<td xml:lang="en-US">Data in world-writable files can be modified by any
+user on the system. In almost all circumstances, files can be
+configured using a combination of user and group permissions to
+support whatever legitimate access is needed without the risk
+caused by world-writable files.</td>
+<td></td>
+</tr>
+<tr>
+<td>6.1.12</td>
+<td>Ensure All Files Are Owned by a Group</td>
+<td xml:lang="en-US">If any files are not owned by a group, then the
+cause of their lack of group-ownership should be investigated.
+Following this, the files should be deleted or assigned to an
+appropriate group.</td>
+<td xml:lang="en-US">Unowned files do not directly imply a security problem, but they are generally
+a sign that something is amiss. They may
+be caused by an intruder, by incorrect software installation or
+draft software removal, or by failure to remove all files belonging
+to a deleted account. The files should be repaired so they
+will not cause problems when accounts are created in the future,
+and the cause should be discovered and addressed.</td>
+<td></td>
+</tr>
+<tr>
+<td>6.1.11</td>
+<td>Ensure All Files Are Owned by a User</td>
+<td xml:lang="en-US">If any files are not owned by a user, then the
+cause of their lack of ownership should be investigated.
+Following this, the files should be deleted or assigned to an
+appropriate user.</td>
+<td xml:lang="en-US">Unowned files do not directly imply a security problem, but they are generally
+a sign that something is amiss. They may
+be caused by an intruder, by incorrect software installation or
+draft software removal, or by failure to remove all files belonging
+to a deleted account. The files should be repaired so they
+will not cause problems when accounts are created in the future,
+and the cause should be discovered and addressed.</td>
+<td></td>
+</tr>
+<tr>
+<td>1.6.1</td>
+<td>Enable Kernel Parameter to Enforce DAC on Hardlinks</td>
+<td xml:lang="en-US">To set the runtime status of the <code>fs.protected_hardlinks</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.protected_hardlinks=1</pre>
+If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.protected_hardlinks = 1</pre>
+</td>
+<td xml:lang="en-US">By enabling this kernel parameter, users can no longer create soft or hard links to
+files which they do not own. Disallowing such hardlinks mitigate vulnerabilities
+based on insecure file system accessed by privileged programs, avoiding an
+exploitation vector exploiting unsafe use of <code>open()</code> or <code>creat()</code>.</td>
+<td></td>
+</tr>
+<tr>
+<td>1.6.1</td>
+<td>Enable Kernel Parameter to Enforce DAC on Symlinks</td>
+<td xml:lang="en-US">To set the runtime status of the <code>fs.protected_symlinks</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.protected_symlinks=1</pre>
+If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.protected_symlinks = 1</pre>
+</td>
+<td xml:lang="en-US">By enabling this kernel parameter, symbolic links are permitted to be followed
+only when outside a sticky world-writable directory, or when the UID of the
+link and follower match, or when the directory owner matches the symlink's owner.
+Disallowing such symlinks helps mitigate vulnerabilities based on insecure file system
+accessed by privileged programs, avoiding an exploitation vector exploiting unsafe use of
+<code>open()</code> or <code>creat()</code>.</td>
+<td></td>
+</tr>
+<tr>
 <td>6.1.4</td>
 <td>Verify Group Who Owns group File</td>
 <td xml:lang="en-US"> To properly set the group owner of <code>/etc/group</code>, run the command: <pre>$ sudo chgrp root /etc/group</pre>
@@ -3675,7 +3072,7 @@ is critical for system security.</td>
 <td>Verify Permissions on shadow File</td>
 <td xml:lang="en-US">
 To properly set the permissions of <code>/etc/shadow</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/shadow</pre>
+<pre>$ sudo chmod 0000 /etc/shadow</pre>
 </td>
 <td xml:lang="en-US">The <code>/etc/shadow</code> file contains the list of local
 system accounts and stores password hashes. Protection of this file is
@@ -3685,134 +3082,27 @@ which could weaken the system security posture.</td>
 <td></td>
 </tr>
 <tr>
-<td>1.1.21</td>
-<td>Verify that All World-Writable Directories Have Sticky Bits Set</td>
-<td xml:lang="en-US">When the so-called 'sticky bit' is set on a directory,
-only the owner of a given file may remove that file from the
-directory. Without the sticky bit, any user with write access to a
-directory may remove any file in the directory. Setting the sticky
-bit prevents users from removing each other's files. In cases where
-there is no reason for a directory to be world-writable, a better
-solution is to remove that permission rather than to set the sticky
-bit. However, if a directory is used by a particular application,
-consult that application's documentation instead of blindly
-changing modes.
-<br>
-To set the sticky bit on a world-writable directory <i>DIR</i>, run the
-following command:
-<pre>$ sudo chmod +t <i>DIR</i></pre>
-</td>
-<td xml:lang="en-US">Failing to set the sticky bit on public directories allows unauthorized
-users to delete files in the directory structure.
+<td>1.1.22</td>
+<td>Disable the Automounter</td>
+<td xml:lang="en-US">The <code>autofs</code> daemon mounts and unmounts filesystems, such as user
+home directories shared via NFS, on demand. In addition, autofs can be used to handle
+removable media, and the default configuration provides the cdrom device as <code>/misc/cd</code>.
+However, this method of providing access to removable media is not common, so autofs
+can almost always be disabled if NFS is not in use. Even if NFS is required, it may be
+possible to configure filesystem mounts statically by editing <code>/etc/fstab</code>
+rather than relying on the automounter.
 <br><br>
-The only authorized public directories are those temporary directories
-supplied with the system, or those designed to be temporary file
-repositories. The setting is normally reserved for directories used by the
-system, by users for temporary file storage (such as <code>/tmp</code>), and
-for directories requiring global read/write access.</td>
-<td></td>
-</tr>
-<tr>
-<td>6.1.14</td>
-<td>Ensure All SGID Executables Are Authorized</td>
-<td xml:lang="en-US">The SGID (set group id) bit should be set only on files that were
-installed via authorized means. A straightforward means of identifying
-unauthorized SGID files is determine if any were not installed as part of an
-RPM package, which is cryptographically verified. Investigate the origin
-of any unpackaged SGID files.</td>
-<td xml:lang="en-US">Executable files with the SGID permission run with the privileges of
-the owner of the file. SGID files of uncertain provenance could allow for
-unprivileged users to elevate privileges. The presence of these files should be
-strictly controlled on the system.</td>
-<td></td>
-</tr>
-<tr>
-<td>6.1.13</td>
-<td>Ensure All SUID Executables Are Authorized</td>
-<td xml:lang="en-US">The SUID (set user id) bit should be set only on files that were
-installed via authorized means. A straightforward means of identifying
-unauthorized SGID files is determine if any were not installed as part of an
-RPM package, which is cryptographically verified. Investigate the origin
-of any unpackaged SUID files.</td>
-<td xml:lang="en-US">Executable files with the SUID permission run with the privileges of
-the owner of the file. SUID files of uncertain provenance could allow for
-unprivileged users to elevate privileges. The presence of these files should be
-strictly controlled on the system.</td>
-<td></td>
-</tr>
-<tr>
-<td>6.1.10</td>
-<td>Ensure No World-Writable Files Exist</td>
-<td xml:lang="en-US">It is generally a good idea to remove global (other) write
-access to a file when it is discovered. However, check with
-documentation for specific applications before making changes.
-Also, monitor for recurring world-writable files, as these may be
-symptoms of a misconfigured application or user account. Finally,
-this applies to real files and not virtual files that are a part of
-pseudo file systems such as <code>sysfs</code> or <code>procfs</code>.</td>
-<td xml:lang="en-US">Data in world-writable files can be modified by any
-user on the system. In almost all circumstances, files can be
-configured using a combination of user and group permissions to
-support whatever legitimate access is needed without the risk
-caused by world-writable files.</td>
-<td></td>
-</tr>
-<tr>
-<td>6.1.12</td>
-<td>Ensure All Files Are Owned by a Group</td>
-<td xml:lang="en-US">If any files are not owned by a group, then the
-cause of their lack of group-ownership should be investigated.
-Following this, the files should be deleted or assigned to an
-appropriate group.</td>
-<td xml:lang="en-US">Unowned files do not directly imply a security problem, but they are generally
-a sign that something is amiss. They may
-be caused by an intruder, by incorrect software installation or
-draft software removal, or by failure to remove all files belonging
-to a deleted account. The files should be repaired so they
-will not cause problems when accounts are created in the future,
-and the cause should be discovered and addressed.</td>
-<td></td>
-</tr>
-<tr>
-<td>6.1.11</td>
-<td>Ensure All Files Are Owned by a User</td>
-<td xml:lang="en-US">If any files are not owned by a user, then the
-cause of their lack of ownership should be investigated.
-Following this, the files should be deleted or assigned to an
-appropriate user.</td>
-<td xml:lang="en-US">Unowned files do not directly imply a security problem, but they are generally
-a sign that something is amiss. They may
-be caused by an intruder, by incorrect software installation or
-draft software removal, or by failure to remove all files belonging
-to a deleted account. The files should be repaired so they
-will not cause problems when accounts are created in the future,
-and the cause should be discovered and addressed.</td>
-<td></td>
-</tr>
-<tr>
-<td>1.6.1</td>
-<td>Enable Kernel Parameter to Enforce DAC on Hardlinks</td>
-<td xml:lang="en-US">To set the runtime status of the <code>fs.protected_hardlinks</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.protected_hardlinks=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.protected_hardlinks = 1</pre>
+
+The <code>autofs</code> service can be disabled with the following command:
+<pre>$ sudo systemctl disable autofs.service</pre>
+The <code>autofs</code> service can be masked with the following command:
+<pre>$ sudo systemctl mask autofs.service</pre>
 </td>
-<td xml:lang="en-US">By enabling this kernel parameter, users can no longer create soft or hard links to
-files which they do not own. Disallowing such hardlinks mitigate vulnerabilities
-based on insecure file system accessed by privileged programs, avoiding an
-exploitation vector exploiting unsafe use of <code>open()</code> or <code>creat()</code>.</td>
-<td></td>
-</tr>
-<tr>
-<td>1.6.1</td>
-<td>Enable Kernel Parameter to Enforce DAC on Symlinks</td>
-<td xml:lang="en-US">To set the runtime status of the <code>fs.protected_symlinks</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.protected_symlinks=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.protected_symlinks = 1</pre>
-</td>
-<td xml:lang="en-US">By enabling this kernel parameter, symbolic links are permitted to be followed
-only when outside a sticky world-writable directory, or when the UID of the
-link and follower match, or when the directory owner matches the symlink's owner.
-Disallowing such symlinks helps mitigate vulnerabilities based on insecure file system
-accessed by privileged programs, avoiding an exploitation vector exploiting unsafe use of
-<code>open()</code> or <code>creat()</code>.</td>
+<td xml:lang="en-US">Disabling the automounter permits the administrator to
+statically control filesystem mounting through <code>/etc/fstab</code>.
+<br><br>
+Additionally, automatically mounting filesystems permits easy introduction of
+unknown devices, thereby facilitating malicious activity.</td>
 <td></td>
 </tr>
 <tr>
@@ -3900,27 +3190,15 @@ local system should be disabled.</td>
 <td></td>
 </tr>
 <tr>
-<td>1.1.22</td>
-<td>Disable the Automounter</td>
-<td xml:lang="en-US">The <code>autofs</code> daemon mounts and unmounts filesystems, such as user
-home directories shared via NFS, on demand. In addition, autofs can be used to handle
-removable media, and the default configuration provides the cdrom device as <code>/misc/cd</code>.
-However, this method of providing access to removable media is not common, so autofs
-can almost always be disabled if NFS is not in use. Even if NFS is required, it may be
-possible to configure filesystem mounts statically by editing <code>/etc/fstab</code>
-rather than relying on the automounter.
-<br><br>
-
-The <code>autofs</code> service can be disabled with the following command:
-<pre>$ sudo systemctl disable autofs.service</pre>
-The <code>autofs</code> service can be masked with the following command:
-<pre>$ sudo systemctl mask autofs.service</pre>
-</td>
-<td xml:lang="en-US">Disabling the automounter permits the administrator to
-statically control filesystem mounting through <code>/etc/fstab</code>.
-<br><br>
-Additionally, automatically mounting filesystems permits easy introduction of
-unknown devices, thereby facilitating malicious activity.</td>
+<td>1.1.1.8</td>
+<td>Disable Mounting of FAT filesystems</td>
+<td xml:lang="en-US">
+To configure the system to prevent the <code>vfat</code>
+kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+<pre>install vfat /bin/true</pre>
+This effectively prevents usage of this uncommon filesystem.</td>
+<td xml:lang="en-US">Linux kernel modules which implement filesystems that are not needed by the
+local system should be disabled.</td>
 <td></td>
 </tr>
 <tr>
@@ -4208,18 +3486,6 @@ existing code in order to re-purpose it using return oriented programming
 <td></td>
 </tr>
 <tr>
-<td>1.6.1.1</td>
-<td>Ensure SELinux Not Disabled in /etc/default/grub</td>
-<td xml:lang="en-US">SELinux can be disabled at boot time by an argument in
-<code>/etc/default/grub</code>.
-Remove any instances of <code>selinux=0</code> from the kernel arguments in that
-file to prevent SELinux from being disabled at boot.</td>
-<td xml:lang="en-US">Disabling a major host protection feature, such as SELinux, at boot time prevents
-it from confining system services at boot time.  Further, it increases
-the chances that it will remain off during system operation.</td>
-<td></td>
-</tr>
-<tr>
 <td>1.6.1.5</td>
 <td>Uninstall mcstrans Package</td>
 <td xml:lang="en-US">The <code>mcstransd</code> daemon provides category label information
@@ -4248,6 +3514,18 @@ $ sudo yum erase setroubleshoot</pre>
 </td>
 <td xml:lang="en-US">The SETroubleshoot service is an unnecessary daemon to
 have running on a server</td>
+<td></td>
+</tr>
+<tr>
+<td>1.6.1.1</td>
+<td>Ensure SELinux Not Disabled in /etc/default/grub</td>
+<td xml:lang="en-US">SELinux can be disabled at boot time by an argument in
+<code>/etc/default/grub</code>.
+Remove any instances of <code>selinux=0</code> from the kernel arguments in that
+file to prevent SELinux from being disabled at boot.</td>
+<td xml:lang="en-US">Disabling a major host protection feature, such as SELinux, at boot time prevents
+it from confining system services at boot time.  Further, it increases
+the chances that it will remain off during system operation.</td>
 <td></td>
 </tr>
 <tr>
@@ -4375,6 +3653,30 @@ restrictive mount options, which can help protect programs which use it.</td>
 <td></td>
 </tr>
 <tr>
+<td>1.5.4</td>
+<td>Disable Prelinking</td>
+<td xml:lang="en-US">The prelinking feature changes binaries in an attempt to decrease their startup
+time. In order to disable it, change or add the following line inside the file
+<code>/etc/sysconfig/prelink</code>:
+<pre>PRELINKING=no</pre>
+Next, run the following command to return binaries to a normal, non-prelinked state:
+<pre>$ sudo /usr/sbin/prelink -ua</pre>
+</td>
+<td xml:lang="en-US">Because the prelinking feature changes binaries, it can interfere with the
+operation of certain software and/or modes such as AIDE, FIPS, etc.</td>
+<td></td>
+</tr>
+<tr>
+<td>1.3.1</td>
+<td>Install AIDE</td>
+<td xml:lang="en-US">The <code>aide</code> package can be installed with the following command:
+<pre>
+$ sudo yum install aide</pre>
+</td>
+<td xml:lang="en-US">The AIDE package must be installed if it is to be available for integrity checking.</td>
+<td></td>
+</tr>
+<tr>
 <td>1.3.2</td>
 <td>Configure Periodic Execution of AIDE</td>
 <td xml:lang="en-US">At a minimum, AIDE should be configured to run a weekly scan. At most, AIDE should be run daily.
@@ -4398,16 +3700,6 @@ negative consequences that could ultimately affect the security state of the ope
 system. The operating system's Information Management Officer (IMO)/Information System
 Security Officer (ISSO) and System Administrators (SAs) must be notified via email and/or
 monitoring system trap when there is an unauthorized modification of a configuration item.</td>
-<td></td>
-</tr>
-<tr>
-<td>1.3.1</td>
-<td>Install AIDE</td>
-<td xml:lang="en-US">The <code>aide</code> package can be installed with the following command:
-<pre>
-$ sudo yum install aide</pre>
-</td>
-<td xml:lang="en-US">The AIDE package must be installed if it is to be available for integrity checking.</td>
 <td></td>
 </tr>
 <tr>
@@ -4845,20 +4137,6 @@ this baseline should be investigated.</td>
 <td></td>
 </tr>
 <tr>
-<td>1.5.4</td>
-<td>Disable Prelinking</td>
-<td xml:lang="en-US">The prelinking feature changes binaries in an attempt to decrease their startup
-time. In order to disable it, change or add the following line inside the file
-<code>/etc/sysconfig/prelink</code>:
-<pre>PRELINKING=no</pre>
-Next, run the following command to return binaries to a normal, non-prelinked state:
-<pre>$ sudo /usr/sbin/prelink -ua</pre>
-</td>
-<td xml:lang="en-US">Because the prelinking feature changes binaries, it can interfere with the
-operation of certain software and/or modes such as AIDE, FIPS, etc.</td>
-<td></td>
-</tr>
-<tr>
 <td>1.2.2</td>
 <td>Ensure gpgcheck Enabled In Main yum Configuration</td>
 <td xml:lang="en-US">The <code>gpgcheck</code> option controls whether
@@ -4929,6 +4207,1017 @@ the exploitation of publicly-known vulnerabilities. If the most
 recent security patches and updates are not installed, unauthorized
 users may take advantage of weaknesses in the unpatched software. The
 lack of prompt attention to patching could result in a system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.2.3</td>
+<td>Disable Avahi Server Software</td>
+<td xml:lang="en-US"> The <code>avahi-daemon</code> service can be disabled with the following command: <pre>$ sudo systemctl disable avahi-daemon.service</pre> The <code>avahi-daemon</code> service can be masked with the following command: <pre>$ sudo systemctl mask avahi-daemon.service</pre>
+</td>
+<td xml:lang="en-US">Because the Avahi daemon service keeps an open network
+port, it is subject to network attacks. Its functionality
+is convenient but is only appropriate if the local network
+can be trusted.</td>
+<td></td>
+</tr>
+<tr>
+<td>1.2.5</td>
+<td>Disable Red Hat Network Service (rhnsd)</td>
+<td xml:lang="en-US">The Red Hat Network service automatically queries Red Hat Network
+servers to determine whether there are any actions that should be executed,
+such as package updates. This only occurs if the system was registered to an
+RHN server or satellite and managed as such.
+
+The <code>rhnsd</code> service can be disabled with the following command:
+<pre>$ sudo systemctl disable rhnsd.service</pre>
+The <code>rhnsd</code> service can be masked with the following command:
+<pre>$ sudo systemctl mask rhnsd.service</pre>
+</td>
+<td xml:lang="en-US">Although systems management and patching is extremely important to
+system security, management by a system outside the enterprise enclave is not
+desirable for some environments.  However, if the system is being managed by RHN or
+ RHN Satellite Server the <code>rhnsd</code> daemon can remain on.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.1.1</td>
+<td>Enable cron Service</td>
+<td xml:lang="en-US">The <code>crond</code> service is used to execute commands at
+preconfigured times. It is required by almost all systems to perform necessary
+maintenance tasks, such as notifying root of system activity.
+
+The <code>crond</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable crond.service</pre>
+</td>
+<td xml:lang="en-US">Due to its usage for maintenance and security-supporting tasks,
+enabling the cron daemon is essential.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.1.7</td>
+<td>Verify Group Who Owns cron.d</td>
+<td xml:lang="en-US">
+To properly set the group owner of <code>/etc/cron.d</code>, run the command:
+<pre>$ sudo chgrp root /etc/cron.d</pre>
+</td>
+<td xml:lang="en-US">Service configuration files enable or disable features of their respective services that if configured incorrectly
+can lead to insecure and vulnerable configurations. Therefore, service configuration files should be owned by the
+correct group to prevent unauthorized changes.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.1.4</td>
+<td>Verify Group Who Owns cron.daily</td>
+<td xml:lang="en-US">
+To properly set the group owner of <code>/etc/cron.daily</code>, run the command:
+<pre>$ sudo chgrp root /etc/cron.daily</pre>
+</td>
+<td xml:lang="en-US">Service configuration files enable or disable features of their respective services that if configured incorrectly
+can lead to insecure and vulnerable configurations. Therefore, service configuration files should be owned by the
+correct group to prevent unauthorized changes.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.1.3</td>
+<td>Verify Group Who Owns cron.hourly</td>
+<td xml:lang="en-US">
+To properly set the group owner of <code>/etc/cron.hourly</code>, run the command:
+<pre>$ sudo chgrp root /etc/cron.hourly</pre>
+</td>
+<td xml:lang="en-US">Service configuration files enable or disable features of their respective services that if configured incorrectly
+can lead to insecure and vulnerable configurations. Therefore, service configuration files should be owned by the
+correct group to prevent unauthorized changes.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.1.6</td>
+<td>Verify Group Who Owns cron.monthly</td>
+<td xml:lang="en-US">
+To properly set the group owner of <code>/etc/cron.monthly</code>, run the command:
+<pre>$ sudo chgrp root /etc/cron.monthly</pre>
+</td>
+<td xml:lang="en-US">Service configuration files enable or disable features of their respective services that if configured incorrectly
+can lead to insecure and vulnerable configurations. Therefore, service configuration files should be owned by the
+correct group to prevent unauthorized changes.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.1.5</td>
+<td>Verify Group Who Owns cron.weekly</td>
+<td xml:lang="en-US">
+To properly set the group owner of <code>/etc/cron.weekly</code>, run the command:
+<pre>$ sudo chgrp root /etc/cron.weekly</pre>
+</td>
+<td xml:lang="en-US">Service configuration files enable or disable features of their respective services that if configured incorrectly
+can lead to insecure and vulnerable configurations. Therefore, service configuration files should be owned by the
+correct group to prevent unauthorized changes.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.1.2</td>
+<td>Verify Group Who Owns Crontab</td>
+<td xml:lang="en-US">
+To properly set the group owner of <code>/etc/crontab</code>, run the command:
+<pre>$ sudo chgrp root /etc/crontab</pre>
+</td>
+<td xml:lang="en-US">Service configuration files enable or disable features of their respective services that if configured incorrectly
+can lead to insecure and vulnerable configurations. Therefore, service configuration files should be owned by the
+correct group to prevent unauthorized changes.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.1.7</td>
+<td>Verify Owner on cron.d</td>
+<td xml:lang="en-US">
+To properly set the owner of <code>/etc/cron.d</code>, run the command:
+<pre>$ sudo chown root /etc/cron.d </pre>
+</td>
+<td xml:lang="en-US">Service configuration files enable or disable features of their respective services that if configured incorrectly
+can lead to insecure and vulnerable configurations. Therefore, service configuration files should be owned by the
+correct user to prevent unauthorized changes.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.1.4</td>
+<td>Verify Owner on cron.daily</td>
+<td xml:lang="en-US">
+To properly set the owner of <code>/etc/cron.daily</code>, run the command:
+<pre>$ sudo chown root /etc/cron.daily </pre>
+</td>
+<td xml:lang="en-US">Service configuration files enable or disable features of their respective services that if configured incorrectly
+can lead to insecure and vulnerable configurations. Therefore, service configuration files should be owned by the
+correct user to prevent unauthorized changes.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.1.3</td>
+<td>Verify Owner on cron.hourly</td>
+<td xml:lang="en-US">
+To properly set the owner of <code>/etc/cron.hourly</code>, run the command:
+<pre>$ sudo chown root /etc/cron.hourly </pre>
+</td>
+<td xml:lang="en-US">Service configuration files enable or disable features of their respective services that if configured incorrectly
+can lead to insecure and vulnerable configurations. Therefore, service configuration files should be owned by the
+correct user to prevent unauthorized changes.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.1.6</td>
+<td>Verify Owner on cron.monthly</td>
+<td xml:lang="en-US">
+To properly set the owner of <code>/etc/cron.monthly</code>, run the command:
+<pre>$ sudo chown root /etc/cron.monthly </pre>
+</td>
+<td xml:lang="en-US">Service configuration files enable or disable features of their respective services that if configured incorrectly
+can lead to insecure and vulnerable configurations. Therefore, service configuration files should be owned by the
+correct user to prevent unauthorized changes.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.1.5</td>
+<td>Verify Owner on cron.weekly</td>
+<td xml:lang="en-US">
+To properly set the owner of <code>/etc/cron.weekly</code>, run the command:
+<pre>$ sudo chown root /etc/cron.weekly </pre>
+</td>
+<td xml:lang="en-US">Service configuration files enable or disable features of their respective services that if configured incorrectly
+can lead to insecure and vulnerable configurations. Therefore, service configuration files should be owned by the
+correct user to prevent unauthorized changes.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.1.2</td>
+<td>Verify Owner on crontab</td>
+<td xml:lang="en-US">
+To properly set the owner of <code>/etc/crontab</code>, run the command:
+<pre>$ sudo chown root /etc/crontab </pre>
+</td>
+<td xml:lang="en-US">Service configuration files enable or disable features of their respective services that if configured incorrectly
+can lead to insecure and vulnerable configurations. Therefore, service configuration files should be owned by the
+correct user to prevent unauthorized changes.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.1.7</td>
+<td>Verify Permissions on cron.d</td>
+<td xml:lang="en-US">
+To properly set the permissions of <code>/etc/cron.d</code>, run the command:
+<pre>$ sudo chmod 0700 /etc/cron.d</pre>
+</td>
+<td xml:lang="en-US">Service configuration files enable or disable features of their respective services that if configured incorrectly
+can lead to insecure and vulnerable configurations. Therefore, service configuration files should have the
+correct access rights to prevent unauthorized changes.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.1.4</td>
+<td>Verify Permissions on cron.daily</td>
+<td xml:lang="en-US">
+To properly set the permissions of <code>/etc/cron.daily</code>, run the command:
+<pre>$ sudo chmod 0700 /etc/cron.daily</pre>
+</td>
+<td xml:lang="en-US">Service configuration files enable or disable features of their respective services that if configured incorrectly
+can lead to insecure and vulnerable configurations. Therefore, service configuration files should have the
+correct access rights to prevent unauthorized changes.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.1.3</td>
+<td>Verify Permissions on cron.hourly</td>
+<td xml:lang="en-US">
+To properly set the permissions of <code>/etc/cron.hourly</code>, run the command:
+<pre>$ sudo chmod 0700 /etc/cron.hourly</pre>
+</td>
+<td xml:lang="en-US">Service configuration files enable or disable features of their respective services that if configured incorrectly
+can lead to insecure and vulnerable configurations. Therefore, service configuration files should have the
+correct access rights to prevent unauthorized changes.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.1.6</td>
+<td>Verify Permissions on cron.monthly</td>
+<td xml:lang="en-US">
+To properly set the permissions of <code>/etc/cron.monthly</code>, run the command:
+<pre>$ sudo chmod 0700 /etc/cron.monthly</pre>
+</td>
+<td xml:lang="en-US">Service configuration files enable or disable features of their respective services that if configured incorrectly
+can lead to insecure and vulnerable configurations. Therefore, service configuration files should have the
+correct access rights to prevent unauthorized changes.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.1.5</td>
+<td>Verify Permissions on cron.weekly</td>
+<td xml:lang="en-US">
+To properly set the permissions of <code>/etc/cron.weekly</code>, run the command:
+<pre>$ sudo chmod 0700 /etc/cron.weekly</pre>
+</td>
+<td xml:lang="en-US">Service configuration files enable or disable features of their respective services that if configured incorrectly
+can lead to insecure and vulnerable configurations. Therefore, service configuration files should have the
+correct access rights to prevent unauthorized changes.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.1.2</td>
+<td>Verify Permissions on crontab</td>
+<td xml:lang="en-US">
+To properly set the permissions of <code>/etc/crontab</code>, run the command:
+<pre>$ sudo chmod 0600 /etc/crontab</pre>
+</td>
+<td xml:lang="en-US">Service configuration files enable or disable features of their respective services that if configured incorrectly
+can lead to insecure and vulnerable configurations. Therefore, service configuration files should have the
+correct access rights to prevent unauthorized changes.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.2.5</td>
+<td>Disable DHCP Service</td>
+<td xml:lang="en-US">The <code>dhcpd</code> service should be disabled on
+any system that does not need to act as a DHCP server.
+
+The <code>dhcpd</code> service can be disabled with the following command:
+<pre>$ sudo systemctl disable dhcpd.service</pre>
+The <code>dhcpd</code> service can be masked with the following command:
+<pre>$ sudo systemctl mask dhcpd.service</pre>
+</td>
+<td xml:lang="en-US">Unmanaged or unintentionally activated DHCP servers may provide faulty information
+to clients, interfering with the operation of a legitimate site
+DHCP server if there is one.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.2.8</td>
+<td>Disable named Service</td>
+<td xml:lang="en-US"> The <code>named</code> service can be disabled with the following command: <pre>$ sudo systemctl disable named.service</pre> The <code>named</code> service can be masked with the following command: <pre>$ sudo systemctl mask named.service</pre>
+</td>
+<td xml:lang="en-US">All network services involve some risk of compromise due to
+implementation flaws and should be disabled if possible.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.2.9</td>
+<td>Disable vsftpd Service</td>
+<td xml:lang="en-US"> The <code>vsftpd</code> service can be disabled with the following command: <pre>$ sudo systemctl disable vsftpd.service</pre> The <code>vsftpd</code> service can be masked with the following command: <pre>$ sudo systemctl mask vsftpd.service</pre>
+</td>
+<td xml:lang="en-US">Running FTP server software provides a network-based avenue
+of attack, and should be disabled if not needed.
+Furthermore, the FTP protocol is unencrypted and creates
+a risk of compromising sensitive information.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.2.10</td>
+<td>Disable httpd Service</td>
+<td xml:lang="en-US"> The <code>httpd</code> service can be disabled with the following command: <pre>$ sudo systemctl disable httpd.service</pre> The <code>httpd</code> service can be masked with the following command: <pre>$ sudo systemctl mask httpd.service</pre>
+</td>
+<td xml:lang="en-US">Running web server software provides a network-based avenue
+of attack, and should be disabled if not needed.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.2.11</td>
+<td>Disable Dovecot Service</td>
+<td xml:lang="en-US"> The <code>dovecot</code> service can be disabled with the following command: <pre>$ sudo systemctl disable dovecot.service</pre> The <code>dovecot</code> service can be masked with the following command: <pre>$ sudo systemctl mask dovecot.service</pre>
+</td>
+<td xml:lang="en-US">Running an IMAP or POP3 server provides a network-based
+avenue of attack, and should be disabled if not needed.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.2.15</td>
+<td>Disable Postfix Network Listening</td>
+<td xml:lang="en-US">Edit the file <code>/etc/postfix/main.cf</code> to ensure that only the following
+<code>inet_interfaces</code> line appears:
+<pre>inet_interfaces = <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_postfix_inet_interfaces"></ns0:sub></pre>
+</td>
+<td xml:lang="en-US">This ensures <code>postfix</code> accepts mail messages
+(such as cron job reports) from the local system only,
+and not from the network, which protects it from network attack.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.2.7</td>
+<td>Disable rpcbind Service</td>
+<td xml:lang="en-US">The rpcbind utility maps RPC services to the ports on which they listen.
+RPC processes notify rpcbind when they start, registering the ports they
+are listening on and the RPC program numbers they expect to serve. The
+rpcbind service redirects the client to the proper port number so it can
+communicate with the requested service. If the system does not require RPC
+(such as for NFS servers) then this service should be disabled.
+
+The <code>rpcbind</code> service can be disabled with the following command:
+<pre>$ sudo systemctl disable rpcbind.service</pre>
+The <code>rpcbind</code> service can be masked with the following command:
+<pre>$ sudo systemctl mask rpcbind.service</pre>
+</td>
+<td xml:lang="en-US"></td>
+<td></td>
+</tr>
+<tr>
+<td>2.2.7</td>
+<td>Disable Network File System (nfs)</td>
+<td xml:lang="en-US">The Network File System (NFS) service allows remote hosts to mount
+and interact with shared filesystems on the local system. If the local system
+is not designated as a NFS server then this service should be disabled.
+
+The <code>nfs</code> service can be disabled with the following command:
+<pre>$ sudo systemctl disable nfs.service</pre>
+The <code>nfs</code> service can be masked with the following command:
+<pre>$ sudo systemctl mask nfs.service</pre>
+</td>
+<td xml:lang="en-US">Unnecessary services should be disabled to decrease the attack surface of the system.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.2.1.1</td>
+<td>Enable the NTP Daemon</td>
+<td xml:lang="en-US">
+Run the following command to determine the current status of the
+<code>chronyd</code> service:
+<pre>$ systemctl is-active chronyd</pre>
+If the service is running, it should return the following: <pre>active</pre>
+Note: The <code>chronyd</code> daemon is enabled by default.
+<br><br>
+
+Run the following command to determine the current status of the
+<code>ntpd</code> service:
+<pre>$ systemctl is-active ntpd</pre>
+If the service is running, it should return the following: <pre>active</pre>
+Note: The <code>ntpd</code> daemon is not enabled by default. Though as mentioned
+in the previous sections in certain environments the <code>ntpd</code> daemon might
+be preferred to be used rather than the <code>chronyd</code> one. Refer to:
+
+    
+    <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html</a>
+
+for guidance which NTP daemon to choose depending on the environment used.</td>
+<td xml:lang="en-US">Enabling some of <code>chronyd</code> or <code>ntpd</code> services ensures
+that the NTP daemon will be running and that the system will synchronize its
+time to any servers specified. This is important whether the system is
+configured to be a client (and synchronize only its own clock) or it is also
+acting as an NTP server to other systems.  Synchronizing time is essential for
+authentication services such as Kerberos, but it is also important for
+maintaining accurate logs and auditing possible security breaches.
+<br><br>
+The <code>chronyd</code> and <code>ntpd</code> NTP daemons offer all of the
+functionality of <code>ntpdate</code>, which is now deprecated. Additional
+information on this is available at
+
+    <a href="http://support.ntp.org/bin/view/Dev/DeprecatingNtpdate">http://support.ntp.org/bin/view/Dev/DeprecatingNtpdate</a>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>3.6</td>
+<td>Specify a Remote NTP Server</td>
+<td xml:lang="en-US">Depending on specific functional requirements of a concrete
+production environment, the Red Hat Enterprise Linux 7 system can be
+configured to utilize the services of the <code>chronyd</code> NTP daemon (the
+default), or services of the <code>ntpd</code> NTP daemon. Refer to
+
+    
+    <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html</a>
+
+for more detailed comparison of the features of both of the choices, and for
+further guidance how to choose between the two NTP daemons.
+<br>
+To specify a remote NTP server for time synchronization, perform the following:
+<ul>
+<li> if the system is configured to use the <code>chronyd</code> as the NTP daemon (the
+default), edit the file <code>/etc/chrony.conf</code> as follows,</li>
+<li> if the system is configured to use the <code>ntpd</code> as the NTP daemon,
+edit the file <code>/etc/ntp.conf</code> as documented below.</li>
+</ul>
+Add or correct the following lines, substituting the IP or hostname of a remote
+NTP server for <em>ntpserver</em>:
+<pre>server <i>ntpserver</i></pre>
+This instructs the NTP software to contact that remote server to obtain time
+data.</td>
+<td xml:lang="en-US">Synchronizing with an NTP server makes it possible to collate system
+logs from multiple sources or correlate computer events with real time events.</td>
+<td></td>
+</tr>
+<tr>
+<td>3.4.1</td>
+<td>Install tcp_wrappers Package</td>
+<td xml:lang="en-US">When network services are using the <code>xinetd</code> service, the
+<code>tcp_wrappers</code> package should be installed.
+The <code>tcp_wrappers</code> package can be installed with the following command:
+<pre>
+$ sudo yum install tcp_wrappers</pre>
+</td>
+<td xml:lang="en-US">Access control methods provide the ability to enhance system security posture
+by restricting services and known good IP addresses and address ranges. This
+prevents connections from unknown hosts and protocols.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.1.7</td>
+<td>Disable xinetd Service</td>
+<td xml:lang="en-US"> The <code>xinetd</code> service can be disabled with the following command: <pre>$ sudo systemctl disable xinetd.service</pre> The <code>xinetd</code> service can be masked with the following command: <pre>$ sudo systemctl mask xinetd.service</pre>
+</td>
+<td xml:lang="en-US">The xinetd service provides a dedicated listener service for some programs,
+which is no longer necessary for commonly-used network services. Disabling
+it ensures that these uncommon services are not running, and also prevents
+attacks against xinetd itself.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.3.1</td>
+<td>Remove NIS Client</td>
+<td xml:lang="en-US">The Network Information Service (NIS), formerly known as Yellow Pages,
+is a client-server directory service protocol used to distribute system configuration
+files. The NIS client (<code>ypbind</code>) was used to bind a system to an NIS server
+and receive the distributed configuration files.</td>
+<td xml:lang="en-US">The NIS service is inherently an insecure system that has been vulnerable
+to DOS attacks, buffer overflows and has poor authentication for querying
+NIS maps. NIS generally has been replaced by such protocols as Lightweight
+Directory Access Protocol (LDAP). It is recommended that the service be
+removed.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.2.16</td>
+<td>Uninstall ypserv Package</td>
+<td xml:lang="en-US">The <code>ypserv</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase ypserv</pre>
+</td>
+<td xml:lang="en-US">The NIS service provides an unencrypted authentication service which does
+not provide for the confidentiality and integrity of user passwords or the
+remote session.
+
+Removing the <code>ypserv</code> package decreases the risk of the accidental
+(or intentional) activation of NIS or NIS+ services.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.3.2</td>
+<td>Uninstall rsh Package</td>
+<td xml:lang="en-US">The <code>rsh</code> package contains the client commands
+for the rsh services</td>
+<td xml:lang="en-US">These legacy clients contain numerous security exposures and have
+been replaced with the more secure SSH package. Even if the server is removed,
+it is best to ensure the clients are also removed to prevent users from
+inadvertently attempting to use these commands and therefore exposing
+their credentials. Note that removing the <code>rsh</code> package removes
+the clients for <code>rsh</code>,<code>rcp</code>, and <code>rlogin</code>.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.2.17</td>
+<td>Disable rexec Service</td>
+<td xml:lang="en-US">The <code>rexec</code> service, which is available with the <code>rsh-server</code> package
+and runs as a service through xinetd or separately as a systemd socket, should be disabled.
+If using xinetd, set <code>disable</code> to <code>yes</code> in <code>/etc/xinetd.d/rexec</code>.
+
+The <code>rexec</code> socket can be disabled with the following command:
+<pre>$ sudo systemctl disable rexec.socket</pre>
+The <code>rexec</code> socket can be masked with the following command:
+<pre>$ sudo systemctl mask .socket</pre>
+</td>
+<td xml:lang="en-US">The rexec service uses unencrypted network communications, which
+means that data from the login session, including passwords and
+all other information transmitted during the session, can be
+stolen by eavesdroppers on the network.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.2.17</td>
+<td>Disable rlogin Service</td>
+<td xml:lang="en-US">The <code>rlogin</code> service, which is available with
+the <code>rsh-server</code> package and runs as a service through xinetd or separately
+as a systemd socket, should be disabled.
+If using xinetd, set <code>disable</code> to <code>yes</code> in <code>/etc/xinetd.d/rlogin</code>.
+
+The <code>rlogin</code> socket can be disabled with the following command:
+<pre>$ sudo systemctl disable rlogin.socket</pre>
+The <code>rlogin</code> socket can be masked with the following command:
+<pre>$ sudo systemctl mask .socket</pre>
+</td>
+<td xml:lang="en-US">The rlogin service uses unencrypted network communications, which
+means that data from the login session, including passwords and
+all other information transmitted during the session, can be
+stolen by eavesdroppers on the network.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.2.17</td>
+<td>Disable rsh Service</td>
+<td xml:lang="en-US">The <code>rsh</code> service, which is available with
+the <code>rsh-server</code> package and runs as a service through xinetd or separately
+as a systemd socket, should be disabled.
+If using xinetd, set <code>disable</code> to <code>yes</code> in <code>/etc/xinetd.d/rsh</code>.
+
+The <code>rsh</code> socket can be disabled with the following command:
+<pre>$ sudo systemctl disable rsh.socket</pre>
+The <code>rsh</code> socket can be masked with the following command:
+<pre>$ sudo systemctl mask .socket</pre>
+</td>
+<td xml:lang="en-US">The rsh service uses unencrypted network communications, which
+means that data from the login session, including passwords and
+all other information transmitted during the session, can be
+stolen by eavesdroppers on the network.</td>
+<td></td>
+</tr>
+<tr>
+<td>6.2.14</td>
+<td>Remove Rsh Trust Files</td>
+<td xml:lang="en-US">The files <code>/etc/hosts.equiv</code> and <code>~/.rhosts</code> (in
+each user's home directory) list remote hosts and users that are trusted by the
+local system when using the rshd daemon.
+To remove these files, run the following command to delete them from any
+location:
+<pre>$ sudo rm /etc/hosts.equiv</pre>
+<pre>$ rm ~/.rhosts</pre>
+</td>
+<td xml:lang="en-US">Trust files are convenient, but when
+used in conjunction with the R-services, they can allow
+unauthenticated access to a system.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.2.21</td>
+<td>Uninstall talk-server Package</td>
+<td xml:lang="en-US">The <code>talk-server</code> package can be removed with the following command: <pre> $ sudo yum erase talk-server</pre>
+</td>
+<td xml:lang="en-US">The talk software presents a security risk as it uses unencrypted protocols
+for communications. Removing the <code>talk-server</code> package decreases the
+risk of the accidental (or intentional) activation of talk services.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.3.3</td>
+<td>Uninstall talk Package</td>
+<td xml:lang="en-US">The <code>talk</code> package contains the client program for the
+Internet talk protocol, which allows the user to chat with other users on
+different systems. Talk is a communication program which copies lines from one
+terminal to the terminal of another user.
+The <code>talk</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase talk</pre>
+</td>
+<td xml:lang="en-US">The talk software presents a security risk as it uses unencrypted protocols
+for communications. Removing the <code>talk</code> package decreases the
+risk of the accidental (or intentional) activation of talk client program.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.1.1</td>
+<td>Uninstall telnet-server Package</td>
+<td xml:lang="en-US">The <code>telnet-server</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase telnet-server</pre>
+</td>
+<td xml:lang="en-US">It is detrimental for operating systems to provide, or install by default,
+functionality exceeding requirements or mission objectives. These
+unnecessary capabilities are often overlooked and therefore may remain
+unsecure. They increase the risk to the platform by providing additional
+attack vectors.
+<br>
+The telnet service provides an unencrypted remote access service which does
+not provide for the confidentiality and integrity of user passwords or the
+remote session. If a privileged user were to login using this service, the
+privileged user password could be compromised.
+<br>
+Removing the <code>telnet-server</code> package decreases the risk of the
+telnet service's accidental (or intentional) activation.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.3.4</td>
+<td>Remove telnet Clients</td>
+<td xml:lang="en-US">The telnet client allows users to start connections to other systems via
+the telnet protocol.</td>
+<td xml:lang="en-US">The <code>telnet</code> protocol is insecure and unencrypted. The use
+of an unencrypted transmission medium could allow an unauthorized user
+to steal credentials. The <code>ssh</code> package provides an
+encrypted session and stronger security and is included in Red Hat Enterprise Linux 7.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.2.18</td>
+<td>Disable telnet Service</td>
+<td xml:lang="en-US">The <code>telnet</code> service configuration file <code>/etc/xinetd.d/telnet</code>
+is not created automatically. If it was created manually, check the
+<code>/etc/xinetd.d/telnet</code> file and ensure that <code>disable = no</code>
+is changed to read <code>disable = yes</code> as follows below:
+<pre>
+# description: The telnet server serves telnet sessions; it uses \\
+#       unencrypted username/password pairs for authentication.
+service telnet
+{
+        flags           = REUSE
+        socket_type     = stream
+
+        wait            = no
+        user            = root
+        server          = /usr/sbin/in.telnetd
+        log_on_failure  += USERID
+        disable         = yes
+}
+</pre>
+If the <code>/etc/xinetd.d/telnet</code> file does not exist, make sure that
+the activation of the <code>telnet</code> service on system boot is disabled
+via the following command:
+
+The <code>rexec</code> socket can be disabled with the following command:
+<pre>$ sudo systemctl disable rexec.socket</pre>
+The <code>rexec</code> socket can be masked with the following command:
+<pre>$ sudo systemctl mask .socket</pre>
+</td>
+<td xml:lang="en-US">The telnet protocol uses unencrypted network communication, which
+means that data from the login session, including passwords and
+all other information transmitted during the session, can be
+stolen by eavesdroppers on the network. The telnet protocol is also
+subject to man-in-the-middle attacks.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.1.6</td>
+<td>Disable tftp Service</td>
+<td xml:lang="en-US">The <code>tftp</code> service should be disabled.
+
+The <code>tftp</code> service can be disabled with the following command:
+<pre>$ sudo systemctl disable tftp.service</pre>
+The <code>tftp</code> service can be masked with the following command:
+<pre>$ sudo systemctl mask tftp.service</pre>
+</td>
+<td xml:lang="en-US">Disabling the <code>tftp</code> service ensures the system is not acting
+as a TFTP server, which does not provide encryption or authentication.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.2.4</td>
+<td>Disable the CUPS Service</td>
+<td xml:lang="en-US"> The <code>cups</code> service can be disabled with the following command: <pre>$ sudo systemctl disable cups.service</pre> The <code>cups</code> service can be masked with the following command: <pre>$ sudo systemctl mask cups.service</pre>
+</td>
+<td xml:lang="en-US">Turn off unneeded services to reduce attack surface.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.2.13</td>
+<td>Disable Squid</td>
+<td xml:lang="en-US"> The <code>squid</code> service can be disabled with the following command: <pre>$ sudo systemctl disable squid.service</pre> The <code>squid</code> service can be masked with the following command: <pre>$ sudo systemctl mask squid.service</pre>
+</td>
+<td xml:lang="en-US">Running proxy server software provides a network-based avenue
+of attack, and should be removed if not needed.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.2.12</td>
+<td>Disable Samba</td>
+<td xml:lang="en-US"> The <code>smb</code> service can be disabled with the following command: <pre>$ sudo systemctl disable smb.service</pre> The <code>smb</code> service can be masked with the following command: <pre>$ sudo systemctl mask smb.service</pre>
+</td>
+<td xml:lang="en-US">Running a Samba server provides a network-based avenue of attack, and
+should be disabled if not needed.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.2.14</td>
+<td>Disable snmpd Service</td>
+<td xml:lang="en-US"> The <code>snmpd</code> service can be disabled with the following command: <pre>$ sudo systemctl disable snmpd.service</pre> The <code>snmpd</code> service can be masked with the following command: <pre>$ sudo systemctl mask snmpd.service</pre>
+</td>
+<td xml:lang="en-US">Running SNMP software provides a network-based avenue of attack, and
+should be disabled if not needed.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.1</td>
+<td>Verify Group Who Owns SSH Server config file</td>
+<td xml:lang="en-US">
+To properly set the group owner of <code>/etc/ssh/sshd_config</code>, run the command:
+<pre>$ sudo chgrp root /etc/ssh/sshd_config</pre>
+</td>
+<td xml:lang="en-US">Service configuration files enable or disable features of their respective services that if configured incorrectly
+can lead to insecure and vulnerable configurations. Therefore, service configuration files should be owned by the
+correct group to prevent unauthorized changes.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.1</td>
+<td>Verify Owner on SSH Server config file</td>
+<td xml:lang="en-US">
+To properly set the owner of <code>/etc/ssh/sshd_config</code>, run the command:
+<pre>$ sudo chown root /etc/ssh/sshd_config </pre>
+</td>
+<td xml:lang="en-US">Service configuration files enable or disable features of their respective services that if configured incorrectly
+can lead to insecure and vulnerable configurations. Therefore, service configuration files should be owned by the
+correct group to prevent unauthorized changes.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.1</td>
+<td>Verify Permissions on SSH Server config file</td>
+<td xml:lang="en-US">
+To properly set the permissions of <code>/etc/ssh/sshd_config</code>, run the command:
+<pre>$ sudo chmod 0600 /etc/ssh/sshd_config</pre>
+</td>
+<td xml:lang="en-US">Service configuration files enable or disable features of their respective services that if configured incorrectly
+can lead to insecure and vulnerable configurations. Therefore, service configuration files should be owned by the
+correct group to prevent unauthorized changes.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.7</td>
+<td>Disable Host-Based Authentication</td>
+<td xml:lang="en-US">SSH's cryptographic host-based authentication is
+more secure than <code>.rhosts</code> authentication. However, it is
+not recommended that hosts unilaterally trust one another, even
+within an organization.
+<br><br>
+To disable host-based authentication, add or correct the
+following line in <code>/etc/ssh/sshd_config</code>:
+<pre>HostbasedAuthentication no</pre>
+</td>
+<td xml:lang="en-US">SSH trust relationships mean a compromise on one host
+can allow an attacker to move trivially to other hosts.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.2</td>
+<td>Allow Only SSH Protocol 2</td>
+<td xml:lang="en-US">Only SSH protocol version 2 connections should be
+permitted. The default setting in
+<code>/etc/ssh/sshd_config</code> is correct, and can be
+verified by ensuring that the following
+line appears:
+<pre>Protocol 2</pre>
+</td>
+<td xml:lang="en-US">SSH protocol version 1 is an insecure implementation of the SSH protocol and
+has many well-known vulnerability exploits. Exploits of the SSH daemon could provide
+immediate root access to the system.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.9</td>
+<td>Disable SSH Access via Empty Passwords</td>
+<td xml:lang="en-US">To explicitly disallow SSH login from accounts with
+empty passwords, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+<br>
+<pre>PermitEmptyPasswords no</pre>
+<br>
+Any accounts with empty passwords should be disabled immediately, and PAM configuration
+should prevent users from being able to assign themselves empty passwords.</td>
+<td xml:lang="en-US">Configuring this setting for the SSH daemon provides additional assurance
+that remote login via SSH will require a password, even in the event of 
+misconfiguration elsewhere.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.6</td>
+<td>Disable SSH Support for .rhosts Files</td>
+<td xml:lang="en-US">SSH can emulate the behavior of the obsolete rsh
+command in allowing users to enable insecure access to their
+accounts via <code>.rhosts</code> files.
+<br><br>
+To ensure this behavior is disabled, add or correct the
+following line in <code>/etc/ssh/sshd_config</code>:
+<pre>IgnoreRhosts yes</pre>
+</td>
+<td xml:lang="en-US">SSH trust relationships mean a compromise on one host
+can allow an attacker to move trivially to other hosts.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.8</td>
+<td>Disable SSH Root Login</td>
+<td xml:lang="en-US">The root user should never be allowed to login to a
+system directly over a network.
+To disable root login via SSH, add or correct the following line
+in <code>/etc/ssh/sshd_config</code>:
+<pre>PermitRootLogin no</pre>
+</td>
+<td xml:lang="en-US">Even though the communications channel may be encrypted, an additional layer of
+security is gained by extending the policy of not logging directly on as root.
+In addition, logging in with a user-specific account provides individual
+accountability of actions performed on the system and also helps to minimize
+direct attack attempts on root's password.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.10</td>
+<td>Do Not Allow SSH Environment Options</td>
+<td xml:lang="en-US">To ensure users are not able to override environment
+variables of the SSH daemon, add or correct the following line
+in <code>/etc/ssh/sshd_config</code>:
+<pre>PermitUserEnvironment no</pre>
+</td>
+<td xml:lang="en-US">SSH environment options potentially allow users to bypass
+access restriction in some configurations.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.16</td>
+<td>Enable SSH Warning Banner</td>
+<td xml:lang="en-US">To enable the warning banner and ensure it is consistent
+across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+<pre>Banner /etc/issue</pre>
+Another section contains information on how to create an
+appropriate system-wide warning banner.</td>
+<td xml:lang="en-US">The warning message reinforces policy awareness during the logon process and
+facilitates possible legal action against attackers. Alternatively, systems
+whose ownership should not be obvious should ensure usage of a banner that does
+not provide easy attribution.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.4</td>
+<td>Enable Encrypted X11 Forwarding</td>
+<td xml:lang="en-US">By default, remote X11 connections are not encrypted when initiated
+by users. SSH has the capability to encrypt remote X11 connections when SSH's
+<code>X11Forwarding</code> option is enabled.
+<br><br>
+To enable X11 Forwarding, add or correct the
+following line in <code>/etc/ssh/sshd_config</code>:
+<pre>X11Forwarding yes</pre>
+</td>
+<td xml:lang="en-US">Open X displays allow an attacker to capture keystrokes and to execute commands
+remotely.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.12</td>
+<td>Set SSH Idle Timeout Interval</td>
+<td xml:lang="en-US">SSH allows administrators to set an idle timeout
+interval.
+After this interval has passed, the idle user will be
+automatically logged out.
+<br><br>
+To set an idle timeout interval, edit the following line in <code>/etc/ssh/sshd_config</code> as
+follows:
+<pre>ClientAliveInterval <b><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="sshd_idle_timeout_value"></ns0:sub></b></pre>
+The timeout <b>interval</b> is given in seconds. To have a timeout
+of e.g. 10 minutes, set <b>interval</b> to 600.
+<br><br>
+If a shorter timeout has already been set for the login
+shell, that value will preempt any SSH
+setting made here. Keep in mind that some processes may stop SSH
+from correctly detecting that the user is idle.</td>
+<td xml:lang="en-US">Terminating an idle ssh session within a short time period reduces the window of
+opportunity for unauthorized personnel to take control of a management session
+enabled on the console or console port that has been let unattended.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.12</td>
+<td>Set SSH Client Alive Max Count</td>
+<td xml:lang="en-US">To ensure the SSH idle timeout occurs precisely when the <code>ClientAliveInterval</code> is set,
+edit <code>/etc/ssh/sshd_config</code> as follows:
+<pre>ClientAliveCountMax <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_set_keepalive"></ns0:sub></pre>
+</td>
+<td xml:lang="en-US">This ensures a user login will be terminated as soon as the <code>ClientAliveInterval</code>
+is reached.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.3</td>
+<td>Set LogLevel to INFO</td>
+<td xml:lang="en-US">The INFO parameter specifices that record login and logout activity will be logged.
+To specify the log level in
+SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+<pre>LogLevel INFO</pre>
+</td>
+<td xml:lang="en-US">SSH provides several logging levels with varying amounts of verbosity. <code>DEBUG</code> is specifically
+not recommended other than strictly for debugging SSH communications since it provides
+so much data that it is difficult to identify important security information. <code>INFO</code> level is the
+basic level that only records login activity of SSH users. In many situations, such as Incident
+Response, it is important to determine when a particular user was active on a system. The
+logout record can eliminate those users who disconnected, which helps narrow the field.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.5</td>
+<td>Set SSH authentication attempt limit</td>
+<td xml:lang="en-US">The <code>MaxAuthTries</code> parameter specifies the maximum number of authentication attempts
+permitted per connection. Once the number of failures reaches half this value, additional failures are logged.
+to set MaxAUthTries edit <code>/etc/ssh/sshd_config</code> as follows:
+<pre>MaxAuthTries <b>tries</b></pre>
+</td>
+<td xml:lang="en-US">Setting the MaxAuthTries parameter to a low number will minimize the risk of successful
+brute force attacks to the SSH server.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.10</td>
+<td>Use Only FIPS 140-2 Validated Ciphers</td>
+<td xml:lang="en-US">Limit the ciphers to those algorithms which are FIPS-approved.
+Counter (CTR) mode is also preferred over cipher-block chaining (CBC) mode.
+The following line in <code>/etc/ssh/sshd_config</code>
+demonstrates use of FIPS-approved ciphers:
+<pre>Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc</pre>
+The man page <code>sshd_config(5)</code> contains a list of supported ciphers.
+
+<br><br>
+The following ciphers are FIPS 140-2 certified on Red Hat Enterprise Linux 7:
+<br>- aes128-ctr
+<br>- aes192-ctr
+<br>- aes256-ctr
+<br>- aes128-cbc
+<br>- aes192-cbc
+<br>- aes256-cbc
+<br>- 3des-cbc
+<br>- rijndael-cbc@lysator.liu.se
+<br><br>
+Any combination of the above ciphers will pass this check.
+Official FIPS 140-2 paperwork for Red Hat Enterprise Linux 7 can be found at
+
+
+    <a href="http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf">http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf</a>
+</td>
+<td xml:lang="en-US">Unapproved mechanisms that are used for authentication to the cryptographic module are not verified and therefore
+cannot be relied upon to provide confidentiality or integrity, and system data may be compromised.
+<br>
+Operating systems utilizing encryption are required to use FIPS-compliant mechanisms for authenticating to
+cryptographic modules.
+<br>
+FIPS 140-2 is the current standard for validating that mechanisms used to access cryptographic modules
+utilize authentication that meets industry and government requirements. For government systems, this allows
+Security Levels 1, 2, 3, or 4 for use on Red Hat Enterprise Linux 7.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.2.12</td>
+<td>Use Only FIPS 140-2 Validated MACs</td>
+<td xml:lang="en-US">Limit the MACs to those hash algorithms which are FIPS-approved.
+The following line in <code>/etc/ssh/sshd_config</code>
+demonstrates use of FIPS-approved MACs:
+
+<pre>MACs hmac-sha2-512,hmac-sha2-256,hmac-sha1</pre>
+
+The man page <code>sshd_config(5)</code> contains a list of supported MACs.
+
+<br><br>
+Only the following message authentication codes are FIPS 140-2 certified on Red Hat Enterprise Linux 7:
+<br>- hmac-sha1
+<br>- hmac-sha2-256
+<br>- hmac-sha2-512
+<br>- hmac-sha1-etm@openssh.com
+<br>- hmac-sha2-256-etm@openssh.com
+<br>- hmac-sha2-512-etm@openssh.com
+<br><br>
+Any combination of the above MACs will pass this check. Official FIPS 140-2 paperwork for
+Red Hat Enterprise Linux 7 can be found at
+
+
+    <a href="http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf">http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf</a>
+</td>
+<td xml:lang="en-US">DoD Information Systems are required to use FIPS-approved cryptographic hash
+functions. The only SSHv2 hash algorithms meeting this requirement is SHA2.</td>
+<td></td>
+</tr>
+<tr>
+<td>2.2.2</td>
+<td>Remove the X Windows Package Group</td>
+<td xml:lang="en-US">By removing the xorg-x11-server-common package, the system no longer has X Windows
+installed. If X Windows is not installed then the system cannot boot into graphical user mode.
+This prevents the system from being accidentally or maliciously booted into a <code>graphical.target</code>
+mode. To do so, run the following command:
+<pre>$ sudo yum groupremove "X Window System"</pre>
+<pre>$ sudo yum remove xorg-x11-server-common</pre>
+</td>
+<td xml:lang="en-US">Unnecessary service packages must not be installed to decrease the attack surface of the system. X windows has a long history of security
+vulnerabilities and should not be installed unless approved and documented.</td>
 <td></td>
 </tr>
 </table>

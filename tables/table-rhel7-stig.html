@@ -47,7 +47,7 @@
 </thead>
 <tr>
 <td>RHEL-07-010010</td>
-<td>CCI-001496</td>
+<td>CCI-002235</td>
 <td>high</td>
 <td>The Red Hat Enterprise Linux operating system must be configured so that the file permissions, ownership, and group membership of system files and commands match the vendor values.</td>
 <td>Permissions on system binaries and configuration files that are too generous
@@ -77,7 +77,7 @@ the correct values:
 </tr>
 <tr>
 <td>RHEL-07-010010</td>
-<td>CCI-001496</td>
+<td>CCI-002235</td>
 <td>high</td>
 <td>The Red Hat Enterprise Linux operating system must be configured so that the file permissions, ownership, and group membership of system files and commands match the vendor values.</td>
 <td>Permissions on system binaries and configuration files that are too generous
@@ -486,6 +486,42 @@ For example:
 After the settings have been set, run <code>dconf update</code>.</td>
 </tr>
 <tr>
+<td>RHEL-07-010062</td>
+<td>CCI-000057</td>
+<td>medium</td>
+<td>The Red Hat Enterprise Linux operating system must prevent a user from overriding the screensaver lock-enabled setting for the graphical user interface.</td>
+<td>A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity
+of the information system but does not want to logout because of the temporary nature of the absense.</td>
+<td>
+
+          		If , this is a finding.
+          		</td>
+<td>If not already configured, ensure that users cannot change GNOME3 screensaver lock settings
+by adding <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
+to <code>/etc/dconf/db/local.d/00-security-settings</code>.
+For example:
+<pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+</tr>
+<tr>
+<td>RHEL-07-010062</td>
+<td>CCI-000057</td>
+<td>medium</td>
+<td>The Red Hat Enterprise Linux operating system must prevent a user from overriding the screensaver lock-enabled setting for the graphical user interface.</td>
+<td>A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity
+of the information system but does not want to logout because of the temporary nature of the absense.</td>
+<td>
+
+          		If , this is a finding.
+          		</td>
+<td>If not already configured, ensure that users cannot change GNOME3 screensaver lock settings
+by adding <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
+to <code>/etc/dconf/db/local.d/00-security-settings</code>.
+For example:
+<pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+</tr>
+<tr>
 <td>RHEL-07-010070</td>
 <td>CCI-000057</td>
 <td>medium</td>
@@ -1847,7 +1883,7 @@ availability of the system to legitimate users.</td>
 <td>RHEL-07-010320</td>
 <td>CCI-002238</td>
 <td>medium</td>
-<td>Accounts on the Red Hat Enterprise Linux operating system that are subject to three unsuccessful logon attempts within 15 minutes must be locked for the maximum configurable period.</td>
+<td>The Red Hat Enterprise Linux operating system must be configured to lock accounts for a minimum of 15 minutes after three unsuccessful logon attempts within a 15-minute timeframe.</td>
 <td>Locking out user accounts after a number of incorrect attempts
 prevents direct password guessing attacks.</td>
 <td>
@@ -1875,7 +1911,7 @@ attempts using <code>pam_faillock.so</code>, modify the content of both
 <td>RHEL-07-010320</td>
 <td>CCI-002238</td>
 <td>medium</td>
-<td>Accounts on the Red Hat Enterprise Linux operating system that are subject to three unsuccessful logon attempts within 15 minutes must be locked for the maximum configurable period.</td>
+<td>The Red Hat Enterprise Linux operating system must be configured to lock accounts for a minimum of 15 minutes after three unsuccessful logon attempts within a 15-minute timeframe.</td>
 <td>Locking out user accounts after a number of incorrect attempts
 prevents direct password guessing attacks.</td>
 <td>
@@ -3121,7 +3157,7 @@ use cases.</td>
 <td>RHEL-07-020230</td>
 <td>CCI-000366</td>
 <td>high</td>
-<td>The Red Hat Enterprise Linux operating system must be configured so that the x86 Ctrl-Alt-Delete key sequence is disabled.</td>
+<td>The Red Hat Enterprise Linux operating system must be configured so that the x86 Ctrl-Alt-Delete key sequence is disabled on the command line.</td>
 <td>A locally logged-in user who presses Ctrl-Alt-Del, when at the console,
 can reboot the system. If accidentally pressed, as could happen in
 the case of mixed OS environment, this can create the risk of short-term
@@ -3147,7 +3183,7 @@ as this file may be restored during future system updates.</td>
 <td>RHEL-07-020230</td>
 <td>CCI-000366</td>
 <td>high</td>
-<td>The Red Hat Enterprise Linux operating system must be configured so that the x86 Ctrl-Alt-Delete key sequence is disabled.</td>
+<td>The Red Hat Enterprise Linux operating system must be configured so that the x86 Ctrl-Alt-Delete key sequence is disabled on the command line.</td>
 <td>A locally logged-in user who presses Ctrl-Alt-Del, when at the console,
 can reboot the system. If accidentally pressed, as could happen in
 the case of mixed OS environment, this can create the risk of short-term
@@ -3168,6 +3204,48 @@ or
 <br><br>
 Do not simply delete the <code>/usr/lib/systemd/system/ctrl-alt-del.service</code> file,
 as this file may be restored during future system updates.</td>
+</tr>
+<tr>
+<td>RHEL-07-020231</td>
+<td>CCI-000366</td>
+<td>high</td>
+<td>The Red Hat Enterprise Linux operating system must be configured so that the x86 Ctrl-Alt-Delete key sequence is disabled in the GUI.</td>
+<td>USB storage devices such as thumb drives can be used to introduce
+malicious software.</td>
+<td>
+
+          		If , this is a finding.
+          		</td>
+<td>To prevent USB storage devices from being used, configure the kernel module loading system
+to prevent automatic loading of the USB storage driver.
+
+To configure the system to prevent the <code>usb-storage</code>
+kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+<pre>install usb-storage /bin/true</pre>
+This will prevent the <code>modprobe</code> program from loading the <code>usb-storage</code>
+module, but will not prevent an administrator (or another program) from using the
+<code>insmod</code> program to load the module manually.</td>
+</tr>
+<tr>
+<td>RHEL-07-020231</td>
+<td>CCI-000366</td>
+<td>high</td>
+<td>The Red Hat Enterprise Linux operating system must be configured so that the x86 Ctrl-Alt-Delete key sequence is disabled in the GUI.</td>
+<td>USB storage devices such as thumb drives can be used to introduce
+malicious software.</td>
+<td>
+
+          		If , this is a finding.
+          		</td>
+<td>To prevent USB storage devices from being used, configure the kernel module loading system
+to prevent automatic loading of the USB storage driver.
+
+To configure the system to prevent the <code>usb-storage</code>
+kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+<pre>install usb-storage /bin/true</pre>
+This will prevent the <code>modprobe</code> program from loading the <code>usb-storage</code>
+module, but will not prevent an administrator (or another program) from using the
+<code>insmod</code> program to load the module manually.</td>
 </tr>
 <tr>
 <td>RHEL-07-020240</td>
@@ -4935,9 +5013,8 @@ with limited audit storage capacity.</td>
 system or media from the system being audited.
 Set the <code>remote_server</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>
 with an IP address or hostname of the system that the audispd plugin should
-send audit records to. For example replacing <i>REMOTE_SYSTEM</i> with an IP
-address or hostname:
-<pre>remote_server = <i>REMOTE_SYSTEM</i></pre>
+send audit records to. For example
+<pre>remote_server = <i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_audispd_remote_server"></ns0:sub></i></pre>
 </td>
 </tr>
 <tr>
@@ -4956,9 +5033,8 @@ with limited audit storage capacity.</td>
 system or media from the system being audited.
 Set the <code>remote_server</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>
 with an IP address or hostname of the system that the audispd plugin should
-send audit records to. For example replacing <i>REMOTE_SYSTEM</i> with an IP
-address or hostname:
-<pre>remote_server = <i>REMOTE_SYSTEM</i></pre>
+send audit records to. For example
+<pre>remote_server = <i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_audispd_remote_server"></ns0:sub></i></pre>
 </td>
 </tr>
 <tr>
@@ -5128,48 +5204,60 @@ notify the user of an issue.</td>
 <td>CCI-001855</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must immediately notify the System Administrator (SA) and Information System Security Officer (ISSO) (at a minimum) via email when the threshold for the repository maximum audit record storage capacity is reached.</td>
-<td>Administrators should be made aware of an inability to record
-audit records. If a separate partition or logical volume of adequate size
-is used, running low on space for audit records should never occur.</td>
+<td>Notifying administrators of an impending disk space problem may
+allow them to take corrective action prior to any disruption.</td>
 <td>
 
           		If , this is a finding.
           		</td>
 <td>The <code>auditd</code> service can be configured to take an action
-when disk space is running low but prior to running out of space completely.
-Edit the file <code>/etc/audit/auditd.conf</code>. Add or modify the following line,
+when disk space <i>starts</i> to run low.
+Edit the file <code>/etc/audit/auditd.conf</code>. Modify the following line,
 substituting <i>ACTION</i> appropriately:
-<pre>admin_space_left_action = <i>ACTION</i></pre>
-Set this value to <code>single</code> to cause the system to switch to single user
-mode for corrective action. Acceptable values also include <code>suspend</code> and
-<code>halt</code>. For certain systems, the need for availability
-outweighs the need to log all actions, and a different setting should be
-determined. Details regarding all possible values for <i>ACTION</i> are described in the
-<code>auditd.conf</code> man page.</td>
+<pre>space_left_action = <i>ACTION</i></pre>
+Possible values for <i>ACTION</i> are described in the <code>auditd.conf</code> man page.
+These include:
+<ul>
+<li><code>syslog</code></li>
+<li><code>email</code></li>
+<li><code>exec</code></li>
+<li><code>suspend</code></li>
+<li><code>single</code></li>
+<li><code>halt</code></li>
+</ul>
+Set this to <code>email</code> (instead of the default,
+which is <code>suspend</code>) as it is more likely to get prompt attention. Acceptable values
+also include <code>suspend</code>, <code>single</code>, and <code>halt</code>.</td>
 </tr>
 <tr>
 <td>RHEL-07-030340</td>
 <td>CCI-001855</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must immediately notify the System Administrator (SA) and Information System Security Officer (ISSO) (at a minimum) via email when the threshold for the repository maximum audit record storage capacity is reached.</td>
-<td>Administrators should be made aware of an inability to record
-audit records. If a separate partition or logical volume of adequate size
-is used, running low on space for audit records should never occur.</td>
+<td>Notifying administrators of an impending disk space problem may
+allow them to take corrective action prior to any disruption.</td>
 <td>
 
           		If , this is a finding.
           		</td>
 <td>The <code>auditd</code> service can be configured to take an action
-when disk space is running low but prior to running out of space completely.
-Edit the file <code>/etc/audit/auditd.conf</code>. Add or modify the following line,
+when disk space <i>starts</i> to run low.
+Edit the file <code>/etc/audit/auditd.conf</code>. Modify the following line,
 substituting <i>ACTION</i> appropriately:
-<pre>admin_space_left_action = <i>ACTION</i></pre>
-Set this value to <code>single</code> to cause the system to switch to single user
-mode for corrective action. Acceptable values also include <code>suspend</code> and
-<code>halt</code>. For certain systems, the need for availability
-outweighs the need to log all actions, and a different setting should be
-determined. Details regarding all possible values for <i>ACTION</i> are described in the
-<code>auditd.conf</code> man page.</td>
+<pre>space_left_action = <i>ACTION</i></pre>
+Possible values for <i>ACTION</i> are described in the <code>auditd.conf</code> man page.
+These include:
+<ul>
+<li><code>syslog</code></li>
+<li><code>email</code></li>
+<li><code>exec</code></li>
+<li><code>suspend</code></li>
+<li><code>single</code></li>
+<li><code>halt</code></li>
+</ul>
+Set this to <code>email</code> (instead of the default,
+which is <code>suspend</code>) as it is more likely to get prompt attention. Acceptable values
+also include <code>suspend</code>, <code>single</code>, and <code>halt</code>.</td>
 </tr>
 <tr>
 <td>RHEL-07-030350</td>
@@ -7882,6 +7970,52 @@ form to <code>/etc/audit/audit.rules</code>:
 </td>
 </tr>
 <tr>
+<td>RHEL-07-030819</td>
+<td>CCI-000172</td>
+<td>medium</td>
+<td>The Red Hat Enterprise Linux operating system must audit all uses of the create_module syscall.</td>
+<td>The removal of kernel modules can be used to alter the behavior of
+the kernel and potentially introduce malicious code into kernel space. It is important
+to have an audit trail of modules that have been introduced into the kernel.</td>
+<td>
+
+          		If , this is a finding.
+          		</td>
+<td>To capture kernel module unloading events, use following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
+<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
+
+Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
+to use the <code>augenrules</code> program (the default), add the line to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
+add the line to file <code>/etc/audit/audit.rules</code>.</td>
+</tr>
+<tr>
+<td>RHEL-07-030819</td>
+<td>CCI-000172</td>
+<td>medium</td>
+<td>The Red Hat Enterprise Linux operating system must audit all uses of the create_module syscall.</td>
+<td>The removal of kernel modules can be used to alter the behavior of
+the kernel and potentially introduce malicious code into kernel space. It is important
+to have an audit trail of modules that have been introduced into the kernel.</td>
+<td>
+
+          		If , this is a finding.
+          		</td>
+<td>To capture kernel module unloading events, use following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
+<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
+
+Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
+to use the <code>augenrules</code> program (the default), add the line to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
+add the line to file <code>/etc/audit/audit.rules</code>.</td>
+</tr>
+<tr>
 <td>RHEL-07-030820</td>
 <td>CCI-000172</td>
 <td>medium</td>
@@ -8003,6 +8137,52 @@ add the line to file <code>/etc/audit/audit.rules</code>.</td>
 <td>CCI-000172</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must audit all uses of the delete_module syscall.</td>
+<td>The removal of kernel modules can be used to alter the behavior of
+the kernel and potentially introduce malicious code into kernel space. It is important
+to have an audit trail of modules that have been introduced into the kernel.</td>
+<td>
+
+          		If , this is a finding.
+          		</td>
+<td>To capture kernel module unloading events, use following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
+<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
+
+Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
+to use the <code>augenrules</code> program (the default), add the line to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
+add the line to file <code>/etc/audit/audit.rules</code>.</td>
+</tr>
+<tr>
+<td>RHEL-07-030840</td>
+<td>CCI-000172</td>
+<td>medium</td>
+<td>The Red Hat Enterprise Linux operating system must audit all uses of the kmod command.</td>
+<td>The removal of kernel modules can be used to alter the behavior of
+the kernel and potentially introduce malicious code into kernel space. It is important
+to have an audit trail of modules that have been introduced into the kernel.</td>
+<td>
+
+          		If , this is a finding.
+          		</td>
+<td>To capture kernel module unloading events, use following line, setting ARCH to
+either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
+<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
+
+Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
+to use the <code>augenrules</code> program (the default), add the line to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
+add the line to file <code>/etc/audit/audit.rules</code>.</td>
+</tr>
+<tr>
+<td>RHEL-07-030840</td>
+<td>CCI-000172</td>
+<td>medium</td>
+<td>The Red Hat Enterprise Linux operating system must audit all uses of the kmod command.</td>
 <td>The removal of kernel modules can be used to alter the behavior of
 the kernel and potentially introduce malicious code into kernel space. It is important
 to have an audit trail of modules that have been introduced into the kernel.</td>
@@ -8582,19 +8762,19 @@ logging.
 Along with these other directives, the system can be configured
 to forward its logs to a particular log server by
 adding or correcting one of the following lines,
-substituting <code><i>loghost.example.com</i></code> appropriately.
+substituting <code><i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></code> appropriately.
 The choice of protocol depends on the environment of the system;
 although TCP and RELP provide more reliable message delivery,
 they may not be supported in all environments.
 <br>
 To use UDP for log message delivery:
-<pre>*.* @<i>loghost.example.com</i></pre>
+<pre>*.* @<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
 <br>
 To use TCP for log message delivery:
-<pre>*.* @@<i>loghost.example.com</i></pre>
+<pre>*.* @@<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
 <br>
 To use RELP for log message delivery:
-<pre>*.* :omrelp:<i>loghost.example.com</i></pre>
+<pre>*.* :omrelp:<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
 <br>
 There must be a resolvable DNS CNAME or Alias record set to "<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub>" for logs to be sent correctly to the centralized logging utility.</td>
 </tr>
@@ -8619,19 +8799,19 @@ logging.
 Along with these other directives, the system can be configured
 to forward its logs to a particular log server by
 adding or correcting one of the following lines,
-substituting <code><i>loghost.example.com</i></code> appropriately.
+substituting <code><i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></code> appropriately.
 The choice of protocol depends on the environment of the system;
 although TCP and RELP provide more reliable message delivery,
 they may not be supported in all environments.
 <br>
 To use UDP for log message delivery:
-<pre>*.* @<i>loghost.example.com</i></pre>
+<pre>*.* @<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
 <br>
 To use TCP for log message delivery:
-<pre>*.* @@<i>loghost.example.com</i></pre>
+<pre>*.* @@<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
 <br>
 To use RELP for log message delivery:
-<pre>*.* :omrelp:<i>loghost.example.com</i></pre>
+<pre>*.* :omrelp:<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
 <br>
 There must be a resolvable DNS CNAME or Alias record set to "<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub>" for logs to be sent correctly to the centralized logging utility.</td>
 </tr>
@@ -8694,9 +8874,16 @@ computer viruses, as well as to limit their spread to other systems.</td>
 
           		If , this is a finding.
           		</td>
-<td>Install McAfee VirusScan Enterprise for Linux antivirus software
-which is provided for DoD systems and uses signatures to search for the
-presence of viruses on the filesystem.</td>
+<td>Virus scanning software can be used to protect a system from penetration from
+computer viruses and to limit their spread through intermediate systems.
+
+The virus scanning software should be configured to perform scans dynamically
+on accessed files. If this capability is not available, the system must be
+configured to scan, at a minimum, all altered files on the system on a daily
+basis.
+
+If the system processes inbound SMTP mail, the virus scanner must be configured
+to scan all received mail.</td>
 </tr>
 <tr>
 <td>RHEL-07-032000</td>
@@ -8709,9 +8896,16 @@ computer viruses, as well as to limit their spread to other systems.</td>
 
           		If , this is a finding.
           		</td>
-<td>Install McAfee VirusScan Enterprise for Linux antivirus software
-which is provided for DoD systems and uses signatures to search for the
-presence of viruses on the filesystem.</td>
+<td>Virus scanning software can be used to protect a system from penetration from
+computer viruses and to limit their spread through intermediate systems.
+
+The virus scanning software should be configured to perform scans dynamically
+on accessed files. If this capability is not available, the system must be
+configured to scan, at a minimum, all altered files on the system on a daily
+basis.
+
+If the system processes inbound SMTP mail, the virus scanner must be configured
+to scan all received mail.</td>
 </tr>
 <tr>
 <td>RHEL-07-040000</td>
@@ -9950,58 +10144,6 @@ add the following:
 </td>
 </tr>
 <tr>
-<td>RHEL-07-040510</td>
-<td>CCI-002385</td>
-<td>medium</td>
-<td>The Red Hat Enterprise Linux operating system must protect against or limit the effects of Denial of Service (DoS) attacks by validating the operating system is implementing rate-limiting measures on impacted network interfaces.</td>
-<td>DoS is a condition when a resource is not available for legitimate users. When
-this occurs, the organization either cannot accomplish its mission or must
-operate at degraded capacity.
-<br><br>
-This requirement addresses the configuration of
-the operating system to mitigate the impact of DoS attacks that have occurred or
-are ongoing on system availability. For each system, known and potential DoS
-attacks must be identified and solutions for each type implemented. A variety of
-technologies exist to limit or, in some cases, eliminate the effects of DoS
-attacks (e.g., limiting processes or establishing memory partitions). Employing
-increased capacity and bandwidth, combined with service redundancy, may reduce
-the susceptibility to some DoS attacks.</td>
-<td>
-
-          		If , this is a finding.
-          		</td>
-<td>Create a direct firewall rule to protect against DoS attacks with the following
-command:
-<pre>$ sudo firewall-cmd --permanent --direct --add-rule ipv4 filter INPUT_direct 0 -p tcp -m limit --limit 25/minute --limit-burst 100  -j ACCEPT</pre>
-</td>
-</tr>
-<tr>
-<td>RHEL-07-040510</td>
-<td>CCI-002385</td>
-<td>medium</td>
-<td>The Red Hat Enterprise Linux operating system must protect against or limit the effects of Denial of Service (DoS) attacks by validating the operating system is implementing rate-limiting measures on impacted network interfaces.</td>
-<td>DoS is a condition when a resource is not available for legitimate users. When
-this occurs, the organization either cannot accomplish its mission or must
-operate at degraded capacity.
-<br><br>
-This requirement addresses the configuration of
-the operating system to mitigate the impact of DoS attacks that have occurred or
-are ongoing on system availability. For each system, known and potential DoS
-attacks must be identified and solutions for each type implemented. A variety of
-technologies exist to limit or, in some cases, eliminate the effects of DoS
-attacks (e.g., limiting processes or establishing memory partitions). Employing
-increased capacity and bandwidth, combined with service redundancy, may reduce
-the susceptibility to some DoS attacks.</td>
-<td>
-
-          		If , this is a finding.
-          		</td>
-<td>Create a direct firewall rule to protect against DoS attacks with the following
-command:
-<pre>$ sudo firewall-cmd --permanent --direct --add-rule ipv4 filter INPUT_direct 0 -p tcp -m limit --limit 25/minute --limit-burst 100  -j ACCEPT</pre>
-</td>
-</tr>
-<tr>
 <td>RHEL-07-040520</td>
 <td>CCI-000366</td>
 <td>medium</td>
@@ -10250,6 +10392,90 @@ uses. It should be disabled unless it is absolutely required.</td>
 <td>To set the runtime status of the <code>net.ipv4.conf.all.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.accept_source_route=0</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.accept_source_route = 0</pre>
 </td>
+</tr>
+<tr>
+<td>RHEL-07-040611</td>
+<td>CCI-000366</td>
+<td>medium</td>
+<td>The Red Hat Enterprise Linux operating system must use a reverse-path filter for IPv4 network traffic when possible on all interfaces.</td>
+<td>USB storage devices such as thumb drives can be used to introduce
+malicious software.</td>
+<td>
+
+          		If , this is a finding.
+          		</td>
+<td>To prevent USB storage devices from being used, configure the kernel module loading system
+to prevent automatic loading of the USB storage driver.
+
+To configure the system to prevent the <code>usb-storage</code>
+kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+<pre>install usb-storage /bin/true</pre>
+This will prevent the <code>modprobe</code> program from loading the <code>usb-storage</code>
+module, but will not prevent an administrator (or another program) from using the
+<code>insmod</code> program to load the module manually.</td>
+</tr>
+<tr>
+<td>RHEL-07-040611</td>
+<td>CCI-000366</td>
+<td>medium</td>
+<td>The Red Hat Enterprise Linux operating system must use a reverse-path filter for IPv4 network traffic when possible on all interfaces.</td>
+<td>USB storage devices such as thumb drives can be used to introduce
+malicious software.</td>
+<td>
+
+          		If , this is a finding.
+          		</td>
+<td>To prevent USB storage devices from being used, configure the kernel module loading system
+to prevent automatic loading of the USB storage driver.
+
+To configure the system to prevent the <code>usb-storage</code>
+kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+<pre>install usb-storage /bin/true</pre>
+This will prevent the <code>modprobe</code> program from loading the <code>usb-storage</code>
+module, but will not prevent an administrator (or another program) from using the
+<code>insmod</code> program to load the module manually.</td>
+</tr>
+<tr>
+<td>RHEL-07-040612</td>
+<td>CCI-000366</td>
+<td>medium</td>
+<td>The Red Hat Enterprise Linux operating system must use a reverse-path filter for IPv4 network traffic when possible by default.</td>
+<td>USB storage devices such as thumb drives can be used to introduce
+malicious software.</td>
+<td>
+
+          		If , this is a finding.
+          		</td>
+<td>To prevent USB storage devices from being used, configure the kernel module loading system
+to prevent automatic loading of the USB storage driver.
+
+To configure the system to prevent the <code>usb-storage</code>
+kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+<pre>install usb-storage /bin/true</pre>
+This will prevent the <code>modprobe</code> program from loading the <code>usb-storage</code>
+module, but will not prevent an administrator (or another program) from using the
+<code>insmod</code> program to load the module manually.</td>
+</tr>
+<tr>
+<td>RHEL-07-040612</td>
+<td>CCI-000366</td>
+<td>medium</td>
+<td>The Red Hat Enterprise Linux operating system must use a reverse-path filter for IPv4 network traffic when possible by default.</td>
+<td>USB storage devices such as thumb drives can be used to introduce
+malicious software.</td>
+<td>
+
+          		If , this is a finding.
+          		</td>
+<td>To prevent USB storage devices from being used, configure the kernel module loading system
+to prevent automatic loading of the USB storage driver.
+
+To configure the system to prevent the <code>usb-storage</code>
+kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+<pre>install usb-storage /bin/true</pre>
+This will prevent the <code>modprobe</code> program from loading the <code>usb-storage</code>
+module, but will not prevent an administrator (or another program) from using the
+<code>insmod</code> program to load the module manually.</td>
 </tr>
 <tr>
 <td>RHEL-07-040620</td>
