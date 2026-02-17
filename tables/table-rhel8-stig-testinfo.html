@@ -1005,7 +1005,12 @@ directory other than the users home directory.</td>
 <td xml:lang="en-US">If local interactive users are not assigned a valid home directory, there is no
 place for the storage and control of files they should own.</td>
 <td xml:lang="en-US">Assign home directories to all interactive users that currently do not
-have a home directory assigned.</td>
+have a home directory assigned.
+
+This rule checks if the home directory is properly defined in a folder which has
+at least one parent folder, like "user" in "/home/user" or "/remote/users/user".
+Therefore, this rule will report a finding for home directories like <code>/users</code>,
+<code>/tmp</code> or <code>/</code>.</td>
 <td></td>
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
@@ -1162,7 +1167,8 @@ The remediation provided with this rule adds <code>xattrs</code> to all rule set
 <td>medium</td>
 <td>Configure immutable Audit login UIDs</td>
 <td xml:lang="en-US">If modification of login UIDs is not prevented, they can be changed by unprivileged users and make auditing complicated or impossible. </td>
-<td xml:lang="en-US">Configure kernel to prevent modification of login UIDs once they are set. Changing login UUIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.   
+<td xml:lang="en-US">Configure kernel to prevent modification of login UIDs once they are set.
+Changing login UIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.
 
 The following rules configure audit as described above:
 <pre>## Make the loginuid immutable. This prevents tampering with the auid.
@@ -2656,9 +2662,9 @@ form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/sbin/unix_update -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td></td>
-<td>SRG-OS-000062-GPOS-00031<br>
+<td>SRG-OS-000062-GPOS-00031<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000458-GPOS-00203<br>
 </td>
-<td>CCI-000169<br>
+<td>CCI-000169<br>CCI-000172<br>
 </td>
 <td></td>
 </tr>
@@ -2744,9 +2750,9 @@ utility to read audit rules during daemon startup, add the following line to
 <pre>-w /etc/sudoers -p wa -k actions</pre>
 </td>
 <td></td>
-<td>SRG-OS-000062-GPOS-00031<br>
+<td>SRG-OS-000062-GPOS-00031<br>SRG-OS-000392-GPOS-00172<br>
 </td>
-<td>CCI-000169<br>
+<td>CCI-000169<br>CCI-002884<br>
 </td>
 <td></td>
 </tr>
@@ -2768,9 +2774,9 @@ utility to read audit rules during daemon startup, add the following line to
 <pre>-w /etc/sudoers.d/ -p wa -k actions</pre>
 </td>
 <td></td>
-<td>SRG-OS-000062-GPOS-00031<br>
+<td>SRG-OS-000062-GPOS-00031<br>SRG-OS-000392-GPOS-00172<br>
 </td>
-<td>CCI-000169<br>
+<td>CCI-000169<br>CCI-002884<br>
 </td>
 <td></td>
 </tr>
@@ -3040,9 +3046,9 @@ account changes:
 <pre>-w /etc/group -p wa -k audit_rules_usergroup_modification</pre>
 </td>
 <td></td>
-<td>SRG-OS-000004-GPOS-00004<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000239-GPOS-00089<br>SRG-OS-000240-GPOS-00090<br>SRG-OS-000241-GPOS-00091<br>SRG-OS-000274-GPOS-00104<br>SRG-OS-000275-GPOS-00105<br>SRG-OS-000276-GPOS-00106<br>SRG-OS-000277-GPOS-00107<br>SRG-OS-000303-GPOS-00120<br>SRG-OS-000304-GPOS-00121<br>
+<td>SRG-OS-000004-GPOS-00004<br>SRG-OS-000062-GPOS-00031<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000239-GPOS-00089<br>SRG-OS-000240-GPOS-00090<br>SRG-OS-000241-GPOS-00091<br>SRG-OS-000274-GPOS-00104<br>SRG-OS-000275-GPOS-00105<br>SRG-OS-000276-GPOS-00106<br>SRG-OS-000277-GPOS-00107<br>SRG-OS-000303-GPOS-00120<br>SRG-OS-000304-GPOS-00121<br>SRG-OS-000392-GPOS-00172<br>
 </td>
-<td>CCI-000018<br>CCI-000169<br>CCI-000172<br>CCI-001403<br>CCI-001404<br>CCI-001405<br>CCI-001683<br>CCI-001684<br>CCI-001685<br>CCI-001686<br>CCI-002130<br>CCI-002132<br>
+<td>CCI-000018<br>CCI-000169<br>CCI-000172<br>CCI-001403<br>CCI-001404<br>CCI-001405<br>CCI-001683<br>CCI-001684<br>CCI-001685<br>CCI-001686<br>CCI-002130<br>CCI-002132<br>CCI-002884<br>
 </td>
 <td></td>
 </tr>
@@ -3284,6 +3290,7 @@ by <code>auditd</code>, add or correct the line in <code>/etc/audit/auditd.conf<
 Possible values for <i>ACTION</i> are described in the <code>auditd.conf</code> man
 page. These include:
 <ul>
+<li><code>ignore</code></li>
 <li><code>syslog</code></li>
 <li><code>suspend</code></li>
 <li><code>rotate</code></li>
@@ -3477,8 +3484,10 @@ Navigate the BIOS configuration menu and make sure that the option is enabled. T
 under a Security section. Look for Execute Disable (XD) on Intel-based systems and No Execute (NX)
 on AMD-based systems.</td>
 <td></td>
-<td></td>
-<td></td>
+<td>SRG-OS-000433-GPOS-00193<br>SRG-OS-000433-GPOS-00192<br>
+</td>
+<td>CCI-002824<br>
+</td>
 <td></td>
 </tr>
 <tr>
@@ -4176,9 +4185,9 @@ Otherwise, change the mode of the audit log files with the following command:
 <pre>$ sudo chmod 0700 /var/log/audit</pre>
 </td>
 <td></td>
-<td>SRG-OS-000057-GPOS-00027<br>
+<td>SRG-OS-000057-GPOS-00027<br>SRG-OS-000059-GPOS-00029<br>
 </td>
-<td>CCI-000162<br>
+<td>CCI-000162<br>CCI-000164<br>
 </td>
 <td></td>
 </tr>
@@ -4426,12 +4435,15 @@ packages, set the <code>localpkg_gpgcheck</code> to <code>1</code> in <code>/etc
 <td>System Audit Logs Must Be Group Owned By Root</td>
 <td xml:lang="en-US">Unauthorized disclosure of audit records can reveal system and configuration data to
 attackers, thus compromising its confidentiality.</td>
-<td xml:lang="en-US">All audit logs must be group owned by root user. By default, the path for audit log is <pre>/var/log/audit/</pre>.
+<td xml:lang="en-US">All audit logs must be group owned by root user. The path for audit log can
+be configured via <code>log_file</code> parameter in <pre>/etc/audit/auditd.conf</pre>
+or, by default, the path for audit log is <pre>/var/log/audit/</pre>.
 
 To properly set the group owner of <code>/var/log/audit/*</code>, run the command:
 <pre>$ sudo chgrp root /var/log/audit/*</pre>
-If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other than the <code>root</code>
-group account, change the group ownership of the audit logs to this specific group.</td>
+If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other
+than the <code>root</code> group account, change the group ownership of the audit logs
+to this specific group.</td>
 <td></td>
 <td>SRG-OS-000057-GPOS-00027<br>SRG-OS-000058-GPOS-00028<br>SRG-OS-000059-GPOS-00029<br>SRG-OS-000206-GPOS-00084<br>
 </td>
@@ -4482,7 +4494,10 @@ able to access files that they legitimately should.</td>
 group found in <code>/etc/passwd</code>. To change the group owner of
 interactive users home directory, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i></pre>
-</td>
+
+This rule ensures every home directory related to an interactive user is
+group-owned by an interactive user. It also ensures that interactive users
+are group-owners of one and only one home directory.</td>
 <td></td>
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
@@ -4618,7 +4633,9 @@ ownership with the following command:
 <td>System Audit Logs Must Be Owned By Root</td>
 <td xml:lang="en-US">Unauthorized disclosure of audit records can reveal system and configuration data to
 attackers, thus compromising its confidentiality.</td>
-<td xml:lang="en-US">All audit logs must be owned by root user. By default, the path for audit log is <pre>/var/log/audit/</pre>.
+<td xml:lang="en-US">All audit logs must be owned by root user. The path for audit log can be
+configured via <code>log_file</code> parameter in <pre>/etc/audit/auditd.conf</pre>
+or by default, the path for audit log is <pre>/var/log/audit/</pre>.
 
 To properly set the owner of <code>/var/log/audit/*</code>, run the command:
 <pre>$ sudo chown root /var/log/audit/* </pre>
@@ -4772,9 +4789,8 @@ its permission with the following command:
 <td xml:lang="en-US">If an unauthorized user obtains the private SSH host key file, the host could be
 impersonated.</td>
 <td xml:lang="en-US">
-
 To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/ssh/*_key</pre>
+<pre>$ sudo chmod 0600 /etc/ssh/*_key</pre>
 </td>
 <td></td>
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>

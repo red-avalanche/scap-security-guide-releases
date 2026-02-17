@@ -2141,6 +2141,11 @@ Otherwise assign a UID greater than "1000" that has not already been
 assigned.</td>
 </tr>
 <tr>
+<td>CCE-86298-7</td>
+<td>Verify Root Has A Primary GID 0</td>
+<td xml:lang="en-US">The <code>root</code> user should have a primary group of 0.</td>
+</tr>
+<tr>
 <td>CCE-83625-4</td>
 <td>Direct root Logins Not Allowed</td>
 <td xml:lang="en-US">To further limit access to the <code>root</code> account, administrators
@@ -2287,7 +2292,10 @@ home directory assigned in <code>/etc/passwd</code>:
 group found in <code>/etc/passwd</code>. To change the group owner of
 interactive users home directory, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i></pre>
-</td>
+
+This rule ensures every home directory related to an interactive user is
+group-owned by an interactive user. It also ensures that interactive users
+are group-owners of one and only one home directory.</td>
 </tr>
 <tr>
 <td>CCE-83637-9</td>
@@ -4858,7 +4866,8 @@ If the system is 64 bit then also add the following lines:
 <tr>
 <td></td>
 <td>Record Unsuccessul Delete Attempts to Files - renameat</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+<td xml:lang="en-US">
+The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following lines to a file with suffix
@@ -4924,7 +4933,8 @@ If the system is 64 bit then also add the following lines:
 <tr>
 <td></td>
 <td>Record Unsuccessul Delete Attempts to Files - unlink</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+<td xml:lang="en-US">
+The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following lines to a file with suffix
@@ -4945,7 +4955,8 @@ If the system is 64 bit then also add the following lines:
 <tr>
 <td></td>
 <td>Record Unsuccessul Delete Attempts to Files - unlinkat</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+<td xml:lang="en-US">
+The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following lines to a file with suffix
@@ -5581,6 +5592,7 @@ should always be used.</td>
 <td>Configure audispd Plugin To Send Logs To Remote Server</td>
 <td xml:lang="en-US">Configure the audispd plugin to off-load audit records onto a different
 system or media from the system being audited.
+
 Set the <code>remote_server</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>
 with an IP address or hostname of the system that the audispd plugin should
 send audit records to. For example
@@ -5725,6 +5737,7 @@ by <code>auditd</code>, add or correct the line in <code>/etc/audit/auditd.conf<
 Possible values for <i>ACTION</i> are described in the <code>auditd.conf</code> man
 page. These include:
 <ul>
+<li><code>ignore</code></li>
 <li><code>syslog</code></li>
 <li><code>suspend</code></li>
 <li><code>rotate</code></li>
@@ -6011,7 +6024,8 @@ Note: This rule utilizes a file provided by <code>Audit</code> package to comply
 <tr>
 <td>CCE-83673-4</td>
 <td>Configure immutable Audit login UIDs</td>
-<td xml:lang="en-US">Configure kernel to prevent modification of login UIDs once they are set. Changing login UUIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.   
+<td xml:lang="en-US">Configure kernel to prevent modification of login UIDs once they are set.
+Changing login UIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.
 
 The following rules configure audit as described above:
 <pre>## Make the loginuid immutable. This prevents tampering with the auid.
@@ -6289,7 +6303,7 @@ Note: This rule utilizes a file provided by <code>Audit</code> package to comply
 <tr>
 <td>CCE-83678-3</td>
 <td>Configure auditing of successful permission changes</td>
-<td xml:lang="en-US">Ensure that successful attempts to modify permissions of iles or directories are audited.
+<td xml:lang="en-US">Ensure that successful attempts to modify permissions of files or directories are audited.
 
 The following rules configure audit as described above:
 <pre>## Successful permission change
@@ -6375,8 +6389,8 @@ GRUB 2 command line for the Linux operating system in
 be group-owned by the <code>root</code> group to prevent
 destruction or modification of the file.
 
-To properly set the group owner of <code>{{{ grub2_boot_path }}}/grub.cfg</code>, run the command:
-<pre>$ sudo chgrp root {{{ grub2_boot_path }}}/grub.cfg</pre>
+To properly set the group owner of <code>/boot/grub2/grub.cfg</code>, run the command:
+<pre>$ sudo chgrp root /boot/grub2/grub.cfg</pre>
 </td>
 </tr>
 <tr>
@@ -6386,8 +6400,8 @@ To properly set the group owner of <code>{{{ grub2_boot_path }}}/grub.cfg</code>
 be owned by the <code>root</code> user to prevent destruction
 or modification of the file.
 
-To properly set the owner of <code>{{{ grub2_boot_path }}}/grub.cfg</code>, run the command:
-<pre>$ sudo chown root {{{ grub2_boot_path }}}/grub.cfg </pre>
+To properly set the owner of <code>/boot/grub2/grub.cfg</code>, run the command:
+<pre>$ sudo chown root /boot/grub2/grub.cfg </pre>
 </td>
 </tr>
 <tr>
@@ -6395,8 +6409,8 @@ To properly set the owner of <code>{{{ grub2_boot_path }}}/grub.cfg</code>, run 
 <td>Verify /boot/grub2/grub.cfg Permissions</td>
 <td xml:lang="en-US">File permissions for <code>/boot/grub2/grub.cfg</code> should be set to 600.
 
-To properly set the permissions of <code>{{{ grub2_boot_path }}}/grub.cfg</code>, run the command:
-<pre>$ sudo chmod 600 {{{ grub2_boot_path }}}/grub.cfg</pre>
+To properly set the permissions of <code>/boot/grub2/grub.cfg</code>, run the command:
+<pre>$ sudo chmod 600 /boot/grub2/grub.cfg</pre>
 </td>
 </tr>
 <tr>
@@ -6677,6 +6691,23 @@ inspect the file's permissions:
 If the permissions are not 600 or more restrictive, run the following
 command to correct this:
 <pre>$ sudo chmod 0600 <i>LOGFILE</i></pre>"</td>
+</tr>
+<tr>
+<td>CCE-85931-4</td>
+<td>Ensure journald is configured to compress large log files</td>
+<td xml:lang="en-US">The journald system can compress large log files to avoid fill the system disk.</td>
+</tr>
+<tr>
+<td>CCE-85996-7</td>
+<td>Ensure journald is configured to send logs to rsyslog</td>
+<td xml:lang="en-US">Data from journald may be stored in volatile memory or persisted locally.
+Utilities exist to accept remote export of journald logs.</td>
+</tr>
+<tr>
+<td>CCE-86046-0</td>
+<td>Ensure journald is configured to write log files to persistent disk</td>
+<td xml:lang="en-US">The journald system may store log files in volatile memory or locally on disk.
+If the logs are only stored in volatile memory they will we lost upon reboot.</td>
 </tr>
 <tr>
 <td>CCE-83993-6</td>
@@ -11597,6 +11628,16 @@ The <code>abrtd</code> service can be disabled with the following command:
 </td>
 </tr>
 <tr>
+<td></td>
+<td>Disable Cockpit Management Server</td>
+<td xml:lang="en-US">The Cockpit Management Server (<code>cockpit</code>) provides a web based
+login and management framework.
+
+The <code>cockpit</code> service can be disabled with the following command:
+<pre>$ sudo systemctl mask --now cockpit.service</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-84232-8</td>
 <td>Disable KDump Kernel Crash Analyzer (kdump)</td>
 <td xml:lang="en-US">The <code>kdump</code> service provides a kernel crash dump analyzer. It uses the <code>kexec</code>
@@ -11850,6 +11891,67 @@ To properly set the permissions of <code>/etc/cron.weekly</code>, run the comman
 <td xml:lang="en-US">
 To properly set the permissions of <code>/etc/crontab</code>, run the command:
 <pre>$ sudo chmod 0600 /etc/crontab</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86946-1</td>
+<td>Ensure that /etc/at.deny does not exist</td>
+<td xml:lang="en-US">The file <code>/etc/at.deny</code> should not exist.
+Use <code>/etc/at.allow</code> instead.</td>
+</tr>
+<tr>
+<td>CCE-86850-5</td>
+<td>Ensure that /etc/cron.deny does not exist</td>
+<td xml:lang="en-US">The file <code>/etc/cron.deny</code> should not exist.
+Use <code>/etc/cron.allow</code> instead.</td>
+</tr>
+<tr>
+<td>CCE-87103-8</td>
+<td>Verify Group Who Owns /etc/at.allow file</td>
+<td xml:lang="en-US">If <code>/etc/at.allow</code> exists, it must be group-owned by <code>root</code>.
+
+To properly set the group owner of <code>/etc/at.allow</code>, run the command:
+<pre>$ sudo chgrp root /etc/at.allow</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86830-7</td>
+<td>Verify Group Who Owns /etc/cron.allow file</td>
+<td xml:lang="en-US">If <code>/etc/cron.allow</code> exists, it must be group-owned by <code>root</code>.
+
+To properly set the group owner of <code>/etc/cron.allow</code>, run the command:
+<pre>$ sudo chgrp root /etc/cron.allow</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86844-8</td>
+<td>Verify User Who Owns /etc/cron.allow file</td>
+<td xml:lang="en-US">If <code>/etc/cron.allow</code> exists, it must be owned by <code>root</code>.
+
+To properly set the owner of <code>/etc/cron.allow</code>, run the command:
+<pre>$ sudo chown root /etc/cron.allow </pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86904-0</td>
+<td>Verify Permissions on /etc/at.allow file</td>
+<td xml:lang="en-US">If <code>/etc/at.allow</code> exists, it must have permissions <code>0600</code>
+or more restrictive.
+
+
+To properly set the permissions of <code>/etc/at.allow</code>, run the command:
+<pre>$ sudo chmod  /etc/at.allow</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86877-8</td>
+<td>Verify Permissions on /etc/cron.allow file</td>
+<td xml:lang="en-US">If <code>/etc/cron.allow</code> exists, it must have permissions <code>0600</code>
+or more restrictive.
+
+
+To properly set the permissions of <code>/etc/cron.allow</code>, run the command:
+<pre>$ sudo chmod  /etc/cron.allow</pre>
 </td>
 </tr>
 <tr>
@@ -12110,6 +12212,11 @@ The openldap-servers package is not installed by default on a Red Hat Enterprise
 system. It is needed only by the OpenLDAP server, not by the
 clients which use LDAP for authentication. If the system is not
 intended for use as an LDAP Server it should be removed.</td>
+</tr>
+<tr>
+<td>CCE-87263-0</td>
+<td>Disable LDAP Server (slapd)</td>
+<td xml:lang="en-US">The Lightweight Directory Access Protocol (LDAP) is a service that provides a method for looking up information from a central database.</td>
 </tr>
 <tr>
 <td>CCE-90830-1</td>
@@ -12402,6 +12509,16 @@ $ sudo dnf erase ypserv</pre>
 </td>
 </tr>
 <tr>
+<td>CCE-86122-9</td>
+<td>Disable ypserv Service</td>
+<td xml:lang="en-US">The <code>ypserv</code> service, which allows the system to act as a client in
+a NIS or NIS+ domain, should be disabled.
+
+The <code>ypserv</code> service can be disabled with the following command:
+<pre>$ sudo systemctl mask --now ypserv.service</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-84143-7</td>
 <td>Uninstall rsh-server Package</td>
 <td xml:lang="en-US">The <code>rsh-server</code> package can be removed with the following command:
@@ -12640,6 +12757,14 @@ The <code>snmpd</code> service can be disabled with the following command:
 </td>
 </tr>
 <tr>
+<td></td>
+<td>Ensure SNMP Read Write is disabled</td>
+<td xml:lang="en-US">Edit <code>/etc/snmp/snmpd.conf</code>, remove any <code>rwuser</code> entries.
+Once the read write users have been removed, restart the SNMP service:
+<pre>$ sudo service snmpd restart</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-87293-7</td>
 <td>Configure SNMP Service to Use Only SNMPv3 or Newer</td>
 <td xml:lang="en-US">Edit <code>/etc/snmp/snmpd.conf</code>, removing any references to <code>rocommunity</code>, <code>rwcommunity</code>, or <code>com2sec</code>.
@@ -12723,9 +12848,8 @@ To properly set the permissions of <code>/etc/ssh/sshd_config</code>, run the co
 <td>CCE-90820-2</td>
 <td>Verify Permissions on SSH Server Private *_key Key Files</td>
 <td xml:lang="en-US">
-
 To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/ssh/*_key</pre>
+<pre>$ sudo chmod 0600 /etc/ssh/*_key</pre>
 </td>
 </tr>
 <tr>
@@ -12946,6 +13070,28 @@ To enable GSSAPI authentication, add or correct the following line in the
 </td>
 </tr>
 <tr>
+<td>CCE-86722-6</td>
+<td>Enable PAM</td>
+<td xml:lang="en-US">UsePAM Enables the Pluggable Authentication Module interface. If set to “yes” this will
+enable PAM authentication using ChallengeResponseAuthentication and
+PasswordAuthentication in addition to PAM account and session module processing for all
+authentication types.
+
+To enable PAM authentication, add or correct the following line in the
+<code>/etc/ssh/sshd_config</code> file:
+<pre>UsePAM yes</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Enable Public Key Authentication</td>
+<td xml:lang="en-US">Verify the sshd daemon allows public key authentication with the
+following:
+<pre>$ grep ^PubkeyAuthentication /etc/ssh/sshd_config
+PubkeyAuthentication yes</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-90809-5</td>
 <td>Enable Use of Strict Mode Checking</td>
 <td xml:lang="en-US">SSHs <code>StrictModes</code> option checks file and ownership permissions in
@@ -12961,6 +13107,15 @@ add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <td xml:lang="en-US">To enable the warning banner and ensure it is consistent
 across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
 <pre>Banner /etc/issue</pre>
+Another section contains information on how to create an
+appropriate system-wide warning banner.</td>
+</tr>
+<tr>
+<td></td>
+<td>Enable SSH Warning Banner</td>
+<td xml:lang="en-US">To enable the warning banner and ensure it is consistent
+across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+<pre>Banner /etc/issue.net</pre>
 Another section contains information on how to create an
 appropriate system-wide warning banner.</td>
 </tr>
@@ -13050,6 +13205,14 @@ and terminated.
 To ensure the SSH idle timeout occurs precisely when the
 <code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
 value of <code>0</code>.</td>
+</tr>
+<tr>
+<td>CCE-86552-7</td>
+<td>Ensure SSH LoginGraceTime is configured</td>
+<td xml:lang="en-US">The <code>LoginGraceTime</code> parameter to the SSH server specifies the time allowed for successful authentication to
+the SSH server. The longer the Grace period is the more open unauthenticated connections
+can exist. Like other session controls in this session the Grace Period should be limited to
+appropriate limits to ensure the service is available for needed access.</td>
 </tr>
 <tr>
 <td>CCE-90813-7</td>

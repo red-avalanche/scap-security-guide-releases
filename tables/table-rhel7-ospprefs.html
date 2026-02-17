@@ -2556,7 +2556,8 @@ these events could serve as evidence of potential system compromise.</td>
 <tr>
 <td>FAU_GEN.1.1.c</td>
 <td>Record Unsuccessul Delete Attempts to Files - renameat</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+<td xml:lang="en-US">
+The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following lines to a file with suffix
@@ -2609,7 +2610,8 @@ these events could serve as evidence of potential system compromise.</td>
 <tr>
 <td>FAU_GEN.1.1.c</td>
 <td>Record Unsuccessul Delete Attempts to Files - unlink</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+<td xml:lang="en-US">
+The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following lines to a file with suffix
@@ -2633,7 +2635,8 @@ these events could serve as evidence of potential system compromise.</td>
 <tr>
 <td>FAU_GEN.1.1.c</td>
 <td>Record Unsuccessul Delete Attempts to Files - unlinkat</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+<td xml:lang="en-US">
+The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following lines to a file with suffix
@@ -3138,6 +3141,7 @@ unusual activity.</td>
 <td>Configure audispd Plugin To Send Logs To Remote Server</td>
 <td xml:lang="en-US">Configure the audispd plugin to off-load audit records onto a different
 system or media from the system being audited.
+
 Set the <code>remote_server</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>
 with an IP address or hostname of the system that the audispd plugin should
 send audit records to. For example
@@ -3361,6 +3365,18 @@ and whether to enter single-user mode.</td>
 <td></td>
 </tr>
 <tr>
+<td>FTP_ITC_EXT.1.1</td>
+<td>Ensure rsyslog-gnutls is installed</td>
+<td xml:lang="en-US">TLS protocol support for rsyslog is installed.
+The <code>rsyslog-gnutls</code> package can be installed with the following command:
+<pre>
+$ sudo yum install rsyslog-gnutls</pre>
+</td>
+<td xml:lang="en-US">The rsyslog-gnutls package provides Transport Layer Security (TLS) support
+for the rsyslog daemon, which enables secure remote logging.</td>
+<td></td>
+</tr>
+<tr>
 <td>FAU_GEN.1.1.c</td>
 <td>Ensure cron Is Logging To Rsyslog</td>
 <td xml:lang="en-US">Cron logging must be implemented to spot intrusions or trace
@@ -3404,6 +3420,66 @@ systems. This data can be used as an additional log source in the event a
 system is compromised and its local logs are suspect. Forwarding log messages
 to a remote loghost also provides system administrators with a centralized
 place to view the status of multiple hosts within the enterprise.</td>
+<td></td>
+</tr>
+<tr>
+<td>FCS_TLSC_EXT.1</td>
+<td>Configure TLS for rsyslog remote logging</td>
+<td xml:lang="en-US">Configure <code>rsyslog</code> to use Transport Layer
+Security (TLS) support for logging to remote server
+for the Forwarding Output Module in <code>/etc/rsyslog.conf</code>
+using action. You can use the following command:
+<pre>echo 'action(type="omfwd" protocol="tcp" Target="&lt;remote system&gt;" port="6514"
+    StreamDriver="gtls" StreamDriverMode="1" StreamDriverAuthMode="x509/name" streamdriver.CheckExtendedKeyPurpose="on")' &gt;&gt; /etc/rsyslog.conf
+</pre>
+Replace the <code>&lt;remote system&gt;</code> in the above command with an IP address or a host name of the remote logging server.</td>
+<td xml:lang="en-US">For protection of data being logged, the connection to the
+remote logging server needs to be authenticated and encrypted.</td>
+<td></td>
+</tr>
+<tr>
+<td>FTP_ITC_EXT.1.1</td>
+<td>Configure TLS for rsyslog remote logging</td>
+<td xml:lang="en-US">Configure <code>rsyslog</code> to use Transport Layer
+Security (TLS) support for logging to remote server
+for the Forwarding Output Module in <code>/etc/rsyslog.conf</code>
+using action. You can use the following command:
+<pre>echo 'action(type="omfwd" protocol="tcp" Target="&lt;remote system&gt;" port="6514"
+    StreamDriver="gtls" StreamDriverMode="1" StreamDriverAuthMode="x509/name" streamdriver.CheckExtendedKeyPurpose="on")' &gt;&gt; /etc/rsyslog.conf
+</pre>
+Replace the <code>&lt;remote system&gt;</code> in the above command with an IP address or a host name of the remote logging server.</td>
+<td xml:lang="en-US">For protection of data being logged, the connection to the
+remote logging server needs to be authenticated and encrypted.</td>
+<td></td>
+</tr>
+<tr>
+<td>FCS_TLSC_EXT.1</td>
+<td>Configure CA certificate for rsyslog remote logging</td>
+<td xml:lang="en-US">Configure CA certificate for <code>rsyslog</code> logging
+to remote server using Transport Layer Security (TLS)
+using correct path for the <code>DefaultNetstreamDriverCAFile</code>
+global option in <code>/etc/rsyslog.conf</code>, for example with the following command:
+<pre>echo 'global(DefaultNetstreamDriverCAFile="/etc/pki/tls/cert.pem")' &gt;&gt; /etc/rsyslog.conf</pre>
+Replace the <code>/etc/pki/tls/cert.pem</code> in the above command with the path to the file with CA certificate generated for the purpose of remote logging.</td>
+<td xml:lang="en-US">The CA certificate needs to be set or <code>rsyslog.service</code>
+fails to start with
+<pre>error: ca certificate is not set, cannot continue</pre>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>FTP_ITC_EXT.1.1</td>
+<td>Configure CA certificate for rsyslog remote logging</td>
+<td xml:lang="en-US">Configure CA certificate for <code>rsyslog</code> logging
+to remote server using Transport Layer Security (TLS)
+using correct path for the <code>DefaultNetstreamDriverCAFile</code>
+global option in <code>/etc/rsyslog.conf</code>, for example with the following command:
+<pre>echo 'global(DefaultNetstreamDriverCAFile="/etc/pki/tls/cert.pem")' &gt;&gt; /etc/rsyslog.conf</pre>
+Replace the <code>/etc/pki/tls/cert.pem</code> in the above command with the path to the file with CA certificate generated for the purpose of remote logging.</td>
+<td xml:lang="en-US">The CA certificate needs to be set or <code>rsyslog.service</code>
+fails to start with
+<pre>error: ca certificate is not set, cannot continue</pre>
+</td>
 <td></td>
 </tr>
 <tr>
@@ -3729,6 +3805,20 @@ in the event of misconfiguration elsewhere.</td>
 <td xml:lang="en-US">To enable the warning banner and ensure it is consistent
 across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
 <pre>Banner /etc/issue</pre>
+Another section contains information on how to create an
+appropriate system-wide warning banner.</td>
+<td xml:lang="en-US">The warning message reinforces policy awareness during the logon process and
+facilitates possible legal action against attackers. Alternatively, systems
+whose ownership should not be obvious should ensure usage of a banner that does
+not provide easy attribution.</td>
+<td></td>
+</tr>
+<tr>
+<td>FTA_TAB.1</td>
+<td>Enable SSH Warning Banner</td>
+<td xml:lang="en-US">To enable the warning banner and ensure it is consistent
+across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+<pre>Banner /etc/issue.net</pre>
 Another section contains information on how to create an
 appropriate system-wide warning banner.</td>
 <td xml:lang="en-US">The warning message reinforces policy awareness during the logon process and

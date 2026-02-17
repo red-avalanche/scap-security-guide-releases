@@ -16,9 +16,9 @@
 <th>STIG ids missing rule</th>
 </tr></thead>
 <tbody><tr>
-<td>251</td>
+<td>252</td>
 <td>0</td>
-<td>251</td>
+<td>252</td>
 <td>100.00%</td>
 <td></td>
 </tr></tbody>
@@ -1200,7 +1200,7 @@ Note: Manual changes to the listed files may be overwritten by the "authconfig" 
 <td>By limiting the number of failed logon attempts, the risk of unauthorized system access via user password guessing, otherwise known as brute forcing, is reduced. Limits are imposed by locking the account.
 
 Satisfies: SRG-OS-000329-GPOS-00128, SRG-OS-000021-GPOS-00005</td>
-<td>Verify the operating system automatically locks the root account until it is released by an administrator when three unsuccessful logon attempts in 15 minutes are made.
+<td>Verify the operating system automatically locks the root account, for a minimum of 15 minutes, when three unsuccessful logon attempts in 15 minutes are made.
 
 # grep pam_faillock.so /etc/pam.d/password-auth
 auth required pam_faillock.so preauth silent audit deny=3 even_deny_root fail_interval=900 unlock_time=900 
@@ -1215,7 +1215,7 @@ auth [default=die] pam_faillock.so authfail audit deny=3 even_deny_root fail_int
 account required pam_faillock.so
 
 If the "even_deny_root" setting is not defined on both lines with the "pam_faillock.so" module, is commented out, or is missing from a line, this is a finding.</td>
-<td>Configure the operating system to lock automatically the root account until the locked account is released by an administrator when three unsuccessful logon attempts in 15 minutes are made.
+<td>Configure the operating system to automatically lock the root account, for a minimum of 15 minutes, when three unsuccessful logon attempts in 15 minutes are made.
 
 Modify the first three lines of the auth section and the first line of the account section of the "/etc/pam.d/system-auth" and "/etc/pam.d/password-auth" files to match the following lines:
 
@@ -1226,7 +1226,7 @@ account required pam_faillock.so
 
 Note: Manual changes to the listed files may be overwritten by the "authconfig" program. The "authconfig" program should not be used to update the configurations listed in this requirement.</td>
 <td>RHEL-07-010330</td>
-<td>SV-204428r603261_rule</td>
+<td>SV-204428r792821_rule</td>
 </tr>
 <tr>
 <td>V-204429</td>
@@ -1417,51 +1417,6 @@ The SSH service must be restarted for changes to take effect.</td>
 <td>SV-204435r603261_rule</td>
 </tr>
 <tr>
-<td>V-204436</td>
-<td>V-71961</td>
-<td>high</td>
-<td>Red Hat Enterprise Linux operating systems prior to version 7.2 with a Basic Input/Output System (BIOS) must require authentication upon booting into single-user and maintenance modes.</td>
-<td>If the system does not require valid root authentication before it boots into single-user or maintenance mode, anyone who invokes single-user or maintenance mode is granted privileged access to all files on the system. GRUB 2 is the default boot loader for RHEL 7 and is designed to require a password to boot into single-user mode or make modifications to the boot menu.</td>
-<td>For systems that use UEFI, this is Not Applicable.
-For systems that are running RHEL 7.2 or newer, this is Not Applicable.
-
-Check to see if an encrypted root password is set. On systems that use a BIOS, use the following command:
-
-# grep -i password_pbkdf2 /boot/grub2/grub.cfg
-
-password_pbkdf2 [superusers-account] [password-hash]
-
-If the root password entry does not begin with "password_pbkdf2", this is a finding.
-
-If the "superusers-account" is not set to "root", this is a finding.</td>
-<td>Configure the system to encrypt the boot password for root.
-
-Generate an encrypted grub2 password for root with the following command:
-
-Note: The hash generated is an example.
-
-# grub2-mkpasswd-pbkdf2
-
-Enter Password:
-Reenter Password:
-PBKDF2 hash of your password is grub.pbkdf2.sha512.10000.F3A7CFAA5A51EED123BE8238C23B25B2A6909AFC9812F0D45
-
-Edit "/etc/grub.d/40_custom" and add the following lines below the comments:
-
-# vi /etc/grub.d/40_custom
-
-set superusers="root"
-
-password_pbkdf2 root {hash from grub2-mkpasswd-pbkdf2 command}
-
-Generate a new "grub.conf" file with the new password with the following commands:
-
-# grub2-mkconfig --output=/tmp/grub2.cfg
-# mv /tmp/grub2.cfg /boot/grub2/grub.cfg</td>
-<td>RHEL-07-010480</td>
-<td>SV-204436r603261_rule</td>
-</tr>
-<tr>
 <td>V-204437</td>
 <td>V-77823</td>
 <td>medium</td>
@@ -1509,51 +1464,6 @@ Enter password:
 Confirm password:</td>
 <td>RHEL-07-010482</td>
 <td>SV-204438r744095_rule</td>
-</tr>
-<tr>
-<td>V-204439</td>
-<td>V-71963</td>
-<td>high</td>
-<td>Red Hat Enterprise Linux operating systems prior to version 7.2 using Unified Extensible Firmware Interface (UEFI) must require authentication upon booting into single-user and maintenance modes.</td>
-<td>If the system does not require valid root authentication before it boots into single-user or maintenance mode, anyone who invokes single-user or maintenance mode is granted privileged access to all files on the system. GRUB 2 is the default boot loader for RHEL 7 and is designed to require a password to boot into single-user mode or make modifications to the boot menu.</td>
-<td>For systems that use BIOS, this is Not Applicable.
-For systems that are running RHEL 7.2 or newer, this is Not Applicable.
-
-Check to see if an encrypted root password is set. On systems that use UEFI, use the following command:
-
-# grep -i password /boot/efi/EFI/redhat/grub.cfg
-
-password_pbkdf2 [superusers-account] [password-hash]
-
-If the root password entry does not begin with "password_pbkdf2", this is a finding.
-
-If the "superusers-account" is not set to "root", this is a finding.</td>
-<td>Configure the system to encrypt the boot password for root.
-
-Generate an encrypted grub2 password for root with the following command:
-
-Note: The hash generated is an example.
-
-# grub2-mkpasswd-pbkdf2
-
-Enter Password:
-Reenter Password:
-PBKDF2 hash of your password is grub.pbkdf2.sha512.10000.F3A7CFAA5A51EED123BE8238C23B25B2A6909AFC9812F0D45
-
-Edit "/etc/grub.d/40_custom" and add the following lines below the comments:
-
-# vi /etc/grub.d/40_custom
-
-set superusers="root"
-
-password_pbkdf2 root {hash from grub2-mkpasswd-pbkdf2 command}
-
-Generate a new "grub.conf" file with the new password with the following commands:
-
-# grub2-mkconfig --output=/tmp/grub2.cfg
-# mv /tmp/grub2.cfg /boot/efi/EFI/redhat/grub.cfg</td>
-<td>RHEL-07-010490</td>
-<td>SV-204439r603261_rule</td>
 </tr>
 <tr>
 <td>V-204440</td>
@@ -1611,7 +1521,7 @@ If "smartcard removal action" is blank, this is a finding.
 
 # authconfig --test | grep "smartcard module"
 
-If "smartcard module" is blank, this is a finding.</td>
+If "smartcard module" is blank, ask the administrator to indicate the AO-approved multifactor authentication in use and the configuration to support it. If there is no evidence of multifactor authentication, this is a finding.</td>
 <td>Configure the operating system to require individuals to be authenticated with a multifactor authenticator.
 
 Enable smartcard logons with the following commands:
@@ -1625,7 +1535,7 @@ Modify the "/etc/pam_pkcs11/pkcs11_eventmgr.conf" file to uncomment the followin
 
 Modify the "/etc/pam_pkcs11/pam_pkcs11.conf" file to use the cackey module if required.</td>
 <td>RHEL-07-010500</td>
-<td>SV-204441r603261_rule</td>
+<td>SV-204441r792823_rule</td>
 </tr>
 <tr>
 <td>V-204442</td>
@@ -1681,11 +1591,11 @@ Privileged functions include, for example, establishing accounts, performing sys
 
 Verify the operating system prevents non-privileged users from executing privileged functions to include disabling, circumventing, or altering implemented security safeguards/countermeasures.
 
-Get a list of authorized users (other than System Administrator and guest accounts) for the system.
+Get a list of authorized users for the system.
 
 Check the list against the system by using the following command:
 
-# semanage login -l | more
+$ sudo semanage login -l | more
 
 Login Name SELinux User MLS/MCS Range Service
 __default__ user_u s0-s0:c0.c1023 *
@@ -1693,38 +1603,32 @@ root unconfined_u s0-s0:c0.c1023 *
 system_u system_u s0-s0:c0.c1023 *
 joe staff_u s0-s0:c0.c1023 *
 
-All administrators must be mapped to the "sysadm_u", "staff_u", or an appropriately tailored confined role as defined by the organization.
+All administrators must be mapped to the , "staff_u", or an appropriately tailored confined SELinux user as defined by the organization.
 
-All authorized non-administrative users must be mapped to the "user_u" role. 
+All authorized non-administrative users must be mapped to the "user_u" SELinux user.
 
-If they are not mapped in this way, this is a finding.</td>
+If they are not mapped in this way, this is a finding.
+If administrator accounts are mapped to the "sysadm_u" SELinux user and are not documented as an operational requirement with the ISSO, this is a finding.
+If administrator accounts are mapped to the "sysadm_u" SELinux user and are documented as an operational requirement with the ISSO, this can be downgraded to a CAT III.</td>
 <td>Configure the operating system to prevent non-privileged users from executing privileged functions to include disabling, circumventing, or altering implemented security safeguards/countermeasures.
 
-Use the following command to map a new user to the "sysadm_u" role: 
+Use the following command to map a new user to the "staff_u" SELinux user:
 
-#semanage login -a -s sysadm_u &lt;username&gt;
+$ sudo semanage login -a -s staff_u &lt;username&gt;
 
-Use the following command to map an existing user to the "sysadm_u" role:
+Use the following command to map an existing user to the "staff_u" SELinux user:
 
-#semanage login -m -s sysadm_u &lt;username&gt;
+$ sudo semanage login -m -s staff_u &lt;username&gt;
 
-Use the following command to map a new user to the "staff_u" role:
+Use the following command to map a new user to the "user_u" SELinux user:
 
-#semanage login -a -s staff_u &lt;username&gt;
+$ sudo semanage login -a -s user_u &lt;username&gt;
 
-Use the following command to map an existing user to the "staff_u" role:
+Use the following command to map an existing user to the "user_u" SELinux user:
 
-#semanage login -m -s staff_u &lt;username&gt;
-
-Use the following command to map a new user to the "user_u" role:
-
-# semanage login -a -s user_u &lt;username&gt;
-
-Use the following command to map an existing user to the "user_u" role:
-
-# semanage login -m -s user_u &lt;username&gt;</td>
+$ sudo semanage login -m -s user_u &lt;username&gt;</td>
 <td>RHEL-07-020020</td>
-<td>SV-204444r754744_rule</td>
+<td>SV-204444r792826_rule</td>
 </tr>
 <tr>
 <td>V-204445</td>
@@ -2648,22 +2552,21 @@ Note: The example will be for the "smithj" user, who has a home directory of "/h
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must be configured so that all local interactive user initialization files executable search paths contain only paths that resolve to the users home directory.</td>
 <td>The executable search path (typically the PATH environment variable) contains a list of directories for the shell to search to find executables. If this path includes the current working directory (other than the user's home directory), executables in these directories may be executed instead of system commands. This variable is formatted as a colon-separated list of directories. If there is an empty entry, such as a leading or trailing colon or two consecutive colons, this is interpreted as the current working directory. If deviations from the default system search path for the local interactive user are required, they must be documented with the Information System Security Officer (ISSO).</td>
-<td>Verify that all local interactive user initialization files' executable search path statements do not contain statements that will reference a working directory other than the users' home directory.
+<td>Verify that all local interactive user initialization files' executable search path statements do not contain statements that will reference a working directory other than the user's home directory.
 
-Check the executable search path statement for all local interactive user initialization files in the users' home directory with the following commands:
+Check the executable search path statement for all local interactive user initialization files in the user's home directory with the following commands:
 
 Note: The example will be for the smithj user, which has a home directory of "/home/smithj".
 
-# grep -i path /home/smithj/.*
+# grep -i path= /home/smithj/.*
 /home/smithj/.bash_profile:PATH=$PATH:$HOME/.local/bin:$HOME/bin
-/home/smithj/.bash_profile:export PATH
 
 If any local interactive user initialization files have executable search path statements that include directories outside of their home directory, this is a finding.</td>
 <td>Edit the local interactive user initialization files to change any PATH variable statements that reference directories other than their home directory. 
 
 If a local interactive user requires path variables to reference a directory owned by the application, it must be documented with the ISSO.</td>
 <td>RHEL-07-020720</td>
-<td>SV-204477r603261_rule</td>
+<td>SV-204477r792828_rule</td>
 </tr>
 <tr>
 <td>V-204478</td>
@@ -2692,7 +2595,7 @@ If any local initialization files are found to reference world-writable files, t
 </tr>
 <tr>
 <td>V-204479</td>
-<td>SV-86663</td>
+<td>V-72039</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must be configured so that all system device files are correctly labeled to prevent unauthorized modification.</td>
 <td>If an unauthorized or modified device is allowed to exist on the system, there is the possibility the system may perform unintended or unauthorized operations.</td>
@@ -3257,7 +3160,7 @@ If AIDE is installed, ensure the "xattrs" rule is present on all uncommented fil
 <td>File integrity tools use cryptographic hashes for verifying file contents and directories have not been altered. These hashes must be FIPS 140-2 approved cryptographic hashes.
 
 Red Hat Enterprise Linux operating system installation media ships with an optional file integrity tool called Advanced Intrusion Detection Environment (AIDE). AIDE is highly configurable at install time. This requirement assumes the "aide.conf" file is under the "/etc" directory.</td>
-<td>Verify the file integrity tool is configured to use FIPS 140-2 approved cryptographic hashes for validating file contents and directories.
+<td>Verify the file integrity tool is configured to use FIPS 140-2-approved cryptographic hashes for validating file contents and directories.
 
 Check to see if AIDE is installed on the system with the following command:
 
@@ -3273,7 +3176,7 @@ Use the following command to determine if the file is in another location:
 
 # find / -name aide.conf
 
-Check the "aide.conf" file to determine if the "sha512" rule has been added to the rule list being applied to the files and directories selection lists.
+Check the "aide.conf" file to determine if the "sha512" rule has been added to the rule list being applied to the files and directories selection lists. Exclude any log files, or files expected to change frequently, to reduce unnecessary notifications.
 
 An example rule that includes the "sha512" rule follows:
 
@@ -3281,12 +3184,12 @@ All=p+i+n+u+g+s+m+S+sha512+acl+xattrs+selinux
 /bin All # apply the custom rule to the files in bin 
 /sbin All # apply the same custom rule to the files in sbin 
 
-If the "sha512" rule is not being used on all uncommented selection lines in the "/etc/aide.conf" file, or another file integrity tool is not using FIPS 140-2 approved cryptographic hashes for validating file contents and directories, this is a finding.</td>
+If the "sha512" rule is not being used on all uncommented selection lines in the "/etc/aide.conf" file, or another file integrity tool is not using FIPS 140-2-approved cryptographic hashes for validating file contents and directories, this is a finding.</td>
 <td>Configure the file integrity tool to use FIPS 140-2 cryptographic hashes for validating file and directory contents. 
 
-If AIDE is installed, ensure the "sha512" rule is present on all uncommented file and directory selection lists.</td>
+If AIDE is installed, ensure the "sha512" rule is present on all uncommented file and directory selection lists. Exclude any log files, or files expected to change frequently, to reduce unnecessary notifications.</td>
 <td>RHEL-07-021620</td>
-<td>SV-204500r603261_rule</td>
+<td>SV-204500r792831_rule</td>
 </tr>
 <tr>
 <td>V-204501</td>
@@ -6388,25 +6291,24 @@ Change the mode of public host key files under "/etc/ssh" to "0644" with the fol
 <td>V-204597</td>
 <td>V-72257</td>
 <td>medium</td>
-<td>The Red Hat Enterprise Linux operating system must be configured so that the SSH private host key files have mode 0640 or less permissive.</td>
+<td>The Red Hat Enterprise Linux operating system must be configured so that the SSH private host key files have mode 0600 or less permissive.</td>
 <td>If an unauthorized user obtains the private SSH host key file, the host could be impersonated.</td>
-<td>Verify the SSH private host key files have mode "0640" or less permissive.
+<td>Verify the SSH private host key files have mode "0600" or less permissive.
 
 The following command will find all SSH private key files on the system and list their modes:
 
 # find / -name '*ssh_host*key' | xargs ls -lL
 
--rw-r----- 1 root ssh_keys 668 Nov 28 06:43 ssh_host_dsa_key
--rw-r----- 1 root ssh_keys 582 Nov 28 06:43 ssh_host_key
--rw-r----- 1 root ssh_keys 887 Nov 28 06:43 ssh_host_rsa_key
+-rw------- 1 root ssh_keys 668 Nov 28 06:43 ssh_host_dsa_key
+-rw------- 1 root ssh_keys 582 Nov 28 06:43 ssh_host_key
+-rw------- 1 root ssh_keys 887 Nov 28 06:43 ssh_host_rsa_key
 
-If any file has a mode more permissive than "0640", this is a finding.</td>
-<td>Configure the mode of SSH private host key files under "/etc/ssh" to "0640" with the following command:
+If any file has a mode more permissive than "0600", this is a finding.</td>
+<td>Configure the mode of SSH private host key files under "/etc/ssh" to "0600" with the following command:
 
-# chmod 0640 /path/to/file/ssh_host*key
-</td>
+# chmod 0600 /path/to/file/ssh_host*key</td>
 <td>RHEL-07-040420</td>
-<td>SV-204597r603261_rule</td>
+<td>SV-204597r792834_rule</td>
 </tr>
 <tr>
 <td>V-204598</td>
@@ -7817,7 +7719,7 @@ If the value is set to an integer less than 0, the user's time stamp will not ex
 <td>Verify the operating system requires re-authentication when using the "sudo" command to elevate privileges.
 
 $ sudo grep -i 'timestamp_timeout' /etc/sudoers /etc/sudoers.d/*
-/etc/sudoers:Defaults timestamp_timout=0
+/etc/sudoers:Defaults timestamp_timeout=0
 
 If "timestamp_timeout" is set to a negative number, is commented out, or no results are returned, this is a finding.</td>
 <td>Configure the "sudo" command to require re-authentication.
@@ -7828,14 +7730,15 @@ Add or modify the following line:
 Defaults timestamp_timeout=[value]
 Note: The "[value]" must be a number that is greater than or equal to "0".</td>
 <td>RHEL-07-010343</td>
-<td>SV-237635r646856_rule</td>
+<td>SV-237635r792836_rule</td>
 </tr>
 <tr>
 <td>V-244557</td>
 <td>CCI-000213</td>
 <td>medium</td>
 <td>Red Hat Enterprise Linux operating systems version 7.2 or newer booted with a BIOS must have a unique name for the grub superusers account when booting into single-user and maintenance modes.</td>
-<td>If the system does not require valid authentication before it boots into single-user or maintenance mode, anyone who invokes single-user or maintenance mode is granted privileged access to all files on the system. GRUB 2 is the default boot loader for RHEL 7 and is designed to require a password to boot into single-user mode or make modifications to the boot menu.</td>
+<td>If the system does not require valid authentication before it boots into single-user or maintenance mode, anyone who invokes single-user or maintenance mode is granted privileged access to all files on the system. GRUB 2 is the default boot loader for RHEL 7 and is designed to require a password to boot into single-user mode or make modifications to the boot menu.
+The GRUB 2 superuser account is an account of last resort. Establishing a unique username for this account hardens the boot loader against brute force attacks. Due to the nature of the superuser account database being distinct from the OS account database, this allows the use of a username that is not among those within the OS account database. Examples of non-unique superusers names are root, superuser, unlock, etc.</td>
 <td>For systems that use UEFI, this is Not Applicable.
 
 For systems that are running a version of RHEL prior to 7.2, this is Not Applicable.
@@ -7846,7 +7749,7 @@ Verify that a unique name is set as the "superusers" account:
     set superusers="[someuniquestringhere]"
     export superusers
 
-If "superusers" is not set to a unique name or is missing a name, this is a finding.</td>
+If "superusers" is identical to any OS account name or is missing a name, this is a finding.</td>
 <td>Configure the system to have a unique name for the grub superusers account.
 
 Edit the /boot/grub2/grub.cfg file and add or modify the following lines in the "### BEGIN /etc/grub.d/01_users ###" section:
@@ -7855,14 +7758,15 @@ set superusers="[someuniquestringhere]"
 export superusers
 password_pbkdf2 [someuniquestringhere] ${GRUB2_PASSWORD}</td>
 <td>RHEL-07-010483</td>
-<td>SV-244557r744063_rule</td>
+<td>SV-244557r792838_rule</td>
 </tr>
 <tr>
 <td>V-244558</td>
 <td>CCI-000213</td>
 <td>medium</td>
 <td>Red Hat Enterprise Linux operating systems version 7.2 or newer booted with United Extensible Firmware Interface (UEFI) must have a unique name for the grub superusers account when booting into single-user mode and maintenance.</td>
-<td>If the system does not require valid authentication before it boots into single-user or maintenance mode, anyone who invokes single-user or maintenance mode is granted privileged access to all files on the system. GRUB 2 is the default boot loader for RHEL 7 and is designed to require a password to boot into single-user mode or make modifications to the boot menu.</td>
+<td>If the system does not require valid authentication before it boots into single-user or maintenance mode, anyone who invokes single-user or maintenance mode is granted privileged access to all files on the system. GRUB 2 is the default boot loader for RHEL 7 and is designed to require a password to boot into single-user mode or make modifications to the boot menu.
+The GRUB 2 superuser account is an account of last resort. Establishing a unique username for this account hardens the boot loader against brute force attacks. Due to the nature of the superuser account database being distinct from the OS account database, this allows the use of a username that is not among those within the OS account database. Examples of non-unique superusers names are root, superuser, unlock, etc.</td>
 <td>For systems that use BIOS, this is Not Applicable.
 
 For systems that are running a version of RHEL prior to 7.2, this is Not Applicable.
@@ -7873,7 +7777,7 @@ $ sudo grep -iw "superusers" /boot/efi/EFI/redhat/grub.cfg
     set superusers="[someuniquestringhere]"
     export superusers
 
-If "superusers" is not set to a unique name or is missing a name, this is a finding.</td>
+If "superusers" is identical to any OS account name or is missing a name, this is a finding.</td>
 <td>Configure the system to have a unique name for the grub superusers account.
 
 Edit the /boot/efi/EFI/redhat/grub.cfg file and add or modify the following lines in the "### BEGIN /etc/grub.d/01_users ###" section:
@@ -7882,7 +7786,101 @@ set superusers="[someuniquestringhere]"
 export superusers
 password_pbkdf2 [someuniquestringhere] ${GRUB2_PASSWORD}</td>
 <td>RHEL-07-010492</td>
-<td>SV-244558r744066_rule</td>
+<td>SV-244558r792840_rule</td>
+</tr>
+<tr>
+<td>V-250312</td>
+<td>CCI-002165</td>
+<td>medium</td>
+<td>The Red Hat Enterprise Linux operating system must confine SELinux users to roles that conform to least privilege.</td>
+<td>Preventing non-privileged users from executing privileged functions mitigates the risk that unauthorized individuals or processes may gain unnecessary access to information or privileges.
+
+Privileged functions include, for example, establishing accounts, performing system integrity checks, or administering cryptographic key management activities. Non-privileged users are individuals who do not possess appropriate authorizations. Circumventing intrusion detection and prevention mechanisms or malicious code protection mechanisms are examples of privileged functions that require protection from non-privileged users.</td>
+<td>Note: Per OPORD 16-0080, the preferred endpoint security tool is Endpoint Security for Linux (ENSL) in conjunction with SELinux.
+
+Verify the operating system confines SELinux users to roles that conform to least privilege.
+
+Check the SELinux User list to SELinux Roles mapping by using the following command:
+
+$ sudo semanage user -l
+SELinuxUser LabelingPrefix MLS/MCSLevel MLS/MCSRange SELinuxRoles
+guest_u            user  s0  s0  guest_r
+root                   user  s0  s0-s0:c0.c1023  staff_r sysadm_r system_r unconfined_r
+staff_u              user  s0  s0-s0:c0.c1023  staff_r sysadm_r
+sysadm_u         user  s0  s0-s0:c0.c1023  sysadm_r 
+system_u          user  s0  s0-s0:c0.c1023  system_r unconfined_r
+unconfined_u  user  s0  s0-s0:c0.c1023  system_r unconfined_r
+user_u               user  s0  s0  user_r
+xguest_u           user  s0  s0  xguest_r
+
+If the output differs from the above example, ask the SA to demonstrate how the SELinux User mappings are exercising least privilege. If deviations from the example are not documented with the ISSO and do not demonstrate least privilege, this is a finding.</td>
+<td>Configure the operating system to confine SELinux users to roles that conform to least privilege.
+
+Use the following command to map the "staff_u" SELinux user to the "staff_r" and "sysadm_r" roles:
+
+$ sudo semanage user -m staff_u -R staff_r -R sysadm_r
+
+Use the following command to map the "user_u" SELinux user to the "user_r" role:
+
+$ sudo semanage -m user_u -R user_r</td>
+<td>RHEL-07-020021</td>
+<td>SV-250312r792843_rule</td>
+</tr>
+<tr>
+<td>V-250313</td>
+<td>CCI-002165</td>
+<td>medium</td>
+<td>The Red Hat Enterprise Linux operating system must not allow privileged accounts to utilize SSH.</td>
+<td>Preventing non-privileged users from executing privileged functions mitigates the risk that unauthorized individuals or processes may gain unnecessary access to information or privileges.
+
+Privileged functions include, for example, establishing accounts, performing system integrity checks, or administering cryptographic key management activities. Non-privileged users are individuals who do not possess appropriate authorizations. Circumventing intrusion detection and prevention mechanisms or malicious code protection mechanisms are examples of privileged functions that require protection from non-privileged users.</td>
+<td>Note: Per OPORD 16-0080, the preferred endpoint security tool is Endpoint Security for Linux (ENSL) in conjunction with SELinux.
+
+Verify the operating system prevents privileged accounts from utilizing SSH.
+Check the SELinux ssh_sysadm_login boolean with the following command:
+
+$ sudo getsebool ssh_sysadm_login
+ssh_sysadm_login --&gt; off
+
+If the "ssh_sysadm_login" boolean is not "off" and is not documented with the ISSO as an operational requirement, this is a finding.</td>
+<td>Configure the operating system to prevent privileged accounts from utilizing SSH.
+Use the following command to set the "ssh_sysadm_login" boolean to "off":
+
+$ sudo setsebool -P ssh_sysadm_login off
+
+Note: SELinux confined users mapped to sysadm_u are not allowed to login to the system over SSH, by default. If this is a required function, it can be configured by setting the ssh_sysadm_login SELinux boolean to "on" with the following command:
+
+$ sudo setsebool -P ssh_sysadm_login on
+
+This must be documented with the ISSO as an operational requirement.</td>
+<td>RHEL-07-020022</td>
+<td>SV-250313r792846_rule</td>
+</tr>
+<tr>
+<td>V-250314</td>
+<td>CCI-002165</td>
+<td>medium</td>
+<td>The Red Hat Enterprise Linux operating system must elevate the SELinux context when an administrator calls the sudo command.</td>
+<td>Preventing non-privileged users from executing privileged functions mitigates the risk that unauthorized individuals or processes may gain unnecessary access to information or privileges.
+
+Privileged functions include, for example, establishing accounts, performing system integrity checks, or administering cryptographic key management activities. Non-privileged users are individuals who do not possess appropriate authorizations. Circumventing intrusion detection and prevention mechanisms or malicious code protection mechanisms are examples of privileged functions that require protection from non-privileged users.</td>
+<td>Note: Per OPORD 16-0080, the preferred endpoint security tool is Endpoint Security for Linux (ENSL) in conjunction with SELinux.
+
+Verify the operating system elevates the SELinux context when an administrator calls the sudo command with the following command:
+
+This command must be ran as root:
+# grep sysadm_r /etc/sudoers.d/*
+%wheel ALL=(ALL) TYPE=sysadm_t ROLE=sysadm_r ALL
+
+If a designated sudoers administrator group or account(s) is not configured to elevate the SELinux type and role to "sysadm_t" and "sysadm_r" with the use of the sudo command, this is a finding.</td>
+<td>Configure the operating system to elevate the SELinux context when an administrator calls the sudo command.
+Edit a file in the /etc/sudoers.d directory with the following command:
+$ sudo visudo -f /etc/sudoers.d/&lt;customfile&gt;
+
+Use the following example to build the &lt;customfile&gt; in the /etc/sudoers.d directory to allow any administrator belonging to a designated sudoers admin group to elevate their SELinux context with the use of the sudo command:
+%wheel ALL=(ALL) TYPE=sysadm_t ROLE=sysadm_r ALL</td>
+<td>RHEL-07-020023</td>
+<td>SV-250314r792849_rule</td>
 </tr>
 </table>
 </body>

@@ -1113,7 +1113,7 @@ DoD recommendation is "35" days, but a lower value greater than "0" is acceptabl
 </tr>
 <tr>
 <td>V-217137</td>
-<td>V-77129</td>
+<td>SV-91825</td>
 <td>medium</td>
 <td>The SUSE operating system must provision temporary accounts with an expiration date for 72 hours.</td>
 <td>If temporary user accounts remain active when no longer needed or for an excessive period, these accounts may be used to gain unauthorized access. To mitigate this risk, automated termination of all temporary accounts must be set upon account creation.
@@ -2226,18 +2226,17 @@ Note: The example will be for the smithj user, who has a home directory of "/hom
 <td>The executable search path (typically the PATH environment variable) contains a list of directories for the shell to search to find executables. If this path includes the current working directory (other than the user's home directory), executables in these directories may be executed instead of system commands. This variable is formatted as a colon-separated list of directories. If there is an empty entry, such as a leading or trailing colon or two consecutive colons, this is interpreted as the current working directory. If deviations from the default system search path for the local interactive user are required, they must be documented with the Information System Security Officer (ISSO).</td>
 <td>Verify that all SUSE operating system local interactive user initialization files executable search path statements do not contain statements that will reference a working directory other than the user's home directory.
 
-Check the executable search path statement for all operating system local interactive user initialization files in the users' home directory with the following commands:
+Check the executable search path statement for all operating system local interactive user initialization files in the user's home directory with the following commands:
 
 Note: The example will be for the user "smithj", who has a home directory of "/home/smithj".
 
-# sudo grep -i path /home/smithj/.*
+# sudo grep -i path= /home/smithj/.*
 /home/smithj/.bash_profile:PATH=$PATH:$HOME/.local/bin:$HOME/bin
-/home/smithj/.bash_profile:export PATH
 
 If any local interactive user initialization files have executable search path statements that include directories outside of their home directory, and the additional path statements are not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</td>
 <td>Edit the SUSE operating system local interactive user initialization files to change any PATH variable statements for executables that reference directories other than their home directory. If a local interactive user requires path variables to reference a directory owned by the application, it must be documented with the ISSO.</td>
 <td>SLES-12-010770</td>
-<td>SV-217176r603262_rule</td>
+<td>SV-217176r793056_rule</td>
 </tr>
 <tr>
 <td>V-217177</td>
@@ -3003,7 +3002,7 @@ The audit daemon must be restarted for the changes to take effect.
 </tr>
 <tr>
 <td>V-217205</td>
-<td>V-77315</td>
+<td>SV-92011</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/passwd.</td>
 <td>Once an attacker establishes initial access to a system, the attacker often attempts to create a persistent method of reestablishing access. One way to accomplish this is for the attacker to simply create a new account. Auditing of account creation mitigates this risk.
@@ -4211,7 +4210,7 @@ The audit daemon must be restarted for the changes to take effect.
 </tr>
 <tr>
 <td>V-217240</td>
-<td>V-77393</td>
+<td>SV-92089</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/gshadow.</td>
 <td>Once an attacker establishes initial access to a system, the attacker often attempts to create a persistent method of reestablishing access. One way to accomplish this is for the attacker to simply create a new account. Auditing of account creation mitigates this risk.
@@ -5214,7 +5213,7 @@ Remote access is access to DoD nonpublic information systems by an authorized us
 
 Encryption provides a means to secure the remote connection to prevent unauthorized access to the data traversing the remote access connection (e.g., RDP), thereby providing a degree of confidentiality. The encryption strength of a mechanism is selected based on the security categorization of the information.
 
-By specifying a cipher list with the order of ciphers being in a “strongest to weakest” orientation, the system will automatically attempt to use the strongest cipher for securing SSH connections.
+The system will attempt to use the first cipher presented by the client that matches the server list. Listing the values "strongest to weakest" is a method to ensure the use of the strongest cipher available to secure the SSH connection.
 
 Satisfies: SRG-OS-000033-GPOS-00014, SRG-OS-000120-GPOS-00061, SRG-OS-000125-GPOS-00065, SRG-OS-000250-GPOS-00093, SRG-OS-000393-GPOS-00173</td>
 <td>Verify that the SUSE operating system implements DoD-approved encryption to protect the confidentiality of SSH remote connections.
@@ -5234,7 +5233,7 @@ Restart the SSH daemon:
 
 # sudo systemctl restart sshd.service</td>
 <td>SLES-12-030170</td>
-<td>SV-217270r603956_rule</td>
+<td>SV-217270r744120_rule</td>
 </tr>
 <tr>
 <td>V-217271</td>
@@ -5247,7 +5246,7 @@ Remote access (e.g., RDP) is access to DoD nonpublic information systems by an a
 
 Cryptographic mechanisms used for protecting the integrity of information include, for example, signed hash functions using asymmetric cryptography enabling distribution of the public key to verify the hash information while maintaining the confidentiality of the secret key used to generate the hash.
 
-By specifying a hash algorithm list with the order of hashes being in a “strongest to weakest” orientation, the system will automatically attempt to use the strongest hash for securing SSH connections.
+The system will attempt to use the first hash presented by the client that matches the server list. Listing the values "strongest to weakest" is a method to ensure the use of the strongest hash available to secure the SSH connection.
 
 Satisfies: SRG-OS-000125-GPOS-00065, SRG-OS-000394-GPOS-00174</td>
 <td>Verify the SUSE operating system SSH daemon is configured to only use MACs that employ FIPS 140-2 approved hashes.
@@ -5264,7 +5263,7 @@ Edit the "/etc/ssh/sshd_config" file to uncomment or add the line for the "MACs"
 
 MACs hmac-sha2-512,hmac-sha2-256</td>
 <td>SLES-12-030180</td>
-<td>SV-217271r603959_rule</td>
+<td>SV-217271r744121_rule</td>
 </tr>
 <tr>
 <td>V-217272</td>
@@ -5475,16 +5474,16 @@ UsePrivilegeSeparation yes
 Check that the SSH daemon performs compression after a user successfully authenticates with the following command:
 
 # sudo grep -i compression /etc/ssh/sshd_config
-Compression no
+Compression delayed
 
-If the "Compression" keyword is set to "yes", "delayed", is missing, or the returned line is commented out, this is a finding.</td>
+If the "Compression" keyword is set to "yes", is missing, or the returned line is commented out, this is a finding.</td>
 <td>Configure the SUSE operating system SSH daemon performs compression after a user successfully authenticates.
 
-Uncomment the "Compression" keyword in "/etc/ssh/sshd_config" on the system and set the value to "no":
+Uncomment the "Compression" keyword in "/etc/ssh/sshd_config" on the system and set the value to "delayed" or "no":
 
 Compression no</td>
 <td>SLES-12-030250</td>
-<td>SV-217279r603262_rule</td>
+<td>SV-217279r744124_rule</td>
 </tr>
 <tr>
 <td>V-217280</td>
@@ -6195,38 +6194,25 @@ Additional information on the configuration of multifactor authentication on the
 <td>V-222385</td>
 <td>V-92249</td>
 <td>medium</td>
-<td>The SUSE operating system must have a host-based intrusion detection tool installed.</td>
-<td>Adding host-based intrusion detection tools can provide the capability to automatically take actions in response to malicious behavior, which can provide additional agility in reacting to network threats. These tools also often include a reporting capability to provide network awareness of the system, which may not otherwise exist in an organization's systems management regime.</td>
-<td>Ask the SA or ISSO if a host-based intrusion detection application is loaded on the system. Per OPORD 16-0080, the preferred intrusion detection system is McAfee HBSS available through the U.S. Cyber Command (USCYBERCOM).
-
-If another host-based intrusion detection application is in use, such as AppArmor, this must be documented and approved by the local Authorizing Official.
+<td>The SUSE operating system must implement the Endpoint Security for Linux Threat Prevention tool.</td>
+<td>Adding endpoint security tools can provide the capability to automatically take actions in response to malicious behavior, which can provide additional agility in reacting to network threats. These tools also often include a reporting capability to provide network awareness of the system, which may not otherwise exist in an organization's systems management regime.</td>
+<td>Per OPORD 16-0080, the preferred endpoint security tool is McAfee Endpoint Security for Linux (ENSL) in conjunction with SELinux. 
 
 Procedure:
-Examine the system to see if the Host Intrusion Prevention System (HIPS) is installed:
+Check that the following package has been installed:
 
-# rpm -qa | grep MFEhiplsm
+# rpm -qa | grep -i mcafeetp
 
-Verify that the McAfee HIPS module is active on the system:
+If the "mcafeetp" package is not installed, this is a finding.
 
-# ps -ef | grep -i “hipclient”
+Verify that the daemon is running:
 
-If the MFEhiplsm package is not installed, check for another intrusion detection system:
+# ps -ef | grep -i mfetpd
 
-# find / -name &lt;daemon name&gt;
-
-Where &lt;daemon name&gt; is the name of the primary application daemon to determine if the application is loaded on the system.
-
-Determine if the application is active on the system:
-
-# ps -ef | grep -i &lt;daemon name&gt;
-
-If the MFEhiplsm package is not installed and an alternate host-based intrusion detection application has not been documented for use, this is a finding.
-
-If no host-based intrusion detection system is installed and running on the system, this is a finding.
-</td>
-<td>Install and enable the latest McAfee HIPS package or McAfee ENSL.</td>
+If the daemon is not running, this is a finding.</td>
+<td>Install and enable the latest McAfee ENSLTP package.</td>
 <td>SLES-12-010599</td>
-<td>SV-222385r603262_rule</td>
+<td>SV-222385r754754_rule</td>
 </tr>
 <tr>
 <td>V-222386</td>
@@ -6325,7 +6311,7 @@ If the value is set to an integer less than 0, the user's time stamp will not ex
 <td>Verify the operating system requires re-authentication when using the "sudo" command to elevate privileges.
 
 $ sudo grep -i 'timestamp_timeout' /etc/sudoers /etc/sudoers.d/*
-/etc/sudoers:Defaults timestamp_timout=0
+/etc/sudoers:Defaults timestamp_timeout=0
 
 If "timestamp_timeout" is set to a negative number, is commented out, or no results are returned, this is a finding.</td>
 <td>Configure the "sudo" command to require re-authentication.
@@ -6336,7 +6322,7 @@ Add or modify the following line:
 Defaults timestamp_timeout=[value]
 Note: The "[value]" must be a number that is greater than or equal to "0".</td>
 <td>SLES-12-010113</td>
-<td>SV-237605r646778_rule</td>
+<td>SV-237605r793058_rule</td>
 </tr>
 <tr>
 <td>V-237606</td>

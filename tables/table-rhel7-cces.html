@@ -2122,6 +2122,16 @@ To remove unauthorized system accounts, use the following command:
 </td>
 </tr>
 <tr>
+<td>CCE-86200-3</td>
+<td>Ensure All Groups on the System Have Unique Group ID</td>
+<td xml:lang="en-US">Change the group name or delete groups, so each has a unique id.</td>
+</tr>
+<tr>
+<td>CCE-86327-4</td>
+<td>Ensure All Groups on the System Have Unique Group Names</td>
+<td xml:lang="en-US">Change the group name or delete groups, so each has a unique name.</td>
+</tr>
+<tr>
 <td>CCE-27355-7</td>
 <td>Set Account Expiration Following Inactivity</td>
 <td xml:lang="en-US">To specify the number of days after a password expires (which
@@ -2326,6 +2336,11 @@ Otherwise assign a UID greater than "1000" that has not already been
 assigned.</td>
 </tr>
 <tr>
+<td>CCE-86296-1</td>
+<td>Verify Root Has A Primary GID 0</td>
+<td xml:lang="en-US">The <code>root</code> user should have a primary group of 0.</td>
+</tr>
+<tr>
 <td>CCE-27294-8</td>
 <td>Direct root Logins Not Allowed</td>
 <td xml:lang="en-US">To further limit access to the <code>root</code> account, administrators
@@ -2489,7 +2504,9 @@ setting in a file loaded by <code>/etc/profile</code>, e.g.
 in <pre>/etc/passwd</pre> for the user. To change the group owner of a local
 interactive user home directory, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i>/.<i>INIT_FILE</i></pre>
-</td>
+
+This rule ensures every initialization file related to an interactive user
+is group-owned by an interactive user.</td>
 </tr>
 <tr>
 <td>CCE-80523-4</td>
@@ -2505,7 +2522,9 @@ following command:
 <td xml:lang="en-US">Set the owner of the user initialization files for interactive users to
 the primary owner with the following command:
 <pre>$ sudo chown <i>USER</i> /home/<i>USER</i>/.*</pre>
-</td>
+
+This rule ensures every initialization file related to an interactive user
+is owned by an interactive user.</td>
 </tr>
 <tr>
 <td>CCE-80524-2</td>
@@ -2518,7 +2537,12 @@ directory other than the users home directory.</td>
 <td>CCE-80528-3</td>
 <td>All Interactive Users Must Have A Home Directory Defined</td>
 <td xml:lang="en-US">Assign home directories to all interactive users that currently do not
-have a home directory assigned.</td>
+have a home directory assigned.
+
+This rule checks if the home directory is properly defined in a folder which has
+at least one parent folder, like "user" in "/home/user" or "/remote/users/user".
+Therefore, this rule will report a finding for home directories like <code>/users</code>,
+<code>/tmp</code> or <code>/</code>.</td>
 </tr>
 <tr>
 <td>CCE-80529-1</td>
@@ -2536,7 +2560,9 @@ home directory assigned in <code>/etc/passwd</code>:
 group that the interactive user is a member of. To change the group owner of a
 local interactive users files and directories, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i>/<i>FILE_DIR</i></pre>
-</td>
+
+This rule ensures every file or directory under the home directory related
+to an interactive user is group-owned by an interactive user.</td>
 </tr>
 <tr>
 <td>CCE-80533-3</td>
@@ -2546,7 +2572,9 @@ do not have a valid user, or assign a valid user to all unowned
 files and directories. To assign a valid owner to a local
 interactive user's files and directories, use the following command:
 <pre>$ sudo chown -R <i>USER</i> /home/<i>USER</i></pre>
-</td>
+
+This rule ensures every file or directory under the home directory related
+to an interactive user is owned by an interactive user.</td>
 </tr>
 <tr>
 <td>CCE-80535-8</td>
@@ -2563,7 +2591,10 @@ directory with the following command:
 group found in <code>/etc/passwd</code>. To change the group owner of
 interactive users home directory, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i></pre>
-</td>
+
+This rule ensures every home directory related to an interactive user is
+group-owned by an interactive user. It also ensures that interactive users
+are group-owners of one and only one home directory.</td>
 </tr>
 <tr>
 <td>CCE-80531-7</td>
@@ -2572,7 +2603,10 @@ interactive users home directory, use the following command:
 owner. To change the owner of a interactive users home directory, use
 the following command:
 <pre>$ sudo chown <i>USER</i> /home/<i>USER</i></pre>
-</td>
+
+This rule ensures every home directory related to an interactive user is
+owned by an interactive user. It also ensures that interactive users are
+owners of one and only one home directory.</td>
 </tr>
 <tr>
 <td>CCE-80525-9</td>
@@ -5112,7 +5146,8 @@ If the system is 64 bit then also add the following lines:
 <tr>
 <td>CCE-82082-9</td>
 <td>Record Unsuccessul Delete Attempts to Files - renameat</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+<td xml:lang="en-US">
+The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following lines to a file with suffix
@@ -5178,7 +5213,8 @@ If the system is 64 bit then also add the following lines:
 <tr>
 <td>CCE-81106-7</td>
 <td>Record Unsuccessul Delete Attempts to Files - unlink</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+<td xml:lang="en-US">
+The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following lines to a file with suffix
@@ -5199,7 +5235,8 @@ If the system is 64 bit then also add the following lines:
 <tr>
 <td>CCE-81104-2</td>
 <td>Record Unsuccessul Delete Attempts to Files - unlinkat</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+<td xml:lang="en-US">
+The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following lines to a file with suffix
@@ -5857,6 +5894,7 @@ should always be used.</td>
 <td>Configure audispd Plugin To Send Logs To Remote Server</td>
 <td xml:lang="en-US">Configure the audispd plugin to off-load audit records onto a different
 system or media from the system being audited.
+
 Set the <code>remote_server</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>
 with an IP address or hostname of the system that the audispd plugin should
 send audit records to. For example
@@ -6001,6 +6039,7 @@ by <code>auditd</code>, add or correct the line in <code>/etc/audit/auditd.conf<
 Possible values for <i>ACTION</i> are described in the <code>auditd.conf</code> man
 page. These include:
 <ul>
+<li><code>ignore</code></li>
 <li><code>syslog</code></li>
 <li><code>suspend</code></li>
 <li><code>rotate</code></li>
@@ -6098,7 +6137,7 @@ in <code>/etc/audit/auditd.conf</code>.</td>
 <td>CCE-88073-2</td>
 <td>Appropriate Action Must be Setup When the Internal Audit Event Queue is Full</td>
 <td xml:lang="en-US">The audit system should have an action setup in the event the internal event queue becomes full.
-To setup an overflow action edit <code>/etc/audit/auditd.conf</code>. Set <code>overflow_action</code>
+To setup an overflow action edit <code>/etc/audisp/audispd.conf</code>. Set <code>overflow_action</code>
 to one of the following values: <code>syslog</code>, <code>single</code>, <code>halt</code>.</td>
 </tr>
 <tr>
@@ -6152,8 +6191,8 @@ GRUB 2 command line for the Linux operating system in
 be group-owned by the <code>root</code> group to prevent
 destruction or modification of the file.
 
-To properly set the group owner of <code>{{{ grub2_boot_path }}}/grub.cfg</code>, run the command:
-<pre>$ sudo chgrp root {{{ grub2_boot_path }}}/grub.cfg</pre>
+To properly set the group owner of <code>/boot/grub2/grub.cfg</code>, run the command:
+<pre>$ sudo chgrp root /boot/grub2/grub.cfg</pre>
 </td>
 </tr>
 <tr>
@@ -6163,8 +6202,8 @@ To properly set the group owner of <code>{{{ grub2_boot_path }}}/grub.cfg</code>
 be owned by the <code>root</code> user to prevent destruction
 or modification of the file.
 
-To properly set the owner of <code>{{{ grub2_boot_path }}}/grub.cfg</code>, run the command:
-<pre>$ sudo chown root {{{ grub2_boot_path }}}/grub.cfg </pre>
+To properly set the owner of <code>/boot/grub2/grub.cfg</code>, run the command:
+<pre>$ sudo chown root /boot/grub2/grub.cfg </pre>
 </td>
 </tr>
 <tr>
@@ -6172,8 +6211,8 @@ To properly set the owner of <code>{{{ grub2_boot_path }}}/grub.cfg</code>, run 
 <td>Verify /boot/grub2/grub.cfg Permissions</td>
 <td xml:lang="en-US">File permissions for <code>/boot/grub2/grub.cfg</code> should be set to 600.
 
-To properly set the permissions of <code>{{{ grub2_boot_path }}}/grub.cfg</code>, run the command:
-<pre>$ sudo chmod 600 {{{ grub2_boot_path }}}/grub.cfg</pre>
+To properly set the permissions of <code>/boot/grub2/grub.cfg</code>, run the command:
+<pre>$ sudo chmod 600 /boot/grub2/grub.cfg</pre>
 </td>
 </tr>
 <tr>
@@ -6319,6 +6358,15 @@ media which should not exist in the line:
 </td>
 </tr>
 <tr>
+<td>CCE-86724-2</td>
+<td>Ensure rsyslog-gnutls is installed</td>
+<td xml:lang="en-US">TLS protocol support for rsyslog is installed.
+The <code>rsyslog-gnutls</code> package can be installed with the following command:
+<pre>
+$ sudo yum install rsyslog-gnutls</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-80187-8</td>
 <td>Ensure rsyslog is Installed</td>
 <td xml:lang="en-US">Rsyslog is installed by default. The <code>rsyslog</code> package can be installed with the following command: <pre> $ sudo yum install rsyslog</pre>
@@ -6452,6 +6500,23 @@ command to correct this:
 <pre>$ sudo chmod 0600 <i>LOGFILE</i></pre>"</td>
 </tr>
 <tr>
+<td>CCE-85929-8</td>
+<td>Ensure journald is configured to compress large log files</td>
+<td xml:lang="en-US">The journald system can compress large log files to avoid fill the system disk.</td>
+</tr>
+<tr>
+<td>CCE-85994-2</td>
+<td>Ensure journald is configured to send logs to rsyslog</td>
+<td xml:lang="en-US">Data from journald may be stored in volatile memory or persisted locally.
+Utilities exist to accept remote export of journald logs.</td>
+</tr>
+<tr>
+<td>CCE-86044-5</td>
+<td>Ensure journald is configured to write log files to persistent disk</td>
+<td xml:lang="en-US">The journald system may store log files in volatile memory or locally on disk.
+If the logs are only stored in volatile memory they will we lost upon reboot.</td>
+</tr>
+<tr>
 <td>CCE-80195-1</td>
 <td>Ensure Logrotate Runs Periodically</td>
 <td xml:lang="en-US">The <code>logrotate</code> utility allows for the automatic rotation of
@@ -6542,6 +6607,28 @@ To use RELP for log message delivery:
 <pre>*.* :omrelp:<i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub></i></pre>
 <br>
 There must be a resolvable DNS CNAME or Alias record set to "<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub>" for logs to be sent correctly to the centralized logging utility.</td>
+</tr>
+<tr>
+<td>CCE-89194-5</td>
+<td>Configure TLS for rsyslog remote logging</td>
+<td xml:lang="en-US">Configure <code>rsyslog</code> to use Transport Layer
+Security (TLS) support for logging to remote server
+for the Forwarding Output Module in <code>/etc/rsyslog.conf</code>
+using action. You can use the following command:
+<pre>echo 'action(type="omfwd" protocol="tcp" Target="&lt;remote system&gt;" port="6514"
+    StreamDriver="gtls" StreamDriverMode="1" StreamDriverAuthMode="x509/name" streamdriver.CheckExtendedKeyPurpose="on")' &gt;&gt; /etc/rsyslog.conf
+</pre>
+Replace the <code>&lt;remote system&gt;</code> in the above command with an IP address or a host name of the remote logging server.</td>
+</tr>
+<tr>
+<td>CCE-89253-9</td>
+<td>Configure CA certificate for rsyslog remote logging</td>
+<td xml:lang="en-US">Configure CA certificate for <code>rsyslog</code> logging
+to remote server using Transport Layer Security (TLS)
+using correct path for the <code>DefaultNetstreamDriverCAFile</code>
+global option in <code>/etc/rsyslog.conf</code>, for example with the following command:
+<pre>echo 'global(DefaultNetstreamDriverCAFile="/etc/pki/tls/cert.pem")' &gt;&gt; /etc/rsyslog.conf</pre>
+Replace the <code>/etc/pki/tls/cert.pem</code> in the above command with the path to the file with CA certificate generated for the purpose of remote logging.</td>
 </tr>
 <tr>
 <td>CCE-80438-5</td>
@@ -12029,6 +12116,18 @@ To properly set the permissions of <code>/etc/crontab</code>, run the command:
 </td>
 </tr>
 <tr>
+<td>CCE-86944-6</td>
+<td>Ensure that /etc/at.deny does not exist</td>
+<td xml:lang="en-US">The file <code>/etc/at.deny</code> should not exist.
+Use <code>/etc/at.allow</code> instead.</td>
+</tr>
+<tr>
+<td>CCE-86848-9</td>
+<td>Ensure that /etc/cron.deny does not exist</td>
+<td xml:lang="en-US">The file <code>/etc/cron.deny</code> should not exist.
+Use <code>/etc/cron.allow</code> instead.</td>
+</tr>
+<tr>
 <td>CCE-80379-1</td>
 <td>Verify Group Who Owns /etc/cron.allow file</td>
 <td xml:lang="en-US">If <code>/etc/cron.allow</code> exists, it must be group-owned by <code>root</code>.
@@ -12044,6 +12143,17 @@ To properly set the group owner of <code>/etc/cron.allow</code>, run the command
 
 To properly set the owner of <code>/etc/cron.allow</code>, run the command:
 <pre>$ sudo chown root /etc/cron.allow </pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86875-2</td>
+<td>Verify Permissions on /etc/cron.allow file</td>
+<td xml:lang="en-US">If <code>/etc/cron.allow</code> exists, it must have permissions <code>0600</code>
+or more restrictive.
+
+
+To properly set the permissions of <code>/etc/cron.allow</code>, run the command:
+<pre>$ sudo chmod  /etc/cron.allow</pre>
 </td>
 </tr>
 <tr>
@@ -14122,9 +14232,8 @@ To properly set the permissions of <code>/etc/ssh/sshd_config</code>, run the co
 <td>CCE-27485-2</td>
 <td>Verify Permissions on SSH Server Private *_key Key Files</td>
 <td xml:lang="en-US">
-
 To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/ssh/*_key</pre>
+<pre>$ sudo chmod 0600 /etc/ssh/*_key</pre>
 </td>
 </tr>
 <tr>
@@ -14343,6 +14452,28 @@ To enable GSSAPI authentication, add or correct the following line in the
 </td>
 </tr>
 <tr>
+<td>CCE-86720-0</td>
+<td>Enable PAM</td>
+<td xml:lang="en-US">UsePAM Enables the Pluggable Authentication Module interface. If set to “yes” this will
+enable PAM authentication using ChallengeResponseAuthentication and
+PasswordAuthentication in addition to PAM account and session module processing for all
+authentication types.
+
+To enable PAM authentication, add or correct the following line in the
+<code>/etc/ssh/sshd_config</code> file:
+<pre>UsePAM yes</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Enable Public Key Authentication</td>
+<td xml:lang="en-US">Verify the sshd daemon allows public key authentication with the
+following:
+<pre>$ grep ^PubkeyAuthentication /etc/ssh/sshd_config
+PubkeyAuthentication yes</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-80222-3</td>
 <td>Enable Use of Strict Mode Checking</td>
 <td xml:lang="en-US">SSHs <code>StrictModes</code> option checks file and ownership permissions in
@@ -14358,6 +14489,15 @@ add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <td xml:lang="en-US">To enable the warning banner and ensure it is consistent
 across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
 <pre>Banner /etc/issue</pre>
+Another section contains information on how to create an
+appropriate system-wide warning banner.</td>
+</tr>
+<tr>
+<td></td>
+<td>Enable SSH Warning Banner</td>
+<td xml:lang="en-US">To enable the warning banner and ensure it is consistent
+across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+<pre>Banner /etc/issue.net</pre>
 Another section contains information on how to create an
 appropriate system-wide warning banner.</td>
 </tr>
@@ -14447,6 +14587,14 @@ and terminated.
 To ensure the SSH idle timeout occurs precisely when the
 <code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
 value of <code>0</code>.</td>
+</tr>
+<tr>
+<td>CCE-86550-1</td>
+<td>Ensure SSH LoginGraceTime is configured</td>
+<td xml:lang="en-US">The <code>LoginGraceTime</code> parameter to the SSH server specifies the time allowed for successful authentication to
+the SSH server. The longer the Grace period is the more open unauthenticated connections
+can exist. Like other session controls in this session the Grace Period should be limited to
+appropriate limits to ensure the service is available for needed access.</td>
 </tr>
 <tr>
 <td>CCE-80645-5</td>

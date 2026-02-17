@@ -690,9 +690,8 @@ which could weaken the system security posture.</td>
 </td>
 <td>Verify Permissions on SSH Server Private *_key Key Files</td>
 <td xml:lang="en-US">
-
 To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/ssh/*_key</pre>
+<pre>$ sudo chmod 0600 /etc/ssh/*_key</pre>
 </td>
 <td xml:lang="en-US">If an unauthorized user obtains the private SSH host key file, the host could be
 impersonated.</td>
@@ -1091,6 +1090,19 @@ inadvertently attempting to use these commands and therefore exposing
 their credentials. Note that removing the <code>rsh</code> package removes
 
 the clients for <code>rsh</code>,<code>rcp</code>, and <code>rlogin</code>.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R43)<br>
+</td>
+<td>Ensure rsyslog-gnutls is installed</td>
+<td xml:lang="en-US">TLS protocol support for rsyslog is installed.
+The <code>rsyslog-gnutls</code> package can be installed with the following command:
+<pre>
+$ sudo yum install rsyslog-gnutls</pre>
+</td>
+<td xml:lang="en-US">The rsyslog-gnutls package provides Transport Layer Security (TLS) support
+for the rsyslog daemon, which enables secure remote logging.</td>
 <td></td>
 </tr>
 <tr>
@@ -1529,6 +1541,38 @@ systems. This data can be used as an additional log source in the event a
 system is compromised and its local logs are suspect. Forwarding log messages
 to a remote loghost also provides system administrators with a centralized
 place to view the status of multiple hosts within the enterprise.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R43)<br>
+</td>
+<td>Configure TLS for rsyslog remote logging</td>
+<td xml:lang="en-US">Configure <code>rsyslog</code> to use Transport Layer
+Security (TLS) support for logging to remote server
+for the Forwarding Output Module in <code>/etc/rsyslog.conf</code>
+using action. You can use the following command:
+<pre>echo 'action(type="omfwd" protocol="tcp" Target="&lt;remote system&gt;" port="6514"
+    StreamDriver="gtls" StreamDriverMode="1" StreamDriverAuthMode="x509/name" streamdriver.CheckExtendedKeyPurpose="on")' &gt;&gt; /etc/rsyslog.conf
+</pre>
+Replace the <code>&lt;remote system&gt;</code> in the above command with an IP address or a host name of the remote logging server.</td>
+<td xml:lang="en-US">For protection of data being logged, the connection to the
+remote logging server needs to be authenticated and encrypted.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R43)<br>
+</td>
+<td>Configure CA certificate for rsyslog remote logging</td>
+<td xml:lang="en-US">Configure CA certificate for <code>rsyslog</code> logging
+to remote server using Transport Layer Security (TLS)
+using correct path for the <code>DefaultNetstreamDriverCAFile</code>
+global option in <code>/etc/rsyslog.conf</code>, for example with the following command:
+<pre>echo 'global(DefaultNetstreamDriverCAFile="/etc/pki/tls/cert.pem")' &gt;&gt; /etc/rsyslog.conf</pre>
+Replace the <code>/etc/pki/tls/cert.pem</code> in the above command with the path to the file with CA certificate generated for the purpose of remote logging.</td>
+<td xml:lang="en-US">The CA certificate needs to be set or <code>rsyslog.service</code>
+fails to start with
+<pre>error: ca certificate is not set, cannot continue</pre>
+</td>
 <td></td>
 </tr>
 <tr>

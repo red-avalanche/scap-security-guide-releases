@@ -5627,6 +5627,26 @@ difficult.</td>
 <td></td>
 </tr>
 <tr>
+<td>CM-6</td>
+<td>Disable debug-shell SystemD Service</td>
+<td xml:lang="en-US">SystemD's <code>debug-shell</code> service is intended to
+diagnose SystemD related boot issues with various <code>systemctl</code>
+commands. Once enabled and following a system reboot, the root shell
+will be available on <code>tty9</code> which is access by pressing
+<code>CTRL-ALT-F9</code>. The <code>debug-shell</code> service should only be used
+for SystemD related issues and should otherwise be disabled.
+<br><br>
+By default, the <code>debug-shell</code> SystemD service is already disabled.
+
+The <code>debug-shell</code> service can be disabled with the following command:
+<pre>$ sudo systemctl mask --now debug-shell.service</pre>
+</td>
+<td xml:lang="en-US">This prevents attackers with physical access from trivially bypassing security
+on the machine through valid troubleshooting configurations and gaining root
+access when the system is rebooted.</td>
+<td></td>
+</tr>
+<tr>
 <td>CM-6(a)</td>
 <td>Disable Ctrl-Alt-Del Burst Action</td>
 <td xml:lang="en-US">By default, <code>SystemD</code> will reboot the system if the <code>Ctrl-Alt-Del</code>
@@ -7035,7 +7055,7 @@ which is readable by all users.</td>
 <td>All GIDs referenced in /etc/passwd must be defined in /etc/group</td>
 <td xml:lang="en-US">Add a group to the system for each GID referenced without a corresponding group.</td>
 <td xml:lang="en-US">If a user is assigned the Group Identifier (GID) of a group not existing on the system, and a group
-with the Gruop Identifier (GID) is subsequently created, the user may have unintended rights to
+with the Group Identifier (GID) is subsequently created, the user may have unintended rights to
 any files associated with the group.</td>
 <td></td>
 </tr>
@@ -7044,7 +7064,7 @@ any files associated with the group.</td>
 <td>All GIDs referenced in /etc/passwd must be defined in /etc/group</td>
 <td xml:lang="en-US">Add a group to the system for each GID referenced without a corresponding group.</td>
 <td xml:lang="en-US">If a user is assigned the Group Identifier (GID) of a group not existing on the system, and a group
-with the Gruop Identifier (GID) is subsequently created, the user may have unintended rights to
+with the Group Identifier (GID) is subsequently created, the user may have unintended rights to
 any files associated with the group.</td>
 <td></td>
 </tr>
@@ -15126,7 +15146,8 @@ these events could serve as evidence of potential system compromise.</td>
 <tr>
 <td>AU-2(d)</td>
 <td>Record Unsuccessul Delete Attempts to Files - renameat</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+<td xml:lang="en-US">
+The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following lines to a file with suffix
@@ -15148,7 +15169,8 @@ these events could serve as evidence of potential system compromise.</td>
 <tr>
 <td>AU-12(c)</td>
 <td>Record Unsuccessul Delete Attempts to Files - renameat</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+<td xml:lang="en-US">
+The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following lines to a file with suffix
@@ -15170,7 +15192,8 @@ these events could serve as evidence of potential system compromise.</td>
 <tr>
 <td>CM-6(a)</td>
 <td>Record Unsuccessul Delete Attempts to Files - renameat</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+<td xml:lang="en-US">
+The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following lines to a file with suffix
@@ -15351,7 +15374,8 @@ these events could serve as evidence of potential system compromise.</td>
 <tr>
 <td>AU-2(d)</td>
 <td>Record Unsuccessul Delete Attempts to Files - unlink</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+<td xml:lang="en-US">
+The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following lines to a file with suffix
@@ -15375,7 +15399,8 @@ these events could serve as evidence of potential system compromise.</td>
 <tr>
 <td>AU-12(c)</td>
 <td>Record Unsuccessul Delete Attempts to Files - unlink</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+<td xml:lang="en-US">
+The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following lines to a file with suffix
@@ -15399,7 +15424,8 @@ these events could serve as evidence of potential system compromise.</td>
 <tr>
 <td>CM-6(a)</td>
 <td>Record Unsuccessul Delete Attempts to Files - unlink</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+<td xml:lang="en-US">
+The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following lines to a file with suffix
@@ -15423,7 +15449,8 @@ these events could serve as evidence of potential system compromise.</td>
 <tr>
 <td>AU-2(d)</td>
 <td>Record Unsuccessul Delete Attempts to Files - unlinkat</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+<td xml:lang="en-US">
+The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following lines to a file with suffix
@@ -15447,7 +15474,8 @@ these events could serve as evidence of potential system compromise.</td>
 <tr>
 <td>AU-12(c)</td>
 <td>Record Unsuccessul Delete Attempts to Files - unlinkat</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+<td xml:lang="en-US">
+The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following lines to a file with suffix
@@ -15471,7 +15499,8 @@ these events could serve as evidence of potential system compromise.</td>
 <tr>
 <td>CM-6(a)</td>
 <td>Record Unsuccessul Delete Attempts to Files - unlinkat</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+<td xml:lang="en-US">
+The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following lines to a file with suffix
@@ -20169,6 +20198,7 @@ by <code>auditd</code>, add or correct the line in <code>/etc/audit/auditd.conf<
 Possible values for <i>ACTION</i> are described in the <code>auditd.conf</code> man
 page. These include:
 <ul>
+<li><code>ignore</code></li>
 <li><code>syslog</code></li>
 <li><code>suspend</code></li>
 <li><code>rotate</code></li>
@@ -20193,6 +20223,7 @@ by <code>auditd</code>, add or correct the line in <code>/etc/audit/auditd.conf<
 Possible values for <i>ACTION</i> are described in the <code>auditd.conf</code> man
 page. These include:
 <ul>
+<li><code>ignore</code></li>
 <li><code>syslog</code></li>
 <li><code>suspend</code></li>
 <li><code>rotate</code></li>
@@ -20217,6 +20248,7 @@ by <code>auditd</code>, add or correct the line in <code>/etc/audit/auditd.conf<
 Possible values for <i>ACTION</i> are described in the <code>auditd.conf</code> man
 page. These include:
 <ul>
+<li><code>ignore</code></li>
 <li><code>syslog</code></li>
 <li><code>suspend</code></li>
 <li><code>rotate</code></li>
@@ -20241,6 +20273,7 @@ by <code>auditd</code>, add or correct the line in <code>/etc/audit/auditd.conf<
 Possible values for <i>ACTION</i> are described in the <code>auditd.conf</code> man
 page. These include:
 <ul>
+<li><code>ignore</code></li>
 <li><code>syslog</code></li>
 <li><code>suspend</code></li>
 <li><code>rotate</code></li>
@@ -20265,6 +20298,7 @@ by <code>auditd</code>, add or correct the line in <code>/etc/audit/auditd.conf<
 Possible values for <i>ACTION</i> are described in the <code>auditd.conf</code> man
 page. These include:
 <ul>
+<li><code>ignore</code></li>
 <li><code>syslog</code></li>
 <li><code>suspend</code></li>
 <li><code>rotate</code></li>
@@ -20505,13 +20539,90 @@ allow them to take corrective action prior to any disruption.</td>
 <td></td>
 </tr>
 <tr>
+<td>CM-6</td>
+<td>Set number of records to cause an explicit flush to audit logs</td>
+<td xml:lang="en-US">To configure Audit daemon to issue an explicit flush to disk command
+after writing 50 records, set <code>freq</code> to <code>50</code>
+in <code>/etc/audit/auditd.conf</code>.</td>
+<td xml:lang="en-US">If option <code>freq</code> isn't set to <code>50</code>, the flush to disk
+may happen after higher number of records, increasing the danger
+of audit loss.</td>
+<td></td>
+</tr>
+<tr>
+<td>CM-6</td>
+<td>Include Local Events in Audit Logs</td>
+<td xml:lang="en-US">To configure Audit daemon to include local events in Audit logs, set
+<code>local_events</code> to <code>yes</code> in <code>/etc/audit/auditd.conf</code>.
+This is the default setting.</td>
+<td xml:lang="en-US">If option <code>local_events</code> isn't set to <code>yes</code> only events from
+network will be aggregated.</td>
+<td></td>
+</tr>
+<tr>
+<td>CM-6</td>
+<td>Resolve information before writing to audit logs</td>
+<td xml:lang="en-US">To configure Audit daemon to resolve all uid, gid, syscall,
+architecture, and socket address information before writing the
+events to disk, set <code>log_format</code> to <code>ENRICHED</code>
+in <code>/etc/audit/auditd.conf</code>.</td>
+<td xml:lang="en-US">If option <code>log_format</code> isn't set to <code>ENRICHED</code>, the
+audit records will be stored in a format exactly as the kernel sends them.</td>
+<td></td>
+</tr>
+<tr>
+<td>AU-3</td>
+<td>Resolve information before writing to audit logs</td>
+<td xml:lang="en-US">To configure Audit daemon to resolve all uid, gid, syscall,
+architecture, and socket address information before writing the
+events to disk, set <code>log_format</code> to <code>ENRICHED</code>
+in <code>/etc/audit/auditd.conf</code>.</td>
+<td xml:lang="en-US">If option <code>log_format</code> isn't set to <code>ENRICHED</code>, the
+audit records will be stored in a format exactly as the kernel sends them.</td>
+<td></td>
+</tr>
+<tr>
+<td>CM-6</td>
+<td>Set hostname as computer node name in audit logs</td>
+<td xml:lang="en-US">To configure Audit daemon to use value returned by gethostname
+syscall as computer node name in the audit events,
+set <code>name_format</code> to <code>hostname</code>
+in <code>/etc/audit/auditd.conf</code>.</td>
+<td xml:lang="en-US">If option <code>name_format</code> is left at its default value of
+<code>none</code>, audit events from different computers may be hard
+to distinguish.</td>
+<td></td>
+</tr>
+<tr>
+<td>AU-3</td>
+<td>Set hostname as computer node name in audit logs</td>
+<td xml:lang="en-US">To configure Audit daemon to use value returned by gethostname
+syscall as computer node name in the audit events,
+set <code>name_format</code> to <code>hostname</code>
+in <code>/etc/audit/auditd.conf</code>.</td>
+<td xml:lang="en-US">If option <code>name_format</code> is left at its default value of
+<code>none</code>, audit events from different computers may be hard
+to distinguish.</td>
+<td></td>
+</tr>
+<tr>
 <td>AU-4(1)</td>
 <td>Appropriate Action Must be Setup When the Internal Audit Event Queue is Full</td>
 <td xml:lang="en-US">The audit system should have an action setup in the event the internal event queue becomes full.
-To setup an overflow action edit <code>/etc/audit/auditd.conf</code>. Set <code>overflow_action</code>
+To setup an overflow action edit <code>/etc/audisp/audispd.conf</code>. Set <code>overflow_action</code>
 to one of the following values: <code>syslog</code>, <code>single</code>, <code>halt</code>.</td>
 <td xml:lang="en-US">The audit system should have an action setup in the event the internal event queue becomes full
 so that no data is lost.</td>
+<td></td>
+</tr>
+<tr>
+<td>CM-6</td>
+<td>Write Audit Logs to the Disk</td>
+<td xml:lang="en-US">To configure Audit daemon to write Audit logs to the disk, set
+<code>write_logs</code> to <code>yes</code> in <code>/etc/audit/auditd.conf</code>.
+This is the default setting.</td>
+<td xml:lang="en-US">If <code>write_logs</code> isn't set to <code>yes</code>, the Audit logs will
+not be written to the disk.</td>
 <td></td>
 </tr>
 <tr>
@@ -20557,8 +20668,8 @@ of the return instruction pointer.</td>
 be group-owned by the <code>root</code> group to prevent
 destruction or modification of the file.
 
-To properly set the group owner of <code>{{{ grub2_boot_path }}}/grub.cfg</code>, run the command:
-<pre>$ sudo chgrp root {{{ grub2_boot_path }}}/grub.cfg</pre>
+To properly set the group owner of <code>/boot/grub2/grub.cfg</code>, run the command:
+<pre>$ sudo chgrp root /boot/grub2/grub.cfg</pre>
 </td>
 <td xml:lang="en-US">The <code>root</code> group is a highly-privileged group. Furthermore, the group-owner of this
 file should not have any access privileges anyway.</td>
@@ -20571,8 +20682,8 @@ file should not have any access privileges anyway.</td>
 be group-owned by the <code>root</code> group to prevent
 destruction or modification of the file.
 
-To properly set the group owner of <code>{{{ grub2_boot_path }}}/grub.cfg</code>, run the command:
-<pre>$ sudo chgrp root {{{ grub2_boot_path }}}/grub.cfg</pre>
+To properly set the group owner of <code>/boot/grub2/grub.cfg</code>, run the command:
+<pre>$ sudo chgrp root /boot/grub2/grub.cfg</pre>
 </td>
 <td xml:lang="en-US">The <code>root</code> group is a highly-privileged group. Furthermore, the group-owner of this
 file should not have any access privileges anyway.</td>
@@ -20585,8 +20696,8 @@ file should not have any access privileges anyway.</td>
 be owned by the <code>root</code> user to prevent destruction
 or modification of the file.
 
-To properly set the owner of <code>{{{ grub2_boot_path }}}/grub.cfg</code>, run the command:
-<pre>$ sudo chown root {{{ grub2_boot_path }}}/grub.cfg </pre>
+To properly set the owner of <code>/boot/grub2/grub.cfg</code>, run the command:
+<pre>$ sudo chown root /boot/grub2/grub.cfg </pre>
 </td>
 <td xml:lang="en-US">Only root should be able to modify important boot parameters.</td>
 <td></td>
@@ -20598,8 +20709,8 @@ To properly set the owner of <code>{{{ grub2_boot_path }}}/grub.cfg</code>, run 
 be owned by the <code>root</code> user to prevent destruction
 or modification of the file.
 
-To properly set the owner of <code>{{{ grub2_boot_path }}}/grub.cfg</code>, run the command:
-<pre>$ sudo chown root {{{ grub2_boot_path }}}/grub.cfg </pre>
+To properly set the owner of <code>/boot/grub2/grub.cfg</code>, run the command:
+<pre>$ sudo chown root /boot/grub2/grub.cfg </pre>
 </td>
 <td xml:lang="en-US">Only root should be able to modify important boot parameters.</td>
 <td></td>
@@ -20609,8 +20720,8 @@ To properly set the owner of <code>{{{ grub2_boot_path }}}/grub.cfg</code>, run 
 <td>Verify /boot/grub2/grub.cfg Permissions</td>
 <td xml:lang="en-US">File permissions for <code>/boot/grub2/grub.cfg</code> should be set to 600.
 
-To properly set the permissions of <code>{{{ grub2_boot_path }}}/grub.cfg</code>, run the command:
-<pre>$ sudo chmod 600 {{{ grub2_boot_path }}}/grub.cfg</pre>
+To properly set the permissions of <code>/boot/grub2/grub.cfg</code>, run the command:
+<pre>$ sudo chmod 600 /boot/grub2/grub.cfg</pre>
 </td>
 <td xml:lang="en-US">Proper permissions ensure that only the root user can modify important boot
 parameters.</td>
@@ -20621,8 +20732,8 @@ parameters.</td>
 <td>Verify /boot/grub2/grub.cfg Permissions</td>
 <td xml:lang="en-US">File permissions for <code>/boot/grub2/grub.cfg</code> should be set to 600.
 
-To properly set the permissions of <code>{{{ grub2_boot_path }}}/grub.cfg</code>, run the command:
-<pre>$ sudo chmod 600 {{{ grub2_boot_path }}}/grub.cfg</pre>
+To properly set the permissions of <code>/boot/grub2/grub.cfg</code>, run the command:
+<pre>$ sudo chmod 600 /boot/grub2/grub.cfg</pre>
 </td>
 <td xml:lang="en-US">Proper permissions ensure that only the root user can modify important boot
 parameters.</td>
@@ -20668,6 +20779,84 @@ When prompted, enter the password that was selected.
 <br><br>
 Once the superuser password has been added,
 update the
+<code>grub.cfg</code> file by running:
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
+</td>
+<td xml:lang="en-US">Password protection on the boot loader configuration ensures
+users with physical access cannot trivially alter
+important bootloader settings. These include which kernel to use,
+and whether to enter single-user mode.</td>
+<td></td>
+</tr>
+<tr>
+<td>AC-3</td>
+<td>Set Boot Loader Password in grub2 - systems prior to version 7.2</td>
+<td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
+<br><br>
+Since plaintext passwords are a security risk, generate an encrypted grub2 password
+for the grub superusers with the following command:
+<pre>$ grub2-mkpasswd-pbkdf2</pre>
+When prompted, enter the password that was selected.
+<br><br>
+Using the hash from the output, modify the <code>/etc/grub.d/40_custom</code>
+file with the following content:
+<pre>set superusers="root"
+password_pbkdf2 root grub.pbkdf2.sha512.VeryLongString
+</pre>
+Once the superuser password has been added, update the
+<code>grub.cfg</code> file by running:
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
+</td>
+<td xml:lang="en-US">Password protection on the boot loader configuration ensures
+users with physical access cannot trivially alter
+important bootloader settings. These include which kernel to use,
+and whether to enter single-user mode.</td>
+<td></td>
+</tr>
+<tr>
+<td>AC-3.1</td>
+<td>Set Boot Loader Password in grub2 - systems prior to version 7.2</td>
+<td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
+<br><br>
+Since plaintext passwords are a security risk, generate an encrypted grub2 password
+for the grub superusers with the following command:
+<pre>$ grub2-mkpasswd-pbkdf2</pre>
+When prompted, enter the password that was selected.
+<br><br>
+Using the hash from the output, modify the <code>/etc/grub.d/40_custom</code>
+file with the following content:
+<pre>set superusers="root"
+password_pbkdf2 root grub.pbkdf2.sha512.VeryLongString
+</pre>
+Once the superuser password has been added, update the
+<code>grub.cfg</code> file by running:
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
+</td>
+<td xml:lang="en-US">Password protection on the boot loader configuration ensures
+users with physical access cannot trivially alter
+important bootloader settings. These include which kernel to use,
+and whether to enter single-user mode.</td>
+<td></td>
+</tr>
+<tr>
+<td>AC-3</td>
+<td>Set Boot Loader Password in grub2 - systems prior to version 7.2</td>
+<td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
+<br><br>
+Since plaintext passwords are a security risk, generate an encrypted grub2 password
+for the grub superusers with the following command:
+<pre>$ grub2-mkpasswd-pbkdf2</pre>
+When prompted, enter the password that was selected.
+<br><br>
+Using the hash from the output, modify the <code>/etc/grub.d/40_custom</code>
+file with the following content:
+<pre>set superusers="root"
+password_pbkdf2 root grub.pbkdf2.sha512.VeryLongString
+</pre>
+Once the superuser password has been added, update the
 <code>grub.cfg</code> file by running:
 <pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
 </td>
@@ -20796,6 +20985,81 @@ Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
 
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
+</td>
+<td xml:lang="en-US">Password protection on the boot loader configuration ensures
+users with physical access cannot trivially alter
+important bootloader settings. These include which kernel to use,
+and whether to enter single-user mode.</td>
+<td></td>
+</tr>
+<tr>
+<td>AC-3</td>
+<td>Set the UEFI Boot Loader Password - systems prior to version 7.2</td>
+<td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
+<br><br>
+Since plaintext passwords are a security risk, generate a hash for the password
+by running the following command: <pre># grub2-mkpasswd-pbkdf2</pre>
+When prompted, enter the password that was selected.
+<br><br>
+Using the hash from the output, modify the <code>/etc/grub.d/40_custom</code>
+file with the following content:
+<pre>set superusers="root"
+password_pbkdf2 boot grub.pbkdf2.sha512.VeryLongString
+</pre>
+Once the superuser password has been added, update the
+<code>grub.cfg</code> file by running:
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
+</td>
+<td xml:lang="en-US">Password protection on the boot loader configuration ensures
+users with physical access cannot trivially alter
+important bootloader settings. These include which kernel to use,
+and whether to enter single-user mode.</td>
+<td></td>
+</tr>
+<tr>
+<td>AC-3.1</td>
+<td>Set the UEFI Boot Loader Password - systems prior to version 7.2</td>
+<td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
+<br><br>
+Since plaintext passwords are a security risk, generate a hash for the password
+by running the following command: <pre># grub2-mkpasswd-pbkdf2</pre>
+When prompted, enter the password that was selected.
+<br><br>
+Using the hash from the output, modify the <code>/etc/grub.d/40_custom</code>
+file with the following content:
+<pre>set superusers="root"
+password_pbkdf2 boot grub.pbkdf2.sha512.VeryLongString
+</pre>
+Once the superuser password has been added, update the
+<code>grub.cfg</code> file by running:
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
+</td>
+<td xml:lang="en-US">Password protection on the boot loader configuration ensures
+users with physical access cannot trivially alter
+important bootloader settings. These include which kernel to use,
+and whether to enter single-user mode.</td>
+<td></td>
+</tr>
+<tr>
+<td>AC-3</td>
+<td>Set the UEFI Boot Loader Password - systems prior to version 7.2</td>
+<td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
+<br><br>
+Since plaintext passwords are a security risk, generate a hash for the password
+by running the following command: <pre># grub2-mkpasswd-pbkdf2</pre>
+When prompted, enter the password that was selected.
+<br><br>
+Using the hash from the output, modify the <code>/etc/grub.d/40_custom</code>
+file with the following content:
+<pre>set superusers="root"
+password_pbkdf2 boot grub.pbkdf2.sha512.VeryLongString
+</pre>
+Once the superuser password has been added, update the
+<code>grub.cfg</code> file by running:
 <pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
 </td>
 <td xml:lang="en-US">Password protection on the boot loader configuration ensures
@@ -27129,6 +27393,99 @@ address information.</td>
 <td></td>
 </tr>
 <tr>
+<td>CM-6</td>
+<td>Disable Kernel Image Loading</td>
+<td xml:lang="en-US">To set the runtime status of the <code>kernel.kexec_load_disabled</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.kexec_load_disabled=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.kexec_load_disabled = 1</pre>
+</td>
+<td xml:lang="en-US">Disabling kexec_load allows greater control of the kernel memory.
+It makes it impossible to load another kernel image after it has been disabled.
+</td>
+<td></td>
+</tr>
+<tr>
+<td>AC-6</td>
+<td>Disallow kernel profiling by unprivileged users</td>
+<td xml:lang="en-US">To set the runtime status of the <code>kernel.perf_event_paranoid</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.perf_event_paranoid=2</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.perf_event_paranoid = 2</pre>
+</td>
+<td xml:lang="en-US">Kernel profiling can reveal sensitive information about kernel behaviour.</td>
+<td></td>
+</tr>
+<tr>
+<td>SC-7(10)</td>
+<td>Restrict usage of ptrace to descendant processes</td>
+<td xml:lang="en-US">To set the runtime status of the <code>kernel.yama.ptrace_scope</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.yama.ptrace_scope=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.yama.ptrace_scope = 1</pre>
+</td>
+<td xml:lang="en-US">Unrestricted usage of ptrace allows compromised binaries to run ptrace
+on another processes of the user. Like this, the attacker can steal
+sensitive information from the target processes (e.g. SSH sessions, web browser, ...)
+without any additional assistance from the user (i.e. without resorting to phishing).
+</td>
+<td></td>
+</tr>
+<tr>
+<td>CM-6</td>
+<td>Disable core dump backtraces</td>
+<td xml:lang="en-US">The <code>ProcessSizeMax</code> option in <code>[Coredump]</code> section
+of <code>/etc/systemd/coredump.conf</code>
+specifies the maximum size in bytes of a core which will be processed.
+Core dumps exceeding this size may be stored, but the backtrace will not
+be generated.</td>
+<td xml:lang="en-US">A core dump includes a memory image taken at the time the operating system
+terminates an application. The memory image could contain sensitive data
+and is generally useful only for developers or system operators trying to
+debug problems.
+
+Enabling core dumps on production systems is not recommended,
+however there may be overriding operational requirements to enable advanced
+debuging. Permitting temporary enablement of core dumps during such situations
+should be reviewed through local needs and policy.</td>
+<td></td>
+</tr>
+<tr>
+<td>CM-6</td>
+<td>Disable storing core dump</td>
+<td xml:lang="en-US">The <code>Storage</code> option in <code>[Coredump]</code> section
+of <code>/etc/systemd/coredump.conf</code>
+can be set to <code>none</code> to disable storing core dumps permanently.</td>
+<td xml:lang="en-US">A core dump includes a memory image taken at the time the operating system
+terminates an application. The memory image could contain sensitive data
+and is generally useful only for developers or system operators trying to
+debug problems. Enabling core dumps on production systems is not recommended,
+however there may be overriding operational requirements to enable advanced
+debuging. Permitting temporary enablement of core dumps during such situations
+should be reviewed through local needs and policy.</td>
+<td></td>
+</tr>
+<tr>
+<td>CM-6</td>
+<td>Disable Core Dumps for All Users</td>
+<td xml:lang="en-US">To disable core dumps for all users, add the following line to
+<code>/etc/security/limits.conf</code>, or to a file within the
+<code>/etc/security/limits.d/</code> directory:
+<pre>*     hard   core    0</pre>
+</td>
+<td xml:lang="en-US">A core dump includes a memory image taken at the time the operating system
+terminates an application. The memory image could contain sensitive data and is generally useful
+only for developers trying to debug problems.</td>
+<td></td>
+</tr>
+<tr>
+<td>SC-7(10)</td>
+<td>Disable Core Dumps for All Users</td>
+<td xml:lang="en-US">To disable core dumps for all users, add the following line to
+<code>/etc/security/limits.conf</code>, or to a file within the
+<code>/etc/security/limits.d/</code> directory:
+<pre>*     hard   core    0</pre>
+</td>
+<td xml:lang="en-US">A core dump includes a memory image taken at the time the operating system
+terminates an application. The memory image could contain sensitive data and is generally useful
+only for developers trying to debug problems.</td>
+<td></td>
+</tr>
+<tr>
 <td>SI-11(a)</td>
 <td>Disable Core Dumps for SUID programs</td>
 <td xml:lang="en-US">To set the runtime status of the <code>fs.suid_dumpable</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.suid_dumpable=0</pre>
@@ -30310,9 +30667,8 @@ of interception and modification.</td>
 <td>AC-17(a)</td>
 <td>Verify Permissions on SSH Server Private *_key Key Files</td>
 <td xml:lang="en-US">
-
 To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/ssh/*_key</pre>
+<pre>$ sudo chmod 0600 /etc/ssh/*_key</pre>
 </td>
 <td xml:lang="en-US">If an unauthorized user obtains the private SSH host key file, the host could be
 impersonated.</td>
@@ -30322,9 +30678,8 @@ impersonated.</td>
 <td>CM-6(a)</td>
 <td>Verify Permissions on SSH Server Private *_key Key Files</td>
 <td xml:lang="en-US">
-
 To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/ssh/*_key</pre>
+<pre>$ sudo chmod 0600 /etc/ssh/*_key</pre>
 </td>
 <td xml:lang="en-US">If an unauthorized user obtains the private SSH host key file, the host could be
 impersonated.</td>
@@ -30334,9 +30689,8 @@ impersonated.</td>
 <td>AC-6(1)</td>
 <td>Verify Permissions on SSH Server Private *_key Key Files</td>
 <td xml:lang="en-US">
-
 To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/ssh/*_key</pre>
+<pre>$ sudo chmod 0600 /etc/ssh/*_key</pre>
 </td>
 <td xml:lang="en-US">If an unauthorized user obtains the private SSH host key file, the host could be
 impersonated.</td>
@@ -31285,6 +31639,62 @@ not provide easy attribution.</td>
 <td xml:lang="en-US">To enable the warning banner and ensure it is consistent
 across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
 <pre>Banner /etc/issue</pre>
+Another section contains information on how to create an
+appropriate system-wide warning banner.</td>
+<td xml:lang="en-US">The warning message reinforces policy awareness during the logon process and
+facilitates possible legal action against attackers. Alternatively, systems
+whose ownership should not be obvious should ensure usage of a banner that does
+not provide easy attribution.</td>
+<td></td>
+</tr>
+<tr>
+<td>AC-8(a)</td>
+<td>Enable SSH Warning Banner</td>
+<td xml:lang="en-US">To enable the warning banner and ensure it is consistent
+across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+<pre>Banner /etc/issue.net</pre>
+Another section contains information on how to create an
+appropriate system-wide warning banner.</td>
+<td xml:lang="en-US">The warning message reinforces policy awareness during the logon process and
+facilitates possible legal action against attackers. Alternatively, systems
+whose ownership should not be obvious should ensure usage of a banner that does
+not provide easy attribution.</td>
+<td></td>
+</tr>
+<tr>
+<td>AC-8(c)</td>
+<td>Enable SSH Warning Banner</td>
+<td xml:lang="en-US">To enable the warning banner and ensure it is consistent
+across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+<pre>Banner /etc/issue.net</pre>
+Another section contains information on how to create an
+appropriate system-wide warning banner.</td>
+<td xml:lang="en-US">The warning message reinforces policy awareness during the logon process and
+facilitates possible legal action against attackers. Alternatively, systems
+whose ownership should not be obvious should ensure usage of a banner that does
+not provide easy attribution.</td>
+<td></td>
+</tr>
+<tr>
+<td>AC-17(a)</td>
+<td>Enable SSH Warning Banner</td>
+<td xml:lang="en-US">To enable the warning banner and ensure it is consistent
+across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+<pre>Banner /etc/issue.net</pre>
+Another section contains information on how to create an
+appropriate system-wide warning banner.</td>
+<td xml:lang="en-US">The warning message reinforces policy awareness during the logon process and
+facilitates possible legal action against attackers. Alternatively, systems
+whose ownership should not be obvious should ensure usage of a banner that does
+not provide easy attribution.</td>
+<td></td>
+</tr>
+<tr>
+<td>CM-6(a)</td>
+<td>Enable SSH Warning Banner</td>
+<td xml:lang="en-US">To enable the warning banner and ensure it is consistent
+across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+<pre>Banner /etc/issue.net</pre>
 Another section contains information on how to create an
 appropriate system-wide warning banner.</td>
 <td xml:lang="en-US">The warning message reinforces policy awareness during the logon process and
@@ -32693,6 +33103,34 @@ set to <code>ldap</code> or <code>ipa</code>, use the following command:
 altered by unauthorized users without detection. The ssl directive specifies
 whether to use TLS or not. If not specified it will default to no.
 It should be set to start_tls rather than doing LDAP over SSL.</td>
+<td></td>
+</tr>
+<tr>
+<td>CM-8(3)</td>
+<td>Install usbguard Package</td>
+<td xml:lang="en-US">
+The <code>usbguard</code> package can be installed with the following command:
+<pre>
+$ sudo yum install usbguard</pre>
+</td>
+<td xml:lang="en-US">
+<code>usbguard</code> is a software framework that helps to protect
+against rogue USB devices by implementing basic whitelisting/blacklisting
+capabilities based on USB device attributes.</td>
+<td></td>
+</tr>
+<tr>
+<td>IA-3</td>
+<td>Install usbguard Package</td>
+<td xml:lang="en-US">
+The <code>usbguard</code> package can be installed with the following command:
+<pre>
+$ sudo yum install usbguard</pre>
+</td>
+<td xml:lang="en-US">
+<code>usbguard</code> is a software framework that helps to protect
+against rogue USB devices by implementing basic whitelisting/blacklisting
+capabilities based on USB device attributes.</td>
 <td></td>
 </tr>
 <tr>

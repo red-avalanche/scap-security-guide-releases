@@ -273,7 +273,7 @@ The banner text must also be set.</td>
 </tr>
 <tr>
 <td>V-217106</td>
-<td>1384</td>
+<td>1388</td>
 <td>medium</td>
 <td>The SUSE operating system must display the approved Standard Mandatory DoD Notice before granting local or remote access to the system via a graphical user logon.</td>
 <td>An appropriate warning message reinforces policy awareness during the logon
@@ -333,7 +333,7 @@ Validate that <code>disable-lock-screen</code> has been set to <code>false</code
 </tr>
 <tr>
 <td>V-217108</td>
-<td>58</td>
+<td>60</td>
 <td>low</td>
 <td>The SUSE operating system must utilize vlock to allow for session locking.</td>
 <td>A session lock is a temporary action taken when a user stops work and
@@ -836,7 +836,7 @@ the system will use SHA-512 as the hashing algorithm:
 </tr>
 <tr>
 <td>V-217123</td>
-<td>196</td>
+<td>803</td>
 <td>medium</td>
 <td>The SUSE operating system must employ FIPS 140-2-approved cryptographic hashing algorithms for all stored passwords.</td>
 <td>The system must use a strong hashing algorithm to store the password. The
@@ -1002,31 +1002,6 @@ minimum characters required in a password. Add <code>minlen=<xccdf-1.1:sub xmlns
 <td>The SUSE operating system must be configured to create or update passwords with a minimum lifetime of 24 hours (one day).</td>
 <td>Enforcing a minimum password lifetime helps to prevent repeated password
 changes to defeat the password reuse or history enforcement requirement. If
-users are allowed to immediately and continually change their password, the
-password could be repeatedly changed in a short period of time to defeat the
-organization's policy regarding password reuse.</td>
-<td>Check whether the minimum time period between password changes for each
-user account is one day or greater by running the following command for
-each user:
-$ sudo chage -l USER | grep Minimum
-The output for each user should return something similary to the following:
-Minimum number of days between password change\t\t: 1
-      Is it the case that existing passwords are not configured correctly?
-      </td>
-<td>Configure non-compliant accounts to enforce a 24 hours/1 day minimum password
-lifetime by running the following command:
-<pre>$ sudo chage -m 1 <i>USER</i></pre>
-</td>
-<td>SLES-12-010260</td>
-<td>accounts_password_set_min_life_existing</td>
-</tr>
-<tr>
-<td>V-217129</td>
-<td>198</td>
-<td>medium</td>
-<td>The SUSE operating system must employ user passwords with a minimum lifetime of 24 hours (one day).</td>
-<td>Enforcing a minimum password lifetime helps to prevent repeated password
-changes to defeat the password reuse or history enforcement requirement. If
 users are allowed to immediately and continually change their password,
 then the password could be repeatedly changed in a short period of time to
 defeat the organization's policy regarding password reuse.
@@ -1044,8 +1019,33 @@ and add or correct the following line:
 A value of 1 day is considered sufficient for many
 environments. The DoD requirement is 1.
 The profile requirement is <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_minimum_age_login_defs"></xccdf-1.1:sub></code>.</td>
-<td>SLES-12-010270</td>
+<td>SLES-12-010260</td>
 <td>accounts_minimum_age_login_defs</td>
+</tr>
+<tr>
+<td>V-217129</td>
+<td>198</td>
+<td>medium</td>
+<td>The SUSE operating system must employ user passwords with a minimum lifetime of 24 hours (one day).</td>
+<td>Enforcing a minimum password lifetime helps to prevent repeated password
+changes to defeat the password reuse or history enforcement requirement. If
+users are allowed to immediately and continually change their password, the
+password could be repeatedly changed in a short period of time to defeat the
+organization's policy regarding password reuse.</td>
+<td>Check whether the minimum time period between password changes for each
+user account is one day or greater by running the following command for
+each user:
+$ sudo chage -l USER | grep Minimum
+The output for each user should return something similary to the following:
+Minimum number of days between password change\t\t: 1
+      Is it the case that existing passwords are not configured correctly?
+      </td>
+<td>Configure non-compliant accounts to enforce a 24 hours/1 day minimum password
+lifetime by running the following command:
+<pre>$ sudo chage -m 1 <i>USER</i></pre>
+</td>
+<td>SLES-12-010270</td>
+<td>accounts_password_set_min_life_existing</td>
 </tr>
 <tr>
 <td>V-217130</td>
@@ -1629,7 +1629,7 @@ following command:
 </tr>
 <tr>
 <td>V-217148</td>
-<td>1744</td>
+<td>2699</td>
 <td>medium</td>
 <td>Advanced Intrusion Detection Environment (AIDE) must verify the baseline SUSE operating system configuration at least weekly.</td>
 <td>The AIDE package must be installed if it is to be available for integrity checking.</td>
@@ -1920,7 +1920,7 @@ The <code>autofs</code> service can be disabled with the following command:
 <td>V-222385</td>
 <td></td>
 <td>medium</td>
-<td>The SUSE operating system must have a host-based intrusion detection tool installed.</td>
+<td>The SUSE operating system must implement the Endpoint Security for Linux Threat Prevention tool.</td>
 <td></td>
 <td></td>
 <td></td>
@@ -2103,7 +2103,7 @@ command: <pre>$ sudo usermod -s /sbin/nologin <i>SYSACCT</i></pre>
 </tr>
 <tr>
 <td>V-217163</td>
-<td>764</td>
+<td>804</td>
 <td>medium</td>
 <td>The SUSE operating system must not have duplicate User IDs (UIDs) for interactive users.</td>
 <td>To assure accountability and prevent unauthenticated access, interactive users must be identified and authenticated to prevent potential misuse and compromise of the system.</td>
@@ -2286,7 +2286,12 @@ defined.
       Is it the case that users home directory is not defined?
       </td>
 <td>Assign home directories to all interactive users that currently do not
-have a home directory assigned.</td>
+have a home directory assigned.
+
+This rule checks if the home directory is properly defined in a folder which has
+at least one parent folder, like "user" in "/home/user" or "/remote/users/user".
+Therefore, this rule will report a finding for home directories like <code>/users</code>,
+<code>/tmp</code> or <code>/</code>.</td>
 <td>SLES-12-010710</td>
 <td>accounts_user_interactive_home_directory_defined</td>
 </tr>
@@ -2376,7 +2381,10 @@ owned by that users primary GID, run the following command:
 group found in <code>/etc/passwd</code>. To change the group owner of
 interactive users home directory, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i></pre>
-</td>
+
+This rule ensures every home directory related to an interactive user is
+group-owned by an interactive user. It also ensures that interactive users
+are group-owners of one and only one home directory.</td>
 <td>SLES-12-010750</td>
 <td>file_groupownership_home_directories</td>
 </tr>
@@ -3402,7 +3410,8 @@ and set it with the following line:
 <td>Information stored in one location is vulnerable to accidental or incidental
 deletion or alteration.Off-loading is a common process in information systems
 with limited audit storage capacity.</td>
-<td>To verify the audispd plugin off-loads audit records onto a different system or
+<td>
+To verify the audispd plugin off-loads audit records onto a different system or
 media from the system being audited, run the following command:
 
 $ sudo grep -i remote_server /etc/audisp/audisp-remote.conf
@@ -3413,6 +3422,7 @@ remote_server =
       </td>
 <td>Configure the audispd plugin to off-load audit records onto a different
 system or media from the system being audited.
+
 Set the <code>remote_server</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>
 with an IP address or hostname of the system that the audispd plugin should
 send audit records to. For example
@@ -3525,7 +3535,7 @@ Check that "permissions.local" file contains the correct permissions rules with 
 </tr>
 <tr>
 <td>V-217203</td>
-<td>1493</td>
+<td>1495</td>
 <td>medium</td>
 <td>The SUSE operating system audit tools must have the proper permissions configured to protect against unauthorized access.</td>
 <td>Protecting audit information also includes identifying and protecting the
@@ -3643,7 +3653,7 @@ account changes:
 </tr>
 <tr>
 <td>V-217206</td>
-<td>2130</td>
+<td>2132</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/group.</td>
 <td>In addition to auditing new user and group accounts, these watches
@@ -3713,7 +3723,7 @@ account changes:
 </tr>
 <tr>
 <td>V-217208</td>
-<td>2130</td>
+<td>2132</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/opasswd.</td>
 <td>In addition to auditing new user and group accounts, these watches
@@ -3748,7 +3758,7 @@ account changes:
 </tr>
 <tr>
 <td>V-217209</td>
-<td>1882</td>
+<td>2234</td>
 <td>low</td>
 <td>The SUSE operating system must generate audit records for all uses of the privileged functions.</td>
 <td>Misuse of privileged functions, either intentionally or unintentionally by
@@ -4069,7 +4079,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 setxattr system call, run the following command:
-preserve$ sudo grep "setxattr" /etc/audit/audit.*
+$ sudo grep "setxattr" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4103,7 +4113,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 fsetxattr system call, run the following command:
-preserve$ sudo grep "fsetxattr" /etc/audit/audit.*
+$ sudo grep "fsetxattr" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4137,7 +4147,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 removexattr system call, run the following command:
-preserve$ sudo grep "removexattr" /etc/audit/audit.*
+$ sudo grep "removexattr" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4175,7 +4185,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 lremovexattr system call, run the following command:
-preserve$ sudo grep "lremovexattr" /etc/audit/audit.*
+$ sudo grep "lremovexattr" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4214,7 +4224,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 fremovexattr system call, run the following command:
-preserve$ sudo grep "fremovexattr" /etc/audit/audit.*
+$ sudo grep "fremovexattr" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4253,7 +4263,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 chown system call, run the following command:
-preserve$ sudo grep "chown" /etc/audit/audit.*
+$ sudo grep "chown" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4287,7 +4297,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 fchown system call, run the following command:
-preserve$ sudo grep "fchown" /etc/audit/audit.*
+$ sudo grep "fchown" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4324,7 +4334,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 lchown system call, run the following command:
-preserve$ sudo grep "lchown" /etc/audit/audit.*
+$ sudo grep "lchown" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4358,7 +4368,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 fchownat system call, run the following command:
-preserve$ sudo grep "fchownat" /etc/audit/audit.*
+$ sudo grep "fchownat" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4392,7 +4402,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 chmod system call, run the following command:
-preserve$ sudo grep "chmod" /etc/audit/audit.*
+$ sudo grep "chmod" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4426,7 +4436,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 fchmod system call, run the following command:
-preserve$ sudo grep "fchmod" /etc/audit/audit.*
+$ sudo grep "fchmod" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4460,7 +4470,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 fchmodat system call, run the following command:
-preserve$ sudo grep "fchmodat" /etc/audit/audit.*
+$ sudo grep "fchmodat" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4492,7 +4502,7 @@ If the system is 64 bit then also add the following line:
 these events could serve as evidence of potential system compromise.</td>
 <td>To determine if the system is configured to audit calls to the
 open system call, run the following command:
-preserve$ sudo grep "open" /etc/audit/audit.*
+$ sudo grep "open" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4533,7 +4543,7 @@ If the system is 64 bit then also add the following lines:
 these events could serve as evidence of potential system compromise.</td>
 <td>To determine if the system is configured to audit calls to the
 truncate system call, run the following command:
-preserve$ sudo grep "truncate" /etc/audit/audit.*
+$ sudo grep "truncate" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4574,7 +4584,7 @@ If the system is 64 bit then also add the following lines:
 these events could serve as evidence of potential system compromise.</td>
 <td>To determine if the system is configured to audit calls to the
 ftruncate system call, run the following command:
-preserve$ sudo grep "ftruncate" /etc/audit/audit.*
+$ sudo grep "ftruncate" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4615,7 +4625,7 @@ If the system is 64 bit then also add the following lines:
 these events could serve as evidence of potential system compromise.</td>
 <td>To determine if the system is configured to audit calls to the
 creat system call, run the following command:
-preserve$ sudo grep "creat" /etc/audit/audit.*
+$ sudo grep "creat" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4653,7 +4663,7 @@ If the system is 64 bit then also add the following lines:
 these events could serve as evidence of potential system compromise.</td>
 <td>To determine if the system is configured to audit calls to the
 openat system call, run the following command:
-preserve$ sudo grep "openat" /etc/audit/audit.*
+$ sudo grep "openat" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4694,7 +4704,7 @@ If the system is 64 bit then also add the following lines:
 these events could serve as evidence of potential system compromise.</td>
 <td>To determine if the system is configured to audit calls to the
 open_by_handle_at system call, run the following command:
-preserve$ sudo grep "open_by_handle_at" /etc/audit/audit.*
+$ sudo grep "open_by_handle_at" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -5344,7 +5354,7 @@ the kernel and potentially introduce malicious code into kernel space. It is imp
 to have an audit trail of modules that have been introduced into the kernel.</td>
 <td>To determine if the system is configured to audit calls to the
 delete_module system call, run the following command:
-preserve$ sudo grep "delete_module" /etc/audit/audit.*
+$ sudo grep "delete_module" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -5372,7 +5382,7 @@ the kernel and potentially introduce malicious code into kernel space. It is imp
 to have an audit trail of modules that have been introduced into the kernel.</td>
 <td>To determine if the system is configured to audit calls to the
 finit_module system call, run the following command:
-preserve$ sudo grep "finit_module" /etc/audit/audit.*
+$ sudo grep "finit_module" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -5401,7 +5411,7 @@ the kernel and potentially introduce malicious code into kernel space. It is imp
 to have an audit trail of modules that have been introduced into the kernel.</td>
 <td>To determine if the system is configured to audit calls to the
 init_module system call, run the following command:
-preserve$ sudo grep "init_module" /etc/audit/audit.*
+$ sudo grep "init_module" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -5549,7 +5559,7 @@ OR:
 </tr>
 <tr>
 <td>V-217261</td>
-<td>2080</td>
+<td>2314</td>
 <td>medium</td>
 <td>The SUSE operating system must be configured to prohibit or restrict the use of functions, ports, protocols, and/or services as defined in the Ports, Protocols, and Services Management (PPSM) Category Assignments List (CAL) and vulnerability assessments.</td>
 <td>To prevent unauthorized connection of devices, unauthorized transfer of
@@ -5672,7 +5682,7 @@ If the "FW_SERVICES_ACCEPT_EXT" rule does not contain both the
 </tr>
 <tr>
 <td>V-217263</td>
-<td>48</td>
+<td>1388</td>
 <td>medium</td>
 <td>The SUSE operating system must display the Standard Mandatory DoD Notice and Consent Banner before granting access via SSH.</td>
 <td>The warning message reinforces policy awareness during the logon process and
@@ -6014,11 +6024,10 @@ impersonated.</td>
 run the command:
 $ ls -l /etc/ssh/*_key
 If properly configured, the output should indicate the following permissions:
--rw-r-----
-      Is it the case that /etc/ssh/*_key has unix mode -rw-r-----?
+-rw-------
+      Is it the case that /etc/ssh/*_key has unix mode -rw-------?
       </td>
 <td>
-
 To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
 <pre>$ sudo chmod 0600 /etc/ssh/*_key</pre>
 </td>
@@ -6143,7 +6152,7 @@ display. Make sure that the option <code>X11UseLocalhost</code> is set to
 </tr>
 <tr>
 <td>V-217281</td>
-<td>1891</td>
+<td>2046</td>
 <td>medium</td>
 <td>The SUSE operating system clock must, for networked systems, be synchronized to an authoritative DoD time source at least every 24 hours.</td>
 <td>Inaccurate time stamps make it more difficult to correlate
@@ -6217,9 +6226,9 @@ $ grep -r '^\s*kernel.kptr_restrict\s*=' /etc/sysctl.conf /etc/sysctl.d
 If any assignments other than
 kernel.kptr_restrict = 1
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains kernel.kptr_restrict = 1, and that one assignment
-is returned when 
+is returned when
 $ grep -r kernel.kptr_restrict /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -6256,9 +6265,9 @@ $ grep -r '^\s*kernel.randomize_va_space\s*=' /etc/sysctl.conf /etc/sysctl.d
 If any assignments other than
 kernel.randomize_va_space = 2
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains kernel.randomize_va_space = 2, and that one assignment
-is returned when 
+is returned when
 $ grep -r kernel.randomize_va_space /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -6340,9 +6349,9 @@ $ grep -r '^\s*net.ipv4.tcp_syncookies\s*=' /etc/sysctl.conf /etc/sysctl.d
 If any assignments other than
 net.ipv4.tcp_syncookies = 1
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.tcp_syncookies = 1, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.tcp_syncookies /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -6381,9 +6390,9 @@ $ grep -r '^\s*net.ipv4.conf.all.accept_source_route\s*=' /etc/sysctl.conf /etc/
 If any assignments other than
 net.ipv4.conf.all.accept_source_route = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.conf.all.accept_source_route = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.conf.all.accept_source_route /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -6422,9 +6431,9 @@ $ grep -r '^\s*net.ipv6.conf.all.accept_source_route\s*=' /etc/sysctl.conf /etc/
 If any assignments other than
 net.ipv6.conf.all.accept_source_route = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv6.conf.all.accept_source_route = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv6.conf.all.accept_source_route /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -6463,9 +6472,9 @@ $ grep -r '^\s*net.ipv6.conf.default.accept_source_route\s*=' /etc/sysctl.conf /
 If any assignments other than
 net.ipv6.conf.default.accept_source_route = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv6.conf.default.accept_source_route = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv6.conf.default.accept_source_route /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -6499,9 +6508,9 @@ $ grep -r '^\s*net.ipv6.conf.default.forwarding\s*=' /etc/sysctl.conf /etc/sysct
 If any assignments other than
 net.ipv6.conf.default.forwarding = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv6.conf.default.forwarding = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv6.conf.default.forwarding /etc/sysctl.conf /etc/sysctl.d
 is executed.
 The ability to forward packets is only appropriate for routers.
@@ -6535,9 +6544,9 @@ $ grep -r '^\s*net.ipv6.conf.all.forwarding\s*=' /etc/sysctl.conf /etc/sysctl.d
 If any assignments other than
 net.ipv6.conf.all.forwarding = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv6.conf.all.forwarding = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv6.conf.all.forwarding /etc/sysctl.conf /etc/sysctl.d
 is executed.
 The ability to forward packets is only appropriate for routers.
@@ -6587,9 +6596,9 @@ $ grep -r '^\s*net.ipv4.conf.default.accept_source_route\s*=' /etc/sysctl.conf /
 If any assignments other than
 net.ipv4.conf.default.accept_source_route = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.conf.default.accept_source_route = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.conf.default.accept_source_route /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -6625,9 +6634,9 @@ $ grep -r '^\s*net.ipv4.icmp_echo_ignore_broadcasts\s*=' /etc/sysctl.conf /etc/s
 If any assignments other than
 net.ipv4.icmp_echo_ignore_broadcasts = 1
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.icmp_echo_ignore_broadcasts = 1, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.icmp_echo_ignore_broadcasts /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -6665,9 +6674,9 @@ $ grep -r '^\s*net.ipv4.conf.all.accept_redirects\s*=' /etc/sysctl.conf /etc/sys
 If any assignments other than
 net.ipv4.conf.all.accept_redirects = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.conf.all.accept_redirects = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.conf.all.accept_redirects /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -6704,9 +6713,9 @@ $ grep -r '^\s*net.ipv4.conf.default.accept_redirects\s*=' /etc/sysctl.conf /etc
 If any assignments other than
 net.ipv4.conf.default.accept_redirects = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.conf.default.accept_redirects = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.conf.default.accept_redirects /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -6738,9 +6747,9 @@ $ grep -r '^\s*net.ipv6.conf.default.accept_redirects\s*=' /etc/sysctl.conf /etc
 If any assignments other than
 net.ipv6.conf.default.accept_redirects = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv6.conf.default.accept_redirects = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv6.conf.default.accept_redirects /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -6776,9 +6785,9 @@ $ grep -r '^\s*net.ipv4.conf.default.send_redirects\s*=' /etc/sysctl.conf /etc/s
 If any assignments other than
 net.ipv4.conf.default.send_redirects = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.conf.default.send_redirects = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.conf.default.send_redirects /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -6814,9 +6823,9 @@ $ grep -r '^\s*net.ipv4.conf.all.send_redirects\s*=' /etc/sysctl.conf /etc/sysct
 If any assignments other than
 net.ipv4.conf.all.send_redirects = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.conf.all.send_redirects = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.conf.all.send_redirects /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -6851,9 +6860,9 @@ $ grep -r '^\s*net.ipv4.ip_forward\s*=' /etc/sysctl.conf /etc/sysctl.d
 If any assignments other than
 net.ipv4.ip_forward = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.ip_forward = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.ip_forward /etc/sysctl.conf /etc/sysctl.d
 is executed.
 The ability to forward packets is only appropriate for routers.
@@ -7027,7 +7036,7 @@ $ sudo zypper install coolkey</pre>
 </tr>
 <tr>
 <td>V-217300</td>
-<td>1953</td>
+<td>1954</td>
 <td>medium</td>
 <td>The SUSE operating system must implement certificate status checking for multifactor authentication.</td>
 <td>Using an authentication device, such as a CAC or token that is separate from

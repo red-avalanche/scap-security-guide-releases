@@ -635,7 +635,9 @@ user defaults for each account on the system.</td>
 in <pre>/etc/passwd</pre> for the user. To change the group owner of a local
 interactive user home directory, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i>/.<i>INIT_FILE</i></pre>
-</td>
+
+This rule ensures every initialization file related to an interactive user
+is group-owned by an interactive user.</td>
 <td xml:lang="en-US">Local initialization files for interactive users are used to configure the
 user's shell environment upon logon. Malicious modification of these files could
 compromise accounts upon logon.</td>
@@ -663,7 +665,9 @@ compromise the system at the root and network level.</td>
 <td xml:lang="en-US">Set the owner of the user initialization files for interactive users to
 the primary owner with the following command:
 <pre>$ sudo chown <i>USER</i> /home/<i>USER</i>/.*</pre>
-</td>
+
+This rule ensures every initialization file related to an interactive user
+is owned by an interactive user.</td>
 <td xml:lang="en-US">Local initialization files are used to configure the user's shell environment
 upon logon. Malicious modification of these files could compromise accounts upon
 logon.</td>
@@ -711,7 +715,9 @@ to system files they normally would not be able to access.</td>
 group that the interactive user is a member of. To change the group owner of a
 local interactive users files and directories, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i>/<i>FILE_DIR</i></pre>
-</td>
+
+This rule ensures every file or directory under the home directory related
+to an interactive user is group-owned by an interactive user.</td>
 <td xml:lang="en-US">If a local interactive users files are group-owned by a group of which the
 user is not a member, unintended users may be able to access them.</td>
 <td></td>
@@ -725,7 +731,9 @@ do not have a valid user, or assign a valid user to all unowned
 files and directories. To assign a valid owner to a local
 interactive user's files and directories, use the following command:
 <pre>$ sudo chown -R <i>USER</i> /home/<i>USER</i></pre>
-</td>
+
+This rule ensures every file or directory under the home directory related
+to an interactive user is owned by an interactive user.</td>
 <td xml:lang="en-US">If local interactive users do not own the files in their directories,
 unauthorized users may be able to access them. Additionally, if files are not
 owned by the user, this could be an indication of system compromise.</td>
@@ -2394,6 +2402,7 @@ users, groups, or modifications should be investigated for legitimacy.</td>
 <td>Configure audispd Plugin To Send Logs To Remote Server</td>
 <td xml:lang="en-US">Configure the audispd plugin to off-load audit records onto a different
 system or media from the system being audited.
+
 Set the <code>remote_server</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>
 with an IP address or hostname of the system that the audispd plugin should
 send audit records to. For example
@@ -2528,13 +2537,14 @@ in <code>/etc/audit/auditd.conf</code>.</td>
 <code>none</code>, audit events from different computers may be hard
 to distinguish.</td>
 <td></td>
-<td></td>
+<td>CM-6<br>AU-3<br>
+</td>
 </tr>
 <tr>
 <td></td>
 <td>Appropriate Action Must be Setup When the Internal Audit Event Queue is Full</td>
 <td xml:lang="en-US">The audit system should have an action setup in the event the internal event queue becomes full.
-To setup an overflow action edit <code>/etc/audit/auditd.conf</code>. Set <code>overflow_action</code>
+To setup an overflow action edit <code>/etc/audisp/audispd.conf</code>. Set <code>overflow_action</code>
 to one of the following values: <code>syslog</code>, <code>single</code>, <code>halt</code>.</td>
 <td xml:lang="en-US">The audit system should have an action setup in the event the internal event queue becomes full
 so that no data is lost.</td>
@@ -3184,7 +3194,10 @@ unauthorized user to view or edit sensitive information.</td>
 group found in <code>/etc/passwd</code>. To change the group owner of
 interactive users home directory, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i></pre>
-</td>
+
+This rule ensures every home directory related to an interactive user is
+group-owned by an interactive user. It also ensures that interactive users
+are group-owners of one and only one home directory.</td>
 <td xml:lang="en-US">If the Group Identifier (GID) of a local interactive users home directory is
 not the same as the primary GID of the user, this would allow unauthorized
 access to the users files, and users that share the same group may not be
@@ -3213,7 +3226,10 @@ unauthorized user to view or edit sensitive information.</td>
 owner. To change the owner of a interactive users home directory, use
 the following command:
 <pre>$ sudo chown <i>USER</i> /home/<i>USER</i></pre>
-</td>
+
+This rule ensures every home directory related to an interactive user is
+owned by an interactive user. It also ensures that interactive users are
+owners of one and only one home directory.</td>
 <td xml:lang="en-US">If a local interactive user does not own their home directory, unauthorized
 users could access or modify the user's files, and the users may not be able to
 access their own files.</td>
@@ -3267,9 +3283,8 @@ unauthorized access to user files by other users.</td>
 <td></td>
 <td>Verify Permissions on SSH Server Private *_key Key Files</td>
 <td xml:lang="en-US">
-
 To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/ssh/*_key</pre>
+<pre>$ sudo chmod 0600 /etc/ssh/*_key</pre>
 </td>
 <td xml:lang="en-US">If an unauthorized user obtains the private SSH host key file, the host could be
 impersonated.</td>
@@ -3332,7 +3347,7 @@ Otherwise, change the mode of the audit log files with the following command:
 <td>All GIDs referenced in /etc/passwd must be defined in /etc/group</td>
 <td xml:lang="en-US">Add a group to the system for each GID referenced without a corresponding group.</td>
 <td xml:lang="en-US">If a user is assigned the Group Identifier (GID) of a group not existing on the system, and a group
-with the Gruop Identifier (GID) is subsequently created, the user may have unintended rights to
+with the Group Identifier (GID) is subsequently created, the user may have unintended rights to
 any files associated with the group.</td>
 <td></td>
 <td>IA-2<br>CM-6(a)<br>
@@ -3471,6 +3486,34 @@ and whether to enter single-user mode.</td>
 </tr>
 <tr>
 <td></td>
+<td>Set Boot Loader Password in grub2 - systems prior to version 7.2</td>
+<td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
+<br><br>
+Since plaintext passwords are a security risk, generate an encrypted grub2 password
+for the grub superusers with the following command:
+<pre>$ grub2-mkpasswd-pbkdf2</pre>
+When prompted, enter the password that was selected.
+<br><br>
+Using the hash from the output, modify the <code>/etc/grub.d/40_custom</code>
+file with the following content:
+<pre>set superusers="root"
+password_pbkdf2 root grub.pbkdf2.sha512.VeryLongString
+</pre>
+Once the superuser password has been added, update the
+<code>grub.cfg</code> file by running:
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
+</td>
+<td xml:lang="en-US">Password protection on the boot loader configuration ensures
+users with physical access cannot trivially alter
+important bootloader settings. These include which kernel to use,
+and whether to enter single-user mode.</td>
+<td></td>
+<td>AC-3<br>AC-3.1<br>AC-3<br>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>Set the UEFI Boot Loader Admin Username to a Non-Default Value</td>
 <td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
 protection enabled to protect boot-time settings.
@@ -3520,6 +3563,33 @@ important bootloader settings. These include which kernel to use,
 and whether to enter single-user mode.</td>
 <td></td>
 <td>CM-6(a)<br>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Set the UEFI Boot Loader Password - systems prior to version 7.2</td>
+<td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
+<br><br>
+Since plaintext passwords are a security risk, generate a hash for the password
+by running the following command: <pre># grub2-mkpasswd-pbkdf2</pre>
+When prompted, enter the password that was selected.
+<br><br>
+Using the hash from the output, modify the <code>/etc/grub.d/40_custom</code>
+file with the following content:
+<pre>set superusers="root"
+password_pbkdf2 boot grub.pbkdf2.sha512.VeryLongString
+</pre>
+Once the superuser password has been added, update the
+<code>grub.cfg</code> file by running:
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
+</td>
+<td xml:lang="en-US">Password protection on the boot loader configuration ensures
+users with physical access cannot trivially alter
+important bootloader settings. These include which kernel to use,
+and whether to enter single-user mode.</td>
+<td></td>
+<td>AC-3<br>AC-3.1<br>AC-3<br>
 </td>
 </tr>
 <tr>
