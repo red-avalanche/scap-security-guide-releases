@@ -112,10 +112,7 @@ If the system requires Long-Term Service Pack Support (LTSS), obtain the correct
 	<td>The SUSE operating system must implement the Endpoint Security for Linux Threat Prevention tool.</td>
 	<td>SRG-OS-000191-GPOS-00080</td>
 	<td><pre>Adding endpoint security tools can provide the capability to automatically take actions in response to malicious behavior, which can provide additional agility in reacting to network threats. These tools also often include a reporting capability to provide network awareness of the system, which may not otherwise exist in an organization's systems management regime.</pre></td>
-	<td><pre>Per OPORD 16-0080, the preferred endpoint security tool is Endpoint Security for Linux (ENSL) in conjunction with SELinux.
-
-Procedure:
-Check that the following package has been installed:
+	<td><pre>Check that the following package has been installed:
 
 # rpm -qa | grep -i mcafeetp
 
@@ -126,9 +123,9 @@ Verify that the daemon is running:
 # ps -ef | grep -i mfetpd
 
 If the daemon is not running, this is a finding.</pre></td>
-	<td><pre>Install and enable the latest McAfee ENSLTP package.</pre></td>
+	<td><pre>Install and enable the latest Trellix ENSLTP package.</pre></td>
 	<td>SLES-15-010001</td>
-	<td>SV-234801r754757_rule</td>
+	<td>SV-234801r942857_rule</td>
 </tr>
 
 <tr>
@@ -1964,7 +1961,7 @@ If the "aide" package is not installed, install it with the following command:
 Configure the file integrity tool to automatically run on the system at least weekly. The following example output is generic. It will set cron to run AIDE weekly, but other file integrity tools may be used:
 
      > cat /etc/cron.weekly/aide 
-     0 0 * * * /usr/sbin/aide --check | /bin/mail -s "$HOSTNAME - Daily AIDE integrity check run" root@example_server_name.mil
+     0 0 * * * /usr/bin/aide --check | /bin/mail -s "$HOSTNAME - Daily AIDE integrity check run" root@example_server_name.mil
 
 Note: Per requirement SLES-15-010418, the "mailx" package must be installed on the system to enable email functionality.</pre></td>
 	<td>SLES-15-010420</td>
@@ -2374,14 +2371,14 @@ This capability must take into account operational requirements for availability
 Check to see if the aide cron job sends an email when executed with the following command:
 
      > grep -i "aide" /etc/cron.*/aide 
-     0 0 * * * /usr/sbin/aide --check | /bin/mail -s "$HOSTNAME - Daily AIDE integrity check run" root@example_server_name.mil
+     0 0 * * * /usr/bin/aide --check | /bin/mail -s "$HOSTNAME - Daily AIDE integrity check run" root@example_server_name.mil
 
 If the "aide" file does not exist under the "/etc/cron" directory structure or the cron job is not configured to execute a binary to send an email (such as "/bin/mail"), this is a finding.</pre></td>
 	<td><pre>Configure the SUSE operating system to notify the SA when AIDE discovers anomalies in the operation of any security functions.
 
 Create the aide crontab file in "/etc/cron.daily" and add following command replacing the "[E-MAIL]" parameter with a proper email address for the SA:
 
-     0 0 * * * /usr/sbin/aide --check | /bin/mail -s "$HOSTNAME - Daily AIDE integrity check run" root@example_server_name.mil
+     0 0 * * * /usr/bin/aide --check | /bin/mail -s "$HOSTNAME - Daily AIDE integrity check run" root@example_server_name.mil
 
 Note: Per requirement SLES-15-010418, the "mailx" package must be installed on the system to enable email functionality.</pre></td>
 	<td>SLES-15-010570</td>

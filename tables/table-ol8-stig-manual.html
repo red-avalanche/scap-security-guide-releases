@@ -298,13 +298,13 @@ To encrypt an entire partition, dedicate a partition for encryption in the parti
 	<td>V-248526</td>
 	<td>CCI-000048</td>
 	<td>medium</td>
-	<td>OL 8 must display the Standard Mandatory DoD Notice and Consent Banner before granting local or remote access to the system via an SSH logon.</td>
+	<td>OL 8 must display the Standard Mandatory DOD Notice and Consent Banner before granting local or remote access to the system via an SSH logon.</td>
 	<td>SRG-OS-000023-GPOS-00006</td>
 	<td><pre>Display of a standardized and approved use notification before granting access to the operating system ensures privacy and security notification verbiage used is consistent with applicable federal laws, Executive Orders, directives, policies, regulations, standards, and guidance. 
  
 System use notifications are required only for access via logon interfaces with human users and are not required when such human interfaces do not exist. 
  
-The banner must be formatted in accordance with applicable DoD policy. Use the following verbiage for operating systems that can accommodate banners of 1300 characters: 
+The banner must be formatted in accordance with applicable DOD policy. Use the following verbiage for operating systems that can accommodate banners of 1300 characters: 
  
 "You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only. 
  
@@ -325,20 +325,21 @@ Use the following verbiage for operating systems that have severe limitations on
 "I've read & consent to terms in IS user agreem't."
 
 Satisfies: SRG-OS-000023-GPOS-00006, SRG-OS-000228-GPOS-00088</pre></td>
-	<td><pre>Verify any publicly accessible connection to the operating system displays the Standard Mandatory DoD Notice and Consent Banner before granting access to the system.
+	<td><pre>Verify that any publicly accessible connection to the operating system displays the Standard Mandatory DOD Notice and Consent Banner before granting access to the system.
 
 Check for the location of the banner file being used with the following command:
 
-$ sudo grep -ir banner /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*banner'
 
 banner /etc/issue
 
 This command will return the banner keyword and the name of the file that contains the SSH banner (in this case "/etc/issue").
 
 If the line is commented out, this is a finding.
+
 If conflicting results are returned, this is a finding.
 
-View the file specified by the banner keyword to check that it matches the text of the Standard Mandatory DoD Notice and Consent Banner:
+View the file specified by the banner keyword to check that it matches the text of the Standard Mandatory DOD Notice and Consent Banner:
 
 "You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only. By using this IS (which includes any device attached to this IS), you consent to the following conditions:
 
@@ -352,16 +353,16 @@ View the file specified by the banner keyword to check that it matches the text 
 
 -Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details."
 
-If the system does not display a graphical logon banner or the banner does not match the Standard Mandatory DoD Notice and Consent Banner, this is a finding.
+If the system does not display a graphical logon banner or the banner does not match the Standard Mandatory DOD Notice and Consent Banner, this is a finding.
 
-If the text in the file does not match the Standard Mandatory DoD Notice and Consent Banner, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to display the Standard Mandatory DoD Notice and Consent Banner before granting access to the system via the SSH. 
+If the text in the file does not match the Standard Mandatory DOD Notice and Consent Banner, this is a finding.</pre></td>
+	<td><pre>Configure OL 8 to display the Standard Mandatory DOD Notice and Consent Banner before granting access to the system via the SSH. 
  
 Edit the "/etc/ssh/sshd_config" file to uncomment the banner keyword and configure it to point to a file that will contain the logon banner (this file may be named differently or be in a different location if using a version of SSH that is provided by a third-party vendor). An example configuration line is: 
  
 banner /etc/issue 
  
-Either create the file containing the banner or replace the text in the file with the Standard Mandatory DoD Notice and Consent Banner. The DoD-required text is: 
+Either create the file containing the banner or replace the text in the file with the Standard Mandatory DOD Notice and Consent Banner. The DOD-required text is: 
  
 "You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only. By using this IS (which includes any device attached to this IS), you consent to the following conditions: 
  
@@ -377,7 +378,7 @@ Either create the file containing the banner or replace the text in the file wit
  
 The SSH service must be restarted for changes to take effect.</pre></td>
 	<td>OL08-00-010040</td>
-	<td>SV-248526r858561_rule</td>
+	<td>SV-248526r951551_rule</td>
 </tr>
 
 <tr>
@@ -560,14 +561,14 @@ By using this IS (which includes any device attached to this IS), you consent to
 	<td>SRG-OS-000032-GPOS-00013</td>
 	<td><pre>Remote access services, such as those providing remote access to network devices and information systems, which lack automated monitoring capabilities increase risk and make remote user access management difficult at best. 
  
-Remote access is access to DoD nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless. 
+Remote access is access to DOD nonpublic information systems by an authorized user (or an information system) communicating through an external, nonorganization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless. 
  
 Automated monitoring of remote access sessions allows organizations to detect cyberattacks and ensure ongoing compliance with remote access policies by auditing connection activities of remote access capabilities, such as Remote Desktop Protocol (RDP), on a variety of information system components (e.g., servers, workstations, notebook computers, smartphones, and tablets).</pre></td>
 	<td><pre>Verify that OL 8 monitors all remote access methods.
 
 Check that remote access methods are being logged by running the following command:
 
-$ sudo grep -E '(auth.*|authpriv.*|daemon.*)' /etc/rsyslog.conf /etc/rsyslog.d/*.conf
+$ sudo grep -E '(auth\.\*|authpriv\.\*|daemon\.\*)' /etc/rsyslog.conf /etc/rsyslog.d/*.conf
 
 /etc/rsyslog.conf:auth.*;authpriv.*;daemon.* /var/log/secure
 
@@ -584,7 +585,7 @@ The "rsyslog" service must be restarted for the changes to take effect. To resta
  
 $ sudo systemctl restart rsyslog.service</pre></td>
 	<td>OL08-00-010070</td>
-	<td>SV-248530r779156_rule</td>
+	<td>SV-248530r951553_rule</td>
 </tr>
 
 <tr>
@@ -1131,9 +1132,9 @@ Satisfies: SRG-OS-000126-GPOS-00066, SRG-OS-000163-GPOS-00072, SRG-OS-000279-GPO
 
 Check that the "ClientAliveCountMax" is set to "1" by running the following command:
 
-     $ sudo grep -ir ClientAliveCountMax /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*clientalivecountmax'
 
-     ClientAliveCountMax 1
+ClientAliveCountMax 1
 
 If "ClientAliveCountMax" does not exist, does not have a product value of "1" in "/etc/ssh/sshd_config", or is commented out, this is a finding.
 
@@ -1150,7 +1151,7 @@ For the changes to take effect, the SSH daemon must be restarted.
 
      $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-010200</td>
-	<td>SV-248552r917896_rule</td>
+	<td>SV-248552r951555_rule</td>
 </tr>
 
 <tr>
@@ -1170,9 +1171,9 @@ Satisfies: SRG-OS-000126-GPOS-00066, SRG-OS-000163-GPOS-00072, SRG-OS-000279-GPO
 
 Check that the "ClientAliveInterval" variable is set to a value of "600" or less by running the following command:
 
-     $ sudo grep -ir ClientAliveInterval /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*clientaliveinterval'
 
-     ClientAliveInterval 600
+ClientAliveInterval 600
 
 If "ClientAliveInterval" does not exist, does not have a product value of "600" or less in "/etc/ssh/sshd_config", or is commented out, this is a finding.
 
@@ -1189,7 +1190,7 @@ The SSH daemon must be restarted for changes to take effect.
  
      $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-010201</td>
-	<td>SV-248553r917899_rule</td>
+	<td>SV-248553r951557_rule</td>
 </tr>
 
 <tr>
@@ -2459,11 +2460,11 @@ GRUB_CMDLINE_LINUX="vsyscall=none"</pre></td>
 	<td>medium</td>
 	<td>OL 8 must clear SLUB/SLAB objects to prevent use-after-free attacks.</td>
 	<td>SRG-OS-000134-GPOS-00068</td>
-	<td><pre>Some adversaries launch attacks with the intent of executing code in non-executable regions of memory or in memory locations that are prohibited. Security safeguards employed to protect memory include, for example, data execution prevention and address space layout randomization. Data execution prevention safeguards can be either hardware-enforced or software-enforced with hardware providing the greater strength of mechanism.
+	<td><pre>Some adversaries launch attacks with the intent of executing code in nonexecutable regions of memory or in memory locations that are prohibited. Security safeguards employed to protect memory include, for example, data execution prevention and address space layout randomization. Data execution prevention safeguards can be either hardware-enforced or software-enforced with hardware providing the greater strength of mechanism.
 
 Poisoning writes an arbitrary value to freed pages, so any modification or reference to that page after being freed or before being initialized will be detected and prevented. This prevents many types of use-after-free vulnerabilities at little performance cost. Also prevents leak of data and detection of corrupted memory.
 
-SLAB objects are blocks of physically-contiguous memory. SLUB is the unqueued SLAB allocator.</pre></td>
+SLAB objects are blocks of physically contiguous memory. SLUB is the unqueued SLAB allocator.</pre></td>
 	<td><pre>Verify that GRUB 2 is configured to enable poisoning of SLUB/SLAB objects to mitigate use-after-free vulnerabilities with the following commands:
 
 Check that the current GRUB 2 configuration has poisoning of SLUB/SLAB objects enabled:
@@ -2472,7 +2473,7 @@ $ sudo grub2-editenv list | grep slub_debug
 
 kernelopts=root=/dev/mapper/ol-root ro crashkernel=auto resume=/dev/mapper/ol-swap rd.lvm.lv=ol/root rd.lvm.lv=ol/swap rhgb quiet fips=1 slub_debug=P page_poison=1 vsyscall=none audit=1 audit_backlog_limit=8192 boot=UUID=8d171156-cd61-421c-ba41-1c021ac29e82
 
-If "slub_debug" is not set to "P" or is missing, this is a finding.
+If "slub_debug" does not contain "P" or is missing, this is a finding.
 
 Check that poisoning of SLUB/SLAB objects is enabled by default to persist in kernel updates: 
 
@@ -2480,7 +2481,7 @@ $ sudo grep slub_debug /etc/default/grub
 
 GRUB_CMDLINE_LINUX="slub_debug=P"
 
-If "slub_debug" is not set to "P", is missing or commented out, this is a finding.</pre></td>
+If "slub_debug" does not contain "P", is missing, or is commented out, this is a finding.</pre></td>
 	<td><pre>Configure OL 8 to enable poisoning of SLUB/SLAB objects with the following commands:
 
 $ sudo grubby --update-kernel=ALL --args="slub_debug=P"
@@ -2489,7 +2490,7 @@ Add or modify the following line in "/etc/default/grub" to ensure the configurat
 
 GRUB_CMDLINE_LINUX="slub_debug=P"</pre></td>
 	<td>OL08-00-010423</td>
-	<td>SV-248592r779342_rule</td>
+	<td>SV-248592r952103_rule</td>
 </tr>
 
 <tr>
@@ -2506,22 +2507,22 @@ $ sudo grubby --default-kernel
 
 Using the default kernel, verify that Meltdown mitigations are not disabled:
 
-$ sudo grubby --info=<path-to-default-kernel> | grep mitigation
+$ sudo grubby --info=<path-to-default-kernel> | grep mitigations
 
-If the mitigation parameter is set to "off" this is a finding.</pre></td>
+If the "mitigations" parameter is set to "off", this is a finding.</pre></td>
 	<td><pre>Determine the default kernel:  
  
 $ sudo grubby --default-kernel 
  
 /boot/vmlinuz-5.4.17-2011.1.2.el8uek.x86_64 
+
+Using the default kernel, remove the argument that sets the Meltdown mitigations to "off": 
  
-Using the default kernel, remove the Meltdown mitigations: 
- 
-$ sudo grubby --update-kernel=<path-to-default-kernel>  --remove-args=mitigation=off 
+$ sudo grubby --update-kernel=<path-to-default-kernel>  --remove-args=mitigations=off 
  
 Reboot the system for the change to take effect.</pre></td>
 	<td>OL08-00-010424</td>
-	<td>SV-248593r779345_rule</td>
+	<td>SV-248593r951562_rule</td>
 </tr>
 
 <tr>
@@ -2807,11 +2808,12 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
 	<td><pre>If other users have access to modify user-specific SSH configuration files, they may be able to log on to the system as another user.</pre></td>
 	<td><pre>Verify the SSH daemon performs strict mode checking of home directory configuration files with the following command:
 
-$ sudo grep -ir strictmodes /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*strictmodes'
 
 StrictModes yes
 
-If "StrictModes" is set to "no" or is missing, or if the returned line is commented out, this is a finding.
+If "StrictModes" is set to "no" or is missing, or if the returned line is commented out, this is a finding. 
+
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure SSH to perform strict mode checking of home directory configuration files.  
  
@@ -2823,7 +2825,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
  
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-010500</td>
-	<td>SV-248603r858568_rule</td>
+	<td>SV-248603r951564_rule</td>
 </tr>
 
 <tr>
@@ -2835,11 +2837,12 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td><pre>Configuring this setting for the SSH daemon provides additional assurance that remote logon via SSH will require a password, even in the event of misconfiguration elsewhere.</pre></td>
 	<td><pre>Verify the SSH daemon does not allow authentication using known host’s authentication with the following command:
 
-$ sudo grep -ir IgnoreUserKnownHosts /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*ignoreuserknownhosts'
 
 IgnoreUserKnownHosts yes
 
 If the value is returned as "no", the returned line is commented out, or no output is returned, this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure the SSH daemon to not allow authentication using known host’s authentication. 
  
@@ -2851,7 +2854,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
  
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-010520</td>
-	<td>SV-248605r858572_rule</td>
+	<td>SV-248605r951566_rule</td>
 </tr>
 
 <tr>
@@ -2863,11 +2866,12 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td><pre>Configuring this setting for the SSH daemon provides additional assurance that remote logon via SSH will require a password, even in the event of misconfiguration elsewhere.</pre></td>
 	<td><pre>Verify the SSH daemon does not allow Kerberos authentication with the following command:
 
-$ sudo grep -ir "KerberosAuthentication" /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*kerberosauthentication'
 
 KerberosAuthentication no
 
-If the value is returned as "yes", the returned line is commented out, or no output is returned, or has not been documented with the ISSO, this is a finding.
+If the value is returned as "yes", the returned line is commented out, or no output is returned or has not been documented with the information system security officer (ISSO), this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure the SSH daemon to not allow Kerberos authentication. 
  
@@ -2879,7 +2883,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
  
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-010521</td>
-	<td>SV-248606r858574_rule</td>
+	<td>SV-248606r951568_rule</td>
 </tr>
 
 <tr>
@@ -2891,11 +2895,12 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td><pre>Configuring this setting for the SSH daemon provides additional assurance that remote logon via SSH will require a password, even in the event of misconfiguration elsewhere.</pre></td>
 	<td><pre>Verify the SSH daemon does not allow GSSAPI authentication with the following command:
 
-$ sudo grep -ir GSSAPIAuthentication  /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*gssapiauthentication'
 
 GSSAPIAuthentication no
 
-If the value is returned as "yes", the returned line is commented out, no output is returned, or has not been documented with the ISSO, this is a finding.
+If the value is returned as "yes", the returned line is commented out, or no output is returned or has not been documented with the information system security officer (ISSO), this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure the SSH daemon to not allow GSSAPI authentication.
 
@@ -2907,7 +2912,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-010522</td>
-	<td>SV-248607r858576_rule</td>
+	<td>SV-248607r951570_rule</td>
 </tr>
 
 <tr>
@@ -3024,11 +3029,12 @@ If a separate entry for "/var/tmp" is not in use, this is a finding.</pre></td>
 	<td><pre>Although the communications channel may be encrypted, an additional layer of security is gained by extending the policy of not logging on directly as root. In addition, logging on with a user-specific account provides individual accountability of actions performed on the system.</pre></td>
 	<td><pre>Verify remote access using SSH prevents users from logging on directly as "root" with the following command:
 
-$ sudo grep -ir PermitRootLogin /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*permitrootlogin'
 
 PermitRootLogin no
 
 If the "PermitRootLogin" keyword is set to "yes", is missing, or is commented out, this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure OL 8 to stop users from logging on remotely as the "root" user via SSH. 
  
@@ -3040,7 +3046,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
  
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-010550</td>
-	<td>SV-248613r858578_rule</td>
+	<td>SV-248613r951572_rule</td>
 </tr>
 
 <tr>
@@ -3965,11 +3971,12 @@ AutomaticLoginEnable=false</pre></td>
 	<td><pre>SSH environment options potentially allow users to bypass access restriction in some configurations.</pre></td>
 	<td><pre>Verify that unattended or automatic login via SSH is disabled with the following command:
 
-$ sudo grep -ir PermitUserEnvironment /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*permituserenvironment'
 
 PermitUserEnvironment no
 
 If "PermitUserEnvironment" is set to "yes", is missing completely, or is commented out, this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure OL 8 to allow the SSH daemon to not allow unattended or automatic login to the system. 
  
@@ -3981,7 +3988,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
  
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-010830</td>
-	<td>SV-248650r877377_rule</td>
+	<td>SV-248650r951574_rule</td>
 </tr>
 
 <tr>
@@ -6151,11 +6158,12 @@ Document all authorized accounts on the system.</pre></td>
 	<td><pre>If an account has an empty password, anyone could log on and run commands with the privileges of that account. Accounts with empty passwords should never be used in operational environments.</pre></td>
 	<td><pre>To verify that null passwords cannot be used, run the following command:
 
-$ sudo grep -ir permitemptypasswords /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*permitemptypasswords'
 
 PermitEmptyPasswords no
 
 If "PermitEmptyPasswords" is set to "yes", this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Edit the following line in "etc/ssh/sshd_config" to prevent logons with empty passwords. 
  
@@ -6165,7 +6173,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
  
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-020330</td>
-	<td>SV-248714r858582_rule</td>
+	<td>SV-248714r951576_rule</td>
 </tr>
 
 <tr>
@@ -6238,11 +6246,12 @@ session required pam_lastlog.so showfailed</pre></td>
 	<td><pre>Providing users with feedback on when account accesses via SSH last occurred facilitates user recognition and reporting of unauthorized account use.</pre></td>
 	<td><pre>Verify SSH provides users with feedback on when account accesses last occurred with the following command:
 
-$ sudo grep -ir printlastlog /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*printlastlog'
 
 PrintLastLog yes
 
 If the "PrintLastLog" keyword is set to "no", is missing, or is commented out, this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure SSH to provide users with feedback on when account accesses last occurred by setting the required configuration options in "/etc/pam.d/sshd" or in the "sshd_config" file used by the system ("/etc/ssh/sshd_config" will be used in the example). Note that this file may be named differently or be in a different location if using a version of SSH that is provided by a third-party vendor. 
  
@@ -6252,7 +6261,7 @@ PrintLastLog yes
  
 The SSH service must be restarted for changes to "sshd_config" to take effect.</pre></td>
 	<td>OL08-00-020350</td>
-	<td>SV-248718r858584_rule</td>
+	<td>SV-248718r951578_rule</td>
 </tr>
 
 <tr>
@@ -8533,9 +8542,9 @@ AuditBackend=LinuxAudit</pre></td>
 	<td>OL 8 must allow only the Information System Security Manager (ISSM) (or individuals or roles appointed by the ISSM) to select which auditable events are to be audited.</td>
 	<td>SRG-OS-000063-GPOS-00032</td>
 	<td><pre>Without the capability to restrict the roles and individuals that can select which events are audited, unauthorized personnel may be able to prevent the auditing of critical events. Misconfigured audits may degrade the system's performance by overwhelming the audit log. Misconfigured audits may also make it more difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.</pre></td>
-	<td><pre>Verify that the "/etc/audit/rules.d/audit.rules" and "/etc/audit/auditd.conf" file have a mode of "0640" or less permissive by using the following commands: 
+	<td><pre>Verify  the "/etc/audit/rules.d/*.rules" and "/etc/audit/auditd.conf" file have a mode of "0640" or less permissive by using the following commands: 
  
-$ sudo ls -al /etc/audit/rules.d/audit.rules 
+$ sudo ls -al /etc/audit/rules.d/*.rules 
  
 -rw-r----- 1 root root 1280 Feb 16 17:09 audit.rules 
  
@@ -8543,13 +8552,13 @@ $ sudo ls -al /etc/audit/auditd.conf
  
 -rw-r----- 1 root root 621 Sep 22 2014 auditd.conf 
  
-If the "/etc/audit/rules.d/audit.rules" or "/etc/audit/auditd.conf" files have a mode more permissive than "0640", this is a finding.</pre></td>
-	<td><pre>Configure the "/etc/audit/rules.d/audit.rules" and "/etc/audit/auditd.conf" files to have a mode of "0640" with the following commands: 
+If the "/etc/audit/rules.d/*.rules" or "/etc/audit/auditd.conf" files have a mode more permissive than "0640", this is a finding.</pre></td>
+	<td><pre>Configure the "/etc/audit/rules.d/*.rules" and "/etc/audit/auditd.conf" files to have a mode of "0640" with the following commands: 
  
-$ sudo chmod 0640 /etc/audit/rules.d/audit.rules 
+$ sudo chmod 0640 /etc/audit/rules.d/*.rules 
 $ sudo chmod 0640 /etc/audit/auditd.conf</pre></td>
 	<td>OL08-00-030610</td>
-	<td>SV-248806r779984_rule</td>
+	<td>SV-248806r951581_rule</td>
 </tr>
 
 <tr>
@@ -10637,18 +10646,17 @@ $ sudo systemctl enable sshd.service</pre></td>
 	<td>medium</td>
 	<td>OL 8 must force a frequent session key renegotiation for SSH connections to the server.</td>
 	<td>SRG-OS-000033-GPOS-00014</td>
-	<td><pre>Unapproved mechanisms that are used for authentication to the cryptographic module are not verified and therefore cannot be relied on to provide confidentiality or integrity, and DoD data may be compromised. 
- 
-Operating systems using encryption are required to use FIPS-compliant mechanisms for authenticating to cryptographic modules. 
+	<td><pre>Unapproved mechanisms that are used for authentication to the cryptographic module are not verified and therefore cannot be relied on to provide confidentiality or integrity, and DOD data may be compromised. 
  
 Session key regeneration limits the chances of a session key becoming compromised.</pre></td>
 	<td><pre>Verify the SSH server is configured to force frequent session key renegotiation with the following command:
 
-$ sudo grep -ir RekeyLimit /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*rekeylimit'
 
 RekeyLimit 1G 1h
 
 If "RekeyLimit" does not have a maximum data amount and maximum time defined or is missing or commented out, this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure the system to force a frequent session key renegotiation for SSH connections to the server by adding or modifying the following line in the "/etc/ssh/sshd_config" file: 
  
@@ -10658,7 +10666,7 @@ The SSH daemon must be restarted for the settings to take effect.
  
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-040161</td>
-	<td>SV-248868r877398_rule</td>
+	<td>SV-248868r951583_rule</td>
 </tr>
 
 <tr>
@@ -12046,11 +12054,12 @@ X11 forwarding should be enabled with caution. Users with the ability to bypass 
 If X11 services are not required for the system's intended function, they should be disabled or restricted as appropriate to the system’s needs.</pre></td>
 	<td><pre>Verify "X11Forwarding" is disabled with the following command:
 
-$ sudo grep -ir x11forwarding /etc/ssh/sshd_config* | grep -v "^#"
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*x11forwarding'
 
 X11Forwarding no
 
-If the "X11Forwarding" keyword is set to "yes" and is not documented with the Information System Security Officer (ISSO) as an operational requirement or is missing, this is a finding.
+If the "X11Forwarding" keyword is set to "yes" and is not documented with the information system security officer (ISSO) as an operational requirement or is missing, this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Edit the "/etc/ssh/sshd_config" file to uncomment or add the line for the "X11Forwarding" keyword and set its value to "no" (this file may be named differently or be in a different location if using a version of SSH that is provided by a third-party vendor): 
  
@@ -12060,7 +12069,7 @@ The SSH service must be restarted for changes to take effect:
  
 $ sudo systemctl restart sshd</pre></td>
 	<td>OL08-00-040340</td>
-	<td>SV-248900r858588_rule</td>
+	<td>SV-248900r951585_rule</td>
 </tr>
 
 <tr>
@@ -12074,10 +12083,12 @@ $ sudo systemctl restart sshd</pre></td>
 
 Check the SSH "X11UseLocalhost" setting with the following command:
 
-$ sudo grep -ir x11uselocalhost /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*x11uselocalhost'
+
 X11UseLocalhost yes
 
 If the "X11UseLocalhost" keyword is set to "no", is missing, or is commented out, this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure the OL 8 SSH daemon to prevent remote hosts from connecting to the proxy display. 
  
@@ -12085,7 +12096,7 @@ Edit the "/etc/ssh/sshd_config" file to uncomment or add the line for the "X11Us
  
 X11UseLocalhost yes</pre></td>
 	<td>OL08-00-040341</td>
-	<td>SV-248901r858590_rule</td>
+	<td>SV-248901r951587_rule</td>
 </tr>
 
 <tr>
