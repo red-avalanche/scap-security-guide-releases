@@ -48,9 +48,9 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>466</td>
+			<td>465</td>
 			<td>0</td>
-			<td>466</td>
+			<td>465</td>
 			<td>100.00%</td>
 			<td>
 				
@@ -586,7 +586,7 @@ $ sudo grep slub_debug /etc/default/grub
 
 GRUB_CMDLINE_LINUX="slub_debug=P"
 
-If "slub_debug" is not set to "P", is missing or commented out, this is a finding.</pre></td>
+If "slub_debug" does not contain "P", is missing, or is commented out, this is a finding.</pre></td>
 	<td><pre>Configure RHEL  to enable poisoning of SLUB/SLAB objects with the following commands:
 
 $ sudo grubby --update-kernel=ALL --args="slub_debug=P"
@@ -595,7 +595,7 @@ Add or modify the following line in "/etc/default/grub" to ensure the configurat
 
 GRUB_CMDLINE_LINUX="slub_debug=P"</pre></td>
 	<td>RHEL-09-212045</td>
-	<td>SV-257794r925369_rule</td>
+	<td>SV-257794r952164_rule</td>
 </tr>
 
 <tr>
@@ -1032,10 +1032,10 @@ blacklist sctp
 If the command does not return any output, or the line is commented out, and use of sctp is not documented with the information system security officer (ISSO) as an operational requirement, this is a finding.</pre></td>
 	<td><pre>To configure the system to prevent the sctp kernel module from being loaded, add the following line to the file  /etc/modprobe.d/sctp.conf (or create sctp.conf if it does not exist):
 
-install sctp/bin/false
+install sctp /bin/false
 blacklist sctp</pre></td>
 	<td>RHEL-09-213060</td>
-	<td>SV-257807r925408_rule</td>
+	<td>SV-257807r952166_rule</td>
 </tr>
 
 <tr>
@@ -1107,7 +1107,7 @@ $ sudo sysctl --system</pre></td>
 	<td><pre>Loading and accessing the packet filters programs and maps using the bpf() system call has the potential of revealing sensitive information about the kernel state.
 
 Satisfies: SRG-OS-000132-GPOS-00067, SRG-OS-000480-GPOS-00227</pre></td>
-	<td><pre>Verify RHEL 9 prevents privilege escalation thru the kernel by disabling access to the bpf system call with the following commands:
+	<td><pre>Verify that RHEL 9 prevents privilege escalation through the kernel by disabling access to the bpf system call with the following commands:
 
 $ sudo sysctl kernel.unprivileged_bpf_disabled
 
@@ -1120,7 +1120,7 @@ Check that the configuration files are present to enable this kernel parameter.
 $ sudo /usr/lib/systemd/systemd-sysctl --cat-config | egrep -v '^(#|;)' | grep -F kernel.unprivileged_bpf_disabled | tail -1
 kernel.unprivileged_bpf_disabled = 1
 
-If the network parameter "ipv4.tcp_syncookies" is not equal to "1", or nothing is returned, this is a finding.</pre></td>
+If the network parameter "kernel.unprivileged_bpf_disabled" is not equal to "1", or nothing is returned, this is a finding.</pre></td>
 	<td><pre>Configure RHEL 9 to prevent privilege escalation thru the kernel by disabling access to the bpf syscall by adding the following line to a file, in the "/etc/sysctl.d" directory:
 
 kernel.unprivileged_bpf_disabled = 1
@@ -1129,7 +1129,7 @@ The system configuration files need to be reloaded for the changes to take effec
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-09-213075</td>
-	<td>SV-257810r942977_rule</td>
+	<td>SV-257810r952168_rule</td>
 </tr>
 
 <tr>
@@ -1806,16 +1806,16 @@ $ sudo dnf remove tuned</pre></td>
 	<td><pre>Removing the "tftp-server" package decreases the risk of the accidental (or intentional) activation of tftp services.
 
 If TFTP is required for operational support (such as transmission of router configurations), its use must be documented with the information systems security manager (ISSM), restricted to only authorized personnel, and have access control rules established.</pre></td>
-	<td><pre>Verify that RHEL 9 does not have a tftp server package installed with the following command:
+	<td><pre>Verify that RHEL 9 does not have a "tftp-server" package installed with the following command:
 
-$ sudo dnf list --installed | grep tftp 
+$ sudo dnf list --installed | grep tftp-server
 
-If the "tftp" package is installed, this is a finding.</pre></td>
-	<td><pre>The tftp package can be removed with the following command:
+If the "tftp-server" package is installed, this is a finding.</pre></td>
+	<td><pre>The "tftp-server" package can be removed with the following command:
 
-$ sudo dnf remove tftp</pre></td>
+$ sudo dnf remove tftp-server</pre></td>
 	<td>RHEL-09-215060</td>
-	<td>SV-257835r925492_rule</td>
+	<td>SV-257835r952171_rule</td>
 </tr>
 
 <tr>
@@ -5544,11 +5544,11 @@ $ sudo dnf install openssh-clients</pre></td>
 	<td><pre>The warning message reinforces policy awareness during the logon process and facilitates possible legal action against attackers. Alternatively, systems whose ownership should not be obvious should ensure usage of a banner that does not provide easy attribution.
 
 Satisfies: SRG-OS-000023-GPOS-00006, SRG-OS-000228-GPOS-00088</pre></td>
-	<td><pre>Verify any SSH connection to the operating system displays the Standard Mandatory DOD Notice and Consent Banner before granting access to the system.
+	<td><pre>Verify that any SSH connection to the operating system displays the Standard Mandatory DOD Notice and Consent Banner before granting access to the system.
 
 Check for the location of the banner file being used with the following command:
 
-$ sudo grep -ir banner /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*banner'
 
 banner /etc/issue
 
@@ -5563,7 +5563,7 @@ An example configuration line is:
 
 Banner /etc/issue</pre></td>
 	<td>RHEL-09-255025</td>
-	<td>SV-257981r943028_rule</td>
+	<td>SV-257981r952173_rule</td>
 </tr>
 
 <tr>
@@ -5573,15 +5573,15 @@ Banner /etc/issue</pre></td>
 	<td>RHEL 9 must log SSH connection attempts and failures to the server.</td>
 	<td>SRG-OS-000032-GPOS-00013</td>
 	<td><pre>SSH provides several logging levels with varying amounts of verbosity. "DEBUG" is specifically not recommended other than strictly for debugging SSH communications since it provides so much data that it is difficult to identify important security information. "INFO" or "VERBOSE" level is the basic level that only records login activity of SSH users. In many situations, such as Incident Response, it is important to determine when a particular user was active on a system. The logout record can eliminate those users who disconnected, which helps narrow the field.</pre></td>
-	<td><pre>Verify RHEL 9 logs SSH connection attempts and failures to the server.
+	<td><pre>Verify that RHEL 9 logs SSH connection attempts and failures to the server.
 
 Check what the SSH daemon's "LogLevel" option is set to with the following command:
 
-$ sudo grep -ir LogLevel /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*loglevel'
 
 LogLevel VERBOSE
 
-If a value of "VERBOSE" is not returned, the line is commented out, or is missing, this is a finding.</pre></td>
+If a value of "VERBOSE" is not returned or the line is commented out or missing, this is a finding.</pre></td>
 	<td><pre>Configure RHEL 9 to log connection attempts add or modify the following line in "/etc/ssh/sshd_config".
 
 LogLevel VERBOSE
@@ -5590,7 +5590,7 @@ Restart the SSH daemon for the settings to take effect:
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-09-255030</td>
-	<td>SV-257982r943030_rule</td>
+	<td>SV-257982r952175_rule</td>
 </tr>
 
 <tr>
@@ -5604,7 +5604,7 @@ $ sudo systemctl restart sshd.service</pre></td>
 Satisfies: SRG-OS-000105-GPOS-00052, SRG-OS-000106-GPOS-00053, SRG-OS-000107-GPOS-00054, SRG-OS-000108-GPOS-00055</pre></td>
 	<td><pre>Verify that RHEL 9 SSH daemon accepts public key encryption with the following command:
  
-$ sudo grep -ir PubkeyAuthentication /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*pubkeyauthentication'
 
 PubkeyAuthentication yes
  
@@ -5617,7 +5617,7 @@ Restart the SSH daemon for the settings to take effect:
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-09-255035</td>
-	<td>SV-257983r943032_rule</td>
+	<td>SV-257983r952177_rule</td>
 </tr>
 
 <tr>
@@ -5629,9 +5629,9 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td><pre>If an account has an empty password, anyone could log on and run commands with the privileges of that account. Accounts with empty passwords should never be used in operational environments.
 
 Satisfies: SRG-OS-000106-GPOS-00053, SRG-OS-000480-GPOS-00229, SRG-OS-000480-GPOS-00227</pre></td>
-	<td><pre>Verify RHEL 9 remote access using SSH prevents logging on with a blank password with the following command:
+	<td><pre>Verify that RHEL 9 remote access using SSH prevents logging on with a blank password with the following command:
 
-$ sudo grep -ir PermitEmptyPasswords /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*permitemptypasswords'
 
 PermitEmptyPassword no
 
@@ -5644,7 +5644,7 @@ Restart the SSH daemon for the settings to take effect:
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-09-255040</td>
-	<td>SV-257984r943034_rule</td>
+	<td>SV-257984r952179_rule</td>
 </tr>
 
 <tr>
@@ -5656,9 +5656,9 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td><pre>Even though the communications channel may be encrypted, an additional layer of security is gained by extending the policy of not logging directly on as root. In addition, logging in with a user-specific account provides individual accountability of actions performed on the system and also helps to minimize direct attack attempts on root's password.
 
 Satisfies: SRG-OS-000109-GPOS-00056, SRG-OS-000480-GPOS-00227</pre></td>
-	<td><pre>Verify RHEL 9 remote access using SSH prevents users from logging on directly as "root" with the following command:
+	<td><pre>Verify that RHEL 9 remote access using SSH prevents users from logging on directly as "root" with the following command:
 
-$ sudo grep -ir PermitRootLogin /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*permitrootlogin'
 
 PermitRootLogin no
 
@@ -5671,7 +5671,7 @@ Restart the SSH daemon for the settings to take effect:
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-09-255045</td>
-	<td>SV-257985r943036_rule</td>
+	<td>SV-257985r952181_rule</td>
 </tr>
 
 <tr>
@@ -5683,7 +5683,7 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td><pre>When UsePAM is set to "yes", PAM runs through account and session types properly. This is important when restricted access to services based off of IP, time, or other factors of the account is needed. Additionally, this ensures users can inherit certain environment variables on login or disallow access to the server.</pre></td>
 	<td><pre>Verify the RHEL 9 SSHD is configured to allow for the UsePAM interface with the following command:
 
-$ sudo grep -ir usepam /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*usepam'
 
 UsePAM yes
 
@@ -5696,7 +5696,7 @@ Restart the SSH daemon for the settings to take effect:
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-09-255050</td>
-	<td>SV-257986r943038_rule</td>
+	<td>SV-257986r952183_rule</td>
 </tr>
 
 <tr>
@@ -5710,9 +5710,9 @@ $ sudo systemctl restart sshd.service</pre></td>
 Remote access (e.g., RDP) is access to DOD nonpublic information systems by an authorized user (or an information system) communicating through an external, nonorganization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
 
 Cryptographic mechanisms used for protecting the integrity of information include, for example, signed hash functions using asymmetric cryptography enabling distribution of the public key to verify the hash information while maintaining the confidentiality of the secret key used to generate the hash.</pre></td>
-	<td><pre>Verify that system-wide crypto policies are in effect with the following command:
+	<td><pre>Verify that systemwide crypto policies are in effect with the following command:
 
-$ sudo grep Include /etc/ssh/sshd_config  /etc/ssh/sshd_config.d/*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*include'
 
 /etc/ssh/sshd_config:Include /etc/ssh/sshd_config.d/*.conf
 /etc/ssh/sshd_config.d/50-redhat.conf:Include /etc/crypto-policies/back-ends/opensshserver.config
@@ -5722,7 +5722,7 @@ If "Include /etc/ssh/sshd_config.d/*.conf" or "Include /etc/crypto-policies/back
 
 $ sudo dnf reinstall openssh-server</pre></td>
 	<td>RHEL-09-255055</td>
-	<td>SV-257987r925948_rule</td>
+	<td>SV-257987r952185_rule</td>
 </tr>
 
 <tr>
@@ -5783,34 +5783,6 @@ A reboot is required for the changes to take effect.</pre></td>
 </tr>
 
 <tr>
-	<td>V-257990</td>
-	<td>CCI-001453</td>
-	<td>medium</td>
-	<td>RHEL 9 SSH client must be configured to use only Message Authentication Codes (MACs) employing FIPS 140-3 validated cryptographic hash algorithms.</td>
-	<td>SRG-OS-000250-GPOS-00093</td>
-	<td><pre>Without cryptographic integrity protections, information can be altered by unauthorized users without detection.
-
-Remote access (e.g., RDP) is access to DOD nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
-
-Cryptographic mechanisms used for protecting the integrity of information include, for example, signed hash functions using asymmetric cryptography enabling distribution of the public key to verify the hash information while maintaining the confidentiality of the secret key used to generate the hash.
-
-RHEL 9 incorporates system-wide crypto policies by default. The SSH configuration file has no effect on the ciphers, MACs, or algorithms unless specifically defined in the /etc/sysconfig/sshd file. The employed algorithms can be viewed in the /etc/crypto-policies/back-ends/opensshserver.config file.</pre></td>
-	<td><pre>Verify SSH client is configured to use only ciphers employing FIPS 140-3 approved algorithms with the following command:
-
-$ sudo grep -i macs /etc/crypto-policies/back-ends/openssh.config
-MACs hmac-sha2-256-etm@openssh.com,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-512
-
-If the MACs entries in the "openssh.config" file have any hashes other than "hmac-sha2-256-etm@openssh.com,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-512", the order differs from the example above, they are missing, or commented out, this is a finding.</pre></td>
-	<td><pre>Configure the RHEL 9 SSH client to use only MACs employing FIPS 140-3 approved algorithms by updating the "/etc/crypto-policies/back-ends/openssh.config" file with the following line:
-
-MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-512,hmac-sha2-256-etm@openssh.com,hmac-sha2-256
-
-A reboot is required for the changes to take effect.</pre></td>
-	<td>RHEL-09-255070</td>
-	<td>SV-257990r925957_rule</td>
-</tr>
-
-<tr>
 	<td>V-257991</td>
 	<td>CCI-001453</td>
 	<td>medium</td>
@@ -5823,19 +5795,19 @@ Remote access (e.g., RDP) is access to DOD nonpublic information systems by an a
 Cryptographic mechanisms used for protecting the integrity of information include, for example, signed hash functions using asymmetric cryptography enabling distribution of the public key to verify the hash information while maintaining the confidentiality of the secret key used to generate the hash.
 
 RHEL 9 incorporates system-wide crypto policies by default. The SSH configuration file has no effect on the ciphers, MACs, or algorithms unless specifically defined in the /etc/sysconfig/sshd file. The employed algorithms can be viewed in the /etc/crypto-policies/back-ends/opensshserver.config file.</pre></td>
-	<td><pre>Verify SSH client is configured to use only ciphers employing FIPS 140-3 approved algorithms with the following command:
+	<td><pre>Verify SSH server is configured to use only ciphers employing FIPS 140-3 approved algorithms with the following command:
 
 $ sudo grep -i macs /etc/crypto-policies/back-ends/openssh.config
 MACs hmac-sha2-256-etm@openssh.com,hmac-sha1-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512-etm@openssh.com,hmac-sha2-256,hmac-sha1,umac-128@openssh.com,hmac-sha2-512
 
-If the MACs entries in the "openssh.config" file have any hashes other than "hmac-sha2-256-etm@openssh.com,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-512", the order differs from the example above, they are missing, or commented out, this is a finding.</pre></td>
-	<td><pre>Configure the RHEL 9 SSH client to use only MACs employing FIPS 140-3 approved algorithms by updating the "/etc/crypto-policies/back-ends/openssh.config" file with the following line:
+If the MACs entries in the "openssh.config" file have any hashes other than "hmac-sha2-256-etm@openssh.com,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-512", the order differs from the example above, or they are missing or commented out, this is a finding.</pre></td>
+	<td><pre>Configure the RHEL 9 SSH server to use only MACs employing FIPS 140-3 approved algorithms by updating the "/etc/crypto-policies/back-ends/openssh.config" file with the following line:
 
 MACs hmac-sha2-256-etm@openssh.com,hmac-sha1-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512-etm@openssh.com,hmac-sha2-256,hmac-sha1,umac-128@openssh.com,hmac-sha2-512
 
 A reboot is required for the changes to take effect.</pre></td>
 	<td>RHEL-09-255075</td>
-	<td>SV-257991r925960_rule</td>
+	<td>SV-257991r952188_rule</td>
 </tr>
 
 <tr>
@@ -5847,7 +5819,7 @@ A reboot is required for the changes to take effect.</pre></td>
 	<td><pre>SSH trust relationships mean a compromise on one host can allow an attacker to move trivially to other hosts.</pre></td>
 	<td><pre>Verify the operating system does not allow a noncertificate trusted host SSH logon to the system with the following command:
 
-$ sudo grep -ir hostbasedauthentication /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*hostbasedauthentication'
 
 HostbasedAuthentication no
 
@@ -5862,7 +5834,7 @@ Restart the SSH daemon for the settings to take effect:
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-09-255080</td>
-	<td>SV-257992r943040_rule</td>
+	<td>SV-257992r952190_rule</td>
 </tr>
 
 <tr>
@@ -5874,7 +5846,7 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td><pre>SSH environment options potentially allow users to bypass access restriction in some configurations.</pre></td>
 	<td><pre>Verify that unattended or automatic logon via SSH is disabled with the following command:
 
-$ sudo grep -ir permituserenvironment /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*permituserenvironment'
 
 PermitUserEnvironment no
 
@@ -5891,7 +5863,7 @@ Restart the SSH daemon  for the setting to take effect:
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-09-255085</td>
-	<td>SV-257993r943042_rule</td>
+	<td>SV-257993r952192_rule</td>
 </tr>
 
 <tr>
@@ -5911,11 +5883,11 @@ Session key regeneration limits the chances of a session key becoming compromise
 Satisfies: SRG-OS-000423-GPOS-00187, SRG-OS-000033-GPOS-00014, SRG-OS-000424-GPOS-00188</pre></td>
 	<td><pre>Verify the SSH server is configured to force frequent session key renegotiation with the following command:
 
-$ sudo grep -ir rekeyLimit /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*rekeylimit'
 
 RekeyLimit 1G 1h
 
-If "RekeyLimit" does not have a maximum data amount and maximum time defined, is missing or commented out, this is a finding.</pre></td>
+If "RekeyLimit" does not have a maximum data amount and maximum time defined, is missing, or is commented out, this is a finding.</pre></td>
 	<td><pre>Configure RHEL 9 to force a frequent session key renegotiation for SSH connections to the server by adding or modifying the following line in the "/etc/ssh/sshd_config" file:
 
 RekeyLimit 1G 1h
@@ -5924,7 +5896,7 @@ Restart the SSH daemon for the settings to take effect.
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-09-255090</td>
-	<td>SV-257994r943044_rule</td>
+	<td>SV-257994r952194_rule</td>
 </tr>
 
 <tr>
@@ -5940,13 +5912,13 @@ Terminating network connections associated with communications sessions includes
 RHEL 9 utilizes /etc/ssh/sshd_config for configurations of OpenSSH. Within the sshd_config, the product of the values of "ClientAliveInterval" and "ClientAliveCountMax" are used to establish the inactivity threshold. The "ClientAliveInterval" is a timeout interval in seconds, after which if no data has been received from the client, sshd will send a message through the encrypted channel to request a response from the client. The "ClientAliveCountMax" is the number of client alive messages that may be sent without sshd receiving any messages back from the client. If this threshold is met, sshd will disconnect the client. For more information on these settings and others, refer to the sshd_config man pages.
 
 Satisfies: SRG-OS-000163-GPOS-00072, SRG-OS-000279-GPOS-00109</pre></td>
-	<td><pre>Verify that the "ClientAliveCountMax" is set to "1" by performing the following command:
+	<td><pre>Verify the "ClientAliveCountMax" is set to "1" by performing the following command:
 
-$ sudo grep -i countmax /etc/ssh/sshd_config
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*clientalivecountmax'
 
 ClientAliveCountMax 1
 
-If "ClientAliveCountMax" do not exist, is not set to a value of "1" in "/etc/ssh/sshd_config", or is commented out, this is a finding.</pre></td>
+If "ClientAliveCountMax" does not exist, is not set to a value of "1" in "/etc/ssh/sshd_config", or is commented out, this is a finding.</pre></td>
 	<td><pre>Note: This setting must be applied in conjunction with RHEL-09-255100 to function correctly.
 
 Configure the SSH server to terminate a user session automatically after the SSH client has become unresponsive.
@@ -5959,7 +5931,7 @@ In order for the changes to take effect, the SSH daemon must be restarted.
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-09-255095</td>
-	<td>SV-257995r942963_rule</td>
+	<td>SV-257995r952196_rule</td>
 </tr>
 
 <tr>
@@ -5975,9 +5947,9 @@ Terminating network connections associated with communications sessions includes
 RHEL 9 utilizes /etc/ssh/sshd_config for configurations of OpenSSH. Within the sshd_config, the product of the values of "ClientAliveInterval" and "ClientAliveCountMax" are used to establish the inactivity threshold. The "ClientAliveInterval" is a timeout interval in seconds, after which if no data has been received from the client, sshd will send a message through the encrypted channel to request a response from the client. The "ClientAliveCountMax" is the number of client alive messages that may be sent without sshd receiving any messages back from the client. If this threshold is met, sshd will disconnect the client. For more information on these settings and others, refer to the sshd_config man pages.
 
 Satisfies: SRG-OS-000126-GPOS-00066, SRG-OS-000163-GPOS-00072, SRG-OS-000279-GPOS-00109, SRG-OS-000395-GPOS-00175</pre></td>
-	<td><pre>Verify that the "ClientAliveInterval" variable is set to a value of "600" or less by performing the following command:
+	<td><pre>Verify the "ClientAliveInterval" variable is set to a value of "600" or less by performing the following command:
 
-$ sudo grep -ir interval /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*clientaliveinterval'
 
 ClientAliveInterval 600
 
@@ -5994,7 +5966,7 @@ In order for the changes to take effect, the SSH daemon must be restarted.
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-09-255100</td>
-	<td>SV-257996r943046_rule</td>
+	<td>SV-257996r952198_rule</td>
 </tr>
 
 <tr>
@@ -6127,7 +6099,7 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td><pre>If compression is allowed in an SSH connection prior to authentication, vulnerabilities in the compression software could result in compromise of the system from an unauthenticated connection, potentially with root privileges.</pre></td>
 	<td><pre>Verify the SSH daemon performs compression after a user successfully authenticates with the following command:
 
-$ sudo grep -ir compression /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*compression'
 
 Compression delayed
 
@@ -6142,7 +6114,7 @@ The SSH service must be restarted for changes to take effect:
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-09-255130</td>
-	<td>SV-258002r925993_rule</td>
+	<td>SV-258002r952200_rule</td>
 </tr>
 
 <tr>
@@ -6156,7 +6128,7 @@ $ sudo systemctl restart sshd.service</pre></td>
 Satisfies: SRG-OS-000364-GPOS-00151, SRG-OS-000480-GPOS-00227</pre></td>
 	<td><pre>Verify the SSH daemon does not allow GSSAPI authentication with the following command:
 
-$ sudo grep -ir gssapiauth  /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*gssapiauthentication'
 
 GSSAPIAuthentication no
 
@@ -6173,7 +6145,7 @@ The SSH service must be restarted for changes to take effect:
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-09-255135</td>
-	<td>SV-258003r925996_rule</td>
+	<td>SV-258003r952202_rule</td>
 </tr>
 
 <tr>
@@ -6187,7 +6159,7 @@ $ sudo systemctl restart sshd.service</pre></td>
 Satisfies: SRG-OS-000364-GPOS-00151, SRG-OS-000480-GPOS-00227</pre></td>
 	<td><pre>Verify the SSH daemon does not allow Kerberos authentication with the following command:
 
-$ sudo grep -i kerberosauth  /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*kerberosauthentication'
 
 KerberosAuthentication no
 
@@ -6202,7 +6174,7 @@ The SSH service must be restarted for changes to take effect:
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-09-255140</td>
-	<td>SV-258004r925999_rule</td>
+	<td>SV-258004r952204_rule</td>
 </tr>
 
 <tr>
@@ -6214,7 +6186,7 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td><pre>SSH trust relationships mean a compromise on one host can allow an attacker to move trivially to other hosts.</pre></td>
 	<td><pre>Verify the SSH daemon does not allow rhosts authentication with the following command:
 
-$ sudo grep -ir ignorerhosts /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*ignorerhosts'
 
 IgnoreRhosts yes
 
@@ -6229,7 +6201,7 @@ The SSH service must be restarted for changes to take effect:
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-09-255145</td>
-	<td>SV-258005r926002_rule</td>
+	<td>SV-258005r952206_rule</td>
 </tr>
 
 <tr>
@@ -6241,7 +6213,7 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td><pre>Configuring the IgnoreUserKnownHosts setting for the SSH daemon provides additional assurance that remote login via SSH will require a password, even in the event of misconfiguration elsewhere.</pre></td>
 	<td><pre>Verify the SSH daemon does not allow known hosts authentication with the following command:
 
-$ sudo grep -ir ignoreuser  /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*ignoreuserknownhosts'
 
 IgnoreUserKnownHosts yes
 
@@ -6256,7 +6228,7 @@ The SSH service must be restarted for changes to take effect:
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-09-255150</td>
-	<td>SV-258006r926005_rule</td>
+	<td>SV-258006r952208_rule</td>
 </tr>
 
 <tr>
@@ -6268,7 +6240,7 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td><pre>When X11 forwarding is enabled, there may be additional exposure to the server and client displays if the sshd proxy display is configured to listen on the wildcard address.  By default, sshd binds the forwarding server to the loopback address and sets the hostname part of the DISPLAY environment variable to localhost. This prevents remote hosts from connecting to the proxy display.</pre></td>
 	<td><pre>Verify the SSH daemon does not allow X11Forwarding with the following command:
 
-$ sudo grep -ir x11for  /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*x11forwarding'
 
 X11forwarding no
 
@@ -6283,7 +6255,7 @@ The SSH service must be restarted for changes to take effect:
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-09-255155</td>
-	<td>SV-258007r943048_rule</td>
+	<td>SV-258007r952210_rule</td>
 </tr>
 
 <tr>
@@ -6295,7 +6267,7 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td><pre>If other users have access to modify user-specific SSH configuration files, they may be able to log into the system as another user.</pre></td>
 	<td><pre>Verify the SSH daemon performs strict mode checking of home directory configuration files with the following command:
 
-$ sudo grep -ir strictmodes  /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*strictmodes'
 
 StrictModes yes
 
@@ -6310,7 +6282,7 @@ The SSH service must be restarted for changes to take effect:
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-09-255160</td>
-	<td>SV-258008r926011_rule</td>
+	<td>SV-258008r952212_rule</td>
 </tr>
 
 <tr>
@@ -6322,7 +6294,7 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td><pre>Providing users feedback on when account accesses last occurred facilitates user recognition and reporting of unauthorized account use.</pre></td>
 	<td><pre>Verify the SSH daemon provides users with feedback on when account accesses last occurred with the following command:
 
-$ sudo grep -ir printlast  /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*printlastlog'
 
 PrintLastLog yes
 
@@ -6337,7 +6309,7 @@ The SSH service must be restarted for changes to take effect:
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-09-255165</td>
-	<td>SV-258009r926014_rule</td>
+	<td>SV-258009r952214_rule</td>
 </tr>
 
 <tr>
@@ -6349,7 +6321,7 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td><pre>SSH daemon privilege separation causes the SSH process to drop root privileges when not needed, which would decrease the impact of software vulnerabilities in the nonprivileged section.</pre></td>
 	<td><pre>Verify the SSH daemon performs privilege separation with the following command:
 
-$ sudo grep -ir usepriv  /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*useprivilegeseparation'
 
 UsePrivilegeSeparation sandbox
 
@@ -6364,7 +6336,7 @@ The SSH service must be restarted for changes to take effect:
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-09-255170</td>
-	<td>SV-258010r926017_rule</td>
+	<td>SV-258010r952216_rule</td>
 </tr>
 
 <tr>
@@ -6376,7 +6348,7 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td><pre>When X11 forwarding is enabled, there may be additional exposure to the server and client displays if the sshd proxy display is configured to listen on the wildcard address. By default, sshd binds the forwarding server to the loopback address and sets the hostname part of the "DISPLAY" environment variable to localhost. This prevents remote hosts from connecting to the proxy display.</pre></td>
 	<td><pre>Verify the SSH daemon prevents remote hosts from connecting to the proxy display with the following command:
 
-$ sudo grep -ir x11uselocal /etc/ssh/sshd_config /etc/ssh/sshd_config.d/*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*x11uselocalhost'
 
 X11UseLocalhost yes
 
@@ -6391,7 +6363,7 @@ The SSH service must be restarted for changes to take effect:
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-09-255175</td>
-	<td>SV-258011r943050_rule</td>
+	<td>SV-258011r952218_rule</td>
 </tr>
 
 <tr>

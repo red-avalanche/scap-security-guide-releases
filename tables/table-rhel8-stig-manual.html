@@ -230,13 +230,13 @@ Encrypting a partition in an already installed system is more difficult, because
 	<td>V-230225</td>
 	<td>CCI-000048</td>
 	<td>medium</td>
-	<td>RHEL 8 must display the Standard Mandatory DoD Notice and Consent Banner before granting local or remote access to the system via a ssh logon.</td>
+	<td>RHEL 8 must display the Standard Mandatory DOD Notice and Consent Banner before granting local or remote access to the system via a ssh logon.</td>
 	<td>SRG-OS-000023-GPOS-00006</td>
 	<td><pre>Display of a standardized and approved use notification before granting access to the operating system ensures privacy and security notification verbiage used is consistent with applicable federal laws, Executive Orders, directives, policies, regulations, standards, and guidance.
 
 System use notifications are required only for access via logon interfaces with human users and are not required when such human interfaces do not exist.
 
-The banner must be formatted in accordance with applicable DoD policy. Use the following verbiage for operating systems that can accommodate banners of 1300 characters:
+The banner must be formatted in accordance with applicable DOD policy. Use the following verbiage for operating systems that can accommodate banners of 1300 characters:
 
 "You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.
 
@@ -257,20 +257,21 @@ Use the following verbiage for operating systems that have severe limitations on
 "I've read & consent to terms in IS user agreem't."
 
 Satisfies: SRG-OS-000023-GPOS-00006, SRG-OS-000228-GPOS-00088</pre></td>
-	<td><pre>Verify any publicly accessible connection to the operating system displays the Standard Mandatory DoD Notice and Consent Banner before granting access to the system.
+	<td><pre>Verify any publicly accessible connection to the operating system displays the Standard Mandatory DOD Notice and Consent Banner before granting access to the system.
 
 Check for the location of the banner file being used with the following command:
 
-$ sudo grep -ir banner /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*banner'
 
 banner /etc/issue
 
 This command will return the banner keyword and the name of the file that contains the ssh banner (in this case "/etc/issue").
 
 If the line is commented out, this is a finding.
+
 If conflicting results are returned, this is a finding.
 
-View the file specified by the banner keyword to check that it matches the text of the Standard Mandatory DoD Notice and Consent Banner:
+View the file specified by the banner keyword to check that it matches the text of the Standard Mandatory DOD Notice and Consent Banner:
 
 "You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only. By using this IS (which includes any device attached to this IS), you consent to the following conditions:
 
@@ -284,16 +285,16 @@ View the file specified by the banner keyword to check that it matches the text 
 
 -Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details."
 
-If the system does not display a graphical logon banner or the banner does not match the Standard Mandatory DoD Notice and Consent Banner, this is a finding.
+If the system does not display a graphical logon banner or the banner does not match the Standard Mandatory DOD Notice and Consent Banner, this is a finding.
 
-If the text in the file does not match the Standard Mandatory DoD Notice and Consent Banner, this is a finding.</pre></td>
-	<td><pre>Configure the operating system to display the Standard Mandatory DoD Notice and Consent Banner before granting access to the system via the ssh.
+If the text in the file does not match the Standard Mandatory DOD Notice and Consent Banner, this is a finding.</pre></td>
+	<td><pre>Configure the operating system to display the Standard Mandatory DOD Notice and Consent Banner before granting access to the system via the ssh.
 
 Edit the "/etc/ssh/sshd_config" file to uncomment the banner keyword and configure it to point to a file that will contain the logon banner (this file may be named differently or be in a different location if using a version of SSH that is provided by a third-party vendor). An example configuration line is:
 
 banner /etc/issue
 
-Either create the file containing the banner or replace the text in the file with the Standard Mandatory DoD Notice and Consent Banner. The DoD-required text is:
+Either create the file containing the banner or replace the text in the file with the Standard Mandatory DOD Notice and Consent Banner. The DOD-required text is:
 
 "You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only. By using this IS (which includes any device attached to this IS), you consent to the following conditions:
 
@@ -309,7 +310,7 @@ Either create the file containing the banner or replace the text in the file wit
 
 The SSH service must be restarted for changes to take effect.</pre></td>
 	<td>RHEL-08-010040</td>
-	<td>SV-230225r858694_rule</td>
+	<td>SV-230225r951590_rule</td>
 </tr>
 
 <tr>
@@ -449,14 +450,14 @@ By using this IS (which includes any device attached to this IS), you consent to
 	<td>SRG-OS-000032-GPOS-00013</td>
 	<td><pre>Remote access services, such as those providing remote access to network devices and information systems, which lack automated monitoring capabilities, increase risk and make remote user access management difficult at best.
 
-Remote access is access to DoD nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
+Remote access is access to DOD nonpublic information systems by an authorized user (or an information system) communicating through an external, nonorganization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
 
 Automated monitoring of remote access sessions allows organizations to detect cyber attacks and ensure ongoing compliance with remote access policies by auditing connection activities of remote access capabilities, such as Remote Desktop Protocol (RDP), on a variety of information system components (e.g., servers, workstations, notebook computers, smartphones, and tablets).</pre></td>
 	<td><pre>Verify that RHEL 8 monitors all remote access methods.
 
 Check that remote access methods are being logged by running the following command:
 
-$ sudo grep -E '(auth.*|authpriv.*|daemon.*)' /etc/rsyslog.conf
+$ sudo grep -E '(auth\.\*|authpriv\.\*|daemon\.\*)' /etc/rsyslog.conf /etc/rsyslog.d/*.conf
 
 auth.*;authpriv.*;daemon.* /var/log/secure
 
@@ -473,7 +474,7 @@ The "rsyslog" service must be restarted for the changes to take effect. To resta
 
 $ sudo systemctl restart rsyslog.service</pre></td>
 	<td>RHEL-08-010070</td>
-	<td>SV-230228r627750_rule</td>
+	<td>SV-230228r951592_rule</td>
 </tr>
 
 <tr>
@@ -878,9 +879,9 @@ Satisfies: SRG-OS-000163-GPOS-00072, SRG-OS-000126-GPOS-00066, SRG-OS-000279-GPO
 
 Check that the "ClientAliveCountMax" is set to "1" by performing the following command:
 
-     $ sudo grep -ir clientalivecountmax /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*clientalivecountmax'
 
-     ClientAliveCountMax 1
+ClientAliveCountMax 1
 
 If "ClientAliveCountMax" do not exist, is not set to a value of "1" in "/etc/ssh/sshd_config", or is commented out, this is a finding.
 
@@ -897,7 +898,7 @@ For the changes to take effect, the SSH daemon must be restarted:
 
      $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-010200</td>
-	<td>SV-230244r917867_rule</td>
+	<td>SV-230244r951594_rule</td>
 </tr>
 
 <tr>
@@ -2063,7 +2064,7 @@ GRUB_CMDLINE_LINUX="vsyscall=none"</pre></td>
 	<td>medium</td>
 	<td>RHEL 8 must clear SLUB/SLAB objects to prevent use-after-free attacks.</td>
 	<td>SRG-OS-000134-GPOS-00068</td>
-	<td><pre>Some adversaries launch attacks with the intent of executing code in non-executable regions of memory or in memory locations that are prohibited. Security safeguards employed to protect memory include, for example, data execution prevention and address space layout randomization. Data execution prevention safeguards can be either hardware-enforced or software-enforced with hardware providing the greater strength of mechanism.
+	<td><pre>Some adversaries launch attacks with the intent of executing code in nonexecutable regions of memory or in memory locations that are prohibited. Security safeguards employed to protect memory include, for example, data execution prevention and address space layout randomization. Data execution prevention safeguards can be either hardware-enforced or software-enforced with hardware providing the greater strength of mechanism.
 
 Poisoning writes an arbitrary value to freed pages, so any modification or reference to that page after being freed or before being initialized will be detected and prevented. This prevents many types of use-after-free vulnerabilities at little performance cost. Also prevents leak of data and detection of corrupted memory.
 
@@ -2078,7 +2079,7 @@ $ sudo grub2-editenv list | grep slub_debug
 
 kernelopts=root=/dev/mapper/rhel-root ro crashkernel=auto resume=/dev/mapper/rhel-swap rd.lvm.lv=rhel/root rd.lvm.lv=rhel/swap rhgb quiet fips=1 slub_debug=P page_poison=1 vsyscall=none audit=1 audit_backlog_limit=8192 boot=UUID=8d171156-cd61-421c-ba41-1c021ac29e82
 
-If "slub_debug" is not set to "P" or is missing, this is a finding.
+If "slub_debug" does not contain "P" or is missing, this is a finding.
 
 Check that poisoning of SLUB/SLAB objects is enabled by default to persist in kernel updates: 
 
@@ -2086,7 +2087,7 @@ $ sudo grep slub_debug /etc/default/grub
 
 GRUB_CMDLINE_LINUX="slub_debug=P"
 
-If "slub_debug" is not set to "P", is missing or commented out, this is a finding.</pre></td>
+If "slub_debug" does not contain "P", is missing, or is commented out, this is a finding.</pre></td>
 	<td><pre>Configure RHEL 8 to enable poisoning of SLUB/SLAB objects with the following commands:
 
 $ sudo grubby --update-kernel=ALL --args="slub_debug=P"
@@ -2095,7 +2096,7 @@ Add or modify the following line in "/etc/default/grub" to ensure the configurat
 
 GRUB_CMDLINE_LINUX="slub_debug=P"</pre></td>
 	<td>RHEL-08-010423</td>
-	<td>SV-230279r792888_rule</td>
+	<td>SV-230279r951598_rule</td>
 </tr>
 
 <tr>
@@ -2358,11 +2359,12 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
 	<td><pre>If other users have access to modify user-specific SSH configuration files, they may be able to log on to the system as another user.</pre></td>
 	<td><pre>Verify the SSH daemon performs strict mode checking of home directory configuration files with the following command:
 
-$ sudo grep -ir strictmodes /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*strictmodes'
 
 StrictModes yes
 
 If "StrictModes" is set to "no", is missing, or the returned line is commented out, this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure SSH to perform strict mode checking of home directory configuration files. Uncomment the "StrictModes" keyword in "/etc/ssh/sshd_config" and set the value to "yes":
 
@@ -2372,7 +2374,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-010500</td>
-	<td>SV-230288r858701_rule</td>
+	<td>SV-230288r951600_rule</td>
 </tr>
 
 <tr>
@@ -2384,11 +2386,12 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td><pre>Configuring this setting for the SSH daemon provides additional assurance that remote logon via SSH will require a password, even in the event of misconfiguration elsewhere.</pre></td>
 	<td><pre>Verify the SSH daemon does not allow authentication using known host’s authentication with the following command:
 
-$ sudo grep -ir IgnoreUserKnownHosts /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*ignoreuserknownhosts'
 
 IgnoreUserKnownHosts yes
 
 If the value is returned as "no", the returned line is commented out, or no output is returned, this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure the SSH daemon to not allow authentication using known host’s authentication.
 
@@ -2400,7 +2403,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-010520</td>
-	<td>SV-230290r858705_rule</td>
+	<td>SV-230290r951602_rule</td>
 </tr>
 
 <tr>
@@ -2412,11 +2415,12 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td><pre>Configuring these settings for the SSH daemon provides additional assurance that remote logon via SSH will not use unused methods of authentication, even in the event of misconfiguration elsewhere.</pre></td>
 	<td><pre>Verify the SSH daemon does not allow Kerberos authentication with the following command:
 
-$ sudo grep -ir KerberosAuthentication  /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*kerberosauthentication'
 
 KerberosAuthentication no
 
-If the value is returned as "yes", the returned line is commented out, no output is returned, or has not been documented with the ISSO, this is a finding.
+If the value is returned as "yes", the returned line is commented out, no output is returned, or has not been documented with the information system security officer (ISSO), this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure the SSH daemon to not allow Kerberos authentication.
 
@@ -2428,7 +2432,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-010521</td>
-	<td>SV-230291r858707_rule</td>
+	<td>SV-230291r952105_rule</td>
 </tr>
 
 <tr>
@@ -2526,11 +2530,12 @@ If a separate entry for the file system/partition "/tmp" does not exist, this is
 
 Check that SSH prevents users from logging on directly as "root" with the following command:
 
-$ sudo grep -ir PermitRootLogin /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*permitrootlogin'
 
 PermitRootLogin no
 
 If the "PermitRootLogin" keyword is set to "yes", is missing, or is commented out, this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure RHEL 8 to stop users from logging on remotely as the "root" user via SSH.
 
@@ -2542,7 +2547,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-010550</td>
-	<td>SV-230296r858711_rule</td>
+	<td>SV-230296r951608_rule</td>
 </tr>
 
 <tr>
@@ -3393,11 +3398,12 @@ AutomaticLoginEnable=false</pre></td>
 	<td><pre>SSH environment options potentially allow users to bypass access restriction in some configurations.</pre></td>
 	<td><pre>Verify that unattended or automatic logon via ssh is disabled with the following command:
 
-$ sudo grep -ir PermitUserEnvironment /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*permituserenvironment'
 
 PermitUserEnvironment no
 
 If "PermitUserEnvironment" is set to "yes", is missing completely, or is commented out, this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure RHEL 8 to allow the SSH daemon to not allow unattended or automatic logon to the system.
 
@@ -3409,7 +3415,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-010830</td>
-	<td>SV-230330r877377_rule</td>
+	<td>SV-230330r951610_rule</td>
 </tr>
 
 <tr>
@@ -5093,11 +5099,12 @@ Document all authorized accounts on the system.</pre></td>
 	<td><pre>If an account has an empty password, anyone could log on and run commands with the privileges of that account. Accounts with empty passwords should never be used in operational environments.</pre></td>
 	<td><pre>To verify that null passwords cannot be used, run the following command:
 
-$ sudo grep -ir permitemptypasswords /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*permitemptypasswords'
 
 PermitEmptyPasswords no
 
 If "PermitEmptyPasswords" is set to "yes", this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Edit the following line in "etc/ssh/sshd_config" to prevent logons with empty passwords.
 
@@ -5107,7 +5114,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-020330</td>
-	<td>SV-230380r858715_rule</td>
+	<td>SV-230380r951612_rule</td>
 </tr>
 
 <tr>
@@ -5142,11 +5149,12 @@ session required pam_lastlog.so showfailed</pre></td>
 	<td><pre>Providing users with feedback on when account accesses via SSH last occurred facilitates user recognition and reporting of unauthorized account use.</pre></td>
 	<td><pre>Verify SSH provides users with feedback on when account accesses last occurred with the following command:
 
-$ sudo grep -ir printlastlog /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*printlastlog'
 
 PrintLastLog yes
 
 If the "PrintLastLog" keyword is set to "no", is missing, or is commented out, this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure SSH to provide users with feedback on when account accesses last occurred by setting the required configuration options in "/etc/pam.d/sshd" or in the "sshd_config" file used by the system ("/etc/ssh/sshd_config" will be used in the example) (this file may be named differently or be in a different location if using a version of SSH that is provided by a third-party vendor).
 
@@ -5156,7 +5164,7 @@ PrintLastLog yes
 
 The SSH service must be restarted for changes to "sshd_config" to take effect.</pre></td>
 	<td>RHEL-08-020350</td>
-	<td>SV-230382r858717_rule</td>
+	<td>SV-230382r951614_rule</td>
 </tr>
 
 <tr>
@@ -9176,11 +9184,12 @@ Session key regeneration limits the chances of a session key becoming compromise
 Satisfies: SRG-OS-000033-GPOS-00014, SRG-OS-000420-GPOS-00186, SRG-OS-000424-GPOS-00188</pre></td>
 	<td><pre>Verify the SSH server is configured to force frequent session key renegotiation with the following command:
 
-$ sudo grep -ir RekeyLimit /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*rekeylimit'
 
 RekeyLimit 1G 1h
 
-If "RekeyLimit" does not have a maximum data amount and maximum time defined, is missing or commented out, this is a finding.
+If "RekeyLimit" does not have a maximum data amount and maximum time defined, is missing, or is commented out, this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure the system to force a frequent session key renegotiation for SSH connections to the server by add or modifying the following line in the "/etc/ssh/sshd_config" file:
 
@@ -9190,7 +9199,7 @@ Restart the SSH daemon for the settings to take effect.
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-040161</td>
-	<td>SV-230527r877398_rule</td>
+	<td>SV-230527r951616_rule</td>
 </tr>
 
 <tr>
@@ -10344,11 +10353,12 @@ X11 forwarding should be enabled with caution. Users with the ability to bypass 
 If X11 services are not required for the system's intended function, they should be disabled or restricted as appropriate to the system’s needs.</pre></td>
 	<td><pre>Verify X11Forwarding is disabled with the following command:
 
-$ sudo grep -ir x11forwarding /etc/ssh/sshd_config* | grep -v "^#"
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*x11forwarding'
 
 X11Forwarding no
 
-If the "X11Forwarding" keyword is set to "yes" and is not documented with the Information System Security Officer (ISSO) as an operational requirement or is missing, this is a finding.
+If the "X11Forwarding" keyword is set to "yes" and is not documented with the  information system security officer (ISSO) as an operational requirement or is missing, this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Edit the "/etc/ssh/sshd_config" file to uncomment or add the line for the "X11Forwarding" keyword and set its value to "no" (this file may be named differently or be in a different location if using a version of SSH that is provided by a third-party vendor):
 
@@ -10358,7 +10368,7 @@ The SSH service must be restarted for changes to take effect:
 
 $ sudo systemctl restart sshd</pre></td>
 	<td>RHEL-08-040340</td>
-	<td>SV-230555r858721_rule</td>
+	<td>SV-230555r951618_rule</td>
 </tr>
 
 <tr>
@@ -10372,10 +10382,12 @@ $ sudo systemctl restart sshd</pre></td>
 
 Check the SSH X11UseLocalhost setting with the following command:
 
-# sudo grep -ir x11uselocalhost /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*x11uselocalhost'
+
 X11UseLocalhost yes
 
 If the "X11UseLocalhost" keyword is set to "no", is missing, or is commented out, this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure the SSH daemon to prevent remote hosts from connecting to the proxy display.
 
@@ -10383,7 +10395,7 @@ Edit the "/etc/ssh/sshd_config" file to uncomment or add the line for the "X11Us
 
 X11UseLocalhost yes</pre></td>
 	<td>RHEL-08-040341</td>
-	<td>SV-230556r858723_rule</td>
+	<td>SV-230556r951620_rule</td>
 </tr>
 
 <tr>
@@ -10800,11 +10812,11 @@ Satisfies: SRG-OS-000163-GPOS-00072, SRG-OS-000126-GPOS-00066, SRG-OS-000279-GPO
 
 Check that the "ClientAliveInterval" variable is set to a value of "600" or less by performing the following command:
 
-     $ sudo grep -ir clientaliveinterval /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*clientaliveinterval'
 
-     ClientAliveInterval 600
+ClientAliveInterval 600
 
-If "ClientAliveInterval" does not exist, does not have a value of "600" or less in "/etc/ssh/sshd_config" or is commented out, this is a finding.
+If "ClientAliveInterval" does not exist, does not have a value of "600" or less in "/etc/ssh/sshd_config", or is commented out, this is a finding.
 
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Note: This setting must be applied in conjunction with RHEL-08-010200 to function correctly.
@@ -10819,7 +10831,7 @@ For the changes to take effect, the SSH daemon must be restarted.
 
      $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-010201</td>
-	<td>SV-244525r917886_rule</td>
+	<td>SV-244525r951596_rule</td>
 </tr>
 
 <tr>
@@ -10885,11 +10897,12 @@ $ sudo yum install rng-tools</pre></td>
 	<td><pre>Configuring this setting for the SSH daemon provides additional assurance that remote logon via SSH will require a password, even in the event of misconfiguration elsewhere.</pre></td>
 	<td><pre>Verify the SSH daemon does not allow GSSAPI authentication with the following command:
 
-$ sudo grep -ir GSSAPIAuthentication  /etc/ssh/sshd_config*
+$ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*gssapiauthentication'
 
 GSSAPIAuthentication no
 
-If the value is returned as "yes", the returned line is commented out, no output is returned, or has not been documented with the ISSO, this is a finding.
+If the value is returned as "yes", the returned line is commented out, no output is returned, or has not been documented with the  information system security officer (ISSO), this is a finding.
+
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure the SSH daemon to not allow GSSAPI authentication.
 
@@ -10901,7 +10914,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-010522</td>
-	<td>SV-244528r858709_rule</td>
+	<td>SV-244528r952106_rule</td>
 </tr>
 
 <tr>

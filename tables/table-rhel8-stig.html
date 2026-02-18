@@ -150,6 +150,7 @@ If the system is not configured to use one of these sources, updates (in the for
 can be manually downloaded from the Red Hat Network and installed using rpm.
 
 
+            
 NOTE: U.S. Defense systems are required to be patched within 30 days or sooner as local policy
 dictates.</pre></td>
 	<td>RHEL-08-010010</td>
@@ -188,7 +189,8 @@ $ sudo rpm --import /media/cdrom/RPM-GPG-KEY
 
 Alternatively, the key may be pre-loaded during the RHEL installation. In
 such cases, the key can be installed by running the following command:
-sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release</pre></td>
+sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release
+          </pre></td>
 	<td>RHEL-08-010019</td>
 	<td>ensure_redhat_gpgkey_installed</td>
 </tr>
@@ -215,7 +217,9 @@ set up incorrectly.
 To check that Crypto Policies settings are configured correctly, ensure that
 /etc/crypto-policies/back-ends/openssh.config contains the following
 line and is not commented out:
-MACs </pre></td>
+MACs 
+              
+            </pre></td>
 	<td>RHEL-08-010020</td>
 	<td>harden_sshd_macs_openssh_conf_crypto_policy</td>
 </tr>
@@ -246,6 +250,7 @@ are not required to use disk encryption and are not a finding.
 Linux Unified Key Setup-on-disk-format (LUKS) technology. The easiest way to
 encrypt a partition is during installation time.
 
+            
 For manual installations, select the Encrypt checkbox during
 partition creation to encrypt the partition. When this
 option is selected the system will prompt for a passphrase to use in
@@ -253,24 +258,26 @@ decrypting the partition. The passphrase will subsequently need to be entered ma
 every time the system boots.
 
 
+            
 For automated/unattended installations, it is possible to use Kickstart by adding
 the --encrypted and --passphrase= options to the definition of each partition to be
 encrypted. For example, the following line would encrypt the root partition:
 part / --fstype=ext4 --size=100 --onpart=hda1 --encrypted --passphrase=PASSPHRASE
+            
 Any PASSPHRASE is stored in the Kickstart in plaintext, and the Kickstart
 must then be protected accordingly.
 Omitting the --passphrase= option from the partition definition will cause the
 installer to pause and interactively ask for the passphrase during installation.
 
+            
 By default, the Anaconda installer uses aes-xts-plain64 cipher
 with a minimum 512 bit key size which should be compatible with FIPS enabled.
 
 
+            
 Detailed information on encrypting partitions using LUKS or LUKS ciphers can be found on
 the Red Hat Enterprise Linux 8 Documentation web site:
-
-    
-    https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/security_hardening/encrypting-block-devices-using-luks_security-hardening
+            https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/8/html/security_hardening/encrypting-block-devices-using-luks_security-hardening
 .</pre></td>
 	<td>RHEL-08-010030</td>
 	<td>encrypt_partitions</td>
@@ -280,7 +287,7 @@ the Red Hat Enterprise Linux 8 Documentation web site:
 	<td>V-230225</td>
 	<td>48</td>
 	<td>medium</td>
-	<td>RHEL 8 must display the Standard Mandatory DoD Notice and Consent Banner before granting local or remote access to the system via a ssh logon.</td>
+	<td>RHEL 8 must display the Standard Mandatory DOD Notice and Consent Banner before granting local or remote access to the system via a ssh logon.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>The warning message reinforces policy awareness during the logon process and
 facilitates possible legal action against attackers. Alternatively, systems
@@ -317,6 +324,7 @@ appropriate system-wide warning banner.</pre></td>
 ensures privacy and security notification verbiage used is consistent with applicable federal laws,
 Executive Orders, directives, policies, regulations, standards, and guidance.
 
+              
 For U.S. Government systems, system use notifications are required only for access via login interfaces
 with human users and are not required when such human interfaces do not exist.</pre></td>
 	<td><pre>To ensure a login warning banner is enabled, run the following:
@@ -331,6 +339,7 @@ If properly configured, the output should be /org/gnome/login-screen/banner-mess
 in the GNOME Display Manager's login screen can be enabled on the login
 screen by setting banner-message-enable to true.
 
+              
 To enable, add or edit banner-message-enable to
 /etc/dconf/db/gdm.d/00-security-settings. For example:
 [org/gnome/login-screen]
@@ -367,6 +376,7 @@ in the GNOME Display Manager's login screen can be configured on the login
 screen by setting banner-message-text to 'APPROVED_BANNER'
 where APPROVED_BANNER is the approved banner for your environment.
 
+              
 To enable, add or edit banner-message-text to
 
 /etc/dconf/db/gdm.d/00-security-settings. For example:
@@ -395,11 +405,13 @@ access to the operating system ensures privacy and security notification
 verbiage used is consistent with applicable federal laws, Executive Orders,
 directives, policies, regulations, standards, and guidance.
 
+            
 System use notifications are required only for access via login interfaces
 with human users and are not required when such human interfaces do not
 exist.</pre></td>
 	<td><pre>To check if the system login banner is compliant,
 run the following command:
+
 $ cat /etc/issue
       Is it the case that it does not display the required banner?
       </pre></td>
@@ -411,7 +423,8 @@ disclaimer.
 
 The DoD required text is either:
 
-You are accessing a U.S. Government (USG) Information System (IS) that
+            
+            You are accessing a U.S. Government (USG) Information System (IS) that
 is provided for USG-authorized use only. By using this IS (which includes
 any device attached to this IS), you consent to the following conditions:
 -The USG routinely intercepts and monitors communications on this IS
@@ -431,10 +444,13 @@ privileged communications, or work product, related to personal
 representation or services by attorneys, psychotherapists, or clergy, and
 their assistants. Such communications and work product are private and
 confidential. See User Agreement for details.
-
+            
+            
 OR:
 
-I've read & consent to terms in IS user agreem't.</pre></td>
+            
+            I've read & consent to terms in IS user agreem't.
+          </pre></td>
 	<td>RHEL-08-010060</td>
 	<td>banner_etc_issue</td>
 </tr>
@@ -464,7 +480,8 @@ network. The /etc/rsyslog.conf or
 /etc/rsyslog.d/*.conf file should contain a match for the following
 selectors: auth.*, authpriv.*, and daemon.*. If
 not, use the following as an example configuration:
-auth.*;authpriv.*;daemon.*                              /var/log/secure</pre></td>
+auth.*;authpriv.*;daemon.*                              /var/log/secure
+          </pre></td>
 	<td>RHEL-08-010070</td>
 	<td>rsyslog_remote_access_monitoring</td>
 </tr>
@@ -551,6 +568,7 @@ Red Hat Enterprise Linux 8, for certificate-based authentication, must enforce a
 If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised. Passwords
 that are encrypted with a weak algorithm are no more protected than if they are kept in plain text.
 
+              
 Using a stronger hashing algorithm makes password cracking attacks more difficult.</pre></td>
 	<td><pre>
 Verify that the shadow password suite configuration is set to encrypt password with a FIPS 140-2 approved cryptographic hashing algorithm.
@@ -564,7 +582,9 @@ ENCRYPT_METHOD
       </pre></td>
 	<td><pre>In /etc/login.defs, add or correct the following line to ensure
 the system will use  as the hashing algorithm:
-ENCRYPT_METHOD </pre></td>
+ENCRYPT_METHOD 
+              
+            </pre></td>
 	<td>RHEL-08-010110</td>
 	<td>set_password_hashing_algorithm_logindefs</td>
 </tr>
@@ -628,7 +648,8 @@ the account with the following commands:
 Perform a password reset:
 $ sudo passwd [username]
 Lock an account:
-$ sudo passwd -l [username]</pre></td>
+$ sudo passwd -l [username]
+            </pre></td>
 	<td>RHEL-08-010121</td>
 	<td>no_empty_passwords_etc_shadow</td>
 </tr>
@@ -645,6 +666,7 @@ be plainly read (i.e., clear text) and easily compromised. Passwords
 that are encrypted with a weak algorithm are no more protected than if
 they are kept in plain text.
 
+              
 Using more hashing rounds makes password cracking attacks more difficult.</pre></td>
 	<td><pre>Inspect /etc/login.defs and ensure that if eihter
 SHA_CRYPT_MIN_ROUNDS or SHA_CRYPT_MAX_ROUNDS
@@ -684,13 +706,16 @@ GRUB2_PASSWORD=grub.pbkdf2.sha512.10000.C4E08AC72FBFF7E837FD267BFAD7AEB3D42DDC
 	<td><pre>The grub2 boot loader should have a superuser account and password
 protection enabled to protect boot-time settings.
 
+            
 Since plaintext passwords are a security risk, generate a hash for the password
 by running the following command:
 
 # grub2-setpassword
 
 When prompted, enter the password that was selected.
-</pre></td>
+
+            
+          </pre></td>
 	<td>RHEL-08-010140</td>
 	<td>grub2_uefi_password</td>
 </tr>
@@ -715,19 +740,24 @@ admin, or administrator and different from any other existing user name.
 	<td><pre>The grub2 boot loader should have a superuser account and password
 protection enabled to protect boot-time settings.
 
+            
 To maximize the protection, select a password-protected superuser account with unique name, and modify the
 /etc/grub.d/01_users configuration file to reflect the account name change.
 
+            
 It is highly suggested not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 
+            
 Change the superuser to a different username (The default is 'root').
 $ sed -i 's/\(set superusers=\).*/\1"<unique user ID>"/g' /etc/grub.d/01_users
-
+            
+            
 Once the superuser account has been added,
 update the
 grub.cfg file by running:
-grubby --update-kernel=ALL --env=/boot/grub2/grubenv</pre></td>
+grubby --update-kernel=ALL --env=/boot/grub2/grubenv
+          </pre></td>
 	<td>RHEL-08-010141</td>
 	<td>grub2_uefi_admin_username</td>
 </tr>
@@ -752,19 +782,24 @@ admin, or administrator and different from any other existing user name.
 	<td><pre>The grub2 boot loader should have a superuser account and password
 protection enabled to protect boot-time settings.
 
+            
 To maximize the protection, select a password-protected superuser account with unique name, and modify the
 /etc/grub.d/01_users configuration file to reflect the account name change.
 
+            
 Do not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 
+            
 Change the superuser to a different username (The default is 'root').
 $ sed -i 's/\(set superusers=\).*/\1"<unique user ID>"/g' /etc/grub.d/01_users
-
+            
+            
 Once the superuser account has been added,
 update the
 grub.cfg file by running:
-grubby --update-kernel=ALL --env=/boot/grub2/grubenv</pre></td>
+grubby --update-kernel=ALL --env=/boot/grub2/grubenv
+          </pre></td>
 	<td>RHEL-08-010149</td>
 	<td>grub2_admin_username</td>
 </tr>
@@ -793,13 +828,16 @@ $ sudo grep '^[\s]*set[\s]+superusers=("?)[a-zA-Z_]+\1$'  /boot/grub2/grub.cfg
 	<td><pre>The grub2 boot loader should have a superuser account and password
 protection enabled to protect boot-time settings.
 
+            
 Since plaintext passwords are a security risk, generate a hash for the password
 by running the following command:
 
 # grub2-setpassword
 
 When prompted, enter the password that was selected.
-</pre></td>
+
+            
+          </pre></td>
 	<td>RHEL-08-010150</td>
 	<td>grub2_password</td>
 </tr>
@@ -824,6 +862,7 @@ ExecStart and /usr/lib/systemd/systemd-sulogin-shell.
 method, providing a single user root access to the system by
 providing a boot option at startup.
 
+            
 By default, single-user mode is protected by requiring a password and is set
 in /usr/lib/systemd/system/rescue.service.</pre></td>
 	<td>RHEL-08-010151</td>
@@ -866,6 +905,7 @@ The output should be empty.
 method, providing a single user root access to the system
 during a failed boot sequence.
 
+            
 By default, Emergency mode is protected by requiring a password and is set
 in /usr/lib/systemd/system/emergency.service.</pre></td>
 	<td>RHEL-08-010152</td>
@@ -884,6 +924,7 @@ be plainly read (i.e., clear text) and easily compromised. Passwords that
 are encrypted with a weak algorithm are no more protected than if they are
 kepy in plain text.
 
+              
 This setting ensures user and group account administration utilities are
 configured to store only encrypted representations of passwords.
 Additionally, the crypt_style configuration option ensures the use
@@ -905,10 +946,9 @@ during a password change. Set the pam_unix.so module in the
 password section to include the argument sha512, as shown
 below:
 
-
-password    sufficient    pam_unix.so sha512 other arguments...
-
-
+              password    sufficient    pam_unix.so sha512 other arguments...
+              
+              
 This will help ensure when local users change their passwords, hashes for
 the new passwords will be generated using the SHA-512 algorithm. This is
 the default.</pre></td>
@@ -928,6 +968,7 @@ be plainly read (i.e., clear text) and easily compromised. Passwords that
 are encrypted with a weak algorithm are no more protected than if they are
 kepy in plain text.
 
+              
 This setting ensures user and group account administration utilities are
 configured to store only encrypted representations of passwords.
 Additionally, the crypt_style configuration option ensures the use
@@ -948,8 +989,9 @@ during a password change. Set the pam_unix.so module in the
 password section to include the argument sha512, as shown
 below:
 
-password    sufficient    pam_unix.so sha512 other arguments...
-
+              password    sufficient    pam_unix.so sha512 other arguments...
+              
+              
 This will help ensure when local users change their passwords, hashes for
 the new passwords will be generated using the SHA-512 algorithm. This is
 the default.</pre></td>
@@ -993,7 +1035,8 @@ $ rpm -q krb5-workstation
       </pre></td>
 	<td><pre>The krb5-workstation package can be removed with the following command:
 
-$ sudo yum erase krb5-workstation</pre></td>
+$ sudo yum erase krb5-workstation
+          </pre></td>
 	<td>RHEL-08-010162</td>
 	<td>package_krb5-workstation_removed</td>
 </tr>
@@ -1041,10 +1084,14 @@ $ sudo getenforce
 
       Is it the case that SELINUX is not set to enforcing?
       </pre></td>
-	<td><pre>The SELinux state should be set to  at
+	<td><pre>The SELinux state should be set to 
+            
+           at
 system boot time.  In the file /etc/selinux/config, add or correct the
 following line to configure the system to boot into enforcing mode:
-SELINUX=</pre></td>
+SELINUX=
+          
+        </pre></td>
 	<td>RHEL-08-010170</td>
 	<td>selinux_state</td>
 </tr>
@@ -1072,7 +1119,8 @@ switch roles, and so on.</pre></td>
       </pre></td>
 	<td><pre>The policycoreutils package can be installed with the following command:
 
-$ sudo yum install policycoreutils</pre></td>
+$ sudo yum install policycoreutils
+        </pre></td>
 	<td>RHEL-08-010171</td>
 	<td>package_policycoreutils_installed</td>
 </tr>
@@ -1086,6 +1134,7 @@ $ sudo yum install policycoreutils</pre></td>
 	<td><pre>Failing to set the sticky bit on public directories allows unauthorized users to delete files
 in the directory structure.
 
+            
 The only authorized public directories are those temporary directories supplied with the
 system, or those designed to be temporary file repositories. The setting is normally reserved
 for directories used by the system, by users for temporary file storage (such as /tmp),
@@ -1111,7 +1160,9 @@ bit. However, if a directory is used by a particular application, consult that a
 documentation instead of blindly changing modes.
 
 To set the sticky bit on a world-writable directory DIR, run the following command:
-$ sudo chmod +t DIR</pre></td>
+$ sudo chmod +t DIR
+            
+          </pre></td>
 	<td>RHEL-08-010190</td>
 	<td>dir_perms_world_writable_sticky_bits</td>
 </tr>
@@ -1170,13 +1221,19 @@ ClientAliveInterval
 	<td><pre>SSH allows administrators to set a network responsiveness timeout interval.
 After this interval has passed, the unresponsive client will be automatically logged out.
 
+            
 To set this timeout interval, edit the following line in /etc/ssh/sshd_config as
 follows:
 ClientAliveInterval 
-
+                
+              
+            
+            
+            
 The timeout interval is given in seconds. For example, have a timeout
 of 10 minutes, set interval to 600.
 
+            
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in /etc/ssh/sshd_config. Keep in mind that
 some processes may stop SSH from correctly detecting that the user is idle.</pre></td>
@@ -1201,7 +1258,8 @@ If properly configured, the output should indicate the following permissions:
       </pre></td>
 	<td><pre>
 To properly set the permissions of /var/log/messages, run the command:
-$ sudo chmod 0640 /var/log/messages</pre></td>
+$ sudo chmod 0640 /var/log/messages
+            </pre></td>
 	<td>RHEL-08-010210</td>
 	<td>file_permissions_var_log_messages</td>
 </tr>
@@ -1221,7 +1279,8 @@ If properly configured, the output should indicate the following owner:
 root
       Is it the case that /var/log/messages does not have an owner of root?
       </pre></td>
-	<td><pre> To properly set the owner of /var/log/messages, run the command: $ sudo chown root /var/log/messages </pre></td>
+	<td><pre> To properly set the owner of /var/log/messages, run the command: $ sudo chown root /var/log/messages 
+            </pre></td>
 	<td>RHEL-08-010220</td>
 	<td>file_owner_var_log_messages</td>
 </tr>
@@ -1241,7 +1300,8 @@ If properly configured, the output should indicate the following group-owner:
 root
       Is it the case that /var/log/messages does not have a group owner of root?
       </pre></td>
-	<td><pre> To properly set the group owner of /var/log/messages, run the command: $ sudo chgrp root /var/log/messages</pre></td>
+	<td><pre> To properly set the group owner of /var/log/messages, run the command: $ sudo chgrp root /var/log/messages
+            </pre></td>
 	<td>RHEL-08-010230</td>
 	<td>file_groupowner_var_log_messages</td>
 </tr>
@@ -1264,7 +1324,8 @@ drwxr-xr-x
       </pre></td>
 	<td><pre>
 To properly set the permissions of /var/log, run the command:
-$ sudo chmod 0755 /var/log</pre></td>
+$ sudo chmod 0755 /var/log
+            </pre></td>
 	<td>RHEL-08-010240</td>
 	<td>file_permissions_var_log</td>
 </tr>
@@ -1285,7 +1346,8 @@ If properly configured, the output should indicate the following owner:
 root
       Is it the case that /var/log does not have an owner of root?
       </pre></td>
-	<td><pre> To properly set the owner of /var/log, run the command: $ sudo chown root /var/log </pre></td>
+	<td><pre> To properly set the owner of /var/log, run the command: $ sudo chown root /var/log 
+            </pre></td>
 	<td>RHEL-08-010250</td>
 	<td>file_owner_var_log</td>
 </tr>
@@ -1306,7 +1368,8 @@ If properly configured, the output should indicate the following group-owner:
 root
       Is it the case that /var/log does not have a group owner of root?
       </pre></td>
-	<td><pre> To properly set the group owner of /var/log, run the command: $ sudo chgrp root /var/log</pre></td>
+	<td><pre> To properly set the group owner of /var/log, run the command: $ sudo chgrp root /var/log
+            </pre></td>
 	<td>RHEL-08-010260</td>
 	<td>file_groupowner_var_log</td>
 </tr>
@@ -1361,7 +1424,9 @@ set up incorrectly.
 To check that Crypto Policies settings are configured correctly, ensure that
 /etc/crypto-policies/back-ends/opensshserver.config contains the following
 text and is not commented out:
--oMACS=</pre></td>
+-oMACS=
+              
+            </pre></td>
 	<td>RHEL-08-010290</td>
 	<td>harden_sshd_macs_opensshserver_conf_crypto_policy</td>
 </tr>
@@ -1390,7 +1455,9 @@ set up incorrectly.
 To check that Crypto Policies settings for ciphers are configured correctly, ensure that
 /etc/crypto-policies/back-ends/opensshserver.config contains the following
 text and is not commented out:
--oCiphers=</pre></td>
+-oCiphers=
+              
+            </pre></td>
 	<td>RHEL-08-010291</td>
 	<td>harden_sshd_ciphers_opensshserver_conf_crypto_policy</td>
 </tr>
@@ -1415,7 +1482,8 @@ then the option is set correctly.
 	<td><pre>To set up SSH server to use entropy from a high-quality source, edit the /etc/sysconfig/sshd file.
 The SSH_USE_STRONG_RNG configuration value determines how many bytes of entropy to use, so
 make sure that the file contains line
-SSH_USE_STRONG_RNG=32</pre></td>
+SSH_USE_STRONG_RNG=32
+          </pre></td>
 	<td>RHEL-08-010292</td>
 	<td>sshd_use_strong_rng</td>
 </tr>
@@ -1484,7 +1552,8 @@ expected:
 $ sudo grep -i MinProtocol /etc/crypto-policies/back-ends/opensslcnf.config
 
 TLS.MinProtocol = TLSv1.2
-DTLS.MinProtocol = DTLSv1.2</pre></td>
+DTLS.MinProtocol = DTLSv1.2
+            </pre></td>
 	<td>RHEL-08-010294</td>
 	<td>configure_openssl_tls_crypto_policy</td>
 </tr>
@@ -1511,7 +1580,8 @@ set up to ignore it.
 To check that Crypto Policies settings are configured correctly, ensure that
 /etc/crypto-policies/back-ends/gnutls.config contains the following
 line and is not commented out:
-+VERS-ALL:-VERS-DTLS0.9:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-VERS-DTLS1.0</pre></td>
++VERS-ALL:-VERS-DTLS0.9:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-VERS-DTLS1.0
+            </pre></td>
 	<td>RHEL-08-010295</td>
 	<td>configure_gnutls_tls_crypto_policy</td>
 </tr>
@@ -1542,7 +1612,9 @@ All files in these directories should not be group-writable or world-writable.
 If any file FILE in these directories is found
 to be group-writable or world-writable, correct its permission with the
 following command:
-$ sudo chmod go-w FILE</pre></td>
+$ sudo chmod go-w FILE
+              
+            </pre></td>
 	<td>RHEL-08-010300</td>
 	<td>file_permissions_binary_dirs</td>
 </tr>
@@ -1573,7 +1645,9 @@ All files in these directories should be owned by the root user.
 If any file FILE in these directories is found
 to be owned by a user other than root, correct its ownership with the
 following command:
-$ sudo chown root FILE</pre></td>
+$ sudo chown root FILE
+              
+            </pre></td>
 	<td>RHEL-08-010310</td>
 	<td>file_ownership_binary_dirs</td>
 </tr>
@@ -1612,7 +1686,9 @@ or a system account.
 If the directory, or any file in these directories, is found to be owned
 by a group other than root or a a system account correct its ownership
 with the following command:
-$ sudo chgrp root FILE</pre></td>
+$ sudo chgrp root FILE
+              
+            </pre></td>
 	<td>RHEL-08-010320</td>
 	<td>file_groupownership_system_commands_dirs</td>
 </tr>
@@ -1644,7 +1720,9 @@ stored in /lib/modules. All files in these directories
 should not be group-writable or world-writable. If any file in these
 directories is found to be group-writable or world-writable, correct
 its permission with the following command:
-$ sudo chmod go-w FILE</pre></td>
+$ sudo chmod go-w FILE
+              
+            </pre></td>
 	<td>RHEL-08-010330</td>
 	<td>file_permissions_library_dirs</td>
 </tr>
@@ -1688,7 +1766,9 @@ stored in /lib/modules. All sub-directories in these directories
 should not be group-writable or world-writable. If any file in these
 directories is found to be group-writable or world-writable, correct
 its permission with the following command:
-$ sudo chmod go-w DIR</pre></td>
+$ sudo chmod go-w DIR
+              
+            </pre></td>
 	<td>RHEL-08-010331</td>
 	<td>dir_permissions_library_dirs</td>
 </tr>
@@ -1720,7 +1800,9 @@ stored in /lib/modules. All files in these directories should be
 owned by the root user. If the directory, or any file in these
 directories, is found to be owned by a user other than root correct its
 ownership with the following command:
-$ sudo chown root FILE</pre></td>
+$ sudo chown root FILE
+              
+            </pre></td>
 	<td>RHEL-08-010340</td>
 	<td>file_ownership_library_dirs</td>
 </tr>
@@ -1753,7 +1835,9 @@ stored in /lib/modules. All files in these directories should be
 owned by the root user. If the  directories, is found to be owned
 by a user other than root correct its
 ownership with the following command:
-$ sudo chown root DIR</pre></td>
+$ sudo chown root DIR
+              
+            </pre></td>
 	<td>RHEL-08-010341</td>
 	<td>dir_ownership_library_dirs</td>
 </tr>
@@ -1788,7 +1872,9 @@ by default:
 All system-wide shared library files should be protected from unauthorised
 access. If any of these files is not group-owned by root, correct its group-owner with
 the following command:
-$ sudo chgrp root FILE</pre></td>
+$ sudo chgrp root FILE
+              
+            </pre></td>
 	<td>RHEL-08-010350</td>
 	<td>root_permissions_syslibrary_files</td>
 </tr>
@@ -1823,7 +1909,9 @@ stored in /lib/modules. All files in these directories should be
 group-owned by the root user. If the  directories, is found to be owned
 by a user other than root correct its
 ownership with the following command:
-$ sudo chgrp root DIR</pre></td>
+$ sudo chgrp root DIR
+              
+            </pre></td>
 	<td>RHEL-08-010351</td>
 	<td>dir_group_ownership_library_dirs</td>
 </tr>
@@ -1842,7 +1930,8 @@ system events such as failures or warnings.</pre></td>
 	<td><pre>A mail server is required for sending emails.
 The mailx package can be installed with the following command:
 
-$ sudo yum install mailx</pre></td>
+$ sudo yum install mailx
+        </pre></td>
 	<td>RHEL-08-010358</td>
 	<td>package_mailx_installed</td>
 </tr>
@@ -1892,6 +1981,7 @@ to various attacks or allow unauthorized access to the operating system. Changes
 operating system configurations can have unintended side effects, some of which may
 be relevant to security.
 
+                
 Detecting such changes and providing an automated response can help avoid unintended,
 negative consequences that could ultimately affect the security state of the operating
 system. The operating system's Information Management Officer (IMO)/Information System
@@ -1939,7 +2029,8 @@ A value of 0 indicates that gpgcheck has been disabled for that repo.
       </pre></td>
 	<td><pre>To ensure signature checking is not disabled for
 any repos, remove any lines from files in /etc/yum.repos.d of the form:
-gpgcheck=0</pre></td>
+gpgcheck=0
+          </pre></td>
 	<td>RHEL-08-010370</td>
 	<td>ensure_gpgcheck_never_disabled</td>
 </tr>
@@ -1954,6 +2045,7 @@ gpgcheck=0</pre></td>
 of the operating system. This requirement ensures the software has not been tampered and
 has been provided by a trusted vendor.
 
+            
 Accordingly, patches, service packs, device drivers, or operating system components must
 be signed with a certificate recognized and approved by the organization.</pre></td>
 	<td><pre>Verify that yum verifies the signature of local packages prior to install with the following command:
@@ -1965,7 +2057,8 @@ localpkg_gpgcheck=1
 If "localpkg_gpgcheck" is not set to "1", or if the option is missing or commented out, ask the System Administrator how the certificates for patches and other operating system components are verified.
       Is it the case that there is no process to validate certificates for local packages that is approved by the organization?
       </pre></td>
-	<td><pre>yum should be configured to verify the signature(s) of local packages
+	<td><pre>
+            yum should be configured to verify the signature(s) of local packages
 prior to installation. To configure yum to verify signatures of local
 packages, set the localpkg_gpgcheck to 1 in /etc/yum.conf.</pre></td>
 	<td>RHEL-08-010371</td>
@@ -1989,7 +2082,8 @@ $ sysctl kernel.kexec_load_disabled
       Is it the case that the correct value is not returned?
       </pre></td>
 	<td><pre>To set the runtime status of the kernel.kexec_load_disabled kernel parameter, run the following command: $ sudo sysctl -w kernel.kexec_load_disabled=1
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: kernel.kexec_load_disabled = 1</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: kernel.kexec_load_disabled = 1
+          </pre></td>
 	<td>RHEL-08-010372</td>
 	<td>sysctl_kernel_kexec_load_disabled</td>
 </tr>
@@ -2014,7 +2108,8 @@ $ sysctl fs.protected_symlinks
       Is it the case that the correct value is not returned?
       </pre></td>
 	<td><pre>To set the runtime status of the fs.protected_symlinks kernel parameter, run the following command: $ sudo sysctl -w fs.protected_symlinks=1
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: fs.protected_symlinks = 1</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: fs.protected_symlinks = 1
+          </pre></td>
 	<td>RHEL-08-010373</td>
 	<td>sysctl_fs_protected_symlinks</td>
 </tr>
@@ -2037,7 +2132,8 @@ $ sysctl fs.protected_hardlinks
       Is it the case that the correct value is not returned?
       </pre></td>
 	<td><pre>To set the runtime status of the fs.protected_hardlinks kernel parameter, run the following command: $ sudo sysctl -w fs.protected_hardlinks=1
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: fs.protected_hardlinks = 1</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: fs.protected_hardlinks = 1
+          </pre></td>
 	<td>RHEL-08-010374</td>
 	<td>sysctl_fs_protected_hardlinks</td>
 </tr>
@@ -2058,7 +2154,8 @@ $ sysctl kernel.dmesg_restrict
       Is it the case that the correct value is not returned?
       </pre></td>
 	<td><pre>To set the runtime status of the kernel.dmesg_restrict kernel parameter, run the following command: $ sudo sysctl -w kernel.dmesg_restrict=1
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: kernel.dmesg_restrict = 1</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: kernel.dmesg_restrict = 1
+          </pre></td>
 	<td>RHEL-08-010375</td>
 	<td>sysctl_kernel_dmesg_restrict</td>
 </tr>
@@ -2078,7 +2175,8 @@ $ sysctl kernel.perf_event_paranoid
       Is it the case that the correct value is not returned?
       </pre></td>
 	<td><pre>To set the runtime status of the kernel.perf_event_paranoid kernel parameter, run the following command: $ sudo sysctl -w kernel.perf_event_paranoid=2
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: kernel.perf_event_paranoid = 2</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: kernel.perf_event_paranoid = 2
+          </pre></td>
 	<td>RHEL-08-010376</td>
 	<td>sysctl_kernel_perf_event_paranoid</td>
 </tr>
@@ -2122,6 +2220,7 @@ Note that the '#' character doesn't denote a comment in the configuration file.<
 	<td><pre>Without re-authentication, users may access resources or perform tasks for which they
 do not have authorization.
 
+            
 When operating systems provide the capability to escalate a functional capability, it
 is critical that the user re-authenticate.</pre></td>
 	<td><pre>To determine if NOPASSWD has been configured for sudo, run the following command:
@@ -2147,6 +2246,7 @@ in /etc/sudoers.d/.</pre></td>
 	<td><pre>Without re-authentication, users may access resources or perform tasks for which they
 do not have authorization.
 
+            
 When operating systems provide the capability to escalate a functional capability, it
 is critical that the user re-authenticate.</pre></td>
 	<td><pre>To determine if !authenticate has not been configured for sudo, run the following command:
@@ -2181,7 +2281,8 @@ and confirms your request to execute a command by checking a file,
 called sudoers.
 Restrict privileged actions by removing the following entries from the sudoers file:
 ALL ALL=(ALL) ALL
-ALL ALL=(ALL:ALL) ALL</pre></td>
+            ALL ALL=(ALL:ALL) ALL
+          </pre></td>
 	<td>RHEL-08-010382</td>
 	<td>sudo_restrict_privilege_elevation_to_authorized</td>
 </tr>
@@ -2209,14 +2310,15 @@ If "Defaults !runaspw" is not defined, this is a finding.
 When sudoers requires authentication, it validates the invoking user's credentials.
 The expected output for:
  sudo cvtsudoers -f sudoers /etc/sudoers | grep -E '^Defaults !?(rootpw|targetpw|runaspw)$' 
- Defaults !targetpw
+             Defaults !targetpw
       Defaults !rootpw
       Defaults !runaspw 
 or if cvtsudoers not supported:
  sudo find /etc/sudoers /etc/sudoers.d \( \! -name '*~' -a \! -name '*.*' \) -exec grep -E --with-filename '^[[:blank:]]*Defaults[[:blank:]](.*[[:blank:]])?!?\b(rootpw|targetpw|runaspw)' -- {} \; 
- /etc/sudoers:Defaults !targetpw
+             /etc/sudoers:Defaults !targetpw
       /etc/sudoers:Defaults !rootpw
-      /etc/sudoers:Defaults !runaspw </pre></td>
+      /etc/sudoers:Defaults !runaspw 
+          </pre></td>
 	<td>RHEL-08-010383</td>
 	<td>sudoers_validate_passwd</td>
 </tr>
@@ -2230,6 +2332,7 @@ or if cvtsudoers not supported:
 	<td><pre>Without re-authentication, users may access resources or perform tasks for which they
 do not have authorization.
 
+            
 When operating systems provide the capability to escalate a functional capability, it
 is critical that the user re-authenticate.</pre></td>
 	<td><pre>Verify the operating system requires re-authentication
@@ -2285,6 +2388,7 @@ the information system, ensures that even if the information system is
 compromised, that compromise will not affect credentials stored on the
 authentication device.
 
+                
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
 providing time-based or challenge-response authenticators and smart cards such
@@ -2301,7 +2405,8 @@ installing the required package with the following command:
 
 The openssl-pkcs11 package can be installed with the following command:
 
-$ sudo yum install openssl-pkcs11</pre></td>
+$ sudo yum install openssl-pkcs11
+              </pre></td>
 	<td>RHEL-08-010390</td>
 	<td>install_smartcard_packages</td>
 </tr>
@@ -2325,7 +2430,8 @@ If configured properly, output should look like
       </pre></td>
 	<td><pre>Multifactor solutions that require devices separate from information systems gaining access include,
 for example, hardware tokens providing time-based or challenge-response authenticators and smart cards.
-Configuring certificate_verification to ocsp_dgst= ensures that certificates for
+Configuring certificate_verification to ocsp_dgst=
+           ensures that certificates for
 multifactor solutions are checked via Online Certificate Status Protocol (OCSP).</pre></td>
 	<td>RHEL-08-010400</td>
 	<td>sssd_certificate_verification</td>
@@ -2342,6 +2448,7 @@ the information system, ensures that even if the information system is
 compromised, that compromise will not affect credentials stored on the
 authentication device.
 
+                
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
 providing time-based or challenge-response authenticators and smart cards such
@@ -2353,7 +2460,8 @@ Access Card.</pre></td>
 	<td><pre>
 The opensc package can be installed with the following command:
 
-$ sudo yum install opensc</pre></td>
+$ sudo yum install opensc
+              </pre></td>
 	<td>RHEL-08-010410</td>
 	<td>package_opensc_installed</td>
 </tr>
@@ -2423,7 +2531,8 @@ argument to newly installed kernels, add page_poison=1 to the
 default Grub2 command line for Linux operating systems. Modify the line within
 /etc/default/grub as shown below:
 GRUB_CMDLINE_LINUX="... page_poison=1 ..."
-Run the following command to update command line for already installed kernels:# grubby --update-kernel=ALL --args="page_poison=1"</pre></td>
+Run the following command to update command line for already installed kernels:# grubby --update-kernel=ALL --args="page_poison=1"
+            </pre></td>
 	<td>RHEL-08-010421</td>
 	<td>grub2_page_poison_argument</td>
 </tr>
@@ -2458,7 +2567,8 @@ argument to newly installed kernels, add vsyscall=none to the
 default Grub2 command line for Linux operating systems. Modify the line within
 /etc/default/grub as shown below:
 GRUB_CMDLINE_LINUX="... vsyscall=none ..."
-Run the following command to update command line for already installed kernels:# grubby --update-kernel=ALL --args="vsyscall=none"</pre></td>
+Run the following command to update command line for already installed kernels:# grubby --update-kernel=ALL --args="vsyscall=none"
+        </pre></td>
 	<td>RHEL-08-010422</td>
 	<td>grub2_vsyscall_argument</td>
 </tr>
@@ -2489,14 +2599,18 @@ The command should not return any output.
       Is it the case that SLUB/SLAB poisoning is not enabled?
       </pre></td>
 	<td><pre>To enable poisoning of SLUB/SLAB objects,
-add the argument slub_debug= to the default
+add the argument slub_debug=
+               to the default
 GRUB 2 command line for the Linux operating system.
-To ensure that slub_debug= is added as a kernel command line
-argument to newly installed kernels, add slub_debug= to the
+To ensure that slub_debug=
+               is added as a kernel command line
+argument to newly installed kernels, add slub_debug=
+               to the
 default Grub2 command line for Linux operating systems. Modify the line within
 /etc/default/grub as shown below:
 GRUB_CMDLINE_LINUX="... slub_debug= ..."
-Run the following command to update command line for already installed kernels:# grubby --update-kernel=ALL --args="slub_debug="</pre></td>
+Run the following command to update command line for already installed kernels:# grubby --update-kernel=ALL --args="slub_debug="
+            </pre></td>
 	<td>RHEL-08-010423</td>
 	<td>grub2_slub_debug_argument</td>
 </tr>
@@ -2521,7 +2635,8 @@ $ sysctl kernel.randomize_va_space
       Is it the case that the correct value is not returned?
       </pre></td>
 	<td><pre>To set the runtime status of the kernel.randomize_va_space kernel parameter, run the following command: $ sudo sysctl -w kernel.randomize_va_space=2
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: kernel.randomize_va_space = 2</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: kernel.randomize_va_space = 2
+            </pre></td>
 	<td>RHEL-08-010430</td>
 	<td>sysctl_kernel_randomize_va_space</td>
 </tr>
@@ -2541,7 +2656,8 @@ $ grep clean_requirements_on_remove /etc/yum.conf
 clean_requirements_on_remove=1
       Is it the case that '"clean_requirements_on_remove" is not set to "1"'?
       </pre></td>
-	<td><pre>yum should be configured to remove previous software components after
+	<td><pre>
+            yum should be configured to remove previous software components after
 new versions have been installed. To configure yum to remove the
 
 previous software components after updating, set the clean_requirements_on_remove
@@ -2562,11 +2678,14 @@ to 1 in /etc/yum.conf.</pre></td>
 ensures the system will confine processes that are likely to be
 targeted for exploitation, such as network or system services.
 
+          
 Note: During the development or debugging of SELinux modules, it is common to
 temporarily place non-production systems in permissive mode. In such
 temporary cases, SELinux policies should be developed, and once work
 is completed, the system should be reconfigured to
-.</pre></td>
+
+            
+          .</pre></td>
 	<td><pre>Verify the SELINUX on Red Hat Enterprise Linux 8 is using the  policy with the following command:
 
 $ sestatus | grep policy
@@ -2579,6 +2698,7 @@ general-purpose desktops and servers, as well as systems in many other roles.
 To configure the system to use this policy, add or correct the following line
 in /etc/selinux/config:
 SELINUXTYPE=
+          
 Other policies, such as mls, provide additional security labeling
 and greater confinement but are not compatible with many general-purpose
 use cases.</pre></td>
@@ -2602,7 +2722,8 @@ $ find / -name shosts.equiv
       </pre></td>
 	<td><pre>The shosts.equiv file lists remote hosts and users that are trusted by the local
 system. To remove these files, run the following command to delete them from any location:
-$ sudo rm /[path]/[to]/[file]/shosts.equiv</pre></td>
+$ sudo rm /[path]/[to]/[file]/shosts.equiv
+          </pre></td>
 	<td>RHEL-08-010460</td>
 	<td>no_host_based_files</td>
 </tr>
@@ -2627,7 +2748,8 @@ $ sudo find / -name '.shosts'
 list remote hosts and users that are trusted by the
 local system. To remove these files, run the following command
 to delete them from any location:
-$ sudo find / -name '.shosts' -type f -delete</pre></td>
+$ sudo find / -name '.shosts' -type f -delete
+          </pre></td>
 	<td>RHEL-08-010470</td>
 	<td>no_user_host_based_files</td>
 </tr>
@@ -2651,7 +2773,8 @@ If the service is running, it should return the following: active
 	<td><pre>The Hardware RNG Entropy Gatherer service should be enabled.
 
 The rngd service can be enabled with the following command:
-$ sudo systemctl enable rngd.service</pre></td>
+$ sudo systemctl enable rngd.service
+        </pre></td>
 	<td>RHEL-08-010471</td>
 	<td>service_rngd_enabled</td>
 </tr>
@@ -2662,14 +2785,16 @@ $ sudo systemctl enable rngd.service</pre></td>
 	<td>low</td>
 	<td>RHEL 8 must have the packages required to use the hardware random number generator entropy gatherer service.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>rng-tools provides hardware random number generator tools,
+	<td><pre>
+            rng-tools provides hardware random number generator tools,
 such as those used in the formation of x509/PKI certificates.</pre></td>
 	<td><pre>Run the following command to determine if the rng-tools package is installed: $ rpm -q rng-tools
       Is it the case that the package is not installed?
       </pre></td>
 	<td><pre>The rng-tools package can be installed with the following command:
 
-$ sudo yum install rng-tools</pre></td>
+$ sudo yum install rng-tools
+          </pre></td>
 	<td>RHEL-08-010472</td>
 	<td>package_rng-tools_installed</td>
 </tr>
@@ -2689,7 +2814,8 @@ If properly configured, the output should indicate the following permissions:
 -rw-r--r--
       Is it the case that /etc/ssh/*.pub does not have unix mode -rw-r--r--?
       </pre></td>
-	<td><pre> To properly set the permissions of /etc/ssh/*.pub, run the command: $ sudo chmod 0644 /etc/ssh/*.pub</pre></td>
+	<td><pre> To properly set the permissions of /etc/ssh/*.pub, run the command: $ sudo chmod 0644 /etc/ssh/*.pub
+        </pre></td>
 	<td>RHEL-08-010480</td>
 	<td>file_permissions_sshd_pub_key</td>
 </tr>
@@ -2744,7 +2870,8 @@ To explicitly enable StrictModes in SSH, add or correct the following line in
 
 /etc/ssh/sshd_config:
 
-StrictModes yes</pre></td>
+StrictModes yes
+          </pre></td>
 	<td>RHEL-08-010500</td>
 	<td>sshd_enable_strictmodes</td>
 </tr>
@@ -2769,12 +2896,14 @@ If a line indicating yes is returned, then the required value is set.
 	<td><pre>SSH can allow system users to connect to systems if a cache of the remote
 systems public keys is available.  This should be disabled.
 
+            
 To ensure this behavior is disabled, add or correct the following line in
 
 
 /etc/ssh/sshd_config:
 
-IgnoreUserKnownHosts yes</pre></td>
+IgnoreUserKnownHosts yes
+          </pre></td>
 	<td>RHEL-08-010520</td>
 	<td>sshd_disable_user_known_hosts</td>
 </tr>
@@ -2808,7 +2937,8 @@ To explicitly disable Kerberos authentication, add or correct the following line
 
 /etc/ssh/sshd_config:
 
-KerberosAuthentication no</pre></td>
+KerberosAuthentication no
+          </pre></td>
 	<td>RHEL-08-010521</td>
 	<td>sshd_disable_kerb_auth</td>
 </tr>
@@ -2841,7 +2971,8 @@ To explicitly disable GSSAPI authentication, add or correct the following line i
 
 /etc/ssh/sshd_config:
 
-GSSAPIAuthentication no</pre></td>
+GSSAPIAuthentication no
+          </pre></td>
 	<td>RHEL-08-010522</td>
 	<td>sshd_disable_gssapi_auth</td>
 </tr>
@@ -2990,7 +3121,8 @@ To disable root login via SSH, add or correct the following line in
 
 /etc/ssh/sshd_config:
 
-PermitRootLogin no</pre></td>
+PermitRootLogin no
+          </pre></td>
 	<td>RHEL-08-010550</td>
 	<td>sshd_disable_root_login</td>
 </tr>
@@ -3014,7 +3146,8 @@ If the service is running, it should return the following: active
 	<td><pre>The rsyslog service provides syslog-style logging by default on Red Hat Enterprise Linux 8.
 
 The rsyslog service can be enabled with the following command:
-$ sudo systemctl enable rsyslog.service</pre></td>
+$ sudo systemctl enable rsyslog.service
+        </pre></td>
 	<td>RHEL-08-010561</td>
 	<td>service_rsyslog_enabled</td>
 </tr>
@@ -3317,7 +3450,9 @@ $ sudo find /home -perm -002 -type f -name ".[^.]*" -exec ls -ld {} \;
       </pre></td>
 	<td><pre>Set the mode on files being executed by the user initialization files with the
 following command:
-$ sudo chmod o-w FILE</pre></td>
+$ sudo chmod o-w FILE
+            
+          </pre></td>
 	<td>RHEL-08-010660</td>
 	<td>accounts_user_dot_no_world_writable_programs</td>
 </tr>
@@ -3361,7 +3496,8 @@ system call to boot a secondary kernel ("capture" kernel) following a system
 crash, which can load information from the crashed kernel for analysis.
 
 The kdump service can be disabled with the following command:
-$ sudo systemctl mask --now kdump.service</pre></td>
+$ sudo systemctl mask --now kdump.service
+        </pre></td>
 	<td>RHEL-08-010670</td>
 	<td>service_kdump_disabled</td>
 </tr>
@@ -3385,7 +3521,8 @@ returned and the need for core dumps is not documented with the Information
 System Security Officer (ISSO) as an operational requirement?
       </pre></td>
 	<td><pre>To set the runtime status of the kernel.core_pattern kernel parameter, run the following command: $ sudo sysctl -w kernel.core_pattern=|/bin/false
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: kernel.core_pattern = |/bin/false</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: kernel.core_pattern = |/bin/false
+          </pre></td>
 	<td>RHEL-08-010671</td>
 	<td>sysctl_kernel_core_pattern</td>
 </tr>
@@ -3433,7 +3570,8 @@ $ grep core /etc/security/limits.conf
 	<td><pre>To disable core dumps for all users, add the following line to
 /etc/security/limits.conf, or to a file within the
 /etc/security/limits.d/ directory:
-*     hard   core    0</pre></td>
+*     hard   core    0
+            </pre></td>
 	<td>RHEL-08-010673</td>
 	<td>disable_users_coredumps</td>
 </tr>
@@ -3526,12 +3664,14 @@ Multiple Domain Name System (DNS) Servers should be configured
 in /etc/resolv.conf. This provides redundant name resolution services
 in the event that a domain server crashes. To configure the system to contain
 as least 2 DNS servers, add a corresponding nameserver
-ip_address entry in /etc/resolv.conf for each DNS
+ip_address
+           entry in /etc/resolv.conf for each DNS
 server where ip_address is the IP address of a valid DNS server.
 For example:
 search example.com
 nameserver 192.168.0.1
-nameserver 192.168.0.2</pre></td>
+nameserver 192.168.0.2
+        </pre></td>
 	<td>RHEL-08-010680</td>
 	<td>network_configure_name_resolution</td>
 </tr>
@@ -3655,7 +3795,9 @@ Inspect the output for any directories with incorrect permissions.
 	<td><pre>Change the mode of interactive users home directories to 0750. To
 change the mode of interactive users home directory, use the
 following command:
-$ sudo chmod 0750 /home/USER</pre></td>
+$ sudo chmod 0750 /home/USER
+            
+          </pre></td>
 	<td>RHEL-08-010730</td>
 	<td>file_permissions_home_directories</td>
 </tr>
@@ -3677,6 +3819,7 @@ $ sudo ls -lLR /home/USER
 	<td><pre>Set the mode on files and directories in the local interactive user home
 directory with the following command:
 $ sudo chmod 0750 /home/USER/FILE_DIR
+            
 Files that begin with a "." are excluded from this requirement.</pre></td>
 	<td>RHEL-08-010731</td>
 	<td>accounts_users_home_files_permissions</td>
@@ -3701,6 +3844,7 @@ owned by that users primary GID, run the following command:
 group found in /etc/passwd. To change the group owner of
 interactive users home directory, use the following command:
 $ sudo chgrp USER_GROUP /home/USER
+            
 
 This rule ensures every home directory related to an interactive user is
 group-owned by an interactive user. It also ensures that interactive users
@@ -3727,6 +3871,7 @@ $ sudo ls -lLR /home/USER
 group that the interactive user is a member of. To change the group owner of a
 local interactive users files and directories, use the following command:
 $ sudo chgrp USER_GROUP /home/USER/FILE_DIR
+            
 
 This rule ensures every file or directory under the home directory related
 to an interactive user is group-owned by an interactive user.</pre></td>
@@ -3757,7 +3902,9 @@ The output should not return any interactive users.
 	<td><pre>Create home directories to all local interactive users that currently do not
 have a home directory assigned. Use the following commands to create the user
 home directory assigned in /etc/passwd:
-$ sudo mkdir /home/USER</pre></td>
+$ sudo mkdir /home/USER
+            
+          </pre></td>
 	<td>RHEL-08-010750</td>
 	<td>accounts_user_interactive_home_directory_exists</td>
 </tr>
@@ -3778,10 +3925,13 @@ CREATE_HOME yes
       </pre></td>
 	<td><pre>All local interactive user accounts, upon creation, should be assigned a home directory.
 
+            
 Configure the operating system to assign home directories to all new local interactive users by setting the CREATE_HOME
 parameter in /etc/login.defs to yes as follows:
 
-CREATE_HOME yes</pre></td>
+            
+            CREATE_HOME yes
+          </pre></td>
 	<td>RHEL-08-010760</td>
 	<td>accounts_have_homedir_login_defs</td>
 </tr>
@@ -3803,7 +3953,9 @@ There should be no output.
       </pre></td>
 	<td><pre>Set the mode of the user initialization files to 0740 with the
 following command:
-$ sudo chmod 0740 /home/USER/.INIT_FILE</pre></td>
+$ sudo chmod 0740 /home/USER/.INIT_FILE
+            
+          </pre></td>
 	<td>RHEL-08-010770</td>
 	<td>file_permission_user_init_files</td>
 </tr>
@@ -3838,7 +3990,8 @@ $ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -s
 
 For all mount points listed by the previous command, it is necessary to search for files which
 do not belong to a valid user using the following command:
-$ sudo find MOUNTPOINT -xdev -nouser 2>/dev/null</pre></td>
+$ sudo find MOUNTPOINT -xdev -nouser 2>/dev/null
+          </pre></td>
 	<td>RHEL-08-010780</td>
 	<td>no_files_unowned_by_user</td>
 </tr>
@@ -3874,7 +4027,8 @@ $ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -s
 
 For all mount points listed by the previous command, it is necessary to search for files which
 do not belong to a valid group using the following command:
-$ sudo find MOUNTPOINT -xdev -nogroup 2>/dev/null</pre></td>
+$ sudo find MOUNTPOINT -xdev -nogroup 2>/dev/null
+          </pre></td>
 	<td>RHEL-08-010790</td>
 	<td>file_permissions_ungroupowned</td>
 </tr>
@@ -3924,7 +4078,8 @@ to the system that they are authorized to use. To disable user ability to automa
 login to the system, set the AutomaticLoginEnable to false in the
 [daemon] section in /etc/gdm/custom.conf. For example:
 [daemon]
-AutomaticLoginEnable=false</pre></td>
+AutomaticLoginEnable=false
+            </pre></td>
 	<td>RHEL-08-010820</td>
 	<td>gnome_gdm_disable_automatic_login</td>
 </tr>
@@ -3955,7 +4110,8 @@ To explicitly disable Environment options, add or correct the following
 
 /etc/ssh/sshd_config:
 
-PermitUserEnvironment no</pre></td>
+PermitUserEnvironment no
+          </pre></td>
 	<td>RHEL-08-010830</td>
 	<td>sshd_do_not_permit_user_env</td>
 </tr>
@@ -3970,7 +4126,8 @@ PermitUserEnvironment no</pre></td>
 an excessive period, these accounts may be used to gain unauthorized access.
 To mitigate this risk, automated termination of all temporary accounts
 must be set upon account creation.
-</pre></td>
+
+            </pre></td>
 	<td><pre>Verify that temporary accounts have been provisioned with an expiration date
 of 72 hours. For every temporary account, run the following command to
 obtain its account aging and expiration information:
@@ -3983,10 +4140,17 @@ as documented.
 procedures when there is a need for short-term accounts. In the event
 temporary accounts are required, configure the system to
 terminate them after a documented time period. For every temporary account, run the following command to set an expiration date on
-it, substituting USER and YYYY-MM-DD
+it, substituting 
+                USER
+               and 
+                YYYY-MM-DD
+              
 appropriately:
 $ sudo chage -E YYYY-MM-DD USER
-YYYY-MM-DD indicates the documented expiration date for the
+              
+              
+                YYYY-MM-DD
+               indicates the documented expiration date for the
 account. For U.S. Government systems, the operating system must be
 configured to automatically terminate these types of accounts after a
 period of 72 hours.</pre></td>
@@ -4064,7 +4228,9 @@ to lock out an account after a number of incorrect login attempts within a speci
 period.
 
 Ensure that the file /etc/security/faillock.conf contains the following entry:
-fail_interval = <interval-in-seconds> where interval-in-seconds is  or greater.
+fail_interval = <interval-in-seconds> where interval-in-seconds is 
+                
+               or greater.
 
 
 In order to avoid errors when manually editing these files, it is
@@ -4095,7 +4261,9 @@ to lock out an account after a number of incorrect login attempts within a speci
 period.
 
 Ensure that the file /etc/security/faillock.conf contains the following entry:
-fail_interval = <interval-in-seconds> where interval-in-seconds is  or greater.
+fail_interval = <interval-in-seconds> where interval-in-seconds is 
+                
+               or greater.
 
 
 In order to avoid errors when manually editing these files, it is
@@ -4130,7 +4298,9 @@ number of incorrect login attempts using pam_faillock.so.
 
 Ensure that the file /etc/security/faillock.conf contains the following entry:
 unlock_time=<interval-in-seconds> where
-interval-in-seconds is  or greater.
+interval-in-seconds is 
+                
+               or greater.
 
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
@@ -4169,7 +4339,9 @@ number of incorrect login attempts using pam_faillock.so.
 
 Ensure that the file /etc/security/faillock.conf contains the following entry:
 unlock_time=<interval-in-seconds> where
-interval-in-seconds is  or greater.
+interval-in-seconds is 
+                
+               or greater.
 
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
@@ -4208,7 +4380,9 @@ defined to work as expected. In order to avoid errors when manually editing thes
 recommended to use the appropriate tools, such as authselect or authconfig,
 depending on the OS version.
 
-The chosen profile expects the directory to be .</pre></td>
+The chosen profile expects the directory to be 
+                
+              .</pre></td>
 	<td>RHEL-08-020016</td>
 	<td>accounts_passwords_pam_faillock_dir</td>
 </tr>
@@ -4238,7 +4412,9 @@ defined to work as expected. In order to avoid errors when manually editing thes
 recommended to use the appropriate tools, such as authselect or authconfig,
 depending on the OS version.
 
-The chosen profile expects the directory to be .</pre></td>
+The chosen profile expects the directory to be 
+                
+              .</pre></td>
 	<td>RHEL-08-020017</td>
 	<td>accounts_passwords_pam_faillock_dir</td>
 </tr>
@@ -4398,7 +4574,9 @@ Service attacks. This addresses concurrent sessions for a single account and doe
 concurrent sessions by a single user via multiple accounts. To set the number of concurrent
 sessions per user add the following line in /etc/security/limits.conf or
 a file under /etc/security/limits.d/:
-* hard maxlogins </pre></td>
+* hard maxlogins 
+            
+          </pre></td>
 	<td>RHEL-08-020024</td>
 	<td>accounts_max_concurrent_login_sessions</td>
 </tr>
@@ -4556,11 +4734,12 @@ If properly configured, the output should be 'uint32 '.
       Is it the case that the screensaver lock delay is missing, or is set to a value greater than <sub idref="var_screensaver_lock_delay" />?
       </pre></td>
 	<td><pre>To activate the locking delay of the screensaver in the GNOME3 desktop when
-the screensaver is activated, add or set lock-delay to uint32  in
+the screensaver is activated, add or set lock-delay to uint32 
+               in
 /etc/dconf/db/local.d/00-security-settings. For example:
 [org/gnome/desktop/screensaver]
 lock-delay=uint32 
-
+              
 After the settings have been set, run dconf update.</pre></td>
 	<td>RHEL-08-020031</td>
 	<td>dconf_gnome_screensaver_lock_delay</td>
@@ -4588,6 +4767,7 @@ system are greeted with a login screen that displays all known users.
 This functionality should be disabled by setting disable-user-list
 to true.
 
+              
 To disable, add or edit disable-user-list to
 /etc/dconf/db/gdm.d/00-security-settings. For example:
 [org/gnome/login-screen]
@@ -4620,7 +4800,8 @@ configuration StopIdleSessionSec=.
 after  seconds, edit the file
 /etc/systemd/logind.conf. Ensure that there is a section
 [Login] which contains the configuration
-StopIdleSessionSec=.</pre></td>
+StopIdleSessionSec=
+            .</pre></td>
 	<td>RHEL-08-020035</td>
 	<td>logind_session_timeout</td>
 </tr>
@@ -4637,6 +4818,7 @@ Rather than relying on the user to manually lock their operation system session 
 operating systems need to be able to identify when a user's session has idled and take action to initiate the
 session lock.
 
+                
 The tmux package allows for a session lock to be implemented and configured.</pre></td>
 	<td><pre>Run the following command to determine if the tmux package is installed: $ rpm -q tmux
       Is it the case that the package is not installed?
@@ -4648,7 +4830,8 @@ Rather than be forced to wait for a period of time to expire before the user ses
 Instruct users to begin new terminal sessions with the following command:
 $ tmux
 The console can now be locked with the following key combination:
-ctrl+b :lock-session</pre></td>
+ctrl+b :lock-session
+              </pre></td>
 	<td>RHEL-08-020039</td>
 	<td>package_tmux_installed</td>
 </tr>
@@ -4678,7 +4861,8 @@ the session-lock command must be bound to a key.
 Add the following line to /etc/tmux.conf:
 bind X lock-session.
 The console can now be locked with the following key combination:
-Ctrl+b Shift+x</pre></td>
+Ctrl+b Shift+x
+              </pre></td>
 	<td>RHEL-08-020040</td>
 	<td>configure_tmux_lock_keybinding</td>
 </tr>
@@ -4768,6 +4952,7 @@ If properly configured, the output should be /org/gnome/settings-daemon/peripher
 can be enabled by setting removal-action
 to 'lock-screen'.
 
+              
 To enable, add or edit removal-action to
 /etc/dconf/db/local.d/00-security-settings. For example:
 [org/gnome/settings-daemon/peripherals/smartcard]
@@ -4804,10 +4989,12 @@ If properly configured, the output should be /org/gnome/desktop/session/idle-del
 setting must be set under an appropriate configuration file(s) in the /etc/dconf/db/local.d directory
 and locked in /etc/dconf/db/local.d/locks directory to prevent user modification.
 
+              
 For example, to configure the system for a 15 minute delay, add the following to
 /etc/dconf/db/local.d/00-security-settings:
 [org/gnome/desktop/session]
-idle-delay=uint32 900</pre></td>
+idle-delay=uint32 900
+            </pre></td>
 	<td>RHEL-08-020060</td>
 	<td>dconf_gnome_screensaver_idle_delay</td>
 </tr>
@@ -4946,7 +5133,8 @@ domains = testing.test
 matchrule =<SAN>.*EDIPI@mil
 maprule = (userCertificate;binary={cert!bin})
 domains = testing.test
-</pre></td>
+
+        </pre></td>
 	<td>RHEL-08-020090</td>
 	<td>sssd_enable_certmap</td>
 </tr>
@@ -5042,7 +5230,8 @@ $ grep retry /etc/security/pwquality.conf
 
 Edit the /etc/security/pwquality.conf to include
 
-retry=, or a lower value if site
+retry=
+                , or a lower value if site
 policy is more restrictive. The DoD requirement is a maximum of 3 prompts
 per session.</pre></td>
 	<td>RHEL-08-020104</td>
@@ -5059,6 +5248,7 @@ per session.</pre></td>
 Password complexity, or strength, is a measure of the effectiveness of a password in resisting attempts
 at guessing and brute-force attacks.
 
+                
 Password complexity is one factor of several that determines how long it takes to crack a password. The more
 complex the password, the greater the number of possible combinations that need to be tested before
 the password is compromised.</pre></td>
@@ -5125,6 +5315,7 @@ to compromise the password. Password complexity, or strength, is a measure of
 the effectiveness of a password in resisting attempts at guessing and brute-force
 attacks.
 
+                
 Password complexity is one factor of several that determines how long it takes
 to crack a password. The more complex the password, the greater the number of
 possible combinations that need to be tested before the password is compromised.
@@ -5187,10 +5378,12 @@ to prevent a run of ( + 1) or more identical characters.</pre></td>
 Password complexity, or strength, is a measure of the effectiveness of a password in resisting attempts at
 guessing and brute-force attacks.
 
+                
 Password complexity is one factor of several that determines how long it takes to crack a password. The more
 complex the password, the greater the number of possible combinations that need to be tested before the
 password is compromised.
 
+                
 Passwords with excessive repeating characters may be more vulnerable to password-guessing attacks.</pre></td>
 	<td><pre>Verify the value of the "maxrepeat" option in "/etc/security/pwquality.conf" with the following command:
 
@@ -5218,10 +5411,12 @@ run of ( + 1) or more identical characters.</pre></td>
 Password complexity, or strength, is a measure of the effectiveness of a password in resisting attempts
 at guessing and brute-force attacks.
 
+                
 Password complexity is one factor of several that determines how long it takes to crack a password. The
 more complex the password, the greater the number of possible combinations that need to be tested before
 the password is compromised.
 
+                
 Requiring a minimum number of character categories makes password guessing attacks more difficult
 by ensuring a larger search space.</pre></td>
 	<td><pre>Verify the value of the "minclass" option in "/etc/security/pwquality.conf" with the following command:
@@ -5262,11 +5457,13 @@ required to compromise the password. Password complexity, or strength,
 is a measure of the effectiveness of a password in resisting attempts
 at guessing and brute–force attacks.
 
+                
 Password complexity is one factor of several that determines how long
 it takes to crack a password. The more complex the password, the
 greater the number of possible combinations that need to be tested
 before the password is compromised.
 
+                
 Requiring a minimum number of different characters during password changes ensures that
 newly changed passwords should not resemble previously compromised ones.
 Note that passwords which are changed on compromised systems will still be compromised, however.</pre></td>
@@ -5280,6 +5477,7 @@ difok =
 	<td><pre>The pam_pwquality module's difok parameter sets the number of characters
 in a password that must not be present in and old password during a password change.
 
+                
 Modify the difok setting in /etc/security/pwquality.conf
 to equal  to require differing characters
 when changing passwords.</pre></td>
@@ -5305,7 +5503,9 @@ $ sudo awk -F: '$4 < 1 {print $1 " " $4}' /etc/shadow
       </pre></td>
 	<td><pre>Configure non-compliant accounts to enforce a 24 hours/1 day minimum password
 lifetime by running the following command:
-$ sudo chage -m 1 USER</pre></td>
+$ sudo chage -m 1 USER
+              
+            </pre></td>
 	<td>RHEL-08-020180</td>
 	<td>accounts_password_set_min_life_existing</td>
 </tr>
@@ -5322,6 +5522,7 @@ users are allowed to immediately and continually change their password,
 then the password could be repeatedly changed in a short period of time to
 defeat the organization's policy regarding password reuse.
 
+              
 Setting the minimum password age protects against users cycling back to a
 favorite password after satisfying the password reuse requirement.</pre></td>
 	<td><pre>Verify Red Hat Enterprise Linux 8 enforces 24 hours/1 day as the minimum password lifetime for new user accounts.
@@ -5337,9 +5538,12 @@ PASS_MIN_DAYS
 edit the file /etc/login.defs
 and add or correct the following line:
 PASS_MIN_DAYS 
+              
 A value of 1 day is considered sufficient for many
 environments. The DoD requirement is 1.
-The profile requirement is .</pre></td>
+The profile requirement is 
+                
+              .</pre></td>
 	<td>RHEL-08-020190</td>
 	<td>accounts_minimum_age_login_defs</td>
 </tr>
@@ -5355,6 +5559,7 @@ need to be changed periodically. If the operating system does not limit the life
 of passwords and force users to change their passwords, there is the risk that the
 operating system passwords could be compromised.
 
+              
 Setting the password maximum age ensures users are required to
 periodically change their passwords. Requiring shorter password lifetimes
 increases the risk of users writing down the password in a convenient
@@ -5370,9 +5575,12 @@ PASS_MAX_DAYS
 edit the file /etc/login.defs
 and add or correct the following line:
 PASS_MAX_DAYS 
+              
 A value of 180 days is sufficient for many environments.
 The DoD requirement is 60.
-The profile requirement is .</pre></td>
+The profile requirement is 
+                
+              .</pre></td>
 	<td>RHEL-08-020200</td>
 	<td>accounts_maximum_age_login_defs</td>
 </tr>
@@ -5397,7 +5605,10 @@ $ sudo awk -F: '$5 <= 0 {print $1 " " $5}' /etc/shadow
       </pre></td>
 	<td><pre>Configure non-compliant accounts to enforce a -day maximum password lifetime
 restriction by running the following command:
-$ sudo chage -M  USER</pre></td>
+$ sudo chage -M 
+                USER
+              
+            </pre></td>
 	<td>RHEL-08-020210</td>
 	<td>accounts_password_set_max_life_existing</td>
 </tr>
@@ -5433,6 +5644,7 @@ with a value less than "<sub idref="var_password_pam_remember" />"?
 	<td><pre>Do not allow users to reuse recent passwords. This can be accomplished by using the
 remember option for the pam_pwhistory PAM module.
 
+              
 
 On systems with newer versions of authselect, the pam_pwhistory PAM module
 can be enabled via authselect feature:
@@ -5440,12 +5652,15 @@ authselect enable-feature with-pwhistory
 
 Otherwise, it should be enabled using an authselect custom profile.
 
+              
 Newer systems also have the /etc/security/pwhistory.conf file for setting
 pam_pwhistory module options. This file should be used whenever available.
 Otherwise, the pam_pwhistory module options can be set in PAM files.
 
+              
 The value for remember option must be equal or greater than
-</pre></td>
+
+            </pre></td>
 	<td>RHEL-08-020220</td>
 	<td>accounts_password_pam_pwhistory_remember_password_auth</td>
 </tr>
@@ -5481,6 +5696,7 @@ with a value less than "<sub idref="var_password_pam_remember" />"?
 	<td><pre>Do not allow users to reuse recent passwords. This can be accomplished by using the
 remember option for the pam_pwhistory PAM module.
 
+              
 
 On systems with newer versions of authselect, the pam_pwhistory PAM module
 can be enabled via authselect feature:
@@ -5488,12 +5704,15 @@ authselect enable-feature with-pwhistory
 
 Otherwise, it should be enabled using an authselect custom profile.
 
+              
 Newer systems also have the /etc/security/pwhistory.conf file for setting
 pam_pwhistory module options. This file should be used whenever available.
 Otherwise, the pam_pwhistory module options can be set in PAM files.
 
+              
 The value for remember option must be equal or greater than
-</pre></td>
+
+            </pre></td>
 	<td>RHEL-08-020221</td>
 	<td>accounts_password_pam_pwhistory_remember_system_auth</td>
 </tr>
@@ -5522,6 +5741,7 @@ minlen =
       </pre></td>
 	<td><pre>The pam_pwquality module's minlen parameter controls requirements for
 minimum characters required in a password. Add minlen=
+                
 after pam_pwquality to set minimum password length requirements.</pre></td>
 	<td>RHEL-08-020230</td>
 	<td>accounts_password_pam_minlen</td>
@@ -5546,11 +5766,15 @@ The DoD requirement is 15.
 	<td><pre>To specify password length requirements for new accounts, edit the file
 /etc/login.defs and add or correct the following line:
 PASS_MIN_LEN 
-
+              
+              
+              
 The DoD requirement is 15.
 The FISMA requirement is 12.
 The profile requirement is
-.
+
+                
+              .
 If a program consults /etc/login.defs and also another PAM module
 (such as pam_pwquality) during a password change operation, then
 the most restrictive must be satisfied. See PAM section for more
@@ -5589,6 +5813,7 @@ the information system, ensures that even if the information system is
 compromised, that compromise will not affect credentials stored on the
 authentication device.
 
+          
 Multi-Factor Authentication (MFA) solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
 providing time-based or challenge-response authenticators and smart cards such
@@ -5623,7 +5848,8 @@ Add or update "pam_sss.so" line in auth section of "/etc/pam.d/system-auth" file
 
 Also add or update "pam_sss.so" line in auth section of "/etc/pam.d/smartcard-auth" file to
 include the "allow_missing_name" option, like in the following example:
-/etc/pam.d/smartcard-auth:auth sufficient pam_sss.so allow_missing_name</pre></td>
+/etc/pam.d/smartcard-auth:auth sufficient pam_sss.so allow_missing_name
+        </pre></td>
 	<td>RHEL-08-020250</td>
 	<td>sssd_enable_smartcards</td>
 </tr>
@@ -5649,11 +5875,18 @@ INACTIVE=
 signifies inactivity) until an account is permanently disabled, add or correct
 the following line in /etc/default/useradd:
 INACTIVE=
+                  
+                
+              
 If a password is currently on the verge of expiration, then
 
+                
+              
 day(s) remain(s) until the account is automatically
 disabled. However, if the password will not expire for another 60 days, then 60
-days plus  day(s) could
+days plus 
+                
+               day(s) could
 elapse until the account would be automatically disabled. See the
 useradd man page for more information.</pre></td>
 	<td>RHEL-08-020260</td>
@@ -5670,7 +5903,8 @@ useradd man page for more information.</pre></td>
 an excessive period, these accounts may be used to gain unauthorized access.
 To mitigate this risk, automated termination of all temporary accounts
 must be set upon account creation.
-</pre></td>
+
+            </pre></td>
 	<td><pre>Verify that temporary accounts have been provisioned with an expiration date
 of 72 hours. For every temporary account, run the following command to
 obtain its account aging and expiration information:
@@ -5683,10 +5917,17 @@ as documented.
 procedures when there is a need for short-term accounts. In the event
 temporary accounts are required, configure the system to
 terminate them after a documented time period. For every temporary account, run the following command to set an expiration date on
-it, substituting USER and YYYY-MM-DD
+it, substituting 
+                USER
+               and 
+                YYYY-MM-DD
+              
 appropriately:
 $ sudo chage -E YYYY-MM-DD USER
-YYYY-MM-DD indicates the documented expiration date for the
+              
+              
+                YYYY-MM-DD
+               indicates the documented expiration date for the
 account. For U.S. Government systems, the operating system must be
 configured to automatically terminate these types of accounts after a
 period of 72 hours.</pre></td>
@@ -5705,6 +5946,7 @@ to compromise the password. Password complexity, or strength, is a measure of
 the effectiveness of a password in resisting attempts at guessing and brute-force
 attacks.
 
+                
 Password complexity is one factor of several that determines how long it takes
 to crack a password. The more complex the password, the greater the number of
 possible combinations that need to be tested before the password is compromised.
@@ -5745,7 +5987,7 @@ cache_credentials = true
 If "cache_credentials" is set to "false" or is missing no further checks are required.
 
 To verify that SSSD expires offline credentials, run the following command:
-$ sudo grep offline_credentials_expiration /etc/sssd/sssd.conf
+$ sudo grep offline_credentials_expiration /etc/sssd/sssd.conf /etc/sssd/conf.d/*.conf
 If configured properly, output should be
 offline_credentials_expiration = 1
       Is it the case that it does not exist or is not configured properly?
@@ -5764,7 +6006,8 @@ offline_credentials_expiration to 1 under the [pam]
 section in /etc/sssd/sssd.conf. For example:
 [pam]
 offline_credentials_expiration = 1
-</pre></td>
+
+        </pre></td>
 	<td>RHEL-08-020290</td>
 	<td>sssd_offline_cred_expiration</td>
 </tr>
@@ -5779,10 +6022,12 @@ offline_credentials_expiration = 1
 Password complexity, or strength, is a measure of the effectiveness of a password in resisting attempts at
 guessing and brute-force attacks.
 
+                
 Password complexity is one factor of several that determines how long it takes to crack a password. The more
 complex the password, the greater the number of possible combinations that need to be tested before the
 password is compromised.
 
+                
 Passwords with dictionary words may be more vulnerable to password-guessing attacks.</pre></td>
 	<td><pre>Verify Red Hat Enterprise Linux 8 prevents the use of dictionary words for passwords with the following command:
 
@@ -5813,7 +6058,9 @@ FAIL_DELAY
       </pre></td>
 	<td><pre>To ensure the logon failure delay controlled by /etc/login.defs is set properly,
 add or correct the FAIL_DELAY setting in /etc/login.defs to read as follows:
-FAIL_DELAY </pre></td>
+FAIL_DELAY 
+            
+          </pre></td>
 	<td>RHEL-08-020310</td>
 	<td>accounts_logon_fail_delay</td>
 </tr>
@@ -5845,7 +6092,9 @@ Configure the system so all accounts on the system are assigned to an active sys
 application, or user account. Remove accounts that do not support approved system
 activities or that allow for a normal user to perform administrative-level actions.
 To remove unauthorized system accounts, use the following command:
-$ sudo userdel unauthorized_user</pre></td>
+$ sudo userdel unauthorized_user
+            
+          </pre></td>
 	<td>RHEL-08-020320</td>
 	<td>accounts_authorized_local_users</td>
 </tr>
@@ -5878,7 +6127,7 @@ add or correct the following line in
 /etc/ssh/sshd_config:
 
 
-PermitEmptyPasswords no
+            PermitEmptyPasswords no
 Any accounts with empty passwords should be disabled immediately, and PAM configuration
 should prevent users from being able to assign themselves empty passwords.</pre></td>
 	<td>RHEL-08-020330</td>
@@ -5999,7 +6248,8 @@ To explicitly enable LastLog in SSH, add or correct the following line in
 
 /etc/ssh/sshd_config:
 
-PrintLastLog yes</pre></td>
+PrintLastLog yes
+          </pre></td>
 	<td>RHEL-08-020350</td>
 	<td>sshd_print_last_log</td>
 </tr>
@@ -6022,7 +6272,9 @@ UMASK
       </pre></td>
 	<td><pre>To ensure the default umask controlled by /etc/login.defs is set properly,
 add or correct the UMASK setting in /etc/login.defs to read as follows:
-UMASK </pre></td>
+UMASK 
+              
+            </pre></td>
 	<td>RHEL-08-020351</td>
 	<td>accounts_umask_etc_login_defs</td>
 </tr>
@@ -6077,6 +6329,7 @@ or the "umask" parameter is missing or is commented out?
 	<td><pre>To ensure the default umask controlled by /etc/profile is set properly,
 add or correct the umask setting in /etc/profile to read as follows:
 umask 
+              
 
 Note that /etc/profile also reads scrips within /etc/profile.d directory.
 These scripts are also valid files to set umask value. Therefore, they should also be
@@ -6121,12 +6374,10 @@ $ sudo grep execve /etc/audit/audit.rules
 If audit is using the "augenrules" tool to load the rules, run the following command:
 
 $ sudo grep -r execve /etc/audit/rules.d
-
-
--a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k setuid
--a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k setuid
--a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k setgid
--a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k setgid
+          -a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k setuid
+          -a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k setuid
+          -a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k setgid
+          -a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k setgid
 
 
 If both the "b32" and "b64" audit rules for "SUID" files are not defined, this is a finding.
@@ -6154,7 +6405,8 @@ cron.*                                                  /var/log/cron
 cron job status. If cron is not logging to rsyslog, it
 can be implemented by adding the following to the RULES section of
 /etc/rsyslog.conf:
-cron.*                                                  /var/log/cron</pre></td>
+cron.*                                                  /var/log/cron
+          </pre></td>
 	<td>RHEL-08-030010</td>
 	<td>rsyslog_cron_logging</td>
 </tr>
@@ -6178,7 +6430,9 @@ action_mail_acct =
 a designated account in certain situations. Add or correct the following line
 in /etc/audit/auditd.conf to ensure that administrators are notified
 via email for those situations:
-action_mail_acct = </pre></td>
+action_mail_acct = 
+          
+        </pre></td>
 	<td>RHEL-08-030020</td>
 	<td>auditd_data_retention_action_mail_acct</td>
 </tr>
@@ -6207,7 +6461,8 @@ The output should return root.
 Check that the "/etc/aliases" file has a defined value for "root".
 $ sudo grep "postmaster:\s*root$" /etc/aliases
 
-postmaster: root</pre></td>
+postmaster: root
+          </pre></td>
 	<td>RHEL-08-030030</td>
 	<td>postfix_client_configure_mail_alias_postmaster</td>
 </tr>
@@ -6236,6 +6491,7 @@ when there is a disk error.
 Edit the file /etc/audit/auditd.conf. Add or modify the following line,
 substituting ACTION appropriately:
 disk_error_action = ACTION
+          
 Set this value to single to cause the system to switch to single-user
 mode for corrective action. Acceptable values also include syslog,
 exec, single, and halt. For certain systems, the need for availability
@@ -6270,6 +6526,7 @@ when disk space is running low but prior to running out of space completely.
 Edit the file /etc/audit/auditd.conf. Add or modify the following line,
 substituting ACTION appropriately:
 disk_full_action = ACTION
+          
 Set this value to single to cause the system to switch to single-user
 mode for corrective action. Acceptable values also include syslog,
 
@@ -6324,6 +6581,8 @@ name_format =
 	<td><pre>To configure Audit daemon to use a unique identifier
 as computer node name in the audit events,
 set name_format to 
+            
+          
 in /etc/audit/auditd.conf.</pre></td>
 	<td>RHEL-08-030062</td>
 	<td>auditd_name_format</td>
@@ -6375,6 +6634,7 @@ log_file = /var/log/audit/audit.log
 Configure the audit log to be protected from unauthorized read access by setting the correct
 permissive mode with the following command:
 $ sudo chmod 0600 audit_log_file
+          
 By default, audit_log_file is "/var/log/audit/audit.log".</pre></td>
 	<td>RHEL-08-030070</td>
 	<td>file_permissions_var_log_audit</td>
@@ -6402,7 +6662,8 @@ configured via log_file parameter in /etc/audit/auditd.conf
 or by default, the path for audit log is /var/log/audit/.
 
 To properly set the owner of /var/log/audit/*, run the command:
-$ sudo chown root /var/log/audit/* </pre></td>
+$ sudo chown root /var/log/audit/* 
+        </pre></td>
 	<td>RHEL-08-030080</td>
 	<td>file_ownership_var_log_audit_stig</td>
 </tr>
@@ -6481,7 +6742,8 @@ The audit log directory must be owned by "root"
 	<td><pre>All audit directories must be owned by root user. By default, the path for audit log is /var/log/audit/.
 
 To properly set the owner of /var/log/audit, run the command:
-$ sudo chown root /var/log/audit </pre></td>
+$ sudo chown root /var/log/audit 
+        </pre></td>
 	<td>RHEL-08-030100</td>
 	<td>directory_ownership_var_log_audit</td>
 </tr>
@@ -6552,7 +6814,10 @@ log_file = /var/log/audit/audit.log
 Configure the audit log directory to be protected from unauthorized read access by setting the
 correct permissive mode with the following command:
 $ sudo chmod 0700 audit_log_directory
-By default, audit_log_directory is "/var/log/audit".</pre></td>
+          
+By default, 
+            audit_log_directory
+           is "/var/log/audit".</pre></td>
 	<td>RHEL-08-030120</td>
 	<td>directory_permissions_var_log_audit</td>
 </tr>
@@ -6624,7 +6889,8 @@ If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following line to
 /etc/audit/audit.rules file in order to make login UIDs
 immutable:
---loginuid-immutable</pre></td>
+--loginuid-immutable
+        </pre></td>
 	<td>RHEL-08-030122</td>
 	<td>audit_rules_immutable_login_uids</td>
 </tr>
@@ -6651,14 +6917,18 @@ default), add the following lines to a file with suffix .rules in the
 directory /etc/audit/rules.d, in order to capture events that modify
 account changes:
 
--w /etc/shadow -p wa -k audit_rules_usergroup_modification
-
+          
+          -w /etc/shadow -p wa -k audit_rules_usergroup_modification
+          
+          
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following lines to
 /etc/audit/audit.rules file, in order to capture events that modify
 account changes:
 
--w /etc/shadow -p wa -k audit_rules_usergroup_modification</pre></td>
+          
+          -w /etc/shadow -p wa -k audit_rules_usergroup_modification
+        </pre></td>
 	<td>RHEL-08-030130</td>
 	<td>audit_rules_usergroup_modification_shadow</td>
 </tr>
@@ -6685,14 +6955,18 @@ default), add the following lines to a file with suffix .rules in the
 directory /etc/audit/rules.d, in order to capture events that modify
 account changes:
 
--w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification
-
+          
+          -w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification
+          
+          
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following lines to
 /etc/audit/audit.rules file, in order to capture events that modify
 account changes:
 
--w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre></td>
+          
+          -w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification
+        </pre></td>
 	<td>RHEL-08-030140</td>
 	<td>audit_rules_usergroup_modification_opasswd</td>
 </tr>
@@ -6719,14 +6993,18 @@ default), add the following lines to a file with suffix .rules in the
 directory /etc/audit/rules.d, in order to capture events that modify
 account changes:
 
--w /etc/passwd -p wa -k audit_rules_usergroup_modification
-
+          
+          -w /etc/passwd -p wa -k audit_rules_usergroup_modification
+          
+          
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following lines to
 /etc/audit/audit.rules file, in order to capture events that modify
 account changes:
 
--w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre></td>
+          
+          -w /etc/passwd -p wa -k audit_rules_usergroup_modification
+        </pre></td>
 	<td>RHEL-08-030150</td>
 	<td>audit_rules_usergroup_modification_passwd</td>
 </tr>
@@ -6755,14 +7033,18 @@ default), add the following lines to a file with suffix .rules in the
 directory /etc/audit/rules.d, in order to capture events that modify
 account changes:
 
--w /etc/gshadow -p wa -k audit_rules_usergroup_modification
-
+          
+          -w /etc/gshadow -p wa -k audit_rules_usergroup_modification
+          
+          
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following lines to
 /etc/audit/audit.rules file, in order to capture events that modify
 account changes:
 
--w /etc/gshadow -p wa -k audit_rules_usergroup_modification</pre></td>
+          
+          -w /etc/gshadow -p wa -k audit_rules_usergroup_modification
+        </pre></td>
 	<td>RHEL-08-030160</td>
 	<td>audit_rules_usergroup_modification_gshadow</td>
 </tr>
@@ -6789,14 +7071,18 @@ default), add the following lines to a file with suffix .rules in the
 directory /etc/audit/rules.d, in order to capture events that modify
 account changes:
 
--w /etc/group -p wa -k audit_rules_usergroup_modification
-
+          
+          -w /etc/group -p wa -k audit_rules_usergroup_modification
+          
+          
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following lines to
 /etc/audit/audit.rules file, in order to capture events that modify
 account changes:
 
--w /etc/group -p wa -k audit_rules_usergroup_modification</pre></td>
+          
+          -w /etc/group -p wa -k audit_rules_usergroup_modification
+        </pre></td>
 	<td>RHEL-08-030170</td>
 	<td>audit_rules_usergroup_modification_group</td>
 </tr>
@@ -6828,7 +7114,8 @@ add the following line to a file with suffix .rules in the directory
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following line to
 /etc/audit/audit.rules file:
--w /etc/sudoers -p wa -k actions</pre></td>
+-w /etc/sudoers -p wa -k actions
+        </pre></td>
 	<td>RHEL-08-030171</td>
 	<td>audit_rules_sudoers</td>
 </tr>
@@ -6860,7 +7147,8 @@ add the following line to a file with suffix .rules in the directory
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following line to
 /etc/audit/audit.rules file:
--w /etc/sudoers.d/ -p wa -k actions</pre></td>
+-w /etc/sudoers.d/ -p wa -k actions
+        </pre></td>
 	<td>RHEL-08-030172</td>
 	<td>audit_rules_sudoers_d</td>
 </tr>
@@ -6891,6 +7179,7 @@ to establish, correlate, and investigate the events leading up to an outage or a
 Ensuring the auditd service is active ensures audit records
 generated by the kernel are appropriately recorded.
 
+        
 Additionally, a properly configured audit subsystem ensures that actions of
 individual system users can be uniquely traced to those users so they
 can be held accountable for their actions.</pre></td>
@@ -6907,7 +7196,8 @@ the Linux Auditing System, as it is responsible for writing audit records to
 disk.
 
 The auditd service can be enabled with the following command:
-$ sudo systemctl enable auditd.service</pre></td>
+$ sudo systemctl enable auditd.service
+      </pre></td>
 	<td>RHEL-08-030181</td>
 	<td>service_auditd_enabled</td>
 </tr>
@@ -6924,6 +7214,7 @@ is a serious and ongoing concern and can have significant adverse impacts on org
 Auditing the use of privileged functions is one way to detect such misuse and identify
 the risk from insider and advanced persistent threats.
 
+            
 Privileged programs are subject to escalation-of-privilege attacks,
 which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
@@ -6944,7 +7235,8 @@ suffix .rules in the directory /etc/audit/rules.d:
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
--a always,exit -F path=/usr/bin/su -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/bin/su -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030190</td>
 	<td>audit_rules_privileged_commands_su</td>
 </tr>
@@ -6972,18 +7264,19 @@ to use the augenrules program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 .rules in the directory /etc/audit/rules.d:
 -a always,exit -F arch=b32 -S setxattr -F auid>=1000 -F auid!=unset -F key=perm_mod
--a always,exit -F arch=b32 -S setxattr -F auid=0 -F key=perm_mod
+            -a always,exit -F arch=b32 -S setxattr -F auid=0 -F key=perm_mod
 If the system is 64 bit then also add the following line:
 -a always,exit -F arch=b64 -S setxattr -F auid>=1000 -F auid!=unset -F key=perm_mod
--a always,exit -F arch=b64 -S setxattr -F auid=0 -F key=perm_mod
+            -a always,exit -F arch=b64 -S setxattr -F auid=0 -F key=perm_mod
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following line to
 /etc/audit/audit.rules file:
 -a always,exit -F arch=b32 -S setxattr -F auid>=1000 -F auid!=unset -F key=perm_mod
--a always,exit -F arch=b32 -S setxattr -F auid=0 -F key=perm_mod
+            -a always,exit -F arch=b32 -S setxattr -F auid=0 -F key=perm_mod
 If the system is 64 bit then also add the following line:
 -a always,exit -F arch=b64 -S setxattr -F auid>=1000 -F auid!=unset -F key=perm_mod
--a always,exit -F arch=b64 -S setxattr -F auid=0 -F key=perm_mod</pre></td>
+            -a always,exit -F arch=b64 -S setxattr -F auid=0 -F key=perm_mod
+          </pre></td>
 	<td>RHEL-08-030200</td>
 	<td>audit_rules_dac_modification_setxattr</td>
 </tr>
@@ -7000,6 +7293,7 @@ is a serious and ongoing concern and can have significant adverse impacts on org
 Auditing the use of privileged functions is one way to detect such misuse and identify
 the risk from insider and advanced persistent threats.
 
+            
 Privileged programs are subject to escalation-of-privilege attacks,
 which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
@@ -7020,7 +7314,8 @@ suffix .rules in the directory /etc/audit/rules.d:
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
--a always,exit -F path=/usr/bin/chage -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/bin/chage -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030250</td>
 	<td>audit_rules_privileged_commands_chage</td>
 </tr>
@@ -7037,6 +7332,7 @@ is a serious and ongoing concern and can have significant adverse impacts on org
 Auditing the use of privileged functions is one way to detect such misuse and identify
 the risk from insider and advanced persistent threats.
 
+            
 Privileged programs are subject to escalation-of-privilege attacks,
 which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
@@ -7057,7 +7353,8 @@ during daemon startup (the default), add the following lines to a file with suff
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following lines to
 /etc/audit/audit.rules file:
--a always,exit -F path=/usr/bin/chcon -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030260</td>
 	<td>audit_rules_execution_chcon</td>
 </tr>
@@ -7091,7 +7388,8 @@ during daemon startup (the default), add the following lines to a file with suff
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following lines to
 /etc/audit/audit.rules file:
--a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid>=1000 -F auid!=unset -k privileged-ssh-agent</pre></td>
+-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid>=1000 -F auid!=unset -k privileged-ssh-agent
+          </pre></td>
 	<td>RHEL-08-030280</td>
 	<td>audit_rules_privileged_commands_ssh_agent</td>
 </tr>
@@ -7108,6 +7406,7 @@ is a serious and ongoing concern and can have significant adverse impacts on org
 Auditing the use of privileged functions is one way to detect such misuse and identify
 the risk from insider and advanced persistent threats.
 
+            
 Privileged programs are subject to escalation-of-privilege attacks,
 which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
@@ -7128,7 +7427,8 @@ suffix .rules in the directory /etc/audit/rules.d:
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
--a always,exit -F path=/usr/bin/passwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030290</td>
 	<td>audit_rules_privileged_commands_passwd</td>
 </tr>
@@ -7145,6 +7445,7 @@ is a serious and ongoing concern and can have significant adverse impacts on org
 Auditing the use of privileged functions is one way to detect such misuse and identify
 the risk from insider and advanced persistent threats.
 
+            
 Privileged programs are subject to escalation-of-privilege attacks,
 which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
@@ -7165,7 +7466,8 @@ suffix .rules in the directory /etc/audit/rules.d:
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
--a always,exit -F path=/usr/bin/mount -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/bin/mount -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030300</td>
 	<td>audit_rules_privileged_commands_mount</td>
 </tr>
@@ -7182,6 +7484,7 @@ is a serious and ongoing concern and can have significant adverse impacts on org
 Auditing the use of privileged functions is one way to detect such misuse and identify
 the risk from insider and advanced persistent threats.
 
+            
 Privileged programs are subject to escalation-of-privilege attacks,
 which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
@@ -7202,7 +7505,8 @@ suffix .rules in the directory /etc/audit/rules.d:
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
--a always,exit -F path=/usr/bin/umount -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/bin/umount -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030301</td>
 	<td>audit_rules_privileged_commands_umount</td>
 </tr>
@@ -7235,7 +7539,8 @@ If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following line to
 /etc/audit/audit.rules file, setting ARCH to either b32 or b64 as
 appropriate for your system:
--a always,exit -F arch=ARCH -S mount -F auid>=1000 -F auid!=unset -F key=export</pre></td>
+-a always,exit -F arch=ARCH -S mount -F auid>=1000 -F auid!=unset -F key=export
+        </pre></td>
 	<td>RHEL-08-030302</td>
 	<td>audit_rules_media_export</td>
 </tr>
@@ -7252,6 +7557,7 @@ is a serious and ongoing concern and can have significant adverse impacts on org
 Auditing the use of privileged functions is one way to detect such misuse and identify
 the risk from insider and advanced persistent threats.
 
+            
 Privileged programs are subject to escalation-of-privilege attacks,
 which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
@@ -7272,7 +7578,8 @@ suffix .rules in the directory /etc/audit/rules.d:
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
--a always,exit -F path=/usr/sbin/unix_update -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/sbin/unix_update -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030310</td>
 	<td>audit_rules_privileged_commands_unix_update</td>
 </tr>
@@ -7289,6 +7596,7 @@ is a serious and ongoing concern and can have significant adverse impacts on org
 Auditing the use of privileged functions is one way to detect such misuse and identify
 the risk from insider and advanced persistent threats.
 
+            
 Privileged programs are subject to escalation-of-privilege attacks,
 which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
@@ -7309,7 +7617,8 @@ suffix .rules in the directory /etc/audit/rules.d:
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
--a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030311</td>
 	<td>audit_rules_privileged_commands_postdrop</td>
 </tr>
@@ -7326,6 +7635,7 @@ is a serious and ongoing concern and can have significant adverse impacts on org
 Auditing the use of privileged functions is one way to detect such misuse and identify
 the risk from insider and advanced persistent threats.
 
+            
 Privileged programs are subject to escalation-of-privilege attacks,
 which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
@@ -7346,7 +7656,8 @@ suffix .rules in the directory /etc/audit/rules.d:
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
--a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030312</td>
 	<td>audit_rules_privileged_commands_postqueue</td>
 </tr>
@@ -7363,6 +7674,7 @@ is a serious and ongoing concern and can have significant adverse impacts on org
 Auditing the use of privileged functions is one way to detect such misuse and identify
 the risk from insider and advanced persistent threats.
 
+            
 Privileged programs are subject to escalation-of-privilege attacks,
 which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
@@ -7383,7 +7695,8 @@ during daemon startup (the default), add the following lines to a file with suff
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following lines to
 /etc/audit/audit.rules file:
--a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030313</td>
 	<td>audit_rules_execution_semanage</td>
 </tr>
@@ -7400,6 +7713,7 @@ is a serious and ongoing concern and can have significant adverse impacts on org
 Auditing the use of privileged functions is one way to detect such misuse and identify
 the risk from insider and advanced persistent threats.
 
+            
 Privileged programs are subject to escalation-of-privilege attacks,
 which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
@@ -7420,7 +7734,8 @@ during daemon startup (the default), add the following lines to a file with suff
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following lines to
 /etc/audit/audit.rules file:
--a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030314</td>
 	<td>audit_rules_execution_setfiles</td>
 </tr>
@@ -7437,6 +7752,7 @@ is a serious and ongoing concern and can have significant adverse impacts on org
 Auditing the use of privileged functions is one way to detect such misuse and identify
 the risk from insider and advanced persistent threats.
 
+            
 Privileged programs are subject to escalation-of-privilege attacks,
 which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
@@ -7457,7 +7773,8 @@ suffix .rules in the directory /etc/audit/rules.d:
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
--a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030315</td>
 	<td>audit_rules_privileged_commands_userhelper</td>
 </tr>
@@ -7474,6 +7791,7 @@ is a serious and ongoing concern and can have significant adverse impacts on org
 Auditing the use of privileged functions is one way to detect such misuse and identify
 the risk from insider and advanced persistent threats.
 
+            
 Privileged programs are subject to escalation-of-privilege attacks,
 which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
@@ -7494,7 +7812,8 @@ during daemon startup (the default), add the following lines to a file with suff
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following lines to
 /etc/audit/audit.rules file:
--a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030316</td>
 	<td>audit_rules_execution_setsebool</td>
 </tr>
@@ -7511,6 +7830,7 @@ is a serious and ongoing concern and can have significant adverse impacts on org
 Auditing the use of privileged functions is one way to detect such misuse and identify
 the risk from insider and advanced persistent threats.
 
+            
 Privileged programs are subject to escalation-of-privilege attacks,
 which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
@@ -7531,7 +7851,8 @@ suffix .rules in the directory /etc/audit/rules.d:
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
--a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030317</td>
 	<td>audit_rules_privileged_commands_unix_chkpwd</td>
 </tr>
@@ -7548,6 +7869,7 @@ is a serious and ongoing concern and can have significant adverse impacts on org
 Auditing the use of privileged functions is one way to detect such misuse and identify
 the risk from insider and advanced persistent threats.
 
+            
 Privileged programs are subject to escalation-of-privilege attacks,
 which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
@@ -7568,7 +7890,8 @@ suffix .rules in the directory /etc/audit/rules.d:
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
--a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030320</td>
 	<td>audit_rules_privileged_commands_ssh_keysign</td>
 </tr>
@@ -7601,7 +7924,8 @@ during daemon startup (the default), add the following lines to a file with suff
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following lines to
 /etc/audit/audit.rules file:
--a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030330</td>
 	<td>audit_rules_execution_setfacl</td>
 </tr>
@@ -7618,6 +7942,7 @@ is a serious and ongoing concern and can have significant adverse impacts on org
 Auditing the use of privileged functions is one way to detect such misuse and identify
 the risk from insider and advanced persistent threats.
 
+            
 Privileged programs are subject to escalation-of-privilege attacks,
 which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
@@ -7640,7 +7965,8 @@ If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/sbin/pam_timestamp_check
--F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030340</td>
 	<td>audit_rules_privileged_commands_pam_timestamp_check</td>
 </tr>
@@ -7657,6 +7983,7 @@ is a serious and ongoing concern and can have significant adverse impacts on org
 Auditing the use of privileged functions is one way to detect such misuse and identify
 the risk from insider and advanced persistent threats.
 
+            
 Privileged programs are subject to escalation-of-privilege attacks,
 which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
@@ -7677,7 +8004,8 @@ suffix .rules in the directory /etc/audit/rules.d:
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
--a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030350</td>
 	<td>audit_rules_privileged_commands_newgrp</td>
 </tr>
@@ -7741,7 +8069,8 @@ If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following line to
 /etc/audit/audit.rules file, setting ARCH to either b32 or b64 as
 appropriate for your system:
--a always,exit -F arch=ARCH -S unlinkat -F auid>=1000 -F auid!=unset -F key=delete</pre></td>
+-a always,exit -F arch=ARCH -S unlinkat -F auid>=1000 -F auid!=unset -F key=delete
+          </pre></td>
 	<td>RHEL-08-030361</td>
 	<td>audit_rules_file_deletion_events_unlinkat</td>
 </tr>
@@ -7758,6 +8087,7 @@ is a serious and ongoing concern and can have significant adverse impacts on org
 Auditing the use of privileged functions is one way to detect such misuse and identify
 the risk from insider and advanced persistent threats.
 
+            
 Privileged programs are subject to escalation-of-privilege attacks,
 which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
@@ -7778,7 +8108,8 @@ suffix .rules in the directory /etc/audit/rules.d:
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
--a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030370</td>
 	<td>audit_rules_privileged_commands_gpasswd</td>
 </tr>
@@ -7827,6 +8158,7 @@ is a serious and ongoing concern and can have significant adverse impacts on org
 Auditing the use of privileged functions is one way to detect such misuse and identify
 the risk from insider and advanced persistent threats.
 
+            
 Privileged programs are subject to escalation-of-privilege attacks,
 which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
@@ -7847,7 +8179,8 @@ suffix .rules in the directory /etc/audit/rules.d:
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
--a always,exit -F path=/usr/bin/crontab -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030400</td>
 	<td>audit_rules_privileged_commands_crontab</td>
 </tr>
@@ -7864,6 +8197,7 @@ is a serious and ongoing concern and can have significant adverse impacts on org
 Auditing the use of privileged functions is one way to detect such misuse and identify
 the risk from insider and advanced persistent threats.
 
+            
 Privileged programs are subject to escalation-of-privilege attacks,
 which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
@@ -7884,7 +8218,8 @@ suffix .rules in the directory /etc/audit/rules.d:
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
--a always,exit -F path=/usr/bin/chsh -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030410</td>
 	<td>audit_rules_privileged_commands_chsh</td>
 </tr>
@@ -7937,7 +8272,8 @@ utility to read audit rules during daemon startup, add the following lines to
 If the system is 64 bit then also add the following lines:
 
 -a always,exit -F arch=b64 -S truncate -F exit=-EACCES -F auid>=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S truncate -F exit=-EPERM -F auid>=1000 -F auid!=unset -F key=access</pre></td>
+-a always,exit -F arch=b64 -S truncate -F exit=-EPERM -F auid>=1000 -F auid!=unset -F key=access
+          </pre></td>
 	<td>RHEL-08-030420</td>
 	<td>audit_rules_unsuccessful_file_modification_truncate</td>
 </tr>
@@ -7972,7 +8308,8 @@ utility to read audit rules during daemon startup, add the following line to
 /etc/audit/audit.rules file:
 -a always,exit -F arch=b32 -S lchown -F auid>=1000 -F auid!=unset -F key=perm_mod
 If the system is 64 bit then also add the following line:
--a always,exit -F arch=b64 -S lchown -F auid>=1000 -F auid!=unset -F key=perm_mod</pre></td>
+-a always,exit -F arch=b64 -S lchown -F auid>=1000 -F auid!=unset -F key=perm_mod
+          </pre></td>
 	<td>RHEL-08-030480</td>
 	<td>audit_rules_dac_modification_lchown</td>
 </tr>
@@ -8007,7 +8344,8 @@ utility to read audit rules during daemon startup, add the following line to
 /etc/audit/audit.rules file:
 -a always,exit -F arch=b32 -S fchmodat -F auid>=1000 -F auid!=unset -F key=perm_mod
 If the system is 64 bit then also add the following line:
--a always,exit -F arch=b64 -S fchmodat -F auid>=1000 -F auid!=unset -F key=perm_mod</pre></td>
+-a always,exit -F arch=b64 -S fchmodat -F auid>=1000 -F auid!=unset -F key=perm_mod
+          </pre></td>
 	<td>RHEL-08-030490</td>
 	<td>audit_rules_dac_modification_fchmodat</td>
 </tr>
@@ -8024,6 +8362,7 @@ is a serious and ongoing concern and can have significant adverse impacts on org
 Auditing the use of privileged functions is one way to detect such misuse and identify
 the risk from insider and advanced persistent threats.
 
+            
 Privileged programs are subject to escalation-of-privilege attacks,
 which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
@@ -8044,7 +8383,8 @@ suffix .rules in the directory /etc/audit/rules.d:
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
--a always,exit -F path=/usr/bin/sudo -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030550</td>
 	<td>audit_rules_privileged_commands_sudo</td>
 </tr>
@@ -8061,6 +8401,7 @@ is a serious and ongoing concern and can have significant adverse impacts on org
 Auditing the use of privileged functions is one way to detect such misuse and identify
 the risk from insider and advanced persistent threats.
 
+            
 Privileged programs are subject to escalation-of-privilege attacks,
 which attempt to subvert their normal role of providing some necessary but
 limited capability. As such, motivation exists to monitor these programs for
@@ -8081,7 +8422,8 @@ suffix .rules in the directory /etc/audit/rules.d:
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
--a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030560</td>
 	<td>audit_rules_privileged_commands_usermod</td>
 </tr>
@@ -8114,7 +8456,8 @@ during daemon startup (the default), add the following lines to a file with suff
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following lines to
 /etc/audit/audit.rules file:
--a always,exit -F path=/usr/bin/chacl -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/bin/chacl -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030570</td>
 	<td>audit_rules_execution_chacl</td>
 </tr>
@@ -8148,7 +8491,8 @@ suffix .rules in the directory /etc/audit/rules.d:
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
--a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
+-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+          </pre></td>
 	<td>RHEL-08-030580</td>
 	<td>audit_rules_privileged_commands_kmod</td>
 </tr>
@@ -8179,7 +8523,8 @@ If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following lines to
 /etc/audit/audit.rules file in order to watch for unattempted manual
 edits of files involved in storing logon events:
--w  -p wa -k logins</pre></td>
+-w  -p wa -k logins
+          </pre></td>
 	<td>RHEL-08-030590</td>
 	<td>audit_rules_login_events_faillock</td>
 </tr>
@@ -8210,7 +8555,8 @@ If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following lines to
 /etc/audit/audit.rules file in order to watch for unattempted manual
 edits of files involved in storing logon events:
--w /var/log/lastlog -p wa -k logins</pre></td>
+-w /var/log/lastlog -p wa -k logins
+          </pre></td>
 	<td>RHEL-08-030600</td>
 	<td>audit_rules_login_events_lastlog</td>
 </tr>
@@ -8247,7 +8593,8 @@ argument to newly installed kernels, add audit=1 to the
 default Grub2 command line for Linux operating systems. Modify the line within
 /etc/default/grub as shown below:
 GRUB_CMDLINE_LINUX="... audit=1 ..."
-Run the following command to update command line for already installed kernels:# grubby --update-kernel=ALL --args="audit=1"</pre></td>
+Run the following command to update command line for already installed kernels:# grubby --update-kernel=ALL --args="audit=1"
+      </pre></td>
 	<td>RHEL-08-030601</td>
 	<td>grub2_audit_argument</td>
 </tr>
@@ -8284,7 +8631,8 @@ argument to newly installed kernels, add audit_backlog_limit=8192 to the
 default Grub2 command line for Linux operating systems. Modify the line within
 /etc/default/grub as shown below:
 GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."
-Run the following command to update command line for already installed kernels:# grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre></td>
+Run the following command to update command line for already installed kernels:# grubby --update-kernel=ALL --args="audit_backlog_limit=8192"
+      </pre></td>
 	<td>RHEL-08-030602</td>
 	<td>grub2_audit_backlog_limit_argument</td>
 </tr>
@@ -8333,7 +8681,8 @@ If properly configured, the output should indicate the following permissions:
       </pre></td>
 	<td><pre>
 To properly set the permissions of /etc/audit/rules.d/*.rules, run the command:
-$ sudo chmod 0640 /etc/audit/rules.d/*.rules</pre></td>
+$ sudo chmod 0640 /etc/audit/rules.d/*.rules
+          </pre></td>
 	<td>RHEL-08-030610</td>
 	<td>file_permissions_etc_audit_rulesd</td>
 </tr>
@@ -8528,7 +8877,8 @@ Check the size of the partition that audit records are written to with the
 following command:
 
 $ sudo df -h /var/log/audit/
-/dev/sda2 24G 10.4G 13.6G 43% /var/log/audit</pre></td>
+/dev/sda2 24G 10.4G 13.6G 43% /var/log/audit
+        </pre></td>
 	<td>RHEL-08-030660</td>
 	<td>auditd_audispd_configure_sufficiently_large_partition</td>
 </tr>
@@ -8544,7 +8894,8 @@ system logging services.</pre></td>
 	<td><pre>Run the following command to determine if the rsyslog package is installed: $ rpm -q rsyslog
       Is it the case that the package is not installed?
       </pre></td>
-	<td><pre>Rsyslog is installed by default. The rsyslog package can be installed with the following command:  $ sudo yum install rsyslog</pre></td>
+	<td><pre>Rsyslog is installed by default. The rsyslog package can be installed with the following command:  $ sudo yum install rsyslog
+        </pre></td>
 	<td>RHEL-08-030670</td>
 	<td>package_rsyslog_installed</td>
 </tr>
@@ -8565,7 +8916,8 @@ $ rpm -q rsyslog-gnutls
 
 The rsyslog-gnutls package can be installed with the following command:
 
-$ sudo yum install rsyslog-gnutls</pre></td>
+$ sudo yum install rsyslog-gnutls
+        </pre></td>
 	<td>RHEL-08-030680</td>
 	<td>package_rsyslog-gnutls_installed</td>
 </tr>
@@ -8598,20 +8950,33 @@ logging.
 Along with these other directives, the system can be configured
 to forward its logs to a particular log server by
 adding or correcting one of the following lines,
-substituting  appropriately.
+substituting 
+              
+                
+              
+             appropriately.
 The choice of protocol depends on the environment of the system;
 although TCP and RELP provide more reliable message delivery,
 they may not be supported in all environments.
 
 To use UDP for log message delivery:
 *.* @
-
+                
+              
+            
+            
 To use TCP for log message delivery:
 *.* @@
-
+                
+              
+            
+            
 To use RELP for log message delivery:
 *.* :omrelp:
-
+                
+              
+            
+            
 There must be a resolvable DNS CNAME or Alias record set to "" for logs to be sent correctly to the centralized logging utility.</pre></td>
 	<td>RHEL-08-030690</td>
 	<td>rsyslog_remote_loghost</td>
@@ -8747,9 +9112,29 @@ when disk space starts to run low.
 Edit the file /etc/audit/auditd.conf. Modify the following line,
 substituting ACTION appropriately:
 space_left_action = ACTION
+          
 Possible values for ACTION are described in the auditd.conf man page.
 These include:
-syslogemailexecsuspendsinglehalt
+
+            
+              syslog
+            
+            
+              email
+            
+            
+              exec
+            
+            
+              suspend
+            
+            
+              single
+            
+            
+              halt
+            
+          
 Set this to email (instead of the default,
 which is suspend) as it is more likely to get prompt attention. Acceptable values
 also include suspend, single, and halt.</pre></td>
@@ -8840,7 +9225,8 @@ $ rpm -q telnet-server
       </pre></td>
 	<td><pre>The telnet-server package can be removed with the following command:
 
-$ sudo yum erase telnet-server</pre></td>
+$ sudo yum erase telnet-server
+          </pre></td>
 	<td>RHEL-08-040000</td>
 	<td>package_telnet-server_removed</td>
 </tr>
@@ -8865,7 +9251,8 @@ reports to files, or forward crash reports to a centralized issue tracking
 system such as RHTSupport.
 The abrt package can be removed with the following command:
 
-$ sudo yum erase abrt</pre></td>
+$ sudo yum erase abrt
+        </pre></td>
 	<td>RHEL-08-040001</td>
 	<td>package_abrt_removed</td>
 </tr>
@@ -8887,7 +9274,8 @@ $ rpm -q sendmail
 not installed by default.
 The sendmail package can be removed with the following command:
 
-$ sudo yum erase sendmail</pre></td>
+$ sudo yum erase sendmail
+        </pre></td>
 	<td>RHEL-08-040002</td>
 	<td>package_sendmail_removed</td>
 </tr>
@@ -8924,7 +9312,8 @@ argument to newly installed kernels, add pti=on to the
 default Grub2 command line for Linux operating systems. Modify the line within
 /etc/default/grub as shown below:
 GRUB_CMDLINE_LINUX="... pti=on ..."
-Run the following command to update command line for already installed kernels:# grubby --update-kernel=ALL --args="pti=on"</pre></td>
+Run the following command to update command line for already installed kernels:# grubby --update-kernel=ALL --args="pti=on"
+        </pre></td>
 	<td>RHEL-08-040004</td>
 	<td>grub2_pti_argument</td>
 </tr>
@@ -8947,7 +9336,8 @@ $ rpm -q rsh-server
       </pre></td>
 	<td><pre>The rsh-server package can be removed with the following command:
 
-$ sudo yum erase rsh-server</pre></td>
+$ sudo yum erase rsh-server
+          </pre></td>
 	<td>RHEL-08-040010</td>
 	<td>package_rsh-server_removed</td>
 </tr>
@@ -9013,7 +9403,8 @@ install atm /bin/true
 
 To configure the system to prevent the atm from being used,
 add the following line to file /etc/modprobe.d/atm.conf:
-blacklist atm</pre></td>
+blacklist atm
+          </pre></td>
 	<td>RHEL-08-040021</td>
 	<td>kernel_module_atm_disabled</td>
 </tr>
@@ -9047,7 +9438,8 @@ install can /bin/true
 
 To configure the system to prevent the can from being used,
 add the following line to file /etc/modprobe.d/can.conf:
-blacklist can</pre></td>
+blacklist can
+          </pre></td>
 	<td>RHEL-08-040022</td>
 	<td>kernel_module_can_disabled</td>
 </tr>
@@ -9082,7 +9474,8 @@ install sctp /bin/true
 
 To configure the system to prevent the sctp from being used,
 add the following line to file /etc/modprobe.d/sctp.conf:
-blacklist sctp</pre></td>
+blacklist sctp
+          </pre></td>
 	<td>RHEL-08-040023</td>
 	<td>kernel_module_sctp_disabled</td>
 </tr>
@@ -9116,7 +9509,8 @@ install tipc /bin/true
 
 To configure the system to prevent the tipc from being used,
 add the following line to file /etc/modprobe.d/tipc.conf:
-blacklist tipc</pre></td>
+blacklist tipc
+          </pre></td>
 	<td>RHEL-08-040024</td>
 	<td>kernel_module_tipc_disabled</td>
 </tr>
@@ -9187,7 +9581,8 @@ install firewire-core /bin/true
 
 To configure the system to prevent the firewire-core from being used,
 add the following line to file /etc/modprobe.d/firewire-core.conf:
-blacklist firewire-core</pre></td>
+blacklist firewire-core
+          </pre></td>
 	<td>RHEL-08-040026</td>
 	<td>kernel_module_firewire-core_disabled</td>
 </tr>
@@ -9203,6 +9598,7 @@ or unauthorized tunneling (i.e., embedding of data types within data types), org
 disable or restrict unused or unnecessary physical and logical ports/protocols on information
 systems.
 
+              
 Operating systems are capable of providing a wide variety of functions and services.
 Some of the functions and services provided by default may not be necessary to support
 essential organizational operations.
@@ -9210,6 +9606,7 @@ Additionally, it is sometimes convenient to provide multiple services from a sin
 (e.g., VPN and IPS); however, doing so increases risk over limiting the services provided by
 one component.
 
+              
 To support the requirements and principles of least functionality, the operating system must
 support the organizational requirements, providing only essential capabilities and limiting the
 use of ports, protocols, and/or services to only those required, authorized, and approved to
@@ -9225,9 +9622,12 @@ Ask the System Administrator for the site or program Ports, Protocols, and Servi
 	<td><pre>Configure the firewalld ports to allow approved services to have access to the system.
 To configure firewalld to open ports, run the following command:
 firewall-cmd --permanent --add-port=port_number/tcp
+              
 To configure firewalld to allow access for pre-defined services, run the following
 command:
-firewall-cmd --permanent --add-service=service_name</pre></td>
+firewall-cmd --permanent --add-service=service_name
+              
+            </pre></td>
 	<td>RHEL-08-040030</td>
 	<td>configure_firewalld_ports</td>
 </tr>
@@ -9241,6 +9641,7 @@ firewall-cmd --permanent --add-service=service_name</pre></td>
 	<td><pre>Disabling the automounter permits the administrator to
 statically control filesystem mounting through /etc/fstab.
 
+            
 Additionally, automatically mounting filesystems permits easy introduction of
 unknown devices, thereby facilitating malicious activity.</pre></td>
 	<td><pre>To check that the autofs service is disabled in system boot configuration,
@@ -9274,9 +9675,11 @@ can almost always be disabled if NFS is not in use. Even if NFS is required, it 
 possible to configure filesystem mounts statically by editing /etc/fstab
 rather than relying on the automounter.
 
+            
 
 The autofs service can be disabled with the following command:
-$ sudo systemctl mask --now autofs.service</pre></td>
+$ sudo systemctl mask --now autofs.service
+          </pre></td>
 	<td>RHEL-08-040070</td>
 	<td>service_autofs_disabled</td>
 </tr>
@@ -9338,7 +9741,8 @@ $ sudo grep DefaultZone /etc/firewalld/firewalld.conf
 the built-in default zone which processes incoming IPv4 and IPv6 packets,
 modify the following line in
 /etc/firewalld/firewalld.conf to be:
-DefaultZone=drop</pre></td>
+DefaultZone=drop
+            </pre></td>
 	<td>RHEL-08-040090</td>
 	<td>set_firewalld_default_zone</td>
 </tr>
@@ -9362,7 +9766,8 @@ Automated control of remote access sessions allows organizations to ensure ongoi
       </pre></td>
 	<td><pre>The firewalld package can be installed with the following command:
 
-$ sudo yum install firewalld</pre></td>
+$ sudo yum install firewalld
+            </pre></td>
 	<td>RHEL-08-040100</td>
 	<td>package_firewalld_installed</td>
 </tr>
@@ -9386,7 +9791,8 @@ If the service is running, it should return the following: active
       </pre></td>
 	<td><pre>
 The firewalld service can be enabled with the following command:
-$ sudo systemctl enable firewalld.service</pre></td>
+$ sudo systemctl enable firewalld.service
+            </pre></td>
 	<td>RHEL-08-040101</td>
 	<td>service_firewalld_enabled</td>
 </tr>
@@ -9422,9 +9828,11 @@ virbr0-nic      tun       unmanaged     --
 	<td><pre>Deactivating wireless network interfaces should prevent normal usage of the wireless
 capability.
 
+              
 
 Configure the system to disable all wireless network interfaces with the following command:
-$ sudo nmcli radio all off</pre></td>
+$ sudo nmcli radio all off
+            </pre></td>
 	<td>RHEL-08-040110</td>
 	<td>wireless_disable_interfaces</td>
 </tr>
@@ -9453,7 +9861,8 @@ $ grep -r bluetooth /etc/modprobe.conf /etc/modprobe.d
 loading of the Bluetooth module. Add the following to
 the appropriate /etc/modprobe.d configuration file
 to prevent the loading of the Bluetooth module:
-install bluetooth /bin/true</pre></td>
+install bluetooth /bin/true
+            </pre></td>
 	<td>RHEL-08-040111</td>
 	<td>kernel_module_bluetooth_disabled</td>
 </tr>
@@ -9846,14 +10255,16 @@ Add the noexec option to the fourth column of
 	<td>medium</td>
 	<td>The RHEL 8 fapolicy module must be installed.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>fapolicyd (File Access Policy Daemon)
+	<td><pre>
+          fapolicyd (File Access Policy Daemon)
 implements application whitelisting to decide file access rights.</pre></td>
 	<td><pre>Run the following command to determine if the fapolicyd package is installed: $ rpm -q fapolicyd
       Is it the case that the fapolicyd package is not installed?
       </pre></td>
 	<td><pre>The fapolicyd package can be installed with the following command:
 
-$ sudo yum install fapolicyd</pre></td>
+$ sudo yum install fapolicyd
+        </pre></td>
 	<td>RHEL-08-040135</td>
 	<td>package_fapolicyd_installed</td>
 </tr>
@@ -9877,7 +10288,8 @@ If the service is running, it should return the following: active
 	<td><pre>The File Access Policy service should be enabled.
 
 The fapolicyd service can be enabled with the following command:
-$ sudo systemctl enable fapolicyd.service</pre></td>
+$ sudo systemctl enable fapolicyd.service
+        </pre></td>
 	<td>RHEL-08-040136</td>
 	<td>service_fapolicyd_enabled</td>
 </tr>
@@ -9926,7 +10338,8 @@ deny perm=any all : all
 	<td>medium</td>
 	<td>RHEL 8 must have the USBGuard installed.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>usbguard is a software framework that helps to protect
+	<td><pre>
+          usbguard is a software framework that helps to protect
 against rogue USB devices by implementing basic whitelisting/blacklisting
 capabilities based on USB device attributes.</pre></td>
 	<td><pre>Run the following command to determine if the usbguard package is installed: $ rpm -q usbguard
@@ -9935,7 +10348,8 @@ capabilities based on USB device attributes.</pre></td>
 	<td><pre>
 The usbguard package can be installed with the following command:
 
-$ sudo yum install usbguard</pre></td>
+$ sudo yum install usbguard
+        </pre></td>
 	<td>RHEL-08-040139</td>
 	<td>package_usbguard_installed</td>
 </tr>
@@ -9984,7 +10398,8 @@ If the service is running, it should return the following: active
 	<td><pre>The USBGuard service should be enabled.
 
 The usbguard service can be enabled with the following command:
-$ sudo systemctl enable usbguard.service</pre></td>
+$ sudo systemctl enable usbguard.service
+        </pre></td>
 	<td>RHEL-08-040141</td>
 	<td>service_usbguard_enabled</td>
 </tr>
@@ -10027,7 +10442,8 @@ intercepted and either read or altered.</pre></td>
 	<td><pre>The openssh-server package should be installed.
 The openssh-server package can be installed with the following command:
 
-$ sudo yum install openssh-server</pre></td>
+$ sudo yum install openssh-server
+        </pre></td>
 	<td>RHEL-08-040159</td>
 	<td>package_openssh-server_installed</td>
 </tr>
@@ -10042,6 +10458,7 @@ $ sudo yum install openssh-server</pre></td>
 integrity may be compromised because unprotected communications can be
 intercepted and either read or altered.
 
+          
 This checklist item applies to both internal and external networks and all types
 of information system components from which information can be transmitted (e.g., servers,
 mobile devices, notebook computers, printers, copiers, scanners, etc). Communication paths
@@ -10058,7 +10475,8 @@ If the service is running, it should return the following: active
 	<td><pre>The SSH server service, sshd, is commonly needed.
 
 The sshd service can be enabled with the following command:
-$ sudo systemctl enable sshd.service</pre></td>
+$ sudo systemctl enable sshd.service
+        </pre></td>
 	<td>RHEL-08-040160</td>
 	<td>service_sshd_enabled</td>
 </tr>
@@ -10090,7 +10508,10 @@ To decrease the default limits, add or correct the following line in
 
 /etc/ssh/sshd_config:
 
-RekeyLimit  </pre></td>
+RekeyLimit 
+              
+            
+          </pre></td>
 	<td>RHEL-08-040161</td>
 	<td>sshd_rekey_limit</td>
 </tr>
@@ -10119,13 +10540,15 @@ Active: inactive (dead)
 	<td><pre>By default, SystemD will reboot the system if the Ctrl-Alt-Del
 key sequence is pressed.
 
+            
 To configure the system to ignore the Ctrl-Alt-Del key sequence from the
 
 command line instead of rebooting the system, do either of the following:
 ln -sf /dev/null /etc/systemd/system/ctrl-alt-del.target
 or
 systemctl mask ctrl-alt-del.target
-
+            
+            
 Do not simply delete the /usr/lib/systemd/system/ctrl-alt-del.service file,
 as this file may be restored during future system updates.</pre></td>
 	<td>RHEL-08-040170</td>
@@ -10153,6 +10576,7 @@ If properly configured, the output should be
 	<td><pre>By default, GNOME will reboot the system if the
 Ctrl-Alt-Del key sequence is pressed.
 
+              
 To configure the system to ignore the Ctrl-Alt-Del key sequence
 from the Graphical User Interface (GUI) instead of rebooting the system,
 add or set logout to '' in
@@ -10188,10 +10612,12 @@ CtrlAltDelBurstAction=none
 	<td><pre>By default, SystemD will reboot the system if the Ctrl-Alt-Del
 key sequence is pressed Ctrl-Alt-Delete more than 7 times in 2 seconds.
 
+            
 To configure the system to ignore the CtrlAltDelBurstAction
 
 setting, add or modify the following to /etc/systemd/system.conf:
-CtrlAltDelBurstAction=none</pre></td>
+CtrlAltDelBurstAction=none
+          </pre></td>
 	<td>RHEL-08-040172</td>
 	<td>disable_ctrlaltdel_burstaction</td>
 </tr>
@@ -10235,10 +10661,12 @@ will be available on tty9 which is access by pressing
 CTRL-ALT-F9. The debug-shell service should only be used
 for SystemD related issues and should otherwise be disabled.
 
+            
 By default, the debug-shell SystemD service is already disabled.
 
 The debug-shell service can be disabled with the following command:
-$ sudo systemctl mask --now debug-shell.service</pre></td>
+$ sudo systemctl mask --now debug-shell.service
+          </pre></td>
 	<td>RHEL-08-040180</td>
 	<td>service_debug-shell_disabled</td>
 </tr>
@@ -10252,6 +10680,7 @@ $ sudo systemctl mask --now debug-shell.service</pre></td>
 	<td><pre>Removing the tftp-server package decreases the risk of the accidental
 (or intentional) activation of tftp services.
 
+            
 If TFTP is required for operational support (such as transmission of router
 configurations), its use must be documented with the Information Systems
 Securty Manager (ISSM), restricted to only authorized personnel, and have
@@ -10260,7 +10689,8 @@ access control rules established.</pre></td>
 $ rpm -q tftp-server
       Is it the case that the package is installed?
       </pre></td>
-	<td><pre>The tftp-server package can be removed with the following command:  $ sudo yum erase tftp-server</pre></td>
+	<td><pre>The tftp-server package can be removed with the following command:  $ sudo yum erase tftp-server
+          </pre></td>
 	<td>RHEL-08-040190</td>
 	<td>package_tftp-server_removed</td>
 </tr>
@@ -10314,7 +10744,8 @@ $ sysctl net.ipv4.conf.default.accept_redirects
       Is it the case that the correct value is not returned?
       </pre></td>
 	<td><pre>To set the runtime status of the net.ipv4.conf.default.accept_redirects kernel parameter, run the following command: $ sudo sysctl -w net.ipv4.conf.default.accept_redirects=0
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv4.conf.default.accept_redirects = 0</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv4.conf.default.accept_redirects = 0
+            </pre></td>
 	<td>RHEL-08-040209</td>
 	<td>sysctl_net_ipv4_conf_default_accept_redirects</td>
 </tr>
@@ -10334,7 +10765,8 @@ $ sysctl net.ipv6.conf.default.accept_redirects
       Is it the case that the correct value is not returned?
       </pre></td>
 	<td><pre>To set the runtime status of the net.ipv6.conf.default.accept_redirects kernel parameter, run the following command: $ sudo sysctl -w net.ipv6.conf.default.accept_redirects=0
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv6.conf.default.accept_redirects = 0</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv6.conf.default.accept_redirects = 0
+            </pre></td>
 	<td>RHEL-08-040210</td>
 	<td>sysctl_net_ipv6_conf_default_accept_redirects</td>
 </tr>
@@ -10358,7 +10790,8 @@ $ sysctl net.ipv4.conf.all.send_redirects
       Is it the case that the correct value is not returned?
       </pre></td>
 	<td><pre>To set the runtime status of the net.ipv4.conf.all.send_redirects kernel parameter, run the following command: $ sudo sysctl -w net.ipv4.conf.all.send_redirects=0
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv4.conf.all.send_redirects = 0</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv4.conf.all.send_redirects = 0
+            </pre></td>
 	<td>RHEL-08-040220</td>
 	<td>sysctl_net_ipv4_conf_all_send_redirects</td>
 </tr>
@@ -10382,7 +10815,8 @@ $ sysctl net.ipv4.icmp_echo_ignore_broadcasts
       Is it the case that the correct value is not returned?
       </pre></td>
 	<td><pre>To set the runtime status of the net.ipv4.icmp_echo_ignore_broadcasts kernel parameter, run the following command: $ sudo sysctl -w net.ipv4.icmp_echo_ignore_broadcasts=1
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv4.icmp_echo_ignore_broadcasts = 1</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv4.icmp_echo_ignore_broadcasts = 1
+            </pre></td>
 	<td>RHEL-08-040230</td>
 	<td>sysctl_net_ipv4_icmp_echo_ignore_broadcasts</td>
 </tr>
@@ -10399,6 +10833,7 @@ which can be used to bypass network security measures. This requirement
 applies only to the forwarding of source-routerd traffic, such as when IPv4
 forwarding is enabled and the system is functioning as a router.
 
+              
 Accepting source-routed packets in the IPv4 protocol has few legitimate
 uses. It should be disabled unless it is absolutely required.</pre></td>
 	<td><pre>The runtime status of the net.ipv4.conf.all.accept_source_route kernel parameter can be queried
@@ -10409,7 +10844,8 @@ $ sysctl net.ipv4.conf.all.accept_source_route
       Is it the case that the correct value is not returned?
       </pre></td>
 	<td><pre>To set the runtime status of the net.ipv4.conf.all.accept_source_route kernel parameter, run the following command: $ sudo sysctl -w net.ipv4.conf.all.accept_source_route=0
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv4.conf.all.accept_source_route = 0</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv4.conf.all.accept_source_route = 0
+            </pre></td>
 	<td>RHEL-08-040239</td>
 	<td>sysctl_net_ipv4_conf_all_accept_source_route</td>
 </tr>
@@ -10426,6 +10862,7 @@ be used to bypass network security measures. This requirement applies only to th
 forwarding of source-routerd traffic, such as when IPv6 forwarding is enabled and
 the system is functioning as a router.
 
+              
 Accepting source-routed packets in the IPv6 protocol has few legitimate
 uses. It should be disabled unless it is absolutely required.</pre></td>
 	<td><pre>The runtime status of the net.ipv6.conf.all.accept_source_route kernel parameter can be queried
@@ -10436,7 +10873,8 @@ $ sysctl net.ipv6.conf.all.accept_source_route
       Is it the case that the correct value is not returned?
       </pre></td>
 	<td><pre>To set the runtime status of the net.ipv6.conf.all.accept_source_route kernel parameter, run the following command: $ sudo sysctl -w net.ipv6.conf.all.accept_source_route=0
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv6.conf.all.accept_source_route = 0</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv6.conf.all.accept_source_route = 0
+            </pre></td>
 	<td>RHEL-08-040240</td>
 	<td>sysctl_net_ipv6_conf_all_accept_source_route</td>
 </tr>
@@ -10463,7 +10901,8 @@ $ sysctl net.ipv4.conf.default.accept_source_route
       Is it the case that the correct value is not returned?
       </pre></td>
 	<td><pre>To set the runtime status of the net.ipv4.conf.default.accept_source_route kernel parameter, run the following command: $ sudo sysctl -w net.ipv4.conf.default.accept_source_route=0
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv4.conf.default.accept_source_route = 0</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv4.conf.default.accept_source_route = 0
+            </pre></td>
 	<td>RHEL-08-040249</td>
 	<td>sysctl_net_ipv4_conf_default_accept_source_route</td>
 </tr>
@@ -10490,7 +10929,8 @@ $ sysctl net.ipv6.conf.default.accept_source_route
       Is it the case that the correct value is not returned?
       </pre></td>
 	<td><pre>To set the runtime status of the net.ipv6.conf.default.accept_source_route kernel parameter, run the following command: $ sudo sysctl -w net.ipv6.conf.default.accept_source_route=0
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv6.conf.default.accept_source_route = 0</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv6.conf.default.accept_source_route = 0
+            </pre></td>
 	<td>RHEL-08-040250</td>
 	<td>sysctl_net_ipv6_conf_default_accept_source_route</td>
 </tr>
@@ -10512,7 +10952,8 @@ The ability to forward packets is only appropriate for routers.
       Is it the case that IP forwarding value is "1" and the system is not router?
       </pre></td>
 	<td><pre>To set the runtime status of the net.ipv4.conf.all.forwarding kernel parameter, run the following command: $ sudo sysctl -w net.ipv4.conf.all.forwarding=0
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv4.conf.all.forwarding = 0</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv4.conf.all.forwarding = 0
+            </pre></td>
 	<td>RHEL-08-040259</td>
 	<td>sysctl_net_ipv4_conf_all_forwarding</td>
 </tr>
@@ -10534,7 +10975,8 @@ The ability to forward packets is only appropriate for routers.
       Is it the case that IP forwarding value is "1" and the system is not router?
       </pre></td>
 	<td><pre>To set the runtime status of the net.ipv6.conf.all.forwarding kernel parameter, run the following command: $ sudo sysctl -w net.ipv6.conf.all.forwarding=0
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv6.conf.all.forwarding = 0</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv6.conf.all.forwarding = 0
+            </pre></td>
 	<td>RHEL-08-040260</td>
 	<td>sysctl_net_ipv6_conf_all_forwarding</td>
 </tr>
@@ -10554,7 +10996,8 @@ $ sysctl net.ipv6.conf.all.accept_ra
       Is it the case that the correct value is not returned?
       </pre></td>
 	<td><pre>To set the runtime status of the net.ipv6.conf.all.accept_ra kernel parameter, run the following command: $ sudo sysctl -w net.ipv6.conf.all.accept_ra=0
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv6.conf.all.accept_ra = 0</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv6.conf.all.accept_ra = 0
+            </pre></td>
 	<td>RHEL-08-040261</td>
 	<td>sysctl_net_ipv6_conf_all_accept_ra</td>
 </tr>
@@ -10574,7 +11017,8 @@ $ sysctl net.ipv6.conf.default.accept_ra
       Is it the case that the correct value is not returned?
       </pre></td>
 	<td><pre>To set the runtime status of the net.ipv6.conf.default.accept_ra kernel parameter, run the following command: $ sudo sysctl -w net.ipv6.conf.default.accept_ra=0
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv6.conf.default.accept_ra = 0</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv6.conf.default.accept_ra = 0
+            </pre></td>
 	<td>RHEL-08-040262</td>
 	<td>sysctl_net_ipv6_conf_default_accept_ra</td>
 </tr>
@@ -10598,7 +11042,8 @@ $ sysctl net.ipv4.conf.default.send_redirects
       Is it the case that the correct value is not returned?
       </pre></td>
 	<td><pre>To set the runtime status of the net.ipv4.conf.default.send_redirects kernel parameter, run the following command: $ sudo sysctl -w net.ipv4.conf.default.send_redirects=0
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv4.conf.default.send_redirects = 0</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv4.conf.default.send_redirects = 0
+            </pre></td>
 	<td>RHEL-08-040270</td>
 	<td>sysctl_net_ipv4_conf_default_send_redirects</td>
 </tr>
@@ -10624,7 +11069,8 @@ $ sysctl net.ipv4.conf.all.accept_redirects
       Is it the case that the correct value is not returned?
       </pre></td>
 	<td><pre>To set the runtime status of the net.ipv4.conf.all.accept_redirects kernel parameter, run the following command: $ sudo sysctl -w net.ipv4.conf.all.accept_redirects=0
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv4.conf.all.accept_redirects = 0</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv4.conf.all.accept_redirects = 0
+            </pre></td>
 	<td>RHEL-08-040279</td>
 	<td>sysctl_net_ipv4_conf_all_accept_redirects</td>
 </tr>
@@ -10644,7 +11090,8 @@ $ sysctl net.ipv6.conf.all.accept_redirects
       Is it the case that the correct value is not returned?
       </pre></td>
 	<td><pre>To set the runtime status of the net.ipv6.conf.all.accept_redirects kernel parameter, run the following command: $ sudo sysctl -w net.ipv6.conf.all.accept_redirects=0
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv6.conf.all.accept_redirects = 0</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv6.conf.all.accept_redirects = 0
+            </pre></td>
 	<td>RHEL-08-040280</td>
 	<td>sysctl_net_ipv6_conf_all_accept_redirects</td>
 </tr>
@@ -10665,7 +11112,8 @@ $ sysctl kernel.unprivileged_bpf_disabled
       Is it the case that the correct value is not returned?
       </pre></td>
 	<td><pre>To set the runtime status of the kernel.unprivileged_bpf_disabled kernel parameter, run the following command: $ sudo sysctl -w kernel.unprivileged_bpf_disabled=1
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: kernel.unprivileged_bpf_disabled = 1</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: kernel.unprivileged_bpf_disabled = 1
+          </pre></td>
 	<td>RHEL-08-040281</td>
 	<td>sysctl_kernel_unprivileged_bpf_disabled</td>
 </tr>
@@ -10689,7 +11137,8 @@ $ sysctl kernel.yama.ptrace_scope
       Is it the case that the correct value is not returned?
       </pre></td>
 	<td><pre>To set the runtime status of the kernel.yama.ptrace_scope kernel parameter, run the following command: $ sudo sysctl -w kernel.yama.ptrace_scope=1
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: kernel.yama.ptrace_scope = 1</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: kernel.yama.ptrace_scope = 1
+          </pre></td>
 	<td>RHEL-08-040282</td>
 	<td>sysctl_kernel_yama_ptrace_scope</td>
 </tr>
@@ -10731,7 +11180,10 @@ Conflicting assignments are not allowed.
       Is it the case that the kernel.kptr_restrict is not set to 1 or 2 or is configured to be 0?
       </pre></td>
 	<td><pre>To set the runtime status of the kernel.kptr_restrict kernel parameter, run the following command: $ sudo sysctl -w kernel.kptr_restrict=
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: kernel.kptr_restrict = </pre></td>
+              
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: kernel.kptr_restrict = 
+              
+            </pre></td>
 	<td>RHEL-08-040283</td>
 	<td>sysctl_kernel_kptr_restrict</td>
 </tr>
@@ -10808,7 +11260,8 @@ Conflicting assignments are not allowed.
       Is it the case that the net.ipv4.conf.all.rp_filter is not set to 1 or 2 or is configured to be 0?
       </pre></td>
 	<td><pre>To set the runtime status of the net.ipv4.conf.all.rp_filter kernel parameter, run the following command: $ sudo sysctl -w net.ipv4.conf.all.rp_filter=1
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv4.conf.all.rp_filter = 1</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv4.conf.all.rp_filter = 1
+            </pre></td>
 	<td>RHEL-08-040285</td>
 	<td>sysctl_net_ipv4_conf_all_rp_filter</td>
 </tr>
@@ -10830,7 +11283,8 @@ $ sysctl net.core.bpf_jit_harden
       Is it the case that the correct value is not returned?
       </pre></td>
 	<td><pre>To set the runtime status of the net.core.bpf_jit_harden kernel parameter, run the following command: $ sudo sysctl -w net.core.bpf_jit_harden=2
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.core.bpf_jit_harden = 2</pre></td>
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.core.bpf_jit_harden = 2
+          </pre></td>
 	<td>RHEL-08-040286</td>
 	<td>sysctl_net_core_bpf_jit_harden</td>
 </tr>
@@ -10851,7 +11305,8 @@ $ sudo postconf -n smtpd_client_restrictions
       </pre></td>
 	<td><pre>Modify the /etc/postfix/main.cf file to restrict client connections
 to the local network with the following command:
-$ sudo postconf -e 'smtpd_client_restrictions = permit_mynetworks,reject'</pre></td>
+$ sudo postconf -e 'smtpd_client_restrictions = permit_mynetworks,reject'
+              </pre></td>
 	<td>RHEL-08-040290</td>
 	<td>postfix_prevent_unrestricted_relay</td>
 </tr>
@@ -10878,7 +11333,8 @@ AIDE rules can be configured in multiple ways; this is merely one example that i
 configured by default.
 
 The remediation provided with this rule adds xattrs to all rule sets available in
-/etc/aide.conf</pre></td>
+/etc/aide.conf
+              </pre></td>
 	<td>RHEL-08-040300</td>
 	<td>aide_verify_ext_attributes</td>
 </tr>
@@ -10905,7 +11361,8 @@ AIDE rules can be configured in multiple ways; this is merely one example that i
 configured by default.
 
 The remediation provided with this rule adds acl to all rule sets available in
-/etc/aide.conf</pre></td>
+/etc/aide.conf
+              </pre></td>
 	<td>RHEL-08-040310</td>
 	<td>aide_verify_acls</td>
 </tr>
@@ -10934,7 +11391,8 @@ If X Windows is not installed then the system cannot boot into graphical user mo
 This prevents the system from being accidentally or maliciously booted into a graphical.target
 mode. To do so, run the following command:
 
-sudo yum remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</pre></td>
+sudo yum remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland
+          </pre></td>
 	<td>RHEL-08-040320</td>
 	<td>xwindows_remove_packages</td>
 </tr>
@@ -10961,7 +11419,8 @@ multi-user.target will prevent automatic startup of the X server. To do so, run:
 $ systemctl set-default multi-user.target
 You should see the following output:
 Removed symlink /etc/systemd/system/default.target.
-Created symlink from /etc/systemd/system/default.target to /usr/lib/systemd/system/multi-user.target.</pre></td>
+Created symlink from /etc/systemd/system/default.target to /usr/lib/systemd/system/multi-user.target.
+          </pre></td>
 	<td>RHEL-08-040321</td>
 	<td>xwindows_runlevel_target</td>
 </tr>
@@ -10977,6 +11436,7 @@ visible to the system. If unauthorized individuals can access these applications
 may allow them to collect information such as logon IDs, passwords, and key exchanges
 between systems.
 
+          
 If the system is being used to perform a network troubleshooting function, the use of these
 tools must be documented with the Information Systems Security Manager (ISSM) and restricted
 to only authorized personnel.</pre></td>
@@ -10989,7 +11449,8 @@ capture all traffic on the network to which it is connected. Run the following
 to determine if any interface is running in promiscuous mode:
 $ ip link | grep PROMISC
 Promiscuous mode of an interface can be disabled with the following command:
-$ sudo ip link set dev device_name multicast off promisc off</pre></td>
+$ sudo ip link set dev device_name multicast off promisc off
+        </pre></td>
 	<td>RHEL-08-040330</td>
 	<td>network_sniffer_disabled</td>
 </tr>
@@ -11026,7 +11487,8 @@ To explicitly disable X11 Forwarding, add or correct the following line in
 
 /etc/ssh/sshd_config:
 
-X11Forwarding no</pre></td>
+X11Forwarding no
+          </pre></td>
 	<td>RHEL-08-040340</td>
 	<td>sshd_disable_x11_forwarding</td>
 </tr>
@@ -11062,7 +11524,8 @@ the following line in
 
 /etc/ssh/sshd_config:
 
-X11UseLocalhost yes</pre></td>
+X11UseLocalhost yes
+          </pre></td>
 	<td>RHEL-08-040341</td>
 	<td>sshd_x11_use_localhost</td>
 </tr>
@@ -11086,7 +11549,7 @@ CRYPTO_POLICY='-oKexAlgorithms=ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-n
       </pre></td>
 	<td><pre>Limit the key exchange algorithms to those  which are FIPS-approved.
 Add or modify the following line in /etc/crypto-policies/back-ends/opensshserver.config
-CRYPTO_POLICY='-oKexAlgorithms=ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512'
+            CRYPTO_POLICY='-oKexAlgorithms=ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512'
 This rule ensures that only the key exchange algorithms mentioned
 above (or their subset) are configured for use, keeping the given
 order of algorithms.</pre></td>
@@ -11124,7 +11587,9 @@ server_args = -s
 it should be configured to change its root directory at startup. To do so,
 ensure /etc/xinetd.d/tftp includes -s as a command line argument,
 as shown in the following example:
-server_args = -s </pre></td>
+server_args = -s 
+            
+          </pre></td>
 	<td>RHEL-08-040350</td>
 	<td>tftpd_uses_secure_mode</td>
 </tr>
@@ -11141,7 +11606,8 @@ accidental activation.</pre></td>
 $ rpm -q vsftpd
       Is it the case that the package is installed?
       </pre></td>
-	<td><pre>The vsftpd package can be removed with the following command:  $ sudo yum erase vsftpd</pre></td>
+	<td><pre>The vsftpd package can be removed with the following command:  $ sudo yum erase vsftpd
+          </pre></td>
 	<td>RHEL-08-040360</td>
 	<td>package_vsftpd_removed</td>
 </tr>
@@ -11152,14 +11618,16 @@ $ rpm -q vsftpd
 	<td>medium</td>
 	<td>The gssproxy package must not be installed unless mission essential on RHEL 8.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>gssproxy is a proxy for GSS API credential handling.</pre></td>
+	<td><pre>
+            gssproxy is a proxy for GSS API credential handling.</pre></td>
 	<td><pre>Run the following command to determine if the gssproxy package is installed:
 $ rpm -q gssproxy
       Is it the case that the package is installed?
       </pre></td>
 	<td><pre>The gssproxy package can be removed with the following command:
 
-$ sudo yum erase gssproxy</pre></td>
+$ sudo yum erase gssproxy
+          </pre></td>
 	<td>RHEL-08-040370</td>
 	<td>package_gssproxy_removed</td>
 </tr>
@@ -11170,7 +11638,8 @@ $ sudo yum erase gssproxy</pre></td>
 	<td>medium</td>
 	<td>The iprutils package must not be installed unless mission essential on RHEL 8.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>iprutils provides a suite of utlilities to manage and configure SCSI devices
+	<td><pre>
+            iprutils provides a suite of utlilities to manage and configure SCSI devices
 supported by the ipr SCSI storage device driver.</pre></td>
 	<td><pre>Run the following command to determine if the iprutils package is installed:
 $ rpm -q iprutils
@@ -11178,7 +11647,8 @@ $ rpm -q iprutils
       </pre></td>
 	<td><pre>The iprutils package can be removed with the following command:
 
-$ sudo yum erase iprutils</pre></td>
+$ sudo yum erase iprutils
+          </pre></td>
 	<td>RHEL-08-040380</td>
 	<td>package_iprutils_removed</td>
 </tr>
@@ -11189,7 +11659,8 @@ $ sudo yum erase iprutils</pre></td>
 	<td>medium</td>
 	<td>The tuned package must not be installed unless mission essential on RHEL 8.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>tuned contains a daemon that tunes the system settings dynamically.
+	<td><pre>
+            tuned contains a daemon that tunes the system settings dynamically.
 It does so by monitoring the usage of several system components periodically. Based
 on that information, components will then be put into lower or higher power savings
 modes to adapt to the current usage.</pre></td>
@@ -11199,7 +11670,8 @@ $ rpm -q tuned
       </pre></td>
 	<td><pre>The tuned package can be removed with the following command:
 
-$ sudo yum erase tuned</pre></td>
+$ sudo yum erase tuned
+          </pre></td>
 	<td>RHEL-08-040390</td>
 	<td>package_tuned_removed</td>
 </tr>
@@ -11214,6 +11686,7 @@ $ sudo yum erase tuned</pre></td>
 the risk that unauthorized individuals or processes may gain unnecessary access
 to information or privileges.
 
+          
 Privileged functions include, for example,
 establishing accounts, performing system integrity checks, or administering
 cryptographic key management activities. Non-privileged users are individuals
@@ -11238,13 +11711,18 @@ privileged functions to include disabling, circumventing, or altering
 implemented security safeguards/countermeasures. All administrators must be
 mapped to the sysadm_u or staff_u users with the
 appropriate domains (sysadm_t and staff_t).
-$ sudo semanage login -m -s sysadm_u USER or
+$ sudo semanage login -m -s sysadm_u USER
+           or
 $ sudo semanage login -m -s staff_u USER
-
+          
+          
+          
 All authorized non-administrative
 users must be mapped to the user_u role or the appropriate domain
 (user_t).
-$ sudo semanage login -m -s user_u USER</pre></td>
+$ sudo semanage login -m -s user_u USER
+          
+        </pre></td>
 	<td>RHEL-08-040400</td>
 	<td>selinux_user_login_roles</td>
 </tr>
