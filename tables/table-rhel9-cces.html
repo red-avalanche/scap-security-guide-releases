@@ -1066,10 +1066,10 @@ After the settings have been set, run <code>dconf update</code>.</td>
          <br>
 To configure the system to ignore the <code>Ctrl-Alt-Del</code> key sequence
 from the Graphical User Interface (GUI) instead of rebooting the system,
-add or set <code>logout</code> to <code>''</code> in
+add or set <code>logout</code> to <code>['']</code> in
 <code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
 <pre>[org/gnome/settings-daemon/plugins/media-keys]
-logout=''</pre>
+logout=['']</pre>
 Once the settings have been added, add a lock to
 <code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent
 user modification. For example:
@@ -1531,7 +1531,14 @@ such cases, the key can be installed by running the following command:
 <td>CCE-84185-8</td>
 <td>Ensure Software Patches Installed</td>
 <td>
-<br><br>
+If the system is joined to the Red Hat Network, a Red Hat Satellite Server,
+or a yum server, run the following command to install updates:
+<pre>$ sudo yum update</pre>
+If the system is not configured to use one of these sources, updates (in the form of RPM packages)
+can be manually downloaded from the Red Hat Network and installed using <code>rpm</code>.
+
+<br>
+        <br>
 NOTE: U.S. Defense systems are required to be patched within 30 days or sooner as local policy
 dictates.</td>
 </tr>
@@ -1897,12 +1904,10 @@ The value for <code>remember</code> option must be equal or greater than
 using <code>pam_faillock.so</code>.
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
-
 Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
 <code>deny = &lt;count&gt;</code>
 Where count should be less than or equal to
 <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_deny" use="legacy"></xccdf-1.2:sub> and greater than 0.
-
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
@@ -1975,11 +1980,9 @@ depending on the OS version.</td>
 <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <code>pam_faillock.so</code>.
 
-
 Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
 <code>unlock_time=&lt;interval-in-seconds&gt;</code> where
 <code>interval-in-seconds</code> is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_unlock_time" use="legacy"></xccdf-1.2:sub></code> or greater.
-
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -2138,17 +2141,18 @@ length credit for each uppercase character. Modify the <code>ucredit</code> sett
 <tr>
 <td>CCE-88865-1</td>
 <td>Set Password Hashing Algorithm in /etc/libuser.conf</td>
-<td>In <code>/etc/libuser.conf</code>, add or correct the following line in its
-<code>[defaults]</code> section to ensure the system will use the SHA-512
+<td>In <code>/etc/libuser.conf</code>, add or correct the following line in its <code>[defaults]</code>
+section to ensure the system will use the <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub>
 algorithm for password hashing:
-<pre>crypt_style = sha512</pre>
+<pre>crypt_style = <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub>
+         </pre>
         </td>
 </tr>
 <tr>
 <td>CCE-90590-1</td>
 <td>Set Password Hashing Algorithm in /etc/login.defs</td>
-<td>In <code>/etc/login.defs</code>, add or correct the following line to ensure
-the system will use <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm" use="legacy"></xccdf-1.2:sub> as the hashing algorithm:
+<td>In <code>/etc/login.defs</code>, add or update the following line to ensure the system will use
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm" use="legacy"></xccdf-1.2:sub> as the hashing algorithm:
 <pre>ENCRYPT_METHOD <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm" use="legacy"></xccdf-1.2:sub>
          </pre>
         </td>
@@ -2156,38 +2160,38 @@ the system will use <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/x
 <tr>
 <td>CCE-85946-2</td>
 <td>Set PAM''s Password Hashing Algorithm - password-auth</td>
-<td>The PAM system service can be configured to only store encrypted
-representations of passwords. In
-<code>/etc/pam.d/password-auth</code>,
-the
-<code>password</code> section of the file controls which PAM modules execute
-during a password change. Set the <code>pam_unix.so</code> module in the
-<code>password</code> section to include the argument <code>sha512</code>, as shown
-below:
+<td>The PAM system service can be configured to only store encrypted representations of passwords.
+In <code>/etc/pam.d/password-auth</code>, the <code>password</code> section of the file controls which
+PAM modules to execute during a password change.
+
+Set the <code>pam_unix.so</code> module in the <code>password</code> section to include the option
+<code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub></code> and no other hashing
+algorithms as shown below:
 <br>
-         <pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i>
+         <pre>password    sufficient    pam_unix.so <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub>
+          <i>other arguments...</i>
          </pre>
          <br>
-This will help ensure when local users change their passwords, hashes for
-the new passwords will be generated using the SHA-512 algorithm. This is
-the default.</td>
+This will help ensure that new passwords for local users will be stored using the
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub> algorithm.</td>
 </tr>
 <tr>
 <td>CCE-83581-9</td>
 <td>Set PAM''s Password Hashing Algorithm</td>
-<td>The PAM system service can be configured to only store encrypted
-representations of passwords. In "/etc/pam.d/system-auth", the
-<code>password</code> section of the file controls which PAM modules execute
-during a password change. Set the <code>pam_unix.so</code> module in the
-<code>password</code> section to include the argument <code>sha512</code>, as shown
-below:
+<td>The PAM system service can be configured to only store encrypted representations of passwords.
+In "/etc/pam.d/system-auth", the <code>password</code> section of the file controls which
+PAM modules to execute during a password change.
+
+Set the <code>pam_unix.so</code> module in the <code>password</code> section to include the option
+<code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub></code> and no other hashing
+algorithms as shown below:
 <br>
-         <pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i>
+         <pre>password    sufficient    pam_unix.so <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub>
+          <i>other arguments...</i>
          </pre>
          <br>
-This will help ensure when local users change their passwords, hashes for
-the new passwords will be generated using the SHA-512 algorithm. This is
-the default.</td>
+This will help ensure that new passwords for local users will be stored using the
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub> algorithm.</td>
 </tr>
 <tr>
 <td>CCE-89708-2</td>
@@ -2665,8 +2669,10 @@ accomplished by using the <code>rounds</code> option for the <code>pam_unix</cod
 In file <code>/etc/pam.d/password-auth</code> append <code>rounds=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_unix_rounds" use="legacy"></xccdf-1.2:sub>
          </code>
 to the <code>pam_unix.so</code> entry, as shown below:
+
 <pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_unix_rounds" use="legacy"></xccdf-1.2:sub>
          </pre>
+
 The system's default number of rounds is 5000.</td>
 </tr>
 <tr>
@@ -4835,7 +4841,10 @@ created files.</td>
 cron job status. If <code>cron</code> is not logging to <code>rsyslog</code>, it
 can be implemented by adding the following to the <i>RULES</i> section of
 <code>/etc/rsyslog.conf</code>:
+If the legacy syntax is used:
 <pre>cron.*                                                  /var/log/cron</pre>
+If the modern syntax (RainerScript) is used:
+<pre>cron.* action(type="omfile" file="/var/log/cron")</pre>
        </td>
 </tr>
 <tr>
@@ -4847,7 +4856,13 @@ and remote logging.  Couple this utility with <code>gnutls</code> (which is a se
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <code>rsyslogd</code> to off-load logs the remote system must be authenticated.</td>
+When using <code>rsyslogd</code> to off-load logs the remote system must be authenticated.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$ActionSendStreamDriverAuthMode x509/name</pre>
+Alternatively, use the RainerScript syntax:
+<pre>action(type="omfwd" Target="some.example.com" StreamDriverAuthMode="x509/name")</pre>
+       </td>
 </tr>
 <tr>
 <td>CCE-90191-8</td>
@@ -4858,7 +4873,14 @@ and remote logging.  Couple this utility with <code>gnutls</code> (which is a se
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <code>rsyslogd</code> to off-load logs off a encrpytion system must be used.</td>
+When using <code>rsyslogd</code> to off-load logs off a encrpytion system must be used.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$ActionSendStreamDriverMode 1</pre>
+
+Alternatively, use the RainerScript syntax:
+<pre>action(type="omfwd" ... StreamDriverMode="1")</pre>
+       </td>
 </tr>
 <tr>
 <td>CCE-86782-0</td>
@@ -4869,7 +4891,14 @@ and remote logging.  Couple this utility with <code>gnutls</code> (which is a se
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <code>rsyslogd</code> to off-load logs off an encryption system must be used.</td>
+When using <code>rsyslogd</code> to off-load logs off an encryption system must be used.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$DefaultNetstreamDriver gtls</pre>
+
+Alternatively, use the RainerScript syntax:
+<pre>global(DefaultNetstreamDriver="gtls")</pre>
+       </td>
 </tr>
 <tr>
 <td>CCE-83834-2</td>
@@ -4950,6 +4979,13 @@ selectors: <code>auth.*</code>, <code>authpriv.*</code>, and <code>daemon.*</cod
 not, use the following as an example configuration:
 <pre>auth.*;authpriv.*;daemon.*                              /var/log/secure</pre>
        </td>
+</tr>
+<tr>
+<td>CCE-86760-6</td>
+<td>Install systemd-journal-remote Package</td>
+<td>Journald (via systemd-journal-remote ) supports the ability to send
+log events it gathers to a remote log host or to receive messages
+from remote hosts, thus enabling centralised log management.</td>
 </tr>
 <tr>
 <td>CCE-85941-3</td>
@@ -5857,7 +5893,19 @@ The <code>nftables</code> service can be disabled with the following command:
 <td>CCE-86163-3</td>
 <td>Ensure a Table Exists for Nftables</td>
 <td>Tables in nftables hold chains. Each table only has one address family and only applies
-to packets of this family. Tables can have one of six families.</td>
+to packets of this family. Tables can have one of six families.
+
+Red Hat Enterprise Linux 9 uses <code>firewalld</code> for firewall management. When <code>nftables</code> is
+the firewall backend used by <code>firewalld</code>, an <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_nftables_family" use="legacy"></xccdf-1.2:sub></code>
+family table called <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_nftables_table" use="legacy"></xccdf-1.2:sub></code> is used.
+
+To verify that the <code>nftables</code> table used by <code>firewalld</code> exists, run the following
+command:
+<pre>$ sudo nft list tables
+table <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_nftables_family" use="legacy"></xccdf-1.2:sub>
+         <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_nftables_table" use="legacy"></xccdf-1.2:sub>
+        </pre>
+This table is automatically created by <code>firewalld</code> when it is started.</td>
 </tr>
 <tr>
 <td></td>
@@ -5876,7 +5924,7 @@ and virtual paths.
 
 To configure the system to prevent the <code>atm</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/atm.conf</code>:
-<pre>install atm /bin/true</pre>
+<pre>install atm /bin/false</pre>
        </td>
 </tr>
 <tr>
@@ -5888,7 +5936,7 @@ is now also used in marine, industrial, and medical applications.
 
 To configure the system to prevent the <code>can</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/can.conf</code>:
-<pre>install can /bin/true</pre>
+<pre>install can /bin/false</pre>
        </td>
 </tr>
 <tr>
@@ -5900,7 +5948,7 @@ streaming media and telephony.
 
 To configure the system to prevent the <code>dccp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/dccp.conf</code>:
-<pre>install dccp /bin/true</pre>
+<pre>install dccp /bin/false</pre>
        </td>
 </tr>
 <tr>
@@ -5911,7 +5959,7 @@ high-speed real-time communication.
 
 To configure the system to prevent the <code>firewire-core</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/firewire-core.conf</code>:
-<pre>install firewire-core /bin/true</pre>
+<pre>install firewire-core /bin/false</pre>
        </td>
 </tr>
 <tr>
@@ -5923,7 +5971,7 @@ low-latency communications between nodes in a cluster.
 
 To configure the system to prevent the <code>rds</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/rds.conf</code>:
-<pre>install rds /bin/true</pre>
+<pre>install rds /bin/false</pre>
        </td>
 </tr>
 <tr>
@@ -5936,7 +5984,7 @@ within one connection.
 
 To configure the system to prevent the <code>sctp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
-<pre>install sctp /bin/true</pre>
+<pre>install sctp /bin/false</pre>
        </td>
 </tr>
 <tr>
@@ -5948,8 +5996,17 @@ cluster.
 
 To configure the system to prevent the <code>tipc</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/tipc.conf</code>:
-<pre>install tipc /bin/true</pre>
+<pre>install tipc /bin/false</pre>
        </td>
+</tr>
+<tr>
+<td>CCE-86761-4</td>
+<td>Disable Bluetooth Service</td>
+<td>
+The <code>bluetooth</code> service can be disabled with the following command:
+<pre>$ sudo systemctl mask --now bluetooth.service</pre>
+         <pre>$ sudo service bluetooth stop</pre>
+        </td>
 </tr>
 <tr>
 <td>CCE-84067-8</td>
@@ -5967,7 +6024,7 @@ to prevent the loading of the Bluetooth module:
 <td>
 To configure the system to prevent the <code>cfg80211</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cfg80211.conf</code>:
-<pre>install cfg80211 /bin/true</pre>
+<pre>install cfg80211 /bin/false</pre>
         </td>
 </tr>
 <tr>
@@ -5976,7 +6033,7 @@ kernel module from being loaded, add the following line to the file <code>/etc/m
 <td>
 To configure the system to prevent the <code>iwlmvm</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/iwlmvm.conf</code>:
-<pre>install iwlmvm /bin/true</pre>
+<pre>install iwlmvm /bin/false</pre>
         </td>
 </tr>
 <tr>
@@ -5985,7 +6042,7 @@ kernel module from being loaded, add the following line to the file <code>/etc/m
 <td>
 To configure the system to prevent the <code>iwlwifi</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/iwlwifi.conf</code>:
-<pre>install iwlwifi /bin/true</pre>
+<pre>install iwlwifi /bin/false</pre>
         </td>
 </tr>
 <tr>
@@ -5994,7 +6051,7 @@ kernel module from being loaded, add the following line to the file <code>/etc/m
 <td>
 To configure the system to prevent the <code>mac80211</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/mac80211.conf</code>:
-<pre>install mac80211 /bin/true</pre>
+<pre>install mac80211 /bin/false</pre>
         </td>
 </tr>
 <tr>
@@ -6233,6 +6290,14 @@ To make sure that the setting is persistent, add the following line to a file in
 <td>To set the runtime status of the <code>fs.protected_symlinks</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.protected_symlinks=1</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.protected_symlinks = 1</pre>
        </td>
+</tr>
+<tr>
+<td>CCE-86762-2</td>
+<td>Verify Permissions and Ownership of Old Passwords File</td>
+<td> To properly set the owner of <code>/etc/security/opasswd</code>, run the command: <pre>$ sudo chown root /etc/security/opasswd </pre>
+To properly set the group owner of <code>/etc/security/opasswd</code>, run the command: <pre>$ sudo chgrp root /etc/security/opasswd</pre>
+To properly set the permissions of <code>/etc/security/opasswd</code>, run the command: <pre>$ sudo chmod 0600 /etc/security/opasswd</pre>
+        </td>
 </tr>
 <tr>
 <td>CCE-83928-2</td>
@@ -6797,7 +6862,7 @@ The <code>autofs</code> service can be disabled with the following command:
 <td>
 To configure the system to prevent the <code>cramfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cramfs.conf</code>:
-<pre>install cramfs /bin/true</pre>
+<pre>install cramfs /bin/false</pre>
 
 This effectively prevents usage of this uncommon filesystem.
 
@@ -6807,42 +6872,42 @@ Linux filesystem embedded in small footprint systems. A
 decompress the image.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86763-0</td>
 <td>Disable Mounting of freevxfs</td>
 <td>
 To configure the system to prevent the <code>freevxfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/freevxfs.conf</code>:
-<pre>install freevxfs /bin/true</pre>
+<pre>install freevxfs /bin/false</pre>
 
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86764-8</td>
 <td>Disable Mounting of hfs</td>
 <td>
 To configure the system to prevent the <code>hfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/hfs.conf</code>:
-<pre>install hfs /bin/true</pre>
+<pre>install hfs /bin/false</pre>
 
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86765-5</td>
 <td>Disable Mounting of hfsplus</td>
 <td>
 To configure the system to prevent the <code>hfsplus</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/hfsplus.conf</code>:
-<pre>install hfsplus /bin/true</pre>
+<pre>install hfsplus /bin/false</pre>
 
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86766-3</td>
 <td>Disable Mounting of jffs2</td>
 <td>
 To configure the system to prevent the <code>jffs2</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/jffs2.conf</code>:
-<pre>install jffs2 /bin/true</pre>
+<pre>install jffs2 /bin/false</pre>
 
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
@@ -6852,7 +6917,7 @@ This effectively prevents usage of this uncommon filesystem.</td>
 <td>
 To configure the system to prevent the <code>squashfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/squashfs.conf</code>:
-<pre>install squashfs /bin/true</pre>
+<pre>install squashfs /bin/false</pre>
 
 This effectively prevents usage of this uncommon filesystem.
 
@@ -6867,7 +6932,7 @@ to first decompress the image.</td>
 <td>
 To configure the system to prevent the <code>udf</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/udf.conf</code>:
-<pre>install udf /bin/true</pre>
+<pre>install udf /bin/false</pre>
 
 This effectively prevents usage of this uncommon filesystem.
 
@@ -6885,7 +6950,7 @@ to prevent automatic loading of the USB storage driver.
 
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
-<pre>install usb-storage /bin/true</pre>
+<pre>install usb-storage /bin/false</pre>
 
 This will prevent the <code>modprobe</code> program from loading the <code>usb-storage</code>
 module, but will not prevent an administrator (or another program) from using the
@@ -6897,7 +6962,7 @@ module, but will not prevent an administrator (or another program) from using th
 <td>
 To configure the system to prevent the <code>vfat</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/vfat.conf</code>:
-<pre>install vfat /bin/true</pre>
+<pre>install vfat /bin/false</pre>
 
 This effectively prevents usage of this uncommon filesystem.
 
@@ -6941,7 +7006,7 @@ Add the <code>nodev</code> option to the fourth column of
 <td>CCE-83892-0</td>
 <td>Add noexec Option to /boot</td>
 <td>The <code>noexec</code> mount option can be used to prevent binaries from being
-executed out of <code>/boot</code>. 
+executed out of <code>/boot</code>.
 Add the <code>noexec</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
 <code>/boot</code>.</td>
@@ -11270,8 +11335,7 @@ The <code>vsftpd</code> service can be disabled with the following command:
 <tr>
 <td></td>
 <td>Configure Firewalls to Protect the FTP Server</td>
-<td>
-By default, <code>iptables</code>
+<td>By default, <code>iptables</code>
 blocks access to the ports used by the web server.
 
 To configure <code>iptables</code> to allow port 21 traffic, one must edit
@@ -11691,15 +11755,13 @@ for management connections made by chronyc.</td>
 <td>Configure Time Service Maxpoll Interval</td>
 <td>The <code>maxpoll</code> should be configured to
 <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_time_service_set_maxpoll" use="legacy"></xccdf-1.2:sub> in <code>/etc/ntp.conf</code> or
-<code>/etc/chrony.conf</code> to continuously poll time servers. To configure
-<code>maxpoll</code> in <code>/etc/ntp.conf</code> or <code>/etc/chrony.conf</code>
-add the following after each `server`, `pool` or `peer` entry:
+<code>/etc/chrony.conf</code> (or <code>/etc/chrony.d/</code>) to continuously poll time servers. To configure
+<code>maxpoll</code> in <code>/etc/ntp.conf</code> or <code>/etc/chrony.conf</code> (or <code>/etc/chrony.d/</code>)
+add the following after each <code>server</code>, <code>pool</code> or <code>peer</code> entry:
 <pre>maxpoll <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_time_service_set_maxpoll" use="legacy"></xccdf-1.2:sub>
        </pre>
-to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
-should be configured too.
-If no <code>server</code> or <code>pool</code> directives are configured, the rule evaluates
-to pass.</td>
+to <code>server</code> directives. If using chrony, any <code>pool</code> directives
+should be configured too.</td>
 </tr>
 <tr>
 <td>CCE-84108-0</td>
@@ -12762,6 +12824,18 @@ CIS recommends a MaxStartups value of '10:30:60', or more restrictive where
 dictated by site policy.</td>
 </tr>
 <tr>
+<td>CCE-86767-1</td>
+<td>Use Only FIPS 140-2 Validated Ciphers</td>
+<td>Limit the ciphers to those algorithms which are FIPS-approved.
+Counter (CTR) mode is also preferred over cipher-block chaining (CBC) mode.
+The following line in <code>/etc/ssh/sshd_config</code>
+demonstrates use of FIPS-approved ciphers:
+<pre>Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc</pre>
+The man page <code>sshd_config(5)</code> contains a list of supported ciphers.
+
+The rule is parametrized to use the following ciphers: <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sshd_approved_ciphers" use="legacy"></xccdf-1.2:sub></code>.</td>
+</tr>
+<tr>
 <td>CCE-87681-3</td>
 <td>Distribute the SSH Server configuration to multiple files in a config directory.</td>
 <td>Make sure to have the <code>Include /etc/ssh/sshd_config.d/*.conf</code> line in the <code>/etc/ssh/sshd_config</code> file.
@@ -12775,6 +12849,26 @@ to several files in the <code>/etc/ssh/sshd_config.d</code> directory.</td>
 has the privilege of the authenticated user. To enable privilege separation in
 SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <pre>UsePrivilegeSeparation <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_sshd_priv_separation" use="legacy"></xccdf-1.2:sub>
+        </pre>
+       </td>
+</tr>
+<tr>
+<td>CCE-86768-9</td>
+<td>Use Only Strong Key Exchange algorithms</td>
+<td>Limit the Key Exchange to strong algorithms.
+The following line in <code>/etc/ssh/sshd_config</code> demonstrates use
+of those:
+<pre>KexAlgorithms <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sshd_strong_kex" use="legacy"></xccdf-1.2:sub>
+        </pre>
+       </td>
+</tr>
+<tr>
+<td>CCE-86769-7</td>
+<td>Use Only Strong MACs</td>
+<td>Limit the MACs to strong hash algorithms.
+The following line in <code>/etc/ssh/sshd_config</code> demonstrates use
+of those MACs:
+<pre>MACs <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sshd_strong_macs" use="legacy"></xccdf-1.2:sub>
         </pre>
        </td>
 </tr>
@@ -12887,6 +12981,13 @@ include the "allow_missing_name" option, like in the following example:
 <td>CCE-87996-5</td>
 <td>Configure SSSD to Expire Offline Credentials</td>
 <td>SSSD should be configured to expire offline credentials after 1 day.
+
+Check if SSSD allows cached authentications with the following command:
+<pre>
+$ sudo grep cache_credentials /etc/sssd/sssd.conf
+cache_credentials = true
+</pre>
+If "cache_credentials" is set to "false" or is missing no further checks are required.<br>
 
 To configure SSSD to expire offline credentials, set
 <code>offline_credentials_expiration</code> to <code>1</code> under the <code>[pam]</code>
@@ -13028,6 +13129,11 @@ $ sudo dnf install audispd-plugins</pre>
 <td>CCE-89457-6</td>
 <td>Ensure the default plugins for the audit dispatcher are Installed</td>
 <td>The audit-audispd-plugins package should be installed.</td>
+</tr>
+<tr>
+<td>CCE-86772-1</td>
+<td>Ensure the audit-libs package as a part of audit Subsystem is Installed</td>
+<td>The audit-libs package should be installed.</td>
 </tr>
 <tr>
 <td>CCE-83649-4</td>
@@ -16614,8 +16720,11 @@ facility.
 
 The partition size needed to capture a week's worth of audit records is
 based on the activity level of the system and the total storage capacity
-available. In normal circumstances, 10.0 GB of storage space for audit
+available.
+
+In normal circumstances, 10.0 GB of storage space for audit
 records will be sufficient.
+
 
 Determine which partition the audit records are being written to with the
 following command:

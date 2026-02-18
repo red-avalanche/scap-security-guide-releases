@@ -633,12 +633,10 @@ audit Is it the case that the "audit" option is not set, is missing or commented
 using <tt>pam_faillock.so</tt>.
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
-
 Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
 <tt>deny = &lt;count&gt;</tt>
 Where count should be less than or equal to
 <sub idref="var_accounts_passwords_pam_faillock_deny" /> and greater than 0.
-
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -648,7 +646,6 @@ depending on the OS version.</td>
     <td>Verify Red Hat Enterprise Linux 9 is configured to lock an account after <sub idref="var_accounts_passwords_pam_faillock_deny" />
 unsuccessful logon attempts with the command:
 
-
 <pre>$ grep 'deny =' /etc/security/faillock.conf</pre>
 deny = <sub idref="var_accounts_passwords_pam_faillock_deny" />. Is it the case that the "deny" option is not set to "<sub idref="var_accounts_passwords_pam_faillock_deny" />"
 or less (but not "0"), is missing or commented out?</td>
@@ -657,12 +654,10 @@ or less (but not "0"), is missing or commented out?</td>
 using <tt>pam_faillock.so</tt>.
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
-
 Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
 <tt>deny = &lt;count&gt;</tt>
 Where count should be less than or equal to
 <sub idref="var_accounts_passwords_pam_faillock_deny" /> and greater than 0.
-
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -693,7 +688,6 @@ depending on the OS version.</td>
     <td>Verify that the operating system enforces the limit of three consecutive invalid logon attempts by a user during a 15-minute time period. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 9 is configured to lock the root account after <sub idref="var_accounts_passwords_pam_faillock_deny" />
 unsuccessful logon attempts with the command:
-
 
 <pre>$ grep even_deny_root /etc/security/faillock.conf</pre>
 even_deny_root Is it the case that the "even_deny_root" option is not set, is missing or commented out?</td>
@@ -813,11 +807,9 @@ depending on the OS version.</td>
     <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
 
-
 Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
 <tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
 <tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_unlock_time" /></tt> or greater.
-
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -832,7 +824,6 @@ to unlock a user. This should be done using the <tt>faillock</tt> tool.</td>
 after <sub idref="var_accounts_passwords_pam_faillock_deny" /> unsuccessful logon
 attempts with the command:
 
-
 <pre>$ grep 'unlock_time =' /etc/security/faillock.conf</pre>
 <tt>unlock_time = <sub idref="var_accounts_passwords_pam_faillock_unlock_time" /></tt> Is it the case that the "unlock_time" option is not set to "<sub idref="var_accounts_passwords_pam_faillock_unlock_time" />",
 the line is missing, or commented out?</td>
@@ -840,11 +831,9 @@ the line is missing, or commented out?</td>
     <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
 
-
 Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
 <tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
 <tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_unlock_time" /></tt> or greater.
-
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -19524,13 +19513,16 @@ accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM m
 <br /><br />
 In file <tt>/etc/pam.d/password-auth</tt> append <tt>rounds=<sub idref="var_password_pam_unix_rounds" /></tt>
 to the <tt>pam_unix.so</tt> entry, as shown below:
+
 <pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<sub idref="var_password_pam_unix_rounds" /></pre>
+
 The system's default number of rounds is 5000.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system stores only encrypted representations of passwords. If it does not, this is a finding.</td>
     <td>To verify the number of rounds for the password hashing algorithm is configured, run the following command:
 <pre>$ sudo grep rounds /etc/pam.d/password-auth</pre>
 The output should show the following match:
+
 <pre>password sufficient pam_unix.so sha512 rounds=<sub idref="var_password_pam_unix_rounds" /></pre> Is it the case that rounds is not set to <sub idref="var_password_pam_unix_rounds" /> or is commented out?</td>
     <td>Configure the operating system to store only encrypted representations of passwords.</td>
     <td>Configure the number or rounds for the password hashing algorithm. This can be
@@ -19538,7 +19530,9 @@ accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM m
 <br /><br />
 In file <tt>/etc/pam.d/password-auth</tt> append <tt>rounds=<sub idref="var_password_pam_unix_rounds" /></tt>
 to the <tt>pam_unix.so</tt> entry, as shown below:
+
 <pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<sub idref="var_password_pam_unix_rounds" /></pre>
+
 The system's default number of rounds is 5000.</td>
     <td>medium</td>
     <td></td>
@@ -19591,10 +19585,10 @@ The system's default number of rounds is 5000.</td>
     <td>CCE-88865-1: Set Password Hashing Algorithm in /etc/libuser.conf</td>
 
     <td>Passwords need to be protected at all times, and encryption is the standard method for protecting passwords. If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised.</td>
-    <td>In <tt>/etc/libuser.conf</tt>, add or correct the following line in its
-<tt>[defaults]</tt> section to ensure the system will use the SHA-512
+    <td>In <tt>/etc/libuser.conf</tt>, add or correct the following line in its <tt>[defaults]</tt>
+section to ensure the system will use the <sub idref="var_password_hashing_algorithm_pam" />
 algorithm for password hashing:
-<pre>crypt_style = sha512</pre></td>
+<pre>crypt_style = <sub idref="var_password_hashing_algorithm_pam" /></pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system stores only encrypted representations of passwords. If it does not, this is a finding.</td>
     <td>Verify that the libuser is set to encrypt password with a FIPS 140-3 approved cryptographic hashing algorithm.
@@ -19604,12 +19598,12 @@ Check the hashing algorithm that is being used to hash passwords with the follow
 
 $ sudo grep -i crypt_style /etc/libuser.conf
 
-crypt_style = sha512 Is it the case that crypt_style is not set to sha512?</td>
+crypt_style = <sub idref="var_password_hashing_algorithm_pam" /> Is it the case that crypt_style is not set to sha512?</td>
     <td>Configure the operating system to store only encrypted representations of passwords.</td>
-    <td>In <tt>/etc/libuser.conf</tt>, add or correct the following line in its
-<tt>[defaults]</tt> section to ensure the system will use the SHA-512
+    <td>In <tt>/etc/libuser.conf</tt>, add or correct the following line in its <tt>[defaults]</tt>
+section to ensure the system will use the <sub idref="var_password_hashing_algorithm_pam" />
 algorithm for password hashing:
-<pre>crypt_style = sha512</pre></td>
+<pre>crypt_style = <sub idref="var_password_hashing_algorithm_pam" /></pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -19625,8 +19619,8 @@ algorithm for password hashing:
     <td>CCE-90590-1: Set Password Hashing Algorithm in /etc/login.defs</td>
 
     <td>Passwords need to be protected at all times, and encryption is the standard method for protecting passwords. If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised.</td>
-    <td>In <tt>/etc/login.defs</tt>, add or correct the following line to ensure
-the system will use <sub idref="var_password_hashing_algorithm" /> as the hashing algorithm:
+    <td>In <tt>/etc/login.defs</tt>, add or update the following line to ensure the system will use
+<sub idref="var_password_hashing_algorithm" /> as the hashing algorithm:
 <pre>ENCRYPT_METHOD <sub idref="var_password_hashing_algorithm" /></pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system stores only encrypted representations of passwords. If it does not, this is a finding.</td>
@@ -19639,8 +19633,8 @@ $ sudo grep -i ENCRYPT_METHOD /etc/login.defs
 
 ENCRYPT_METHOD <sub idref="var_password_hashing_algorithm" /> Is it the case that ENCRYPT_METHOD is not set to <sub idref="var_password_hashing_algorithm" />?</td>
     <td>Configure the operating system to store only encrypted representations of passwords.</td>
-    <td>In <tt>/etc/login.defs</tt>, add or correct the following line to ensure
-the system will use <sub idref="var_password_hashing_algorithm" /> as the hashing algorithm:
+    <td>In <tt>/etc/login.defs</tt>, add or update the following line to ensure the system will use
+<sub idref="var_password_hashing_algorithm" /> as the hashing algorithm:
 <pre>ENCRYPT_METHOD <sub idref="var_password_hashing_algorithm" /></pre></td>
     <td>medium</td>
     <td></td>
@@ -19657,41 +19651,38 @@ the system will use <sub idref="var_password_hashing_algorithm" /> as the hashin
     <td>CCE-85946-2: Set PAM''s Password Hashing Algorithm - password-auth</td>
 
     <td>Passwords need to be protected at all times, and encryption is the standard method for protecting passwords. If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised.</td>
-    <td>The PAM system service can be configured to only store encrypted
-representations of passwords. In
-<tt>/etc/pam.d/password-auth</tt>,
-the
-<tt>password</tt> section of the file controls which PAM modules execute
-during a password change. Set the <tt>pam_unix.so</tt> module in the
-<tt>password</tt> section to include the argument <tt>sha512</tt>, as shown
-below:
+    <td>The PAM system service can be configured to only store encrypted representations of passwords.
+In <tt>/etc/pam.d/password-auth</tt>, the <tt>password</tt> section of the file controls which
+PAM modules to execute during a password change.
+
+Set the <tt>pam_unix.so</tt> module in the <tt>password</tt> section to include the option
+<tt><sub idref="var_password_hashing_algorithm_pam" /></tt> and no other hashing
+algorithms as shown below:
 <br />
-<pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i></pre>
+<pre>password    sufficient    pam_unix.so <sub idref="var_password_hashing_algorithm_pam" /> <i>other arguments...</i></pre>
 <br />
-This will help ensure when local users change their passwords, hashes for
-the new passwords will be generated using the SHA-512 algorithm. This is
-the default.</td>
+This will help ensure that new passwords for local users will be stored using the
+<sub idref="var_password_hashing_algorithm_pam" /> algorithm.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system stores only encrypted representations of passwords. If it does not, this is a finding.</td>
     <td>Inspect the <tt>password</tt> section of <tt>/etc/pam.d/password-auth</tt>
-and ensure that the <tt>pam_unix.so</tt> module includes the argument
-<tt>sha512</tt>:
-<pre>$ grep sha512 /etc/pam.d/password-auth</pre> Is it the case that it does not?</td>
+and ensure that the <tt>pam_unix.so</tt> module is configured to use the argument
+<tt><sub idref="var_password_hashing_algorithm_pam" /></tt>:
+
+<pre>$ grep <sub idref="var_password_hashing_algorithm_pam" /> /etc/pam.d/password-auth</pre> Is it the case that it does not?</td>
     <td>Configure the operating system to store only encrypted representations of passwords.</td>
-    <td>The PAM system service can be configured to only store encrypted
-representations of passwords. In
-<tt>/etc/pam.d/password-auth</tt>,
-the
-<tt>password</tt> section of the file controls which PAM modules execute
-during a password change. Set the <tt>pam_unix.so</tt> module in the
-<tt>password</tt> section to include the argument <tt>sha512</tt>, as shown
-below:
+    <td>The PAM system service can be configured to only store encrypted representations of passwords.
+In <tt>/etc/pam.d/password-auth</tt>, the <tt>password</tt> section of the file controls which
+PAM modules to execute during a password change.
+
+Set the <tt>pam_unix.so</tt> module in the <tt>password</tt> section to include the option
+<tt><sub idref="var_password_hashing_algorithm_pam" /></tt> and no other hashing
+algorithms as shown below:
 <br />
-<pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i></pre>
+<pre>password    sufficient    pam_unix.so <sub idref="var_password_hashing_algorithm_pam" /> <i>other arguments...</i></pre>
 <br />
-This will help ensure when local users change their passwords, hashes for
-the new passwords will be generated using the SHA-512 algorithm. This is
-the default.</td>
+This will help ensure that new passwords for local users will be stored using the
+<sub idref="var_password_hashing_algorithm_pam" /> algorithm.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -20546,13 +20537,13 @@ and virtual paths.
 
 To configure the system to prevent the <code>atm</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/atm.conf</code>:
-<pre>install atm /bin/true</pre></td>
+<pre>install atm /bin/false</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured to disable non-essential capabilities. If it does not, this is a finding.</td>
     <td>
 If the system is configured to prevent the loading of the <code>atm</code> kernel module,
 it will contain lines inside any file in <code>/etc/modprobe.d</code> or the deprecated<code> /etc/modprobe.conf</code>.
-These lines instruct the module loading system to run another program (such as <code>/bin/true</code>) upon a module <code>install</code> event.
+These lines instruct the module loading system to run another program (such as <code>/bin/false</code>) upon a module <code>install</code> event.
 
 Run the following command to search for such lines in all files in <code>/etc/modprobe.d</code> and the deprecated <code>/etc/modprobe.conf</code>:
 <pre>$ grep -r atm /etc/modprobe.conf /etc/modprobe.d</pre> Is it the case that no line is returned?</td>
@@ -20563,7 +20554,7 @@ and virtual paths.
 
 To configure the system to prevent the <code>atm</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/atm.conf</code>:
-<pre>install atm /bin/true</pre></td>
+<pre>install atm /bin/false</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -20593,7 +20584,7 @@ to prevent the loading of the Bluetooth module:
     <td>
 If the system is configured to prevent the loading of the <code>bluetooth</code> kernel module,
 it will contain lines inside any file in <code>/etc/modprobe.d</code> or the deprecated<code> /etc/modprobe.conf</code>.
-These lines instruct the module loading system to run another program (such as <code>/bin/true</code>) upon a module <code>install</code> event.
+These lines instruct the module loading system to run another program (such as <code>/bin/false</code>) upon a module <code>install</code> event.
 
 Run the following command to search for such lines in all files in <code>/etc/modprobe.d</code> and the deprecated <code>/etc/modprobe.conf</code>:
 <pre>$ grep -r bluetooth /etc/modprobe.conf /etc/modprobe.d</pre> Is it the case that no line is returned?</td>
@@ -20628,13 +20619,13 @@ is now also used in marine, industrial, and medical applications.
 
 To configure the system to prevent the <code>can</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/can.conf</code>:
-<pre>install can /bin/true</pre></td>
+<pre>install can /bin/false</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured to disable non-essential capabilities. If it does not, this is a finding.</td>
     <td>
 If the system is configured to prevent the loading of the <code>can</code> kernel module,
 it will contain lines inside any file in <code>/etc/modprobe.d</code> or the deprecated<code> /etc/modprobe.conf</code>.
-These lines instruct the module loading system to run another program (such as <code>/bin/true</code>) upon a module <code>install</code> event.
+These lines instruct the module loading system to run another program (such as <code>/bin/false</code>) upon a module <code>install</code> event.
 
 Run the following command to search for such lines in all files in <code>/etc/modprobe.d</code> and the deprecated <code>/etc/modprobe.conf</code>:
 <pre>$ grep -r can /etc/modprobe.conf /etc/modprobe.d</pre> Is it the case that no line is returned?</td>
@@ -20645,7 +20636,7 @@ is now also used in marine, industrial, and medical applications.
 
 To configure the system to prevent the <code>can</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/can.conf</code>:
-<pre>install can /bin/true</pre></td>
+<pre>install can /bin/false</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -20668,7 +20659,7 @@ Examples of non-essential capabilities include, but are not limited to, games, s
     <td>
 To configure the system to prevent the <code>cramfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cramfs.conf</code>:
-<pre>install cramfs /bin/true</pre>
+<pre>install cramfs /bin/false</pre>
 
 This effectively prevents usage of this uncommon filesystem.
 
@@ -20681,7 +20672,7 @@ decompress the image.</td>
     <td>
 If the system is configured to prevent the loading of the <code>cramfs</code> kernel module,
 it will contain lines inside any file in <code>/etc/modprobe.d</code> or the deprecated<code> /etc/modprobe.conf</code>.
-These lines instruct the module loading system to run another program (such as <code>/bin/true</code>) upon a module <code>install</code> event.
+These lines instruct the module loading system to run another program (such as <code>/bin/false</code>) upon a module <code>install</code> event.
 
 Run the following command to search for such lines in all files in <code>/etc/modprobe.d</code> and the deprecated <code>/etc/modprobe.conf</code>:
 <pre>$ grep -r cramfs /etc/modprobe.conf /etc/modprobe.d</pre> Is it the case that no line is returned?</td>
@@ -20689,7 +20680,7 @@ Run the following command to search for such lines in all files in <code>/etc/mo
     <td>
 To configure the system to prevent the <code>cramfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cramfs.conf</code>:
-<pre>install cramfs /bin/true</pre>
+<pre>install cramfs /bin/false</pre>
 
 This effectively prevents usage of this uncommon filesystem.
 
@@ -20721,13 +20712,13 @@ high-speed real-time communication.
 
 To configure the system to prevent the <code>firewire-core</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/firewire-core.conf</code>:
-<pre>install firewire-core /bin/true</pre></td>
+<pre>install firewire-core /bin/false</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured to disable non-essential capabilities. If it does not, this is a finding.</td>
     <td>
 If the system is configured to prevent the loading of the <code>firewire-core</code> kernel module,
 it will contain lines inside any file in <code>/etc/modprobe.d</code> or the deprecated<code> /etc/modprobe.conf</code>.
-These lines instruct the module loading system to run another program (such as <code>/bin/true</code>) upon a module <code>install</code> event.
+These lines instruct the module loading system to run another program (such as <code>/bin/false</code>) upon a module <code>install</code> event.
 
 Run the following command to search for such lines in all files in <code>/etc/modprobe.d</code> and the deprecated <code>/etc/modprobe.conf</code>:
 <pre>$ grep -r firewire-core /etc/modprobe.conf /etc/modprobe.d</pre> Is it the case that no line is returned?</td>
@@ -20737,7 +20728,7 @@ high-speed real-time communication.
 
 To configure the system to prevent the <code>firewire-core</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/firewire-core.conf</code>:
-<pre>install firewire-core /bin/true</pre></td>
+<pre>install firewire-core /bin/false</pre></td>
     <td>low</td>
     <td></td>
     <td></td>
@@ -20764,13 +20755,13 @@ within one connection.
 
 To configure the system to prevent the <code>sctp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
-<pre>install sctp /bin/true</pre></td>
+<pre>install sctp /bin/false</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured to disable non-essential capabilities. If it does not, this is a finding.</td>
     <td>
 If the system is configured to prevent the loading of the <code>sctp</code> kernel module,
 it will contain lines inside any file in <code>/etc/modprobe.d</code> or the deprecated<code> /etc/modprobe.conf</code>.
-These lines instruct the module loading system to run another program (such as <code>/bin/true</code>) upon a module <code>install</code> event.
+These lines instruct the module loading system to run another program (such as <code>/bin/false</code>) upon a module <code>install</code> event.
 
 Run the following command to search for such lines in all files in <code>/etc/modprobe.d</code> and the deprecated <code>/etc/modprobe.conf</code>:
 <pre>$ grep -r sctp /etc/modprobe.conf /etc/modprobe.d</pre> Is it the case that no line is returned?</td>
@@ -20782,7 +20773,7 @@ within one connection.
 
 To configure the system to prevent the <code>sctp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
-<pre>install sctp /bin/true</pre></td>
+<pre>install sctp /bin/false</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -20808,13 +20799,13 @@ cluster.
 
 To configure the system to prevent the <code>tipc</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/tipc.conf</code>:
-<pre>install tipc /bin/true</pre></td>
+<pre>install tipc /bin/false</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured to disable non-essential capabilities. If it does not, this is a finding.</td>
     <td>
 If the system is configured to prevent the loading of the <code>tipc</code> kernel module,
 it will contain lines inside any file in <code>/etc/modprobe.d</code> or the deprecated<code> /etc/modprobe.conf</code>.
-These lines instruct the module loading system to run another program (such as <code>/bin/true</code>) upon a module <code>install</code> event.
+These lines instruct the module loading system to run another program (such as <code>/bin/false</code>) upon a module <code>install</code> event.
 
 Run the following command to search for such lines in all files in <code>/etc/modprobe.d</code> and the deprecated <code>/etc/modprobe.conf</code>:
 <pre>$ grep -r tipc /etc/modprobe.conf /etc/modprobe.d</pre> Is it the case that no line is returned?</td>
@@ -20825,7 +20816,7 @@ cluster.
 
 To configure the system to prevent the <code>tipc</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/tipc.conf</code>:
-<pre>install tipc /bin/true</pre></td>
+<pre>install tipc /bin/false</pre></td>
     <td>low</td>
     <td></td>
     <td></td>
@@ -22641,7 +22632,7 @@ to prevent automatic loading of the USB storage driver.
 
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
-<pre>install usb-storage /bin/true</pre>
+<pre>install usb-storage /bin/false</pre>
 
 This will prevent the <tt>modprobe</tt> program from loading the <tt>usb-storage</tt>
 module, but will not prevent an administrator (or another program) from using the
@@ -22651,7 +22642,7 @@ module, but will not prevent an administrator (or another program) from using th
     <td>
 If the system is configured to prevent the loading of the <code>usb-storage</code> kernel module,
 it will contain lines inside any file in <code>/etc/modprobe.d</code> or the deprecated<code> /etc/modprobe.conf</code>.
-These lines instruct the module loading system to run another program (such as <code>/bin/true</code>) upon a module <code>install</code> event.
+These lines instruct the module loading system to run another program (such as <code>/bin/false</code>) upon a module <code>install</code> event.
 
 Run the following command to search for such lines in all files in <code>/etc/modprobe.d</code> and the deprecated <code>/etc/modprobe.conf</code>:
 <pre>$ grep -r usb-storage /etc/modprobe.conf /etc/modprobe.d</pre> Is it the case that no line is returned?</td>
@@ -22661,7 +22652,7 @@ to prevent automatic loading of the USB storage driver.
 
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
-<pre>install usb-storage /bin/true</pre>
+<pre>install usb-storage /bin/false</pre>
 
 This will prevent the <tt>modprobe</tt> program from loading the <tt>usb-storage</tt>
 module, but will not prevent an administrator (or another program) from using the
@@ -22999,41 +22990,38 @@ $ sudo dnf install rsyslog-gnutls</pre></td>
 Operating systems utilizing encryption are required to use FIPS-compliant mechanisms for authenticating to cryptographic modules. 
 
 FIPS 140-2/140-3 is the current standard for validating that mechanisms used to access cryptographic modules utilize authentication that meets DoD requirements. This allows for Security Levels 1, 2, 3, or 4 for use on a general purpose computing system.</td>
-    <td>The PAM system service can be configured to only store encrypted
-representations of passwords. In
-<tt>/etc/pam.d/password-auth</tt>,
-the
-<tt>password</tt> section of the file controls which PAM modules execute
-during a password change. Set the <tt>pam_unix.so</tt> module in the
-<tt>password</tt> section to include the argument <tt>sha512</tt>, as shown
-below:
+    <td>The PAM system service can be configured to only store encrypted representations of passwords.
+In <tt>/etc/pam.d/password-auth</tt>, the <tt>password</tt> section of the file controls which
+PAM modules to execute during a password change.
+
+Set the <tt>pam_unix.so</tt> module in the <tt>password</tt> section to include the option
+<tt><sub idref="var_password_hashing_algorithm_pam" /></tt> and no other hashing
+algorithms as shown below:
 <br />
-<pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i></pre>
+<pre>password    sufficient    pam_unix.so <sub idref="var_password_hashing_algorithm_pam" /> <i>other arguments...</i></pre>
 <br />
-This will help ensure when local users change their passwords, hashes for
-the new passwords will be generated using the SHA-512 algorithm. This is
-the default.</td>
+This will help ensure that new passwords for local users will be stored using the
+<sub idref="var_password_hashing_algorithm_pam" /> algorithm.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system uses mechanisms meeting the requirements of applicable federal laws, Executive orders, directives, policies, regulations, standards, and guidance for authentication to a cryptographic module. If it does not, this is a finding.</td>
     <td>Inspect the <tt>password</tt> section of <tt>/etc/pam.d/password-auth</tt>
-and ensure that the <tt>pam_unix.so</tt> module includes the argument
-<tt>sha512</tt>:
-<pre>$ grep sha512 /etc/pam.d/password-auth</pre> Is it the case that it does not?</td>
+and ensure that the <tt>pam_unix.so</tt> module is configured to use the argument
+<tt><sub idref="var_password_hashing_algorithm_pam" /></tt>:
+
+<pre>$ grep <sub idref="var_password_hashing_algorithm_pam" /> /etc/pam.d/password-auth</pre> Is it the case that it does not?</td>
     <td>Configure the operating system to use mechanisms meeting the requirements of applicable federal laws, Executive orders, directives, policies, regulations, standards, and guidance for authentication to a cryptographic module.</td>
-    <td>The PAM system service can be configured to only store encrypted
-representations of passwords. In
-<tt>/etc/pam.d/password-auth</tt>,
-the
-<tt>password</tt> section of the file controls which PAM modules execute
-during a password change. Set the <tt>pam_unix.so</tt> module in the
-<tt>password</tt> section to include the argument <tt>sha512</tt>, as shown
-below:
+    <td>The PAM system service can be configured to only store encrypted representations of passwords.
+In <tt>/etc/pam.d/password-auth</tt>, the <tt>password</tt> section of the file controls which
+PAM modules to execute during a password change.
+
+Set the <tt>pam_unix.so</tt> module in the <tt>password</tt> section to include the option
+<tt><sub idref="var_password_hashing_algorithm_pam" /></tt> and no other hashing
+algorithms as shown below:
 <br />
-<pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i></pre>
+<pre>password    sufficient    pam_unix.so <sub idref="var_password_hashing_algorithm_pam" /> <i>other arguments...</i></pre>
 <br />
-This will help ensure when local users change their passwords, hashes for
-the new passwords will be generated using the SHA-512 algorithm. This is
-the default.</td>
+This will help ensure that new passwords for local users will be stored using the
+<sub idref="var_password_hashing_algorithm_pam" /> algorithm.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -28621,7 +28609,7 @@ to prevent the loading of the Bluetooth module:
     <td>
 If the system is configured to prevent the loading of the <code>bluetooth</code> kernel module,
 it will contain lines inside any file in <code>/etc/modprobe.d</code> or the deprecated<code> /etc/modprobe.conf</code>.
-These lines instruct the module loading system to run another program (such as <code>/bin/true</code>) upon a module <code>install</code> event.
+These lines instruct the module loading system to run another program (such as <code>/bin/false</code>) upon a module <code>install</code> event.
 
 Run the following command to search for such lines in all files in <code>/etc/modprobe.d</code> and the deprecated <code>/etc/modprobe.conf</code>:
 <pre>$ grep -r bluetooth /etc/modprobe.conf /etc/modprobe.d</pre> Is it the case that no line is returned?</td>
@@ -30102,12 +30090,10 @@ If both the "b32" and "b64" audit rules for "SGID" files are not defined, this i
 using <tt>pam_faillock.so</tt>.
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
-
 Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
 <tt>deny = &lt;count&gt;</tt>
 Where count should be less than or equal to
 <sub idref="var_accounts_passwords_pam_faillock_deny" /> and greater than 0.
-
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -30117,7 +30103,6 @@ depending on the OS version.</td>
     <td>Verify Red Hat Enterprise Linux 9 is configured to lock an account after <sub idref="var_accounts_passwords_pam_faillock_deny" />
 unsuccessful logon attempts with the command:
 
-
 <pre>$ grep 'deny =' /etc/security/faillock.conf</pre>
 deny = <sub idref="var_accounts_passwords_pam_faillock_deny" />. Is it the case that the "deny" option is not set to "<sub idref="var_accounts_passwords_pam_faillock_deny" />"
 or less (but not "0"), is missing or commented out?</td>
@@ -30126,12 +30111,10 @@ or less (but not "0"), is missing or commented out?</td>
 using <tt>pam_faillock.so</tt>.
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
-
 Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
 <tt>deny = &lt;count&gt;</tt>
 Where count should be less than or equal to
 <sub idref="var_accounts_passwords_pam_faillock_deny" /> and greater than 0.
-
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -30162,7 +30145,6 @@ depending on the OS version.</td>
     <td>Verify the operating system automatically locks an account until the locked account is released by an administrator when three unsuccessful logon attempts in 15 minutes are made. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 9 is configured to lock the root account after <sub idref="var_accounts_passwords_pam_faillock_deny" />
 unsuccessful logon attempts with the command:
-
 
 <pre>$ grep even_deny_root /etc/security/faillock.conf</pre>
 even_deny_root Is it the case that the "even_deny_root" option is not set, is missing or commented out?</td>
@@ -30282,11 +30264,9 @@ depending on the OS version.</td>
     <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
 
-
 Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
 <tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
 <tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_unlock_time" /></tt> or greater.
-
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -30301,7 +30281,6 @@ to unlock a user. This should be done using the <tt>faillock</tt> tool.</td>
 after <sub idref="var_accounts_passwords_pam_faillock_deny" /> unsuccessful logon
 attempts with the command:
 
-
 <pre>$ grep 'unlock_time =' /etc/security/faillock.conf</pre>
 <tt>unlock_time = <sub idref="var_accounts_passwords_pam_faillock_unlock_time" /></tt> Is it the case that the "unlock_time" option is not set to "<sub idref="var_accounts_passwords_pam_faillock_unlock_time" />",
 the line is missing, or commented out?</td>
@@ -30309,11 +30288,9 @@ the line is missing, or commented out?</td>
     <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
 
-
 Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
 <tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
 <tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_unlock_time" /></tt> or greater.
-
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -30417,8 +30394,11 @@ facility.
 
 The partition size needed to capture a week's worth of audit records is
 based on the activity level of the system and the total storage capacity
-available. In normal circumstances, 10.0 GB of storage space for audit
+available.
+
+In normal circumstances, 10.0 GB of storage space for audit
 records will be sufficient.
+
 
 Determine which partition the audit records are being written to with the
 following command:
@@ -30461,8 +30441,11 @@ facility.
 
 The partition size needed to capture a week's worth of audit records is
 based on the activity level of the system and the total storage capacity
-available. In normal circumstances, 10.0 GB of storage space for audit
+available.
+
+In normal circumstances, 10.0 GB of storage space for audit
 records will be sufficient.
+
 
 Determine which partition the audit records are being written to with the
 following command:
@@ -30590,8 +30573,11 @@ facility.
 
 The partition size needed to capture a week's worth of audit records is
 based on the activity level of the system and the total storage capacity
-available. In normal circumstances, 10.0 GB of storage space for audit
+available.
+
+In normal circumstances, 10.0 GB of storage space for audit
 records will be sufficient.
+
 
 Determine which partition the audit records are being written to with the
 following command:
@@ -30634,8 +30620,11 @@ facility.
 
 The partition size needed to capture a week's worth of audit records is
 based on the activity level of the system and the total storage capacity
-available. In normal circumstances, 10.0 GB of storage space for audit
+available.
+
+In normal circumstances, 10.0 GB of storage space for audit
 records will be sufficient.
+
 
 Determine which partition the audit records are being written to with the
 following command:
@@ -30798,7 +30787,12 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs the remote system must be authenticated.</td>
+When using <tt>rsyslogd</tt> to off-load logs the remote system must be authenticated.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$ActionSendStreamDriverAuthMode x509/name</pre>
+Alternatively, use the RainerScript syntax:
+<pre>action(type="omfwd" Target="some.example.com" StreamDriverAuthMode="x509/name")</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system off-loads audit records onto a different system or media from the system being audited. If it does not, this is a finding.</td>
     <td>Verify the operating system authenticates the remote logging server for off-loading audit logs with the following command:
@@ -30813,7 +30807,12 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs the remote system must be authenticated.</td>
+When using <tt>rsyslogd</tt> to off-load logs the remote system must be authenticated.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$ActionSendStreamDriverAuthMode x509/name</pre>
+Alternatively, use the RainerScript syntax:
+<pre>action(type="omfwd" Target="some.example.com" StreamDriverAuthMode="x509/name")</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -30837,7 +30836,13 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs off a encrpytion system must be used.</td>
+When using <tt>rsyslogd</tt> to off-load logs off a encrpytion system must be used.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$ActionSendStreamDriverMode 1</pre>
+
+Alternatively, use the RainerScript syntax:
+<pre>action(type="omfwd" ... StreamDriverMode="1")</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system off-loads audit records onto a different system or media from the system being audited. If it does not, this is a finding.</td>
     <td>Verify the operating system encrypts audit records off-loaded onto a different system
@@ -30855,7 +30860,13 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs off a encrpytion system must be used.</td>
+When using <tt>rsyslogd</tt> to off-load logs off a encrpytion system must be used.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$ActionSendStreamDriverMode 1</pre>
+
+Alternatively, use the RainerScript syntax:
+<pre>action(type="omfwd" ... StreamDriverMode="1")</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -30879,7 +30890,13 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs off an encryption system must be used.</td>
+When using <tt>rsyslogd</tt> to off-load logs off an encryption system must be used.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$DefaultNetstreamDriver gtls</pre>
+
+Alternatively, use the RainerScript syntax:
+<pre>global(DefaultNetstreamDriver="gtls")</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system off-loads audit records onto a different system or media from the system being audited. If it does not, this is a finding.</td>
     <td>Verify the operating system encrypts audit records off-loaded onto a different system
@@ -30897,7 +30914,13 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs off an encryption system must be used.</td>
+When using <tt>rsyslogd</tt> to off-load logs off an encryption system must be used.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$DefaultNetstreamDriver gtls</pre>
+
+Alternatively, use the RainerScript syntax:
+<pre>global(DefaultNetstreamDriver="gtls")</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -31716,30 +31739,26 @@ Synchronizing internal information system clocks provides uniformity of time sta
 Organizations should consider endpoints that may not have regular access to the authoritative time server (e.g., mobile, teleworking, and tactical endpoints).</td>
     <td>The <tt>maxpoll</tt> should be configured to
 <sub idref="var_time_service_set_maxpoll" /> in <tt>/etc/ntp.conf</tt> or
-<tt>/etc/chrony.conf</tt> to continuously poll time servers. To configure
-<tt>maxpoll</tt> in <tt>/etc/ntp.conf</tt> or <tt>/etc/chrony.conf</tt>
-add the following after each `server`, `pool` or `peer` entry:
+<tt>/etc/chrony.conf</tt> (or <tt>/etc/chrony.d/</tt>) to continuously poll time servers. To configure
+<tt>maxpoll</tt> in <tt>/etc/ntp.conf</tt> or <tt>/etc/chrony.conf</tt> (or <tt>/etc/chrony.d/</tt>)
+add the following after each <tt>server</tt>, <tt>pool</tt> or <tt>peer</tt> entry:
 <pre>maxpoll <sub idref="var_time_service_set_maxpoll" /></pre>
-to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
-should be configured too.
-If no <tt>server</tt> or <tt>pool</tt> directives are configured, the rule evaluates
-to pass.</td>
+to <tt>server</tt> directives. If using chrony, any <tt>pool</tt> directives
+should be configured too.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system, for networked systems, compares internal information system clocks at least every 24 hours with a server which is synchronized to one of the redundant United States Naval Observatory (USNO) time servers, or a time server designated for the appropriate DoD network (NIPRNet/SIPRNet), and/or the Global Positioning System (GPS). If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 9 is securely comparing internal information system clocks at a regular interval with an NTP server with the following command:
-<pre>$ sudo grep maxpoll /etc/ntp.conf /etc/chrony.conf</pre>
+<pre>$ sudo grep maxpoll /etc/ntp.conf /etc/chrony.conf /etc/chrony.d/</pre>
 <pre>server [ntp.server.name] iburst maxpoll <sub idref="var_time_service_set_maxpoll" /></pre>. Is it the case that "maxpoll" has not been set to the value of "<sub idref="var_time_service_set_maxpoll" />", is commented out, or is missing?</td>
     <td>Configure the operating system to, for networked systems, compare internal information system clocks at least every 24 hours with a server which is synchronized to one of the redundant United States Naval Observatory (USNO) time servers, or a time server designated for the appropriate DoD network (NIPRNet/SIPRNet), and/or the Global Positioning System (GPS).  </td>
     <td>The <tt>maxpoll</tt> should be configured to
 <sub idref="var_time_service_set_maxpoll" /> in <tt>/etc/ntp.conf</tt> or
-<tt>/etc/chrony.conf</tt> to continuously poll time servers. To configure
-<tt>maxpoll</tt> in <tt>/etc/ntp.conf</tt> or <tt>/etc/chrony.conf</tt>
-add the following after each `server`, `pool` or `peer` entry:
+<tt>/etc/chrony.conf</tt> (or <tt>/etc/chrony.d/</tt>) to continuously poll time servers. To configure
+<tt>maxpoll</tt> in <tt>/etc/ntp.conf</tt> or <tt>/etc/chrony.conf</tt> (or <tt>/etc/chrony.d/</tt>)
+add the following after each <tt>server</tt>, <tt>pool</tt> or <tt>peer</tt> entry:
 <pre>maxpoll <sub idref="var_time_service_set_maxpoll" /></pre>
-to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
-should be configured too.
-If no <tt>server</tt> or <tt>pool</tt> directives are configured, the rule evaluates
-to pass.</td>
+to <tt>server</tt> directives. If using chrony, any <tt>pool</tt> directives
+should be configured too.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -31916,30 +31935,26 @@ Synchronizing internal information system clocks provides uniformity of time sta
 Organizations should also consider endpoints that may not have regular access to the authoritative time server (e.g., mobile, teleworking, and tactical endpoints). This requirement is related to the comparison done every 24 hours in SRG-OS-000355 because a comparison must be done in order to determine the time difference.</td>
     <td>The <tt>maxpoll</tt> should be configured to
 <sub idref="var_time_service_set_maxpoll" /> in <tt>/etc/ntp.conf</tt> or
-<tt>/etc/chrony.conf</tt> to continuously poll time servers. To configure
-<tt>maxpoll</tt> in <tt>/etc/ntp.conf</tt> or <tt>/etc/chrony.conf</tt>
-add the following after each `server`, `pool` or `peer` entry:
+<tt>/etc/chrony.conf</tt> (or <tt>/etc/chrony.d/</tt>) to continuously poll time servers. To configure
+<tt>maxpoll</tt> in <tt>/etc/ntp.conf</tt> or <tt>/etc/chrony.conf</tt> (or <tt>/etc/chrony.d/</tt>)
+add the following after each <tt>server</tt>, <tt>pool</tt> or <tt>peer</tt> entry:
 <pre>maxpoll <sub idref="var_time_service_set_maxpoll" /></pre>
-to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
-should be configured too.
-If no <tt>server</tt> or <tt>pool</tt> directives are configured, the rule evaluates
-to pass.</td>
+to <tt>server</tt> directives. If using chrony, any <tt>pool</tt> directives
+should be configured too.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system synchronizes internal information system clocks to the authoritative time source when the time difference is greater than one second. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 9 is securely comparing internal information system clocks at a regular interval with an NTP server with the following command:
-<pre>$ sudo grep maxpoll /etc/ntp.conf /etc/chrony.conf</pre>
+<pre>$ sudo grep maxpoll /etc/ntp.conf /etc/chrony.conf /etc/chrony.d/</pre>
 <pre>server [ntp.server.name] iburst maxpoll <sub idref="var_time_service_set_maxpoll" /></pre>. Is it the case that "maxpoll" has not been set to the value of "<sub idref="var_time_service_set_maxpoll" />", is commented out, or is missing?</td>
     <td>Configure the operating system to synchronize internal information system clocks to the authoritative time source when the time difference is greater than the organization-defined time period.</td>
     <td>The <tt>maxpoll</tt> should be configured to
 <sub idref="var_time_service_set_maxpoll" /> in <tt>/etc/ntp.conf</tt> or
-<tt>/etc/chrony.conf</tt> to continuously poll time servers. To configure
-<tt>maxpoll</tt> in <tt>/etc/ntp.conf</tt> or <tt>/etc/chrony.conf</tt>
-add the following after each `server`, `pool` or `peer` entry:
+<tt>/etc/chrony.conf</tt> (or <tt>/etc/chrony.d/</tt>) to continuously poll time servers. To configure
+<tt>maxpoll</tt> in <tt>/etc/ntp.conf</tt> or <tt>/etc/chrony.conf</tt> (or <tt>/etc/chrony.d/</tt>)
+add the following after each <tt>server</tt>, <tt>pool</tt> or <tt>peer</tt> entry:
 <pre>maxpoll <sub idref="var_time_service_set_maxpoll" /></pre>
-to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
-should be configured too.
-If no <tt>server</tt> or <tt>pool</tt> directives are configured, the rule evaluates
-to pass.</td>
+to <tt>server</tt> directives. If using chrony, any <tt>pool</tt> directives
+should be configured too.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -32057,30 +32072,26 @@ The <code>auditd</code> service can be enabled with the following command:
 Time stamps generated by the operating system include date and time. Time is commonly expressed in Coordinated Universal Time (UTC), a modern continuation of Greenwich Mean Time (GMT), or local time with an offset from UTC.</td>
     <td>The <tt>maxpoll</tt> should be configured to
 <sub idref="var_time_service_set_maxpoll" /> in <tt>/etc/ntp.conf</tt> or
-<tt>/etc/chrony.conf</tt> to continuously poll time servers. To configure
-<tt>maxpoll</tt> in <tt>/etc/ntp.conf</tt> or <tt>/etc/chrony.conf</tt>
-add the following after each `server`, `pool` or `peer` entry:
+<tt>/etc/chrony.conf</tt> (or <tt>/etc/chrony.d/</tt>) to continuously poll time servers. To configure
+<tt>maxpoll</tt> in <tt>/etc/ntp.conf</tt> or <tt>/etc/chrony.conf</tt> (or <tt>/etc/chrony.d/</tt>)
+add the following after each <tt>server</tt>, <tt>pool</tt> or <tt>peer</tt> entry:
 <pre>maxpoll <sub idref="var_time_service_set_maxpoll" /></pre>
-to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
-should be configured too.
-If no <tt>server</tt> or <tt>pool</tt> directives are configured, the rule evaluates
-to pass.</td>
+to <tt>server</tt> directives. If using chrony, any <tt>pool</tt> directives
+should be configured too.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system records time stamps for audit records that can be mapped to Coordinated Universal Time (UTC) or Greenwich Mean Time (GMT). If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 9 is securely comparing internal information system clocks at a regular interval with an NTP server with the following command:
-<pre>$ sudo grep maxpoll /etc/ntp.conf /etc/chrony.conf</pre>
+<pre>$ sudo grep maxpoll /etc/ntp.conf /etc/chrony.conf /etc/chrony.d/</pre>
 <pre>server [ntp.server.name] iburst maxpoll <sub idref="var_time_service_set_maxpoll" /></pre>. Is it the case that "maxpoll" has not been set to the value of "<sub idref="var_time_service_set_maxpoll" />", is commented out, or is missing?</td>
     <td>Configure the operating system to record time stamps for audit records that can be mapped to Coordinated Universal Time (UTC) or Greenwich Mean Time (GMT).</td>
     <td>The <tt>maxpoll</tt> should be configured to
 <sub idref="var_time_service_set_maxpoll" /> in <tt>/etc/ntp.conf</tt> or
-<tt>/etc/chrony.conf</tt> to continuously poll time servers. To configure
-<tt>maxpoll</tt> in <tt>/etc/ntp.conf</tt> or <tt>/etc/chrony.conf</tt>
-add the following after each `server`, `pool` or `peer` entry:
+<tt>/etc/chrony.conf</tt> (or <tt>/etc/chrony.d/</tt>) to continuously poll time servers. To configure
+<tt>maxpoll</tt> in <tt>/etc/ntp.conf</tt> or <tt>/etc/chrony.conf</tt> (or <tt>/etc/chrony.d/</tt>)
+add the following after each <tt>server</tt>, <tt>pool</tt> or <tt>peer</tt> entry:
 <pre>maxpoll <sub idref="var_time_service_set_maxpoll" /></pre>
-to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
-should be configured too.
-If no <tt>server</tt> or <tt>pool</tt> directives are configured, the rule evaluates
-to pass.</td>
+to <tt>server</tt> directives. If using chrony, any <tt>pool</tt> directives
+should be configured too.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -34663,7 +34674,7 @@ to prevent automatic loading of the USB storage driver.
 
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
-<pre>install usb-storage /bin/true</pre>
+<pre>install usb-storage /bin/false</pre>
 
 This will prevent the <tt>modprobe</tt> program from loading the <tt>usb-storage</tt>
 module, but will not prevent an administrator (or another program) from using the
@@ -34673,7 +34684,7 @@ module, but will not prevent an administrator (or another program) from using th
     <td>
 If the system is configured to prevent the loading of the <code>usb-storage</code> kernel module,
 it will contain lines inside any file in <code>/etc/modprobe.d</code> or the deprecated<code> /etc/modprobe.conf</code>.
-These lines instruct the module loading system to run another program (such as <code>/bin/true</code>) upon a module <code>install</code> event.
+These lines instruct the module loading system to run another program (such as <code>/bin/false</code>) upon a module <code>install</code> event.
 
 Run the following command to search for such lines in all files in <code>/etc/modprobe.d</code> and the deprecated <code>/etc/modprobe.conf</code>:
 <pre>$ grep -r usb-storage /etc/modprobe.conf /etc/modprobe.d</pre> Is it the case that no line is returned?</td>
@@ -34683,7 +34694,7 @@ to prevent automatic loading of the USB storage driver.
 
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
-<pre>install usb-storage /bin/true</pre>
+<pre>install usb-storage /bin/false</pre>
 
 This will prevent the <tt>modprobe</tt> program from loading the <tt>usb-storage</tt>
 module, but will not prevent an administrator (or another program) from using the
@@ -34923,6 +34934,13 @@ Temporary passwords are typically used to allow access when new accounts are cre
     <td>If cached authentication information is out-of-date, the validity of the authentication information may be questionable.</td>
     <td>SSSD should be configured to expire offline credentials after 1 day.
 
+Check if SSSD allows cached authentications with the following command:
+<pre>
+$ sudo grep cache_credentials /etc/sssd/sssd.conf
+cache_credentials = true
+</pre>
+If "cache_credentials" is set to "false" or is missing no further checks are required.<br/>
+
 To configure SSSD to expire offline credentials, set
 <tt>offline_credentials_expiration</tt> to <tt>1</tt> under the <tt>[pam]</tt>
 section in <tt>/etc/sssd/sssd.conf</tt>. For example:
@@ -34932,12 +34950,26 @@ offline_credentials_expiration = 1
     <td>Applicable - Configurable</td>
     <td>Verify the operating system prohibits the use of cached authenticators after one day. If it does not, this is a finding.</td>
     <td>
+Check if SSSD allows cached authentications with the following command:
+<pre>
+$ sudo grep cache_credentials /etc/sssd/sssd.conf
+cache_credentials = true
+</pre>
+If "cache_credentials" is set to "false" or is missing no further checks are required.<br/>
+
 To verify that SSSD expires offline credentials, run the following command:
 <pre>$ sudo grep offline_credentials_expiration /etc/sssd/sssd.conf /etc/sssd/conf.d/*.conf</pre>
 If configured properly, output should be
 <pre>offline_credentials_expiration = 1</pre> Is it the case that it does not exist or is not configured properly?</td>
     <td>Configure the operating system to prohibit the use of cached authenticators after one day.</td>
     <td>SSSD should be configured to expire offline credentials after 1 day.
+
+Check if SSSD allows cached authentications with the following command:
+<pre>
+$ sudo grep cache_credentials /etc/sssd/sssd.conf
+cache_credentials = true
+</pre>
+If "cache_credentials" is set to "false" or is missing no further checks are required.<br/>
 
 To configure SSSD to expire offline credentials, set
 <tt>offline_credentials_expiration</tt> to <tt>1</tt> under the <tt>[pam]</tt>
@@ -55513,7 +55545,12 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs the remote system must be authenticated.</td>
+When using <tt>rsyslogd</tt> to off-load logs the remote system must be authenticated.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$ActionSendStreamDriverAuthMode x509/name</pre>
+Alternatively, use the RainerScript syntax:
+<pre>action(type="omfwd" Target="some.example.com" StreamDriverAuthMode="x509/name")</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system, at a minimum, off-loads interconnected systems in real time and off-loads standalone systems weekly. If it does not, this is a finding.</td>
     <td>Verify the operating system authenticates the remote logging server for off-loading audit logs with the following command:
@@ -55528,7 +55565,12 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs the remote system must be authenticated.</td>
+When using <tt>rsyslogd</tt> to off-load logs the remote system must be authenticated.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$ActionSendStreamDriverAuthMode x509/name</pre>
+Alternatively, use the RainerScript syntax:
+<pre>action(type="omfwd" Target="some.example.com" StreamDriverAuthMode="x509/name")</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -55552,7 +55594,13 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs off a encrpytion system must be used.</td>
+When using <tt>rsyslogd</tt> to off-load logs off a encrpytion system must be used.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$ActionSendStreamDriverMode 1</pre>
+
+Alternatively, use the RainerScript syntax:
+<pre>action(type="omfwd" ... StreamDriverMode="1")</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system, at a minimum, off-loads interconnected systems in real time and off-loads standalone systems weekly. If it does not, this is a finding.</td>
     <td>Verify the operating system encrypts audit records off-loaded onto a different system
@@ -55570,7 +55618,13 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs off a encrpytion system must be used.</td>
+When using <tt>rsyslogd</tt> to off-load logs off a encrpytion system must be used.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$ActionSendStreamDriverMode 1</pre>
+
+Alternatively, use the RainerScript syntax:
+<pre>action(type="omfwd" ... StreamDriverMode="1")</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -55594,7 +55648,13 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs off an encryption system must be used.</td>
+When using <tt>rsyslogd</tt> to off-load logs off an encryption system must be used.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$DefaultNetstreamDriver gtls</pre>
+
+Alternatively, use the RainerScript syntax:
+<pre>global(DefaultNetstreamDriver="gtls")</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system, at a minimum, off-loads interconnected systems in real time and off-loads standalone systems weekly. If it does not, this is a finding.</td>
     <td>Verify the operating system encrypts audit records off-loaded onto a different system
@@ -55612,7 +55672,13 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs off an encryption system must be used.</td>
+When using <tt>rsyslogd</tt> to off-load logs off an encryption system must be used.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$DefaultNetstreamDriver gtls</pre>
+
+Alternatively, use the RainerScript syntax:
+<pre>global(DefaultNetstreamDriver="gtls")</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -56728,10 +56794,10 @@ Configuration settings are the set of parameters that can be changed in hardware
 <br /><br />
 To configure the system to ignore the <tt>Ctrl-Alt-Del</tt> key sequence
 from the Graphical User Interface (GUI) instead of rebooting the system,
-add or set <tt>logout</tt> to <tt>''</tt> in
+add or set <tt>logout</tt> to <tt>['']</tt> in
 <tt>/etc/dconf/db/local.d/00-security-settings</tt>. For example:
 <pre>[org/gnome/settings-daemon/plugins/media-keys]
-logout=''</pre>
+logout=['']</pre>
 Once the settings have been added, add a lock to
 <tt>/etc/dconf/db/local.d/locks/00-security-settings-lock</tt> to prevent
 user modification. For example:
@@ -56751,10 +56817,10 @@ If properly configured, the output should be
 <br /><br />
 To configure the system to ignore the <tt>Ctrl-Alt-Del</tt> key sequence
 from the Graphical User Interface (GUI) instead of rebooting the system,
-add or set <tt>logout</tt> to <tt>''</tt> in
+add or set <tt>logout</tt> to <tt>['']</tt> in
 <tt>/etc/dconf/db/local.d/00-security-settings</tt>. For example:
 <pre>[org/gnome/settings-daemon/plugins/media-keys]
-logout=''</pre>
+logout=['']</pre>
 Once the settings have been added, add a lock to
 <tt>/etc/dconf/db/local.d/locks/00-security-settings-lock</tt> to prevent
 user modification. For example:
@@ -58975,13 +59041,13 @@ and virtual paths.
 
 To configure the system to prevent the <code>atm</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/atm.conf</code>:
-<pre>install atm /bin/true</pre></td>
+<pre>install atm /bin/false</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
     <td>
 If the system is configured to prevent the loading of the <code>atm</code> kernel module,
 it will contain lines inside any file in <code>/etc/modprobe.d</code> or the deprecated<code> /etc/modprobe.conf</code>.
-These lines instruct the module loading system to run another program (such as <code>/bin/true</code>) upon a module <code>install</code> event.
+These lines instruct the module loading system to run another program (such as <code>/bin/false</code>) upon a module <code>install</code> event.
 
 Run the following command to search for such lines in all files in <code>/etc/modprobe.d</code> and the deprecated <code>/etc/modprobe.conf</code>:
 <pre>$ grep -r atm /etc/modprobe.conf /etc/modprobe.d</pre> Is it the case that no line is returned?</td>
@@ -58992,7 +59058,7 @@ and virtual paths.
 
 To configure the system to prevent the <code>atm</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/atm.conf</code>:
-<pre>install atm /bin/true</pre></td>
+<pre>install atm /bin/false</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -59016,13 +59082,13 @@ is now also used in marine, industrial, and medical applications.
 
 To configure the system to prevent the <code>can</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/can.conf</code>:
-<pre>install can /bin/true</pre></td>
+<pre>install can /bin/false</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
     <td>
 If the system is configured to prevent the loading of the <code>can</code> kernel module,
 it will contain lines inside any file in <code>/etc/modprobe.d</code> or the deprecated<code> /etc/modprobe.conf</code>.
-These lines instruct the module loading system to run another program (such as <code>/bin/true</code>) upon a module <code>install</code> event.
+These lines instruct the module loading system to run another program (such as <code>/bin/false</code>) upon a module <code>install</code> event.
 
 Run the following command to search for such lines in all files in <code>/etc/modprobe.d</code> and the deprecated <code>/etc/modprobe.conf</code>:
 <pre>$ grep -r can /etc/modprobe.conf /etc/modprobe.d</pre> Is it the case that no line is returned?</td>
@@ -59033,7 +59099,7 @@ is now also used in marine, industrial, and medical applications.
 
 To configure the system to prevent the <code>can</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/can.conf</code>:
-<pre>install can /bin/true</pre></td>
+<pre>install can /bin/false</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -59058,13 +59124,13 @@ within one connection.
 
 To configure the system to prevent the <code>sctp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
-<pre>install sctp /bin/true</pre></td>
+<pre>install sctp /bin/false</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
     <td>
 If the system is configured to prevent the loading of the <code>sctp</code> kernel module,
 it will contain lines inside any file in <code>/etc/modprobe.d</code> or the deprecated<code> /etc/modprobe.conf</code>.
-These lines instruct the module loading system to run another program (such as <code>/bin/true</code>) upon a module <code>install</code> event.
+These lines instruct the module loading system to run another program (such as <code>/bin/false</code>) upon a module <code>install</code> event.
 
 Run the following command to search for such lines in all files in <code>/etc/modprobe.d</code> and the deprecated <code>/etc/modprobe.conf</code>:
 <pre>$ grep -r sctp /etc/modprobe.conf /etc/modprobe.d</pre> Is it the case that no line is returned?</td>
@@ -59076,7 +59142,7 @@ within one connection.
 
 To configure the system to prevent the <code>sctp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
-<pre>install sctp /bin/true</pre></td>
+<pre>install sctp /bin/false</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -59099,7 +59165,7 @@ to prevent automatic loading of the USB storage driver.
 
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
-<pre>install usb-storage /bin/true</pre>
+<pre>install usb-storage /bin/false</pre>
 
 This will prevent the <tt>modprobe</tt> program from loading the <tt>usb-storage</tt>
 module, but will not prevent an administrator (or another program) from using the
@@ -59109,7 +59175,7 @@ module, but will not prevent an administrator (or another program) from using th
     <td>
 If the system is configured to prevent the loading of the <code>usb-storage</code> kernel module,
 it will contain lines inside any file in <code>/etc/modprobe.d</code> or the deprecated<code> /etc/modprobe.conf</code>.
-These lines instruct the module loading system to run another program (such as <code>/bin/true</code>) upon a module <code>install</code> event.
+These lines instruct the module loading system to run another program (such as <code>/bin/false</code>) upon a module <code>install</code> event.
 
 Run the following command to search for such lines in all files in <code>/etc/modprobe.d</code> and the deprecated <code>/etc/modprobe.conf</code>:
 <pre>$ grep -r usb-storage /etc/modprobe.conf /etc/modprobe.d</pre> Is it the case that no line is returned?</td>
@@ -59119,7 +59185,7 @@ to prevent automatic loading of the USB storage driver.
 
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
-<pre>install usb-storage /bin/true</pre>
+<pre>install usb-storage /bin/false</pre>
 
 This will prevent the <tt>modprobe</tt> program from loading the <tt>usb-storage</tt>
 module, but will not prevent an administrator (or another program) from using the
@@ -60673,19 +60739,27 @@ Configuration settings are the set of parameters that can be changed in hardware
 cron job status. If <tt>cron</tt> is not logging to <tt>rsyslog</tt>, it
 can be implemented by adding the following to the <i>RULES</i> section of
 <tt>/etc/rsyslog.conf</tt>:
-<pre>cron.*                                                  /var/log/cron</pre></td>
+If the legacy syntax is used:
+<pre>cron.*                                                  /var/log/cron</pre>
+If the modern syntax (RainerScript) is used:
+<pre>cron.* action(type="omfile" file="/var/log/cron")</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
     <td>Verify that <tt>cron</tt> is logging to <tt>rsyslog</tt>,
 run the following command:
 <pre>grep -rni "cron\.\*" /etc/rsyslog.*</pre>
-<pre>cron.*                                                  /var/log/cron</pre> Is it the case that cron is not logging to rsyslog?</td>
+<pre>cron.*                                                  /var/log/cron</pre>
+or
+<pre>cron.* action(type="omfile" file="/var/log/cron")</pre> Is it the case that cron is not logging to rsyslog?</td>
     <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
     <td>Cron logging must be implemented to spot intrusions or trace
 cron job status. If <tt>cron</tt> is not logging to <tt>rsyslog</tt>, it
 can be implemented by adding the following to the <i>RULES</i> section of
 <tt>/etc/rsyslog.conf</tt>:
-<pre>cron.*                                                  /var/log/cron</pre></td>
+If the legacy syntax is used:
+<pre>cron.*                                                  /var/log/cron</pre>
+If the modern syntax (RainerScript) is used:
+<pre>cron.* action(type="omfile" file="/var/log/cron")</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -60854,6 +60928,12 @@ There must be a resolvable DNS CNAME or Alias record set to "<sub idref="rsyslog
 
 Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
     <td>
+If the system is joined to the Red Hat Network, a Red Hat Satellite Server,
+or a yum server, run the following command to install updates:
+<pre>$ sudo yum update</pre>
+If the system is not configured to use one of these sources, updates (in the form of RPM packages)
+can be manually downloaded from the Red Hat Network and installed using <tt>rpm</tt>.
+
 <br /><br />
 NOTE: U.S. Defense systems are required to be patched within 30 days or sooner as local policy
 dictates.</td>
@@ -60883,6 +60963,12 @@ ID | Command line | Date and time | Action(s) | Altered
 Typical update frequency may be overridden by Information Assurance Vulnerability Alert (IAVA) notifications from CYBERCOM. Is it the case that Red Hat Enterprise Linux 9 is in non-compliance with the organizational patching policy?</td>
     <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
     <td>
+If the system is joined to the Red Hat Network, a Red Hat Satellite Server,
+or a yum server, run the following command to install updates:
+<pre>$ sudo yum update</pre>
+If the system is not configured to use one of these sources, updates (in the form of RPM packages)
+can be manually downloaded from the Red Hat Network and installed using <tt>rpm</tt>.
+
 <br /><br />
 NOTE: U.S. Defense systems are required to be patched within 30 days or sooner as local policy
 dictates.</td>

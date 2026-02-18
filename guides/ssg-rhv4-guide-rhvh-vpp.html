@@ -89,8 +89,8 @@ this guide without first testing them in a non-operational environment. The
 creators of this guidance assume no responsibility whatsoever for its use by
 other parties, and makes no guarantees, expressed or implied, about its
 quality, reliability, or any other characteristic.
-</div></div></div></div></div><div id="profileinfo"><h2>Profile Information</h2><div class="row"><div class="col-md-5 well well-lg horizontal-scroll"><table class="table table-bordered"><tr><th>Profile Title</th><td>VPP - Protection Profile for Virtualization v. 1.0 for Red Hat Virtualization Host (RHVH)</td></tr><tr><th>Profile ID</th><td>xccdf_org.ssgproject.content_profile_rhvh-vpp</td></tr></table></div><div class="col-md-3"><h4>CPE Platforms</h4><ul class="list-group"><li class="list-group-item"><span class="label label-default" title="CPE platform cpe:/o:redhat:enterprise_linux:8::hypervisor is applicable to this Benchmark">cpe:/o:redhat:enterprise_linux:8::hypervisor</span></li><li class="list-group-item"><span class="label label-default" title="CPE platform cpe:/a:redhat:enterprise_virtualization_manager:4 is applicable to this Benchmark">cpe:/a:redhat:enterprise_virtualization_manager:4</span></li></ul></div></div></div><div id="revisionhistory"><h2>Revision History</h2><p>Current version: <strong>0.1.73</strong></p><ul><li><strong>draft</strong>
-                    (as of 2024-05-16)
+</div></div></div></div></div><div id="profileinfo"><h2>Profile Information</h2><div class="row"><div class="col-md-5 well well-lg horizontal-scroll"><table class="table table-bordered"><tr><th>Profile Title</th><td>VPP - Protection Profile for Virtualization v. 1.0 for Red Hat Virtualization Host (RHVH)</td></tr><tr><th>Profile ID</th><td>xccdf_org.ssgproject.content_profile_rhvh-vpp</td></tr></table></div><div class="col-md-3"><h4>CPE Platforms</h4><ul class="list-group"><li class="list-group-item"><span class="label label-default" title="CPE platform cpe:/o:redhat:enterprise_linux:8::hypervisor is applicable to this Benchmark">cpe:/o:redhat:enterprise_linux:8::hypervisor</span></li><li class="list-group-item"><span class="label label-default" title="CPE platform cpe:/a:redhat:enterprise_virtualization_manager:4 is applicable to this Benchmark">cpe:/a:redhat:enterprise_virtualization_manager:4</span></li></ul></div></div></div><div id="revisionhistory"><h2>Revision History</h2><p>Current version: <strong>0.1.74</strong></p><ul><li><strong>draft</strong>
+                    (as of 2024-08-09)
                 </li></ul></div><h2>Table of Contents</h2><ol><li><a href="#xccdf_org.ssgproject.content_group_system">System Settings</a><ol><li><a href="#xccdf_org.ssgproject.content_group_software">Installing and Maintaining Software</a></li><li><a href="#xccdf_org.ssgproject.content_group_accounts">Account and Access Control</a></li><li><a href="#xccdf_org.ssgproject.content_group_bootloader-grub2">GRUB2 bootloader configuration</a></li><li><a href="#xccdf_org.ssgproject.content_group_network">Network Configuration and Firewalls</a></li><li><a href="#xccdf_org.ssgproject.content_group_permissions">File Permissions and Masks</a></li><li><a href="#xccdf_org.ssgproject.content_group_selinux">SELinux</a></li></ol></li><li><a href="#xccdf_org.ssgproject.content_group_services">Services</a><ol><li><a href="#xccdf_org.ssgproject.content_group_ssh">SSH Server</a></li><li><a href="#xccdf_org.ssgproject.content_group_sssd">System Security Services Daemon</a></li></ol></li><li><a href="#xccdf_org.ssgproject.content_group_auditing">System Accounting with auditd</a><ol><li><a href="#xccdf_org.ssgproject.content_group_auditd_configure_rules">Configure auditd Rules for Comprehensive Auditing</a></li></ol></li></ol><div id="guide-tree"><h2>Checklist</h2><table class="treetable table table-bordered"><tbody><tr data-tt-id="children-xccdf_org.ssgproject.content_benchmark_RHV-4"><td style="padding-left: 0px" id="xccdf_org.ssgproject.content_benchmark_RHV-4"><span class="label label-default">Group</span>  
                 Guide to the Secure Configuration of Red Hat Virtualization 4
                           <small>Group contains 49 groups and 144 rules</small></td></tr><tr data-tt-id="children-xccdf_org.ssgproject.content_group_system" data-tt-parent-id="children-xccdf_org.ssgproject.content_benchmark_RHV-4"><td style="padding-left: 19px" id="xccdf_org.ssgproject.content_group_system"><span class="label label-default">Group</span>  
@@ -688,7 +688,10 @@ and validated.</div></td></tr><tr><td><span class="label label-warning">Severity
   - medium_disruption
   - reboot_required
   - restrict_strategy
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id15" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id15"><pre><code># Remediation is applicable only in certain platforms
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id15" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id15"><pre><code>
+[customizations]
+fips = true
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id16" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id16"><pre><code># Remediation is applicable only in certain platforms
 if ( [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ] &amp;&amp; ! ( [ "${container:-}" == "bwrap-osbuild" ] ) ) &amp;&amp; { [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ]; }; then
 
 var_system_crypto_policy='<abbr title="from Profile/refine-value: xccdf_org.ssgproject.content_value_var_system_crypto_policy">FIPS:OSPP</abbr>'
@@ -714,9 +717,6 @@ fi
 else
     &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
 fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id16" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id16"><pre><code>
-[customizations]
-fips = true
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="children-xccdf_org.ssgproject.content_group_crypto" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_integrity"><td style="padding-left: 76px" id="xccdf_org.ssgproject.content_group_crypto"><span class="label label-default">Group</span>  
                 System Cryptographic Policies
                           <small>Group contains 6 rules</small></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_group_crypto" class="guide-tree-inner-node guide-tree-inner-node-id-xccdf_org.ssgproject.content_group_crypto" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_integrity"><td style="padding-left: 76px"><div><a class="small" href="#xccdf_org.ssgproject.content_group_crypto">[ref]</a>  
@@ -1847,7 +1847,7 @@ re-used by a user.</div></td></tr><tr><td><span class="label label-warning">Seve
 
 - name: Limit Password Reuse - Collect the available authselect features
   ansible.builtin.command:
-    cmd: authselect list-features minimal
+    cmd: authselect list-features sssd
   register: result_authselect_available_features
   changed_when: false
   when:
@@ -2073,11 +2073,16 @@ re-used by a user.</div></td></tr><tr><td><span class="label label-warning">Seve
     when:
     - result_authselect_present.stat.exists
 
+  - name: Limit Password Reuse - Define a fact for control already filtered in case
+      filters are used
+    ansible.builtin.set_fact:
+      pam_module_control: requisite
+
   - name: Limit Password Reuse - Check if expected PAM module line is present in {{
       pam_file_path }}
     ansible.builtin.lineinfile:
       path: '{{ pam_file_path }}'
-      regexp: ^\s*password\s+{{ 'requisite' | regex_escape() }}\s+pam_pwhistory.so\s*.*
+      regexp: ^\s*password\s+{{ pam_module_control | regex_escape() }}\s+pam_pwhistory.so\s*.*
       state: absent
     check_mode: true
     changed_when: false
@@ -2102,7 +2107,7 @@ re-used by a user.</div></td></tr><tr><td><span class="label label-warning">Seve
       ansible.builtin.replace:
         dest: '{{ pam_file_path }}'
         regexp: ^(\s*password\s+).*(\bpam_pwhistory.so.*)
-        replace: \1requisite \2
+        replace: \1{{ pam_module_control }} \2
       register: result_pam_module_edit
       when:
       - result_pam_line_other_control_present.found == 1
@@ -2112,7 +2117,7 @@ re-used by a user.</div></td></tr><tr><td><span class="label label-warning">Seve
       ansible.builtin.lineinfile:
         dest: '{{ pam_file_path }}'
         insertafter: ^password.*requisite.*pam_pwquality\.so
-        line: password    requisite    pam_pwhistory.so
+        line: password    {{ pam_module_control }}    pam_pwhistory.so
       register: result_pam_module_add
       when:
       - result_pam_line_other_control_present.found == 0 or result_pam_line_other_control_present.found
@@ -2329,6 +2334,11 @@ re-used by a user.</div></td></tr><tr><td><span class="label label-warning">Seve
         when:
         - result_authselect_present.stat.exists
 
+      - name: Limit Password Reuse - Define a fact for control already filtered in
+          case filters are used
+        ansible.builtin.set_fact:
+          pam_module_control: ''
+
       - name: Limit Password Reuse - Ensure the "remember" option from "pam_pwhistory.so"
           is not present in {{ pam_file_path }}
         ansible.builtin.replace:
@@ -2501,11 +2511,16 @@ re-used by a user.</div></td></tr><tr><td><span class="label label-warning">Seve
     when:
     - result_authselect_present.stat.exists
 
+  - name: Limit Password Reuse - Define a fact for control already filtered in case
+      filters are used
+    ansible.builtin.set_fact:
+      pam_module_control: requisite
+
   - name: Limit Password Reuse - Check if expected PAM module line is present in {{
       pam_file_path }}
     ansible.builtin.lineinfile:
       path: '{{ pam_file_path }}'
-      regexp: ^\s*password\s+{{ 'requisite' | regex_escape() }}\s+pam_pwhistory.so\s*.*
+      regexp: ^\s*password\s+{{ pam_module_control | regex_escape() }}\s+pam_pwhistory.so\s*.*
       state: absent
     check_mode: true
     changed_when: false
@@ -2530,7 +2545,7 @@ re-used by a user.</div></td></tr><tr><td><span class="label label-warning">Seve
       ansible.builtin.replace:
         dest: '{{ pam_file_path }}'
         regexp: ^(\s*password\s+).*(\bpam_pwhistory.so.*)
-        replace: \1requisite \2
+        replace: \1{{ pam_module_control }} \2
       register: result_pam_module_edit
       when:
       - result_pam_line_other_control_present.found == 1
@@ -2539,7 +2554,7 @@ re-used by a user.</div></td></tr><tr><td><span class="label label-warning">Seve
         in {{ pam_file_path }}
       ansible.builtin.lineinfile:
         dest: '{{ pam_file_path }}'
-        line: password    requisite    pam_pwhistory.so
+        line: password    {{ pam_module_control }}    pam_pwhistory.so
       register: result_pam_module_add
       when:
       - result_pam_line_other_control_present.found == 0 or result_pam_line_other_control_present.found
@@ -2558,38 +2573,45 @@ re-used by a user.</div></td></tr><tr><td><span class="label label-warning">Seve
     - result_pam_line_present.found is defined
     - result_pam_line_present.found == 0
 
+  - name: Limit Password Reuse - Define a fact for control already filtered in case
+      filters are used
+    ansible.builtin.set_fact:
+      pam_module_control: requisite
+
   - name: Limit Password Reuse - Check if the required PAM module option is present
       in {{ pam_file_path }}
     ansible.builtin.lineinfile:
       path: '{{ pam_file_path }}'
-      regexp: ^\s*password\s+{{ 'requisite' | regex_escape() }}\s+pam_pwhistory.so\s*.*\sremember\b
+      regexp: ^\s*password\s+{{ pam_module_control | regex_escape() }}\s+pam_pwhistory.so\s*.*\sremember\b
       state: absent
     check_mode: true
     changed_when: false
-    register: result_pam_module_remember_option_present
+    register: result_pam_module_accounts_password_pam_unix_remember_option_present
 
   - name: Limit Password Reuse - Ensure the "remember" PAM option for "pam_pwhistory.so"
       is included in {{ pam_file_path }}
     ansible.builtin.lineinfile:
       path: '{{ pam_file_path }}'
       backrefs: true
-      regexp: ^(\s*password\s+{{ 'requisite' | regex_escape() }}\s+pam_pwhistory.so.*)
+      regexp: ^(\s*password\s+{{ pam_module_control | regex_escape() }}\s+pam_pwhistory.so.*)
       line: \1 remember={{ var_password_pam_unix_remember }}
       state: present
-    register: result_pam_remember_add
+    register: result_pam_accounts_password_pam_unix_remember_add
     when:
-    - result_pam_module_remember_option_present.found == 0
+    - result_pam_module_accounts_password_pam_unix_remember_option_present.found ==
+      0
 
   - name: Limit Password Reuse - Ensure the required value for "remember" PAM option
       from "pam_pwhistory.so" in {{ pam_file_path }}
     ansible.builtin.lineinfile:
       path: '{{ pam_file_path }}'
       backrefs: true
-      regexp: ^(\s*password\s+{{ 'requisite' | regex_escape() }}\s+pam_pwhistory.so\s+.*)(remember)=[0-9a-zA-Z]+\s*(.*)
+      regexp: ^(\s*password\s+{{ pam_module_control | regex_escape() }}\s+pam_pwhistory.so\s+.*)(remember)=[0-9a-zA-Z]+\s*(.*)
       line: \1\2={{ var_password_pam_unix_remember }} \3
-    register: result_pam_remember_edit
+    register: result_pam_accounts_password_pam_unix_remember_edit
     when:
-    - result_pam_module_remember_option_present.found &gt; 0
+    - result_pam_module_accounts_password_pam_unix_remember_option_present.found &gt;
+      0
 
   - name: Limit Password Reuse - Ensure authselect changes are applied
     ansible.builtin.command:
@@ -2620,8 +2642,12 @@ if rpm --quiet -q pam; then
 var_password_pam_unix_remember='<abbr title="from Benchmark/Value: xccdf_org.ssgproject.content_value_var_password_pam_unix_remember">5</abbr>'
 
 
+
+
+
+
 if [ -f /usr/bin/authselect ]; then
-    if authselect list-features minimal | grep -q with-pwhistory; then
+    if authselect list-features sssd | grep -q with-pwhistory; then
         if ! authselect check; then
         echo "
         authselect integrity check failed. Remediation aborted!
@@ -2663,33 +2689,33 @@ if [ -f /usr/bin/authselect ]; then
         PAM_FILE_PATH="/etc/authselect/$CURRENT_PROFILE/$PAM_FILE_NAME"
 
         authselect apply-changes -b
-        if ! grep -qP '^\s*password\s+'"requisite"'\s+pam_pwhistory.so\s*.*' "$PAM_FILE_PATH"; then
+        if ! grep -qP "^\s*password\s+requisite\s+pam_pwhistory.so\s*.*" "$PAM_FILE_PATH"; then
             # Line matching group + control + module was not found. Check group + module.
             if [ "$(grep -cP '^\s*password\s+.*\s+pam_pwhistory.so\s*' "$PAM_FILE_PATH")" -eq 1 ]; then
                 # The control is updated only if one single line matches.
-                sed -i -E --follow-symlinks 's/^(\s*password\s+).*(\bpam_pwhistory.so.*)/\1'"requisite"' \2/' "$PAM_FILE_PATH"
+                sed -i -E --follow-symlinks "s/^(\s*password\s+).*(\bpam_pwhistory.so.*)/\1requisite \2/" "$PAM_FILE_PATH"
             else
                 LAST_MATCH_LINE=$(grep -nP "^password.*requisite.*pam_pwquality\.so" "$PAM_FILE_PATH" | tail -n 1 | cut -d: -f 1)
                 if [ ! -z $LAST_MATCH_LINE ]; then
-                    sed -i --follow-symlinks $LAST_MATCH_LINE' a password     '"requisite"'    pam_pwhistory.so' "$PAM_FILE_PATH"
+                    sed -i --follow-symlinks $LAST_MATCH_LINE" a password     requisite    pam_pwhistory.so" "$PAM_FILE_PATH"
                 else
-                    echo 'password    '"requisite"'    pam_pwhistory.so' &gt;&gt; "$PAM_FILE_PATH"
+                    echo "password    requisite    pam_pwhistory.so" &gt;&gt; "$PAM_FILE_PATH"
                 fi
             fi
         fi
     fi
 else
-    if ! grep -qP '^\s*password\s+'"requisite"'\s+pam_pwhistory.so\s*.*' "/etc/pam.d/system-auth"; then
+    if ! grep -qP "^\s*password\s+requisite\s+pam_pwhistory.so\s*.*" "/etc/pam.d/system-auth"; then
         # Line matching group + control + module was not found. Check group + module.
         if [ "$(grep -cP '^\s*password\s+.*\s+pam_pwhistory.so\s*' "/etc/pam.d/system-auth")" -eq 1 ]; then
             # The control is updated only if one single line matches.
-            sed -i -E --follow-symlinks 's/^(\s*password\s+).*(\bpam_pwhistory.so.*)/\1'"requisite"' \2/' "/etc/pam.d/system-auth"
+            sed -i -E --follow-symlinks "s/^(\s*password\s+).*(\bpam_pwhistory.so.*)/\1requisite \2/" "/etc/pam.d/system-auth"
         else
             LAST_MATCH_LINE=$(grep -nP "^password.*requisite.*pam_pwquality\.so" "/etc/pam.d/system-auth" | tail -n 1 | cut -d: -f 1)
             if [ ! -z $LAST_MATCH_LINE ]; then
-                sed -i --follow-symlinks $LAST_MATCH_LINE' a password     '"requisite"'    pam_pwhistory.so' "/etc/pam.d/system-auth"
+                sed -i --follow-symlinks $LAST_MATCH_LINE" a password     requisite    pam_pwhistory.so" "/etc/pam.d/system-auth"
             else
-                echo 'password    '"requisite"'    pam_pwhistory.so' &gt;&gt; "/etc/pam.d/system-auth"
+                echo "password    requisite    pam_pwhistory.so" &gt;&gt; "/etc/pam.d/system-auth"
             fi
         fi
     fi
@@ -2738,8 +2764,8 @@ if [ -f $PWHISTORY_CONF ]; then
             authselect apply-changes -b
         fi
         
-    if grep -qP '^\s*password\s.*\bpam_pwhistory.so\s.*\bremember\b' "$PAM_FILE_PATH"; then
-        sed -i -E --follow-symlinks 's/(.*password.*pam_pwhistory.so.*)\bremember\b=?[[:alnum:]]*(.*)/\1\2/g' "$PAM_FILE_PATH"
+    if grep -qP "^\s*password\s.*\bpam_pwhistory.so\s.*\bremember\b" "$PAM_FILE_PATH"; then
+        sed -i -E --follow-symlinks "s/(.*password.*pam_pwhistory.so.*)\bremember\b=?[[:alnum:]]*(.*)/\1\2/g" "$PAM_FILE_PATH"
     fi
         if [ -f /usr/bin/authselect ]; then
             
@@ -2781,20 +2807,20 @@ else
 
         authselect apply-changes -b
     fi
-    if ! grep -qP '^\s*password\s+'"requisite"'\s+pam_pwhistory.so\s*.*' "$PAM_FILE_PATH"; then
+    if ! grep -qP "^\s*password\s+requisite\s+pam_pwhistory.so\s*.*" "$PAM_FILE_PATH"; then
         # Line matching group + control + module was not found. Check group + module.
         if [ "$(grep -cP '^\s*password\s+.*\s+pam_pwhistory.so\s*' "$PAM_FILE_PATH")" -eq 1 ]; then
             # The control is updated only if one single line matches.
-            sed -i -E --follow-symlinks 's/^(\s*password\s+).*(\bpam_pwhistory.so.*)/\1'"requisite"' \2/' "$PAM_FILE_PATH"
+            sed -i -E --follow-symlinks "s/^(\s*password\s+).*(\bpam_pwhistory.so.*)/\1requisite \2/" "$PAM_FILE_PATH"
         else
-            echo 'password    '"requisite"'    pam_pwhistory.so' &gt;&gt; "$PAM_FILE_PATH"
+            echo "password    requisite    pam_pwhistory.so" &gt;&gt; "$PAM_FILE_PATH"
         fi
     fi
     # Check the option
-    if ! grep -qP '^\s*password\s+'"requisite"'\s+pam_pwhistory.so\s*.*\sremember\b' "$PAM_FILE_PATH"; then
-        sed -i -E --follow-symlinks '/\s*password\s+'"requisite"'\s+pam_pwhistory.so.*/ s/$/ remember='"$var_password_pam_unix_remember"'/' "$PAM_FILE_PATH"
+    if ! grep -qP "^\s*password\s+requisite\s+pam_pwhistory.so\s*.*\sremember\b" "$PAM_FILE_PATH"; then
+        sed -i -E --follow-symlinks "/\s*password\s+requisite\s+pam_pwhistory.so.*/ s/$/ remember=$var_password_pam_unix_remember/" "$PAM_FILE_PATH"
     else
-        sed -i -E --follow-symlinks 's/(\s*password\s+'"requisite"'\s+pam_pwhistory.so\s+.*)('"remember"'=)[[:alnum:]]+\s*(.*)/\1\2'"$var_password_pam_unix_remember"' \3/' "$PAM_FILE_PATH"
+        sed -i -E --follow-symlinks "s/(\s*password\s+requisite\s+pam_pwhistory.so\s+.*)(remember=)[[:alnum:]]+\s*(.*)/\1\2$var_password_pam_unix_remember \3/" "$PAM_FILE_PATH"
     fi
     if [ -f /usr/bin/authselect ]; then
         
@@ -2811,12 +2837,10 @@ fi
 using <code>pam_faillock.so</code>.
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
-
 Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
 <code>deny = &lt;count&gt;</code>
 Where count should be less than or equal to
 <abbr title="from Profile/refine-value: xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_deny">3</abbr> and greater than 0.
-
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
@@ -3211,6 +3235,11 @@ the account.</div></td></tr><tr><td><span class="label label-warning">Severity:<
       when:
       - result_authselect_present.stat.exists
 
+    - name: Lock Accounts After Failed Password Attempts - Define a fact for control
+        already filtered in case filters are used
+      ansible.builtin.set_fact:
+        pam_module_control: ''
+
     - name: Lock Accounts After Failed Password Attempts - Ensure the "deny" option
         from "pam_faillock.so" is not present in {{ pam_file_path }}
       ansible.builtin.replace:
@@ -3382,6 +3411,11 @@ the account.</div></td></tr><tr><td><span class="label label-warning">Severity:<
             | basename }}
       when:
       - result_authselect_present.stat.exists
+
+    - name: Lock Accounts After Failed Password Attempts - Define a fact for control
+        already filtered in case filters are used
+      ansible.builtin.set_fact:
+        pam_module_control: ''
 
     - name: Lock Accounts After Failed Password Attempts - Ensure the "deny" option
         from "pam_faillock.so" is not present in {{ pam_file_path }}
@@ -3582,8 +3616,8 @@ if [ -f $FAILLOCK_CONF ]; then
                 authselect apply-changes -b
             fi
             
-        if grep -qP '^\s*auth\s.*\bpam_faillock.so\s.*\bdeny\b' "$PAM_FILE_PATH"; then
-            sed -i -E --follow-symlinks 's/(.*auth.*pam_faillock.so.*)\bdeny\b=?[[:alnum:]]*(.*)/\1\2/g' "$PAM_FILE_PATH"
+        if grep -qP "^\s*auth\s.*\bpam_faillock.so\s.*\bdeny\b" "$PAM_FILE_PATH"; then
+            sed -i -E --follow-symlinks "s/(.*auth.*pam_faillock.so.*)\bdeny\b=?[[:alnum:]]*(.*)/\1\2/g" "$PAM_FILE_PATH"
         fi
             if [ -f /usr/bin/authselect ]; then
                 
@@ -3986,6 +4020,11 @@ the account.</div></td></tr><tr><td><span class="label label-warning">Severity:<
       when:
       - result_authselect_present.stat.exists
 
+    - name: Configure the root Account for Failed Password Attempts - Define a fact
+        for control already filtered in case filters are used
+      ansible.builtin.set_fact:
+        pam_module_control: ''
+
     - name: Configure the root Account for Failed Password Attempts - Ensure the "even_deny_root"
         option from "pam_faillock.so" is not present in {{ pam_file_path }}
       ansible.builtin.replace:
@@ -4158,6 +4197,11 @@ the account.</div></td></tr><tr><td><span class="label label-warning">Severity:<
       when:
       - result_authselect_present.stat.exists
 
+    - name: Configure the root Account for Failed Password Attempts - Define a fact
+        for control already filtered in case filters are used
+      ansible.builtin.set_fact:
+        pam_module_control: ''
+
     - name: Configure the root Account for Failed Password Attempts - Ensure the "even_deny_root"
         option from "pam_faillock.so" is not present in {{ pam_file_path }}
       ansible.builtin.replace:
@@ -4318,8 +4362,8 @@ if [ -f $FAILLOCK_CONF ]; then
                 authselect apply-changes -b
             fi
             
-        if grep -qP '^\s*auth\s.*\bpam_faillock.so\s.*\beven_deny_root\b' "$PAM_FILE_PATH"; then
-            sed -i -E --follow-symlinks 's/(.*auth.*pam_faillock.so.*)\beven_deny_root\b=?[[:alnum:]]*(.*)/\1\2/g' "$PAM_FILE_PATH"
+        if grep -qP "^\s*auth\s.*\bpam_faillock.so\s.*\beven_deny_root\b" "$PAM_FILE_PATH"; then
+            sed -i -E --follow-symlinks "s/(.*auth.*pam_faillock.so.*)\beven_deny_root\b=?[[:alnum:]]*(.*)/\1\2/g" "$PAM_FILE_PATH"
         fi
             if [ -f /usr/bin/authselect ]; then
                 
@@ -4722,6 +4766,11 @@ Limits are imposed by locking the account.</div></td></tr><tr><td><span class="l
       when:
       - result_authselect_present.stat.exists
 
+    - name: Set Interval For Counting Failed Password Attempts - Define a fact for
+        control already filtered in case filters are used
+      ansible.builtin.set_fact:
+        pam_module_control: ''
+
     - name: Set Interval For Counting Failed Password Attempts - Ensure the "fail_interval"
         option from "pam_faillock.so" is not present in {{ pam_file_path }}
       ansible.builtin.replace:
@@ -4893,6 +4942,11 @@ Limits are imposed by locking the account.</div></td></tr><tr><td><span class="l
             | basename }}
       when:
       - result_authselect_present.stat.exists
+
+    - name: Set Interval For Counting Failed Password Attempts - Define a fact for
+        control already filtered in case filters are used
+      ansible.builtin.set_fact:
+        pam_module_control: ''
 
     - name: Set Interval For Counting Failed Password Attempts - Ensure the "fail_interval"
         option from "pam_faillock.so" is not present in {{ pam_file_path }}
@@ -5087,8 +5141,8 @@ if [ -f $FAILLOCK_CONF ]; then
                 authselect apply-changes -b
             fi
             
-        if grep -qP '^\s*auth\s.*\bpam_faillock.so\s.*\bfail_interval\b' "$PAM_FILE_PATH"; then
-            sed -i -E --follow-symlinks 's/(.*auth.*pam_faillock.so.*)\bfail_interval\b=?[[:alnum:]]*(.*)/\1\2/g' "$PAM_FILE_PATH"
+        if grep -qP "^\s*auth\s.*\bpam_faillock.so\s.*\bfail_interval\b" "$PAM_FILE_PATH"; then
+            sed -i -E --follow-symlinks "s/(.*auth.*pam_faillock.so.*)\bfail_interval\b=?[[:alnum:]]*(.*)/\1\2/g" "$PAM_FILE_PATH"
         fi
             if [ -f /usr/bin/authselect ]; then
                 
@@ -5119,11 +5173,9 @@ fi
                                   <a class="small" href="#xccdf_org.ssgproject.content_rule_accounts_passwords_pam_faillock_unlock_time">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <code>pam_faillock.so</code>.
 
-
 Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
 <code>unlock_time=&lt;interval-in-seconds&gt;</code> where
 <code>interval-in-seconds</code> is <code><abbr title="from Profile/refine-value: xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_unlock_time">0</abbr></code> or greater.
-
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -5528,6 +5580,11 @@ Limits are imposed by locking the account.</div></td></tr><tr><td><span class="l
       when:
       - result_authselect_present.stat.exists
 
+    - name: Set Lockout Time for Failed Password Attempts - Define a fact for control
+        already filtered in case filters are used
+      ansible.builtin.set_fact:
+        pam_module_control: ''
+
     - name: Set Lockout Time for Failed Password Attempts - Ensure the "unlock_time"
         option from "pam_faillock.so" is not present in {{ pam_file_path }}
       ansible.builtin.replace:
@@ -5699,6 +5756,11 @@ Limits are imposed by locking the account.</div></td></tr><tr><td><span class="l
             | basename }}
       when:
       - result_authselect_present.stat.exists
+
+    - name: Set Lockout Time for Failed Password Attempts - Define a fact for control
+        already filtered in case filters are used
+      ansible.builtin.set_fact:
+        pam_module_control: ''
 
     - name: Set Lockout Time for Failed Password Attempts - Ensure the "unlock_time"
         option from "pam_faillock.so" is not present in {{ pam_file_path }}
@@ -5901,8 +5963,8 @@ if [ -f $FAILLOCK_CONF ]; then
                 authselect apply-changes -b
             fi
             
-        if grep -qP '^\s*auth\s.*\bpam_faillock.so\s.*\bunlock_time\b' "$PAM_FILE_PATH"; then
-            sed -i -E --follow-symlinks 's/(.*auth.*pam_faillock.so.*)\bunlock_time\b=?[[:alnum:]]*(.*)/\1\2/g' "$PAM_FILE_PATH"
+        if grep -qP "^\s*auth\s.*\bpam_faillock.so\s.*\bunlock_time\b" "$PAM_FILE_PATH"; then
+            sed -i -E --follow-symlinks "s/(.*auth.*pam_faillock.so.*)\bunlock_time\b=?[[:alnum:]]*(.*)/\1\2/g" "$PAM_FILE_PATH"
         fi
             if [ -f /usr/bin/authselect ]; then
                 
@@ -6689,22 +6751,21 @@ fi
 <code>/etc/shadow</code> is SHA-512. This can be configured in several
 locations.</div></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_libuserconf" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_libuserconf" id="guide-tree-leaf-id92" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_set_password_hashing_algorithm"><td style="padding-left: 95px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_libuserconf"><span class="label label-default">Rule</span>  
                                 Set Password Hashing Algorithm in /etc/libuser.conf
-                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_libuserconf">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">In <code>/etc/libuser.conf</code>, add or correct the following line in its
-<code>[defaults]</code> section to ensure the system will use the SHA-512
+                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_libuserconf">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">In <code>/etc/libuser.conf</code>, add or correct the following line in its <code>[defaults]</code>
+section to ensure the system will use the <abbr title="from Benchmark/Value: xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam">sha512</abbr>
 algorithm for password hashing:
-<pre>crypt_style = sha512</pre>
-        </div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale">Passwords need to be protected at all times, and encryption is the standard
-method for protecting passwords. If passwords are not encrypted, they can
-be plainly read (i.e., clear text) and easily compromised. Passwords that
-are encrypted with a weak algorithm are no more protected than if they are
-kepy in plain text.
+<pre>crypt_style = <abbr title="from Benchmark/Value: xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam">sha512</abbr>
+         </pre>
+        </div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale">Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 <br>
          <br>
-This setting ensures user and group account administration utilities are
-configured to store only encrypted representations of passwords.
-Additionally, the <code>crypt_style</code> configuration option ensures the use
-of a strong hashing algorithm that makes password cracking attacks more
-difficult.</div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_libuserconf</td></tr><tr><td><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span></td><td class="identifiers"><table class="table table-striped table-bordered"><tr><td><a href="https://www.cisecurity.org/controls/">cis-csc</a></td><td>1, 12, 15, 16, 5</td></tr><tr><td><a href="https://www.fbi.gov/file-repository/cjis-security-policy-v5_5_20160601-2-1.pdf">cjis</a></td><td>5.6.2.2</td></tr><tr><td><a href="https://www.isaca.org/resources/cobit">cobit5</a></td><td>DSS05.04, DSS05.05, DSS05.07, DSS05.10, DSS06.03, DSS06.10</td></tr><tr><td><a href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-171.pdf">cui</a></td><td>3.13.11</td></tr><tr><td><a href="https://public.cyber.mil/stigs/cci/">disa</a></td><td>CCI-000196</td></tr><tr><td><a href="https://www.isa.org/products/isa-62443-2-1-2009-security-for-industrial-automat">isa-62443-2009</a></td><td>4.3.3.2.2, 4.3.3.5.1, 4.3.3.5.2, 4.3.3.6.1, 4.3.3.6.2, 4.3.3.6.3, 4.3.3.6.4, 4.3.3.6.5, 4.3.3.6.6, 4.3.3.6.7, 4.3.3.6.8, 4.3.3.6.9, 4.3.3.7.2, 4.3.3.7.4</td></tr><tr><td><a href="https://www.isa.org/products/ansi-isa-62443-3-3-99-03-03-2013-security-for-indu">isa-62443-2013</a></td><td>SR 1.1, SR 1.10, SR 1.2, SR 1.3, SR 1.4, SR 1.5, SR 1.7, SR 1.8, SR 1.9, SR 2.1</td></tr><tr><td><a href="https://www.cyber.gov.au/acsc/view-all-content/ism">ism</a></td><td>0418, 1055, 1402</td></tr><tr><td><a href="https://www.iso.org/contents/data/standard/05/45/54534.html">iso27001-2013</a></td><td>A.18.1.4, A.7.1.1, A.9.2.1, A.9.2.2, A.9.2.3, A.9.2.4, A.9.2.6, A.9.3.1, A.9.4.2, A.9.4.3</td></tr><tr><td><a href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">nist</a></td><td>IA-5(c), IA-5(1)(c), CM-6(a)</td></tr><tr><td><a href="https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.04162018.pdf">nist-csf</a></td><td>PR.AC-1, PR.AC-6, PR.AC-7</td></tr><tr><td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-2-1.pdf">pcidss</a></td><td>Req-8.2.1</td></tr><tr><td><a href="https://public.cyber.mil/stigs/downloads/?_dl_facet_stigs=operating-systems%2Cgeneral-purpose-os">os-srg</a></td><td>SRG-OS-000073-GPOS-00041</td></tr><tr><td><a href="https://docs-prv.pcisecuritystandards.org/PCI%20DSS/Standard/PCI-DSS-v4_0.pdf">pcidss4</a></td><td>8.3.2</td></tr></table></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#id93" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br><div class="panel-collapse collapse" id="id93"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>restrict</td></tr></table><pre><code>- name: Gather the package facts
+This setting ensures user and group account administration utilities are configured to store
+only encrypted representations of passwords. Additionally, the <code>crypt_style</code>
+configuration option in <code>/etc/libuser.conf</code> ensures the use of a strong hashing
+algorithm that makes password cracking attacks more difficult.</div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_libuserconf</td></tr><tr><td><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span></td><td class="identifiers"><table class="table table-striped table-bordered"><tr><td><a href="https://www.cisecurity.org/controls/">cis-csc</a></td><td>1, 12, 15, 16, 5</td></tr><tr><td><a href="https://www.fbi.gov/file-repository/cjis-security-policy-v5_5_20160601-2-1.pdf">cjis</a></td><td>5.6.2.2</td></tr><tr><td><a href="https://www.isaca.org/resources/cobit">cobit5</a></td><td>DSS05.04, DSS05.05, DSS05.07, DSS05.10, DSS06.03, DSS06.10</td></tr><tr><td><a href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-171.pdf">cui</a></td><td>3.13.11</td></tr><tr><td><a href="https://public.cyber.mil/stigs/cci/">disa</a></td><td>CCI-000196</td></tr><tr><td><a href="https://www.isa.org/products/isa-62443-2-1-2009-security-for-industrial-automat">isa-62443-2009</a></td><td>4.3.3.2.2, 4.3.3.5.1, 4.3.3.5.2, 4.3.3.6.1, 4.3.3.6.2, 4.3.3.6.3, 4.3.3.6.4, 4.3.3.6.5, 4.3.3.6.6, 4.3.3.6.7, 4.3.3.6.8, 4.3.3.6.9, 4.3.3.7.2, 4.3.3.7.4</td></tr><tr><td><a href="https://www.isa.org/products/ansi-isa-62443-3-3-99-03-03-2013-security-for-indu">isa-62443-2013</a></td><td>SR 1.1, SR 1.10, SR 1.2, SR 1.3, SR 1.4, SR 1.5, SR 1.7, SR 1.8, SR 1.9, SR 2.1</td></tr><tr><td><a href="https://www.cyber.gov.au/acsc/view-all-content/ism">ism</a></td><td>0418, 1055, 1402</td></tr><tr><td><a href="https://www.iso.org/contents/data/standard/05/45/54534.html">iso27001-2013</a></td><td>A.18.1.4, A.7.1.1, A.9.2.1, A.9.2.2, A.9.2.3, A.9.2.4, A.9.2.6, A.9.3.1, A.9.4.2, A.9.4.3</td></tr><tr><td><a href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">nist</a></td><td>IA-5(c), IA-5(1)(c), CM-6(a)</td></tr><tr><td><a href="https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.04162018.pdf">nist-csf</a></td><td>PR.AC-1, PR.AC-6, PR.AC-7</td></tr><tr><td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-2-1.pdf">pcidss</a></td><td>Req-8.2.1</td></tr><tr><td><a href="https://public.cyber.mil/stigs/downloads/?_dl_facet_stigs=operating-systems%2Cgeneral-purpose-os">os-srg</a></td><td>SRG-OS-000073-GPOS-00041</td></tr><tr><td><a href="https://docs-prv.pcisecuritystandards.org/PCI%20DSS/Standard/PCI-DSS-v4_0.pdf">pcidss4</a></td><td>8.3.2</td></tr></table></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#id93" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br><div class="panel-collapse collapse" id="id93"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>restrict</td></tr></table><pre><code>- name: Gather the package facts
   package_facts:
     manager: auto
   tags:
@@ -6721,13 +6782,19 @@ difficult.</div></td></tr><tr><td><span class="label label-warning">Severity:</s
   - no_reboot_needed
   - restrict_strategy
   - set_password_hashing_algorithm_libuserconf
+- name: XCCDF Value var_password_hashing_algorithm_pam # promote to variable
+  set_fact:
+    var_password_hashing_algorithm_pam: !!str <abbr title="from Benchmark/Value: xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam">sha512</abbr>
+  tags:
+    - always
 
-- name: Set Password Hashing Algorithm in /etc/libuser.conf
-  lineinfile:
+- name: Set Password Hashing Algorithm in /etc/libuser.conf - Set Password Hashing
+    Algorithm in /etc/libuser.conf
+  ansible.builtin.lineinfile:
     dest: /etc/libuser.conf
     insertafter: ^\s*\[defaults]
     regexp: ^#?crypt_style
-    line: crypt_style = sha512
+    line: crypt_style = {{ var_password_hashing_algorithm_pam }}
     state: present
     create: true
   when: '"libuser" in ansible_facts.packages'
@@ -6748,17 +6815,19 @@ difficult.</div></td></tr><tr><td><span class="label label-warning">Severity:</s
 </code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id94" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id94"><pre><code># Remediation is applicable only in certain platforms
 if rpm --quiet -q libuser; then
 
+var_password_hashing_algorithm_pam='<abbr title="from Benchmark/Value: xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam">sha512</abbr>'
+
 LIBUSER_CONF="/etc/libuser.conf"
 CRYPT_STYLE_REGEX='[[:space:]]*\[defaults](.*(\n)+)+?[[:space:]]*crypt_style[[:space:]]*'
 
 # Try find crypt_style in [defaults] section. If it is here, then change algorithm to sha512.
 # If it isn't here, then add it to [defaults] section.
 if grep -qzosP $CRYPT_STYLE_REGEX $LIBUSER_CONF ; then
-        sed -i "s/\(crypt_style[[:space:]]*=[[:space:]]*\).*/\1sha512/g" $LIBUSER_CONF
+        sed -i "s/\(crypt_style[[:space:]]*=[[:space:]]*\).*/\1$var_password_hashing_algorithm_pam/g" $LIBUSER_CONF
 elif grep -qs "\[defaults]" $LIBUSER_CONF ; then
-        sed -i "/[[:space:]]*\[defaults]/a crypt_style = sha512" $LIBUSER_CONF
+        sed -i "/[[:space:]]*\[defaults]/a crypt_style = $var_password_hashing_algorithm_pam" $LIBUSER_CONF
 else
-        echo -e "[defaults]\ncrypt_style = sha512" &gt;&gt; $LIBUSER_CONF
+        echo -e "[defaults]\ncrypt_style = $var_password_hashing_algorithm_pam" &gt;&gt; $LIBUSER_CONF
 fi
 
 else
@@ -6766,13 +6835,14 @@ else
 fi
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_logindefs" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_logindefs" id="guide-tree-leaf-id95" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_set_password_hashing_algorithm"><td style="padding-left: 95px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_logindefs"><span class="label label-default">Rule</span>  
                                 Set Password Hashing Algorithm in /etc/login.defs
-                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_logindefs">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">In <code>/etc/login.defs</code>, add or correct the following line to ensure
-the system will use <abbr title="from Benchmark/Value: xccdf_org.ssgproject.content_value_var_password_hashing_algorithm">SHA512</abbr> as the hashing algorithm:
+                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_logindefs">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">In <code>/etc/login.defs</code>, add or update the following line to ensure the system will use
+<abbr title="from Benchmark/Value: xccdf_org.ssgproject.content_value_var_password_hashing_algorithm">SHA512</abbr> as the hashing algorithm:
 <pre>ENCRYPT_METHOD <abbr title="from Benchmark/Value: xccdf_org.ssgproject.content_value_var_password_hashing_algorithm">SHA512</abbr>
          </pre>
-        </div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale">Passwords need to be protected at all times, and encryption is the standard method for protecting passwords.
-If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised. Passwords
-that are encrypted with a weak algorithm are no more protected than if they are kept in plain text.
+        </div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale">Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 <br>
          <br>
 Using a stronger hashing algorithm makes password cracking attacks more difficult.</div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_logindefs</td></tr><tr><td><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span></td><td class="identifiers"><table class="table table-striped table-bordered"><tr><td><a href="https://www.cisecurity.org/controls/">cis-csc</a></td><td>1, 12, 15, 16, 5</td></tr><tr><td><a href="https://www.fbi.gov/file-repository/cjis-security-policy-v5_5_20160601-2-1.pdf">cjis</a></td><td>5.6.2.2</td></tr><tr><td><a href="https://www.isaca.org/resources/cobit">cobit5</a></td><td>DSS05.04, DSS05.05, DSS05.07, DSS05.10, DSS06.03, DSS06.10</td></tr><tr><td><a href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-171.pdf">cui</a></td><td>3.13.11</td></tr><tr><td><a href="https://public.cyber.mil/stigs/cci/">disa</a></td><td>CCI-000196</td></tr><tr><td><a href="https://www.isa.org/products/isa-62443-2-1-2009-security-for-industrial-automat">isa-62443-2009</a></td><td>4.3.3.2.2, 4.3.3.5.1, 4.3.3.5.2, 4.3.3.6.1, 4.3.3.6.2, 4.3.3.6.3, 4.3.3.6.4, 4.3.3.6.5, 4.3.3.6.6, 4.3.3.6.7, 4.3.3.6.8, 4.3.3.6.9, 4.3.3.7.2, 4.3.3.7.4</td></tr><tr><td><a href="https://www.isa.org/products/ansi-isa-62443-3-3-99-03-03-2013-security-for-indu">isa-62443-2013</a></td><td>SR 1.1, SR 1.10, SR 1.2, SR 1.3, SR 1.4, SR 1.5, SR 1.7, SR 1.8, SR 1.9, SR 2.1</td></tr><tr><td><a href="https://www.cyber.gov.au/acsc/view-all-content/ism">ism</a></td><td>0418, 1055, 1402</td></tr><tr><td><a href="https://www.iso.org/contents/data/standard/05/45/54534.html">iso27001-2013</a></td><td>A.18.1.4, A.7.1.1, A.9.2.1, A.9.2.2, A.9.2.3, A.9.2.4, A.9.2.6, A.9.3.1, A.9.4.2, A.9.4.3</td></tr><tr><td><a href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">nist</a></td><td>IA-5(c), IA-5(1)(c), CM-6(a)</td></tr><tr><td><a href="https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.04162018.pdf">nist-csf</a></td><td>PR.AC-1, PR.AC-6, PR.AC-7</td></tr><tr><td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-2-1.pdf">pcidss</a></td><td>Req-8.2.1</td></tr><tr><td><a href="https://public.cyber.mil/stigs/downloads/?_dl_facet_stigs=operating-systems%2Cgeneral-purpose-os">os-srg</a></td><td>SRG-OS-000073-GPOS-00041</td></tr><tr><td><a href="https://docs-prv.pcisecuritystandards.org/PCI%20DSS/Standard/PCI-DSS-v4_0.pdf">pcidss4</a></td><td>8.3.2</td></tr></table></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#id96" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br><div class="panel-collapse collapse" id="id96"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>restrict</td></tr></table><pre><code>- name: Gather the package facts
@@ -6850,32 +6920,37 @@ else
 fi
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_passwordauth" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_passwordauth" id="guide-tree-leaf-id98" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_set_password_hashing_algorithm"><td style="padding-left: 95px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_passwordauth"><span class="label label-default">Rule</span>  
                                 Set PAM''s Password Hashing Algorithm - password-auth
-                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_passwordauth">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">The PAM system service can be configured to only store encrypted
-representations of passwords. In
-<code>/etc/pam.d/password-auth</code>,
-the
-<code>password</code> section of the file controls which PAM modules execute
-during a password change. Set the <code>pam_unix.so</code> module in the
-<code>password</code> section to include the argument <code>sha512</code>, as shown
-below:
+                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_passwordauth">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">The PAM system service can be configured to only store encrypted representations of passwords.
+In <code>/etc/pam.d/password-auth</code>, the <code>password</code> section of the file controls which
+PAM modules to execute during a password change.
+
+Set the <code>pam_unix.so</code> module in the <code>password</code> section to include the option
+<code><abbr title="from Benchmark/Value: xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam">sha512</abbr></code> and no other hashing
+algorithms as shown below:
 <br>
-         <pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i>
+         <pre>password    sufficient    pam_unix.so <abbr title="from Benchmark/Value: xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam">sha512</abbr>
+          <i>other arguments...</i>
          </pre>
          <br>
-This will help ensure when local users change their passwords, hashes for
-the new passwords will be generated using the SHA-512 algorithm. This is
-the default.</div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale">Passwords need to be protected at all times, and encryption is the standard
-method for protecting passwords. If passwords are not encrypted, they can
-be plainly read (i.e., clear text) and easily compromised. Passwords that
-are encrypted with a weak algorithm are no more protected than if they are
-kepy in plain text.
+This will help ensure that new passwords for local users will be stored using the
+<abbr title="from Benchmark/Value: xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam">sha512</abbr> algorithm.</div><div class="panel panel-warning"><div class="panel-heading"><span class="label label-warning">Warning:</span> 
+                                        The hashing algorithms to be used with pam_unix.so are defined with independent module
+options. There are at least 7 possible algorithms and likely more algorithms will be
+introduced along the time. Due the the number of options and its possible combinations,
+the use of multiple hashing algorithm options may bring unexpected behaviors to the
+system. For this reason the check will pass only when one hashing algorithm option is
+defined and is aligned to the "var_password_hashing_algorithm_pam" variable. The
+remediation will ensure the correct option and remove any other extra hashing algorithm
+option.</div></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale">Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 <br>
          <br>
-This setting ensures user and group account administration utilities are
-configured to store only encrypted representations of passwords.
-Additionally, the <code>crypt_style</code> configuration option ensures the use
-of a strong hashing algorithm that makes password cracking attacks more
-difficult.</div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_passwordauth</td></tr><tr><td><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span></td><td class="identifiers"><table class="table table-striped table-bordered"><tr><td><a href="https://www.cisecurity.org/controls/">cis-csc</a></td><td>1, 12, 15, 16, 5</td></tr><tr><td><a href="https://www.fbi.gov/file-repository/cjis-security-policy-v5_5_20160601-2-1.pdf">cjis</a></td><td>5.6.2.2</td></tr><tr><td><a href="https://www.isaca.org/resources/cobit">cobit5</a></td><td>DSS05.04, DSS05.05, DSS05.07, DSS05.10, DSS06.03, DSS06.10</td></tr><tr><td><a href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-171.pdf">cui</a></td><td>3.13.11</td></tr><tr><td><a href="https://public.cyber.mil/stigs/cci/">disa</a></td><td>CCI-000196, CCI-000803</td></tr><tr><td><a href="https://www.isa.org/products/isa-62443-2-1-2009-security-for-industrial-automat">isa-62443-2009</a></td><td>4.3.3.2.2, 4.3.3.5.1, 4.3.3.5.2, 4.3.3.6.1, 4.3.3.6.2, 4.3.3.6.3, 4.3.3.6.4, 4.3.3.6.5, 4.3.3.6.6, 4.3.3.6.7, 4.3.3.6.8, 4.3.3.6.9, 4.3.3.7.2, 4.3.3.7.4</td></tr><tr><td><a href="https://www.isa.org/products/ansi-isa-62443-3-3-99-03-03-2013-security-for-indu">isa-62443-2013</a></td><td>SR 1.1, SR 1.10, SR 1.2, SR 1.3, SR 1.4, SR 1.5, SR 1.7, SR 1.8, SR 1.9, SR 2.1</td></tr><tr><td><a href="https://www.cyber.gov.au/acsc/view-all-content/ism">ism</a></td><td>0418, 1055, 1402</td></tr><tr><td><a href="https://www.iso.org/contents/data/standard/05/45/54534.html">iso27001-2013</a></td><td>A.18.1.4, A.7.1.1, A.9.2.1, A.9.2.2, A.9.2.3, A.9.2.4, A.9.2.6, A.9.3.1, A.9.4.2, A.9.4.3</td></tr><tr><td><a href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">nist</a></td><td>IA-5(c), IA-5(1)(c), CM-6(a)</td></tr><tr><td><a href="https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.04162018.pdf">nist-csf</a></td><td>PR.AC-1, PR.AC-6, PR.AC-7</td></tr><tr><td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-2-1.pdf">pcidss</a></td><td>Req-8.2.1</td></tr><tr><td><a href="https://public.cyber.mil/stigs/downloads/?_dl_facet_stigs=operating-systems%2Cgeneral-purpose-os">os-srg</a></td><td>SRG-OS-000073-GPOS-00041, SRG-OS-000120-GPOS-00061</td></tr></table></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#id99" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br><div class="panel-collapse collapse" id="id99"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>medium</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Gather the package facts
+This setting ensures user and group account administration utilities are configured to store
+only encrypted representations of passwords. Additionally, the <code>crypt_style</code>
+configuration option in <code>/etc/libuser.conf</code> ensures the use of a strong hashing
+algorithm that makes password cracking attacks more difficult.</div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_passwordauth</td></tr><tr><td><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span></td><td class="identifiers"><table class="table table-striped table-bordered"><tr><td><a href="https://www.cisecurity.org/controls/">cis-csc</a></td><td>1, 12, 15, 16, 5</td></tr><tr><td><a href="https://www.fbi.gov/file-repository/cjis-security-policy-v5_5_20160601-2-1.pdf">cjis</a></td><td>5.6.2.2</td></tr><tr><td><a href="https://www.isaca.org/resources/cobit">cobit5</a></td><td>DSS05.04, DSS05.05, DSS05.07, DSS05.10, DSS06.03, DSS06.10</td></tr><tr><td><a href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-171.pdf">cui</a></td><td>3.13.11</td></tr><tr><td><a href="https://public.cyber.mil/stigs/cci/">disa</a></td><td>CCI-000196, CCI-000803</td></tr><tr><td><a href="https://www.isa.org/products/isa-62443-2-1-2009-security-for-industrial-automat">isa-62443-2009</a></td><td>4.3.3.2.2, 4.3.3.5.1, 4.3.3.5.2, 4.3.3.6.1, 4.3.3.6.2, 4.3.3.6.3, 4.3.3.6.4, 4.3.3.6.5, 4.3.3.6.6, 4.3.3.6.7, 4.3.3.6.8, 4.3.3.6.9, 4.3.3.7.2, 4.3.3.7.4</td></tr><tr><td><a href="https://www.isa.org/products/ansi-isa-62443-3-3-99-03-03-2013-security-for-indu">isa-62443-2013</a></td><td>SR 1.1, SR 1.10, SR 1.2, SR 1.3, SR 1.4, SR 1.5, SR 1.7, SR 1.8, SR 1.9, SR 2.1</td></tr><tr><td><a href="https://www.cyber.gov.au/acsc/view-all-content/ism">ism</a></td><td>0418, 1055, 1402</td></tr><tr><td><a href="https://www.iso.org/contents/data/standard/05/45/54534.html">iso27001-2013</a></td><td>A.18.1.4, A.7.1.1, A.9.2.1, A.9.2.2, A.9.2.3, A.9.2.4, A.9.2.6, A.9.3.1, A.9.4.2, A.9.4.3</td></tr><tr><td><a href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">nist</a></td><td>IA-5(c), IA-5(1)(c), CM-6(a)</td></tr><tr><td><a href="https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.04162018.pdf">nist-csf</a></td><td>PR.AC-1, PR.AC-6, PR.AC-7</td></tr><tr><td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-2-1.pdf">pcidss</a></td><td>Req-8.2.1</td></tr><tr><td><a href="https://public.cyber.mil/stigs/downloads/?_dl_facet_stigs=operating-systems%2Cgeneral-purpose-os">os-srg</a></td><td>SRG-OS-000073-GPOS-00041, SRG-OS-000120-GPOS-00061</td></tr></table></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#id99" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br><div class="panel-collapse collapse" id="id99"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>medium</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Gather the package facts
   package_facts:
     manager: auto
   tags:
@@ -6891,6 +6966,11 @@ difficult.</div></td></tr><tr><td><span class="label label-warning">Severity:</s
   - medium_severity
   - no_reboot_needed
   - set_password_hashing_algorithm_passwordauth
+- name: XCCDF Value var_password_hashing_algorithm_pam # promote to variable
+  set_fact:
+    var_password_hashing_algorithm_pam: !!str <abbr title="from Benchmark/Value: xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam">sha512</abbr>
+  tags:
+    - always
 
 - name: Set PAM's Password Hashing Algorithm - password-auth - Check if /etc/pam.d/password-auth
     file is present
@@ -7060,11 +7140,16 @@ difficult.</div></td></tr><tr><td><span class="label label-warning">Severity:</s
     when:
     - result_authselect_present.stat.exists
 
+  - name: Set PAM's Password Hashing Algorithm - password-auth - Define a fact for
+      control already filtered in case filters are used
+    ansible.builtin.set_fact:
+      pam_module_control: sufficient
+
   - name: Set PAM's Password Hashing Algorithm - password-auth - Check if expected
       PAM module line is present in {{ pam_file_path }}
     ansible.builtin.lineinfile:
       path: '{{ pam_file_path }}'
-      regexp: ^\s*password\s+{{ 'sufficient' | regex_escape() }}\s+pam_unix.so\s*.*
+      regexp: ^\s*password\s+{{ pam_module_control | regex_escape() }}\s+pam_unix.so\s*.*
       state: absent
     check_mode: true
     changed_when: false
@@ -7089,7 +7174,7 @@ difficult.</div></td></tr><tr><td><span class="label label-warning">Severity:</s
       ansible.builtin.replace:
         dest: '{{ pam_file_path }}'
         regexp: ^(\s*password\s+).*(\bpam_unix.so.*)
-        replace: \1sufficient \2
+        replace: \1{{ pam_module_control }} \2
       register: result_pam_module_edit
       when:
       - result_pam_line_other_control_present.found == 1
@@ -7098,7 +7183,7 @@ difficult.</div></td></tr><tr><td><span class="label label-warning">Severity:</s
         PAM module line is included in {{ pam_file_path }}
       ansible.builtin.lineinfile:
         dest: '{{ pam_file_path }}'
-        line: password    sufficient    pam_unix.so
+        line: password    {{ pam_module_control }}    pam_unix.so
       register: result_pam_module_add
       when:
       - result_pam_line_other_control_present.found == 0 or result_pam_line_other_control_present.found
@@ -7118,27 +7203,34 @@ difficult.</div></td></tr><tr><td><span class="label label-warning">Severity:</s
     - result_pam_line_present.found is defined
     - result_pam_line_present.found == 0
 
+  - name: Set PAM's Password Hashing Algorithm - password-auth - Define a fact for
+      control already filtered in case filters are used
+    ansible.builtin.set_fact:
+      pam_module_control: sufficient
+
   - name: Set PAM's Password Hashing Algorithm - password-auth - Check if the required
       PAM module option is present in {{ pam_file_path }}
     ansible.builtin.lineinfile:
       path: '{{ pam_file_path }}'
-      regexp: ^\s*password\s+{{ 'sufficient' | regex_escape() }}\s+pam_unix.so\s*.*\ssha512\b
+      regexp: ^\s*password\s+{{ pam_module_control | regex_escape() }}\s+pam_unix.so\s*.*\s{{
+        var_password_hashing_algorithm_pam }}\b
       state: absent
     check_mode: true
     changed_when: false
-    register: result_pam_module_sha512_option_present
+    register: result_pam_module_set_password_hashing_algorithm_passwordauth_option_present
 
-  - name: Set PAM's Password Hashing Algorithm - password-auth - Ensure the "sha512"
-      PAM option for "pam_unix.so" is included in {{ pam_file_path }}
+  - name: Set PAM's Password Hashing Algorithm - password-auth - Ensure the "{{ var_password_hashing_algorithm_pam
+      }}" PAM option for "pam_unix.so" is included in {{ pam_file_path }}
     ansible.builtin.lineinfile:
       path: '{{ pam_file_path }}'
       backrefs: true
-      regexp: ^(\s*password\s+{{ 'sufficient' | regex_escape() }}\s+pam_unix.so.*)
-      line: \1 sha512
+      regexp: ^(\s*password\s+{{ pam_module_control | regex_escape() }}\s+pam_unix.so.*)
+      line: \1 {{ var_password_hashing_algorithm_pam }}
       state: present
-    register: result_pam_sha512_add
+    register: result_pam_set_password_hashing_algorithm_passwordauth_add
     when:
-    - result_pam_module_sha512_option_present.found == 0
+    - result_pam_module_set_password_hashing_algorithm_passwordauth_option_present.found
+      == 0
 
   - name: Set PAM's Password Hashing Algorithm - password-auth - Ensure authselect
       changes are applied
@@ -7147,8 +7239,217 @@ difficult.</div></td></tr><tr><td><span class="label label-warning">Severity:</s
     when:
     - result_authselect_present.stat.exists
     - |-
-      (result_pam_sha512_add is defined and result_pam_sha512_add.changed)
-       or (result_pam_sha512_edit is defined and result_pam_sha512_edit.changed)
+      (result_pam_set_password_hashing_algorithm_passwordauth_add is defined and result_pam_set_password_hashing_algorithm_passwordauth_add.changed)
+       or (result_pam_set_password_hashing_algorithm_passwordauth_edit is defined and result_pam_set_password_hashing_algorithm_passwordauth_edit.changed)
+  when:
+  - '"pam" in ansible_facts.packages'
+  - result_pam_file_present.stat.exists
+  tags:
+  - CJIS-5.6.2.2
+  - NIST-800-171-3.13.11
+  - NIST-800-53-CM-6(a)
+  - NIST-800-53-IA-5(1)(c)
+  - NIST-800-53-IA-5(c)
+  - PCI-DSS-Req-8.2.1
+  - configure_strategy
+  - low_complexity
+  - medium_disruption
+  - medium_severity
+  - no_reboot_needed
+  - set_password_hashing_algorithm_passwordauth
+
+- name: Set PAM's Password Hashing Algorithm - password-auth - Check if /etc/pam.d/password-auth
+    File is Present
+  ansible.builtin.stat:
+    path: /etc/pam.d/password-auth
+  register: result_pam_file_present
+  when: '"pam" in ansible_facts.packages'
+  tags:
+  - CJIS-5.6.2.2
+  - NIST-800-171-3.13.11
+  - NIST-800-53-CM-6(a)
+  - NIST-800-53-IA-5(1)(c)
+  - NIST-800-53-IA-5(c)
+  - PCI-DSS-Req-8.2.1
+  - configure_strategy
+  - low_complexity
+  - medium_disruption
+  - medium_severity
+  - no_reboot_needed
+  - set_password_hashing_algorithm_passwordauth
+
+- name: Set PAM's Password Hashing Algorithm - password-auth - Check The Proper Remediation
+    For The System
+  block:
+
+  - name: Set PAM's Password Hashing Algorithm - password-auth - Define the PAM file
+      to be edited as a local fact
+    ansible.builtin.set_fact:
+      pam_file_path: /etc/pam.d/password-auth
+
+  - name: Set PAM's Password Hashing Algorithm - password-auth - Check if system relies
+      on authselect tool
+    ansible.builtin.stat:
+      path: /usr/bin/authselect
+    register: result_authselect_present
+
+  - name: Set PAM's Password Hashing Algorithm - password-auth - Ensure authselect
+      custom profile is used if authselect is present
+    block:
+
+    - name: Set PAM's Password Hashing Algorithm - password-auth - Check integrity
+        of authselect current profile
+      ansible.builtin.command:
+        cmd: authselect check
+      register: result_authselect_check_cmd
+      changed_when: false
+      failed_when: false
+
+    - name: Set PAM's Password Hashing Algorithm - password-auth - Informative message
+        based on the authselect integrity check result
+      ansible.builtin.assert:
+        that:
+        - result_authselect_check_cmd.rc == 0
+        fail_msg:
+        - authselect integrity check failed. Remediation aborted!
+        - This remediation could not be applied because an authselect profile was
+          not selected or the selected profile is not intact.
+        - It is not recommended to manually edit the PAM files when authselect tool
+          is available.
+        - In cases where the default authselect profile does not cover a specific
+          demand, a custom authselect profile is recommended.
+        success_msg:
+        - authselect integrity check passed
+
+    - name: Set PAM's Password Hashing Algorithm - password-auth - Get authselect
+        current profile
+      ansible.builtin.shell:
+        cmd: authselect current -r | awk '{ print $1 }'
+      register: result_authselect_profile
+      changed_when: false
+      when:
+      - result_authselect_check_cmd is success
+
+    - name: Set PAM's Password Hashing Algorithm - password-auth - Define the current
+        authselect profile as a local fact
+      ansible.builtin.set_fact:
+        authselect_current_profile: '{{ result_authselect_profile.stdout }}'
+        authselect_custom_profile: '{{ result_authselect_profile.stdout }}'
+      when:
+      - result_authselect_profile is not skipped
+      - result_authselect_profile.stdout is match("custom/")
+
+    - name: Set PAM's Password Hashing Algorithm - password-auth - Define the new
+        authselect custom profile as a local fact
+      ansible.builtin.set_fact:
+        authselect_current_profile: '{{ result_authselect_profile.stdout }}'
+        authselect_custom_profile: custom/hardening
+      when:
+      - result_authselect_profile is not skipped
+      - result_authselect_profile.stdout is not match("custom/")
+
+    - name: Set PAM's Password Hashing Algorithm - password-auth - Get authselect
+        current features to also enable them in the custom profile
+      ansible.builtin.shell:
+        cmd: authselect current | tail -n+3 | awk '{ print $2 }'
+      register: result_authselect_features
+      changed_when: false
+      when:
+      - result_authselect_profile is not skipped
+      - authselect_current_profile is not match("custom/")
+
+    - name: Set PAM's Password Hashing Algorithm - password-auth - Check if any custom
+        profile with the same name was already created
+      ansible.builtin.stat:
+        path: /etc/authselect/{{ authselect_custom_profile }}
+      register: result_authselect_custom_profile_present
+      changed_when: false
+      when:
+      - authselect_current_profile is not match("custom/")
+
+    - name: Set PAM's Password Hashing Algorithm - password-auth - Create an authselect
+        custom profile based on the current profile
+      ansible.builtin.command:
+        cmd: authselect create-profile hardening -b {{ authselect_current_profile
+          }}
+      when:
+      - result_authselect_check_cmd is success
+      - authselect_current_profile is not match("custom/")
+      - not result_authselect_custom_profile_present.stat.exists
+
+    - name: Set PAM's Password Hashing Algorithm - password-auth - Ensure authselect
+        changes are applied
+      ansible.builtin.command:
+        cmd: authselect apply-changes -b --backup=before-hardening-custom-profile
+      when:
+      - result_authselect_check_cmd is success
+      - result_authselect_profile is not skipped
+      - authselect_current_profile is not match("custom/")
+      - authselect_custom_profile is not match(authselect_current_profile)
+
+    - name: Set PAM's Password Hashing Algorithm - password-auth - Ensure the authselect
+        custom profile is selected
+      ansible.builtin.command:
+        cmd: authselect select {{ authselect_custom_profile }}
+      register: result_pam_authselect_select_profile
+      when:
+      - result_authselect_check_cmd is success
+      - result_authselect_profile is not skipped
+      - authselect_current_profile is not match("custom/")
+      - authselect_custom_profile is not match(authselect_current_profile)
+
+    - name: Set PAM's Password Hashing Algorithm - password-auth - Restore the authselect
+        features in the custom profile
+      ansible.builtin.command:
+        cmd: authselect enable-feature {{ item }}
+      loop: '{{ result_authselect_features.stdout_lines }}'
+      register: result_pam_authselect_restore_features
+      when:
+      - result_authselect_profile is not skipped
+      - result_authselect_features is not skipped
+      - result_pam_authselect_select_profile is not skipped
+
+    - name: Set PAM's Password Hashing Algorithm - password-auth - Ensure authselect
+        changes are applied
+      ansible.builtin.command:
+        cmd: authselect apply-changes -b --backup=after-hardening-custom-profile
+      when:
+      - result_authselect_check_cmd is success
+      - result_authselect_profile is not skipped
+      - result_pam_authselect_restore_features is not skipped
+
+    - name: Set PAM's Password Hashing Algorithm - password-auth - Change the PAM
+        file to be edited according to the custom authselect profile
+      ansible.builtin.set_fact:
+        pam_file_path: /etc/authselect/{{ authselect_custom_profile }}/{{ pam_file_path
+          | basename }}
+    when:
+    - result_authselect_present.stat.exists
+
+  - name: Set PAM's Password Hashing Algorithm - password-auth - Ensure That Only
+      the Correct Hashing Algorithm Option For pam_unix.so Is Used in /etc/pam.d/password-auth
+    ansible.builtin.replace:
+      dest: '{{ pam_file_path }}'
+      regexp: (^\s*password.*pam_unix\.so.*)\b{{ item }}\b\s*(.*)
+      replace: \1\2
+    when: item != var_password_hashing_algorithm_pam
+    loop:
+    - sha512
+    - yescrypt
+    - gost_yescrypt
+    - blowfish
+    - sha256
+    - md5
+    - bigcrypt
+    register: result_pam_hashing_options_removal
+
+  - name: Set PAM's Password Hashing Algorithm - password-auth - Ensure authselect
+      changes are applied
+    ansible.builtin.command:
+      cmd: authselect apply-changes -b
+    when:
+    - result_authselect_present.stat.exists
+    - result_pam_hashing_options_removal is changed
   when:
   - '"pam" in ansible_facts.packages'
   - result_pam_file_present.stat.exists
@@ -7168,8 +7469,12 @@ difficult.</div></td></tr><tr><td><span class="label label-warning">Severity:</s
 </code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id100" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id100"><pre><code># Remediation is applicable only in certain platforms
 if rpm --quiet -q pam; then
 
-if [ -e "/etc/pam.d/password-auth" ] ; then
-    PAM_FILE_PATH="/etc/pam.d/password-auth"
+var_password_hashing_algorithm_pam='<abbr title="from Benchmark/Value: xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam">sha512</abbr>'
+
+PAM_FILE_PATH="/etc/pam.d/password-auth"
+
+if [ -e "$PAM_FILE_PATH" ] ; then
+    PAM_FILE_PATH="$PAM_FILE_PATH"
     if [ -f /usr/bin/authselect ]; then
         
         if ! authselect check; then
@@ -7196,61 +7501,122 @@ if [ -e "/etc/pam.d/password-auth" ] ; then
             
             authselect apply-changes -b --backup=after-hardening-custom-profile
         fi
-        PAM_FILE_NAME=$(basename "/etc/pam.d/password-auth")
+        PAM_FILE_NAME=$(basename "$PAM_FILE_PATH")
         PAM_FILE_PATH="/etc/authselect/$CURRENT_PROFILE/$PAM_FILE_NAME"
 
         authselect apply-changes -b
     fi
-    if ! grep -qP '^\s*password\s+'"sufficient"'\s+pam_unix.so\s*.*' "$PAM_FILE_PATH"; then
+    if ! grep -qP "^\s*password\s+sufficient\s+pam_unix.so\s*.*" "$PAM_FILE_PATH"; then
             # Line matching group + control + module was not found. Check group + module.
             if [ "$(grep -cP '^\s*password\s+.*\s+pam_unix.so\s*' "$PAM_FILE_PATH")" -eq 1 ]; then
                 # The control is updated only if one single line matches.
-                sed -i -E --follow-symlinks 's/^(\s*password\s+).*(\bpam_unix.so.*)/\1'"sufficient"' \2/' "$PAM_FILE_PATH"
+                sed -i -E --follow-symlinks "s/^(\s*password\s+).*(\bpam_unix.so.*)/\1sufficient \2/" "$PAM_FILE_PATH"
             else
-                echo 'password    '"sufficient"'    pam_unix.so' &gt;&gt; "$PAM_FILE_PATH"
+                echo "password    sufficient    pam_unix.so" &gt;&gt; "$PAM_FILE_PATH"
             fi
         fi
         # Check the option
-        if ! grep -qP '^\s*password\s+'"sufficient"'\s+pam_unix.so\s*.*\ssha512\b' "$PAM_FILE_PATH"; then
-            sed -i -E --follow-symlinks '/\s*password\s+'"sufficient"'\s+pam_unix.so.*/ s/$/ sha512/' "$PAM_FILE_PATH"
+        if ! grep -qP "^\s*password\s+sufficient\s+pam_unix.so\s*.*\s$var_password_hashing_algorithm_pam\b" "$PAM_FILE_PATH"; then
+            sed -i -E --follow-symlinks "/\s*password\s+sufficient\s+pam_unix.so.*/ s/$/ $var_password_hashing_algorithm_pam/" "$PAM_FILE_PATH"
         fi
     if [ -f /usr/bin/authselect ]; then
         
         authselect apply-changes -b
     fi
 else
-    echo "/etc/pam.d/password-auth was not found" &gt;&amp;2
+    echo "$PAM_FILE_PATH was not found" &gt;&amp;2
 fi
+
+# Ensure only the correct hashing algorithm option is used.
+declare -a HASHING_ALGORITHMS_OPTIONS=("sha512" "yescrypt" "gost_yescrypt" "blowfish" "sha256" "md5" "bigcrypt")
+
+for hash_option in "${HASHING_ALGORITHMS_OPTIONS[@]}"; do
+  if [ "$hash_option" != "$var_password_hashing_algorithm_pam" ]; then
+    if grep -qP "^\s*password\s+.*\s+pam_unix.so\s+.*\b$hash_option\b" "$PAM_FILE_PATH"; then
+      if [ -e "$PAM_FILE_PATH" ] ; then
+    PAM_FILE_PATH="$PAM_FILE_PATH"
+    if [ -f /usr/bin/authselect ]; then
+        
+        if ! authselect check; then
+        echo "
+        authselect integrity check failed. Remediation aborted!
+        This remediation could not be applied because an authselect profile was not selected or the selected profile is not intact.
+        It is not recommended to manually edit the PAM files when authselect tool is available.
+        In cases where the default authselect profile does not cover a specific demand, a custom authselect profile is recommended."
+        exit 1
+        fi
+
+        CURRENT_PROFILE=$(authselect current -r | awk '{ print $1 }')
+        # If not already in use, a custom profile is created preserving the enabled features.
+        if [[ ! $CURRENT_PROFILE == custom/* ]]; then
+            ENABLED_FEATURES=$(authselect current | tail -n+3 | awk '{ print $2 }')
+            authselect create-profile hardening -b $CURRENT_PROFILE
+            CURRENT_PROFILE="custom/hardening"
+            
+            authselect apply-changes -b --backup=before-hardening-custom-profile
+            authselect select $CURRENT_PROFILE
+            for feature in $ENABLED_FEATURES; do
+                authselect enable-feature $feature;
+            done
+            
+            authselect apply-changes -b --backup=after-hardening-custom-profile
+        fi
+        PAM_FILE_NAME=$(basename "$PAM_FILE_PATH")
+        PAM_FILE_PATH="/etc/authselect/$CURRENT_PROFILE/$PAM_FILE_NAME"
+
+        authselect apply-changes -b
+    fi
+    
+if grep -qP "^\s*password\s+.*\s+pam_unix.so\s.*\b$hash_option\b" "$PAM_FILE_PATH"; then
+    sed -i -E --follow-symlinks "s/(.*password.*.*.*pam_unix.so.*)\s$hash_option=?[[:alnum:]]*(.*)/\1\2/g" "$PAM_FILE_PATH"
+fi
+    if [ -f /usr/bin/authselect ]; then
+        
+        authselect apply-changes -b
+    fi
+else
+    echo "$PAM_FILE_PATH was not found" &gt;&amp;2
+fi
+    fi
+  fi
+done
 
 else
     &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
 fi
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_systemauth" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_systemauth" id="guide-tree-leaf-id101" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_set_password_hashing_algorithm"><td style="padding-left: 95px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_systemauth"><span class="label label-default">Rule</span>  
                                 Set PAM''s Password Hashing Algorithm
-                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_systemauth">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">The PAM system service can be configured to only store encrypted
-representations of passwords. In "/etc/pam.d/system-auth", the
-<code>password</code> section of the file controls which PAM modules execute
-during a password change. Set the <code>pam_unix.so</code> module in the
-<code>password</code> section to include the argument <code>sha512</code>, as shown
-below:
+                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_systemauth">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">The PAM system service can be configured to only store encrypted representations of passwords.
+In "/etc/pam.d/system-auth", the <code>password</code> section of the file controls which
+PAM modules to execute during a password change.
+
+Set the <code>pam_unix.so</code> module in the <code>password</code> section to include the option
+<code><abbr title="from Benchmark/Value: xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam">sha512</abbr></code> and no other hashing
+algorithms as shown below:
 <br>
-         <pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i>
+         <pre>password    sufficient    pam_unix.so <abbr title="from Benchmark/Value: xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam">sha512</abbr>
+          <i>other arguments...</i>
          </pre>
          <br>
-This will help ensure when local users change their passwords, hashes for
-the new passwords will be generated using the SHA-512 algorithm. This is
-the default.</div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale">Passwords need to be protected at all times, and encryption is the standard
-method for protecting passwords. If passwords are not encrypted, they can
-be plainly read (i.e., clear text) and easily compromised. Passwords that
-are encrypted with a weak algorithm are no more protected than if they are
-kepy in plain text.
+This will help ensure that new passwords for local users will be stored using the
+<abbr title="from Benchmark/Value: xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam">sha512</abbr> algorithm.</div><div class="panel panel-warning"><div class="panel-heading"><span class="label label-warning">Warning:</span> 
+                                        The hashing algorithms to be used with pam_unix.so are defined with independent module
+options. There are at least 7 possible algorithms and likely more algorithms will be
+introduced along the time. Due the the number of options and its possible combinations,
+the use of multiple hashing algorithm options may bring unexpected behaviors to the
+system. For this reason the check will pass only when one hashing algorithm option is
+defined and is aligned to the "var_password_hashing_algorithm_pam" variable. The
+remediation will ensure the correct option and remove any other extra hashing algorithm
+option.</div></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale">Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 <br>
          <br>
-This setting ensures user and group account administration utilities are
-configured to store only encrypted representations of passwords.
-Additionally, the <code>crypt_style</code> configuration option ensures the use
-of a strong hashing algorithm that makes password cracking attacks more
-difficult.</div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_systemauth</td></tr><tr><td><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span></td><td class="identifiers"><table class="table table-striped table-bordered"><tr><td><a href="https://www.cisecurity.org/controls/">cis-csc</a></td><td>1, 12, 15, 16, 5</td></tr><tr><td><a href="https://www.fbi.gov/file-repository/cjis-security-policy-v5_5_20160601-2-1.pdf">cjis</a></td><td>5.6.2.2</td></tr><tr><td><a href="https://www.isaca.org/resources/cobit">cobit5</a></td><td>DSS05.04, DSS05.05, DSS05.07, DSS05.10, DSS06.03, DSS06.10</td></tr><tr><td><a href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-171.pdf">cui</a></td><td>3.13.11</td></tr><tr><td><a href="https://public.cyber.mil/stigs/cci/">disa</a></td><td>CCI-000196, CCI-000803</td></tr><tr><td><a href="https://www.isa.org/products/isa-62443-2-1-2009-security-for-industrial-automat">isa-62443-2009</a></td><td>4.3.3.2.2, 4.3.3.5.1, 4.3.3.5.2, 4.3.3.6.1, 4.3.3.6.2, 4.3.3.6.3, 4.3.3.6.4, 4.3.3.6.5, 4.3.3.6.6, 4.3.3.6.7, 4.3.3.6.8, 4.3.3.6.9, 4.3.3.7.2, 4.3.3.7.4</td></tr><tr><td><a href="https://www.isa.org/products/ansi-isa-62443-3-3-99-03-03-2013-security-for-indu">isa-62443-2013</a></td><td>SR 1.1, SR 1.10, SR 1.2, SR 1.3, SR 1.4, SR 1.5, SR 1.7, SR 1.8, SR 1.9, SR 2.1</td></tr><tr><td><a href="https://www.cyber.gov.au/acsc/view-all-content/ism">ism</a></td><td>0418, 1055, 1402</td></tr><tr><td><a href="https://www.iso.org/contents/data/standard/05/45/54534.html">iso27001-2013</a></td><td>A.18.1.4, A.7.1.1, A.9.2.1, A.9.2.2, A.9.2.3, A.9.2.4, A.9.2.6, A.9.3.1, A.9.4.2, A.9.4.3</td></tr><tr><td><a href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">nist</a></td><td>IA-5(c), IA-5(1)(c), CM-6(a)</td></tr><tr><td><a href="https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.04162018.pdf">nist-csf</a></td><td>PR.AC-1, PR.AC-6, PR.AC-7</td></tr><tr><td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-2-1.pdf">pcidss</a></td><td>Req-8.2.1</td></tr><tr><td><a href="https://public.cyber.mil/stigs/downloads/?_dl_facet_stigs=operating-systems%2Cgeneral-purpose-os">os-srg</a></td><td>SRG-OS-000073-GPOS-00041, SRG-OS-000120-GPOS-00061</td></tr><tr><td><a href="https://cyber.gouv.fr/sites/default/files/document/linux_configuration-en-v2.pdf">anssi</a></td><td>R68</td></tr><tr><td><a href="https://docs-prv.pcisecuritystandards.org/PCI%20DSS/Standard/PCI-DSS-v4_0.pdf">pcidss4</a></td><td>8.3.2</td></tr></table></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#id102" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br><div class="panel-collapse collapse" id="id102"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>medium</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Gather the package facts
+This setting ensures user and group account administration utilities are configured to store
+only encrypted representations of passwords. Additionally, the <code>crypt_style</code>
+configuration option in <code>/etc/libuser.conf</code> ensures the use of a strong hashing
+algorithm that makes password cracking attacks more difficult.</div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_systemauth</td></tr><tr><td><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span></td><td class="identifiers"><table class="table table-striped table-bordered"><tr><td><a href="https://www.cisecurity.org/controls/">cis-csc</a></td><td>1, 12, 15, 16, 5</td></tr><tr><td><a href="https://www.fbi.gov/file-repository/cjis-security-policy-v5_5_20160601-2-1.pdf">cjis</a></td><td>5.6.2.2</td></tr><tr><td><a href="https://www.isaca.org/resources/cobit">cobit5</a></td><td>DSS05.04, DSS05.05, DSS05.07, DSS05.10, DSS06.03, DSS06.10</td></tr><tr><td><a href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-171.pdf">cui</a></td><td>3.13.11</td></tr><tr><td><a href="https://public.cyber.mil/stigs/cci/">disa</a></td><td>CCI-000196, CCI-000803</td></tr><tr><td><a href="https://www.isa.org/products/isa-62443-2-1-2009-security-for-industrial-automat">isa-62443-2009</a></td><td>4.3.3.2.2, 4.3.3.5.1, 4.3.3.5.2, 4.3.3.6.1, 4.3.3.6.2, 4.3.3.6.3, 4.3.3.6.4, 4.3.3.6.5, 4.3.3.6.6, 4.3.3.6.7, 4.3.3.6.8, 4.3.3.6.9, 4.3.3.7.2, 4.3.3.7.4</td></tr><tr><td><a href="https://www.isa.org/products/ansi-isa-62443-3-3-99-03-03-2013-security-for-indu">isa-62443-2013</a></td><td>SR 1.1, SR 1.10, SR 1.2, SR 1.3, SR 1.4, SR 1.5, SR 1.7, SR 1.8, SR 1.9, SR 2.1</td></tr><tr><td><a href="https://www.cyber.gov.au/acsc/view-all-content/ism">ism</a></td><td>0418, 1055, 1402</td></tr><tr><td><a href="https://www.iso.org/contents/data/standard/05/45/54534.html">iso27001-2013</a></td><td>A.18.1.4, A.7.1.1, A.9.2.1, A.9.2.2, A.9.2.3, A.9.2.4, A.9.2.6, A.9.3.1, A.9.4.2, A.9.4.3</td></tr><tr><td><a href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">nist</a></td><td>IA-5(c), IA-5(1)(c), CM-6(a)</td></tr><tr><td><a href="https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.04162018.pdf">nist-csf</a></td><td>PR.AC-1, PR.AC-6, PR.AC-7</td></tr><tr><td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-2-1.pdf">pcidss</a></td><td>Req-8.2.1</td></tr><tr><td><a href="https://public.cyber.mil/stigs/downloads/?_dl_facet_stigs=operating-systems%2Cgeneral-purpose-os">os-srg</a></td><td>SRG-OS-000073-GPOS-00041, SRG-OS-000120-GPOS-00061</td></tr><tr><td><a href="https://cyber.gouv.fr/sites/default/files/document/linux_configuration-en-v2.pdf">anssi</a></td><td>R68</td></tr><tr><td><a href="https://docs-prv.pcisecuritystandards.org/PCI%20DSS/Standard/PCI-DSS-v4_0.pdf">pcidss4</a></td><td>8.3.2</td></tr></table></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#id102" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br><div class="panel-collapse collapse" id="id102"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>medium</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Gather the package facts
   package_facts:
     manager: auto
   tags:
@@ -7267,6 +7633,11 @@ difficult.</div></td></tr><tr><td><span class="label label-warning">Severity:</s
   - medium_severity
   - no_reboot_needed
   - set_password_hashing_algorithm_systemauth
+- name: XCCDF Value var_password_hashing_algorithm_pam # promote to variable
+  set_fact:
+    var_password_hashing_algorithm_pam: !!str <abbr title="from Benchmark/Value: xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam">sha512</abbr>
+  tags:
+    - always
 
 - name: Set PAM's Password Hashing Algorithm - Check if /etc/pam.d/system-auth file
     is present
@@ -7434,11 +7805,16 @@ difficult.</div></td></tr><tr><td><span class="label label-warning">Severity:</s
     when:
     - result_authselect_present.stat.exists
 
+  - name: Set PAM's Password Hashing Algorithm - Define a fact for control already
+      filtered in case filters are used
+    ansible.builtin.set_fact:
+      pam_module_control: sufficient
+
   - name: Set PAM's Password Hashing Algorithm - Check if expected PAM module line
       is present in {{ pam_file_path }}
     ansible.builtin.lineinfile:
       path: '{{ pam_file_path }}'
-      regexp: ^\s*password\s+{{ 'sufficient' | regex_escape() }}\s+pam_unix.so\s*.*
+      regexp: ^\s*password\s+{{ pam_module_control | regex_escape() }}\s+pam_unix.so\s*.*
       state: absent
     check_mode: true
     changed_when: false
@@ -7463,7 +7839,7 @@ difficult.</div></td></tr><tr><td><span class="label label-warning">Severity:</s
       ansible.builtin.replace:
         dest: '{{ pam_file_path }}'
         regexp: ^(\s*password\s+).*(\bpam_unix.so.*)
-        replace: \1sufficient \2
+        replace: \1{{ pam_module_control }} \2
       register: result_pam_module_edit
       when:
       - result_pam_line_other_control_present.found == 1
@@ -7472,7 +7848,7 @@ difficult.</div></td></tr><tr><td><span class="label label-warning">Severity:</s
         line is included in {{ pam_file_path }}
       ansible.builtin.lineinfile:
         dest: '{{ pam_file_path }}'
-        line: password    sufficient    pam_unix.so
+        line: password    {{ pam_module_control }}    pam_unix.so
       register: result_pam_module_add
       when:
       - result_pam_line_other_control_present.found == 0 or result_pam_line_other_control_present.found
@@ -7491,27 +7867,34 @@ difficult.</div></td></tr><tr><td><span class="label label-warning">Severity:</s
     - result_pam_line_present.found is defined
     - result_pam_line_present.found == 0
 
+  - name: Set PAM's Password Hashing Algorithm - Define a fact for control already
+      filtered in case filters are used
+    ansible.builtin.set_fact:
+      pam_module_control: sufficient
+
   - name: Set PAM's Password Hashing Algorithm - Check if the required PAM module
       option is present in {{ pam_file_path }}
     ansible.builtin.lineinfile:
       path: '{{ pam_file_path }}'
-      regexp: ^\s*password\s+{{ 'sufficient' | regex_escape() }}\s+pam_unix.so\s*.*\ssha512\b
+      regexp: ^\s*password\s+{{ pam_module_control | regex_escape() }}\s+pam_unix.so\s*.*\s{{
+        var_password_hashing_algorithm_pam }}\b
       state: absent
     check_mode: true
     changed_when: false
-    register: result_pam_module_sha512_option_present
+    register: result_pam_module_set_password_hashing_algorithm_systemauth_option_present
 
-  - name: Set PAM's Password Hashing Algorithm - Ensure the "sha512" PAM option for
-      "pam_unix.so" is included in {{ pam_file_path }}
+  - name: Set PAM's Password Hashing Algorithm - Ensure the "{{ var_password_hashing_algorithm_pam
+      }}" PAM option for "pam_unix.so" is included in {{ pam_file_path }}
     ansible.builtin.lineinfile:
       path: '{{ pam_file_path }}'
       backrefs: true
-      regexp: ^(\s*password\s+{{ 'sufficient' | regex_escape() }}\s+pam_unix.so.*)
-      line: \1 sha512
+      regexp: ^(\s*password\s+{{ pam_module_control | regex_escape() }}\s+pam_unix.so.*)
+      line: \1 {{ var_password_hashing_algorithm_pam }}
       state: present
-    register: result_pam_sha512_add
+    register: result_pam_set_password_hashing_algorithm_systemauth_add
     when:
-    - result_pam_module_sha512_option_present.found == 0
+    - result_pam_module_set_password_hashing_algorithm_systemauth_option_present.found
+      == 0
 
   - name: Set PAM's Password Hashing Algorithm - Ensure authselect changes are applied
     ansible.builtin.command:
@@ -7519,8 +7902,215 @@ difficult.</div></td></tr><tr><td><span class="label label-warning">Severity:</s
     when:
     - result_authselect_present.stat.exists
     - |-
-      (result_pam_sha512_add is defined and result_pam_sha512_add.changed)
-       or (result_pam_sha512_edit is defined and result_pam_sha512_edit.changed)
+      (result_pam_set_password_hashing_algorithm_systemauth_add is defined and result_pam_set_password_hashing_algorithm_systemauth_add.changed)
+       or (result_pam_set_password_hashing_algorithm_systemauth_edit is defined and result_pam_set_password_hashing_algorithm_systemauth_edit.changed)
+  when:
+  - '"pam" in ansible_facts.packages'
+  - result_pam_file_present.stat.exists
+  tags:
+  - CJIS-5.6.2.2
+  - NIST-800-171-3.13.11
+  - NIST-800-53-CM-6(a)
+  - NIST-800-53-IA-5(1)(c)
+  - NIST-800-53-IA-5(c)
+  - PCI-DSS-Req-8.2.1
+  - PCI-DSSv4-8.3.2
+  - configure_strategy
+  - low_complexity
+  - medium_disruption
+  - medium_severity
+  - no_reboot_needed
+  - set_password_hashing_algorithm_systemauth
+
+- name: Set PAM's Password Hashing Algorithm - Check if /etc/pam.d/system-auth File
+    is Present
+  ansible.builtin.stat:
+    path: /etc/pam.d/system-auth
+  register: result_pam_file_present
+  when: '"pam" in ansible_facts.packages'
+  tags:
+  - CJIS-5.6.2.2
+  - NIST-800-171-3.13.11
+  - NIST-800-53-CM-6(a)
+  - NIST-800-53-IA-5(1)(c)
+  - NIST-800-53-IA-5(c)
+  - PCI-DSS-Req-8.2.1
+  - PCI-DSSv4-8.3.2
+  - configure_strategy
+  - low_complexity
+  - medium_disruption
+  - medium_severity
+  - no_reboot_needed
+  - set_password_hashing_algorithm_systemauth
+
+- name: Set PAM's Password Hashing Algorithm - Check The Proper Remediation For The
+    System
+  block:
+
+  - name: Set PAM's Password Hashing Algorithm - Define the PAM file to be edited
+      as a local fact
+    ansible.builtin.set_fact:
+      pam_file_path: /etc/pam.d/system-auth
+
+  - name: Set PAM's Password Hashing Algorithm - Check if system relies on authselect
+      tool
+    ansible.builtin.stat:
+      path: /usr/bin/authselect
+    register: result_authselect_present
+
+  - name: Set PAM's Password Hashing Algorithm - Ensure authselect custom profile
+      is used if authselect is present
+    block:
+
+    - name: Set PAM's Password Hashing Algorithm - Check integrity of authselect current
+        profile
+      ansible.builtin.command:
+        cmd: authselect check
+      register: result_authselect_check_cmd
+      changed_when: false
+      failed_when: false
+
+    - name: Set PAM's Password Hashing Algorithm - Informative message based on the
+        authselect integrity check result
+      ansible.builtin.assert:
+        that:
+        - result_authselect_check_cmd.rc == 0
+        fail_msg:
+        - authselect integrity check failed. Remediation aborted!
+        - This remediation could not be applied because an authselect profile was
+          not selected or the selected profile is not intact.
+        - It is not recommended to manually edit the PAM files when authselect tool
+          is available.
+        - In cases where the default authselect profile does not cover a specific
+          demand, a custom authselect profile is recommended.
+        success_msg:
+        - authselect integrity check passed
+
+    - name: Set PAM's Password Hashing Algorithm - Get authselect current profile
+      ansible.builtin.shell:
+        cmd: authselect current -r | awk '{ print $1 }'
+      register: result_authselect_profile
+      changed_when: false
+      when:
+      - result_authselect_check_cmd is success
+
+    - name: Set PAM's Password Hashing Algorithm - Define the current authselect profile
+        as a local fact
+      ansible.builtin.set_fact:
+        authselect_current_profile: '{{ result_authselect_profile.stdout }}'
+        authselect_custom_profile: '{{ result_authselect_profile.stdout }}'
+      when:
+      - result_authselect_profile is not skipped
+      - result_authselect_profile.stdout is match("custom/")
+
+    - name: Set PAM's Password Hashing Algorithm - Define the new authselect custom
+        profile as a local fact
+      ansible.builtin.set_fact:
+        authselect_current_profile: '{{ result_authselect_profile.stdout }}'
+        authselect_custom_profile: custom/hardening
+      when:
+      - result_authselect_profile is not skipped
+      - result_authselect_profile.stdout is not match("custom/")
+
+    - name: Set PAM's Password Hashing Algorithm - Get authselect current features
+        to also enable them in the custom profile
+      ansible.builtin.shell:
+        cmd: authselect current | tail -n+3 | awk '{ print $2 }'
+      register: result_authselect_features
+      changed_when: false
+      when:
+      - result_authselect_profile is not skipped
+      - authselect_current_profile is not match("custom/")
+
+    - name: Set PAM's Password Hashing Algorithm - Check if any custom profile with
+        the same name was already created
+      ansible.builtin.stat:
+        path: /etc/authselect/{{ authselect_custom_profile }}
+      register: result_authselect_custom_profile_present
+      changed_when: false
+      when:
+      - authselect_current_profile is not match("custom/")
+
+    - name: Set PAM's Password Hashing Algorithm - Create an authselect custom profile
+        based on the current profile
+      ansible.builtin.command:
+        cmd: authselect create-profile hardening -b {{ authselect_current_profile
+          }}
+      when:
+      - result_authselect_check_cmd is success
+      - authselect_current_profile is not match("custom/")
+      - not result_authselect_custom_profile_present.stat.exists
+
+    - name: Set PAM's Password Hashing Algorithm - Ensure authselect changes are applied
+      ansible.builtin.command:
+        cmd: authselect apply-changes -b --backup=before-hardening-custom-profile
+      when:
+      - result_authselect_check_cmd is success
+      - result_authselect_profile is not skipped
+      - authselect_current_profile is not match("custom/")
+      - authselect_custom_profile is not match(authselect_current_profile)
+
+    - name: Set PAM's Password Hashing Algorithm - Ensure the authselect custom profile
+        is selected
+      ansible.builtin.command:
+        cmd: authselect select {{ authselect_custom_profile }}
+      register: result_pam_authselect_select_profile
+      when:
+      - result_authselect_check_cmd is success
+      - result_authselect_profile is not skipped
+      - authselect_current_profile is not match("custom/")
+      - authselect_custom_profile is not match(authselect_current_profile)
+
+    - name: Set PAM's Password Hashing Algorithm - Restore the authselect features
+        in the custom profile
+      ansible.builtin.command:
+        cmd: authselect enable-feature {{ item }}
+      loop: '{{ result_authselect_features.stdout_lines }}'
+      register: result_pam_authselect_restore_features
+      when:
+      - result_authselect_profile is not skipped
+      - result_authselect_features is not skipped
+      - result_pam_authselect_select_profile is not skipped
+
+    - name: Set PAM's Password Hashing Algorithm - Ensure authselect changes are applied
+      ansible.builtin.command:
+        cmd: authselect apply-changes -b --backup=after-hardening-custom-profile
+      when:
+      - result_authselect_check_cmd is success
+      - result_authselect_profile is not skipped
+      - result_pam_authselect_restore_features is not skipped
+
+    - name: Set PAM's Password Hashing Algorithm - Change the PAM file to be edited
+        according to the custom authselect profile
+      ansible.builtin.set_fact:
+        pam_file_path: /etc/authselect/{{ authselect_custom_profile }}/{{ pam_file_path
+          | basename }}
+    when:
+    - result_authselect_present.stat.exists
+
+  - name: Set PAM's Password Hashing Algorithm - Ensure That Only the Correct Hashing
+      Algorithm Option For pam_unix.so Is Used in /etc/pam.d/system-auth
+    ansible.builtin.replace:
+      dest: '{{ pam_file_path }}'
+      regexp: (^\s*password.*pam_unix\.so.*)\b{{ item }}\b\s*(.*)
+      replace: \1\2
+    when: item != var_password_hashing_algorithm_pam
+    loop:
+    - sha512
+    - yescrypt
+    - gost_yescrypt
+    - blowfish
+    - sha256
+    - md5
+    - bigcrypt
+    register: result_pam_hashing_options_removal
+
+  - name: Set PAM's Password Hashing Algorithm - Ensure authselect changes are applied
+    ansible.builtin.command:
+      cmd: authselect apply-changes -b
+    when:
+    - result_authselect_present.stat.exists
+    - result_pam_hashing_options_removal is changed
   when:
   - '"pam" in ansible_facts.packages'
   - result_pam_file_present.stat.exists
@@ -7541,8 +8131,14 @@ difficult.</div></td></tr><tr><td><span class="label label-warning">Severity:</s
 </code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id103" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id103"><pre><code># Remediation is applicable only in certain platforms
 if rpm --quiet -q pam; then
 
-if [ -e "/etc/pam.d/system-auth" ] ; then
-    PAM_FILE_PATH="/etc/pam.d/system-auth"
+var_password_hashing_algorithm_pam='<abbr title="from Benchmark/Value: xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam">sha512</abbr>'
+
+
+PAM_FILE_PATH="/etc/pam.d/system-auth"
+CONTROL="sufficient"
+
+if [ -e "$PAM_FILE_PATH" ] ; then
+    PAM_FILE_PATH="$PAM_FILE_PATH"
     if [ -f /usr/bin/authselect ]; then
         
         if ! authselect check; then
@@ -7569,31 +8165,85 @@ if [ -e "/etc/pam.d/system-auth" ] ; then
             
             authselect apply-changes -b --backup=after-hardening-custom-profile
         fi
-        PAM_FILE_NAME=$(basename "/etc/pam.d/system-auth")
+        PAM_FILE_NAME=$(basename "$PAM_FILE_PATH")
         PAM_FILE_PATH="/etc/authselect/$CURRENT_PROFILE/$PAM_FILE_NAME"
 
         authselect apply-changes -b
     fi
-    if ! grep -qP '^\s*password\s+'"sufficient"'\s+pam_unix.so\s*.*' "$PAM_FILE_PATH"; then
+    if ! grep -qP "^\s*password\s+$CONTROL\s+pam_unix.so\s*.*" "$PAM_FILE_PATH"; then
             # Line matching group + control + module was not found. Check group + module.
             if [ "$(grep -cP '^\s*password\s+.*\s+pam_unix.so\s*' "$PAM_FILE_PATH")" -eq 1 ]; then
                 # The control is updated only if one single line matches.
-                sed -i -E --follow-symlinks 's/^(\s*password\s+).*(\bpam_unix.so.*)/\1'"sufficient"' \2/' "$PAM_FILE_PATH"
+                sed -i -E --follow-symlinks "s/^(\s*password\s+).*(\bpam_unix.so.*)/\1$CONTROL \2/" "$PAM_FILE_PATH"
             else
-                echo 'password    '"sufficient"'    pam_unix.so' &gt;&gt; "$PAM_FILE_PATH"
+                echo "password    $CONTROL    pam_unix.so" &gt;&gt; "$PAM_FILE_PATH"
             fi
         fi
         # Check the option
-        if ! grep -qP '^\s*password\s+'"sufficient"'\s+pam_unix.so\s*.*\ssha512\b' "$PAM_FILE_PATH"; then
-            sed -i -E --follow-symlinks '/\s*password\s+'"sufficient"'\s+pam_unix.so.*/ s/$/ sha512/' "$PAM_FILE_PATH"
+        if ! grep -qP "^\s*password\s+$CONTROL\s+pam_unix.so\s*.*\s$var_password_hashing_algorithm_pam\b" "$PAM_FILE_PATH"; then
+            sed -i -E --follow-symlinks "/\s*password\s+$CONTROL\s+pam_unix.so.*/ s/$/ $var_password_hashing_algorithm_pam/" "$PAM_FILE_PATH"
         fi
     if [ -f /usr/bin/authselect ]; then
         
         authselect apply-changes -b
     fi
 else
-    echo "/etc/pam.d/system-auth was not found" &gt;&amp;2
+    echo "$PAM_FILE_PATH was not found" &gt;&amp;2
 fi
+
+# Ensure only the correct hashing algorithm option is used.
+declare -a HASHING_ALGORITHMS_OPTIONS=("sha512" "yescrypt" "gost_yescrypt" "blowfish" "sha256" "md5" "bigcrypt")
+
+for hash_option in "${HASHING_ALGORITHMS_OPTIONS[@]}"; do
+  if [ "$hash_option" != "$var_password_hashing_algorithm_pam" ]; then
+    if grep -qP "^\s*password\s+.*\s+pam_unix.so\s+.*\b$hash_option\b" "$PAM_FILE_PATH"; then
+      if [ -e "$PAM_FILE_PATH" ] ; then
+    PAM_FILE_PATH="$PAM_FILE_PATH"
+    if [ -f /usr/bin/authselect ]; then
+        
+        if ! authselect check; then
+        echo "
+        authselect integrity check failed. Remediation aborted!
+        This remediation could not be applied because an authselect profile was not selected or the selected profile is not intact.
+        It is not recommended to manually edit the PAM files when authselect tool is available.
+        In cases where the default authselect profile does not cover a specific demand, a custom authselect profile is recommended."
+        exit 1
+        fi
+
+        CURRENT_PROFILE=$(authselect current -r | awk '{ print $1 }')
+        # If not already in use, a custom profile is created preserving the enabled features.
+        if [[ ! $CURRENT_PROFILE == custom/* ]]; then
+            ENABLED_FEATURES=$(authselect current | tail -n+3 | awk '{ print $2 }')
+            authselect create-profile hardening -b $CURRENT_PROFILE
+            CURRENT_PROFILE="custom/hardening"
+            
+            authselect apply-changes -b --backup=before-hardening-custom-profile
+            authselect select $CURRENT_PROFILE
+            for feature in $ENABLED_FEATURES; do
+                authselect enable-feature $feature;
+            done
+            
+            authselect apply-changes -b --backup=after-hardening-custom-profile
+        fi
+        PAM_FILE_NAME=$(basename "$PAM_FILE_PATH")
+        PAM_FILE_PATH="/etc/authselect/$CURRENT_PROFILE/$PAM_FILE_NAME"
+
+        authselect apply-changes -b
+    fi
+    
+if grep -qP "^\s*password\s+.*\s+pam_unix.so\s.*\b$hash_option\b" "$PAM_FILE_PATH"; then
+    sed -i -E --follow-symlinks "s/(.*password.*.*.*pam_unix.so.*)\s$hash_option=?[[:alnum:]]*(.*)/\1\2/g" "$PAM_FILE_PATH"
+fi
+    if [ -f /usr/bin/authselect ]; then
+        
+        authselect apply-changes -b
+    fi
+else
+    echo "$PAM_FILE_PATH was not found" &gt;&amp;2
+fi
+    fi
+  fi
+done
 
 else
     &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
@@ -7654,14 +8304,20 @@ Access Card.</div></td></tr><tr><td><span class="label label-warning">Severity:<
   - medium_severity
   - no_reboot_needed
   - package_opensc_installed
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id106" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id106"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>include install_opensc
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id106" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id106"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>
+package --add=opensc
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id107" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id107"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>include install_opensc
 
 class install_opensc {
   package { 'opensc':
     ensure =&gt; 'installed',
   }
 }
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id107" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id107"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id108" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id108"><pre><code>
+[[packages]]
+name = "opensc"
+version = "*"
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id109" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id109"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
 if [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ]; then
 
 if ! rpm -q --quiet "opensc" ; then
@@ -7671,12 +8327,6 @@ fi
 else
     &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
 fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id108" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id108"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>
-package --add=opensc
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id109" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id109"><pre><code>
-[[packages]]
-name = "opensc"
-version = "*"
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_package_pcsc-lite_installed" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_package_pcsc-lite_installed" id="guide-tree-leaf-id110" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_smart_card_login"><td style="padding-left: 114px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_package_pcsc-lite_installed"><span class="label label-default">Rule</span>  
                                 Install the pcsc-lite package
                                   <a class="small" href="#xccdf_org.ssgproject.content_rule_package_pcsc-lite_installed">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">The <code>pcsc-lite</code> package can be installed with the following command:
@@ -7696,14 +8346,20 @@ multifactor authentication using smartcards.</div></td></tr><tr><td><span class=
   - medium_severity
   - no_reboot_needed
   - package_pcsc-lite_installed
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id112" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id112"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>include install_pcsc-lite
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id112" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id112"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>
+package --add=pcsc-lite
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id113" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id113"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>include install_pcsc-lite
 
 class install_pcsc-lite {
   package { 'pcsc-lite':
     ensure =&gt; 'installed',
   }
 }
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id113" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id113"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id114" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id114"><pre><code>
+[[packages]]
+name = "pcsc-lite"
+version = "*"
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id115" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id115"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
 if [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ]; then
 
 if ! rpm -q --quiet "pcsc-lite" ; then
@@ -7713,12 +8369,6 @@ fi
 else
     &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
 fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id114" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id114"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>
-package --add=pcsc-lite
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id115" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id115"><pre><code>
-[[packages]]
-name = "pcsc-lite"
-version = "*"
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_service_pcscd_enabled" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_service_pcscd_enabled" id="guide-tree-leaf-id116" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_smart_card_login"><td style="padding-left: 114px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_service_pcscd_enabled"><span class="label label-default">Rule</span>  
                                 Enable the pcscd Service
                                   <a class="small" href="#xccdf_org.ssgproject.content_rule_service_pcscd_enabled">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">
@@ -7779,7 +8429,10 @@ class enable_pcscd {
     ensure =&gt; 'running',
   }
 }
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id119" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id119"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id119" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id119"><pre><code>
+[customizations.services]
+enabled = ["pcscd"]
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id120" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id120"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
 if [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ]; then
 
 SYSTEMCTL_EXEC='/usr/bin/systemctl'
@@ -7790,9 +8443,6 @@ SYSTEMCTL_EXEC='/usr/bin/systemctl'
 else
     &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
 fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id120" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id120"><pre><code>
-[customizations.services]
-enabled = ["pcscd"]
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_configure_opensc_card_drivers" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_configure_opensc_card_drivers" id="guide-tree-leaf-id121" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_smart_card_login"><td style="padding-left: 114px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_configure_opensc_card_drivers"><span class="label label-default">Rule</span>  
                                 Configure opensc Smart Card Drivers
                                   <a class="small" href="#xccdf_org.ssgproject.content_rule_configure_opensc_card_drivers">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">The OpenSC smart card tool can auto-detect smart card drivers; however,
@@ -8642,44 +9292,7 @@ empty passwords should never be used in operational environments.</div></td></tr
   - medium_disruption
   - no_empty_passwords
   - no_reboot_needed
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id144" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id144"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>medium</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code># Remediation is applicable only in certain platforms
-if [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ]; then
-
-if [ -f /usr/bin/authselect ]; then
-    if ! authselect check; then
-echo "
-authselect integrity check failed. Remediation aborted!
-This remediation could not be applied because an authselect profile was not selected or the selected profile is not intact.
-It is not recommended to manually edit the PAM files when authselect tool is available.
-In cases where the default authselect profile does not cover a specific demand, a custom authselect profile is recommended."
-exit 1
-fi
-authselect enable-feature without-nullok
-
-authselect apply-changes -b
-else
-    
-if grep -qP '^\s*auth\s+'"sufficient"'\s+pam_unix.so\s.*\bnullok\b' "/etc/pam.d/system-auth"; then
-    sed -i -E --follow-symlinks 's/(.*auth.*'"sufficient"'.*pam_unix.so.*)\snullok=?[[:alnum:]]*(.*)/\1\2/g' "/etc/pam.d/system-auth"
-fi
-    
-if grep -qP '^\s*password\s+'"sufficient"'\s+pam_unix.so\s.*\bnullok\b' "/etc/pam.d/system-auth"; then
-    sed -i -E --follow-symlinks 's/(.*password.*'"sufficient"'.*pam_unix.so.*)\snullok=?[[:alnum:]]*(.*)/\1\2/g' "/etc/pam.d/system-auth"
-fi
-    
-if grep -qP '^\s*auth\s+'"sufficient"'\s+pam_unix.so\s.*\bnullok\b' "/etc/pam.d/password-auth"; then
-    sed -i -E --follow-symlinks 's/(.*auth.*'"sufficient"'.*pam_unix.so.*)\snullok=?[[:alnum:]]*(.*)/\1\2/g' "/etc/pam.d/password-auth"
-fi
-    
-if grep -qP '^\s*password\s+'"sufficient"'\s+pam_unix.so\s.*\bnullok\b' "/etc/pam.d/password-auth"; then
-    sed -i -E --follow-symlinks 's/(.*password.*'"sufficient"'.*pam_unix.so.*)\snullok=?[[:alnum:]]*(.*)/\1\2/g' "/etc/pam.d/password-auth"
-fi
-fi
-
-else
-    &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
-fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id145" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Kubernetes snippet ⇲</a><br><div class="panel-collapse collapse" id="id145"><pre><code>---
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id144" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Kubernetes snippet ⇲</a><br><div class="panel-collapse collapse" id="id144"><pre><code>---
 apiVersion: machineconfiguration.openshift.io/v1
 kind: MachineConfig
 spec:
@@ -8698,6 +9311,43 @@ spec:
         mode: 0644
         path: /etc/pam.d/system-auth
         overwrite: true
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id145" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id145"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>medium</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code># Remediation is applicable only in certain platforms
+if [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ]; then
+
+if [ -f /usr/bin/authselect ]; then
+    if ! authselect check; then
+echo "
+authselect integrity check failed. Remediation aborted!
+This remediation could not be applied because an authselect profile was not selected or the selected profile is not intact.
+It is not recommended to manually edit the PAM files when authselect tool is available.
+In cases where the default authselect profile does not cover a specific demand, a custom authselect profile is recommended."
+exit 1
+fi
+authselect enable-feature without-nullok
+
+authselect apply-changes -b
+else
+    
+if grep -qP "^\s*auth\s+sufficient\s+pam_unix.so\s.*\bnullok\b" "/etc/pam.d/system-auth"; then
+    sed -i -E --follow-symlinks "s/(.*auth.*sufficient.*pam_unix.so.*)\snullok=?[[:alnum:]]*(.*)/\1\2/g" "/etc/pam.d/system-auth"
+fi
+    
+if grep -qP "^\s*password\s+sufficient\s+pam_unix.so\s.*\bnullok\b" "/etc/pam.d/system-auth"; then
+    sed -i -E --follow-symlinks "s/(.*password.*sufficient.*pam_unix.so.*)\snullok=?[[:alnum:]]*(.*)/\1\2/g" "/etc/pam.d/system-auth"
+fi
+    
+if grep -qP "^\s*auth\s+sufficient\s+pam_unix.so\s.*\bnullok\b" "/etc/pam.d/password-auth"; then
+    sed -i -E --follow-symlinks "s/(.*auth.*sufficient.*pam_unix.so.*)\snullok=?[[:alnum:]]*(.*)/\1\2/g" "/etc/pam.d/password-auth"
+fi
+    
+if grep -qP "^\s*password\s+sufficient\s+pam_unix.so\s.*\bnullok\b" "/etc/pam.d/password-auth"; then
+    sed -i -E --follow-symlinks "s/(.*password.*sufficient.*pam_unix.so.*)\snullok=?[[:alnum:]]*(.*)/\1\2/g" "/etc/pam.d/password-auth"
+fi
+fi
+
+else
+    &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
+fi
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="children-xccdf_org.ssgproject.content_group_root_logins" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_accounts-restrictions"><td style="padding-left: 76px" id="xccdf_org.ssgproject.content_group_root_logins"><span class="label label-default">Group</span>  
                 Restrict Root Logins
                           <small>Group contains 5 rules</small></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_group_root_logins" class="guide-tree-inner-node guide-tree-inner-node-id-xccdf_org.ssgproject.content_group_root_logins" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_accounts-restrictions"><td style="padding-left: 76px"><div><a class="small" href="#xccdf_org.ssgproject.content_group_root_logins">[ref]</a>  
@@ -9077,7 +9727,7 @@ utility of Bluetooth connectivity and its limited range.</div></td></tr><tr><td>
   - no_reboot_needed
   - service_bluetooth_disabled
 
-- name: Disable Bluetooth Service - Ensure "bluetooth.service" is Masked
+- name: Disable Bluetooth Service - Ensure bluetooth.service is Masked
   ansible.builtin.systemd:
     name: bluetooth.service
     state: stopped
@@ -9085,7 +9735,7 @@ utility of Bluetooth connectivity and its limited range.</div></td></tr><tr><td>
     masked: true
   when:
   - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
-  - service_exists.stdout_lines is search("bluetooth.service",multiline=True)
+  - service_exists.stdout_lines is search("bluetooth.service", multiline=True)
   tags:
   - NIST-800-171-3.1.16
   - NIST-800-53-AC-18(3)
@@ -9123,15 +9773,15 @@ utility of Bluetooth connectivity and its limited range.</div></td></tr><tr><td>
   - no_reboot_needed
   - service_bluetooth_disabled
 
-- name: Disable socket bluetooth
+- name: Disable Bluetooth Service - Disable Socket bluetooth
   ansible.builtin.systemd:
     name: bluetooth.socket
-    enabled: 'no'
+    enabled: false
     state: stopped
-    masked: 'yes'
+    masked: true
   when:
   - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
-  - socket_file_exists.stdout_lines is search("bluetooth.socket",multiline=True)
+  - socket_file_exists.stdout_lines is search("bluetooth.socket", multiline=True)
   tags:
   - NIST-800-171-3.1.16
   - NIST-800-53-AC-18(3)
@@ -9154,7 +9804,10 @@ class disable_bluetooth {
     ensure =&gt; 'stopped',
   }
 }
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id166" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id166"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id166" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id166"><pre><code>
+[customizations.services]
+masked = ["bluetooth"]
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id167" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id167"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
 if [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ]; then
 
 SYSTEMCTL_EXEC='/usr/bin/systemctl'
@@ -9174,9 +9827,6 @@ fi
 else
     &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
 fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id167" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id167"><pre><code>
-[customizations.services]
-masked = ["bluetooth"]
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_kernel_module_bluetooth_disabled" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_kernel_module_bluetooth_disabled" id="guide-tree-leaf-id168" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_wireless_software"><td style="padding-left: 95px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_kernel_module_bluetooth_disabled"><span class="label label-default">Rule</span>  
                                 Disable Bluetooth Kernel Module
                                   <a class="small" href="#xccdf_org.ssgproject.content_rule_kernel_module_bluetooth_disabled">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">The kernel's module loading system can be configured to prevent
@@ -9266,7 +9916,7 @@ to prevent automatic loading of the USB storage driver.
 
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
-<pre>install usb-storage /bin/true</pre>
+<pre>install usb-storage /bin/false</pre>
 
 This will prevent the <code>modprobe</code> program from loading the <code>usb-storage</code>
 module, but will not prevent an administrator (or another program) from using the
@@ -11472,7 +12122,8 @@ fi
                                   <a class="small" href="#xccdf_org.ssgproject.content_rule_file_permissions_sshd_pub_key">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"> To properly set the permissions of <code>/etc/ssh/*.pub</code>, run the command: <pre>$ sudo chmod 0644 /etc/ssh/*.pub</pre>
       </div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale">If a public host key file is modified by an unauthorized user, the SSH service
 may be compromised.</div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_file_permissions_sshd_pub_key</td></tr><tr><td><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span></td><td class="identifiers"><table class="table table-striped table-bordered"><tr><td><a href="https://www.cisecurity.org/controls/">cis-csc</a></td><td>12, 13, 14, 15, 16, 18, 3, 5</td></tr><tr><td><a href="https://www.isaca.org/resources/cobit">cobit5</a></td><td>APO01.06, DSS05.04, DSS05.07, DSS06.02</td></tr><tr><td><a href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-171.pdf">cui</a></td><td>3.1.13, 3.13.10</td></tr><tr><td><a href="https://public.cyber.mil/stigs/cci/">disa</a></td><td>CCI-000366</td></tr><tr><td><a href="https://www.isa.org/products/isa-62443-2-1-2009-security-for-industrial-automat">isa-62443-2009</a></td><td>4.3.3.7.3</td></tr><tr><td><a href="https://www.isa.org/products/ansi-isa-62443-3-3-99-03-03-2013-security-for-indu">isa-62443-2013</a></td><td>SR 2.1, SR 5.2</td></tr><tr><td><a href="https://www.iso.org/contents/data/standard/05/45/54534.html">iso27001-2013</a></td><td>A.10.1.1, A.11.1.4, A.11.1.5, A.11.2.1, A.13.1.1, A.13.1.3, A.13.2.1, A.13.2.3, A.13.2.4, A.14.1.2, A.14.1.3, A.6.1.2, A.7.1.1, A.7.1.2, A.7.3.1, A.8.2.2, A.8.2.3, A.9.1.1, A.9.1.2, A.9.2.3, A.9.4.1, A.9.4.4, A.9.4.5</td></tr><tr><td><a href="https://www.nerc.com/pa/Stand/Standard%20Purpose%20Statement%20DL/US_Standard_One-Stop-Shop.xlsx">nerc-cip</a></td><td>CIP-003-8 R5.1.1, CIP-003-8 R5.3, CIP-004-6 R2.3, CIP-007-3 R2.1, CIP-007-3 R2.2, CIP-007-3 R2.3, CIP-007-3 R5.1, CIP-007-3 R5.1.1, CIP-007-3 R5.1.2</td></tr><tr><td><a href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">nist</a></td><td>AC-17(a), CM-6(a), AC-6(1)</td></tr><tr><td><a href="https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.04162018.pdf">nist-csf</a></td><td>PR.AC-4, PR.DS-5</td></tr><tr><td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-2-1.pdf">pcidss</a></td><td>Req-2.2.4</td></tr><tr><td><a href="https://public.cyber.mil/stigs/downloads/?_dl_facet_stigs=operating-systems%2Cgeneral-purpose-os">os-srg</a></td><td>SRG-OS-000480-GPOS-00227</td></tr><tr><td><a href="https://cyber.gouv.fr/sites/default/files/document/linux_configuration-en-v2.pdf">anssi</a></td><td>R50</td></tr><tr><td><a href="https://docs-prv.pcisecuritystandards.org/PCI%20DSS/Standard/PCI-DSS-v4_0.pdf">pcidss4</a></td><td>2.2.6</td></tr></table></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#id243" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br><div class="panel-collapse collapse" id="id243"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Find /etc/ssh/ file(s)
-  command: find -H /etc/ssh/ -maxdepth 1 -perm /u+xs,g+xws,o+xwt  -type f -regex "^.*\.pub$"
+  command: find -H /etc/ssh/ -maxdepth 1 -perm /u+xs,g+xws,o+xwt  -type f -regextype
+    posix-extended -regex "^.*\.pub$"
   register: files_found
   changed_when: false
   failed_when: false
@@ -11526,7 +12177,7 @@ class ssh_public_key_perms {
 </code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id245" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id245"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code># Remediation is applicable only in certain platforms
 if [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ]; then
 
-find -H /etc/ssh/ -maxdepth 1 -perm /u+xs,g+xws,o+xwt  -type f -regex '^.*\.pub$' -exec chmod u-xs,g-xws,o-xwt {} \;
+find -H /etc/ssh/ -maxdepth 1 -perm /u+xs,g+xws,o+xwt  -type f -regextype posix-extended -regex '^.*\.pub$' -exec chmod u-xs,g-xws,o-xwt {} \;
 
 else
     &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
@@ -11690,12 +12341,16 @@ for f in $(echo -n "/etc/sssd/sssd.conf /etc/sssd/conf.d/*.conf"); do
 
     # find key in section and change value
     if grep -qzosP "[[:space:]]*\[pam\]([^\n\[]*\n+)+?[[:space:]]*pam_cert_auth" "$f"; then
-            sed -i "s/pam_cert_auth[^(\n)]*/pam_cert_auth = True/" "$f"
+
+            sed -i "s/pam_cert_auth[^(\n)]*/pam_cert_auth=True/" "$f"
+
             found=true
 
     # find section and add key = value to it
     elif grep -qs "[[:space:]]*\[pam\]" "$f"; then
-            sed -i "/[[:space:]]*\[pam\]/a pam_cert_auth = True" "$f"
+
+            sed -i "/[[:space:]]*\[pam\]/a pam_cert_auth=True" "$f"
+
             found=true
     fi
 done
@@ -11704,7 +12359,9 @@ done
 if ! $found ; then
     file=$(echo "/etc/sssd/sssd.conf /etc/sssd/conf.d/*.conf" | cut -f1 -d ' ')
     mkdir -p "$(dirname "$file")"
-    echo -e "[pam]\npam_cert_auth = True" &gt;&gt; "$file"
+
+    echo -e "[pam]\npam_cert_auth=True" &gt;&gt; "$file"
+
 fi
 
 umask $OLD_UMASK
@@ -49172,19 +49829,19 @@ can be held accountable for their actions.</div></td></tr><tr><td><span class="l
   - no_reboot_needed
   - service_auditd_enabled
 
-- name: Enable service auditd
+- name: Enable auditd Service - Enable service auditd
   block:
 
   - name: Gather the package facts
     package_facts:
       manager: auto
 
-  - name: Enable service auditd
-    systemd:
+  - name: Enable auditd Service - Enable Service auditd
+    ansible.builtin.systemd:
       name: auditd
-      enabled: 'yes'
+      enabled: true
       state: started
-      masked: 'no'
+      masked: false
     when:
     - '"audit" in ansible_facts.packages'
   when:
@@ -49212,26 +49869,7 @@ can be held accountable for their actions.</div></td></tr><tr><td><span class="l
   - medium_severity
   - no_reboot_needed
   - service_auditd_enabled
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id433" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id433"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>include enable_auditd
-
-class enable_auditd {
-  service {'auditd':
-    enable =&gt; true,
-    ensure =&gt; 'running',
-  }
-}
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id434" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id434"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
-if [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ] &amp;&amp; { rpm --quiet -q audit; }; then
-
-SYSTEMCTL_EXEC='/usr/bin/systemctl'
-"$SYSTEMCTL_EXEC" unmask 'auditd.service'
-"$SYSTEMCTL_EXEC" start 'auditd.service'
-"$SYSTEMCTL_EXEC" enable 'auditd.service'
-
-else
-    &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
-fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id435" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Kubernetes snippet ⇲</a><br><div class="panel-collapse collapse" id="id435"><pre><code>---
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id433" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Kubernetes snippet ⇲</a><br><div class="panel-collapse collapse" id="id433"><pre><code>---
 apiVersion: machineconfiguration.openshift.io/v1
 kind: MachineConfig
 spec:
@@ -49242,9 +49880,28 @@ spec:
       units:
       - name: auditd.service
         enabled: true
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id436" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id436"><pre><code>
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id434" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id434"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>include enable_auditd
+
+class enable_auditd {
+  service {'auditd':
+    enable =&gt; true,
+    ensure =&gt; 'running',
+  }
+}
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id435" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id435"><pre><code>
 [customizations.services]
 enabled = ["auditd"]
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id436" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id436"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
+if [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ] &amp;&amp; { rpm --quiet -q audit; }; then
+
+SYSTEMCTL_EXEC='/usr/bin/systemctl'
+"$SYSTEMCTL_EXEC" unmask 'auditd.service'
+"$SYSTEMCTL_EXEC" start 'auditd.service'
+"$SYSTEMCTL_EXEC" enable 'auditd.service'
+
+else
+    &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
+fi
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_grub2_audit_argument" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_grub2_audit_argument" id="guide-tree-leaf-id437" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_auditing"><td style="padding-left: 38px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_grub2_audit_argument"><span class="label label-default">Rule</span>  
                                 Enable Auditing for Processes Which Start Prior to the Audit Daemon
                                   <a class="small" href="#xccdf_org.ssgproject.content_rule_grub2_audit_argument">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">To ensure all processes can be audited, even those which start
@@ -49296,7 +49953,9 @@ ensures it is set for every process during boot.</div></td></tr><tr><td><span cl
   - medium_complexity
   - reboot_required
   - restrict_strategy
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id439" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id439"><pre><code># Remediation is applicable only in certain platforms
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id439" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id439"><pre><code>[customizations.kernel]
+append = "audit=1"
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id440" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id440"><pre><code># Remediation is applicable only in certain platforms
 if [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ] &amp;&amp; { rpm --quiet -q grub2-common; }; then
 
 grubby --update-kernel=ALL --args=audit=1
@@ -49304,8 +49963,6 @@ grubby --update-kernel=ALL --args=audit=1
 else
     &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
 fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id440" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id440"><pre><code>[customizations.kernel]
-append = "audit=1"
 </code></pre></div></div></td></tr></tbody></table></td></tr></tbody></table></div><div id="rear-matter"><div class="row top-spacer-10"><div class="col-md-12 well well-lg"><div class="rear-matter">Red Hat and Red Hat Enterprise Linux are either registered
 trademarks or trademarks of Red Hat, Inc. in the United States and other
 countries. All other names are registered trademarks or trademarks of their

@@ -1031,40 +1031,41 @@ files.</pre></td>
 	<td>medium</td>
 	<td>The Oracle Linux operating system must be configured so that the PAM system service is configured to store only encrypted representations of passwords.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Passwords need to be protected at all times, and encryption is the standard
-method for protecting passwords. If passwords are not encrypted, they can
-be plainly read (i.e., clear text) and easily compromised. Passwords that
-are encrypted with a weak algorithm are no more protected than if they are
-kepy in plain text.
+	<td><pre>Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 
               
-This setting ensures user and group account administration utilities are
-configured to store only encrypted representations of passwords.
-Additionally, the crypt_style configuration option ensures the use
-of a strong hashing algorithm that makes password cracking attacks more
-difficult.</pre></td>
+This setting ensures user and group account administration utilities are configured to store
+only encrypted representations of passwords. Additionally, the crypt_style
+configuration option in /etc/libuser.conf ensures the use of a strong hashing
+algorithm that makes password cracking attacks more difficult.</pre></td>
 	<td><pre>Inspect the password section of /etc/pam.d/system-auth
-and ensure that the pam_unix.so module  is configured to use the argument
-sha512:
+and ensure that the pam_unix.so module is configured to use the argument
+:
 
-$ sudo grep "^password.*pam_unix\.so.*sha512" /etc/pam.d/system-auth
+$ sudo grep "^password.*pam_unix\.so.*" /etc/pam.d/system-auth
 
-password sufficient pam_unix.so sha512
-      Is it the case that "sha512" is missing, or is commented out?
+password sufficient pam_unix.so 
+      Is it the case that "<sub idref="var_password_hashing_algorithm_pam" />" is missing, or is commented out?
       </pre></td>
-	<td><pre>The PAM system service can be configured to only store encrypted
-representations of passwords. In "/etc/pam.d/system-auth", the
-password section of the file controls which PAM modules execute
-during a password change. Set the pam_unix.so module in the
-password section to include the argument sha512, as shown
-below:
+	<td><pre>The PAM system service can be configured to only store encrypted representations of passwords.
+In "/etc/pam.d/system-auth", the password section of the file controls which
+PAM modules to execute during a password change.
 
-              password    sufficient    pam_unix.so sha512 other arguments...
+Set the pam_unix.so module in the password section to include the option
+
+                
+               and no other hashing
+algorithms as shown below:
+
+              password    sufficient    pam_unix.so 
+                other arguments...
               
               
-This will help ensure when local users change their passwords, hashes for
-the new passwords will be generated using the SHA-512 algorithm. This is
-the default.</pre></td>
+This will help ensure that new passwords for local users will be stored using the
+ algorithm.</pre></td>
 	<td>OL07-00-010200</td>
 	<td>set_password_hashing_algorithm_systemauth</td>
 </tr>
@@ -1075,9 +1076,10 @@ the default.</pre></td>
 	<td>medium</td>
 	<td>The Oracle Linux operating system must be configured to use the shadow file to store only encrypted representations of passwords.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Passwords need to be protected at all times, and encryption is the standard method for protecting passwords.
-If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised. Passwords
-that are encrypted with a weak algorithm are no more protected than if they are kept in plain text.
+	<td><pre>Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 
               
 Using a stronger hashing algorithm makes password cracking attacks more difficult.</pre></td>
@@ -1091,8 +1093,8 @@ $ sudo grep -i ENCRYPT_METHOD /etc/login.defs
 ENCRYPT_METHOD 
       Is it the case that ENCRYPT_METHOD is not set to <sub idref="var_password_hashing_algorithm" />?
       </pre></td>
-	<td><pre>In /etc/login.defs, add or correct the following line to ensure
-the system will use  as the hashing algorithm:
+	<td><pre>In /etc/login.defs, add or update the following line to ensure the system will use
+ as the hashing algorithm:
 ENCRYPT_METHOD 
               
             </pre></td>
@@ -1106,18 +1108,16 @@ ENCRYPT_METHOD
 	<td>medium</td>
 	<td>The Oracle Linux operating system must be configured so that user and group account administration utilities are configured to store only encrypted representations of passwords.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Passwords need to be protected at all times, and encryption is the standard
-method for protecting passwords. If passwords are not encrypted, they can
-be plainly read (i.e., clear text) and easily compromised. Passwords that
-are encrypted with a weak algorithm are no more protected than if they are
-kepy in plain text.
+	<td><pre>Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 
               
-This setting ensures user and group account administration utilities are
-configured to store only encrypted representations of passwords.
-Additionally, the crypt_style configuration option ensures the use
-of a strong hashing algorithm that makes password cracking attacks more
-difficult.</pre></td>
+This setting ensures user and group account administration utilities are configured to store
+only encrypted representations of passwords. Additionally, the crypt_style
+configuration option in /etc/libuser.conf ensures the use of a strong hashing
+algorithm that makes password cracking attacks more difficult.</pre></td>
 	<td><pre>
 Verify that the libuser is set to encrypt password with a FIPS 140-2 approved cryptographic hashing algorithm.
 
@@ -1125,13 +1125,14 @@ Check the hashing algorithm that is being used to hash passwords with the follow
 
 $ sudo grep -i crypt_style /etc/libuser.conf
 
-crypt_style = sha512
+crypt_style = 
       Is it the case that crypt_style is not set to sha512?
       </pre></td>
-	<td><pre>In /etc/libuser.conf, add or correct the following line in its
-[defaults] section to ensure the system will use the SHA-512
+	<td><pre>In /etc/libuser.conf, add or correct the following line in its [defaults]
+section to ensure the system will use the 
 algorithm for password hashing:
-crypt_style = sha512
+crypt_style = 
+              
             </pre></td>
 	<td>OL07-00-010220</td>
 	<td>set_password_hashing_algorithm_libuserconf</td>
@@ -1523,7 +1524,6 @@ Limits are imposed by locking the account.</pre></td>
 after  unsuccessful logon
 attempts with the command:
 
-
 $ grep 'unlock_time =' /etc/security/faillock.conf
 unlock_time = 
       Is it the case that the "unlock_time" option is not set to "<sub idref="var_accounts_passwords_pam_faillock_unlock_time" />",
@@ -1532,13 +1532,11 @@ the line is missing, or commented out?
 	<td><pre>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using pam_faillock.so.
 
-
 Ensure that the file /etc/security/faillock.conf contains the following entry:
 unlock_time=<interval-in-seconds> where
 interval-in-seconds is 
                 
                or greater.
-
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -1562,7 +1560,6 @@ user password guessing, also known as brute-forcing, is reduced. Limits are impo
 the account.</pre></td>
 	<td><pre>Verify Oracle Linux 7 is configured to lock the root account after 
 unsuccessful logon attempts with the command:
-
 
 $ grep even_deny_root /etc/security/faillock.conf
 even_deny_root
@@ -2638,7 +2635,7 @@ malicious software.</pre></td>
 	<td><pre>
 If the system is configured to prevent the loading of the usb-storage kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the usb-storage kernel module via blacklist keyword.
 
@@ -2651,7 +2648,7 @@ to prevent automatic loading of the USB storage driver.
 
 To configure the system to prevent the usb-storage
 kernel module from being loaded, add the following line to the file /etc/modprobe.d/usb-storage.conf:
-install usb-storage /bin/true
+install usb-storage /bin/false
 
 To configure the system to prevent the usb-storage from being used,
 add the following line to file /etc/modprobe.d/usb-storage.conf:
@@ -2675,7 +2672,7 @@ the system against exploitation of any flaws in its implementation.</pre></td>
 	<td><pre>
 If the system is configured to prevent the loading of the dccp kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the dccp kernel module via blacklist keyword.
 
@@ -2689,7 +2686,7 @@ streaming media and telephony.
 
 To configure the system to prevent the dccp
 kernel module from being loaded, add the following line to the file /etc/modprobe.d/dccp.conf:
-install dccp /bin/true
+install dccp /bin/false
 
 To configure the system to prevent the dccp from being used,
 add the following line to file /etc/modprobe.d/dccp.conf:
@@ -2944,10 +2941,10 @@ Ctrl-Alt-Del key sequence is pressed.
               
 To configure the system to ignore the Ctrl-Alt-Del key sequence
 from the Graphical User Interface (GUI) instead of rebooting the system,
-add or set logout to '' in
+add or set logout to [''] in
 /etc/dconf/db/local.d/00-security-settings. For example:
 [org/gnome/settings-daemon/plugins/media-keys]
-logout=''
+logout=['']
 Once the settings have been added, add a lock to
 /etc/dconf/db/local.d/locks/00-security-settings-lock to prevent
 user modification. For example:
@@ -3780,13 +3777,18 @@ facility by unauthorized and malicious users.</pre></td>
 run the following command:
 grep -rni "cron\.\*" /etc/rsyslog.*
 cron.*                                                  /var/log/cron
+or
+cron.* action(type="omfile" file="/var/log/cron")
       Is it the case that cron is not logging to rsyslog?
       </pre></td>
 	<td><pre>Cron logging must be implemented to spot intrusions or trace
 cron job status. If cron is not logging to rsyslog, it
 can be implemented by adding the following to the RULES section of
 /etc/rsyslog.conf:
+If the legacy syntax is used:
 cron.*                                                  /var/log/cron
+If the modern syntax (RainerScript) is used:
+cron.* action(type="omfile" file="/var/log/cron")
           </pre></td>
 	<td>OL07-00-021100</td>
 	<td>rsyslog_cron_logging</td>
@@ -6964,21 +6966,19 @@ Compression
 Synchronizing internal information system clocks provides uniformity of time stamps for information systems with multiple system clocks and systems connected over a network.
 Organizations should consider endpoints that may not have regular access to the authoritative time server (e.g., mobile, teleworking, and tactical endpoints).</pre></td>
 	<td><pre>Verify Oracle Linux 7 is securely comparing internal information system clocks at a regular interval with an NTP server with the following command:
-$ sudo grep maxpoll /etc/ntp.conf /etc/chrony.conf
+$ sudo grep maxpoll /etc/ntp.conf /etc/chrony.conf /etc/chrony.d/
 server [ntp.server.name] iburst maxpoll .
       Is it the case that "maxpoll" has not been set to the value of "<sub idref="var_time_service_set_maxpoll" />", is commented out, or is missing?
       </pre></td>
 	<td><pre>The maxpoll should be configured to
  in /etc/ntp.conf or
-/etc/chrony.conf to continuously poll time servers. To configure
-maxpoll in /etc/ntp.conf or /etc/chrony.conf
-add the following after each `server`, `pool` or `peer` entry:
+/etc/chrony.conf (or /etc/chrony.d/) to continuously poll time servers. To configure
+maxpoll in /etc/ntp.conf or /etc/chrony.conf (or /etc/chrony.d/)
+add the following after each server, pool or peer entry:
 maxpoll 
           
-to server directives. If using chrony any pool directives
-should be configured too.
-If no server or pool directives are configured, the rule evaluates
-to pass.</pre></td>
+to server directives. If using chrony, any pool directives
+should be configured too.</pre></td>
 	<td>OL07-00-040500</td>
 	<td>chronyd_or_ntpd_set_maxpoll</td>
 </tr>

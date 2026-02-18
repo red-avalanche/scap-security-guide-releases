@@ -6,7 +6,7 @@
 <body>
 <br><br><div style="text-align: center; font-size: x-large; font-weight:bold">DISA STIG for SUSE Linux Enterprise 15</div>
 <div style="text-align: center; font-size: normal ">This profile contains configuration checks that align to the
-DISA STIG for SUSE Linux Enterprise 15 V1R12.</div>
+DISA STIG for SUSE Linux Enterprise 15 V1R13.</div>
 <br><br><style type="text/css">
 		table
 		{
@@ -3782,8 +3782,11 @@ facility.
 
 The partition size needed to capture a week's worth of audit records is
 based on the activity level of the system and the total storage capacity
-available. In normal circumstances, 10.0 GB of storage space for audit
+available.
+
+In normal circumstances, 10.0 GB of storage space for audit
 records will be sufficient.
+
 
 Determine which partition the audit records are being written to with the
 following command:
@@ -4135,17 +4138,15 @@ Synchronizing internal information system clocks provides uniformity of time sta
 Organizations should consider endpoints that may not have regular access to the authoritative time server (e.g., mobile, teleworking, and tactical endpoints).</td>
 <td>The <code>maxpoll</code> should be configured to
 <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_time_service_set_maxpoll" use="legacy"></xccdf-1.2:sub> in <code>/etc/ntp.conf</code> or
-<code>/etc/chrony.conf</code> to continuously poll time servers. To configure
-<code>maxpoll</code> in <code>/etc/ntp.conf</code> or <code>/etc/chrony.conf</code>
-add the following after each `server`, `pool` or `peer` entry:
+<code>/etc/chrony.conf</code> (or <code>/etc/chrony.d/</code>) to continuously poll time servers. To configure
+<code>maxpoll</code> in <code>/etc/ntp.conf</code> or <code>/etc/chrony.conf</code> (or <code>/etc/chrony.d/</code>)
+add the following after each <code>server</code>, <code>pool</code> or <code>peer</code> entry:
 <pre>maxpoll <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_time_service_set_maxpoll" use="legacy"></xccdf-1.2:sub>
           </pre>
-to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
-should be configured too.
-If no <code>server</code> or <code>pool</code> directives are configured, the rule evaluates
-to pass.</td>
+to <code>server</code> directives. If using chrony, any <code>pool</code> directives
+should be configured too.</td>
 <td><pre>Verify SUSE Linux Enterprise 15 is securely comparing internal information system clocks at a regular interval with an NTP server with the following command:
-$ sudo grep maxpoll /etc/ntp.conf /etc/chrony.conf
+$ sudo grep maxpoll /etc/ntp.conf /etc/chrony.conf /etc/chrony.d/
 server [ntp.server.name] iburst maxpoll .
       Is it the case that "maxpoll" has not been set to the value of "&lt;sub idref="var_time_service_set_maxpoll" /&gt;", is commented out, or is missing?
       </pre></td>
@@ -6006,7 +6007,7 @@ to prevent automatic loading of the USB storage driver.
 
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
-<pre>install usb-storage /bin/true</pre>
+<pre>install usb-storage /bin/false</pre>
 
 This will prevent the <code>modprobe</code> program from loading the <code>usb-storage</code>
 module, but will not prevent an administrator (or another program) from using the
@@ -6014,7 +6015,7 @@ module, but will not prevent an administrator (or another program) from using th
 <td><pre>
 If the system is configured to prevent the loading of the usb-storage kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 Run the following command to search for such lines in all files in /etc/modprobe.d and the deprecated /etc/modprobe.conf:
 $ grep -r usb-storage /etc/modprobe.conf /etc/modprobe.d
@@ -7129,14 +7130,15 @@ If the service is running, it should return the following: active
 <td>xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_logindefs</td>
 <td>medium</td>
 <td>Set Password Hashing Algorithm in /etc/login.defs</td>
-<td>Passwords need to be protected at all times, and encryption is the standard method for protecting passwords.
-If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised. Passwords
-that are encrypted with a weak algorithm are no more protected than if they are kept in plain text.
+<td>Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 <br>
               <br>
 Using a stronger hashing algorithm makes password cracking attacks more difficult.</td>
-<td>In <code>/etc/login.defs</code>, add or correct the following line to ensure
-the system will use <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm" use="legacy"></xccdf-1.2:sub> as the hashing algorithm:
+<td>In <code>/etc/login.defs</code>, add or update the following line to ensure the system will use
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm" use="legacy"></xccdf-1.2:sub> as the hashing algorithm:
 <pre>ENCRYPT_METHOD <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm" use="legacy"></xccdf-1.2:sub>
               </pre>
             </td>
@@ -7161,39 +7163,40 @@ ENCRYPT_METHOD
 <td>xccdf_org.ssgproject.content_rule_set_password_hashing_algorithm_systemauth</td>
 <td>medium</td>
 <td>Set PAM''s Password Hashing Algorithm</td>
-<td>Passwords need to be protected at all times, and encryption is the standard
-method for protecting passwords. If passwords are not encrypted, they can
-be plainly read (i.e., clear text) and easily compromised. Passwords that
-are encrypted with a weak algorithm are no more protected than if they are
-kepy in plain text.
+<td>Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 <br>
               <br>
-This setting ensures user and group account administration utilities are
-configured to store only encrypted representations of passwords.
-Additionally, the <code>crypt_style</code> configuration option ensures the use
-of a strong hashing algorithm that makes password cracking attacks more
-difficult.</td>
-<td>The PAM system service can be configured to only store encrypted
-representations of passwords. In "/etc/pam.d/common-password", the
-<code>password</code> section of the file controls which PAM modules execute
-during a password change. Set the <code>pam_unix.so</code> module in the
-<code>password</code> section to include the argument <code>sha512</code>, as shown
-below:
+This setting ensures user and group account administration utilities are configured to store
+only encrypted representations of passwords. Additionally, the <code>crypt_style</code>
+configuration option in <code>/etc/libuser.conf</code> ensures the use of a strong hashing
+algorithm that makes password cracking attacks more difficult.</td>
+<td>The PAM system service can be configured to only store encrypted representations of passwords.
+In "/etc/pam.d/common-password", the <code>password</code> section of the file controls which
+PAM modules to execute during a password change.
+
+Set the <code>pam_unix.so</code> module in the <code>password</code> section to include the option
+<code>
+                <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub>
+              </code> and no other hashing
+algorithms as shown below:
 <br>
-              <pre>password    required    pam_unix.so sha512 <i>other arguments...</i>
+              <pre>password    required    pam_unix.so <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub>
+                <i>other arguments...</i>
               </pre>
               <br>
-This will help ensure when local users change their passwords, hashes for
-the new passwords will be generated using the SHA-512 algorithm. This is
-the default.</td>
+This will help ensure that new passwords for local users will be stored using the
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm_pam" use="legacy"></xccdf-1.2:sub> algorithm.</td>
 <td><pre>Inspect the password section of /etc/pam.d/common-password
-and ensure that the pam_unix.so module  is configured to use the argument
-sha512:
+and ensure that the pam_unix.so module is configured to use the argument
+:
 
-$ sudo grep "^password.*pam_unix\.so.*sha512" /etc/pam.d/common-password
-password required pam_unix.so sha512
+$ sudo grep "^password.*pam_unix\.so.*" /etc/pam.d/common-password
+password required pam_unix.so 
 
-      Is it the case that "sha512" is missing, or is commented out?
+      Is it the case that "&lt;sub idref="var_password_hashing_algorithm_pam" /&gt;" is missing, or is commented out?
       </pre></td>
 <td>SRG-OS-000073-GPOS-00041<br>SRG-OS-000120-GPOS-00061<br>
 </td>

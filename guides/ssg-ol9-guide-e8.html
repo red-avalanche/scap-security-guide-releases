@@ -70,8 +70,8 @@ this guide without first testing them in a non-operational environment. The
 creators of this guidance assume no responsibility whatsoever for its use by
 other parties, and makes no guarantees, expressed or implied, about its
 quality, reliability, or any other characteristic.
-</div></div></div></div></div><div id="profileinfo"><h2>Profile Information</h2><div class="row"><div class="col-md-5 well well-lg horizontal-scroll"><table class="table table-bordered"><tr><th>Profile Title</th><td>Australian Cyber Security Centre (ACSC) Essential Eight</td></tr><tr><th>Profile ID</th><td>xccdf_org.ssgproject.content_profile_e8</td></tr></table></div><div class="col-md-3"><h4>CPE Platforms</h4><ul class="list-group"><li class="list-group-item"><span class="label label-default" title="CPE platform cpe:/o:oracle:linux:9 is applicable to this Benchmark">cpe:/o:oracle:linux:9</span></li></ul></div></div></div><div id="revisionhistory"><h2>Revision History</h2><p>Current version: <strong>0.1.73</strong></p><ul><li><strong>draft</strong>
-                    (as of 2024-05-16)
+</div></div></div></div></div><div id="profileinfo"><h2>Profile Information</h2><div class="row"><div class="col-md-5 well well-lg horizontal-scroll"><table class="table table-bordered"><tr><th>Profile Title</th><td>Australian Cyber Security Centre (ACSC) Essential Eight</td></tr><tr><th>Profile ID</th><td>xccdf_org.ssgproject.content_profile_e8</td></tr></table></div><div class="col-md-3"><h4>CPE Platforms</h4><ul class="list-group"><li class="list-group-item"><span class="label label-default" title="CPE platform cpe:/o:oracle:linux:9 is applicable to this Benchmark">cpe:/o:oracle:linux:9</span></li></ul></div></div></div><div id="revisionhistory"><h2>Revision History</h2><p>Current version: <strong>0.1.74</strong></p><ul><li><strong>draft</strong>
+                    (as of 2024-08-09)
                 </li></ul></div><h2>Table of Contents</h2><ol><li><a href="#xccdf_org.ssgproject.content_group_system">System Settings</a><ol><li><a href="#xccdf_org.ssgproject.content_group_software">Installing and Maintaining Software</a></li><li><a href="#xccdf_org.ssgproject.content_group_accounts">Account and Access Control</a></li><li><a href="#xccdf_org.ssgproject.content_group_logging">Configure Syslog</a></li><li><a href="#xccdf_org.ssgproject.content_group_network">Network Configuration and Firewalls</a></li><li><a href="#xccdf_org.ssgproject.content_group_permissions">File Permissions and Masks</a></li><li><a href="#xccdf_org.ssgproject.content_group_selinux">SELinux</a></li></ol></li><li><a href="#xccdf_org.ssgproject.content_group_services">Services</a><ol><li><a href="#xccdf_org.ssgproject.content_group_avahi">Avahi Server</a></li><li><a href="#xccdf_org.ssgproject.content_group_fapolicyd">Application Whitelisting Daemon</a></li><li><a href="#xccdf_org.ssgproject.content_group_obsolete">Obsolete Services</a></li><li><a href="#xccdf_org.ssgproject.content_group_proxy">Proxy Server</a></li><li><a href="#xccdf_org.ssgproject.content_group_ssh">SSH Server</a></li></ol></li><li><a href="#xccdf_org.ssgproject.content_group_auditing">System Accounting with auditd</a><ol><li><a href="#xccdf_org.ssgproject.content_group_auditd_configure_rules">Configure auditd Rules for Comprehensive Auditing</a></li><li><a href="#xccdf_org.ssgproject.content_group_configure_auditd_data_retention">Configure auditd Data Retention</a></li></ol></li></ol><div id="guide-tree"><h2>Checklist</h2><table class="treetable table table-bordered"><tbody><tr data-tt-id="children-xccdf_org.ssgproject.content_benchmark_OL-9"><td style="padding-left: 0px" id="xccdf_org.ssgproject.content_benchmark_OL-9"><span class="label label-default">Group</span>  
                 Guide to the Secure Configuration of Oracle Linux 9
                           <small>Group contains 44 groups and 94 rules</small></td></tr><tr data-tt-id="children-xccdf_org.ssgproject.content_group_system" data-tt-parent-id="children-xccdf_org.ssgproject.content_benchmark_OL-9"><td style="padding-left: 19px" id="xccdf_org.ssgproject.content_group_system"><span class="label label-default">Group</span>  
@@ -937,14 +937,20 @@ image of a system and restores from backup using this image.</div></td></tr><tr>
   - medium_severity
   - no_reboot_needed
   - package_rear_installed
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id39" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id39"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>include install_rear
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id39" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id39"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>
+package --add=rear
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id40" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id40"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>include install_rear
 
 class install_rear {
   package { 'rear':
     ensure =&gt; 'installed',
   }
 }
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id40" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id40"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id41" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id41"><pre><code>
+[[packages]]
+name = "rear"
+version = "*"
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id42" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id42"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
 if ! ( ( ( grep -q aarch64 /proc/sys/kernel/osrelease &amp;&amp; grep -qP "^ID=[\"']?ol[\"']?$" "/etc/os-release" &amp;&amp; { real="$(grep -P "^VERSION_ID=[\"']?[\w.]+[\"']?$" /etc/os-release | sed "s/^VERSION_ID=[\"']\?\([^\"']\+\)[\"']\?$/\1/")"; expected="9.0"; printf "%s\n%s" "$expected" "$real" | sort -VC; } ) || ( grep -q aarch64 /proc/sys/kernel/osrelease &amp;&amp; grep -qP "^ID=[\"']?rhel[\"']?$" "/etc/os-release" &amp;&amp; { real="$(grep -P "^VERSION_ID=[\"']?[\w.]+[\"']?$" /etc/os-release | sed "s/^VERSION_ID=[\"']\?\([^\"']\+\)[\"']\?$/\1/")"; expected="9.0"; printf "%s\n%s" "$expected" "$real" | sort -VC; } ) || ( grep -qP "^ID=[\"']?rhel[\"']?$" "/etc/os-release" &amp;&amp; { real="$(grep -P "^VERSION_ID=[\"']?[\w.]+[\"']?$" /etc/os-release | sed "s/^VERSION_ID=[\"']\?\([^\"']\+\)[\"']\?$/\1/")"; expected="8.4"; printf "%s\n%s" "$real" "$expected" | sort -VC; } &amp;&amp; grep -q s390x /proc/sys/kernel/osrelease ) ) ); then
 
 if ! rpm -q --quiet "rear" ; then
@@ -954,12 +960,6 @@ fi
 else
     &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
 fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id41" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id41"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>
-package --add=rear
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id42" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id42"><pre><code>
-[[packages]]
-name = "rear"
-version = "*"
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="children-xccdf_org.ssgproject.content_group_updating" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_software"><td style="padding-left: 57px" id="xccdf_org.ssgproject.content_group_updating"><span class="label label-default">Group</span>  
                 Updating Software
                           <small>Group contains 6 rules</small></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_group_updating" class="guide-tree-inner-node guide-tree-inner-node-id-xccdf_org.ssgproject.content_group_updating" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_software"><td style="padding-left: 57px"><div><a class="small" href="#xccdf_org.ssgproject.content_group_updating">[ref]</a>  
@@ -992,12 +992,16 @@ for f in $(echo -n "/etc/dnf/automatic.conf"); do
 
     # find key in section and change value
     if grep -qzosP "[[:space:]]*\[commands\]([^\n\[]*\n+)+?[[:space:]]*upgrade_type" "$f"; then
-            sed -i "s/upgrade_type[^(\n)]*/upgrade_type = security/" "$f"
+
+            sed -i "s/upgrade_type[^(\n)]*/upgrade_type=security/" "$f"
+
             found=true
 
     # find section and add key = value to it
     elif grep -qs "[[:space:]]*\[commands\]" "$f"; then
-            sed -i "/[[:space:]]*\[commands\]/a upgrade_type = security" "$f"
+
+            sed -i "/[[:space:]]*\[commands\]/a upgrade_type=security" "$f"
+
             found=true
     fi
 done
@@ -1006,7 +1010,9 @@ done
 if ! $found ; then
     file=$(echo "/etc/dnf/automatic.conf" | cut -f1 -d ' ')
     mkdir -p "$(dirname "$file")"
-    echo -e "[commands]\nupgrade_type = security" &gt;&gt; "$file"
+
+    echo -e "[commands]\nupgrade_type=security" &gt;&gt; "$file"
+
 fi
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_ensure_gpgcheck_globally_activated" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_ensure_gpgcheck_globally_activated" id="guide-tree-leaf-id45" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_updating"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_ensure_gpgcheck_globally_activated"><span class="label label-default">Rule</span>  
                                 Ensure gpgcheck Enabled In Main yum Configuration
@@ -1539,44 +1545,7 @@ empty passwords should never be used in operational environments.</div></td></tr
   - medium_disruption
   - no_empty_passwords
   - no_reboot_needed
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id61" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id61"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>medium</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code># Remediation is applicable only in certain platforms
-if [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ]; then
-
-if [ -f /usr/bin/authselect ]; then
-    if ! authselect check; then
-echo "
-authselect integrity check failed. Remediation aborted!
-This remediation could not be applied because an authselect profile was not selected or the selected profile is not intact.
-It is not recommended to manually edit the PAM files when authselect tool is available.
-In cases where the default authselect profile does not cover a specific demand, a custom authselect profile is recommended."
-exit 1
-fi
-authselect enable-feature without-nullok
-
-authselect apply-changes -b
-else
-    
-if grep -qP '^\s*auth\s+'"sufficient"'\s+pam_unix.so\s.*\bnullok\b' "/etc/pam.d/system-auth"; then
-    sed -i -E --follow-symlinks 's/(.*auth.*'"sufficient"'.*pam_unix.so.*)\snullok=?[[:alnum:]]*(.*)/\1\2/g' "/etc/pam.d/system-auth"
-fi
-    
-if grep -qP '^\s*password\s+'"sufficient"'\s+pam_unix.so\s.*\bnullok\b' "/etc/pam.d/system-auth"; then
-    sed -i -E --follow-symlinks 's/(.*password.*'"sufficient"'.*pam_unix.so.*)\snullok=?[[:alnum:]]*(.*)/\1\2/g' "/etc/pam.d/system-auth"
-fi
-    
-if grep -qP '^\s*auth\s+'"sufficient"'\s+pam_unix.so\s.*\bnullok\b' "/etc/pam.d/password-auth"; then
-    sed -i -E --follow-symlinks 's/(.*auth.*'"sufficient"'.*pam_unix.so.*)\snullok=?[[:alnum:]]*(.*)/\1\2/g' "/etc/pam.d/password-auth"
-fi
-    
-if grep -qP '^\s*password\s+'"sufficient"'\s+pam_unix.so\s.*\bnullok\b' "/etc/pam.d/password-auth"; then
-    sed -i -E --follow-symlinks 's/(.*password.*'"sufficient"'.*pam_unix.so.*)\snullok=?[[:alnum:]]*(.*)/\1\2/g' "/etc/pam.d/password-auth"
-fi
-fi
-
-else
-    &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
-fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id62" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Kubernetes snippet ⇲</a><br><div class="panel-collapse collapse" id="id62"><pre><code>---
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id61" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Kubernetes snippet ⇲</a><br><div class="panel-collapse collapse" id="id61"><pre><code>---
 apiVersion: machineconfiguration.openshift.io/v1
 kind: MachineConfig
 spec:
@@ -1595,6 +1564,43 @@ spec:
         mode: 0644
         path: /etc/pam.d/system-auth
         overwrite: true
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id62" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id62"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>medium</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code># Remediation is applicable only in certain platforms
+if [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ]; then
+
+if [ -f /usr/bin/authselect ]; then
+    if ! authselect check; then
+echo "
+authselect integrity check failed. Remediation aborted!
+This remediation could not be applied because an authselect profile was not selected or the selected profile is not intact.
+It is not recommended to manually edit the PAM files when authselect tool is available.
+In cases where the default authselect profile does not cover a specific demand, a custom authselect profile is recommended."
+exit 1
+fi
+authselect enable-feature without-nullok
+
+authselect apply-changes -b
+else
+    
+if grep -qP "^\s*auth\s+sufficient\s+pam_unix.so\s.*\bnullok\b" "/etc/pam.d/system-auth"; then
+    sed -i -E --follow-symlinks "s/(.*auth.*sufficient.*pam_unix.so.*)\snullok=?[[:alnum:]]*(.*)/\1\2/g" "/etc/pam.d/system-auth"
+fi
+    
+if grep -qP "^\s*password\s+sufficient\s+pam_unix.so\s.*\bnullok\b" "/etc/pam.d/system-auth"; then
+    sed -i -E --follow-symlinks "s/(.*password.*sufficient.*pam_unix.so.*)\snullok=?[[:alnum:]]*(.*)/\1\2/g" "/etc/pam.d/system-auth"
+fi
+    
+if grep -qP "^\s*auth\s+sufficient\s+pam_unix.so\s.*\bnullok\b" "/etc/pam.d/password-auth"; then
+    sed -i -E --follow-symlinks "s/(.*auth.*sufficient.*pam_unix.so.*)\snullok=?[[:alnum:]]*(.*)/\1\2/g" "/etc/pam.d/password-auth"
+fi
+    
+if grep -qP "^\s*password\s+sufficient\s+pam_unix.so\s.*\bnullok\b" "/etc/pam.d/password-auth"; then
+    sed -i -E --follow-symlinks "s/(.*password.*sufficient.*pam_unix.so.*)\snullok=?[[:alnum:]]*(.*)/\1\2/g" "/etc/pam.d/password-auth"
+fi
+fi
+
+else
+    &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
+fi
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="children-xccdf_org.ssgproject.content_group_root_logins" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_accounts-restrictions"><td style="padding-left: 76px" id="xccdf_org.ssgproject.content_group_root_logins"><span class="label label-default">Group</span>  
                 Restrict Root Logins
                           <small>Group contains  1 rule</small></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_group_root_logins" class="guide-tree-inner-node guide-tree-inner-node-id-xccdf_org.ssgproject.content_group_root_logins" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_accounts-restrictions"><td style="padding-left: 76px"><div><a class="small" href="#xccdf_org.ssgproject.content_group_root_logins">[ref]</a>  
@@ -1687,11 +1693,29 @@ that are well tested and supported to solve different use-cases.</div></td></tr>
   tags:
     - always
 
-- name: Enable authselect - Select authselect profile
+- name: Enable authselect - Check Current authselect Profile
+  ansible.builtin.command:
+    cmd: authselect current
+  register: result_authselect_current
+  changed_when: false
+  failed_when: false
+  tags:
+  - NIST-800-53-AC-3
+  - PCI-DSSv4-8.3.4
+  - configure_strategy
+  - enable_authselect
+  - low_complexity
+  - medium_disruption
+  - medium_severity
+  - no_reboot_needed
+
+- name: Enable authselect - Try to Select an authselect Profile
   ansible.builtin.command:
     cmd: authselect select "{{ var_authselect_profile }}"
   register: result_authselect_select
+  changed_when: result_authselect_select.rc == 0
   failed_when: false
+  when: result_authselect_current.rc != 0
   tags:
   - NIST-800-53-AC-3
   - PCI-DSSv4-8.3.4
@@ -1702,12 +1726,15 @@ that are well tested and supported to solve different use-cases.</div></td></tr>
   - medium_severity
   - no_reboot_needed
 
-- name: Enable authselect - Verify if PAM has been altered
+- name: Enable authselect - Verify If pam Has Been Altered
   ansible.builtin.command:
     cmd: rpm -qV pam
   register: result_altered_authselect
+  changed_when: false
   failed_when: false
-  when: result_authselect_select.rc != 0
+  when:
+  - result_authselect_select is not skipped
+  - result_authselect_select.rc != 0
   tags:
   - NIST-800-53-AC-3
   - PCI-DSSv4-8.3.4
@@ -1718,14 +1745,14 @@ that are well tested and supported to solve different use-cases.</div></td></tr>
   - medium_severity
   - no_reboot_needed
 
-- name: Enable authselect - Informative message based on the authselect integrity
-    check
+- name: Enable authselect - Informative Message Based on authselect Integrity Check
   ansible.builtin.assert:
     that:
-    - result_altered_authselect is skipped or result_altered_authselect.rc == 0
+    - result_authselect_current.rc == 0 or result_altered_authselect is skipped or
+      result_altered_authselect.rc == 0
     fail_msg:
-    - Files in the 'pam' package have been altered, so the authselect configuration
-      won't be forced.
+    - authselect is not used but files from the 'pam' package have been altered, so
+      the authselect configuration won't be forced.
   tags:
   - NIST-800-53-AC-3
   - PCI-DSSv4-8.3.4
@@ -1736,12 +1763,13 @@ that are well tested and supported to solve different use-cases.</div></td></tr>
   - medium_severity
   - no_reboot_needed
 
-- name: Enable authselect - Force authselect profile select
+- name: Enable authselect - Force authselect Profile Selection
   ansible.builtin.command:
     cmd: authselect select --force "{{ var_authselect_profile }}"
   when:
+  - result_authselect_current.rc != 0
   - result_authselect_select.rc != 0
-  - result_altered_authselect is skipped or result_altered_authselect.rc == 0
+  - result_altered_authselect.rc == 0
   tags:
   - NIST-800-53-AC-3
   - PCI-DSSv4-8.3.4
@@ -1755,13 +1783,17 @@ that are well tested and supported to solve different use-cases.</div></td></tr>
 var_authselect_profile='<abbr title="from Profile/refine-value: xccdf_org.ssgproject.content_value_var_authselect_profile">sssd</abbr>'
 
 
-authselect select "$var_authselect_profile"
+authselect current
 
 if test "$?" -ne 0; then
-    if rpm --quiet --verify pam; then
-        authselect select --force "$var_authselect_profile"
-    else
-	echo "Files in the 'pam' package have been altered, so the authselect configuration won't be forced" &gt;&amp;2
+    authselect select "$var_authselect_profile"
+
+    if test "$?" -ne 0; then
+        if rpm --quiet --verify pam; then
+            authselect select --force "$var_authselect_profile"
+        else
+	        echo "authselect is not used but files from the 'pam' package have been altered, so the authselect configuration won't be forced." &gt;&amp;2
+        fi
     fi
 fi
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="children-xccdf_org.ssgproject.content_group_logging" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_system"><td style="padding-left: 38px" id="xccdf_org.ssgproject.content_group_logging"><span class="label label-default">Group</span>  
@@ -1799,14 +1831,20 @@ system logging services.</div></td></tr><tr><td><span class="label label-warning
   - medium_severity
   - no_reboot_needed
   - package_rsyslog_installed
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id71" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id71"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>include install_rsyslog
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id71" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id71"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>
+package --add=rsyslog
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id72" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id72"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>include install_rsyslog
 
 class install_rsyslog {
   package { 'rsyslog':
     ensure =&gt; 'installed',
   }
 }
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id72" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id72"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id73" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id73"><pre><code>
+[[packages]]
+name = "rsyslog"
+version = "*"
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id74" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id74"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
 if [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ]; then
 
 if ! rpm -q --quiet "rsyslog" ; then
@@ -1816,12 +1854,6 @@ fi
 else
     &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
 fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id73" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id73"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>
-package --add=rsyslog
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id74" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id74"><pre><code>
-[[packages]]
-name = "rsyslog"
-version = "*"
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_service_rsyslog_enabled" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_service_rsyslog_enabled" id="guide-tree-leaf-id75" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_logging"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_service_rsyslog_enabled"><span class="label label-default">Rule</span>  
                                 Enable rsyslog Service
                                   <a class="small" href="#xccdf_org.ssgproject.content_rule_service_rsyslog_enabled">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">The <code>rsyslog</code> service provides syslog-style logging by default on Oracle Linux 9.
@@ -1829,19 +1861,19 @@ version = "*"
 The <code>rsyslog</code> service can be enabled with the following command:
 <pre>$ sudo systemctl enable rsyslog.service</pre>
       </div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale">The <code>rsyslog</code> service must be running in order to provide
-logging services, which are essential to system administration.</div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_service_rsyslog_enabled</td></tr><tr><td><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span></td><td class="identifiers"><table class="table table-striped table-bordered"><tr><td><a href="https://www.cisecurity.org/controls/">cis-csc</a></td><td>1, 12, 13, 14, 15, 16, 2, 3, 5, 6, 7, 8, 9</td></tr><tr><td><a href="https://www.isaca.org/resources/cobit">cobit5</a></td><td>APO10.01, APO10.03, APO10.04, APO10.05, APO11.04, APO13.01, BAI03.05, BAI04.04, DSS01.03, DSS03.05, DSS05.02, DSS05.04, DSS05.05, DSS05.07, MEA01.01, MEA01.02, MEA01.03, MEA01.04, MEA01.05, MEA02.01</td></tr><tr><td><a href="https://public.cyber.mil/stigs/cci/">disa</a></td><td>CCI-001311, CCI-001312, CCI-001557, CCI-001851, CCI-000366</td></tr><tr><td><a href="https://www.gpo.gov/fdsys/pkg/CFR-2007-title45-vol1/pdf/CFR-2007-title45-vol1-chapA-subchapC.pdf">hipaa</a></td><td>164.312(a)(2)(ii)</td></tr><tr><td><a href="https://www.isa.org/products/isa-62443-2-1-2009-security-for-industrial-automat">isa-62443-2009</a></td><td>4.3.2.6.7, 4.3.3.3.9, 4.3.3.5.8, 4.3.4.4.7, 4.4.2.1, 4.4.2.2, 4.4.2.4</td></tr><tr><td><a href="https://www.isa.org/products/ansi-isa-62443-3-3-99-03-03-2013-security-for-indu">isa-62443-2013</a></td><td>SR 2.10, SR 2.11, SR 2.12, SR 2.8, SR 2.9, SR 6.1, SR 6.2, SR 7.1, SR 7.2</td></tr><tr><td><a href="https://www.iso.org/contents/data/standard/05/45/54534.html">iso27001-2013</a></td><td>A.12.1.3, A.12.4.1, A.12.4.2, A.12.4.3, A.12.4.4, A.12.7.1, A.14.2.7, A.15.2.1, A.15.2.2, A.17.2.1</td></tr><tr><td><a href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">nist</a></td><td>CM-6(a), AU-4(1)</td></tr><tr><td><a href="https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.04162018.pdf">nist-csf</a></td><td>DE.CM-1, DE.CM-3, DE.CM-7, ID.SC-4, PR.DS-4, PR.PT-1</td></tr><tr><td><a href="https://public.cyber.mil/stigs/downloads/?_dl_facet_stigs=operating-systems%2Cgeneral-purpose-os">os-srg</a></td><td>SRG-OS-000480-GPOS-00227</td></tr></table></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#id76" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br><div class="panel-collapse collapse" id="id76"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>- name: Enable service rsyslog
+logging services, which are essential to system administration.</div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_service_rsyslog_enabled</td></tr><tr><td><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span></td><td class="identifiers"><table class="table table-striped table-bordered"><tr><td><a href="https://www.cisecurity.org/controls/">cis-csc</a></td><td>1, 12, 13, 14, 15, 16, 2, 3, 5, 6, 7, 8, 9</td></tr><tr><td><a href="https://www.isaca.org/resources/cobit">cobit5</a></td><td>APO10.01, APO10.03, APO10.04, APO10.05, APO11.04, APO13.01, BAI03.05, BAI04.04, DSS01.03, DSS03.05, DSS05.02, DSS05.04, DSS05.05, DSS05.07, MEA01.01, MEA01.02, MEA01.03, MEA01.04, MEA01.05, MEA02.01</td></tr><tr><td><a href="https://public.cyber.mil/stigs/cci/">disa</a></td><td>CCI-001311, CCI-001312, CCI-001557, CCI-001851, CCI-000366</td></tr><tr><td><a href="https://www.gpo.gov/fdsys/pkg/CFR-2007-title45-vol1/pdf/CFR-2007-title45-vol1-chapA-subchapC.pdf">hipaa</a></td><td>164.312(a)(2)(ii)</td></tr><tr><td><a href="https://www.isa.org/products/isa-62443-2-1-2009-security-for-industrial-automat">isa-62443-2009</a></td><td>4.3.2.6.7, 4.3.3.3.9, 4.3.3.5.8, 4.3.4.4.7, 4.4.2.1, 4.4.2.2, 4.4.2.4</td></tr><tr><td><a href="https://www.isa.org/products/ansi-isa-62443-3-3-99-03-03-2013-security-for-indu">isa-62443-2013</a></td><td>SR 2.10, SR 2.11, SR 2.12, SR 2.8, SR 2.9, SR 6.1, SR 6.2, SR 7.1, SR 7.2</td></tr><tr><td><a href="https://www.iso.org/contents/data/standard/05/45/54534.html">iso27001-2013</a></td><td>A.12.1.3, A.12.4.1, A.12.4.2, A.12.4.3, A.12.4.4, A.12.7.1, A.14.2.7, A.15.2.1, A.15.2.2, A.17.2.1</td></tr><tr><td><a href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">nist</a></td><td>CM-6(a), AU-4(1)</td></tr><tr><td><a href="https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.04162018.pdf">nist-csf</a></td><td>DE.CM-1, DE.CM-3, DE.CM-7, ID.SC-4, PR.DS-4, PR.PT-1</td></tr><tr><td><a href="https://public.cyber.mil/stigs/downloads/?_dl_facet_stigs=operating-systems%2Cgeneral-purpose-os">os-srg</a></td><td>SRG-OS-000480-GPOS-00227</td></tr></table></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#id76" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br><div class="panel-collapse collapse" id="id76"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>- name: Enable rsyslog Service - Enable service rsyslog
   block:
 
   - name: Gather the package facts
     package_facts:
       manager: auto
 
-  - name: Enable service rsyslog
-    systemd:
+  - name: Enable rsyslog Service - Enable Service rsyslog
+    ansible.builtin.systemd:
       name: rsyslog
-      enabled: 'yes'
+      enabled: true
       state: started
-      masked: 'no'
+      masked: false
     when:
     - '"rsyslog" in ansible_facts.packages'
   when: ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
@@ -1862,7 +1894,10 @@ class enable_rsyslog {
     ensure =&gt; 'running',
   }
 }
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id78" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id78"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id78" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id78"><pre><code>
+[customizations.services]
+enabled = ["rsyslog"]
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id79" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id79"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
 if [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ]; then
 
 SYSTEMCTL_EXEC='/usr/bin/systemctl'
@@ -1873,9 +1908,6 @@ SYSTEMCTL_EXEC='/usr/bin/systemctl'
 else
     &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
 fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id79" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id79"><pre><code>
-[customizations.services]
-enabled = ["rsyslog"]
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="children-xccdf_org.ssgproject.content_group_network" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_system"><td style="padding-left: 38px" id="xccdf_org.ssgproject.content_group_network"><span class="label label-default">Group</span>  
                 Network Configuration and Firewalls
                           <small>Group contains 2 groups and 3 rules</small></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_group_network" class="guide-tree-inner-node guide-tree-inner-node-id-xccdf_org.ssgproject.content_group_network" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_system"><td style="padding-left: 38px"><div><a class="small" href="#xccdf_org.ssgproject.content_group_network">[ref]</a>  
@@ -2002,14 +2034,20 @@ Automated control of remote access sessions allows organizations to ensure ongoi
   - medium_severity
   - no_reboot_needed
   - package_firewalld_installed
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id82" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id82"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>include install_firewalld
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id82" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id82"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>
+package --add=firewalld
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id83" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id83"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>include install_firewalld
 
 class install_firewalld {
   package { 'firewalld':
     ensure =&gt; 'installed',
   }
 }
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id83" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id83"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id84" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id84"><pre><code>
+[[packages]]
+name = "firewalld"
+version = "*"
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id85" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id85"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
 if [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ]; then
 
 if ! rpm -q --quiet "firewalld" ; then
@@ -2019,12 +2057,6 @@ fi
 else
     &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
 fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id84" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id84"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>
-package --add=firewalld
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id85" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id85"><pre><code>
-[[packages]]
-name = "firewalld"
-version = "*"
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_service_firewalld_enabled" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_service_firewalld_enabled" id="guide-tree-leaf-id86" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_firewalld_activation"><td style="padding-left: 95px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_service_firewalld_enabled"><span class="label label-default">Rule</span>  
                                 Verify firewalld Enabled
                                   <a class="small" href="#xccdf_org.ssgproject.content_rule_service_firewalld_enabled">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">
@@ -2051,19 +2083,19 @@ prevents connections from unknown hosts and protocols.</div></td></tr><tr><td><s
   - no_reboot_needed
   - service_firewalld_enabled
 
-- name: Enable service firewalld
+- name: Verify firewalld Enabled - Enable service firewalld
   block:
 
   - name: Gather the package facts
     package_facts:
       manager: auto
 
-  - name: Enable service firewalld
-    systemd:
+  - name: Verify firewalld Enabled - Enable Service firewalld
+    ansible.builtin.systemd:
       name: firewalld
-      enabled: 'yes'
+      enabled: true
       state: started
-      masked: 'no'
+      masked: false
     when:
     - '"firewalld" in ansible_facts.packages'
   when:
@@ -2092,7 +2124,10 @@ class enable_firewalld {
     ensure =&gt; 'running',
   }
 }
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id89" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id89"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id89" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id89"><pre><code>
+[customizations.services]
+enabled = ["firewalld"]
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id90" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id90"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
 if [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ] &amp;&amp; { rpm --quiet -q firewalld; }; then
 
 SYSTEMCTL_EXEC='/usr/bin/systemctl'
@@ -2103,9 +2138,6 @@ SYSTEMCTL_EXEC='/usr/bin/systemctl'
 else
     &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
 fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id90" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id90"><pre><code>
-[customizations.services]
-enabled = ["firewalld"]
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_network_sniffer_disabled" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_network_sniffer_disabled" id="guide-tree-leaf-id91" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_network"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_network_sniffer_disabled"><span class="label label-default">Rule</span>  
                                 Ensure System is Not Acting as a Network Sniffer
                                   <a class="small" href="#xccdf_org.ssgproject.content_rule_network_sniffer_disabled">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">The system should not be acting as a network sniffer, which can
@@ -2290,7 +2322,7 @@ ownership with the following command:
         </div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale">Files from shared library directories are loaded into the address
 space of processes (including privileged ones) or of the kernel itself at
 runtime. Proper ownership is necessary to protect the integrity of the system.</div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_file_ownership_library_dirs</td></tr><tr><td><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span></td><td class="identifiers"><table class="table table-striped table-bordered"><tr><td><a href="https://www.cisecurity.org/controls/">cis-csc</a></td><td>12, 13, 14, 15, 16, 18, 3, 5</td></tr><tr><td><a href="https://www.isaca.org/resources/cobit">cobit5</a></td><td>APO01.06, DSS05.04, DSS05.07, DSS06.02</td></tr><tr><td><a href="https://public.cyber.mil/stigs/cci/">disa</a></td><td>CCI-001499</td></tr><tr><td><a href="https://www.isa.org/products/isa-62443-2-1-2009-security-for-industrial-automat">isa-62443-2009</a></td><td>4.3.3.7.3</td></tr><tr><td><a href="https://www.isa.org/products/ansi-isa-62443-3-3-99-03-03-2013-security-for-indu">isa-62443-2013</a></td><td>SR 2.1, SR 5.2</td></tr><tr><td><a href="https://www.iso.org/contents/data/standard/05/45/54534.html">iso27001-2013</a></td><td>A.10.1.1, A.11.1.4, A.11.1.5, A.11.2.1, A.13.1.1, A.13.1.3, A.13.2.1, A.13.2.3, A.13.2.4, A.14.1.2, A.14.1.3, A.6.1.2, A.7.1.1, A.7.1.2, A.7.3.1, A.8.2.2, A.8.2.3, A.9.1.1, A.9.1.2, A.9.2.3, A.9.4.1, A.9.4.4, A.9.4.5</td></tr><tr><td><a href="https://www.nerc.com/pa/Stand/Standard%20Purpose%20Statement%20DL/US_Standard_One-Stop-Shop.xlsx">nerc-cip</a></td><td>CIP-003-8 R5.1.1, CIP-003-8 R5.3, CIP-004-6 R2.3, CIP-007-3 R2.1, CIP-007-3 R2.2, CIP-007-3 R2.3, CIP-007-3 R5.1, CIP-007-3 R5.1.1, CIP-007-3 R5.1.2</td></tr><tr><td><a href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">nist</a></td><td>CM-5(6), CM-5(6).1, CM-6(a), AC-6(1)</td></tr><tr><td><a href="https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.04162018.pdf">nist-csf</a></td><td>PR.AC-4, PR.DS-5</td></tr><tr><td><a href="https://public.cyber.mil/stigs/downloads/?_dl_facet_stigs=operating-systems%2Cgeneral-purpose-os">os-srg</a></td><td>SRG-OS-000259-GPOS-00100</td></tr></table></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#id98" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br><div class="panel-collapse collapse" id="id98"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Find /lib/ file(s) matching ^.*$ recursively
-  command: find -H /lib/  -type f ! -uid 0 -regex "^.*$"
+  command: find -H /lib/  -type f ! -uid 0 -regextype posix-extended -regex "^.*$"
   register: files_found
   changed_when: false
   failed_when: false
@@ -2327,7 +2359,7 @@ runtime. Proper ownership is necessary to protect the integrity of the system.</
   - no_reboot_needed
 
 - name: Find /lib64/ file(s) matching ^.*$ recursively
-  command: find -H /lib64/  -type f ! -uid 0 -regex "^.*$"
+  command: find -H /lib64/  -type f ! -uid 0 -regextype posix-extended -regex "^.*$"
   register: files_found
   changed_when: false
   failed_when: false
@@ -2364,7 +2396,7 @@ runtime. Proper ownership is necessary to protect the integrity of the system.</
   - no_reboot_needed
 
 - name: Find /usr/lib/ file(s) matching ^.*$ recursively
-  command: find -H /usr/lib/  -type f ! -uid 0 -regex "^.*$"
+  command: find -H /usr/lib/  -type f ! -uid 0 -regextype posix-extended -regex "^.*$"
   register: files_found
   changed_when: false
   failed_when: false
@@ -2401,7 +2433,8 @@ runtime. Proper ownership is necessary to protect the integrity of the system.</
   - no_reboot_needed
 
 - name: Find /usr/lib64/ file(s) matching ^.*$ recursively
-  command: find -H /usr/lib64/  -type f ! -uid 0 -regex "^.*$"
+  command: find -H /usr/lib64/  -type f ! -uid 0 -regextype posix-extended -regex
+    "^.*$"
   register: files_found
   changed_when: false
   failed_when: false
@@ -2437,13 +2470,13 @@ runtime. Proper ownership is necessary to protect the integrity of the system.</
   - medium_severity
   - no_reboot_needed
 </code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id99" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id99"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>
-find /lib/  -type f ! -uid 0 -regex '^.*$' -exec chown 0 {} \;
+find /lib/  -type f ! -uid 0 -regextype posix-extended -regex '^.*$' -exec chown -L 0 {} \;
 
-find /lib64/  -type f ! -uid 0 -regex '^.*$' -exec chown 0 {} \;
+find /lib64/  -type f ! -uid 0 -regextype posix-extended -regex '^.*$' -exec chown -L 0 {} \;
 
-find /usr/lib/  -type f ! -uid 0 -regex '^.*$' -exec chown 0 {} \;
+find /usr/lib/  -type f ! -uid 0 -regextype posix-extended -regex '^.*$' -exec chown -L 0 {} \;
 
-find /usr/lib64/  -type f ! -uid 0 -regex '^.*$' -exec chown 0 {} \;
+find /usr/lib64/  -type f ! -uid 0 -regextype posix-extended -regex '^.*$' -exec chown -L 0 {} \;
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_file_permissions_binary_dirs" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_file_permissions_binary_dirs" id="guide-tree-leaf-id100" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_permissions_within_important_dirs"><td style="padding-left: 95px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_file_permissions_binary_dirs"><span class="label label-default">Rule</span>  
                                 Verify that System Executables Have Restrictive Permissions
                                   <a class="small" href="#xccdf_org.ssgproject.content_rule_file_permissions_binary_dirs">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">System executables are stored in the following directories by default:
@@ -2523,7 +2556,8 @@ its permission with the following command:
         </div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale">Files from shared library directories are loaded into the address
 space of processes (including privileged ones) or of the kernel itself at
 runtime. Restrictive permissions are necessary to protect the integrity of the system.</div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_file_permissions_library_dirs</td></tr><tr><td><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span></td><td class="identifiers"><table class="table table-striped table-bordered"><tr><td><a href="https://www.cisecurity.org/controls/">cis-csc</a></td><td>12, 13, 14, 15, 16, 18, 3, 5</td></tr><tr><td><a href="https://www.isaca.org/resources/cobit">cobit5</a></td><td>APO01.06, DSS05.04, DSS05.07, DSS06.02</td></tr><tr><td><a href="https://public.cyber.mil/stigs/cci/">disa</a></td><td>CCI-001499</td></tr><tr><td><a href="https://www.isa.org/products/isa-62443-2-1-2009-security-for-industrial-automat">isa-62443-2009</a></td><td>4.3.3.7.3</td></tr><tr><td><a href="https://www.isa.org/products/ansi-isa-62443-3-3-99-03-03-2013-security-for-indu">isa-62443-2013</a></td><td>SR 2.1, SR 5.2</td></tr><tr><td><a href="https://www.iso.org/contents/data/standard/05/45/54534.html">iso27001-2013</a></td><td>A.10.1.1, A.11.1.4, A.11.1.5, A.11.2.1, A.13.1.1, A.13.1.3, A.13.2.1, A.13.2.3, A.13.2.4, A.14.1.2, A.14.1.3, A.6.1.2, A.7.1.1, A.7.1.2, A.7.3.1, A.8.2.2, A.8.2.3, A.9.1.1, A.9.1.2, A.9.2.3, A.9.4.1, A.9.4.4, A.9.4.5</td></tr><tr><td><a href="https://www.nerc.com/pa/Stand/Standard%20Purpose%20Statement%20DL/US_Standard_One-Stop-Shop.xlsx">nerc-cip</a></td><td>CIP-003-8 R5.1.1, CIP-003-8 R5.3, CIP-004-6 R2.3, CIP-007-3 R2.1, CIP-007-3 R2.2, CIP-007-3 R2.3, CIP-007-3 R5.1, CIP-007-3 R5.1.1, CIP-007-3 R5.1.2</td></tr><tr><td><a href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">nist</a></td><td>CM-6(a), CM-5(6), CM-5(6).1, AC-6(1)</td></tr><tr><td><a href="https://nvlpubs.nist.gov/nistpubs/CSWP/NIST.CSWP.04162018.pdf">nist-csf</a></td><td>PR.AC-4, PR.DS-5</td></tr><tr><td><a href="https://public.cyber.mil/stigs/downloads/?_dl_facet_stigs=operating-systems%2Cgeneral-purpose-os">os-srg</a></td><td>SRG-OS-000259-GPOS-00100</td></tr></table></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#id104" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br><div class="panel-collapse collapse" id="id104"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Find /lib/ file(s) recursively
-  command: find -H /lib/  -perm /g+w,o+w  -type f -regex "^.*$"
+  command: find -H /lib/  -perm /g+w,o+w  -type f -regextype posix-extended -regex
+    "^.*$"
   register: files_found
   changed_when: false
   failed_when: false
@@ -2560,7 +2594,8 @@ runtime. Restrictive permissions are necessary to protect the integrity of the s
   - no_reboot_needed
 
 - name: Find /lib64/ file(s) recursively
-  command: find -H /lib64/  -perm /g+w,o+w  -type f -regex "^.*$"
+  command: find -H /lib64/  -perm /g+w,o+w  -type f -regextype posix-extended -regex
+    "^.*$"
   register: files_found
   changed_when: false
   failed_when: false
@@ -2597,7 +2632,8 @@ runtime. Restrictive permissions are necessary to protect the integrity of the s
   - no_reboot_needed
 
 - name: Find /usr/lib/ file(s) recursively
-  command: find -H /usr/lib/  -perm /g+w,o+w  -type f -regex "^.*$"
+  command: find -H /usr/lib/  -perm /g+w,o+w  -type f -regextype posix-extended -regex
+    "^.*$"
   register: files_found
   changed_when: false
   failed_when: false
@@ -2634,7 +2670,8 @@ runtime. Restrictive permissions are necessary to protect the integrity of the s
   - no_reboot_needed
 
 - name: Find /usr/lib64/ file(s) recursively
-  command: find -H /usr/lib64/  -perm /g+w,o+w  -type f -regex "^.*$"
+  command: find -H /usr/lib64/  -perm /g+w,o+w  -type f -regextype posix-extended
+    -regex "^.*$"
   register: files_found
   changed_when: false
   failed_when: false
@@ -2674,13 +2711,13 @@ runtime. Restrictive permissions are necessary to protect the integrity of the s
 
 
 
-find -H /lib/  -perm /g+w,o+w  -type f -regex '^.*$' -exec chmod g-w,o-w {} \;
+find -H /lib/  -perm /g+w,o+w  -type f -regextype posix-extended -regex '^.*$' -exec chmod g-w,o-w {} \;
 
-find -H /lib64/  -perm /g+w,o+w  -type f -regex '^.*$' -exec chmod g-w,o-w {} \;
+find -H /lib64/  -perm /g+w,o+w  -type f -regextype posix-extended -regex '^.*$' -exec chmod g-w,o-w {} \;
 
-find -H /usr/lib/  -perm /g+w,o+w  -type f -regex '^.*$' -exec chmod g-w,o-w {} \;
+find -H /usr/lib/  -perm /g+w,o+w  -type f -regextype posix-extended -regex '^.*$' -exec chmod g-w,o-w {} \;
 
-find -H /usr/lib64/  -perm /g+w,o+w  -type f -regex '^.*$' -exec chmod g-w,o-w {} \;
+find -H /usr/lib64/  -perm /g+w,o+w  -type f -regextype posix-extended -regex '^.*$' -exec chmod g-w,o-w {} \;
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_dir_perms_world_writable_sticky_bits" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_dir_perms_world_writable_sticky_bits" id="guide-tree-leaf-id106" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_files"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_dir_perms_world_writable_sticky_bits"><span class="label label-default">Rule</span>  
                                 Verify that All World-Writable Directories Have Sticky Bits Set
                                   <a class="small" href="#xccdf_org.ssgproject.content_rule_dir_perms_world_writable_sticky_bits">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">When the so-called 'sticky bit' is set on a directory, only the owner of a given file may
@@ -4763,7 +4800,7 @@ can be trusted.</div></td></tr><tr><td><span class="label label-warning">Severit
   - no_reboot_needed
   - service_avahi-daemon_disabled
 
-- name: Disable Avahi Server Software - Ensure "avahi-daemon.service" is Masked
+- name: Disable Avahi Server Software - Ensure avahi-daemon.service is Masked
   ansible.builtin.systemd:
     name: avahi-daemon.service
     state: stopped
@@ -4772,7 +4809,7 @@ can be trusted.</div></td></tr><tr><td><span class="label label-warning">Severit
   when:
   - ( ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
     and "avahi" in ansible_facts.packages )
-  - service_exists.stdout_lines is search("avahi-daemon.service",multiline=True)
+  - service_exists.stdout_lines is search("avahi-daemon.service", multiline=True)
   tags:
   - NIST-800-53-CM-6(a)
   - NIST-800-53-CM-7(a)
@@ -4805,16 +4842,16 @@ can be trusted.</div></td></tr><tr><td><span class="label label-warning">Severit
   - no_reboot_needed
   - service_avahi-daemon_disabled
 
-- name: Disable socket avahi-daemon
+- name: Disable Avahi Server Software - Disable Socket avahi-daemon
   ansible.builtin.systemd:
     name: avahi-daemon.socket
-    enabled: 'no'
+    enabled: false
     state: stopped
-    masked: 'yes'
+    masked: true
   when:
   - ( ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
     and "avahi" in ansible_facts.packages )
-  - socket_file_exists.stdout_lines is search("avahi-daemon.socket",multiline=True)
+  - socket_file_exists.stdout_lines is search("avahi-daemon.socket", multiline=True)
   tags:
   - NIST-800-53-CM-6(a)
   - NIST-800-53-CM-7(a)
@@ -4834,7 +4871,10 @@ class disable_avahi-daemon {
     ensure =&gt; 'stopped',
   }
 }
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id155" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id155"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id155" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id155"><pre><code>
+[customizations.services]
+masked = ["avahi-daemon"]
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id156" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id156"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
 if ( [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ] &amp;&amp; rpm --quiet -q avahi ); then
 
 SYSTEMCTL_EXEC='/usr/bin/systemctl'
@@ -4854,9 +4894,6 @@ fi
 else
     &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
 fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id156" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id156"><pre><code>
-[customizations.services]
-masked = ["avahi-daemon"]
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="children-xccdf_org.ssgproject.content_group_fapolicyd" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_services"><td style="padding-left: 38px" id="xccdf_org.ssgproject.content_group_fapolicyd"><span class="label label-default">Group</span>  
                 Application Whitelisting Daemon
                           <small>Group contains 2 rules</small></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_group_fapolicyd" class="guide-tree-inner-node guide-tree-inner-node-id-xccdf_org.ssgproject.content_group_fapolicyd" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_services"><td style="padding-left: 38px"><div><a class="small" href="#xccdf_org.ssgproject.content_group_fapolicyd">[ref]</a>  
@@ -4883,14 +4920,20 @@ implements application whitelisting to decide file access rights.</div></td></tr
   - medium_severity
   - no_reboot_needed
   - package_fapolicyd_installed
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id159" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id159"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>include install_fapolicyd
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id159" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id159"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>
+package --add=fapolicyd
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id160" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id160"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>include install_fapolicyd
 
 class install_fapolicyd {
   package { 'fapolicyd':
     ensure =&gt; 'installed',
   }
 }
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id160" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id160"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id161" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id161"><pre><code>
+[[packages]]
+name = "fapolicyd"
+version = "*"
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id162" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id162"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
 if [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ]; then
 
 if ! rpm -q --quiet "fapolicyd" ; then
@@ -4900,12 +4943,6 @@ fi
 else
     &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
 fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id161" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id161"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>
-package --add=fapolicyd
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id162" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id162"><pre><code>
-[[packages]]
-name = "fapolicyd"
-version = "*"
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_service_fapolicyd_enabled" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_service_fapolicyd_enabled" id="guide-tree-leaf-id163" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_fapolicyd"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_service_fapolicyd_enabled"><span class="label label-default">Rule</span>  
                                 Enable the File Access Policy Service
                                   <a class="small" href="#xccdf_org.ssgproject.content_rule_service_fapolicyd_enabled">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">The File Access Policy service should be enabled.
@@ -4913,19 +4950,19 @@ version = "*"
 The <code>fapolicyd</code> service can be enabled with the following command:
 <pre>$ sudo systemctl enable fapolicyd.service</pre>
       </div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale">The <code>fapolicyd</code> service (File Access Policy Daemon)
-implements application whitelisting to decide file access rights.</div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_service_fapolicyd_enabled</td></tr><tr><td><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span></td><td class="identifiers"><table class="table table-striped table-bordered"><tr><td><a href="https://public.cyber.mil/stigs/cci/">disa</a></td><td>CCI-001764, CCI-001774</td></tr><tr><td><a href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">nist</a></td><td>CM-6(a), SI-4(22)</td></tr><tr><td><a href="https://www.niap-ccevs.org/Profile/PP.cfm">ospp</a></td><td>FMT_SMF_EXT.1</td></tr><tr><td><a href="https://public.cyber.mil/stigs/downloads/?_dl_facet_stigs=operating-systems%2Cgeneral-purpose-os">os-srg</a></td><td>SRG-OS-000370-GPOS-00155, SRG-OS-000368-GPOS-00154, SRG-OS-000480-GPOS-00230</td></tr></table></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#id164" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br><div class="panel-collapse collapse" id="id164"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>- name: Enable service fapolicyd
+implements application whitelisting to decide file access rights.</div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_service_fapolicyd_enabled</td></tr><tr><td><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span></td><td class="identifiers"><table class="table table-striped table-bordered"><tr><td><a href="https://public.cyber.mil/stigs/cci/">disa</a></td><td>CCI-001764, CCI-001774</td></tr><tr><td><a href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">nist</a></td><td>CM-6(a), SI-4(22)</td></tr><tr><td><a href="https://www.niap-ccevs.org/Profile/PP.cfm">ospp</a></td><td>FMT_SMF_EXT.1</td></tr><tr><td><a href="https://public.cyber.mil/stigs/downloads/?_dl_facet_stigs=operating-systems%2Cgeneral-purpose-os">os-srg</a></td><td>SRG-OS-000370-GPOS-00155, SRG-OS-000368-GPOS-00154, SRG-OS-000480-GPOS-00230</td></tr></table></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#id164" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br><div class="panel-collapse collapse" id="id164"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>- name: Enable the File Access Policy Service - Enable service fapolicyd
   block:
 
   - name: Gather the package facts
     package_facts:
       manager: auto
 
-  - name: Enable service fapolicyd
-    systemd:
+  - name: Enable the File Access Policy Service - Enable Service fapolicyd
+    ansible.builtin.systemd:
       name: fapolicyd
-      enabled: 'yes'
+      enabled: true
       state: started
-      masked: 'no'
+      masked: false
     when:
     - '"fapolicyd" in ansible_facts.packages'
   when: ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
@@ -4946,7 +4983,10 @@ class enable_fapolicyd {
     ensure =&gt; 'running',
   }
 }
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id166" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id166"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id166" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id166"><pre><code>
+[customizations.services]
+enabled = ["fapolicyd"]
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id167" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id167"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
 if [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ]; then
 
 SYSTEMCTL_EXEC='/usr/bin/systemctl'
@@ -4957,9 +4997,6 @@ SYSTEMCTL_EXEC='/usr/bin/systemctl'
 else
     &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
 fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id167" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id167"><pre><code>
-[customizations.services]
-enabled = ["fapolicyd"]
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="children-xccdf_org.ssgproject.content_group_obsolete" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_services"><td style="padding-left: 38px" id="xccdf_org.ssgproject.content_group_obsolete"><span class="label label-default">Group</span>  
                 Obsolete Services
                           <small>Group contains 3 groups and 7 rules</small></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_group_obsolete" class="guide-tree-inner-node guide-tree-inner-node-id-xccdf_org.ssgproject.content_group_obsolete" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_services"><td style="padding-left: 38px"><div><a class="small" href="#xccdf_org.ssgproject.content_group_obsolete">[ref]</a>  
@@ -5011,14 +5048,16 @@ activation.</div></td></tr><tr><td><span class="label label-warning">Severity:</
   - low_disruption
   - no_reboot_needed
   - package_rsh-server_removed
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id170" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id170"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>include remove_rsh-server
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id170" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id170"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
+package --remove=rsh-server
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id171" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id171"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>include remove_rsh-server
 
 class remove_rsh-server {
   package { 'rsh-server':
     ensure =&gt; 'purged',
   }
 }
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id171" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id171"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id172" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id172"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
 # CAUTION: This remediation script will remove rsh-server
 #	   from the system, and may remove any packages
 #	   that depend on rsh-server. Execute this
@@ -5030,8 +5069,6 @@ if rpm -q --quiet "rsh-server" ; then
     yum remove -y "rsh-server"
 
 fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id172" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id172"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
-package --remove=rsh-server
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_package_rsh_removed" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_package_rsh_removed" id="guide-tree-leaf-id173" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_r_services"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_package_rsh_removed"><span class="label label-default">Rule</span>  
                                 Uninstall rsh Package
                                   <a class="small" href="#xccdf_org.ssgproject.content_rule_package_rsh_removed">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">
@@ -5057,14 +5094,16 @@ the clients for <code>rsh</code>,<code>rcp</code>, and <code>rlogin</code>.</div
   - no_reboot_needed
   - package_rsh_removed
   - unknown_severity
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id175" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id175"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>include remove_rsh
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id175" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id175"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
+package --remove=rsh
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id176" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id176"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>include remove_rsh
 
 class remove_rsh {
   package { 'rsh':
     ensure =&gt; 'purged',
   }
 }
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id176" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id176"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id177" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id177"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
 # CAUTION: This remediation script will remove rsh
 #	   from the system, and may remove any packages
 #	   that depend on rsh. Execute this
@@ -5076,8 +5115,6 @@ if rpm -q --quiet "rsh" ; then
     yum remove -y "rsh"
 
 fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id177" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id177"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
-package --remove=rsh
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="children-xccdf_org.ssgproject.content_group_talk" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_obsolete"><td style="padding-left: 57px" id="xccdf_org.ssgproject.content_group_talk"><span class="label label-default">Group</span>  
                 Chat/Messaging Services
                           <small>Group contains 2 rules</small></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_group_talk" class="guide-tree-inner-node guide-tree-inner-node-id-xccdf_org.ssgproject.content_group_talk" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_obsolete"><td style="padding-left: 57px"><div><a class="small" href="#xccdf_org.ssgproject.content_group_talk">[ref]</a>  
@@ -5099,14 +5136,16 @@ risk of the accidental (or intentional) activation of talk services.</div></td><
   - medium_severity
   - no_reboot_needed
   - package_talk-server_removed
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id180" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id180"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>include remove_talk-server
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id180" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id180"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
+package --remove=talk-server
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id181" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id181"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>include remove_talk-server
 
 class remove_talk-server {
   package { 'talk-server':
     ensure =&gt; 'purged',
   }
 }
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id181" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id181"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id182" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id182"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
 # CAUTION: This remediation script will remove talk-server
 #	   from the system, and may remove any packages
 #	   that depend on talk-server. Execute this
@@ -5118,8 +5157,6 @@ if rpm -q --quiet "talk-server" ; then
     yum remove -y "talk-server"
 
 fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id182" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id182"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
-package --remove=talk-server
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_package_talk_removed" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_package_talk_removed" id="guide-tree-leaf-id183" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_talk"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_package_talk_removed"><span class="label label-default">Rule</span>  
                                 Uninstall talk Package
                                   <a class="small" href="#xccdf_org.ssgproject.content_rule_package_talk_removed">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">The <code>talk</code> package contains the client program for the
@@ -5143,14 +5180,16 @@ risk of the accidental (or intentional) activation of talk client program.</div>
   - medium_severity
   - no_reboot_needed
   - package_talk_removed
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id185" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id185"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>include remove_talk
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id185" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id185"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
+package --remove=talk
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id186" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id186"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>include remove_talk
 
 class remove_talk {
   package { 'talk':
     ensure =&gt; 'purged',
   }
 }
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id186" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id186"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id187" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id187"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
 # CAUTION: This remediation script will remove talk
 #	   from the system, and may remove any packages
 #	   that depend on talk. Execute this
@@ -5162,8 +5201,6 @@ if rpm -q --quiet "talk" ; then
     yum remove -y "talk"
 
 fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id187" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id187"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
-package --remove=talk
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="children-xccdf_org.ssgproject.content_group_telnet" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_obsolete"><td style="padding-left: 57px" id="xccdf_org.ssgproject.content_group_telnet"><span class="label label-default">Group</span>  
                 Telnet
                           <small>Group contains 3 rules</small></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_group_telnet" class="guide-tree-inner-node guide-tree-inner-node-id-xccdf_org.ssgproject.content_group_telnet" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_obsolete"><td style="padding-left: 57px"><div><a class="small" href="#xccdf_org.ssgproject.content_group_telnet">[ref]</a>  
@@ -5203,14 +5240,16 @@ telnet service's accidental (or intentional) activation.</div></td></tr><tr><td>
   - low_disruption
   - no_reboot_needed
   - package_telnet-server_removed
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id190" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id190"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>include remove_telnet-server
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id190" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id190"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
+package --remove=telnet-server
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id191" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id191"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>include remove_telnet-server
 
 class remove_telnet-server {
   package { 'telnet-server':
     ensure =&gt; 'purged',
   }
 }
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id191" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id191"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id192" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id192"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
 # CAUTION: This remediation script will remove telnet-server
 #	   from the system, and may remove any packages
 #	   that depend on telnet-server. Execute this
@@ -5222,8 +5261,6 @@ if rpm -q --quiet "telnet-server" ; then
     yum remove -y "telnet-server"
 
 fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id192" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id192"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
-package --remove=telnet-server
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_package_telnet_removed" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_package_telnet_removed" id="guide-tree-leaf-id193" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_telnet"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_package_telnet_removed"><span class="label label-default">Rule</span>  
                                 Remove telnet Clients
                                   <a class="small" href="#xccdf_org.ssgproject.content_rule_package_telnet_removed">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">The telnet client allows users to start connections to other systems via
@@ -5243,14 +5280,16 @@ encrypted session and stronger security and is included in Oracle Linux 9.</div>
   - low_severity
   - no_reboot_needed
   - package_telnet_removed
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id195" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id195"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>include remove_telnet
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id195" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id195"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
+package --remove=telnet
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id196" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id196"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>include remove_telnet
 
 class remove_telnet {
   package { 'telnet':
     ensure =&gt; 'purged',
   }
 }
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id196" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id196"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id197" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id197"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
 # CAUTION: This remediation script will remove telnet
 #	   from the system, and may remove any packages
 #	   that depend on telnet. Execute this
@@ -5262,8 +5301,6 @@ if rpm -q --quiet "telnet" ; then
     yum remove -y "telnet"
 
 fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id197" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id197"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
-package --remove=telnet
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_service_telnet_disabled" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_service_telnet_disabled" id="guide-tree-leaf-id198" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_telnet"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_service_telnet_disabled"><span class="label label-default">Rule</span>  
                                 Disable telnet Service
                                   <a class="small" href="#xccdf_org.ssgproject.content_rule_service_telnet_disabled">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">Make sure that the activation of the <code>telnet</code> service on system boot is disabled.
@@ -5315,7 +5352,7 @@ man-in-the-middle attacks.</div></td></tr><tr><td><span class="label label-warni
   - no_reboot_needed
   - service_telnet_disabled
 
-- name: Disable telnet Service - Ensure "telnet.service" is Masked
+- name: Disable telnet Service - Ensure telnet.service is Masked
   ansible.builtin.systemd:
     name: telnet.service
     state: stopped
@@ -5324,7 +5361,7 @@ man-in-the-middle attacks.</div></td></tr><tr><td><span class="label label-warni
   when:
   - ( ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
     and "telnet-server" in ansible_facts.packages )
-  - service_exists.stdout_lines is search("telnet.service",multiline=True)
+  - service_exists.stdout_lines is search("telnet.service", multiline=True)
   tags:
   - NIST-800-171-3.1.13
   - NIST-800-171-3.4.7
@@ -5361,16 +5398,16 @@ man-in-the-middle attacks.</div></td></tr><tr><td><span class="label label-warni
   - no_reboot_needed
   - service_telnet_disabled
 
-- name: Disable socket telnet
+- name: Disable telnet Service - Disable Socket telnet
   ansible.builtin.systemd:
     name: telnet.socket
-    enabled: 'no'
+    enabled: false
     state: stopped
-    masked: 'yes'
+    masked: true
   when:
   - ( ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
     and "telnet-server" in ansible_facts.packages )
-  - socket_file_exists.stdout_lines is search("telnet.socket",multiline=True)
+  - socket_file_exists.stdout_lines is search("telnet.socket", multiline=True)
   tags:
   - NIST-800-171-3.1.13
   - NIST-800-171-3.4.7
@@ -5392,7 +5429,10 @@ class disable_telnet {
     ensure =&gt; 'stopped',
   }
 }
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id201" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id201"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id201" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id201"><pre><code>
+[customizations.services]
+masked = ["telnet"]
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id202" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id202"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
 if ( [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ] &amp;&amp; rpm --quiet -q telnet-server ); then
 
 SYSTEMCTL_EXEC='/usr/bin/systemctl'
@@ -5412,9 +5452,6 @@ fi
 else
     &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
 fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id202" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id202"><pre><code>
-[customizations.services]
-masked = ["telnet"]
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="children-xccdf_org.ssgproject.content_group_proxy" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_services"><td style="padding-left: 38px" id="xccdf_org.ssgproject.content_group_proxy"><span class="label label-default">Group</span>  
                 Proxy Server
                           <small>Group contains 1 group and 2 rules</small></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_group_proxy" class="guide-tree-inner-node guide-tree-inner-node-id-xccdf_org.ssgproject.content_group_proxy" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_services"><td style="padding-left: 38px"><div><a class="small" href="#xccdf_org.ssgproject.content_group_proxy">[ref]</a>  
@@ -5444,14 +5481,16 @@ removing it provides a safeguard against its activation.</div></td></tr><tr><td>
   - no_reboot_needed
   - package_squid_removed
   - unknown_severity
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id205" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id205"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>include remove_squid
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id205" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id205"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
+package --remove=squid
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id206" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id206"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>include remove_squid
 
 class remove_squid {
   package { 'squid':
     ensure =&gt; 'purged',
   }
 }
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id206" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id206"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id207" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id207"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
 # CAUTION: This remediation script will remove squid
 #	   from the system, and may remove any packages
 #	   that depend on squid. Execute this
@@ -5463,8 +5502,6 @@ if rpm -q --quiet "squid" ; then
     yum remove -y "squid"
 
 fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id207" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Anaconda snippet ⇲</a><br><div class="panel-collapse collapse" id="id207"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code>
-package --remove=squid
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_service_squid_disabled" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_service_squid_disabled" id="guide-tree-leaf-id208" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_disabling_squid"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_service_squid_disabled"><span class="label label-default">Rule</span>  
                                 Disable Squid
                                   <a class="small" href="#xccdf_org.ssgproject.content_rule_service_squid_disabled">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description">
@@ -5498,7 +5535,7 @@ of attack, and should be removed if not needed.</div></td></tr><tr><td><span cla
   - service_squid_disabled
   - unknown_severity
 
-- name: Disable Squid - Ensure "squid.service" is Masked
+- name: Disable Squid - Ensure squid.service is Masked
   ansible.builtin.systemd:
     name: squid.service
     state: stopped
@@ -5507,7 +5544,7 @@ of attack, and should be removed if not needed.</div></td></tr><tr><td><span cla
   when:
   - ( ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
     and "squid" in ansible_facts.packages )
-  - service_exists.stdout_lines is search("squid.service",multiline=True)
+  - service_exists.stdout_lines is search("squid.service", multiline=True)
   tags:
   - disable_strategy
   - low_complexity
@@ -5532,16 +5569,16 @@ of attack, and should be removed if not needed.</div></td></tr><tr><td><span cla
   - service_squid_disabled
   - unknown_severity
 
-- name: Disable socket squid
+- name: Disable Squid - Disable Socket squid
   ansible.builtin.systemd:
     name: squid.socket
-    enabled: 'no'
+    enabled: false
     state: stopped
-    masked: 'yes'
+    masked: true
   when:
   - ( ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
     and "squid" in ansible_facts.packages )
-  - socket_file_exists.stdout_lines is search("squid.socket",multiline=True)
+  - socket_file_exists.stdout_lines is search("squid.socket", multiline=True)
   tags:
   - disable_strategy
   - low_complexity
@@ -5557,7 +5594,10 @@ class disable_squid {
     ensure =&gt; 'stopped',
   }
 }
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id211" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id211"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id211" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id211"><pre><code>
+[customizations.services]
+masked = ["squid"]
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id212" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id212"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>disable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
 if ( [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ] &amp;&amp; rpm --quiet -q squid ); then
 
 SYSTEMCTL_EXEC='/usr/bin/systemctl'
@@ -5577,9 +5617,6 @@ fi
 else
     &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
 fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id212" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id212"><pre><code>
-[customizations.services]
-masked = ["squid"]
 </code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="children-xccdf_org.ssgproject.content_group_ssh" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_services"><td style="padding-left: 38px" id="xccdf_org.ssgproject.content_group_ssh"><span class="label label-default">Group</span>  
                 SSH Server
                           <small>Group contains 1 group and 10 rules</small></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_group_ssh" class="guide-tree-inner-node guide-tree-inner-node-id-xccdf_org.ssgproject.content_group_ssh" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_services"><td style="padding-left: 38px"><div><a class="small" href="#xccdf_org.ssgproject.content_group_ssh">[ref]</a>  
@@ -20308,19 +20345,19 @@ can be held accountable for their actions.</div></td></tr><tr><td><span class="l
   - no_reboot_needed
   - service_auditd_enabled
 
-- name: Enable service auditd
+- name: Enable auditd Service - Enable service auditd
   block:
 
   - name: Gather the package facts
     package_facts:
       manager: auto
 
-  - name: Enable service auditd
-    systemd:
+  - name: Enable auditd Service - Enable Service auditd
+    ansible.builtin.systemd:
       name: auditd
-      enabled: 'yes'
+      enabled: true
       state: started
-      masked: 'no'
+      masked: false
     when:
     - '"audit" in ansible_facts.packages'
   when:
@@ -20348,26 +20385,7 @@ can be held accountable for their actions.</div></td></tr><tr><td><span class="l
   - medium_severity
   - no_reboot_needed
   - service_auditd_enabled
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id323" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id323"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>include enable_auditd
-
-class enable_auditd {
-  service {'auditd':
-    enable =&gt; true,
-    ensure =&gt; 'running',
-  }
-}
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id324" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id324"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
-if [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ] &amp;&amp; { rpm --quiet -q audit; }; then
-
-SYSTEMCTL_EXEC='/usr/bin/systemctl'
-"$SYSTEMCTL_EXEC" unmask 'auditd.service'
-"$SYSTEMCTL_EXEC" start 'auditd.service'
-"$SYSTEMCTL_EXEC" enable 'auditd.service'
-
-else
-    &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
-fi
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id325" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Kubernetes snippet ⇲</a><br><div class="panel-collapse collapse" id="id325"><pre><code>---
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id323" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Kubernetes snippet ⇲</a><br><div class="panel-collapse collapse" id="id323"><pre><code>---
 apiVersion: machineconfiguration.openshift.io/v1
 kind: MachineConfig
 spec:
@@ -20378,9 +20396,28 @@ spec:
       units:
       - name: auditd.service
         enabled: true
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id326" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id326"><pre><code>
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id324" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Puppet snippet ⇲</a><br><div class="panel-collapse collapse" id="id324"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code>include enable_auditd
+
+class enable_auditd {
+  service {'auditd':
+    enable =&gt; true,
+    ensure =&gt; 'running',
+  }
+}
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id325" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation OSBuild Blueprint snippet ⇲</a><br><div class="panel-collapse collapse" id="id325"><pre><code>
 [customizations.services]
 enabled = ["auditd"]
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#id326" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br><div class="panel-collapse collapse" id="id326"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Reboot:</th><td>false</td></tr><tr><th>Strategy:</th><td>enable</td></tr></table><pre><code># Remediation is applicable only in certain platforms
+if [ ! -f /.dockerenv ] &amp;&amp; [ ! -f /run/.containerenv ] &amp;&amp; { rpm --quiet -q audit; }; then
+
+SYSTEMCTL_EXEC='/usr/bin/systemctl'
+"$SYSTEMCTL_EXEC" unmask 'auditd.service'
+"$SYSTEMCTL_EXEC" start 'auditd.service'
+"$SYSTEMCTL_EXEC" enable 'auditd.service'
+
+else
+    &gt;&amp;2 echo 'Remediation is not applicable, nothing was done'
+fi
 </code></pre></div></div></td></tr></tbody></table></td></tr></tbody></table></div><div id="rear-matter"><div class="row top-spacer-10"><div class="col-md-12 well well-lg"><div class="rear-matter">Red Hat and Red Hat Enterprise Linux are either registered
 trademarks or trademarks of Red Hat, Inc. in the United States and other
 countries. All other names are registered trademarks or trademarks of their

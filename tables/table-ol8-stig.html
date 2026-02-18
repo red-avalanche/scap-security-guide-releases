@@ -48,9 +48,9 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>381</td>
+			<td>378</td>
 			<td>0</td>
-			<td>381</td>
+			<td>378</td>
 			<td>100.00%</td>
 			<td>
 				
@@ -101,26 +101,6 @@ Linux vendor, Oracle Corporation is responsible for providing security patches.<
 </tr>
 
 <tr>
-	<td>V-248522</td>
-	<td>1233</td>
-	<td>medium</td>
-	<td>The OL 8 operating system must implement the Endpoint Security for Linux Threat Prevention tool.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre>Virus scanning software can be used to detect if a system has been compromised by
-computer viruses, as well as to limit their spread to other systems.</pre></td>
-	<td><pre>To verify that McAfee Endpoint Security for Linux is
-running, run the following command:
-$ sudo ps -ef | grep -i mfetpd
-      Is it the case that virus scanning software is not running?
-      </pre></td>
-	<td><pre>Install McAfee Endpoint Security for Linux antivirus software
-which is provided for DoD systems and uses signatures to search for the
-presence of viruses on the filesystem.</pre></td>
-	<td>OL08-00-010001</td>
-	<td>agent_mfetpd_running</td>
-</tr>
-
-<tr>
 	<td>V-248523</td>
 	<td>366</td>
 	<td>medium</td>
@@ -149,7 +129,7 @@ dictates.</pre></td>
 
 <tr>
 	<td>V-256978</td>
-	<td>1749</td>
+	<td>3992</td>
 	<td>medium</td>
 	<td>OL 8 must ensure cryptographic verification of vendor software packages.</td>
 	<td>SRG-OS-ID</td>
@@ -479,7 +459,7 @@ auth.*;authpriv.*;daemon.*                              /var/log/secure
 
 <tr>
 	<td>V-248531</td>
-	<td>1991</td>
+	<td>4068</td>
 	<td>medium</td>
 	<td>OL 8, for PKI-based authentication, must validate certificates by constructing a certification path (which includes status information) to an accepted trust anchor.</td>
 	<td>SRG-OS-ID</td>
@@ -551,13 +531,14 @@ Oracle Linux 8, for certificate-based authentication, must enforce authorized ac
 
 <tr>
 	<td>V-248533</td>
-	<td>196</td>
+	<td>4062</td>
 	<td>medium</td>
 	<td>OL 8 must encrypt all stored passwords with a FIPS 140-2 approved cryptographic hashing algorithm.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Passwords need to be protected at all times, and encryption is the standard method for protecting passwords.
-If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised. Passwords
-that are encrypted with a weak algorithm are no more protected than if they are kept in plain text.
+	<td><pre>Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 
               
 Using a stronger hashing algorithm makes password cracking attacks more difficult.</pre></td>
@@ -571,8 +552,8 @@ $ sudo grep -i ENCRYPT_METHOD /etc/login.defs
 ENCRYPT_METHOD 
       Is it the case that ENCRYPT_METHOD is not set to <sub idref="var_password_hashing_algorithm" />?
       </pre></td>
-	<td><pre>In /etc/login.defs, add or correct the following line to ensure
-the system will use  as the hashing algorithm:
+	<td><pre>In /etc/login.defs, add or update the following line to ensure the system will use
+ as the hashing algorithm:
 ENCRYPT_METHOD 
               
             </pre></td>
@@ -582,7 +563,7 @@ ENCRYPT_METHOD
 
 <tr>
 	<td>V-248534</td>
-	<td>196</td>
+	<td>4062</td>
 	<td>medium</td>
 	<td>OL 8 must employ FIPS 140-2 approved cryptographic hashing algorithms for all stored passwords.</td>
 	<td>SRG-OS-ID</td>
@@ -647,7 +628,7 @@ $ sudo passwd -l [username]
 
 <tr>
 	<td>V-248535</td>
-	<td>196</td>
+	<td>4062</td>
 	<td>medium</td>
 	<td>The OL 8 shadow password suite must be configured to use a sufficient number of hashing rounds.</td>
 	<td>SRG-OS-ID</td>
@@ -909,40 +890,41 @@ in /usr/lib/systemd/system/emergency.service.</pre></td>
 	<td>medium</td>
 	<td>The OL 8 "pam_unix.so" module must be configured in the system-auth file to use a FIPS 140-2 approved cryptographic hashing algorithm for system authentication.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Passwords need to be protected at all times, and encryption is the standard
-method for protecting passwords. If passwords are not encrypted, they can
-be plainly read (i.e., clear text) and easily compromised. Passwords that
-are encrypted with a weak algorithm are no more protected than if they are
-kepy in plain text.
+	<td><pre>Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 
               
-This setting ensures user and group account administration utilities are
-configured to store only encrypted representations of passwords.
-Additionally, the crypt_style configuration option ensures the use
-of a strong hashing algorithm that makes password cracking attacks more
-difficult.</pre></td>
+This setting ensures user and group account administration utilities are configured to store
+only encrypted representations of passwords. Additionally, the crypt_style
+configuration option in /etc/libuser.conf ensures the use of a strong hashing
+algorithm that makes password cracking attacks more difficult.</pre></td>
 	<td><pre>Inspect the password section of /etc/pam.d/system-auth
-and ensure that the pam_unix.so module  is configured to use the argument
-sha512:
+and ensure that the pam_unix.so module is configured to use the argument
+:
 
-$ sudo grep "^password.*pam_unix\.so.*sha512" /etc/pam.d/system-auth
+$ sudo grep "^password.*pam_unix\.so.*" /etc/pam.d/system-auth
 
-password sufficient pam_unix.so sha512
-      Is it the case that "sha512" is missing, or is commented out?
+password sufficient pam_unix.so 
+      Is it the case that "<sub idref="var_password_hashing_algorithm_pam" />" is missing, or is commented out?
       </pre></td>
-	<td><pre>The PAM system service can be configured to only store encrypted
-representations of passwords. In "/etc/pam.d/system-auth", the
-password section of the file controls which PAM modules execute
-during a password change. Set the pam_unix.so module in the
-password section to include the argument sha512, as shown
-below:
+	<td><pre>The PAM system service can be configured to only store encrypted representations of passwords.
+In "/etc/pam.d/system-auth", the password section of the file controls which
+PAM modules to execute during a password change.
 
-              password    sufficient    pam_unix.so sha512 other arguments...
+Set the pam_unix.so module in the password section to include the option
+
+                
+               and no other hashing
+algorithms as shown below:
+
+              password    sufficient    pam_unix.so 
+                other arguments...
               
               
-This will help ensure when local users change their passwords, hashes for
-the new passwords will be generated using the SHA-512 algorithm. This is
-the default.</pre></td>
+This will help ensure that new passwords for local users will be stored using the
+ algorithm.</pre></td>
 	<td>OL08-00-010159</td>
 	<td>set_password_hashing_algorithm_systemauth</td>
 </tr>
@@ -953,39 +935,39 @@ the default.</pre></td>
 	<td>medium</td>
 	<td>The OL 8 "pam_unix.so" module must be configured in the password-auth file to use a FIPS 140-2 approved cryptographic hashing algorithm for system authentication.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Passwords need to be protected at all times, and encryption is the standard
-method for protecting passwords. If passwords are not encrypted, they can
-be plainly read (i.e., clear text) and easily compromised. Passwords that
-are encrypted with a weak algorithm are no more protected than if they are
-kepy in plain text.
+	<td><pre>Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 
               
-This setting ensures user and group account administration utilities are
-configured to store only encrypted representations of passwords.
-Additionally, the crypt_style configuration option ensures the use
-of a strong hashing algorithm that makes password cracking attacks more
-difficult.</pre></td>
+This setting ensures user and group account administration utilities are configured to store
+only encrypted representations of passwords. Additionally, the crypt_style
+configuration option in /etc/libuser.conf ensures the use of a strong hashing
+algorithm that makes password cracking attacks more difficult.</pre></td>
 	<td><pre>Inspect the password section of /etc/pam.d/password-auth
-and ensure that the pam_unix.so module includes the argument
-sha512:
-$ grep sha512 /etc/pam.d/password-auth
+and ensure that the pam_unix.so module is configured to use the argument
+:
+
+$ grep  /etc/pam.d/password-auth
       Is it the case that it does not?
       </pre></td>
-	<td><pre>The PAM system service can be configured to only store encrypted
-representations of passwords. In
-/etc/pam.d/password-auth,
-the
-password section of the file controls which PAM modules execute
-during a password change. Set the pam_unix.so module in the
-password section to include the argument sha512, as shown
-below:
+	<td><pre>The PAM system service can be configured to only store encrypted representations of passwords.
+In /etc/pam.d/password-auth, the password section of the file controls which
+PAM modules to execute during a password change.
 
-              password    sufficient    pam_unix.so sha512 other arguments...
+Set the pam_unix.so module in the password section to include the option
+
+                
+               and no other hashing
+algorithms as shown below:
+
+              password    sufficient    pam_unix.so 
+                other arguments...
               
               
-This will help ensure when local users change their passwords, hashes for
-the new passwords will be generated using the SHA-512 algorithm. This is
-the default.</pre></td>
+This will help ensure that new passwords for local users will be stored using the
+ algorithm.</pre></td>
 	<td>OL08-00-010160</td>
 	<td>set_password_hashing_algorithm_passwordauth</td>
 </tr>
@@ -2000,7 +1982,7 @@ AIDE can be executed periodically through other means; this is merely one exampl
 
 <tr>
 	<td>V-248574</td>
-	<td>1749</td>
+	<td>3992</td>
 	<td>high</td>
 	<td>YUM must be configured to prevent the installation of patches, service packs, device drivers, or OL 8 system components that have not been digitally signed using a certificate that is recognized and approved by the organization.</td>
 	<td>SRG-OS-ID</td>
@@ -2028,7 +2010,7 @@ gpgcheck=0
 
 <tr>
 	<td>V-248575</td>
-	<td>1749</td>
+	<td>3992</td>
 	<td>high</td>
 	<td>OL 8 must prevent the installation of software, patches, service packs, device drivers, or operating system components of local packages without verification they have been digitally signed using a certificate that is issued by a Certificate Authority (CA) that is recognized and approved by the organization.</td>
 	<td>SRG-OS-ID</td>
@@ -2058,7 +2040,7 @@ packages, set the localpkg_gpgcheck to 1 in /etc/yum.conf.</pre></td>
 
 <tr>
 	<td>V-248576</td>
-	<td>1749</td>
+	<td>3992</td>
 	<td>medium</td>
 	<td>OL 8 must prevent the loading of a new kernel for later execution.</td>
 	<td>SRG-OS-ID</td>
@@ -2204,7 +2186,7 @@ Note that the '#' character doesn't denote a comment in the configuration file.<
 
 <tr>
 	<td>V-248581</td>
-	<td>2038</td>
+	<td>4895</td>
 	<td>medium</td>
 	<td>OL 8 must require users to provide a password for privilege escalation.</td>
 	<td>SRG-OS-ID</td>
@@ -2230,7 +2212,7 @@ in /etc/sudoers.d/.</pre></td>
 
 <tr>
 	<td>V-248582</td>
-	<td>2038</td>
+	<td>4895</td>
 	<td>medium</td>
 	<td>OL 8 must require users to reauthenticate for privilege escalation and changing roles.</td>
 	<td>SRG-OS-ID</td>
@@ -2316,9 +2298,9 @@ or if cvtsudoers not supported:
 
 <tr>
 	<td>V-248585</td>
-	<td>2038</td>
+	<td>4895</td>
 	<td>medium</td>
-	<td>OL 8 must require re-authentication when using the "sudo" command.</td>
+	<td>OL 8 must require reauthentication when using the "sudo" command.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Without re-authentication, users may access resources or perform tasks for which they
 do not have authorization.
@@ -2348,7 +2330,7 @@ and the user will not have to re-authenticate for privileged actions until the u
 
 <tr>
 	<td>V-252656</td>
-	<td>2038</td>
+	<td>4895</td>
 	<td>medium</td>
 	<td>The OL 8 operating system must not be configured to bypass password requirements for privilege escalation.</td>
 	<td>SRG-OS-ID</td>
@@ -2370,7 +2352,7 @@ If any occurrences of "pam_succeed_if" is returned from the command, this is a f
 
 <tr>
 	<td>V-248586</td>
-	<td>1948</td>
+	<td>4047</td>
 	<td>low</td>
 	<td>OL 8 must have the package required for multifactor authentication installed.</td>
 	<td>SRG-OS-ID</td>
@@ -2404,7 +2386,7 @@ $ sudo yum install openssl-pkcs11
 
 <tr>
 	<td>V-248587</td>
-	<td>1954</td>
+	<td>4047</td>
 	<td>medium</td>
 	<td>OL 8 must implement certificate status checking for multifactor authentication.</td>
 	<td>SRG-OS-ID</td>
@@ -3112,7 +3094,7 @@ logical volume at installation time, or migrate it using LVM.</pre></td>
 
 <tr>
 	<td>V-248613</td>
-	<td>770</td>
+	<td>4045</td>
 	<td>medium</td>
 	<td>OL 8 must not permit direct logons to the root account using remote access via SSH.</td>
 	<td>SRG-OS-ID</td>
@@ -4187,7 +4169,6 @@ the account.</pre></td>
 	<td><pre>Verify Oracle Linux 8 is configured to lock an account after 
 unsuccessful logon attempts with the command:
 
-
 $ grep 'deny =' /etc/security/faillock.conf
 deny = .
       Is it the case that the "deny" option is not set to "<sub idref="var_accounts_passwords_pam_faillock_deny" />"
@@ -4197,12 +4178,10 @@ or less (but not "0"), is missing or commented out?
 using pam_faillock.so.
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
-
 Ensure that the file /etc/security/faillock.conf contains the following entry:
 deny = <count>
 Where count should be less than or equal to
  and greater than 0.
-
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as authselect or authconfig,
@@ -4223,7 +4202,6 @@ the account.</pre></td>
 	<td><pre>Verify Oracle Linux 8 is configured to lock an account after 
 unsuccessful logon attempts with the command:
 
-
 $ grep 'deny =' /etc/security/faillock.conf
 deny = .
       Is it the case that the "deny" option is not set to "<sub idref="var_accounts_passwords_pam_faillock_deny" />"
@@ -4233,12 +4211,10 @@ or less (but not "0"), is missing or commented out?
 using pam_faillock.so.
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
-
 Ensure that the file /etc/security/faillock.conf contains the following entry:
 deny = <count>
 Where count should be less than or equal to
  and greater than 0.
-
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as authselect or authconfig,
@@ -4326,7 +4302,6 @@ Limits are imposed by locking the account.</pre></td>
 after  unsuccessful logon
 attempts with the command:
 
-
 $ grep 'unlock_time =' /etc/security/faillock.conf
 unlock_time = 
       Is it the case that the "unlock_time" option is not set to "<sub idref="var_accounts_passwords_pam_faillock_unlock_time" />",
@@ -4335,13 +4310,11 @@ the line is missing, or commented out?
 	<td><pre>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using pam_faillock.so.
 
-
 Ensure that the file /etc/security/faillock.conf contains the following entry:
 unlock_time=<interval-in-seconds> where
 interval-in-seconds is 
                 
                or greater.
-
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -4367,7 +4340,6 @@ Limits are imposed by locking the account.</pre></td>
 after  unsuccessful logon
 attempts with the command:
 
-
 $ grep 'unlock_time =' /etc/security/faillock.conf
 unlock_time = 
       Is it the case that the "unlock_time" option is not set to "<sub idref="var_accounts_passwords_pam_faillock_unlock_time" />",
@@ -4376,13 +4348,11 @@ the line is missing, or commented out?
 	<td><pre>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using pam_faillock.so.
 
-
 Ensure that the file /etc/security/faillock.conf contains the following entry:
 unlock_time=<interval-in-seconds> where
 interval-in-seconds is 
                 
                or greater.
-
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -4565,7 +4535,6 @@ the account.</pre></td>
 	<td><pre>Verify Oracle Linux 8 is configured to lock the root account after 
 unsuccessful logon attempts with the command:
 
-
 $ grep even_deny_root /etc/security/faillock.conf
 even_deny_root
       Is it the case that the "even_deny_root" option is not set, is missing or commented out?
@@ -4592,7 +4561,6 @@ user password guessing, also known as brute-forcing, is reduced. Limits are impo
 the account.</pre></td>
 	<td><pre>Verify Oracle Linux 8 is configured to lock the root account after 
 unsuccessful logon attempts with the command:
-
 
 $ grep even_deny_root /etc/security/faillock.conf
 even_deny_root
@@ -4750,7 +4718,7 @@ records is stored. The configured directory must have the correct SELinux contex
 
 <tr>
 	<td>V-248671</td>
-	<td>58</td>
+	<td>57</td>
 	<td>medium</td>
 	<td>OL 8 must enable a user session lock until that user reestablishes access using established identification and authentication procedures for graphical user sessions.</td>
 	<td>SRG-OS-ID</td>
@@ -4869,7 +4837,7 @@ StopIdleSessionSec=
 
 <tr>
 	<td>V-248674</td>
-	<td>58</td>
+	<td>57</td>
 	<td>medium</td>
 	<td>OL 8 must have the tmux package installed.</td>
 	<td>SRG-OS-ID</td>
@@ -4899,7 +4867,7 @@ ctrl+b :lock-session
 
 <tr>
 	<td>V-248675</td>
-	<td>58</td>
+	<td>57</td>
 	<td>medium</td>
 	<td>OL 8 must enable a user session lock until that user re-establishes access using established identification and authentication procedures for command line sessions.</td>
 	<td>SRG-OS-ID</td>
@@ -4930,7 +4898,7 @@ Ctrl+b Shift+x
 
 <tr>
 	<td>V-248676</td>
-	<td>58</td>
+	<td>57</td>
 	<td>medium</td>
 	<td>OL 8 must ensure session control is automatically started at shell initialization.</td>
 	<td>SRG-OS-ID</td>
@@ -4973,7 +4941,7 @@ automatic session locking. It should be started from
 
 <tr>
 	<td>V-248677</td>
-	<td>58</td>
+	<td>57</td>
 	<td>low</td>
 	<td>OL 8 must prevent users from disabling session control mechanisms.</td>
 	<td>SRG-OS-ID</td>
@@ -4995,7 +4963,7 @@ automatic session locking. It should not be listed in
 
 <tr>
 	<td>V-248678</td>
-	<td>58</td>
+	<td>57</td>
 	<td>medium</td>
 	<td>OL 8 must enable a user session lock until that user reestablishes access using established identification and authentication procedures for command line sessions.</td>
 	<td>SRG-OS-ID</td>
@@ -5029,7 +4997,7 @@ $ sudo yum install kbd
 
 <tr>
 	<td>V-248679</td>
-	<td>58</td>
+	<td>57</td>
 	<td>medium</td>
 	<td>OL 8 must be able to initiate directly a session lock for all connection types using smartcard when the smartcard is removed.</td>
 	<td>SRG-OS-ID</td>
@@ -5377,7 +5345,7 @@ per session.</pre></td>
 
 <tr>
 	<td>V-248687</td>
-	<td>193</td>
+	<td>4066</td>
 	<td>low</td>
 	<td>OL 8 must enforce password complexity by requiring that at least one uppercase character be used.</td>
 	<td>SRG-OS-ID</td>
@@ -5409,7 +5377,7 @@ length credit for each uppercase character. Modify the ucredit setting in
 
 <tr>
 	<td>V-248688</td>
-	<td>193</td>
+	<td>4066</td>
 	<td>low</td>
 	<td>OL 8 must enforce password complexity by requiring that at least one lowercase character be used.</td>
 	<td>SRG-OS-ID</td>
@@ -5443,7 +5411,7 @@ length credit for each lowercase character. Modify the lcredit setting in
 
 <tr>
 	<td>V-248689</td>
-	<td>194</td>
+	<td>4066</td>
 	<td>low</td>
 	<td>OL 8 must enforce password complexity by requiring that at least one numeric character be used.</td>
 	<td>SRG-OS-ID</td>
@@ -5478,7 +5446,7 @@ length credit for each digit. Modify the dcredit setting in
 
 <tr>
 	<td>V-248690</td>
-	<td>195</td>
+	<td>4066</td>
 	<td>medium</td>
 	<td>OL 8 must require the maximum number of repeating characters of the same character class be limited to four when passwords are changed.</td>
 	<td>SRG-OS-ID</td>
@@ -5507,7 +5475,7 @@ to prevent a run of ( + 1) or more identical characters.</pre></td>
 
 <tr>
 	<td>V-248691</td>
-	<td>195</td>
+	<td>4066</td>
 	<td>medium</td>
 	<td>OL 8 must require the maximum number of repeating characters be limited to three when passwords are changed.</td>
 	<td>SRG-OS-ID</td>
@@ -5540,7 +5508,7 @@ run of ( + 1) or more identical characters.</pre></td>
 
 <tr>
 	<td>V-248692</td>
-	<td>195</td>
+	<td>4066</td>
 	<td>medium</td>
 	<td>OL 8 must require the change of at least four character classes when passwords are changed.</td>
 	<td>SRG-OS-ID</td>
@@ -5585,9 +5553,9 @@ differing categories of characters when changing passwords.</pre></td>
 
 <tr>
 	<td>V-248693</td>
-	<td>195</td>
+	<td>4066</td>
 	<td>low</td>
-	<td>OL 8 must require the change of at least 8 characters when passwords are changed.</td>
+	<td>OL 8 must require the change of at least eight characters when passwords are changed.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Use of a complex password helps to increase the time and resources
 required to compromise the password. Password complexity, or strength,
@@ -5624,9 +5592,9 @@ when changing passwords.</pre></td>
 
 <tr>
 	<td>V-248694</td>
-	<td>198</td>
+	<td>4066</td>
 	<td>medium</td>
-	<td>OL 8 passwords for new users or password changes must have a 24 hours/1 day minimum password lifetime restriction in "/etc/shadow".</td>
+	<td>OL 8 passwords for new users or password changes must have a 24 hours/one day minimum password lifetime restriction in "/etc/shadow".</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Enforcing a minimum password lifetime helps to prevent repeated password
 changes to defeat the password reuse or history enforcement requirement. If
@@ -5649,9 +5617,9 @@ $ sudo chage -m 1 USER
 
 <tr>
 	<td>V-248695</td>
-	<td>198</td>
+	<td>4066</td>
 	<td>medium</td>
-	<td>OL 8 passwords for new users or password changes must have a 24 hours/1 day minimum password lifetime restriction in "/etc/login.defs".</td>
+	<td>OL 8 passwords for new users or password changes must have a 24 hours/one day minimum password lifetime restriction in "/etc/login.defs".</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Enforcing a minimum password lifetime helps to prevent repeated password
 changes to defeat the password reuse or history enforcement requirement. If
@@ -5687,7 +5655,7 @@ The profile requirement is
 
 <tr>
 	<td>V-248696</td>
-	<td>199</td>
+	<td>4066</td>
 	<td>medium</td>
 	<td>OL 8 user account passwords must have a 60-day maximum password lifetime restriction.</td>
 	<td>SRG-OS-ID</td>
@@ -5724,7 +5692,7 @@ The profile requirement is
 
 <tr>
 	<td>V-248697</td>
-	<td>199</td>
+	<td>4066</td>
 	<td>medium</td>
 	<td>OL 8 user account passwords must be configured so that existing passwords are restricted to a 60-day maximum lifetime.</td>
 	<td>SRG-OS-ID</td>
@@ -5751,112 +5719,8 @@ $ sudo chage -M
 </tr>
 
 <tr>
-	<td>V-248698</td>
-	<td>200</td>
-	<td>low</td>
-	<td>OL 8 must be configured in the password-auth file to prohibit password reuse for a minimum of five generations.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre>Preventing re-use of previous passwords helps ensure that a compromised password is not
-re-used by a user.</pre></td>
-	<td><pre>Verify Oracle Linux 8 use the "pam_pwhistory.so" module in the /etc/pam.d/password-auth file
-and is configured to prohibit password reuse for a minimum of 
-generations.
-
-Verify the "/etc/pam.d/password-auth" file with the following command:
-
-$ grep pam_pwhistory.so /etc/pam.d/password-auth
-password  pam_pwhistory.so use_authtok remember=
-
-
-Verify the "/etc/security/pwhistory.conf" file using the following command:
-
-$ grep remember /etc/security/pwhistory.conf
-remember = 
-
-The pam_pwhistory.so "remember" option must be configured only in one file.
-      Is it the case that the pam_pwhistory.so module is not used, the "remember" module option is not set in
-/etc/pam.d/password-auth or in /etc/security/pwhistory.conf, or is set in both files, or is set
-with a value less than "<sub idref="var_password_pam_remember" />"?
-      </pre></td>
-	<td><pre>Do not allow users to reuse recent passwords. This can be accomplished by using the
-remember option for the pam_pwhistory PAM module.
-
-              
-
-On systems with newer versions of authselect, the pam_pwhistory PAM module
-can be enabled via authselect feature:
-authselect enable-feature with-pwhistory
-
-Otherwise, it should be enabled using an authselect custom profile.
-
-              
-Newer systems also have the /etc/security/pwhistory.conf file for setting
-pam_pwhistory module options. This file should be used whenever available.
-Otherwise, the pam_pwhistory module options can be set in PAM files.
-
-              
-The value for remember option must be equal or greater than
-
-            </pre></td>
-	<td>OL08-00-020220</td>
-	<td>accounts_password_pam_pwhistory_remember_password_auth</td>
-</tr>
-
-<tr>
-	<td>V-252661</td>
-	<td>200</td>
-	<td>medium</td>
-	<td>OL 8 must be configured in the system-auth file to prohibit password reuse for a minimum of five generations.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre>Preventing re-use of previous passwords helps ensure that a compromised password is not
-re-used by a user.</pre></td>
-	<td><pre>Verify Oracle Linux 8 use the "pam_pwhistory.so" module in the /etc/pam.d/system-auth file
-and is configured to prohibit password reuse for a minimum of 
-generations.
-
-Verify the "/etc/pam.d/system-auth" file with the following command:
-
-$ grep pam_pwhistory.so /etc/pam.d/system-auth
-password  pam_pwhistory.so use_authtok remember=
-
-
-Verify the "/etc/security/pwhistory.conf" file using the following command:
-
-$ grep remember /etc/security/pwhistory.conf
-remember = 
-
-The pam_pwhistory.so "remember" option must be configured only in one file.
-      Is it the case that the pam_pwhistory.so module is not used, the "remember" module option is not set in
-/etc/pam.d/system-auth or in /etc/security/pwhistory.conf, or is set in both files, or is set
-with a value less than "<sub idref="var_password_pam_remember" />"?
-      </pre></td>
-	<td><pre>Do not allow users to reuse recent passwords. This can be accomplished by using the
-remember option for the pam_pwhistory PAM module.
-
-              
-
-On systems with newer versions of authselect, the pam_pwhistory PAM module
-can be enabled via authselect feature:
-authselect enable-feature with-pwhistory
-
-Otherwise, it should be enabled using an authselect custom profile.
-
-              
-Newer systems also have the /etc/security/pwhistory.conf file for setting
-pam_pwhistory module options. This file should be used whenever available.
-Otherwise, the pam_pwhistory module options can be set in PAM files.
-
-              
-The value for remember option must be equal or greater than
-
-            </pre></td>
-	<td>OL08-00-020221</td>
-	<td>accounts_password_pam_pwhistory_remember_system_auth</td>
-</tr>
-
-<tr>
 	<td>V-248699</td>
-	<td>205</td>
+	<td>4066</td>
 	<td>medium</td>
 	<td>OL 8 passwords must have a minimum of 15 characters.</td>
 	<td>SRG-OS-ID</td>
@@ -5886,7 +5750,7 @@ after pam_pwquality to set minimum password length requirements.</pre></td>
 
 <tr>
 	<td>V-248700</td>
-	<td>205</td>
+	<td>4066</td>
 	<td>medium</td>
 	<td>OL 8 passwords for new users must have a minimum of 15 characters.</td>
 	<td>SRG-OS-ID</td>
@@ -5941,7 +5805,7 @@ $ sudo awk -F ":" 'list[$3]++{print $1, $3}' /etc/passwd
 
 <tr>
 	<td>V-248702</td>
-	<td>768</td>
+	<td>4047</td>
 	<td>medium</td>
 	<td>OL 8 must implement multifactor authentication for access to interactive accounts.</td>
 	<td>SRG-OS-ID</td>
@@ -5993,7 +5857,7 @@ include the "allow_missing_name" option, like in the following example:
 
 <tr>
 	<td>V-248703</td>
-	<td>795</td>
+	<td>3628</td>
 	<td>medium</td>
 	<td>The OL 8 system-auth file must disable access to the system for account identifiers (individuals, groups, roles, and devices) with 35 days of inactivity.</td>
 	<td>SRG-OS-ID</td>
@@ -6032,7 +5896,7 @@ useradd man page for more information.</pre></td>
 
 <tr>
 	<td>V-248704</td>
-	<td>795</td>
+	<td>3628</td>
 	<td>medium</td>
 	<td>The OL 8 password-auth file must disable access to the system for account identifiers (individuals, groups, roles, and devices) with 35 days of inactivity.</td>
 	<td>SRG-OS-ID</td>
@@ -6176,7 +6040,7 @@ period of 72 hours.</pre></td>
 
 <tr>
 	<td>V-248709</td>
-	<td>1619</td>
+	<td>4066</td>
 	<td>low</td>
 	<td>All OL 8 passwords must contain at least one special character.</td>
 	<td>SRG-OS-ID</td>
@@ -6638,13 +6502,18 @@ facility by unauthorized and malicious users.</pre></td>
 run the following command:
 grep -rni "cron\.\*" /etc/rsyslog.*
 cron.*                                                  /var/log/cron
+or
+cron.* action(type="omfile" file="/var/log/cron")
       Is it the case that cron is not logging to rsyslog?
       </pre></td>
 	<td><pre>Cron logging must be implemented to spot intrusions or trace
 cron job status. If cron is not logging to rsyslog, it
 can be implemented by adding the following to the RULES section of
 /etc/rsyslog.conf:
+If the legacy syntax is used:
 cron.*                                                  /var/log/cron
+If the modern syntax (RainerScript) is used:
+cron.* action(type="omfile" file="/var/log/cron")
           </pre></td>
 	<td>OL08-00-030010</td>
 	<td>rsyslog_cron_logging</td>
@@ -7405,7 +7274,7 @@ utility to read audit rules during daemon startup, add the following line to
 
 <tr>
 	<td>V-248520</td>
-	<td>2884</td>
+	<td>4188</td>
 	<td>medium</td>
 	<td>OL 8 audit records must contain information to establish what type of events occurred, the source of events, where events occurred, and the outcome of events.</td>
 	<td>SRG-OS-ID</td>
@@ -9099,8 +8968,11 @@ facility.
 
 The partition size needed to capture a week's worth of audit records is
 based on the activity level of the system and the total storage capacity
-available. In normal circumstances, 10.0 GB of storage space for audit
+available.
+
+In normal circumstances, 10.0 GB of storage space for audit
 records will be sufficient.
+
 
 Determine which partition the audit records are being written to with the
 following command:
@@ -9267,7 +9139,14 @@ and remote logging.  Couple this utility with gnutls (which is a secure communic
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using rsyslogd to off-load logs off an encryption system must be used.</pre></td>
+When using rsyslogd to off-load logs off an encryption system must be used.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+$DefaultNetstreamDriver gtls
+
+Alternatively, use the RainerScript syntax:
+global(DefaultNetstreamDriver="gtls")
+          </pre></td>
 	<td>OL08-00-030710</td>
 	<td>rsyslog_encrypt_offload_defaultnetstreamdriver</td>
 </tr>
@@ -9294,7 +9173,13 @@ and remote logging.  Couple this utility with gnutls (which is a secure communic
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using rsyslogd to off-load logs the remote system must be authenticated.</pre></td>
+When using rsyslogd to off-load logs the remote system must be authenticated.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+$ActionSendStreamDriverAuthMode x509/name
+Alternatively, use the RainerScript syntax:
+action(type="omfwd" Target="some.example.com" StreamDriverAuthMode="x509/name")
+          </pre></td>
 	<td>OL08-00-030720</td>
 	<td>rsyslog_encrypt_offload_actionsendstreamdriverauthmode</td>
 </tr>
@@ -9379,9 +9264,9 @@ also include suspend, single, and halt.</pre></td>
 
 <tr>
 	<td>V-248820</td>
-	<td>2046</td>
+	<td>4926</td>
 	<td>medium</td>
-	<td>OL 8 must compare internal information system clocks at least every 24 hours with a server synchronized to an authoritative time source, such as the United States Naval Observatory (USNO) time servers, or a time server designated for the appropriate DoD network (NIPRNet/SIPRNet), and/or the Global Positioning System (GPS).</td>
+	<td>OL 8 must compare internal information system clocks at least every 24 hours with a server synchronized to an authoritative time source, such as the United States Naval Observatory (USNO) time servers, or a time server designated for the appropriate DOD network (NIPRNet/SIPRNet), and/or the Global Positioning System (GPS).</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Depending on the infrastructure being used the pool directive may not be supported.</pre></td>
 	<td><pre>Run the following command and verify that time sources are only configured with server directive:
@@ -9620,7 +9505,7 @@ flaws in its implementation.</pre></td>
 	<td><pre>
 If the system is configured to prevent the loading of the atm kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the atm kernel module via blacklist keyword.
 
@@ -9634,7 +9519,7 @@ and virtual paths.
 
 To configure the system to prevent the atm
 kernel module from being loaded, add the following line to the file /etc/modprobe.d/atm.conf:
-install atm /bin/true
+install atm /bin/false
 
 To configure the system to prevent the atm from being used,
 add the following line to file /etc/modprobe.d/atm.conf:
@@ -9655,7 +9540,7 @@ flaws in its implementation.</pre></td>
 	<td><pre>
 If the system is configured to prevent the loading of the can kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the can kernel module via blacklist keyword.
 
@@ -9669,7 +9554,7 @@ is now also used in marine, industrial, and medical applications.
 
 To configure the system to prevent the can
 kernel module from being loaded, add the following line to the file /etc/modprobe.d/can.conf:
-install can /bin/true
+install can /bin/false
 
 To configure the system to prevent the can from being used,
 add the following line to file /etc/modprobe.d/can.conf:
@@ -9690,7 +9575,7 @@ the system against exploitation of any flaws in its implementation.</pre></td>
 	<td><pre>
 If the system is configured to prevent the loading of the sctp kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the sctp kernel module via blacklist keyword.
 
@@ -9705,7 +9590,7 @@ within one connection.
 
 To configure the system to prevent the sctp
 kernel module from being loaded, add the following line to the file /etc/modprobe.d/sctp.conf:
-install sctp /bin/true
+install sctp /bin/false
 
 To configure the system to prevent the sctp from being used,
 add the following line to file /etc/modprobe.d/sctp.conf:
@@ -9726,7 +9611,7 @@ the system against exploitation of any flaws in its implementation.</pre></td>
 	<td><pre>
 If the system is configured to prevent the loading of the tipc kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the tipc kernel module via blacklist keyword.
 
@@ -9740,7 +9625,7 @@ cluster.
 
 To configure the system to prevent the tipc
 kernel module from being loaded, add the following line to the file /etc/modprobe.d/tipc.conf:
-install tipc /bin/true
+install tipc /bin/false
 
 To configure the system to prevent the tipc from being used,
 add the following line to file /etc/modprobe.d/tipc.conf:
@@ -9761,7 +9646,7 @@ of the server.</pre></td>
 	<td><pre>
 If the system is configured to prevent the loading of the cramfs kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the cramfs kernel module via blacklist keyword.
 
@@ -9772,7 +9657,7 @@ $ grep -r cramfs /etc/modprobe.conf /etc/modprobe.d
 	<td><pre>
 To configure the system to prevent the cramfs
 kernel module from being loaded, add the following line to the file /etc/modprobe.d/cramfs.conf:
-install cramfs /bin/true
+install cramfs /bin/false
 
 To configure the system to prevent the cramfs from being used,
 add the following line to file /etc/modprobe.d/cramfs.conf:
@@ -9799,7 +9684,7 @@ flaws in its implementation.</pre></td>
 	<td><pre>
 If the system is configured to prevent the loading of the firewire-core kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the firewire-core kernel module via blacklist keyword.
 
@@ -9812,7 +9697,7 @@ high-speed real-time communication.
 
 To configure the system to prevent the firewire-core
 kernel module from being loaded, add the following line to the file /etc/modprobe.d/firewire-core.conf:
-install firewire-core /bin/true
+install firewire-core /bin/false
 
 To configure the system to prevent the firewire-core from being used,
 add the following line to file /etc/modprobe.d/firewire-core.conf:
@@ -9921,7 +9806,7 @@ $ sudo systemctl mask --now autofs.service
 
 <tr>
 	<td>V-248837</td>
-	<td>778</td>
+	<td>3959</td>
 	<td>medium</td>
 	<td>OL 8 must be configured to disable the ability to use USB mass storage devices.</td>
 	<td>SRG-OS-ID</td>
@@ -9930,7 +9815,7 @@ malicious software.</pre></td>
 	<td><pre>
 If the system is configured to prevent the loading of the usb-storage kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the usb-storage kernel module via blacklist keyword.
 
@@ -9943,7 +9828,7 @@ to prevent automatic loading of the USB storage driver.
 
 To configure the system to prevent the usb-storage
 kernel module from being loaded, add the following line to the file /etc/modprobe.d/usb-storage.conf:
-install usb-storage /bin/true
+install usb-storage /bin/false
 
 To configure the system to prevent the usb-storage from being used,
 add the following line to file /etc/modprobe.d/usb-storage.conf:
@@ -10089,7 +9974,7 @@ activation.</pre></td>
 	<td><pre>
 If the system is configured to prevent the loading of the bluetooth kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the bluetooth kernel module via blacklist keyword.
 
@@ -10574,7 +10459,7 @@ deny perm=any all : all
 
 <tr>
 	<td>V-248862</td>
-	<td>1958</td>
+	<td>3959</td>
 	<td>medium</td>
 	<td>OL 8 must have the USBGuard installed.</td>
 	<td>SRG-OS-ID</td>
@@ -10621,7 +10506,7 @@ devices.</pre></td>
 
 <tr>
 	<td>V-248864</td>
-	<td>1958</td>
+	<td>3959</td>
 	<td>medium</td>
 	<td>OL 8 must enable the USBGuard.</td>
 	<td>SRG-OS-ID</td>
@@ -10819,10 +10704,10 @@ Ctrl-Alt-Del key sequence is pressed.
               
 To configure the system to ignore the Ctrl-Alt-Del key sequence
 from the Graphical User Interface (GUI) instead of rebooting the system,
-add or set logout to '' in
+add or set logout to [''] in
 /etc/dconf/db/local.d/00-security-settings. For example:
 [org/gnome/settings-daemon/plugins/media-keys]
-logout=''
+logout=['']
 Once the settings have been added, add a lock to
 /etc/dconf/db/local.d/locks/00-security-settings-lock to prevent
 user modification. For example:

@@ -291,12 +291,10 @@ records is stored. The configured directory must have the correct SELinux contex
 using <tt>pam_faillock.so</tt>.
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
-
 Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
 <tt>deny = &lt;count&gt;</tt>
 Where count should be less than or equal to
 <sub idref="var_accounts_passwords_pam_faillock_deny" /> and greater than 0.
-
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -358,11 +356,9 @@ depending on the OS version.</td>
           <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
 
-
 Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
 <tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
 <tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_unlock_time" /></tt> or greater.
-
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -6478,7 +6474,9 @@ accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM m
 <br /><br />
 In file <tt>/etc/pam.d/password-auth</tt> append <tt>rounds=<sub idref="var_password_pam_unix_rounds" /></tt>
 to the <tt>pam_unix.so</tt> entry, as shown below:
+
 <pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<sub idref="var_password_pam_unix_rounds" /></pre>
+
 The system's default number of rounds is 5000.</td>
         </tr>
       </table>
@@ -6499,18 +6497,18 @@ The system's default number of rounds is 5000.</td>
       <table>
         <tr>
           <td>Set Password Hashing Algorithm in /etc/libuser.conf</td>
-          <td>In <tt>/etc/libuser.conf</tt>, add or correct the following line in its
-<tt>[defaults]</tt> section to ensure the system will use the SHA-512
+          <td>In <tt>/etc/libuser.conf</tt>, add or correct the following line in its <tt>[defaults]</tt>
+section to ensure the system will use the <sub idref="var_password_hashing_algorithm_pam" />
 algorithm for password hashing:
-<pre>crypt_style = sha512</pre></td>
+<pre>crypt_style = <sub idref="var_password_hashing_algorithm_pam" /></pre></td>
         </tr>
       </table>
 
       <table>
         <tr>
           <td>Set Password Hashing Algorithm in /etc/login.defs</td>
-          <td>In <tt>/etc/login.defs</tt>, add or correct the following line to ensure
-the system will use <sub idref="var_password_hashing_algorithm" /> as the hashing algorithm:
+          <td>In <tt>/etc/login.defs</tt>, add or update the following line to ensure the system will use
+<sub idref="var_password_hashing_algorithm" /> as the hashing algorithm:
 <pre>ENCRYPT_METHOD <sub idref="var_password_hashing_algorithm" /></pre></td>
         </tr>
       </table>
@@ -6518,20 +6516,18 @@ the system will use <sub idref="var_password_hashing_algorithm" /> as the hashin
       <table>
         <tr>
           <td>Set PAM''s Password Hashing Algorithm - password-auth</td>
-          <td>The PAM system service can be configured to only store encrypted
-representations of passwords. In
-<tt>/etc/pam.d/password-auth</tt>,
-the
-<tt>password</tt> section of the file controls which PAM modules execute
-during a password change. Set the <tt>pam_unix.so</tt> module in the
-<tt>password</tt> section to include the argument <tt>sha512</tt>, as shown
-below:
+          <td>The PAM system service can be configured to only store encrypted representations of passwords.
+In <tt>/etc/pam.d/password-auth</tt>, the <tt>password</tt> section of the file controls which
+PAM modules to execute during a password change.
+
+Set the <tt>pam_unix.so</tt> module in the <tt>password</tt> section to include the option
+<tt><sub idref="var_password_hashing_algorithm_pam" /></tt> and no other hashing
+algorithms as shown below:
 <br />
-<pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i></pre>
+<pre>password    sufficient    pam_unix.so <sub idref="var_password_hashing_algorithm_pam" /> <i>other arguments...</i></pre>
 <br />
-This will help ensure when local users change their passwords, hashes for
-the new passwords will be generated using the SHA-512 algorithm. This is
-the default.</td>
+This will help ensure that new passwords for local users will be stored using the
+<sub idref="var_password_hashing_algorithm_pam" /> algorithm.</td>
         </tr>
       </table>
 
@@ -6898,7 +6894,7 @@ and virtual paths.
 
 To configure the system to prevent the <code>atm</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/atm.conf</code>:
-<pre>install atm /bin/true</pre></td>
+<pre>install atm /bin/false</pre></td>
         </tr>
       </table>
 
@@ -6922,7 +6918,7 @@ is now also used in marine, industrial, and medical applications.
 
 To configure the system to prevent the <code>can</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/can.conf</code>:
-<pre>install can /bin/true</pre></td>
+<pre>install can /bin/false</pre></td>
         </tr>
       </table>
 
@@ -6932,7 +6928,7 @@ kernel module from being loaded, add the following line to the file <code>/etc/m
           <td>
 To configure the system to prevent the <code>cramfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cramfs.conf</code>:
-<pre>install cramfs /bin/true</pre>
+<pre>install cramfs /bin/false</pre>
 
 This effectively prevents usage of this uncommon filesystem.
 
@@ -6951,7 +6947,7 @@ high-speed real-time communication.
 
 To configure the system to prevent the <code>firewire-core</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/firewire-core.conf</code>:
-<pre>install firewire-core /bin/true</pre></td>
+<pre>install firewire-core /bin/false</pre></td>
         </tr>
       </table>
 
@@ -6965,7 +6961,7 @@ within one connection.
 
 To configure the system to prevent the <code>sctp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
-<pre>install sctp /bin/true</pre></td>
+<pre>install sctp /bin/false</pre></td>
         </tr>
       </table>
 
@@ -6978,7 +6974,7 @@ cluster.
 
 To configure the system to prevent the <code>tipc</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/tipc.conf</code>:
-<pre>install tipc /bin/true</pre></td>
+<pre>install tipc /bin/false</pre></td>
         </tr>
       </table>
 
@@ -7699,7 +7695,7 @@ to prevent automatic loading of the USB storage driver.
 
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
-<pre>install usb-storage /bin/true</pre>
+<pre>install usb-storage /bin/false</pre>
 
 This will prevent the <tt>modprobe</tt> program from loading the <tt>usb-storage</tt>
 module, but will not prevent an administrator (or another program) from using the
@@ -7837,20 +7833,18 @@ $ sudo dnf install rsyslog-gnutls</pre></td>
       <table>
         <tr>
           <td>Set PAM''s Password Hashing Algorithm - password-auth</td>
-          <td>The PAM system service can be configured to only store encrypted
-representations of passwords. In
-<tt>/etc/pam.d/password-auth</tt>,
-the
-<tt>password</tt> section of the file controls which PAM modules execute
-during a password change. Set the <tt>pam_unix.so</tt> module in the
-<tt>password</tt> section to include the argument <tt>sha512</tt>, as shown
-below:
+          <td>The PAM system service can be configured to only store encrypted representations of passwords.
+In <tt>/etc/pam.d/password-auth</tt>, the <tt>password</tt> section of the file controls which
+PAM modules to execute during a password change.
+
+Set the <tt>pam_unix.so</tt> module in the <tt>password</tt> section to include the option
+<tt><sub idref="var_password_hashing_algorithm_pam" /></tt> and no other hashing
+algorithms as shown below:
 <br />
-<pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i></pre>
+<pre>password    sufficient    pam_unix.so <sub idref="var_password_hashing_algorithm_pam" /> <i>other arguments...</i></pre>
 <br />
-This will help ensure when local users change their passwords, hashes for
-the new passwords will be generated using the SHA-512 algorithm. This is
-the default.</td>
+This will help ensure that new passwords for local users will be stored using the
+<sub idref="var_password_hashing_algorithm_pam" /> algorithm.</td>
         </tr>
       </table>
 
@@ -10797,12 +10791,10 @@ If both the "b32" and "b64" audit rules for "SGID" files are not defined, this i
 using <tt>pam_faillock.so</tt>.
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
-
 Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
 <tt>deny = &lt;count&gt;</tt>
 Where count should be less than or equal to
 <sub idref="var_accounts_passwords_pam_faillock_deny" /> and greater than 0.
-
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
@@ -10864,11 +10856,9 @@ depending on the OS version.</td>
           <td>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using <tt>pam_faillock.so</tt>.
 
-
 Ensure that the file <tt>/etc/security/faillock.conf</tt> contains the following entry:
 <tt>unlock_time=&lt;interval-in-seconds&gt;</tt> where
 <tt>interval-in-seconds</tt> is <tt><sub idref="var_accounts_passwords_pam_faillock_unlock_time" /></tt> or greater.
-
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -10939,8 +10929,11 @@ facility.
 
 The partition size needed to capture a week's worth of audit records is
 based on the activity level of the system and the total storage capacity
-available. In normal circumstances, 10.0 GB of storage space for audit
+available.
+
+In normal circumstances, 10.0 GB of storage space for audit
 records will be sufficient.
+
 
 Determine which partition the audit records are being written to with the
 following command:
@@ -11008,8 +11001,11 @@ facility.
 
 The partition size needed to capture a week's worth of audit records is
 based on the activity level of the system and the total storage capacity
-available. In normal circumstances, 10.0 GB of storage space for audit
+available.
+
+In normal circumstances, 10.0 GB of storage space for audit
 records will be sufficient.
+
 
 Determine which partition the audit records are being written to with the
 following command:
@@ -11073,7 +11069,12 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs the remote system must be authenticated.</td>
+When using <tt>rsyslogd</tt> to off-load logs the remote system must be authenticated.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$ActionSendStreamDriverAuthMode x509/name</pre>
+Alternatively, use the RainerScript syntax:
+<pre>action(type="omfwd" Target="some.example.com" StreamDriverAuthMode="x509/name")</pre></td>
         </tr>
       </table>
 
@@ -11086,7 +11087,13 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs off a encrpytion system must be used.</td>
+When using <tt>rsyslogd</tt> to off-load logs off a encrpytion system must be used.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$ActionSendStreamDriverMode 1</pre>
+
+Alternatively, use the RainerScript syntax:
+<pre>action(type="omfwd" ... StreamDriverMode="1")</pre></td>
         </tr>
       </table>
 
@@ -11099,7 +11106,13 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs off an encryption system must be used.</td>
+When using <tt>rsyslogd</tt> to off-load logs off an encryption system must be used.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$DefaultNetstreamDriver gtls</pre>
+
+Alternatively, use the RainerScript syntax:
+<pre>global(DefaultNetstreamDriver="gtls")</pre></td>
         </tr>
       </table>
 
@@ -11501,14 +11514,12 @@ Organizations should consider endpoints that may not have regular access to the 
           <td>Configure Time Service Maxpoll Interval</td>
           <td>The <tt>maxpoll</tt> should be configured to
 <sub idref="var_time_service_set_maxpoll" /> in <tt>/etc/ntp.conf</tt> or
-<tt>/etc/chrony.conf</tt> to continuously poll time servers. To configure
-<tt>maxpoll</tt> in <tt>/etc/ntp.conf</tt> or <tt>/etc/chrony.conf</tt>
-add the following after each `server`, `pool` or `peer` entry:
+<tt>/etc/chrony.conf</tt> (or <tt>/etc/chrony.d/</tt>) to continuously poll time servers. To configure
+<tt>maxpoll</tt> in <tt>/etc/ntp.conf</tt> or <tt>/etc/chrony.conf</tt> (or <tt>/etc/chrony.d/</tt>)
+add the following after each <tt>server</tt>, <tt>pool</tt> or <tt>peer</tt> entry:
 <pre>maxpoll <sub idref="var_time_service_set_maxpoll" /></pre>
-to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
-should be configured too.
-If no <tt>server</tt> or <tt>pool</tt> directives are configured, the rule evaluates
-to pass.</td>
+to <tt>server</tt> directives. If using chrony, any <tt>pool</tt> directives
+should be configured too.</td>
         </tr>
       </table>
 
@@ -11583,14 +11594,12 @@ Organizations should also consider endpoints that may not have regular access to
           <td>Configure Time Service Maxpoll Interval</td>
           <td>The <tt>maxpoll</tt> should be configured to
 <sub idref="var_time_service_set_maxpoll" /> in <tt>/etc/ntp.conf</tt> or
-<tt>/etc/chrony.conf</tt> to continuously poll time servers. To configure
-<tt>maxpoll</tt> in <tt>/etc/ntp.conf</tt> or <tt>/etc/chrony.conf</tt>
-add the following after each `server`, `pool` or `peer` entry:
+<tt>/etc/chrony.conf</tt> (or <tt>/etc/chrony.d/</tt>) to continuously poll time servers. To configure
+<tt>maxpoll</tt> in <tt>/etc/ntp.conf</tt> or <tt>/etc/chrony.conf</tt> (or <tt>/etc/chrony.d/</tt>)
+add the following after each <tt>server</tt>, <tt>pool</tt> or <tt>peer</tt> entry:
 <pre>maxpoll <sub idref="var_time_service_set_maxpoll" /></pre>
-to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
-should be configured too.
-If no <tt>server</tt> or <tt>pool</tt> directives are configured, the rule evaluates
-to pass.</td>
+to <tt>server</tt> directives. If using chrony, any <tt>pool</tt> directives
+should be configured too.</td>
         </tr>
       </table>
 
@@ -11655,14 +11664,12 @@ Time stamps generated by the operating system include date and time. Time is com
           <td>Configure Time Service Maxpoll Interval</td>
           <td>The <tt>maxpoll</tt> should be configured to
 <sub idref="var_time_service_set_maxpoll" /> in <tt>/etc/ntp.conf</tt> or
-<tt>/etc/chrony.conf</tt> to continuously poll time servers. To configure
-<tt>maxpoll</tt> in <tt>/etc/ntp.conf</tt> or <tt>/etc/chrony.conf</tt>
-add the following after each `server`, `pool` or `peer` entry:
+<tt>/etc/chrony.conf</tt> (or <tt>/etc/chrony.d/</tt>) to continuously poll time servers. To configure
+<tt>maxpoll</tt> in <tt>/etc/ntp.conf</tt> or <tt>/etc/chrony.conf</tt> (or <tt>/etc/chrony.d/</tt>)
+add the following after each <tt>server</tt>, <tt>pool</tt> or <tt>peer</tt> entry:
 <pre>maxpoll <sub idref="var_time_service_set_maxpoll" /></pre>
-to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
-should be configured too.
-If no <tt>server</tt> or <tt>pool</tt> directives are configured, the rule evaluates
-to pass.</td>
+to <tt>server</tt> directives. If using chrony, any <tt>pool</tt> directives
+should be configured too.</td>
         </tr>
       </table>
 
@@ -12681,7 +12688,7 @@ to prevent automatic loading of the USB storage driver.
 
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
-<pre>install usb-storage /bin/true</pre>
+<pre>install usb-storage /bin/false</pre>
 
 This will prevent the <tt>modprobe</tt> program from loading the <tt>usb-storage</tt>
 module, but will not prevent an administrator (or another program) from using the
@@ -12783,6 +12790,13 @@ Temporary passwords are typically used to allow access when new accounts are cre
         <tr>
           <td>Configure SSSD to Expire Offline Credentials</td>
           <td>SSSD should be configured to expire offline credentials after 1 day.
+
+Check if SSSD allows cached authentications with the following command:
+<pre>
+$ sudo grep cache_credentials /etc/sssd/sssd.conf
+cache_credentials = true
+</pre>
+If "cache_credentials" is set to "false" or is missing no further checks are required.<br/>
 
 To configure SSSD to expire offline credentials, set
 <tt>offline_credentials_expiration</tt> to <tt>1</tt> under the <tt>[pam]</tt>
@@ -20652,7 +20666,12 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs the remote system must be authenticated.</td>
+When using <tt>rsyslogd</tt> to off-load logs the remote system must be authenticated.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$ActionSendStreamDriverAuthMode x509/name</pre>
+Alternatively, use the RainerScript syntax:
+<pre>action(type="omfwd" Target="some.example.com" StreamDriverAuthMode="x509/name")</pre></td>
         </tr>
       </table>
 
@@ -20665,7 +20684,13 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs off a encrpytion system must be used.</td>
+When using <tt>rsyslogd</tt> to off-load logs off a encrpytion system must be used.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$ActionSendStreamDriverMode 1</pre>
+
+Alternatively, use the RainerScript syntax:
+<pre>action(type="omfwd" ... StreamDriverMode="1")</pre></td>
         </tr>
       </table>
 
@@ -20678,7 +20703,13 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs off an encryption system must be used.</td>
+When using <tt>rsyslogd</tt> to off-load logs off an encryption system must be used.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$DefaultNetstreamDriver gtls</pre>
+
+Alternatively, use the RainerScript syntax:
+<pre>global(DefaultNetstreamDriver="gtls")</pre></td>
         </tr>
       </table>
 
@@ -21082,10 +21113,10 @@ After the settings have been set, run <tt>dconf update</tt>.</td>
 <br /><br />
 To configure the system to ignore the <tt>Ctrl-Alt-Del</tt> key sequence
 from the Graphical User Interface (GUI) instead of rebooting the system,
-add or set <tt>logout</tt> to <tt>''</tt> in
+add or set <tt>logout</tt> to <tt>['']</tt> in
 <tt>/etc/dconf/db/local.d/00-security-settings</tt>. For example:
 <pre>[org/gnome/settings-daemon/plugins/media-keys]
-logout=''</pre>
+logout=['']</pre>
 Once the settings have been added, add a lock to
 <tt>/etc/dconf/db/local.d/locks/00-security-settings-lock</tt> to prevent
 user modification. For example:
@@ -21756,7 +21787,7 @@ and virtual paths.
 
 To configure the system to prevent the <code>atm</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/atm.conf</code>:
-<pre>install atm /bin/true</pre></td>
+<pre>install atm /bin/false</pre></td>
         </tr>
       </table>
 
@@ -21769,7 +21800,7 @@ is now also used in marine, industrial, and medical applications.
 
 To configure the system to prevent the <code>can</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/can.conf</code>:
-<pre>install can /bin/true</pre></td>
+<pre>install can /bin/false</pre></td>
         </tr>
       </table>
 
@@ -21783,7 +21814,7 @@ within one connection.
 
 To configure the system to prevent the <code>sctp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
-<pre>install sctp /bin/true</pre></td>
+<pre>install sctp /bin/false</pre></td>
         </tr>
       </table>
 
@@ -21795,7 +21826,7 @@ to prevent automatic loading of the USB storage driver.
 
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
-<pre>install usb-storage /bin/true</pre>
+<pre>install usb-storage /bin/false</pre>
 
 This will prevent the <tt>modprobe</tt> program from loading the <tt>usb-storage</tt>
 module, but will not prevent an administrator (or another program) from using the
@@ -22308,7 +22339,10 @@ to the local network with the following command:
 cron job status. If <tt>cron</tt> is not logging to <tt>rsyslog</tt>, it
 can be implemented by adding the following to the <i>RULES</i> section of
 <tt>/etc/rsyslog.conf</tt>:
-<pre>cron.*                                                  /var/log/cron</pre></td>
+If the legacy syntax is used:
+<pre>cron.*                                                  /var/log/cron</pre>
+If the modern syntax (RainerScript) is used:
+<pre>cron.* action(type="omfile" file="/var/log/cron")</pre></td>
         </tr>
       </table>
 
@@ -22368,6 +22402,12 @@ There must be a resolvable DNS CNAME or Alias record set to "<sub idref="rsyslog
         <tr>
           <td>Ensure Software Patches Installed</td>
           <td>
+If the system is joined to the Red Hat Network, a Red Hat Satellite Server,
+or a yum server, run the following command to install updates:
+<pre>$ sudo yum update</pre>
+If the system is not configured to use one of these sources, updates (in the form of RPM packages)
+can be manually downloaded from the Red Hat Network and installed using <tt>rpm</tt>.
+
 <br /><br />
 NOTE: U.S. Defense systems are required to be patched within 30 days or sooner as local policy
 dictates.</td>

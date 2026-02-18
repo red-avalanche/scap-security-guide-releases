@@ -564,9 +564,10 @@ Red Hat Enterprise Linux 8, for certificate-based authentication, must enforce a
 	<td>medium</td>
 	<td>RHEL 8 must encrypt all stored passwords with a FIPS 140-2 approved cryptographic hashing algorithm.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Passwords need to be protected at all times, and encryption is the standard method for protecting passwords.
-If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised. Passwords
-that are encrypted with a weak algorithm are no more protected than if they are kept in plain text.
+	<td><pre>Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 
               
 Using a stronger hashing algorithm makes password cracking attacks more difficult.</pre></td>
@@ -580,8 +581,8 @@ $ sudo grep -i ENCRYPT_METHOD /etc/login.defs
 ENCRYPT_METHOD 
       Is it the case that ENCRYPT_METHOD is not set to <sub idref="var_password_hashing_algorithm" />?
       </pre></td>
-	<td><pre>In /etc/login.defs, add or correct the following line to ensure
-the system will use  as the hashing algorithm:
+	<td><pre>In /etc/login.defs, add or update the following line to ensure the system will use
+ as the hashing algorithm:
 ENCRYPT_METHOD 
               
             </pre></td>
@@ -918,40 +919,41 @@ in /usr/lib/systemd/system/emergency.service.</pre></td>
 	<td>medium</td>
 	<td>The RHEL 8 pam_unix.so module must be configured in the system-auth file to use a FIPS 140-2 approved cryptographic hashing algorithm for system authentication.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Passwords need to be protected at all times, and encryption is the standard
-method for protecting passwords. If passwords are not encrypted, they can
-be plainly read (i.e., clear text) and easily compromised. Passwords that
-are encrypted with a weak algorithm are no more protected than if they are
-kepy in plain text.
+	<td><pre>Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 
               
-This setting ensures user and group account administration utilities are
-configured to store only encrypted representations of passwords.
-Additionally, the crypt_style configuration option ensures the use
-of a strong hashing algorithm that makes password cracking attacks more
-difficult.</pre></td>
+This setting ensures user and group account administration utilities are configured to store
+only encrypted representations of passwords. Additionally, the crypt_style
+configuration option in /etc/libuser.conf ensures the use of a strong hashing
+algorithm that makes password cracking attacks more difficult.</pre></td>
 	<td><pre>Inspect the password section of /etc/pam.d/system-auth
-and ensure that the pam_unix.so module  is configured to use the argument
-sha512:
+and ensure that the pam_unix.so module is configured to use the argument
+:
 
-$ sudo grep "^password.*pam_unix\.so.*sha512" /etc/pam.d/system-auth
+$ sudo grep "^password.*pam_unix\.so.*" /etc/pam.d/system-auth
 
-password sufficient pam_unix.so sha512
-      Is it the case that "sha512" is missing, or is commented out?
+password sufficient pam_unix.so 
+      Is it the case that "<sub idref="var_password_hashing_algorithm_pam" />" is missing, or is commented out?
       </pre></td>
-	<td><pre>The PAM system service can be configured to only store encrypted
-representations of passwords. In "/etc/pam.d/system-auth", the
-password section of the file controls which PAM modules execute
-during a password change. Set the pam_unix.so module in the
-password section to include the argument sha512, as shown
-below:
+	<td><pre>The PAM system service can be configured to only store encrypted representations of passwords.
+In "/etc/pam.d/system-auth", the password section of the file controls which
+PAM modules to execute during a password change.
 
-              password    sufficient    pam_unix.so sha512 other arguments...
+Set the pam_unix.so module in the password section to include the option
+
+                
+               and no other hashing
+algorithms as shown below:
+
+              password    sufficient    pam_unix.so 
+                other arguments...
               
               
-This will help ensure when local users change their passwords, hashes for
-the new passwords will be generated using the SHA-512 algorithm. This is
-the default.</pre></td>
+This will help ensure that new passwords for local users will be stored using the
+ algorithm.</pre></td>
 	<td>RHEL-08-010159</td>
 	<td>set_password_hashing_algorithm_systemauth</td>
 </tr>
@@ -962,39 +964,39 @@ the default.</pre></td>
 	<td>medium</td>
 	<td>The RHEL 8 pam_unix.so module must be configured in the password-auth file to use a FIPS 140-2 approved cryptographic hashing algorithm for system authentication.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Passwords need to be protected at all times, and encryption is the standard
-method for protecting passwords. If passwords are not encrypted, they can
-be plainly read (i.e., clear text) and easily compromised. Passwords that
-are encrypted with a weak algorithm are no more protected than if they are
-kepy in plain text.
+	<td><pre>Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised. Passwords that are encrypted with a weak algorithm
+are no more protected than if they are kept in plain text.
 
               
-This setting ensures user and group account administration utilities are
-configured to store only encrypted representations of passwords.
-Additionally, the crypt_style configuration option ensures the use
-of a strong hashing algorithm that makes password cracking attacks more
-difficult.</pre></td>
+This setting ensures user and group account administration utilities are configured to store
+only encrypted representations of passwords. Additionally, the crypt_style
+configuration option in /etc/libuser.conf ensures the use of a strong hashing
+algorithm that makes password cracking attacks more difficult.</pre></td>
 	<td><pre>Inspect the password section of /etc/pam.d/password-auth
-and ensure that the pam_unix.so module includes the argument
-sha512:
-$ grep sha512 /etc/pam.d/password-auth
+and ensure that the pam_unix.so module is configured to use the argument
+:
+
+$ grep  /etc/pam.d/password-auth
       Is it the case that it does not?
       </pre></td>
-	<td><pre>The PAM system service can be configured to only store encrypted
-representations of passwords. In
-/etc/pam.d/password-auth,
-the
-password section of the file controls which PAM modules execute
-during a password change. Set the pam_unix.so module in the
-password section to include the argument sha512, as shown
-below:
+	<td><pre>The PAM system service can be configured to only store encrypted representations of passwords.
+In /etc/pam.d/password-auth, the password section of the file controls which
+PAM modules to execute during a password change.
 
-              password    sufficient    pam_unix.so sha512 other arguments...
+Set the pam_unix.so module in the password section to include the option
+
+                
+               and no other hashing
+algorithms as shown below:
+
+              password    sufficient    pam_unix.so 
+                other arguments...
               
               
-This will help ensure when local users change their passwords, hashes for
-the new passwords will be generated using the SHA-512 algorithm. This is
-the default.</pre></td>
+This will help ensure that new passwords for local users will be stored using the
+ algorithm.</pre></td>
 	<td>RHEL-08-010160</td>
 	<td>set_password_hashing_algorithm_passwordauth</td>
 </tr>
@@ -3951,13 +3953,15 @@ $ sudo find /home -type f -name '\.*' \( -perm -0002 -o -perm -0020 \)
 There should be no output.
       Is it the case that they are not 0740 or more permissive?
       </pre></td>
-	<td><pre>Set the mode of the user initialization files to 0740 with the
-following command:
+	<td><pre>Set the mode of the user initialization files, including the root user,
+to 0740 with the following commands:
+
+$ sudo chmod 0740 /root/.INIT_FILE
 $ sudo chmod 0740 /home/USER/.INIT_FILE
             
           </pre></td>
 	<td>RHEL-08-010770</td>
-	<td>file_permission_user_init_files</td>
+	<td>file_permission_user_init_files_root</td>
 </tr>
 
 <tr>
@@ -4183,7 +4187,6 @@ the account.</pre></td>
 	<td><pre>Verify Red Hat Enterprise Linux 8 is configured to lock an account after 
 unsuccessful logon attempts with the command:
 
-
 $ grep 'deny =' /etc/security/faillock.conf
 deny = .
       Is it the case that the "deny" option is not set to "<sub idref="var_accounts_passwords_pam_faillock_deny" />"
@@ -4193,12 +4196,10 @@ or less (but not "0"), is missing or commented out?
 using pam_faillock.so.
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected.
-
 Ensure that the file /etc/security/faillock.conf contains the following entry:
 deny = <count>
 Where count should be less than or equal to
  and greater than 0.
-
 
 In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as authselect or authconfig,
@@ -4286,7 +4287,6 @@ Limits are imposed by locking the account.</pre></td>
 after  unsuccessful logon
 attempts with the command:
 
-
 $ grep 'unlock_time =' /etc/security/faillock.conf
 unlock_time = 
       Is it the case that the "unlock_time" option is not set to "<sub idref="var_accounts_passwords_pam_faillock_unlock_time" />",
@@ -4295,13 +4295,11 @@ the line is missing, or commented out?
 	<td><pre>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using pam_faillock.so.
 
-
 Ensure that the file /etc/security/faillock.conf contains the following entry:
 unlock_time=<interval-in-seconds> where
 interval-in-seconds is 
                 
                or greater.
-
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -4327,7 +4325,6 @@ Limits are imposed by locking the account.</pre></td>
 after  unsuccessful logon
 attempts with the command:
 
-
 $ grep 'unlock_time =' /etc/security/faillock.conf
 unlock_time = 
       Is it the case that the "unlock_time" option is not set to "<sub idref="var_accounts_passwords_pam_faillock_unlock_time" />",
@@ -4336,13 +4333,11 @@ the line is missing, or commented out?
 	<td><pre>This rule configures the system to lock out accounts during a specified time period after a
 number of incorrect login attempts using pam_faillock.so.
 
-
 Ensure that the file /etc/security/faillock.conf contains the following entry:
 unlock_time=<interval-in-seconds> where
 interval-in-seconds is 
                 
                or greater.
-
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid any errors when manually editing these files,
@@ -4531,7 +4526,6 @@ user password guessing, also known as brute-forcing, is reduced. Limits are impo
 the account.</pre></td>
 	<td><pre>Verify Red Hat Enterprise Linux 8 is configured to lock the root account after 
 unsuccessful logon attempts with the command:
-
 
 $ grep even_deny_root /etc/security/faillock.conf
 even_deny_root
@@ -6399,13 +6393,18 @@ facility by unauthorized and malicious users.</pre></td>
 run the following command:
 grep -rni "cron\.\*" /etc/rsyslog.*
 cron.*                                                  /var/log/cron
+or
+cron.* action(type="omfile" file="/var/log/cron")
       Is it the case that cron is not logging to rsyslog?
       </pre></td>
 	<td><pre>Cron logging must be implemented to spot intrusions or trace
 cron job status. If cron is not logging to rsyslog, it
 can be implemented by adding the following to the RULES section of
 /etc/rsyslog.conf:
+If the legacy syntax is used:
 cron.*                                                  /var/log/cron
+If the modern syntax (RainerScript) is used:
+cron.* action(type="omfile" file="/var/log/cron")
           </pre></td>
 	<td>RHEL-08-030010</td>
 	<td>rsyslog_cron_logging</td>
@@ -8864,8 +8863,11 @@ facility.
 
 The partition size needed to capture a week's worth of audit records is
 based on the activity level of the system and the total storage capacity
-available. In normal circumstances, 10.0 GB of storage space for audit
+available.
+
+In normal circumstances, 10.0 GB of storage space for audit
 records will be sufficient.
+
 
 Determine which partition the audit records are being written to with the
 following command:
@@ -9032,7 +9034,14 @@ and remote logging.  Couple this utility with gnutls (which is a secure communic
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using rsyslogd to off-load logs off an encryption system must be used.</pre></td>
+When using rsyslogd to off-load logs off an encryption system must be used.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+$DefaultNetstreamDriver gtls
+
+Alternatively, use the RainerScript syntax:
+global(DefaultNetstreamDriver="gtls")
+          </pre></td>
 	<td>RHEL-08-030710</td>
 	<td>rsyslog_encrypt_offload_defaultnetstreamdriver</td>
 </tr>
@@ -9059,7 +9068,13 @@ and remote logging.  Couple this utility with gnutls (which is a secure communic
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using rsyslogd to off-load logs the remote system must be authenticated.</pre></td>
+When using rsyslogd to off-load logs the remote system must be authenticated.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+$ActionSendStreamDriverAuthMode x509/name
+Alternatively, use the RainerScript syntax:
+action(type="omfwd" Target="some.example.com" StreamDriverAuthMode="x509/name")
+          </pre></td>
 	<td>RHEL-08-030720</td>
 	<td>rsyslog_encrypt_offload_actionsendstreamdriverauthmode</td>
 </tr>
@@ -9385,7 +9400,7 @@ flaws in its implementation.</pre></td>
 	<td><pre>
 If the system is configured to prevent the loading of the atm kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the atm kernel module via blacklist keyword.
 
@@ -9399,7 +9414,7 @@ and virtual paths.
 
 To configure the system to prevent the atm
 kernel module from being loaded, add the following line to the file /etc/modprobe.d/atm.conf:
-install atm /bin/true
+install atm /bin/false
 
 To configure the system to prevent the atm from being used,
 add the following line to file /etc/modprobe.d/atm.conf:
@@ -9420,7 +9435,7 @@ flaws in its implementation.</pre></td>
 	<td><pre>
 If the system is configured to prevent the loading of the can kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the can kernel module via blacklist keyword.
 
@@ -9434,7 +9449,7 @@ is now also used in marine, industrial, and medical applications.
 
 To configure the system to prevent the can
 kernel module from being loaded, add the following line to the file /etc/modprobe.d/can.conf:
-install can /bin/true
+install can /bin/false
 
 To configure the system to prevent the can from being used,
 add the following line to file /etc/modprobe.d/can.conf:
@@ -9455,7 +9470,7 @@ the system against exploitation of any flaws in its implementation.</pre></td>
 	<td><pre>
 If the system is configured to prevent the loading of the sctp kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the sctp kernel module via blacklist keyword.
 
@@ -9470,7 +9485,7 @@ within one connection.
 
 To configure the system to prevent the sctp
 kernel module from being loaded, add the following line to the file /etc/modprobe.d/sctp.conf:
-install sctp /bin/true
+install sctp /bin/false
 
 To configure the system to prevent the sctp from being used,
 add the following line to file /etc/modprobe.d/sctp.conf:
@@ -9491,7 +9506,7 @@ the system against exploitation of any flaws in its implementation.</pre></td>
 	<td><pre>
 If the system is configured to prevent the loading of the tipc kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the tipc kernel module via blacklist keyword.
 
@@ -9505,7 +9520,7 @@ cluster.
 
 To configure the system to prevent the tipc
 kernel module from being loaded, add the following line to the file /etc/modprobe.d/tipc.conf:
-install tipc /bin/true
+install tipc /bin/false
 
 To configure the system to prevent the tipc from being used,
 add the following line to file /etc/modprobe.d/tipc.conf:
@@ -9526,7 +9541,7 @@ of the server.</pre></td>
 	<td><pre>
 If the system is configured to prevent the loading of the cramfs kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the cramfs kernel module via blacklist keyword.
 
@@ -9537,7 +9552,7 @@ $ grep -r cramfs /etc/modprobe.conf /etc/modprobe.d
 	<td><pre>
 To configure the system to prevent the cramfs
 kernel module from being loaded, add the following line to the file /etc/modprobe.d/cramfs.conf:
-install cramfs /bin/true
+install cramfs /bin/false
 
 To configure the system to prevent the cramfs from being used,
 add the following line to file /etc/modprobe.d/cramfs.conf:
@@ -9564,7 +9579,7 @@ flaws in its implementation.</pre></td>
 	<td><pre>
 If the system is configured to prevent the loading of the firewire-core kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the firewire-core kernel module via blacklist keyword.
 
@@ -9577,7 +9592,7 @@ high-speed real-time communication.
 
 To configure the system to prevent the firewire-core
 kernel module from being loaded, add the following line to the file /etc/modprobe.d/firewire-core.conf:
-install firewire-core /bin/true
+install firewire-core /bin/false
 
 To configure the system to prevent the firewire-core from being used,
 add the following line to file /etc/modprobe.d/firewire-core.conf:
@@ -9695,7 +9710,7 @@ malicious software.</pre></td>
 	<td><pre>
 If the system is configured to prevent the loading of the usb-storage kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the usb-storage kernel module via blacklist keyword.
 
@@ -9708,7 +9723,7 @@ to prevent automatic loading of the USB storage driver.
 
 To configure the system to prevent the usb-storage
 kernel module from being loaded, add the following line to the file /etc/modprobe.d/usb-storage.conf:
-install usb-storage /bin/true
+install usb-storage /bin/false
 
 To configure the system to prevent the usb-storage from being used,
 add the following line to file /etc/modprobe.d/usb-storage.conf:
@@ -9849,7 +9864,7 @@ activation.</pre></td>
 	<td><pre>
 If the system is configured to prevent the loading of the bluetooth kernel module,
 it will contain lines inside any file in /etc/modprobe.d or the deprecated /etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+These lines instruct the module loading system to run another program (such as /bin/false) upon a module install event.
 
 These lines can also instruct the module loading system to ignore the bluetooth kernel module via blacklist keyword.
 
@@ -10579,10 +10594,10 @@ Ctrl-Alt-Del key sequence is pressed.
               
 To configure the system to ignore the Ctrl-Alt-Del key sequence
 from the Graphical User Interface (GUI) instead of rebooting the system,
-add or set logout to '' in
+add or set logout to [''] in
 /etc/dconf/db/local.d/00-security-settings. For example:
 [org/gnome/settings-daemon/plugins/media-keys]
-logout=''
+logout=['']
 Once the settings have been added, add a lock to
 /etc/dconf/db/local.d/locks/00-security-settings-lock to prevent
 user modification. For example:

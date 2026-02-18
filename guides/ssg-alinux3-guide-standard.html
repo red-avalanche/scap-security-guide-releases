@@ -66,8 +66,8 @@ this guide without first testing them in a non-operational environment. The
 creators of this guidance assume no responsibility whatsoever for its use by
 other parties, and makes no guarantees, expressed or implied, about its
 quality, reliability, or any other characteristic.
-</div></div></div></div></div><div id="profileinfo"><h2>Profile Information</h2><div class="row"><div class="col-md-5 well well-lg horizontal-scroll"><table class="table table-bordered"><tr><th>Profile Title</th><td>Standard System Security Profile for Alibaba Cloud Linux 3</td></tr><tr><th>Profile ID</th><td>xccdf_org.ssgproject.content_profile_standard</td></tr></table></div><div class="col-md-3"><h4>CPE Platforms</h4><ul class="list-group"><li class="list-group-item"><span class="label label-default" title="CPE platform cpe:/o:alinux:alibaba_cloud_linux:3 is applicable to this Benchmark">cpe:/o:alinux:alibaba_cloud_linux:3</span></li></ul></div></div></div><div id="revisionhistory"><h2>Revision History</h2><p>Current version: <strong>0.1.73</strong></p><ul><li><strong>draft</strong>
-                    (as of 2024-05-16)
+</div></div></div></div></div><div id="profileinfo"><h2>Profile Information</h2><div class="row"><div class="col-md-5 well well-lg horizontal-scroll"><table class="table table-bordered"><tr><th>Profile Title</th><td>Standard System Security Profile for Alibaba Cloud Linux 3</td></tr><tr><th>Profile ID</th><td>xccdf_org.ssgproject.content_profile_standard</td></tr></table></div><div class="col-md-3"><h4>CPE Platforms</h4><ul class="list-group"><li class="list-group-item"><span class="label label-default" title="CPE platform cpe:/o:alinux:alibaba_cloud_linux:3 is applicable to this Benchmark">cpe:/o:alinux:alibaba_cloud_linux:3</span></li></ul></div></div></div><div id="revisionhistory"><h2>Revision History</h2><p>Current version: <strong>0.1.74</strong></p><ul><li><strong>draft</strong>
+                    (as of 2024-08-09)
                 </li></ul></div><h2>Table of Contents</h2><ol><li><a href="#xccdf_org.ssgproject.content_group_system">System Settings</a><ol><li><a href="#xccdf_org.ssgproject.content_group_software">Installing and Maintaining Software</a></li><li><a href="#xccdf_org.ssgproject.content_group_permissions">File Permissions and Masks</a></li></ol></li><li><a href="#xccdf_org.ssgproject.content_group_services">Services</a><ol><li><a href="#xccdf_org.ssgproject.content_group_base">Base Services</a></li><li><a href="#xccdf_org.ssgproject.content_group_cron_and_at">Cron and At Daemons</a></li></ol></li><li><a href="#xccdf_org.ssgproject.content_group_auditing">System Accounting with auditd</a><ol><li><a href="#xccdf_org.ssgproject.content_group_auditd_configure_rules">Configure auditd Rules for Comprehensive Auditing</a></li></ol></li></ol><div id="guide-tree"><h2>Checklist</h2><table class="treetable table table-bordered"><tbody><tr data-tt-id="children-xccdf_org.ssgproject.content_benchmark_ALINUX-3"><td style="padding-left: 0px" id="xccdf_org.ssgproject.content_benchmark_ALINUX-3"><span class="label label-default">Group</span>  
                 Guide to the Secure Configuration of Alibaba Cloud Linux 3
                           <small>Group contains 18 groups and 23 rules</small></td></tr><tr data-tt-id="children-xccdf_org.ssgproject.content_group_system" data-tt-parent-id="children-xccdf_org.ssgproject.content_benchmark_ALINUX-3"><td style="padding-left: 19px" id="xccdf_org.ssgproject.content_group_system"><span class="label label-default">Group</span>  
@@ -806,7 +806,7 @@ unknown devices, thereby facilitating malicious activity.</div></td></tr><tr><td
   - no_reboot_needed
   - service_autofs_disabled
 
-- name: Disable the Automounter - Ensure "autofs.service" is Masked
+- name: Disable the Automounter - Ensure autofs.service is Masked
   ansible.builtin.systemd:
     name: autofs.service
     state: stopped
@@ -815,7 +815,7 @@ unknown devices, thereby facilitating malicious activity.</div></td></tr><tr><td
   when:
   - ( ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
     and "autofs" in ansible_facts.packages )
-  - service_exists.stdout_lines is search("autofs.service",multiline=True)
+  - service_exists.stdout_lines is search("autofs.service", multiline=True)
   tags:
   - NIST-800-171-3.4.6
   - NIST-800-53-CM-6(a)
@@ -850,16 +850,16 @@ unknown devices, thereby facilitating malicious activity.</div></td></tr><tr><td
   - no_reboot_needed
   - service_autofs_disabled
 
-- name: Disable socket autofs
+- name: Disable the Automounter - Disable Socket autofs
   ansible.builtin.systemd:
     name: autofs.socket
-    enabled: 'no'
+    enabled: false
     state: stopped
-    masked: 'yes'
+    masked: true
   when:
   - ( ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
     and "autofs" in ansible_facts.packages )
-  - socket_file_exists.stdout_lines is search("autofs.socket",multiline=True)
+  - socket_file_exists.stdout_lines is search("autofs.socket", multiline=True)
   tags:
   - NIST-800-171-3.4.6
   - NIST-800-53-CM-6(a)
@@ -932,7 +932,7 @@ information from within a process's address space or registers.</div></td></tr><
   - no_reboot_needed
   - service_abrtd_disabled
 
-- name: Disable Automatic Bug Reporting Tool (abrtd) - Ensure "abrtd.service" is Masked
+- name: Disable Automatic Bug Reporting Tool (abrtd) - Ensure abrtd.service is Masked
   ansible.builtin.systemd:
     name: abrtd.service
     state: stopped
@@ -940,7 +940,7 @@ information from within a process's address space or registers.</div></td></tr><
     masked: true
   when:
   - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
-  - service_exists.stdout_lines is search("abrtd.service",multiline=True)
+  - service_exists.stdout_lines is search("abrtd.service", multiline=True)
   tags:
   - NIST-800-53-CM-6(a)
   - NIST-800-53-CM-7(a)
@@ -968,15 +968,15 @@ information from within a process's address space or registers.</div></td></tr><
   - no_reboot_needed
   - service_abrtd_disabled
 
-- name: Disable socket abrtd
+- name: Disable Automatic Bug Reporting Tool (abrtd) - Disable Socket abrtd
   ansible.builtin.systemd:
     name: abrtd.socket
-    enabled: 'no'
+    enabled: false
     state: stopped
-    masked: 'yes'
+    masked: true
   when:
   - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
-  - socket_file_exists.stdout_lines is search("abrtd.socket",multiline=True)
+  - socket_file_exists.stdout_lines is search("abrtd.socket", multiline=True)
   tags:
   - NIST-800-53-CM-6(a)
   - NIST-800-53-CM-7(a)
@@ -1029,7 +1029,7 @@ available in the ntpd program and should be considered deprecated.</div></td></t
   - no_reboot_needed
   - service_ntpdate_disabled
 
-- name: Disable ntpdate Service (ntpdate) - Ensure "ntpdate.service" is Masked
+- name: Disable ntpdate Service (ntpdate) - Ensure ntpdate.service is Masked
   ansible.builtin.systemd:
     name: ntpdate.service
     state: stopped
@@ -1037,7 +1037,7 @@ available in the ntpd program and should be considered deprecated.</div></td></t
     masked: true
   when:
   - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
-  - service_exists.stdout_lines is search("ntpdate.service",multiline=True)
+  - service_exists.stdout_lines is search("ntpdate.service", multiline=True)
   tags:
   - NIST-800-53-CM-6(a)
   - NIST-800-53-CM-7(a)
@@ -1067,15 +1067,15 @@ available in the ntpd program and should be considered deprecated.</div></td></t
   - no_reboot_needed
   - service_ntpdate_disabled
 
-- name: Disable socket ntpdate
+- name: Disable ntpdate Service (ntpdate) - Disable Socket ntpdate
   ansible.builtin.systemd:
     name: ntpdate.socket
-    enabled: 'no'
+    enabled: false
     state: stopped
-    masked: 'yes'
+    masked: true
   when:
   - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
-  - socket_file_exists.stdout_lines is search("ntpdate.socket",multiline=True)
+  - socket_file_exists.stdout_lines is search("ntpdate.socket", multiline=True)
   tags:
   - NIST-800-53-CM-6(a)
   - NIST-800-53-CM-7(a)
@@ -1128,7 +1128,7 @@ been a source of privilege escalation security issues.</div></td></tr><tr><td><s
   - no_reboot_needed
   - service_oddjobd_disabled
 
-- name: Disable Odd Job Daemon (oddjobd) - Ensure "oddjobd.service" is Masked
+- name: Disable Odd Job Daemon (oddjobd) - Ensure oddjobd.service is Masked
   ansible.builtin.systemd:
     name: oddjobd.service
     state: stopped
@@ -1136,7 +1136,7 @@ been a source of privilege escalation security issues.</div></td></tr><tr><td><s
     masked: true
   when:
   - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
-  - service_exists.stdout_lines is search("oddjobd.service",multiline=True)
+  - service_exists.stdout_lines is search("oddjobd.service", multiline=True)
   tags:
   - NIST-800-53-CM-6(a)
   - NIST-800-53-CM-7(a)
@@ -1166,15 +1166,15 @@ been a source of privilege escalation security issues.</div></td></tr><tr><td><s
   - no_reboot_needed
   - service_oddjobd_disabled
 
-- name: Disable socket oddjobd
+- name: Disable Odd Job Daemon (oddjobd) - Disable Socket oddjobd
   ansible.builtin.systemd:
     name: oddjobd.socket
-    enabled: 'no'
+    enabled: false
     state: stopped
-    masked: 'yes'
+    masked: true
   when:
   - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
-  - socket_file_exists.stdout_lines is search("oddjobd.socket",multiline=True)
+  - socket_file_exists.stdout_lines is search("oddjobd.socket", multiline=True)
   tags:
   - NIST-800-53-CM-6(a)
   - NIST-800-53-CM-7(a)
@@ -1227,7 +1227,7 @@ service is not needed and should be disabled or removed.</div></td></tr><tr><td>
   - no_reboot_needed
   - service_qpidd_disabled
 
-- name: Disable Apache Qpid (qpidd) - Ensure "qpidd.service" is Masked
+- name: Disable Apache Qpid (qpidd) - Ensure qpidd.service is Masked
   ansible.builtin.systemd:
     name: qpidd.service
     state: stopped
@@ -1235,7 +1235,7 @@ service is not needed and should be disabled or removed.</div></td></tr><tr><td>
     masked: true
   when:
   - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
-  - service_exists.stdout_lines is search("qpidd.service",multiline=True)
+  - service_exists.stdout_lines is search("qpidd.service", multiline=True)
   tags:
   - NIST-800-53-CM-6(a)
   - NIST-800-53-CM-7(a)
@@ -1265,15 +1265,15 @@ service is not needed and should be disabled or removed.</div></td></tr><tr><td>
   - no_reboot_needed
   - service_qpidd_disabled
 
-- name: Disable socket qpidd
+- name: Disable Apache Qpid (qpidd) - Disable Socket qpidd
   ansible.builtin.systemd:
     name: qpidd.socket
-    enabled: 'no'
+    enabled: false
     state: stopped
-    masked: 'yes'
+    masked: true
   when:
   - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
-  - socket_file_exists.stdout_lines is search("qpidd.socket",multiline=True)
+  - socket_file_exists.stdout_lines is search("qpidd.socket", multiline=True)
   tags:
   - NIST-800-53-CM-6(a)
   - NIST-800-53-CM-7(a)
@@ -1327,7 +1327,7 @@ dynamic network configuration information.</div></td></tr><tr><td><span class="l
   - no_reboot_needed
   - service_rdisc_disabled
 
-- name: Disable Network Router Discovery Daemon (rdisc) - Ensure "rdisc.service" is
+- name: Disable Network Router Discovery Daemon (rdisc) - Ensure rdisc.service is
     Masked
   ansible.builtin.systemd:
     name: rdisc.service
@@ -1336,7 +1336,7 @@ dynamic network configuration information.</div></td></tr><tr><td><span class="l
     masked: true
   when:
   - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
-  - service_exists.stdout_lines is search("rdisc.service",multiline=True)
+  - service_exists.stdout_lines is search("rdisc.service", multiline=True)
   tags:
   - NIST-800-53-AC-4
   - NIST-800-53-CM-6(a)
@@ -1368,15 +1368,15 @@ dynamic network configuration information.</div></td></tr><tr><td><span class="l
   - no_reboot_needed
   - service_rdisc_disabled
 
-- name: Disable socket rdisc
+- name: Disable Network Router Discovery Daemon (rdisc) - Disable Socket rdisc
   ansible.builtin.systemd:
     name: rdisc.socket
-    enabled: 'no'
+    enabled: false
     state: stopped
-    masked: 'yes'
+    masked: true
   when:
   - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
-  - socket_file_exists.stdout_lines is search("rdisc.socket",multiline=True)
+  - socket_file_exists.stdout_lines is search("rdisc.socket", multiline=True)
   tags:
   - NIST-800-53-AC-4
   - NIST-800-53-CM-6(a)
@@ -1437,7 +1437,7 @@ accountability. Furthermore, the need to schedule tasks with <code>at</code> or
   - no_reboot_needed
   - service_atd_disabled
 
-- name: Disable At Service (atd) - Ensure "atd.service" is Masked
+- name: Disable At Service (atd) - Ensure atd.service is Masked
   ansible.builtin.systemd:
     name: atd.service
     state: stopped
@@ -1445,7 +1445,7 @@ accountability. Furthermore, the need to schedule tasks with <code>at</code> or
     masked: true
   when:
   - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
-  - service_exists.stdout_lines is search("atd.service",multiline=True)
+  - service_exists.stdout_lines is search("atd.service", multiline=True)
   tags:
   - NIST-800-53-CM-6(a)
   - NIST-800-53-CM-7(a)
@@ -1475,15 +1475,15 @@ accountability. Furthermore, the need to schedule tasks with <code>at</code> or
   - no_reboot_needed
   - service_atd_disabled
 
-- name: Disable socket atd
+- name: Disable At Service (atd) - Disable Socket atd
   ansible.builtin.systemd:
     name: atd.socket
-    enabled: 'no'
+    enabled: false
     state: stopped
-    masked: 'yes'
+    masked: true
   when:
   - ansible_virtualization_type not in ["docker", "lxc", "openvz", "podman", "container"]
-  - socket_file_exists.stdout_lines is search("atd.socket",multiline=True)
+  - socket_file_exists.stdout_lines is search("atd.socket", multiline=True)
   tags:
   - NIST-800-53-CM-6(a)
   - NIST-800-53-CM-7(a)

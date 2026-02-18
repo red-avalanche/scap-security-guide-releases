@@ -1612,6 +1612,81 @@ These scripts are also valid files to set umask value. Therefore, they should al
 considered during the check and properly remediated, if necessary.</td>
 </tr>
 <tr>
+<td></td>
+<td>Ensure AppArmor is installed</td>
+<td>AppArmor provide Mandatory Access Controls.</td>
+</tr>
+<tr>
+<td></td>
+<td>Install the pam_apparmor Package</td>
+<td>The <code>pam_apparmor</code> package can be installed with the following command:
+<pre>
+$ sudo dnf install pam_apparmor</pre>
+      </td>
+</tr>
+<tr>
+<td></td>
+<td>Enforce all AppArmor Profiles</td>
+<td>AppArmor profiles define what resources applications are able to access.
+To set all profiles to enforce mode run the following command:
+<pre>$ sudo aa-enforce /etc/apparmor.d/*</pre>
+To list unconfined processes run the following command:
+
+<pre>$ sudo aa-unconfined</pre>
+
+Any unconfined processes may need to have a profile created or activated
+for them and then be restarted.</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure AppArmor is Active and Configured</td>
+<td>Verify that the Apparmor tool is configured to
+control whitelisted applications and user home directory access
+control.<br>
+       <br>
+
+The <code>apparmor</code> service can be enabled with the following manifest:
+<pre>
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: 75-master-apparmor-enable
+spec:
+  config:
+    ignition:
+      version: 3.1.0
+    systemd:
+      units:
+      - name: apparmor.service
+        enabled: true
+</pre>
+       <p>
+This will enable the <code>apparmor</code> service in all the
+nodes labeled with the "master" role.
+</p>
+       <p>
+Note that this needs to be done for each <code>MachineConfigPool</code>
+       </p>
+       <p>
+For more information on how to configure nodes with the Machine Config
+Operator see
+<a href="https://docs.openshift.com/container-platform/4.6/post_installation_configuration/machine-configuration-tasks.html">the relevant documentation</a>.
+</p>
+      </td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure AppArmor is enabled in the bootloader configuration</td>
+<td>Configure AppArmor to be enabled at boot time and verify that it has not been
+overwritten by the bootloader boot parameters.
+
+Note: This recommendation is designed around the grub bootloader, if LILO or
+another bootloader is in use in your environment, enact equivalent settings.</td>
+</tr>
+<tr>
 <td>CCE-82497-9</td>
 <td>Enable Kernel Page-Table Isolation (KPTI)</td>
 <td>To enable Kernel page-table isolation, add the argument <code>pti=on</code> to all
@@ -2720,7 +2795,13 @@ and remote logging.  Couple this utility with <code>gnutls</code> (which is a se
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <code>rsyslogd</code> to off-load logs the remote system must be authenticated.</td>
+When using <code>rsyslogd</code> to off-load logs the remote system must be authenticated.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$ActionSendStreamDriverAuthMode x509/name</pre>
+Alternatively, use the RainerScript syntax:
+<pre>action(type="omfwd" Target="some.example.com" StreamDriverAuthMode="x509/name")</pre>
+       </td>
 </tr>
 <tr>
 <td></td>
@@ -2731,7 +2812,14 @@ and remote logging.  Couple this utility with <code>gnutls</code> (which is a se
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <code>rsyslogd</code> to off-load logs off a encrpytion system must be used.</td>
+When using <code>rsyslogd</code> to off-load logs off a encrpytion system must be used.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$ActionSendStreamDriverMode 1</pre>
+
+Alternatively, use the RainerScript syntax:
+<pre>action(type="omfwd" ... StreamDriverMode="1")</pre>
+       </td>
 </tr>
 <tr>
 <td></td>
@@ -2742,7 +2830,14 @@ and remote logging.  Couple this utility with <code>gnutls</code> (which is a se
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <code>rsyslogd</code> to off-load logs off an encryption system must be used.</td>
+When using <code>rsyslogd</code> to off-load logs off an encryption system must be used.
+
+Set the following configuration option in /etc/rsyslog.conf or in a file in /etc/rsyslog.d (using legacy syntax):
+<pre>$DefaultNetstreamDriver gtls</pre>
+
+Alternatively, use the RainerScript syntax:
+<pre>global(DefaultNetstreamDriver="gtls")</pre>
+       </td>
 </tr>
 <tr>
 <td></td>
@@ -2844,14 +2939,16 @@ Operator see
 <tr>
 <td>CCE-86221-9</td>
 <td>Verify Group Who Owns the system journal</td>
-<td> To properly set the group owner of <code>/var/log/journal/.*/system.journal</code>, run the command: <pre>$ sudo chgrp systemd-journal /var/log/journal/.*/system.journal</pre>
-       </td>
+<td>'
+To properly set the group owner of <code>/var/log/journal/.*/system.journal</code>, run the command:
+<pre>$ sudo chgrp systemd-journal /var/log/journal/.*/system.journal</pre>'</td>
 </tr>
 <tr>
 <td>CCE-87682-1</td>
 <td>Verify Owner on the system journal</td>
-<td> To properly set the owner of <code>/var/log/journal/.*/system.journal</code>, run the command: <pre>$ sudo chown root /var/log/journal/.*/system.journal </pre>
-       </td>
+<td>'
+To properly set the owner of <code>/var/log/journal/.*/system.journal</code>, run the command:
+<pre>$ sudo chown root /var/log/journal/.*/system.journal </pre>'</td>
 </tr>
 <tr>
 <td>CCE-86509-7</td>
@@ -3574,7 +3671,7 @@ and virtual paths.
 
 To configure the system to prevent the <code>atm</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/atm.conf</code>:
-<pre>install atm /bin/true</pre>
+<pre>install atm /bin/false</pre>
        </td>
 </tr>
 <tr>
@@ -3586,7 +3683,7 @@ is now also used in marine, industrial, and medical applications.
 
 To configure the system to prevent the <code>can</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/can.conf</code>:
-<pre>install can /bin/true</pre>
+<pre>install can /bin/false</pre>
        </td>
 </tr>
 <tr>
@@ -3597,7 +3694,7 @@ high-speed real-time communication.
 
 To configure the system to prevent the <code>firewire-core</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/firewire-core.conf</code>:
-<pre>install firewire-core /bin/true</pre>
+<pre>install firewire-core /bin/false</pre>
        </td>
 </tr>
 <tr>
@@ -3609,7 +3706,7 @@ low-latency communications between nodes in a cluster.
 
 To configure the system to prevent the <code>rds</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/rds.conf</code>:
-<pre>install rds /bin/true</pre>
+<pre>install rds /bin/false</pre>
        </td>
 </tr>
 <tr>
@@ -3622,7 +3719,7 @@ within one connection.
 
 To configure the system to prevent the <code>sctp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
-<pre>install sctp /bin/true</pre>
+<pre>install sctp /bin/false</pre>
        </td>
 </tr>
 <tr>
@@ -3634,7 +3731,7 @@ cluster.
 
 To configure the system to prevent the <code>tipc</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/tipc.conf</code>:
-<pre>install tipc /bin/true</pre>
+<pre>install tipc /bin/false</pre>
        </td>
 </tr>
 <tr>
@@ -3694,7 +3791,7 @@ to prevent the loading of the Bluetooth module:
 <td>
 To configure the system to prevent the <code>cfg80211</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cfg80211.conf</code>:
-<pre>install cfg80211 /bin/true</pre>
+<pre>install cfg80211 /bin/false</pre>
         </td>
 </tr>
 <tr>
@@ -3703,7 +3800,7 @@ kernel module from being loaded, add the following line to the file <code>/etc/m
 <td>
 To configure the system to prevent the <code>iwlmvm</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/iwlmvm.conf</code>:
-<pre>install iwlmvm /bin/true</pre>
+<pre>install iwlmvm /bin/false</pre>
         </td>
 </tr>
 <tr>
@@ -3712,7 +3809,7 @@ kernel module from being loaded, add the following line to the file <code>/etc/m
 <td>
 To configure the system to prevent the <code>iwlwifi</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/iwlwifi.conf</code>:
-<pre>install iwlwifi /bin/true</pre>
+<pre>install iwlwifi /bin/false</pre>
         </td>
 </tr>
 <tr>
@@ -3721,7 +3818,7 @@ kernel module from being loaded, add the following line to the file <code>/etc/m
 <td>
 To configure the system to prevent the <code>mac80211</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/mac80211.conf</code>:
-<pre>install mac80211 /bin/true</pre>
+<pre>install mac80211 /bin/false</pre>
         </td>
 </tr>
 <tr>
@@ -4388,7 +4485,7 @@ append "nousb" to the kernel line in <code>/etc/default/grub</code> as shown:
 <td>
 To configure the system to prevent the <code>cramfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cramfs.conf</code>:
-<pre>install cramfs /bin/true</pre>
+<pre>install cramfs /bin/false</pre>
 
 This effectively prevents usage of this uncommon filesystem.
 
@@ -4403,7 +4500,7 @@ decompress the image.</td>
 <td>
 To configure the system to prevent the <code>freevxfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/freevxfs.conf</code>:
-<pre>install freevxfs /bin/true</pre>
+<pre>install freevxfs /bin/false</pre>
 
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
@@ -4413,7 +4510,7 @@ This effectively prevents usage of this uncommon filesystem.</td>
 <td>
 To configure the system to prevent the <code>hfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/hfs.conf</code>:
-<pre>install hfs /bin/true</pre>
+<pre>install hfs /bin/false</pre>
 
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
@@ -4423,7 +4520,7 @@ This effectively prevents usage of this uncommon filesystem.</td>
 <td>
 To configure the system to prevent the <code>hfsplus</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/hfsplus.conf</code>:
-<pre>install hfsplus /bin/true</pre>
+<pre>install hfsplus /bin/false</pre>
 
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
@@ -4433,7 +4530,7 @@ This effectively prevents usage of this uncommon filesystem.</td>
 <td>
 To configure the system to prevent the <code>jffs2</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/jffs2.conf</code>:
-<pre>install jffs2 /bin/true</pre>
+<pre>install jffs2 /bin/false</pre>
 
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
@@ -4443,7 +4540,7 @@ This effectively prevents usage of this uncommon filesystem.</td>
 <td>
 To configure the system to prevent the <code>squashfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/squashfs.conf</code>:
-<pre>install squashfs /bin/true</pre>
+<pre>install squashfs /bin/false</pre>
 
 This effectively prevents usage of this uncommon filesystem.
 
@@ -4458,7 +4555,7 @@ to first decompress the image.</td>
 <td>
 To configure the system to prevent the <code>udf</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/udf.conf</code>:
-<pre>install udf /bin/true</pre>
+<pre>install udf /bin/false</pre>
 
 This effectively prevents usage of this uncommon filesystem.
 
@@ -4476,7 +4573,7 @@ to prevent automatic loading of the USB storage driver.
 
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
-<pre>install usb-storage /bin/true</pre>
+<pre>install usb-storage /bin/false</pre>
 
 This will prevent the <code>modprobe</code> program from loading the <code>usb-storage</code>
 module, but will not prevent an administrator (or another program) from using the
@@ -4488,7 +4585,7 @@ module, but will not prevent an administrator (or another program) from using th
 <td>
 To configure the system to prevent the <code>vfat</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/vfat.conf</code>:
-<pre>install vfat /bin/true</pre>
+<pre>install vfat /bin/false</pre>
 
 This effectively prevents usage of this uncommon filesystem.
 
@@ -5252,8 +5349,7 @@ Operator see
 <tr>
 <td></td>
 <td>Configure Firewalls to Protect the FTP Server</td>
-<td>
-By default, <code>iptables</code>
+<td>By default, <code>iptables</code>
 blocks access to the ports used by the web server.
 
 To configure <code>iptables</code> to allow port 21 traffic, one must edit
@@ -5550,15 +5646,14 @@ for management connections made by chronyc.</td>
 <td>Configure Time Service Maxpoll Interval</td>
 <td>The <code>maxpoll</code> should be configured to
 <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_time_service_set_maxpoll" use="legacy"></xccdf-1.2:sub> in <code>/etc/ntp.conf</code> or
-<code>/etc/chrony.conf</code> to continuously poll time servers. To configure
-<code>maxpoll</code> in <code>/etc/ntp.conf</code> or <code>/etc/chrony.conf</code>
-add the following after each `server`, `pool` or `peer` entry:
+<code>/etc/chrony.conf</code> (or <code>/etc/chrony.d/</code>) to continuously poll time servers. To configure
+<code>maxpoll</code> in <code>/etc/ntp.conf</code> or <code>/etc/chrony.conf</code> (or <code>/etc/chrony.d/</code>)
+add the following after each <code>server</code>, <code>pool</code> or <code>peer</code> entry:
 <pre>maxpoll <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_time_service_set_maxpoll" use="legacy"></xccdf-1.2:sub>
        </pre>
-to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
+to <code>server</code> directives. If using chrony, any <code>pool</code> directives
 should be configured too.
-If no <code>server</code> or <code>pool</code> directives are configured, the rule evaluates
-to pass.
+
 
 <p>
 Note that if the remediation shipping with this content is being used, the
@@ -6021,23 +6116,6 @@ the <code>include</code> directive in the main config file
 lexicographical order of file names. Make sure that there is no file
 processed before <code>02-rekey-limit.conf</code> containing definition of
 <code>RekeyLimit</code>.</td>
-</tr>
-<tr>
-<td>CCE-83406-9</td>
-<td>Set SSH Client Alive Count Max to zero</td>
-<td>The SSH server sends at most <code>ClientAliveCountMax</code> messages
-during a SSH session and waits for a response from the SSH client.
-The option <code>ClientAliveInterval</code> configures timeout after
-each <code>ClientAliveCountMax</code> message. If the SSH server does not
-receive a response from the client, then the connection is considered unresponsive
-and terminated.
-
-To ensure the SSH timeout occurs precisely when the
-<code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
-value of <code>0</code> in
-
-
-<code>/etc/ssh/sshd_config</code>:</td>
 </tr>
 <tr>
 <td>CCE-82464-9</td>
