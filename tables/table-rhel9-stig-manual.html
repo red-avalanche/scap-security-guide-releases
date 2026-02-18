@@ -416,9 +416,13 @@ export superusers
 
 Once the superuser account has been added, update the grub.cfg file by running:
 
-$ sudo grubby --update-kernel=ALL</pre></td>
+Regenerate the GRUB configuration:
+$ sudo grub2-mkconfig -o /boot/grub2/grub.cfg
+
+Reboot the system:
+$ sudo reboot</pre></td>
 	<td>RHEL-09-212020</td>
-	<td>SV-257789r1044841_rule</td>
+	<td>SV-257789r1069356_rule</td>
 </tr>
 
 <tr>
@@ -537,39 +541,36 @@ GRUB_CMDLINE_LINUX="page_poison=1"</pre></td>
 	<td>V-257794</td>
 	<td>CCI-001084</td>
 	<td>medium</td>
-	<td>RHEL 9 must clear SLUB/SLAB objects to prevent use-after-free attacks.</td>
+	<td>RHEL 9 must clear memory when it is freed to prevent use-after-free attacks.</td>
 	<td>SRG-OS-000433-GPOS-00192</td>
 	<td><pre>Some adversaries launch attacks with the intent of executing code in nonexecutable regions of memory or in memory locations that are prohibited. Security safeguards employed to protect memory include, for example, data execution prevention and address space layout randomization. Data execution prevention safeguards can be either hardware-enforced or software-enforced with hardware providing the greater strength of mechanism.
 
 Poisoning writes an arbitrary value to freed pages, so any modification or reference to that page after being freed or before being initialized will be detected and prevented. This prevents many types of use-after-free vulnerabilities at little performance cost. Also prevents leak of data and detection of corrupted memory.
 
+init_on_free is a Linux kernel boot parameter that enhances security by initializing memory regions when they are freed, preventing data leakage. This process ensures that stale data in freed memory cannot be accessed by malicious programs.
+
+SLUB canaries add a randomized value (canary) at the end of SLUB-allocated objects to detect memory corruption caused by buffer overflows or underflows. Redzoning adds padding (red zones) around SLUB-allocated objects to detect overflows or underflows by triggering a fault when adjacent memory is accessed. SLUB canaries are often more efficient and provide stronger detection against buffer overflows compared to redzoning. SLUB canaries are supported in hardened Linux kernels like the ones provided by Linux-hardened.
+
 SLAB objects are blocks of physically contiguous memory. SLUB is the unqueued SLAB allocator.
 
 Satisfies: SRG-OS-000433-GPOS-00192, SRG-OS-000134-GPOS-00068</pre></td>
-	<td><pre>Verify that GRUB 2 is configured to enable poisoning of SLUB/SLAB objects to mitigate use-after-free vulnerabilities with the following commands:
+	<td><pre>Verify that GRUB2 is configured to mitigate use-after-free vulnerabilities by employing memory poisoning.
 
-Check that the current GRUB 2 configuration has poisoning of SLUB/SLAB objects enabled:
+Inspect the "GRUB_CMDLINE_LINUX" entry of /etc/default/grub as follows:
+$ sudo grep -i grub_cmdline_linux /etc/default/grub
+GRUB_CMDLINE_LINUX="... init_on_free=1"
 
-$ sudo grubby --info=ALL | grep args | grep -v 'slub_debug=P' 
+If "init_on_free=1" is missing or commented out, this is a finding.</pre></td>
+	<td><pre>Configure RHEL 9 to enable init_on_free with the following command:
+$ sudo grubby --update-kernel=ALL --args="init_on_free=1"
 
-If any output is returned, this is a finding.
+Regenerate the GRUB configuration:
+$ sudo grub2-mkconfig -o /boot/grub2/grub.cfg
 
-Check that poisoning of SLUB/SLAB objects is enabled by default to persist in kernel updates: 
-
-$ sudo grep slub_debug /etc/default/grub
-
-GRUB_CMDLINE_LINUX="slub_debug=P"
-
-If "slub_debug" does not contain "P", is missing, or is commented out, this is a finding.</pre></td>
-	<td><pre>Configure RHEL  to enable poisoning of SLUB/SLAB objects with the following commands:
-
-$ sudo grubby --update-kernel=ALL --args="slub_debug=P"
-
-Add or modify the following line in "/etc/default/grub" to ensure the configuration survives kernel updates:
-
-GRUB_CMDLINE_LINUX="slub_debug=P"</pre></td>
+Reboot the system:
+$ sudo reboot</pre></td>
 	<td>RHEL-09-212045</td>
-	<td>SV-257794r958928_rule</td>
+	<td>SV-257794r1069362_rule</td>
 </tr>
 
 <tr>
@@ -1294,21 +1295,29 @@ $ sudo sysctl --system</pre></td>
 	<td>medium</td>
 	<td>RHEL 9 must implement nonexecutable data to protect its memory from unauthorized code execution.</td>
 	<td>SRG-OS-000433-GPOS-00192</td>
-	<td><pre>ExecShield uses the segmentation feature on all x86 systems to prevent execution in memory higher than a certain address. It writes an address as a limit in the code segment descriptor, to control where code can be executed, on a per-process basis. When the kernel places a process's memory regions such as the stack and heap higher than this address, the hardware prevents execution in that address range. This is enabled by default on the latest Red Hat and Fedora systems if supported by the hardware.</pre></td>
-	<td><pre>Verify ExecShield is enabled on 64-bit RHEL 9 systems with the following command:
+	<td><pre>ExecShield uses the segmentation feature on all x86 systems to prevent execution in memory higher than a certain address. It writes an address as a limit in the code segment descriptor, to control where code can be executed, on a per-process basis. When the kernel places a process's memory regions such as the stack and heap higher than this address, the hardware prevents execution in that address range. This is enabled by default on the latest Red Hat and Fedora systems if supported by the hardware.
 
-$ sudo dmesg | grep '[NX|DX]*protection' 
-
-[ 0.000000] NX (Execute Disable) protection: active
-
-If "dmesg" does not show "NX (Execute Disable) protection" active, this is a finding.</pre></td>
-	<td><pre>Update the GRUB 2 bootloader configuration.
+Checking dmesg will return a false-positive if the system has generated enough kernel messages that the "(Execute Disable) protection: active" line is no longer present in the output from dmesg(1). A better way to ensure that ExecShield is enabled is to first ensure all processors support the NX feature, and then to check that noexec was not passed to the kernel command line.</pre></td>
+	<td><pre>Verify ExecShield is enabled on 64-bit RHEL 9 systems.
 
 Run the following command:
 
+$ grep ^flags /proc/cpuinfo | grep -Ev '([^[:alnum:]])(nx)([^[:alnum:]]|$)'
+
+If any output is returned, this is a finding.
+
+Next, run the following command:
+
+$ sudo grubby --info=ALL | grep args | grep -E '([^[:alnum:]])(noexec)([^[:alnum:]])'
+
+If any output is returned, this is a finding.</pre></td>
+	<td><pre>If /proc/cpuinfo shows that one or more processors do not enable ExecShield (lack the "nx" feature flag), verify that the NX/XD feature is not disabled in the BIOS or UEFI. If it is disabled, enable it.
+
+If the noexec option is present on the kernel command line, update the GRUB 2 bootloader configuration to remove it by running the following command:
+
 $ sudo grubby --update-kernel=ALL --remove-args=noexec</pre></td>
 	<td>RHEL-09-213110</td>
-	<td>SV-257817r958928_rule</td>
+	<td>SV-257817r1069383_rule</td>
 </tr>
 
 <tr>
@@ -1800,14 +1809,16 @@ $ sudo dnf remove tuned</pre></td>
 If TFTP is required for operational support (such as transmission of router configurations), its use must be documented with the information systems security manager (ISSM), restricted to only authorized personnel, and have access control rules established.</pre></td>
 	<td><pre>Verify that RHEL 9 does not have a "tftp-server" package installed with the following command:
 
-$ dnf list --installed | grep tftp-server
+$ dnf list --installed tftp-server
+
+Error: No matching Packages to list
 
 If the "tftp-server" package is installed, this is a finding.</pre></td>
 	<td><pre>The "tftp-server" package can be removed with the following command:
 
 $ sudo dnf remove tftp-server</pre></td>
 	<td>RHEL-09-215060</td>
-	<td>SV-257835r1044906_rule</td>
+	<td>SV-257835r1069368_rule</td>
 </tr>
 
 <tr>
@@ -2954,25 +2965,21 @@ Replace "[audit_tool]" with each audit tool that has a more permissive mode than
 	<td>V-257888</td>
 	<td>CCI-000366</td>
 	<td>medium</td>
-	<td>RHEL 9 cron configuration directories must have a mode of 0700 or less permissive.</td>
+	<td>RHEL 9 permissions of cron configuration files and directories must not be modified from the operating system defaults.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
-	<td><pre>Service configuration files enable or disable features of their respective services that if configured incorrectly can lead to insecure and vulnerable configurations. Therefore, service configuration files should have the correct access rights to prevent unauthorized changes.</pre></td>
-	<td><pre>Verify the permissions of the cron directories with the following command:
+	<td><pre>If the permissions of cron configuration files or directories are modified from the operating system defaults, it may be possible for individuals to insert unauthorized cron jobs that perform unauthorized actions, including potentially escalating privileges.</pre></td>
+	<td><pre>Run the following command to verify that the owner, group, and mode of cron configuration files and directories match the operating system defaults:
 
-$ find /etc/cron* -maxdepth 0 -type d | xargs stat -c "%a %n"
+$ rpm --verify cronie crontabs | awk '! ($2 == "c" && $1 ~ /^.\..\.\.\.\..\./) {print $0}'
 
-700 /etc/cron.d
-700 /etc/cron.daily
-700 /etc/cron.hourly
-700 /etc/cron.monthly
-700 /etc/cron.weekly
+If the command returns any output, this is a finding.</pre></td>
+	<td><pre>Run the following commands to restore the permissions of cron configuration files and directories to the operating system defaults:
 
-If any cron configuration directory is more permissive than "700", this is a finding.</pre></td>
-	<td><pre>Configure any RHEL 9 cron configuration directory with a mode more permissive than "0700" as follows:
-
-chmod 0700 [cron configuration directory]</pre></td>
+$ sudo dnf reinstall cronie crontabs
+$ rpm --setugids cronie crontabs
+$ rpm --setperms cronie crontabs</pre></td>
 	<td>RHEL-09-232040</td>
-	<td>SV-257888r1044957_rule</td>
+	<td>SV-257888r1069378_rule</td>
 </tr>
 
 <tr>
@@ -3657,7 +3664,7 @@ $ sudo chgrp root [FILE]</pre></td>
 This requirement applies to RHEL 9 with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs that execute with escalated privileges.</pre></td>
 	<td><pre>Verify the systemwide shared library files are owned by "root" with the following command:
 
-$ sudo find -L /lib /lib64 /usr/lib /usr/lib64 ! -user root -exec stat -L -c "%U %n" {} \;
+$ sudo find -L /lib /lib64 /usr/lib /usr/lib64 ! -user root ! -type d -exec stat -L -c "%U %n" {} \;
 
 If any systemwide shared library file is not owned by root, this is a finding.</pre></td>
 	<td><pre>Configure the systemwide shared library files (/lib, /lib64, /usr/lib and /usr/lib64) to be protected from unauthorized access.
@@ -3666,7 +3673,7 @@ Run the following command, replacing "[FILE]" with any library file not owned by
 
 $ sudo chown root [FILE]</pre></td>
 	<td>RHEL-09-232200</td>
-	<td>SV-257920r1044982_rule</td>
+	<td>SV-257920r1069385_rule</td>
 </tr>
 
 <tr>
@@ -3680,7 +3687,7 @@ $ sudo chown root [FILE]</pre></td>
 This requirement applies to RHEL 9 with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs that execute with escalated privileges.</pre></td>
 	<td><pre>Verify the systemwide shared library files are group-owned by "root" with the following command:
 
-$ sudo find -L /lib /lib64 /usr/lib /usr/lib64 ! -group root -exec stat -L -c "%G %n" {} \;
+$ sudo find -L /lib /lib64 /usr/lib /usr/lib64 ! -group root ! -type d -exec stat -L -c "%G %n" {} \;
 
 If any systemwide shared library file is returned and is not group-owned by a required system account, this is a finding.</pre></td>
 	<td><pre>Configure the systemwide shared library files (/lib, /lib64, /usr/lib and /usr/lib64) to be protected from unauthorized access.
@@ -3689,7 +3696,7 @@ Run the following command, replacing "[FILE]" with any library file not group-ow
 
 $ sudo chgrp root [FILE]</pre></td>
 	<td>RHEL-09-232205</td>
-	<td>SV-257921r1044985_rule</td>
+	<td>SV-257921r1069387_rule</td>
 </tr>
 
 <tr>
@@ -3979,27 +3986,6 @@ $ sudo dnf reinstall <package_name>
 If a package was not used to install the SELinux policy for a given device class, then it must be generated manually and provide specific type labels.</pre></td>
 	<td>RHEL-09-232260</td>
 	<td>SV-257932r1014838_rule</td>
-</tr>
-
-<tr>
-	<td>V-257933</td>
-	<td>CCI-000366</td>
-	<td>medium</td>
-	<td>RHEL 9 /etc/crontab file must have mode 0600.</td>
-	<td>SRG-OS-000480-GPOS-00227</td>
-	<td><pre>Service configuration files enable or disable features of their respective services that if configured incorrectly can lead to insecure and vulnerable configurations; therefore, service configuration files must have the correct access rights to prevent unauthorized changes.</pre></td>
-	<td><pre>Verify the permissions of /etc/crontab with the following command:
-
-$ stat -c "%a %n" /etc/crontab
-
-0600
-
-If /etc/crontab does not have a mode of "0600", this is a finding.</pre></td>
-	<td><pre>Configure the RHEL 9 file /etc/crontab with mode 600.
-
-$ sudo chmod 0600 /etc/crontab</pre></td>
-	<td>RHEL-09-232265</td>
-	<td>SV-257933r991589_rule</td>
 </tr>
 
 <tr>
@@ -5591,13 +5577,13 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td><pre>Even though the communications channel may be encrypted, an additional layer of security is gained by extending the policy of not logging directly on as root. In addition, logging in with a user-specific account provides individual accountability of actions performed on the system and also helps to minimize direct attack attempts on root's password.
 
 Satisfies: SRG-OS-000109-GPOS-00056, SRG-OS-000480-GPOS-00227</pre></td>
-	<td><pre>Verify that RHEL 9 remote access using SSH prevents users from logging on directly as "root" with the following command:
+	<td><pre>Verify RHEL 9 remote access using SSH prevents users from logging on directly as "root" with the following command:
 
 $ sudo /usr/sbin/sshd -dd 2>&1 | awk '/filename/ {print $4}' | tr -d '\r' | tr '\n' ' ' | xargs sudo grep -iH '^\s*permitrootlogin'
 
 PermitRootLogin no
 
-If the "PermitRootLogin" keyword is set to "yes", is missing, or is commented out, this is a finding.</pre></td>
+If the "PermitRootLogin" keyword is set to any value other than "no", is missing, or is commented out, this is a finding.</pre></td>
 	<td><pre>To configure the system to prevent SSH users from logging on directly as root add or modify the following line in "/etc/ssh/sshd_config" or in a file in "/etc/ssh/sshd_config.d".
 
 PermitRootLogin no
@@ -5606,7 +5592,7 @@ Restart the SSH daemon for the settings to take effect:
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-09-255045</td>
-	<td>SV-257985r1045028_rule</td>
+	<td>SV-257985r1069364_rule</td>
 </tr>
 
 <tr>
@@ -5943,21 +5929,21 @@ root /etc/ssh/sshd_config.d/50-cloud-init.conf
 root /etc/ssh/sshd_config.d/50-redhat.conf
 
 If the "/etc/ssh/sshd_config" file or "/etc/ssh/sshd_config.d" or any files in the sshd_config.d directory do not have a group owner of "root", this is a finding.</pre></td>
-	<td><pre>Configure the "/etc/ssh/sshd_config" file to be group-owned by root with the following command:
+	<td><pre>Configure the "/etc/ssh/sshd_config" file and the contents of "/etc/ssh/sshd_config.d" to be group-owned by root with the following command:
 
-$ sudo chgrp root /etc/ssh/sshd_config</pre></td>
+$ sudo chgrp root /etc/ssh/sshd_config /etc/ssh/sshd_config.d</pre></td>
 	<td>RHEL-09-255105</td>
-	<td>SV-257997r1045057_rule</td>
+	<td>SV-257997r1069370_rule</td>
 </tr>
 
 <tr>
 	<td>V-257998</td>
 	<td>CCI-000366</td>
 	<td>medium</td>
-	<td>RHEL 9 SSH server configuration file must be owned by root.</td>
+	<td>The RHEL 9 SSH server configuration file must be owned by root.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>Service configuration files enable or disable features of their respective services, which if configured incorrectly, can lead to insecure and vulnerable configurations. Therefore, service configuration files must be owned by the correct group to prevent unauthorized changes.</pre></td>
-	<td><pre>Verify the ownership of the "/etc/ssh/sshd_config" file with the following command:
+	<td><pre>Verify the ownership of the "/etc/ssh/sshd_config" file and the contents of "/etc/ssh/sshd_config.d" with the following command:
 
 $ sudo find /etc/ssh/sshd_config /etc/ssh/sshd_config.d -exec stat -c "%U %n" {} \;
 
@@ -5966,36 +5952,33 @@ root /etc/ssh/sshd_config.d
 root /etc/ssh/sshd_config.d/50-cloud-init.conf
 root /etc/ssh/sshd_config.d/50-redhat.conf
 
-If the "/etc/ssh/sshd_config" file or "/etc/ssh/sshd_config.d" or any files in the sshd_config.d directory do not have an owner of "root", this is a finding.</pre></td>
-	<td><pre>Configure the "/etc/ssh/sshd_config" file to be owned by root with the following command:
+If the "/etc/ssh/sshd_config" file or "/etc/ssh/sshd_config.d" or any files in the "sshd_config.d" directory do not have an owner of "root", this is a finding.</pre></td>
+	<td><pre>Configure  the "/etc/ssh/sshd_config" file and the contents of "/etc/ssh/sshd_config.d" to be owned by root with the following command:
 
-$ sudo chown root /etc/ssh/sshd_config</pre></td>
+$ sudo chown -R root /etc/ssh/sshd_config /etc/ssh/sshd_config.d</pre></td>
 	<td>RHEL-09-255110</td>
-	<td>SV-257998r1045059_rule</td>
+	<td>SV-257998r1082181_rule</td>
 </tr>
 
 <tr>
 	<td>V-257999</td>
 	<td>CCI-000366</td>
 	<td>medium</td>
-	<td>RHEL 9 SSH server configuration file must have mode 0600 or less permissive.</td>
+	<td>RHEL 9 SSH server configuration files' permissions must not be modified.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
-	<td><pre>Service configuration files enable or disable features of their respective services that if configured incorrectly can lead to insecure and vulnerable configurations. Therefore, service configuration files should be owned by the correct group to prevent unauthorized changes.</pre></td>
+	<td><pre>Service configuration files enable or disable features of their respective services, that if configured incorrectly, can lead to insecure and vulnerable configurations. Therefore, service configuration files must have correct permissions (owner, group owner, mode) to prevent unauthorized changes.</pre></td>
 	<td><pre>Verify the permissions of the "/etc/ssh/sshd_config" file with the following command:
 
-$ sudo find /etc/ssh/sshd_config /etc/ssh/sshd_config.d -exec stat -c "%a %n" {} \;
+$ sudo rpm --verify openssh-server
 
-600 /etc/ssh/sshd_config
-700 /etc/ssh/sshd_config.d
-600 /etc/ssh/sshd_config.d/50-cloud-init.conf
-600 /etc/ssh/sshd_config.d/50-redhat.conf
+If the command returns any output, this is a finding.</pre></td>
+	<td><pre>Run the following commands to restore the correct permissions of OpenSSH server configuration files:
 
-If the "/etc/ssh/sshd_config" permissions are not "0600", this is a finding.</pre></td>
-	<td><pre>Configure the "/etc/ssh/sshd_config" permissions to be "0600" with the following command:
-
-$ sudo chmod 0600 /etc/ssh/sshd_config</pre></td>
+$ sudo dnf reinstall -y openssh-server
+$ rpm --setugids openssh-server
+$ rpm --setperms openssh-server</pre></td>
 	<td>RHEL-09-255115</td>
-	<td>SV-257999r1045061_rule</td>
+	<td>SV-257999r1082182_rule</td>
 </tr>
 
 <tr>
@@ -7471,15 +7454,15 @@ $ sudo chage -E $(date -d +3days +%Y-%m-%d) <temporary_account_name></pre></td>
 	<td><pre>Verify that all RHEL 9 interactive users have a valid GID.
 
 Check that the interactive users have a valid GID with the following command:
- 
-$ sudo pwck -qr 
- 
-If the system has any interactive users with duplicate GIDs, this is a finding.</pre></td>
+
+$ sudo pwck -r
+
+If pwck reports "no group" for any interactive user, this is a finding.</pre></td>
 	<td><pre>Configure the system so that all GIDs are referenced in "/etc/passwd" are defined in "/etc/group".
 
 Edit the file "/etc/passwd" and ensure that every user's GID is a valid GID.</pre></td>
 	<td>RHEL-09-411045</td>
-	<td>SV-258048r958482_rule</td>
+	<td>SV-258048r1069380_rule</td>
 </tr>
 
 <tr>
@@ -7841,7 +7824,7 @@ $ sudo chmod 0755 <file></pre></td>
 	<td>V-258068</td>
 	<td>CCI-000057</td>
 	<td>medium</td>
-	<td>RHEL 9 must automatically exit interactive command shell user sessions after 15 minutes of inactivity.</td>
+	<td>RHEL 9 must automatically exit interactive command shell user sessions after 10 minutes of inactivity.</td>
 	<td>SRG-OS-000163-GPOS-00072</td>
 	<td><pre>Terminating an idle interactive command shell user session within a short time period reduces the window of opportunity for unauthorized personnel to take control of it when left unattended in a virtual terminal or physical console.
 
@@ -7861,7 +7844,7 @@ Add or edit the following line in "/etc/profile.d/tmout.sh":
 
 declare -xr TMOUT=600</pre></td>
 	<td>RHEL-09-412035</td>
-	<td>SV-258068r1014872_rule</td>
+	<td>SV-258068r1069388_rule</td>
 </tr>
 
 <tr>
@@ -9415,39 +9398,6 @@ ExecStart=-/usr/lib/systemd/systemd-sulogin-shell rescue</pre></td>
 </tr>
 
 <tr>
-	<td>V-258130</td>
-	<td>CCI-000803</td>
-	<td>medium</td>
-	<td>RHEL 9 must prevent system daemons from using Kerberos for authentication.</td>
-	<td>SRG-OS-000120-GPOS-00061</td>
-	<td><pre>Unapproved mechanisms used for authentication to the cryptographic module are not verified; therefore, cannot be relied upon to provide confidentiality or integrity and DOD data may be compromised.
-
-RHEL 9 systems utilizing encryption are required to use FIPS-compliant mechanisms for authenticating to cryptographic modules.
-
-The key derivation function (KDF) in Kerberos is not FIPS compatible. Ensuring the system does not have any keytab files present prevents system daemons from using Kerberos for authentication. A keytab is a file containing pairs of Kerberos principals and encrypted keys.
-
-FIPS 140-3 is the current standard for validating that mechanisms used to access cryptographic modules utilize authentication that meets DOD requirements. This allows for Security Levels 1, 2, 3, or 4 for use on a general-purpose computing system.</pre></td>
-	<td><pre>Note: If there is an operational requirement for Kerberos implementation, and it is documented with the ISSO, this control is Not Applicable.
-
-Verify that RHEL 9 prevents system daemons from using Kerberos for authentication with the following command:
-
-$ sudo ls -al /etc/*.keytab
-
-ls: cannot access '/etc/*.keytab': No such file or directory 
-
-If this command produces any "keytab" file(s), this is a finding.</pre></td>
-	<td><pre>Configure RHEL 9 to prevent system daemons from using Kerberos for authentication.
-
-Remove any files with the .keytab extension from the operating system.
-
-rm -f /etc/*.keytab
-
-If Kerberos authentication is a mission requirement, document its use and justification with the ISSO.</pre></td>
-	<td>RHEL-09-611205</td>
-	<td>SV-258130r1045258_rule</td>
-</tr>
-
-<tr>
 	<td>V-258131</td>
 	<td>CCI-000185</td>
 	<td>medium</td>
@@ -10944,7 +10894,7 @@ $ sudo augenrules --load</pre></td>
 	<td>medium</td>
 	<td>RHEL 9 must audit all uses of the setxattr, fsetxattr, lsetxattr, removexattr, fremovexattr, and lremovexattr system calls.</td>
 	<td>SRG-OS-000037-GPOS-00015</td>
-	<td><pre>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
+	<td><pre>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
 
 Audit records can be generated from various components within the information system (e.g., module or policy filter).
 
@@ -10953,7 +10903,7 @@ When a user logs on, the auid is set to the uid of the account being authenticat
 The system call rules are loaded into a matching engine that intercepts each system call made by all programs on the system. Therefore, it is very important to use system call rules only when absolutely necessary since these affect performance. The more rules, the bigger the performance hit. The performance can be helped, however, by combining system calls into one rule whenever possible.
 
 Satisfies: SRG-OS-000037-GPOS-00015, SRG-OS-000042-GPOS-00020, SRG-OS-000062-GPOS-00031, SRG-OS-000392-GPOS-00172, SRG-OS-000458-GPOS-00203, SRG-OS-000462-GPOS-00206, SRG-OS-000463-GPOS-00207, SRG-OS-000471-GPOS-00215, SRG-OS-000474-GPOS-00219, SRG-OS-000466-GPOS-00210, SRG-OS-000064-GPOS-00033</pre></td>
-	<td><pre>Verify that RHEL 9 is configured to audit the execution of the "setxattr", "fsetxattr", "lsetxattr", "removexattr", "fremovexattr", and "lremovexattr" system calls with the following command:
+	<td><pre>Verify RHEL 9 is configured to audit the execution of the "setxattr", "fsetxattr", "lsetxattr", "removexattr", "fremovexattr", and "lremovexattr" system calls with the following command:
 
 $ sudo auditctl -l | grep xattr
 
@@ -10962,7 +10912,7 @@ $ sudo auditctl -l | grep xattr
 -a always,exit -F arch=b32 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid=0 -F key=perm_mod
 -a always,exit -F arch=b64 -S setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F auid=0 -F key=perm_mod
 
-If both the "b32" and "b64" audit rules are not defined for the "chmod", "fchmod", and "fchmodat" system calls "setxattr", "fsetxattr", "lsetxattr", "removexattr", "fremovexattr", and "lremovexattr" system calls, or any of the lines returned are commented out, this is a finding.</pre></td>
+If both the "b32" and "b64" audit rules are not defined for the "setxattr", "fsetxattr", "lsetxattr", "removexattr", "fremovexattr", and "lremovexattr" system calls, or any of the lines returned are commented out, this is a finding.</pre></td>
 	<td><pre>Configure RHEL 9 to audit the execution of the "setxattr", "fsetxattr", "lsetxattr", "removexattr", "fremovexattr", and "lremovexattr" system calls by adding or updating the following lines to "/etc/audit/rules.d/audit.rules":
 
 -a always,exit -F arch=b32 -S setxattr,fsetxattr,lsetxattr,removexattr,fremovexattr,lremovexattr -F auid>=1000 -F auid!=unset -k perm_mod
@@ -10974,7 +10924,7 @@ To load the rules to the kernel immediately, use the following command:
 
 $ sudo augenrules --load</pre></td>
 	<td>RHEL-09-654025</td>
-	<td>SV-258179r1045322_rule</td>
+	<td>SV-258179r1069366_rule</td>
 </tr>
 
 <tr>
@@ -12568,7 +12518,7 @@ Reboot the system for the changes to take effect.</pre></td>
 Passwords need to be protected at all times, and encryption is the standard method for protecting passwords. If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised.
 
 Satisfies: SRG-OS-000073-GPOS-00041, SRG-OS-000120-GPOS-00061</pre></td>
-	<td><pre>Verify that the interactive user account passwords are using a strong password hash with the following command:
+	<td><pre>Verify the interactive user account passwords are using a strong password hash with the following command:
 
 $ sudo cut -d: -f2 /etc/shadow
 
@@ -12576,10 +12526,10 @@ $6$kcOnRq/5$NUEYPuyL.wghQwWssXRcLRFiiru7f5JPV6GaJhNC2aK5F3PZpE/BCCtwrxRc/AInKMNX
 
 Password hashes "!" or "*" indicate inactive accounts not available for logon and are not evaluated.
 
-If any interactive user password hash does not begin with "$6", this is a finding.</pre></td>
+If any interactive user password hash does not begin with "$6$", this is a finding.</pre></td>
 	<td><pre>Lock all interactive user accounts not using SHA-512 hashing until the passwords can be regenerated with SHA-512.</pre></td>
 	<td>RHEL-09-671015</td>
-	<td>SV-258231r1015135_rule</td>
+	<td>SV-258231r1069375_rule</td>
 </tr>
 
 <tr>
@@ -13081,6 +13031,72 @@ Once it is determined the allow list is built correctly, set the "fapolicyd" to 
 permissive = 0</pre></td>
 	<td>RHEL-09-433016</td>
 	<td>SV-270180r1045182_rule</td>
+</tr>
+
+<tr>
+	<td>V-272488</td>
+	<td>CCI-000015</td>
+	<td>medium</td>
+	<td>RHEL 9 must have the Postfix package installed.</td>
+	<td>SRG-OS-000304-GPOS-00121</td>
+	<td><pre>Postfix is a free, open-source mail transfer agent (MTA) that sends and receives emails. It is a server-side application that can be used to set up a local mail server, create a null-client mail relay, use a Postfix server as a destination for multiple domains, or choose an LDAP directory instead of files for lookups. Postfix supports protocols such as LDAP, SMTP AUTH (SASL), and TLS. It uses the Simple Mail Transfer Protocol (SMTP) to transfer emails between servers.
+
+Satisfies: SRG-OS-000304-GPOS-00121, SRG-OS-000343-GPOS-00134, SRG-OS-000363-GPOS-00150, SRG-OS-000447-GPOS-00201</pre></td>
+	<td><pre>Verify that RHEL 9 has the Postfix package installed with the following command:
+
+$ sudo dnf list --installed postfix
+
+Example output:
+
+postfix.x86_64                             2:3.5.25-1.el9 
+
+If the "postfix" package is not installed, this is a finding.</pre></td>
+	<td><pre>Install the Postfix package with the following command:
+ 
+$ sudo dnf install postfix</pre></td>
+	<td>RHEL-09-215101</td>
+	<td>SV-272488r1082178_rule</td>
+</tr>
+
+<tr>
+	<td>V-272496</td>
+	<td>SV-70979</td>
+	<td>medium</td>
+	<td>RHEL 9 must elevate the SELinux context when an administrator calls the sudo command.</td>
+	<td>SRG-OS-000445-GPOS-00199</td>
+	<td><pre>Without verification of the security functions, security functions may not operate correctly and the failure may go unnoticed. Security function is defined as the hardware, software, and/or firmware of the information system responsible for enforcing the system security policy and supporting the isolation of code and data on which the protection is based. Security functionality includes, but is not limited to, establishing system accounts, configuring access authorizations (i.e., permissions, privileges), setting events to be audited, and setting intrusion detection parameters.
+
+This requirement applies to operating systems performing security function verification/testing and/or systems and environments that require this functionality.
+
+Preventing nonprivileged users from executing privileged functions mitigates the risk that unauthorized individuals or processes may gain unnecessary access to information or privileges.
+
+Privileged functions include, for example, establishing accounts, performing system integrity checks, or administering cryptographic key management activities. Nonprivileged users are individuals who do not possess appropriate authorizations. Circumventing intrusion detection and prevention mechanisms or malicious code protection mechanisms are examples of privileged functions that require protection from nonprivileged users.</pre></td>
+	<td><pre>Verify that RHEL 9 elevates the SELinux context when an administrator calls the sudo command with the following command:
+
+This command must be run as root:
+
+# grep -r sysadm_r /etc/sudoers /etc/sudoers.d
+%{designated_group_or_user_name} ALL=(ALL) TYPE=sysadm_t ROLE=sysadm_r ALL
+
+If conflicting results are returned, this is a finding.
+
+If a designated sudoers administrator group or account(s) is not configured to elevate the SELinux type and role to "sysadm_t" and "sysadm_r" with the use of the sudo command, this is a finding.</pre></td>
+	<td><pre>Configure RHEL 9 to elevate the SELinux context when an administrator calls the sudo command.
+
+Edit a file in the "/etc/sudoers.d" directory with the following command:
+
+$ sudo visudo -f /etc/sudoers.d/<customfile>
+
+Use the following example to build the <customfile> in the /etc/sudoers.d directory to allow any administrator belonging to a designated sudoers admin group to elevate their SELinux context with the use of the sudo command:
+
+%{designated_group_or_user_name} ALL=(ALL) TYPE=sysadm_t ROLE=sysadm_r ALL
+
+Remove any configurations that conflict with the above from the following locations:
+ 
+/etc/sudoers
+/etc/sudoers.d/</pre></td>
+	<td>RHEL-09-431016</td>
+	<td>SV-272496r1082184_rule</td>
 </tr>
 
 </table>

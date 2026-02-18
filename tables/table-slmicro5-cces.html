@@ -41,17 +41,6 @@
 <td>Description</td>
 </thead>
 <tr>
-<td>CCE-94078-3</td>
-<td>Disable Prelinking</td>
-<td>The prelinking feature changes binaries in an attempt to decrease their startup
-time. In order to disable it, change or add the following line inside the file
-<code>/etc/sysconfig/prelink</code>:
-<pre>PRELINKING=no</pre>
-Next, run the following command to return binaries to a normal, non-prelinked state:
-<pre>$ sudo /usr/sbin/prelink -ua</pre>
-       </td>
-</tr>
-<tr>
 <td>CCE-93758-1</td>
 <td>Install AIDE</td>
 <td>The <code>aide</code> package can be installed with the following command:
@@ -177,14 +166,6 @@ the SUSE Linux Enterprise Micro 5 Documentation web site:<br>
 .</td>
 </tr>
 <tr>
-<td>CCE-94076-7</td>
-<td>Ensure /dev/shm is configured</td>
-<td>The <code>/dev/shm</code> is a traditional shared memory concept.
-One program will create a memory portion, which other processes
-(if permitted) can access. If <code>/dev/shm</code> is not configured,
-tmpfs will be mounted to /dev/shm by systemd.</td>
-</tr>
-<tr>
 <td>CCE-93796-1</td>
 <td>Ensure /home Located On Separate Partition</td>
 <td>If user home directories will be stored locally, create a separate partition
@@ -222,30 +203,6 @@ or <code>DISPLAYMANAGER_PASSWORD_LESS_LOGIN="no"</code> in the
 <pre>DISPLAYMANAGER_AUTOLOGIN=""
 DISPLAYMANAGER_PASSWORD_LESS_LOGIN="no"</pre>
         </td>
-</tr>
-<tr>
-<td>CCE-94075-9</td>
-<td>Install sudo Package</td>
-<td>The <code>sudo</code> package can be installed with the following command:
-<pre>
-$ sudo zypper install sudo</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-94074-2</td>
-<td>Ensure Only Users Logged In To Real tty Can Execute Sudo - sudo use_pty</td>
-<td>The sudo <code>use_pty</code> tag, when specified, will only execute sudo
-commands from users logged in to a real tty.
-This should be enabled by making sure that the <code>use_pty</code> tag exists in
-<code>/etc/sudoers</code> configuration file or any sudo configuration snippets
-in <code>/etc/sudoers.d/</code>.</td>
-</tr>
-<tr>
-<td>CCE-94073-4</td>
-<td>Ensure Sudo Logfile Exists - sudo logfile</td>
-<td>A custom log sudo file can be configured with the 'logfile' tag. This rule configures
-a sudo custom logfile at the default location suggested by CIS, which uses
-/var/log/sudo.log.</td>
 </tr>
 <tr>
 <td>CCE-93715-1</td>
@@ -342,50 +299,6 @@ previous software components after updating, set the <code>solver.upgradeRemoveD
 to <code>1</code> in <code>/etc/zypp/zypp.conf</code>.</td>
 </tr>
 <tr>
-<td>CCE-94072-6</td>
-<td>Ensure GPG keys are configured</td>
-<td>The operation system or installed application can be successfully bootstrapped
-without the GPG key being trusted. However, you cannot install new packages or
-update them until the keys are trusted.
-<br>
-        <br>
-Most packages managers implement GPG key signing to verify package integrity
-during installation.
-<br>
-        <br>
-To verify GPG keys are configured correctly for your package manager,
-one of the following command groups may provide the needed information
-depending on the package manager in use.
-<br>
-        <br>
-In SUSE Linux distributions, the administrators have to follow the next steps: <br>
-1. Log on to the system as a user with administrator rights.<br>
-2. Locate and download package, for example zoom_x86_64.rpm<br>
-3. Locate and download the public key (GPG) from the software download site, for
-example the key for zoom package is package-signing-key-5-12-6.pub<br>
-4. Import the key public key:<br>
-        <code>$ sudo rpm --import package-signing-key-5-12-6.pub</code>
-        <br>
-5. List the keys, for example the command:<br>
-        <code>$ sudo rpm -qa gpg-pubkey*</code>
-        <br>
-will provide:<br>
-        <code>gpg-pubkey-dd79b481-62fe7502</code>
-        <br>
-6. Get more details about the key, via the command:<br>
-        <code>$ sudo rpm -qa gpg-pubkey-dd79b481-62fe7502</code>
-        <br>
-7. Check the GPG key, for example the command:<br>
-        <code>$ sudo rpm -q gpg-pubkey --qf '%{name}-%{version}-%{release} --&gt; %{summary}\n'</code>
-        <br>
-will provide:<br>
-        <code>gpg-pubkey-dd79b481-62fe7502 --&gt; gpg(Zoom Video Communications, Inc. &lt;CryptoOpsCodeSignProd@zoom.us&gt;)</code>
-        <br>
-        <br>
-        <br>
-       </td>
-</tr>
-<tr>
 <td>CCE-93712-8</td>
 <td>Ensure gpgcheck Enabled In Main zypper Configuration</td>
 <td>The <code>gpgcheck</code> option controls whether
@@ -395,20 +308,6 @@ them, ensure the following line appears in <code>/etc/zypp/zypp.conf</code> in
 the <code>[main]</code> section:
 <pre>gpgcheck=1</pre>
        </td>
-</tr>
-<tr>
-<td>CCE-94070-0</td>
-<td>Ensure gpgcheck Enabled for All zypper Package Repositories</td>
-<td>To ensure signature checking is not disabled for
-any repos, remove any lines from files in <code>/etc/zypp/repos.d</code> of the form:
-<pre>gpgcheck=0</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-94063-5</td>
-<td>Ensure package manager repositories are configured</td>
-<td>Systems need to have package manager repositories configured to ensure they receive the
-latest patches and updates.</td>
 </tr>
 <tr>
 <td>CCE-93804-3</td>
@@ -463,154 +362,6 @@ OR:
        </td>
 </tr>
 <tr>
-<td>CCE-94062-7</td>
-<td>Modify the System Login Banner for Remote Connections</td>
-<td>To configure the system login banner edit <code>/etc/issue.net</code>. Replace the
-default text with a message compliant with the local site policy or a legal
-disclaimer.
-
-The DoD required text is either:
-<br>
-        <br>
-        <code>You are accessing a U.S. Government (USG) Information System (IS) that
-is provided for USG-authorized use only. By using this IS (which includes
-any device attached to this IS), you consent to the following conditions:
-<br>-The USG routinely intercepts and monitors communications on this IS
-for purposes including, but not limited to, penetration testing, COMSEC
-monitoring, network operations and defense, personnel misconduct (PM), law
-enforcement (LE), and counterintelligence (CI) investigations.
-<br>-At any time, the USG may inspect and seize data stored on this IS.
-<br>-Communications using, or data stored on, this IS are not private,
-are subject to routine monitoring, interception, and search, and may be
-disclosed or used for any USG-authorized purpose.
-<br>-This IS includes security measures (e.g., authentication and access
-controls) to protect USG interests -- not for your personal benefit or
-privacy.
-<br>-Notwithstanding the above, using this IS does not constitute consent
-to PM, LE or CI investigative searching or monitoring of the content of
-privileged communications, or work product, related to personal
-representation or services by attorneys, psychotherapists, or clergy, and
-their assistants. Such communications and work product are private and
-confidential. See User Agreement for details.</code>
-        <br>
-        <br>
-OR:
-<br>
-        <br>
-        <code>I've read &amp; consent to terms in IS user agreem't.</code>
-       </td>
-</tr>
-<tr>
-<td>CCE-94061-9</td>
-<td>Modify the System Message of the Day Banner</td>
-<td>To configure the system message banner edit <code>/etc/motd</code>. Replace the
-default text with a message compliant with the local site policy or a legal
-disclaimer.
-
-The DoD required text is either:
-<br>
-        <br>
-        <code>You are accessing a U.S. Government (USG) Information System (IS) that
-is provided for USG-authorized use only. By using this IS (which includes
-any device attached to this IS), you consent to the following conditions:
-<br>-The USG routinely intercepts and monitors communications on this IS
-for purposes including, but not limited to, penetration testing, COMSEC
-monitoring, network operations and defense, personnel misconduct (PM), law
-enforcement (LE), and counterintelligence (CI) investigations.
-<br>-At any time, the USG may inspect and seize data stored on this IS.
-<br>-Communications using, or data stored on, this IS are not private,
-are subject to routine monitoring, interception, and search, and may be
-disclosed or used for any USG-authorized purpose.
-<br>-This IS includes security measures (e.g., authentication and access
-controls) to protect USG interests -- not for your personal benefit or
-privacy.
-<br>-Notwithstanding the above, using this IS does not constitute consent
-to PM, LE or CI investigative searching or monitoring of the content of
-privileged communications, or work product, related to personal
-representation or services by attorneys, psychotherapists, or clergy, and
-their assistants. Such communications and work product are private and
-confidential. See User Agreement for details.</code>
-        <br>
-        <br>
-OR:
-<br>
-        <br>
-        <code>I've read &amp; consent to terms in IS user agreem't.</code>
-       </td>
-</tr>
-<tr>
-<td>CCE-94060-1</td>
-<td>Verify Group Ownership of System Login Banner</td>
-<td>
-To properly set the group owner of <code>/etc/issue</code>, run the command:
-<pre>$ sudo chgrp root /etc/issue</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-94059-3</td>
-<td>Verify Group Ownership of System Login Banner for Remote Connections</td>
-<td>
-To properly set the group owner of <code>/etc/issue.net</code>, run the command:
-<pre>$ sudo chgrp root /etc/issue.net</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-94058-5</td>
-<td>Verify Group Ownership of Message of the Day Banner</td>
-<td>
-To properly set the group owner of <code>/etc/motd</code>, run the command:
-<pre>$ sudo chgrp root /etc/motd</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-94057-7</td>
-<td>Verify ownership of System Login Banner</td>
-<td>
-To properly set the owner of <code>/etc/issue</code>, run the command:
-<pre>$ sudo chown root /etc/issue </pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-94056-9</td>
-<td>Verify ownership of System Login Banner for Remote Connections</td>
-<td>
-To properly set the owner of <code>/etc/issue.net</code>, run the command:
-<pre>$ sudo chown root /etc/issue.net </pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-94055-1</td>
-<td>Verify ownership of Message of the Day Banner</td>
-<td>
-To properly set the owner of <code>/etc/motd</code>, run the command:
-<pre>$ sudo chown root /etc/motd </pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-94054-4</td>
-<td>Verify permissions on System Login Banner</td>
-<td>
-To properly set the permissions of <code>/etc/issue</code>, run the command:
-<pre>$ sudo chmod 0644 /etc/issue</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-94053-6</td>
-<td>Verify permissions on System Login Banner for Remote Connections</td>
-<td>
-To properly set the permissions of <code>/etc/issue.net</code>, run the command:
-<pre>$ sudo chmod 0644 /etc/issue.net</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-94052-8</td>
-<td>Verify permissions on Message of the Day Banner</td>
-<td>
-To properly set the permissions of <code>/etc/motd</code>, run the command:
-<pre>$ sudo chmod 0644 /etc/motd</pre>
-       </td>
-</tr>
-<tr>
 <td>CCE-93730-0</td>
 <td>Ensure PAM Displays Last Logon/Access Notification</td>
 <td>To configure the system to notify users of last logon/access using <code>pam_lastlog</code>,
@@ -657,12 +408,6 @@ is at least <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2
 consecutive invalid access attempts.</td>
 </tr>
 <tr>
-<td>CCE-94051-0</td>
-<td>Configure the root Account lock for Failed Password Attempts via pam_tally2</td>
-<td>This rule configures the system to lock out the <code>root</code> account after a number of
-incorrect login attempts using <code>pam_tally2.so</code>.</td>
-</tr>
-<tr>
 <td>CCE-94089-0</td>
 <td>SLEM 5 must use the default pam_tally2 tally directory.</td>
 <td>This rule configures the system to use default pam_tally2 tally directory</td>
@@ -672,12 +417,6 @@ incorrect login attempts using <code>pam_tally2.so</code>.</td>
 <td>An SELinux Context must be configured for default pam_tally2 file option</td>
 <td>The <code>file</code> configuration option in PAM pam_tally2.so module defines where to keep counts.
 Default is /var/log/tallylog. The configured directory must have the correct SELinux context.</td>
-</tr>
-<tr>
-<td>CCE-94050-2</td>
-<td>Set Lockout Time for Failed Password Attempts using pam_tally2</td>
-<td>This rule configures the system to lock out accounts during a specified time period after a
-number of incorrect login attempts using <code>pam_tally2.so</code>.</td>
 </tr>
 <tr>
 <td>CCE-93764-9</td>
@@ -809,28 +548,6 @@ Do not simply delete the <code>/usr/lib/systemd/system/ctrl-alt-del.service</cod
 as this file may be restored during future system updates.</td>
 </tr>
 <tr>
-<td>CCE-94049-4</td>
-<td>Require Authentication for Emergency Systemd Target</td>
-<td>Emergency mode is intended as a system recovery
-method, providing a single user root access to the system
-during a failed boot sequence.
-<br>
-        <br>
-By default, Emergency mode is protected by requiring a password and is set
-in <code>/usr/lib/systemd/system/emergency.service</code>.</td>
-</tr>
-<tr>
-<td>CCE-94048-6</td>
-<td>Require Authentication for Single User Mode</td>
-<td>Single-user mode is intended as a system recovery
-method, providing a single user root access to the system by
-providing a boot option at startup.
-<br>
-        <br>
-By default, single-user mode is protected by requiring a password and is set
-in <code>/usr/lib/systemd/system/rescue.service</code>.</td>
-</tr>
-<tr>
 <td>CCE-93755-7</td>
 <td>Check that vlock is installed to allow session locking</td>
 <td>The SUSE Linux Enterprise Micro 5 operating system must have vlock installed to allow for session locking.
@@ -944,16 +661,6 @@ To remove unauthorized system accounts, use the following command:
        </td>
 </tr>
 <tr>
-<td>CCE-94047-8</td>
-<td>Ensure All Groups on the System Have Unique Group ID</td>
-<td>Change the group name or delete groups, so each has a unique id.</td>
-</tr>
-<tr>
-<td>CCE-94046-0</td>
-<td>Ensure All Groups on the System Have Unique Group Names</td>
-<td>Change the group name or delete groups, so each has a unique name.</td>
-</tr>
-<tr>
 <td>CCE-93688-0</td>
 <td>Set Account Expiration Following Inactivity</td>
 <td>To specify the number of days after a password expires (which
@@ -1004,21 +711,6 @@ configured to automatically terminate these types of accounts after a
 period of 72 hours.</td>
 </tr>
 <tr>
-<td>CCE-94045-2</td>
-<td>Ensure All Accounts on the System Have Unique Names</td>
-<td>Ensure accounts on the system have unique names.
-
-To ensure all accounts have unique names, run the following command:
-<pre>$ sudo getent passwd | awk -F: '{ print $1}' | uniq -d</pre>
-If a username is returned, change or delete the username.</td>
-</tr>
-<tr>
-<td>CCE-94044-5</td>
-<td>Ensure shadow Group is Empty</td>
-<td>The shadow group allows system programs which require access the ability
-to read the /etc/shadow file. No users should be assigned to the shadow group.</td>
-</tr>
-<tr>
 <td>CCE-93685-6</td>
 <td>Set Password Maximum Age</td>
 <td>To specify password maximum age for new accounts,
@@ -1062,46 +754,6 @@ lifetime by running the following command:
         </td>
 </tr>
 <tr>
-<td>CCE-94043-7</td>
-<td>Set Existing Passwords Warning Age</td>
-<td>To configure how many days prior to password expiration that a warning will be issued to
-users, run the command:
-<pre>$ sudo chage --warndays <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub>
-          <i>USER</i>
-         </pre>
-The DoD requirement is 7, and CIS recommendation is no less than 7 days.
-This profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
-</tr>
-<tr>
-<td>CCE-94042-9</td>
-<td>Set Password Warning Age</td>
-<td>To specify how many days prior to password
-expiration that a warning will be issued to users,
-edit the file <code>/etc/login.defs</code> and add or correct
- the following line:
-<pre>PASS_WARN_AGE <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub>
-         </pre>
-The DoD requirement is 7.
-The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
-</tr>
-<tr>
-<td>CCE-94041-1</td>
-<td>Set existing passwords a period of inactivity before they been locked</td>
-<td>Configure user accounts that have been inactive for over a given period of time
-to be automatically disabled by running the following command:
-<pre>$ sudo chage --inactive 30<i>USER</i>
-         </pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-94040-3</td>
-<td>Verify All Account Password Hashes are Shadowed</td>
-<td>If any password hashes are stored in <code>/etc/passwd</code> (in the second field,
-instead of an <code>x</code> or <code>*</code>), the cause of this misconfiguration should be
-investigated. The account should have its password reset and the hash should be
-properly stored, or the account should be deleted entirely.</td>
-</tr>
-<tr>
 <td>CCE-93774-8</td>
 <td>Verify All Account Password Hashes are Shadowed with SHA512</td>
 <td>Verify the operating system requires the shadow password suite
@@ -1115,16 +767,6 @@ Password hashes <code>!</code> or <code>*</code> indicate inactive accounts not
 available for logon and are not evaluated.
 If any interactive user password hash does not begin with <code>$6</code>,
 this is a finding.</td>
-</tr>
-<tr>
-<td>CCE-94039-5</td>
-<td>Ensure all users last password change date is in the past</td>
-<td>All users should have a password change date in the past.</td>
-</tr>
-<tr>
-<td>CCE-94038-7</td>
-<td>All GIDs referenced in /etc/passwd must be defined in /etc/group</td>
-<td>Add a group to the system for each GID referenced without a corresponding group.</td>
 </tr>
 <tr>
 <td>CCE-93738-3</td>
@@ -1154,32 +796,6 @@ Lock an account:
         </td>
 </tr>
 <tr>
-<td>CCE-94037-9</td>
-<td>Verify No .forward Files Exist</td>
-<td>The <code>.forward</code> file specifies an email address to forward the user's mail to.</td>
-</tr>
-<tr>
-<td>CCE-94036-1</td>
-<td>Ensure there are no legacy + NIS entries in /etc/passwd</td>
-<td>The <code>+</code> character in <code>/etc/passwd</code> file marks a place where
-entries from a network information service (NIS) should be directly inserted.</td>
-</tr>
-<tr>
-<td>CCE-94035-3</td>
-<td>Ensure there are no legacy + NIS entries in /etc/shadow</td>
-<td>The <code>+</code> character in <code>/etc/shadow</code> file marks a place where
-entries from a network information service (NIS) should be directly inserted.</td>
-</tr>
-<tr>
-<td>CCE-94034-6</td>
-<td>Verify No netrc Files Exist</td>
-<td>The <code>.netrc</code> files contain login information
-used to auto-login into FTP servers and reside in the user's home
-directory. These files may contain unencrypted passwords to
-remote FTP servers making them susceptible to access by unauthorized
-users and should not be used.  Any <code>.netrc</code> files should be removed.</td>
-</tr>
-<tr>
 <td>CCE-93734-2</td>
 <td>Verify Only Root Has UID 0</td>
 <td>If any account other than root has a UID of 0, this misconfiguration should
@@ -1190,39 +806,6 @@ If the account is associated with system commands or applications the UID
 should be changed to one greater than "0" but less than "1000."
 Otherwise assign a UID greater than "1000" that has not already been
 assigned.</td>
-</tr>
-<tr>
-<td>CCE-94033-8</td>
-<td>Verify Root Has A Primary GID 0</td>
-<td>The <code>root</code> user should have a primary group of 0.</td>
-</tr>
-<tr>
-<td>CCE-94032-0</td>
-<td>Ensure the Group Used by pam_wheel.so Module Exists on System and is Empty</td>
-<td>Ensure that the group <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_pam_wheel_group_for_su" use="legacy"></xccdf-1.2:sub></code> referenced by
-<code>var_pam_wheel_group_for_su</code> variable and used as value for the <code>pam_wheel.so</code>
-         <code>group</code> option exists and has no members. This empty group used by
-<code>pam_wheel.so</code> in <code>/etc/pam.d/su</code> ensures that no user can run commands with
-altered privileges through the <code>su</code> command.</td>
-</tr>
-<tr>
-<td>CCE-94031-2</td>
-<td>Direct root Logins Not Allowed</td>
-<td>To further limit access to the <code>root</code> account, administrators
-can disable root logins at the console by editing the <code>/etc/securetty</code> file.
-This file lists all devices the root user is allowed to login to. If the file does
-not exist at all, the root user can login through any communication device on the
-system, whether via the console or via a raw network interface. This is dangerous
-as user can login to the system as root via Telnet, which sends the password in
-plain text over the network. By default, SUSE Linux Enterprise Micro 5's
-<code>/etc/securetty</code> file only allows the root user to login at the console
-physically attached to the system. To prevent root from logging in, remove the
-contents of this file. To prevent direct root logins, remove the contents of this
-file by typing the following command:
-<pre>
-$ sudo echo &gt; /etc/securetty
-</pre>
-        </td>
 </tr>
 <tr>
 <td>CCE-93732-6</td>
@@ -1237,27 +820,6 @@ The login shell for each local account is stored in the last field of each line 
 <code>1000</code>. The user ID is stored in the third field. If any system account
 other than <code>root</code> has a login shell, disable it with the command:
 <pre>$ sudo usermod -s /sbin/nologin <i>account</i>
-         </pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-94030-4</td>
-<td>Restrict Virtual Console Root Logins</td>
-<td>To restrict root logins through the (deprecated) virtual console devices,
-ensure lines of this form do not appear in <code>/etc/securetty</code>:
-<pre>vc/1
-vc/2
-vc/3
-vc/4</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-94029-6</td>
-<td>Enforce Usage of pam_wheel with Group Parameter for su Authentication</td>
-<td>To ensure that only users who are members of the group set in the <code>group</code> option of
-<code>pam_wheel.so</code> module can run commands with altered privileges through the <code>su</code>
-command, make sure that the following line exists in the file <code>/etc/pam.d/su</code>:
-<pre>auth required pam_wheel.so use_uid group=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_pam_wheel_group_for_su" use="legacy"></xccdf-1.2:sub>
          </pre>
         </td>
 </tr>
@@ -1347,24 +909,6 @@ home directory assigned in <code>/etc/passwd</code>:
        </td>
 </tr>
 <tr>
-<td>CCE-94028-8</td>
-<td>All User Files and Directories In The Home Directory Must Have Mode 0750 Or Less Permissive</td>
-<td>Set the mode on files and directories in the local interactive user home
-directory with the following command:
-<pre>$ sudo chmod 0750 /home/<i>USER</i>/<i>FILE_DIR</i>
-        </pre>
-Files that begin with a "." are excluded from this requirement.</td>
-</tr>
-<tr>
-<td>CCE-94027-0</td>
-<td>Ensure users' .netrc Files are not group or world accessible</td>
-<td>While the system administrator can establish secure permissions for users' .netrc files, the
-users can easily override these.
-
-This rule ensures every .netrc file or directory under the home directory related
-to an interactive user is not group or world accessible</td>
-</tr>
-<tr>
 <td>CCE-93748-2</td>
 <td>All Interactive User Home Directories Must Be Group-Owned By The Primary Group</td>
 <td>Change the group owner of interactive users home directory to the
@@ -1397,38 +941,6 @@ following command:
        </td>
 </tr>
 <tr>
-<td>CCE-94026-2</td>
-<td>Ensure that Root's Path Does Not Include World or Group-Writable Directories</td>
-<td>For each element in root's path, run:
-<pre># ls -ld <i>DIR</i>
-         </pre>
-and ensure that write permissions are disabled for group and
-other.</td>
-</tr>
-<tr>
-<td>CCE-94025-4</td>
-<td>Ensure that Root's Path Does Not Include Relative Paths or Null Directories</td>
-<td>Ensure that none of the directories in root's path is equal to a single
-<code>.</code> character, or
-that it contains any instances that lead to relative path traversal, such as
-<code>..</code> or beginning a path without the slash (<code>/</code>) character.
-Also ensure that there are no "empty" elements in the path, such as in these examples:
-<pre>PATH=:/bin
-PATH=/bin:
-PATH=/bin::/sbin</pre>
-These empty elements have the same effect as a single <code>.</code> character.</td>
-</tr>
-<tr>
-<td>CCE-94023-9</td>
-<td>Ensure the Default Bash Umask is Set Correctly</td>
-<td>To ensure the default umask for users of the Bash shell is set properly,
-add or correct the <code>umask</code> setting in <code>/etc/bash.bashrc</code> to read
-as follows:
-<pre>umask <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_user_umask" use="legacy"></xccdf-1.2:sub>
-         </pre>
-        </td>
-</tr>
-<tr>
 <td>CCE-93753-2</td>
 <td>Ensure the Default Umask is Set Correctly in login.defs</td>
 <td>To ensure the default umask controlled by <code>/etc/login.defs</code> is set properly,
@@ -1436,57 +948,6 @@ add or correct the <code>UMASK</code> setting in <code>/etc/login.defs</code> to
 <pre>UMASK <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_user_umask" use="legacy"></xccdf-1.2:sub>
          </pre>
         </td>
-</tr>
-<tr>
-<td>CCE-94024-7</td>
-<td>Ensure the Default Umask is Set Correctly in /etc/profile</td>
-<td>To ensure the default umask controlled by <code>/etc/profile</code> is set properly,
-add or correct the <code>umask</code> setting in <code>/etc/profile</code> to read as follows:
-<pre>umask <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_user_umask" use="legacy"></xccdf-1.2:sub>
-         </pre>
-
-Note that <code>/etc/profile</code> also reads scrips within <code>/etc/profile.d</code> directory.
-These scripts are also valid files to set umask value. Therefore, they should also be
-considered during the check and properly remediated, if necessary.</td>
-</tr>
-<tr>
-<td>CCE-94022-1</td>
-<td>Install the pam_apparmor Package</td>
-<td>The <code>pam_apparmor</code> package can be installed with the following command:
-<pre>
-$ sudo zypper install pam_apparmor</pre>
-      </td>
-</tr>
-<tr>
-<td>CCE-94021-3</td>
-<td>Verify /boot/grub2/grub.cfg Group Ownership</td>
-<td>The file <code>/boot/grub2/grub.cfg</code> should
-be group-owned by the <code>root</code> group to prevent
-destruction or modification of the file.
-
-To properly set the group owner of <code>/boot/grub2/grub.cfg</code>, run the command:
-<pre>$ sudo chgrp root /boot/grub2/grub.cfg</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-94020-5</td>
-<td>Verify /boot/grub2/grub.cfg User Ownership</td>
-<td>The file <code>/boot/grub2/grub.cfg</code> should
-be owned by the <code>root</code> user to prevent destruction
-or modification of the file.
-
-To properly set the owner of <code>/boot/grub2/grub.cfg</code>, run the command:
-<pre>$ sudo chown root /boot/grub2/grub.cfg </pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-94019-7</td>
-<td>Verify /boot/grub2/grub.cfg Permissions</td>
-<td>File permissions for <code>/boot/grub2/grub.cfg</code> should be set to 600.
-
-To properly set the permissions of <code>/boot/grub2/grub.cfg</code>, run the command:
-<pre>$ sudo chmod 600 /boot/grub2/grub.cfg</pre>
-       </td>
 </tr>
 <tr>
 <td>CCE-93778-9</td>
@@ -1564,23 +1025,6 @@ The <code>systemd-journal-upload</code> service can be enabled with the followin
        </td>
 </tr>
 <tr>
-<td>CCE-94018-9</td>
-<td>Ensure journald is configured to compress large log files</td>
-<td>The journald system can compress large log files to avoid fill the system disk.</td>
-</tr>
-<tr>
-<td>CCE-94017-1</td>
-<td>Ensure journald is configured to send logs to rsyslog</td>
-<td>Data from journald may be stored in volatile memory or persisted locally.
-Utilities exist to accept remote export of journald logs.</td>
-</tr>
-<tr>
-<td>CCE-94016-3</td>
-<td>Ensure journald is configured to write log files to persistent disk</td>
-<td>The journald system may store log files in volatile memory or locally on disk.
-If the logs are only stored in volatile memory they will we lost upon reboot.</td>
-</tr>
-<tr>
 <td>CCE-94080-9</td>
 <td>Configure systemd-journal-upload TLS parameters: ServerKeyFile, ServerCertificateFile and TrustedCertificateFile</td>
 <td>SUSE Linux Enterprise Micro 5 must offload rsyslog messages for networked systems in real time and
@@ -1591,31 +1035,6 @@ offload standalone systems at least weekly</td>
 <td>Configure systemd-journal-upload URL</td>
 <td>SUSE Linux Enterprise Micro 5 must offload rsyslog messages for networked systems in real time and
 offload standalone systems at least weekly</td>
-</tr>
-<tr>
-<td>CCE-94015-5</td>
-<td>Ensure logrotate is Installed</td>
-<td>logrotate is installed by default. The <code>logrotate</code> package can be installed with the following command: <pre> $ sudo zypper install logrotate</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-94014-8</td>
-<td>Ensure Logrotate Runs Periodically</td>
-<td>The <code>logrotate</code> utility allows for the automatic rotation of
-log files.  The frequency of rotation is specified in <code>/etc/logrotate.conf</code>,
-which triggers a cron task or a timer.  To configure logrotate to run daily, add or correct
-the following line in <code>/etc/logrotate.conf</code>:
-<pre># rotate log files <i>frequency</i>
-daily</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-94013-0</td>
-<td>Enable logrotate Timer</td>
-<td>
-The <code>logrotate</code> timer can be enabled with the following command:
-<pre>$ sudo systemctl enable logrotate.timer</pre>
-       </td>
 </tr>
 <tr>
 <td>CCE-93752-4</td>
@@ -1629,187 +1048,11 @@ Promiscuous mode of an interface can be disabled with the following command:
       </td>
 </tr>
 <tr>
-<td>CCE-94012-2</td>
-<td>Configure Firewalld to Use the Nftables Backend</td>
-<td>Firewalld can be configured with many backends, such as nftables.</td>
-</tr>
-<tr>
-<td></td>
-<td>Ensure network interfaces are assigned to appropriate zone</td>
-<td>Firewall zones define the trust level of network connections or interfaces.
-Note: Changing firewall settings while connected over network can result in 
-being locked out of the system.</td>
-</tr>
-<tr>
-<td>CCE-94011-4</td>
-<td>Ensure Unnecessary Services and Ports Are Not Accepted</td>
-<td>Services and ports can be accepted or explicitly rejected or dropped by a zone.
-For every zone, a default behavior can be set that handles incoming traffic that
-is not further specified. Such behavior is defined by setting the target of the zone.
-The possible options are:
-- <code>ACCEPT</code> - accepts all incoming packets except those disabled by a specific rule.
-- <code>REJECT</code> - disables all incoming packets except those that have been allowed in
-   specific rules and the source machine is informed about the rejection.
-- <code>DROP</code> - disables all incoming packets except those that have been allowed in
-   specific rules and no information sent to the source machine.</td>
-</tr>
-<tr>
-<td>CCE-94010-6</td>
-<td>Install firewalld Package</td>
-<td>The <code>firewalld</code> package can be installed with the following command:
-<pre>
-$ sudo zypper install firewalld</pre>
-        </td>
-</tr>
-<tr>
 <td>CCE-93769-8</td>
 <td>Verify firewalld Enabled</td>
 <td>
 The <code>firewalld</code> service can be enabled with the following command:
 <pre>$ sudo systemctl enable firewalld.service</pre>
-        </td>
-</tr>
-<tr>
-<td></td>
-<td>Ensure firewall rules exist for all open ports</td>
-<td>Any ports that have been opened on non-loopback addresses need firewall rules to govern
-traffic.</td>
-</tr>
-<tr>
-<td>CCE-94009-8</td>
-<td>Set Default firewalld Zone for Incoming Packets</td>
-<td>To set the default zone to <code>drop</code> for
-the built-in default zone which processes incoming IPv4 and IPv6 packets,
-modify the following line in
-<code>/etc/firewalld/firewalld.conf</code> to be:
-<pre>DefaultZone=drop</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-94008-0</td>
-<td>Uninstall firewalld Package</td>
-<td>firewalld (Dynamic Firewall Manager) provides a dynamically managed firewall with
-support for network/firewall “zones” to assign a level of trust to a network and its
-associated connections, interfaces or sources. It has support for IPv4, IPv6, Ethernet
-bridges and also for IPSet firewall settings. There is a separation of the runtime and
-permanent configuration options.
-The <code>firewalld</code> package can be removed with the following command:
-<pre>
-$ sudo zypper remove firewalld</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-94007-2</td>
-<td>Verify firewalld service disabled</td>
-<td>Firewalld (Dynamic Firewall Manager) provides a dynamically managed firewall with
-support for network/firewall “zones” to assign a level of trust to a network and its
-associated connections, interfaces or sources. It has support for IPv4, IPv6, Ethernet
-bridges and also for IPSet firewall settings. There is a separation of the runtime and
-permanent configuration options.
-
-The <code>firewalld</code> service can be disabled with the following command:
-<pre>$ sudo systemctl mask --now firewalld.service</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-94006-4</td>
-<td>Install iptables Package</td>
-<td>The <code>iptables</code> package can be installed with the following command:
-<pre>
-$ sudo zypper install iptables</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-94005-6</td>
-<td>Ensure iptables are flushed</td>
-<td>nftables is a replacement for iptables, ip6tables, ebtables and arptables</td>
-</tr>
-<tr>
-<td>CCE-94004-9</td>
-<td>Verify iptables Enabled</td>
-<td>
-The <code>iptables</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable iptables.service</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-94003-1</td>
-<td>Set Default ip6tables Policy for Incoming Packets</td>
-<td>To set the default policy to DROP (instead of ACCEPT) for
-the built-in INPUT chain which processes incoming packets,
-add or correct the following line in
-
-<code>/etc/sysconfig/ip6tables</code>:
-
-<pre>:INPUT DROP [0:0]</pre>
-If changes were required, reload the ip6tables rules:
-<pre>$ sudo service ip6tables reload</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-94002-3</td>
-<td>Set configuration for IPv6 loopback traffic</td>
-<td>Configure the loopback interface to accept traffic.
-Configure all other interfaces to deny traffic to the loopback
-network.</td>
-</tr>
-<tr>
-<td>CCE-94001-5</td>
-<td>Set configuration for loopback traffic</td>
-<td>Configure the loopback interface to accept traffic.
-Configure all other interfaces to deny traffic to the loopback
-network.</td>
-</tr>
-<tr>
-<td>CCE-94000-7</td>
-<td>Set Default iptables Policy for Incoming Packets</td>
-<td>To set the default policy to DROP (instead of ACCEPT) for
-the built-in INPUT chain which processes incoming packets,
-add or correct the following line in
-<code>/etc/sysconfig/iptables</code>:
-<pre>:INPUT DROP [0:0]</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93999-1</td>
-<td>Set Default iptables Policy for Forwarded Packets</td>
-<td>To set the default policy to DROP (instead of ACCEPT) for
-the built-in FORWARD chain which processes packets that will be forwarded from
-one interface to another,
-add or correct the following line in
-<code>/etc/sysconfig/iptables</code>:
-<pre>:FORWARD DROP [0:0]</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93998-3</td>
-<td>Ensure Outbound and Established Connections are Configured</td>
-<td>Configure the firewall rules for new outbound and established connections.</td>
-</tr>
-<tr>
-<td>CCE-93997-5</td>
-<td>Ensure IPv6 is disabled through kernel boot parameter</td>
-<td>To disable IPv6 protocol support in the Linux kernel,
-add the argument <code>ipv6.disable=1</code> to the default
-GRUB2 command line for the Linux operating system.
-Configure the default Grub2 kernel command line to contain ipv6.disable=1 as follows:
-<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) ipv6.disable=1"</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93996-7</td>
-<td>Disable IPv6 Addressing on All IPv6 Interfaces</td>
-<td>To disable support for (<code>ipv6</code>) addressing on all interface add the following line to
-<code>/etc/sysctl.d/ipv6.conf</code> (or another file in <code>/etc/sysctl.d</code>):
-<pre>net.ipv6.conf.all.disable_ipv6 = 1</pre>
-This disables IPv6 on all network interfaces as other services and system
-functionality require the IPv6 stack loaded to work.</td>
-</tr>
-<tr>
-<td>CCE-93995-9</td>
-<td>Configure Accepting Router Advertisements on All IPv6 Interfaces</td>
-<td>To set the runtime status of the <code>net.ipv6.conf.all.accept_ra</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.accept_ra=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_ra = 0</pre>
         </td>
 </tr>
 <tr>
@@ -1831,13 +1074,6 @@ To make sure that the setting is persistent, add the following line to a file in
 <td>Disable Kernel Parameter for IPv6 Forwarding</td>
 <td>To set the runtime status of the <code>net.ipv6.conf.all.forwarding</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.forwarding=0</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.forwarding = 0</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93994-2</td>
-<td>Disable Accepting Router Advertisements on all IPv6 Interfaces by Default</td>
-<td>To set the runtime status of the <code>net.ipv6.conf.default.accept_ra</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_ra=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_ra = 0</pre>
         </td>
 </tr>
 <tr>
@@ -1876,27 +1112,6 @@ To make sure that the setting is persistent, add the following line to a file in
         </td>
 </tr>
 <tr>
-<td>CCE-93993-4</td>
-<td>Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces</td>
-<td>To set the runtime status of the <code>net.ipv4.conf.all.log_martians</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.log_martians=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.log_martians = 1</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93992-6</td>
-<td>Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces</td>
-<td>To set the runtime status of the <code>net.ipv4.conf.all.rp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.rp_filter=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.rp_filter = 1</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93991-8</td>
-<td>Disable Kernel Parameter for Accepting Secure ICMP Redirects on all IPv4 Interfaces</td>
-<td>To set the runtime status of the <code>net.ipv4.conf.all.secure_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.secure_redirects=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.secure_redirects = 0</pre>
-        </td>
-</tr>
-<tr>
 <td>CCE-93634-4</td>
 <td>Disable Kernel Parameter for Accepting ICMP Redirects by Default on IPv4 Interfaces</td>
 <td>To set the runtime status of the <code>net.ipv4.conf.default.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.accept_redirects=0</pre>
@@ -1908,41 +1123,6 @@ To make sure that the setting is persistent, add the following line to a file in
 <td>Disable Kernel Parameter for Accepting Source-Routed Packets on IPv4 Interfaces by Default</td>
 <td>To set the runtime status of the <code>net.ipv4.conf.default.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.accept_source_route=0</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.accept_source_route = 0</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93990-0</td>
-<td>Enable Kernel Paremeter to Log Martian Packets on all IPv4 Interfaces by Default</td>
-<td>To set the runtime status of the <code>net.ipv4.conf.default.log_martians</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.log_martians=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.log_martians = 1</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93989-2</td>
-<td>Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces by Default</td>
-<td>To set the runtime status of the <code>net.ipv4.conf.default.rp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.rp_filter=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.rp_filter = 1</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93988-4</td>
-<td>Configure Kernel Parameter for Accepting Secure Redirects By Default</td>
-<td>To set the runtime status of the <code>net.ipv4.conf.default.secure_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.secure_redirects=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.secure_redirects = 0</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93987-6</td>
-<td>Enable Kernel Parameter to Ignore ICMP Broadcast Echo Requests on IPv4 Interfaces</td>
-<td>To set the runtime status of the <code>net.ipv4.icmp_echo_ignore_broadcasts</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.icmp_echo_ignore_broadcasts=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.icmp_echo_ignore_broadcasts = 1</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93986-8</td>
-<td>Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces</td>
-<td>To set the runtime status of the <code>net.ipv4.icmp_ignore_bogus_error_responses</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.icmp_ignore_bogus_error_responses=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.icmp_ignore_bogus_error_responses = 1</pre>
         </td>
 </tr>
 <tr>
@@ -1972,128 +1152,6 @@ To make sure that the setting is persistent, add the following line to a file in
 <td>To set the runtime status of the <code>net.ipv4.ip_forward</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.ip_forward=0</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.ip_forward = 0</pre>
         </td>
-</tr>
-<tr>
-<td>CCE-93985-0</td>
-<td>Install nftables Package</td>
-<td>nftables provides a new in-kernel packet classification framework that is based on a
-network-specific Virtual Machine (VM) and a new nft userspace command line tool.
-nftables reuses the existing Netfilter subsystems such as the existing hook infrastructure,
-the connection tracking system, NAT, userspace queuing and logging subsystem.
-The <code>nftables</code> package can be installed with the following command:
-<pre>
-$ sudo zypper install nftables</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93984-3</td>
-<td>Uninstall nftables package</td>
-<td>nftables is a subsystem of the Linux kernel providing filtering and classification of network
-packets/datagrams/frames and is the successor to iptables.
-The <code>nftables</code> package can be removed with the following command:
-<pre>
-$ sudo zypper remove nftables</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93983-5</td>
-<td>Verify nftables Service is Enabled</td>
-<td>The nftables service allows for the loading of nftables rulesets during boot,
-or starting on the nftables service
-
-The <code>nftables</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable nftables.service</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93982-7</td>
-<td>Verify nftables Service is Disabled</td>
-<td>nftables is a subsystem of the Linux kernel providing filtering and classification of network
-packets/datagrams/frames and is the successor to iptables.
-The <code>nftables</code> service can be disabled with the following command:
-<pre>systemctl disable nftables</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93981-9</td>
-<td>Ensure nftables Default Deny Firewall Policy</td>
-<td>Base chain policy is the default verdict that will be applied to packets reaching the end of
-the chain. There are two policies: accept (Default) and drop. If the policy is set to accept,
-the firewall will accept any packet that is not configured to be denied and the packet will
-continue traversing the network stack.
-
-{% if 'ubuntu' in product %}
-Run the following commands and verify that base chains contain a policy of DROP.
-<pre>
-$ nft list ruleset | grep 'hook input'
-type filter hook input priority 0; policy drop;
-$ nft list ruleset | grep 'hook forward'
-type filter hook forward priority 0; policy drop;
-$ nft list ruleset | grep 'hook output'
-type filter hook output priority 0; policy drop;
-</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93980-1</td>
-<td>Ensure nftables Rules are Permanent</td>
-<td>nftables is a subsystem of the Linux kernel providing filtering and classification of
-network packets/datagrams/frames. The nftables service reads the
-<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_nftables_master_config_file" use="legacy"></xccdf-1.2:sub> file for a nftables file or files to
-include in the nftables ruleset. A nftables ruleset containing the input, forward, and output
-base chains allow network traffic to be filtered.</td>
-</tr>
-<tr>
-<td>CCE-93979-3</td>
-<td>Ensure Base Chains Exist for Nftables</td>
-<td>Tables in nftables hold chains. Each table only has one address family and only applies
-to packets of this family. Tables can have one of six families.
-Chains are containers for rules. They exist in two kinds, base chains and regular chains.
-A base chain is an entry point for packets from the networking stack, a regular chain may
-be used as jump target and is used for better rule organization.</td>
-</tr>
-<tr>
-<td>CCE-93978-5</td>
-<td>Set nftables Configuration for Loopback Traffic</td>
-<td>Configure the loopback interface to accept traffic.
-Configure all other interfaces to deny traffic to the loopback
-network.</td>
-</tr>
-<tr>
-<td>CCE-93977-7</td>
-<td>Ensure all outbound and established connections are configured for nftables</td>
-<td>Configure the nftables firewall rules for new outbound and established connections</td>
-</tr>
-<tr>
-<td>CCE-93976-9</td>
-<td>Ensure a Table Exists for Nftables</td>
-<td>Tables in nftables hold chains. Each table only has one address family and only applies
-to packets of this family. Tables can have one of six families.</td>
-</tr>
-<tr>
-<td>CCE-93975-1</td>
-<td>Disable DCCP Support</td>
-<td>The Datagram Congestion Control Protocol (DCCP) is a
-relatively new transport layer protocol, designed to support
-streaming media and telephony.
-
-To configure the system to prevent the <code>dccp</code>
-kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/dccp.conf</code>:
-<pre>install dccp /bin/false</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93974-4</td>
-<td>Disable SCTP Support</td>
-<td>The Stream Control Transmission Protocol (SCTP) is a
-transport layer protocol, designed to support the idea of
-message-oriented communication, with several streams of messages
-within one connection.
-
-To configure the system to prevent the <code>sctp</code>
-kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
-<pre>install sctp /bin/false</pre>
-       </td>
 </tr>
 <tr>
 <td>CCE-93704-5</td>
@@ -2174,15 +1232,6 @@ correct its ownership with the following command:
        </td>
 </tr>
 <tr>
-<td>CCE-93973-6</td>
-<td>Ensure No World-Writable Files Exist</td>
-<td>It is generally a good idea to remove global (other) write access to a file when it is
-discovered. However, check with documentation for specific applications before making changes.
-Also, monitor for recurring world-writable files, as these may be symptoms of a misconfigured
-application or user account. Finally, this applies to real files and not virtual files that
-are a part of pseudo file systems such as <code>sysfs</code> or <code>procfs</code>.</td>
-</tr>
-<tr>
 <td>CCE-93799-5</td>
 <td>Ensure All Files Are Owned by a Group</td>
 <td>If any file is not group-owned by a valid defined group, the cause of the lack of
@@ -2233,169 +1282,15 @@ card numbers.</td>
 <tr>
 <td>CCE-93687-2</td>
 <td>Verify Permissions and Ownership of Old Passwords File</td>
-<td> To properly set the owner of <code>/etc/security/opasswd</code>, run the command: <pre>$ sudo chown root /etc/security/opasswd </pre>
-To properly set the group owner of <code>/etc/security/opasswd</code>, run the command: <pre>$ sudo chgrp root /etc/security/opasswd</pre>
+<td> To properly set the owner of <code>/etc/security/opasswd</code>, run the command:
+<pre>$ sudo chown root /etc/security/opasswd </pre>
+
+
+To properly set the group owner of <code>/etc/security/opasswd</code>, run the command:
+<pre>$ sudo chgrp root /etc/security/opasswd</pre>
+
+
 To properly set the permissions of <code>/etc/security/opasswd</code>, run the command: <pre>$ sudo chmod 0600 /etc/security/opasswd</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93972-8</td>
-<td>Verify Group Who Owns Backup group File</td>
-<td> To properly set the group owner of <code>/etc/group-</code>, run the command: <pre>$ sudo chgrp root /etc/group-</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93971-0</td>
-<td>Verify Group Who Owns Backup gshadow File</td>
-<td> To properly set the group owner of <code>/etc/gshadow-</code>, run the command: <pre>$ sudo chgrp root /etc/gshadow-</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93970-2</td>
-<td>Verify Group Who Owns Backup passwd File</td>
-<td> To properly set the group owner of <code>/etc/passwd-</code>, run the command: <pre>$ sudo chgrp root /etc/passwd-</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93969-4</td>
-<td>Verify User Who Owns Backup shadow File</td>
-<td> To properly set the group owner of <code>/etc/shadow-</code>, run the command: <pre>$ sudo chgrp root /etc/shadow-</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93968-6</td>
-<td>Verify Group Who Owns group File</td>
-<td> To properly set the group owner of <code>/etc/group</code>, run the command: <pre>$ sudo chgrp root /etc/group</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93967-8</td>
-<td>Verify Group Who Owns gshadow File</td>
-<td> To properly set the group owner of <code>/etc/gshadow</code>, run the command: <pre>$ sudo chgrp root /etc/gshadow</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93966-0</td>
-<td>Verify Group Who Owns passwd File</td>
-<td> To properly set the group owner of <code>/etc/passwd</code>, run the command: <pre>$ sudo chgrp root /etc/passwd</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93965-2</td>
-<td>Verify Group Who Owns shadow File</td>
-<td> To properly set the group owner of <code>/etc/shadow</code>, run the command: <pre>$ sudo chgrp root /etc/shadow</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93964-5</td>
-<td>Verify User Who Owns Backup group File</td>
-<td> To properly set the owner of <code>/etc/group-</code>, run the command: <pre>$ sudo chown root /etc/group- </pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93963-7</td>
-<td>Verify User Who Owns Backup gshadow File</td>
-<td> To properly set the owner of <code>/etc/gshadow-</code>, run the command: <pre>$ sudo chown root /etc/gshadow- </pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93962-9</td>
-<td>Verify User Who Owns Backup passwd File</td>
-<td> To properly set the owner of <code>/etc/passwd-</code>, run the command: <pre>$ sudo chown root /etc/passwd- </pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93961-1</td>
-<td>Verify Group Who Owns Backup shadow File</td>
-<td> To properly set the owner of <code>/etc/shadow-</code>, run the command: <pre>$ sudo chown root /etc/shadow- </pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93960-3</td>
-<td>Verify User Who Owns group File</td>
-<td> To properly set the owner of <code>/etc/group</code>, run the command: <pre>$ sudo chown root /etc/group </pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93959-5</td>
-<td>Verify User Who Owns gshadow File</td>
-<td> To properly set the owner of <code>/etc/gshadow</code>, run the command: <pre>$ sudo chown root /etc/gshadow </pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93958-7</td>
-<td>Verify User Who Owns passwd File</td>
-<td> To properly set the owner of <code>/etc/passwd</code>, run the command: <pre>$ sudo chown root /etc/passwd </pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93957-9</td>
-<td>Verify User Who Owns shadow File</td>
-<td> To properly set the owner of <code>/etc/shadow</code>, run the command: <pre>$ sudo chown root /etc/shadow </pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93956-1</td>
-<td>Verify Permissions on Backup group File</td>
-<td>
-To properly set the permissions of <code>/etc/group-</code>, run the command:
-<pre>$ sudo chmod 0644 /etc/group-</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93955-3</td>
-<td>Verify Permissions on Backup gshadow File</td>
-<td>
-To properly set the permissions of <code>/etc/gshadow-</code>, run the command:
-<pre>$ sudo chmod 0000 /etc/gshadow-</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93954-6</td>
-<td>Verify Permissions on Backup passwd File</td>
-<td>
-To properly set the permissions of <code>/etc/passwd-</code>, run the command:
-<pre>$ sudo chmod 0644 /etc/passwd-</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93953-8</td>
-<td>Verify Permissions on Backup shadow File</td>
-<td>
-To properly set the permissions of <code>/etc/shadow-</code>, run the command:
-<pre>$ sudo chmod 0000 /etc/shadow-</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93952-0</td>
-<td>Verify Permissions on group File</td>
-<td>
-To properly set the permissions of <code>/etc/group</code>, run the command:
-<pre>$ sudo chmod 0644 /etc/group</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93951-2</td>
-<td>Verify Permissions on gshadow File</td>
-<td>
-To properly set the permissions of <code>/etc/gshadow</code>, run the command:
-<pre>$ sudo chmod 0000 /etc/gshadow</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93950-4</td>
-<td>Verify Permissions on passwd File</td>
-<td>
-To properly set the permissions of <code>/etc/passwd</code>, run the command:
-<pre>$ sudo chmod 0644 /etc/passwd</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93949-6</td>
-<td>Verify Permissions on shadow File</td>
-<td>
-To properly set the permissions of <code>/etc/shadow</code>, run the command:
-<pre>$ sudo chmod 0000 /etc/shadow</pre>
         </td>
 </tr>
 <tr>
@@ -2610,52 +1505,6 @@ The <code>autofs</code> service can be disabled with the following command:
        </td>
 </tr>
 <tr>
-<td>CCE-93948-8</td>
-<td>Disable Mounting of cramfs</td>
-<td>
-To configure the system to prevent the <code>cramfs</code>
-kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cramfs.conf</code>:
-<pre>install cramfs /bin/false</pre>
-
-This effectively prevents usage of this uncommon filesystem.
-
-The <code>cramfs</code> filesystem type is a compressed read-only
-Linux filesystem embedded in small footprint systems. A
-<code>cramfs</code> image can be used without having to first
-decompress the image.</td>
-</tr>
-<tr>
-<td>CCE-93947-0</td>
-<td>Disable Mounting of squashfs</td>
-<td>
-To configure the system to prevent the <code>squashfs</code>
-kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/squashfs.conf</code>:
-<pre>install squashfs /bin/false</pre>
-
-This effectively prevents usage of this uncommon filesystem.
-
-The <code>squashfs</code> filesystem type is a compressed read-only Linux
-filesystem embedded in small footprint systems (similar to
-<code>cramfs</code>). A <code>squashfs</code> image can be used without having
-to first decompress the image.</td>
-</tr>
-<tr>
-<td>CCE-93946-2</td>
-<td>Disable Mounting of udf</td>
-<td>
-To configure the system to prevent the <code>udf</code>
-kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/udf.conf</code>:
-<pre>install udf /bin/false</pre>
-
-This effectively prevents usage of this uncommon filesystem.
-
-The <code>udf</code> filesystem type is the universal disk format
-used to implement the ISO/IEC 13346 and ECMA-167 specifications.
-This is an open vendor filesystem type for data storage on a broad
-range of media. This filesystem type is neccessary to support
-writing DVDs and newer optical disc formats.</td>
-</tr>
-<tr>
 <td>CCE-93784-7</td>
 <td>Disable Modprobe Loading of USB Storage Driver</td>
 <td>To prevent USB storage devices from being used, configure the kernel module loading system
@@ -2670,64 +1519,6 @@ module, but will not prevent an administrator (or another program) from using th
 <code>insmod</code> program to load the module manually.</td>
 </tr>
 <tr>
-<td>CCE-93945-4</td>
-<td>Disable Mounting of vFAT filesystems</td>
-<td>
-To configure the system to prevent the <code>vfat</code>
-kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/vfat.conf</code>:
-<pre>install vfat /bin/false</pre>
-
-This effectively prevents usage of this uncommon filesystem.
-
-The <code>vFAT</code> filesystem format is primarily used on older
-windows systems and portable USB drives or flash modules. It comes
-in three types <code>FAT12</code>, <code>FAT16</code>, and <code>FAT32</code>
-all of which are supported by the <code>vfat</code> kernel module.</td>
-</tr>
-<tr>
-<td>CCE-93944-7</td>
-<td>Add nodev Option to /dev/shm</td>
-<td>The <code>nodev</code> mount option can be used to prevent creation of device
-files in <code>/dev/shm</code>. Legitimate character and block devices should
-not exist within temporary directories like <code>/dev/shm</code>.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
-<code>/dev/shm</code>.</td>
-</tr>
-<tr>
-<td>CCE-93943-9</td>
-<td>Add noexec Option to /dev/shm</td>
-<td>The <code>noexec</code> mount option can be used to prevent binaries
-from being executed out of <code>/dev/shm</code>.
-It can be dangerous to allow the execution of binaries
-from world-writable temporary storage directories such as <code>/dev/shm</code>.
-Add the <code>noexec</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
-<code>/dev/shm</code>.</td>
-</tr>
-<tr>
-<td>CCE-93942-1</td>
-<td>Add nosuid Option to /dev/shm</td>
-<td>The <code>nosuid</code> mount option can be used to prevent execution
-of setuid programs in <code>/dev/shm</code>.  The SUID and SGID permissions should not
-be required in these world-writable directories.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
-<code>/dev/shm</code>.</td>
-</tr>
-<tr>
-<td>CCE-93941-3</td>
-<td>Add nodev Option to /home</td>
-<td>The <code>nodev</code> mount option can be used to prevent device files from
-being created in <code>/home</code>.
-Legitimate character and block devices should exist only in
-the <code>/dev</code> directory on the root partition or within chroot
-jails built for system services.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
-<code>/home</code>.</td>
-</tr>
-<tr>
 <td>CCE-93791-2</td>
 <td>Add nosuid Option to /home</td>
 <td>The <code>nosuid</code> mount option can be used to prevent
@@ -2736,31 +1527,6 @@ should not be required in these user data directories.
 Add the <code>nosuid</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
 <code>/home</code>.</td>
-</tr>
-<tr>
-<td>CCE-93940-5</td>
-<td>Add nodev Option to Removable Media Partitions</td>
-<td>The <code>nodev</code> mount option prevents files from being
-interpreted as character or block devices.
-Legitimate character and block devices should exist only in
-the <code>/dev</code> directory on the root partition or within chroot
-jails built for system services.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
-
-    any removable media partitions.</td>
-</tr>
-<tr>
-<td>CCE-93939-7</td>
-<td>Add noexec Option to Removable Media Partitions</td>
-<td>The <code>noexec</code> mount option prevents the direct execution of binaries
-on the mounted filesystem. Preventing the direct execution of binaries from
-removable media (such as a USB key) provides a defense against malicious
-software that may be present on such untrusted media.
-Add the <code>noexec</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
-
-    any removable media partitions.</td>
 </tr>
 <tr>
 <td>CCE-93792-0</td>
@@ -2841,37 +1607,6 @@ To make sure that the setting is persistent, add the following line to a file in
        </td>
 </tr>
 <tr>
-<td>CCE-93938-9</td>
-<td>Disable core dump backtraces</td>
-<td>The <code>ProcessSizeMax</code> option in <code>[Coredump]</code> section
-of <code>/etc/systemd/coredump.conf</code>
-specifies the maximum size in bytes of a core which will be processed.
-Core dumps exceeding this size may be stored, but the backtrace will not
-be generated.</td>
-</tr>
-<tr>
-<td>CCE-93937-1</td>
-<td>Disable storing core dump</td>
-<td>The <code>Storage</code> option in <code>[Coredump]</code> sectionof <code>/etc/systemd/coredump.conf</code>
-can be set to <code>none</code> to disable storing core dumps permanently.</td>
-</tr>
-<tr>
-<td>CCE-93936-3</td>
-<td>Disable Core Dumps for All Users</td>
-<td>To disable core dumps for all users, add the following line to
-<code>/etc/security/limits.conf</code>, or to a file within the
-<code>/etc/security/limits.d/</code> directory:
-<pre>*     hard   core    0</pre>
-        </td>
-</tr>
-<tr>
-<td>CCE-93935-5</td>
-<td>Disable Core Dumps for SUID programs</td>
-<td>To set the runtime status of the <code>fs.suid_dumpable</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.suid_dumpable=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.suid_dumpable = 0</pre>
-        </td>
-</tr>
-<tr>
 <td>CCE-93627-8</td>
 <td>Restrict Exposed Kernel Pointer Addresses Access</td>
 <td>To set the runtime status of the <code>kernel.kptr_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.kptr_restrict=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sysctl_kernel_kptr_restrict_value" use="legacy"></xccdf-1.2:sub>
@@ -2886,30 +1621,6 @@ To make sure that the setting is persistent, add the following line to a file in
 <td>To set the runtime status of the <code>kernel.randomize_va_space</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.randomize_va_space=2</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.randomize_va_space = 2</pre>
         </td>
-</tr>
-<tr>
-<td>CCE-93934-8</td>
-<td>Enable NX or XD Support in the BIOS</td>
-<td>Reboot the system and enter the BIOS or Setup configuration menu.
-Navigate the BIOS configuration menu and make sure that the option is enabled. The setting may be located
-under a Security section. Look for Execute Disable (XD) on Intel-based systems and No Execute (NX)
-on AMD-based systems.</td>
-</tr>
-<tr>
-<td>CCE-93933-0</td>
-<td>Install PAE Kernel on Supported 32-bit x86 Systems</td>
-<td>Systems that are using the 64-bit x86 kernel package
-do not need to install the kernel-PAE package because the 64-bit
-x86 kernel already includes this support. However, if the system is
-32-bit and also supports the PAE and NX features as
-determined in the previous section, the kernel-PAE package should
-be installed to enable XD or NX support.
-The <code>kernel-PAE</code> package can be installed with the following command:
-<pre>
-$ sudo zypper install kernel-PAE</pre>
-The installation process should also have configured the
-bootloader to load the new kernel at boot. Verify this after reboot
-and modify <code>/etc/default/grub</code> if necessary.</td>
 </tr>
 <tr>
 <td>CCE-94091-6</td>
@@ -2972,28 +1683,6 @@ users must be mapped to the <code>user_u</code> role or the appropriate domain
       </td>
 </tr>
 <tr>
-<td>CCE-93932-2</td>
-<td>Uninstall avahi-autoipd Server Package</td>
-<td>If the system does not need to have an Avahi server which implements 
-the DNS Service Discovery and Multicast DNS protocols,
-the avahi-autoipd and avahi packages can be uninstalled.</td>
-</tr>
-<tr>
-<td>CCE-93931-4</td>
-<td>Uninstall avahi Server Package</td>
-<td>If the system does not need to have an Avahi server which implements
-the DNS Service Discovery and Multicast DNS protocols,
-the avahi-autoipd and avahi packages can be uninstalled.</td>
-</tr>
-<tr>
-<td>CCE-93930-6</td>
-<td>Disable Avahi Server Software</td>
-<td>
-The <code>avahi-daemon</code> service can be disabled with the following command:
-<pre>$ sudo systemctl mask --now avahi-daemon.service</pre>
-       </td>
-</tr>
-<tr>
 <td>CCE-93773-0</td>
 <td>Disable KDump Kernel Crash Analyzer (kdump)</td>
 <td>The <code>kdump</code> service provides a kernel crash dump analyzer. It uses the <code>kexec</code>
@@ -3003,155 +1692,6 @@ crash, which can load information from the crashed kernel for analysis.
 The <code>kdump</code> service can be disabled with the following command:
 <pre>$ sudo systemctl mask --now kdump.service</pre>
       </td>
-</tr>
-<tr>
-<td>CCE-93929-8</td>
-<td>Ensure that /etc/at.deny does not exist</td>
-<td>The file <code>/etc/at.deny</code> should not exist.
-Use <code>/etc/at.allow</code> instead.</td>
-</tr>
-<tr>
-<td>CCE-93928-0</td>
-<td>Verify Group Who Owns /etc/at.allow file</td>
-<td>If <code>/etc/at.allow</code> exists, it must be group-owned by <code>root</code>.
-
-To properly set the group owner of <code>/etc/at.allow</code>, run the command:
-<pre>$ sudo chgrp root /etc/at.allow</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93927-2</td>
-<td>Verify User Who Owns /etc/at.allow file</td>
-<td>If <code>/etc/at.allow</code> exists, it must be owned by <code>root</code>.
-
-To properly set the owner of <code>/etc/at.allow</code>, run the command:
-<pre>$ sudo chown root /etc/at.allow </pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93926-4</td>
-<td>Verify Permissions on /etc/at.allow file</td>
-<td>If <code>/etc/at.allow</code> exists, it must have permissions <code>0640</code>
-or more restrictive.
-
-
-To properly set the permissions of <code>/etc/at.allow</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/at.allow</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93925-6</td>
-<td>Uninstall DHCP Client Package</td>
-<td>If the system does not need to act as a DHCP client,
-the dhcp-client package can be uninstalled.
-The <code>dhcp-client</code> package can be removed with the following command:
-<pre>
-$ sudo zypper remove dhcp-client</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93924-9</td>
-<td>Uninstall DHCP Server Package</td>
-<td>If the system does not need to act as a DHCP server,
-the dhcp package can be uninstalled.
-
-The <code>dhcp</code> package can be removed with the following command:
-<pre>
-$ sudo zypper remove dhcp</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93923-1</td>
-<td>Disable DHCP Service</td>
-<td>The <code>dhcpd</code> service should be disabled on
-any system that does not need to act as a DHCP server.
-
-
-The <code>dhcpd</code> service can be disabled with the following command:
-<pre>$ sudo systemctl mask --now dhcpd.service</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93922-3</td>
-<td>Uninstall bind Package</td>
-<td>The <code>named</code> service is provided by the <code>bind</code> package.
-The <code>bind</code> package can be removed with the following command:
-<pre>
-$ sudo zypper remove bind</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93921-5</td>
-<td>Disable named Service</td>
-<td>
-The <code>named</code> service can be disabled with the following command:
-<pre>$ sudo systemctl mask --now named.service</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93920-7</td>
-<td>Uninstall vsftpd Package</td>
-<td>The <code>vsftpd</code> package can be removed with the following command: <pre> $ sudo zypper remove vsftpd</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93919-9</td>
-<td>Disable vsftpd Service</td>
-<td>
-The <code>vsftpd</code> service can be disabled with the following command:
-<pre>$ sudo systemctl mask --now vsftpd.service</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93918-1</td>
-<td>Uninstall httpd Package</td>
-<td>The <code>httpd</code> package can be removed with the following command:
-<pre>
-$ sudo zypper remove httpd</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93917-3</td>
-<td>Disable httpd Service</td>
-<td>
-The <code>httpd</code> service can be disabled with the following command:
-<pre>$ sudo systemctl mask --now httpd.service</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93916-5</td>
-<td>Uninstall dovecot Package</td>
-<td>
-The <code>dovecot</code> package can be removed with the following command:
-<pre>
-$ sudo zypper remove dovecot</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93915-7</td>
-<td>Disable Dovecot Service</td>
-<td>
-The <code>dovecot</code> service can be disabled with the following command:
-<pre>$ sudo systemctl mask --now dovecot.service</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93914-0</td>
-<td>Ensure LDAP client is not installed</td>
-<td>The Lightweight Directory Access Protocol (LDAP) is a service that provides
-a method for looking up information from a central database.
-The <code>openldap-clients</code> package can be removed with the following command:
-<pre>
-$ sudo zypper remove openldap-clients</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93913-2</td>
-<td>Uninstall openldap-servers Package</td>
-<td>The openldap-servers package is not installed by default on a SUSE Linux Enterprise Micro 5
-system. It is needed only by the OpenLDAP server, not by the
-clients which use LDAP for authentication. If the system is not
-intended for use as an LDAP Server it should be removed.</td>
 </tr>
 <tr>
 <td>CCE-93678-1</td>
@@ -3166,34 +1706,6 @@ $ sudo newaliases</pre>
        </td>
 </tr>
 <tr>
-<td>CCE-93912-4</td>
-<td>Disable Postfix Network Listening</td>
-<td>Edit the file <code>/etc/postfix/main.cf</code> to ensure that only the following
-<code>inet_interfaces</code> line appears:
-<pre>inet_interfaces = <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_postfix_inet_interfaces" use="legacy"></xccdf-1.2:sub>
-        </pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93911-6</td>
-<td>Uninstall nfs-utils Package</td>
-<td>The <code>nfs-utils</code> package can be removed with the following command:
-<pre>
-$ sudo zypper remove nfs-utils</pre>
-      </td>
-</tr>
-<tr>
-<td>CCE-93910-8</td>
-<td>Disable Network File System (nfs)</td>
-<td>The Network File System (NFS) service allows remote hosts to mount
-and interact with shared filesystems on the local system. If the local system
-is not designated as a NFS server then this service should be disabled.
-
-The <code>nfs-server</code> service can be disabled with the following command:
-<pre>$ sudo systemctl mask --now nfs-server.service</pre>
-        </td>
-</tr>
-<tr>
 <td>CCE-93794-6</td>
 <td>Mount Remote Filesystems with noexec</td>
 <td>Add the <code>noexec</code> option to the fourth column of <code>/etc/fstab</code> for the line which controls mounting of
@@ -3206,36 +1718,11 @@ any NFS mounts.</td>
 any NFS mounts.</td>
 </tr>
 <tr>
-<td>CCE-93909-0</td>
-<td>The Chrony package is installed</td>
-<td>System time should be synchronized between all systems in an environment. This is
-typically done by establishing an authoritative time server or set of servers and having all
-systems synchronize their clocks to them.
-The <code>chrony</code> package can be installed with the following command:
-<pre>
-$ sudo zypper install chrony</pre>
-      </td>
-</tr>
-<tr>
 <td>CCE-93803-5</td>
 <td>A remote time server for Chrony is configured</td>
 <td>
 <code>Chrony</code> is a daemon which implements the Network Time Protocol (NTP). It is designed
 to synchronize system clocks across a variety of systems and use a source that is highly
-accurate. More information on <code>chrony</code> can be found at
-
-    <a href="https://chrony-project.org/">https://chrony-project.org/</a>.
-<code>Chrony</code> can be configured to be a client and/or a server.
-Add or edit server or pool lines to <code>/etc/chrony.conf</code> as appropriate:
-<pre>server &lt;remote-server&gt;</pre>
-Multiple servers may be configured.</td>
-</tr>
-<tr>
-<td>CCE-93908-2</td>
-<td>Chrony Configure Pool and Server</td>
-<td>
-<code>Chrony</code> is a daemon which implements the Network Time Protocol (NTP). It is designed to
-synchronize system clocks across a variety of systems and use a source that is highly
 accurate. More information on <code>chrony</code> can be found at
 
     <a href="https://chrony-project.org/">https://chrony-project.org/</a>.
@@ -3258,70 +1745,6 @@ to <code>server</code> directives. If using chrony, any <code>pool</code> direct
 should be configured too.</td>
 </tr>
 <tr>
-<td>CCE-93907-4</td>
-<td>Ensure that chronyd is running under chrony user account</td>
-<td>chrony is a daemon which implements the Network Time Protocol (NTP). It is designed to
-synchronize system clocks across a variety of systems and use a source that is highly
-accurate. More information on chrony can be found at
-
-    <a href="https://chrony-project.org/">https://chrony-project.org/</a>.
-Chrony can be configured to be a client and/or a server.
-To ensure that chronyd is running under chrony user account,
-add or edit the
-<code>OPTIONS</code> variable in <code>/etc/sysconfig/chronyd</code> to include <code>-u chrony</code>:
-<pre>OPTIONS="-u chrony"</pre>
-
-This recommendation only applies if chrony is in use on the system.</td>
-</tr>
-<tr>
-<td>CCE-93906-6</td>
-<td>Uninstall tcpd Package</td>
-<td>The <code>tcpd</code> package can be removed with the following command:
-<pre>
-$ sudo zypper remove tcpd</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93905-8</td>
-<td>Uninstall xinetd Package</td>
-<td>The <code>xinetd</code> package can be removed with the following command:
-<pre>
-$ sudo zypper remove xinetd</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93904-1</td>
-<td>Disable xinetd Service</td>
-<td>
-The <code>xinetd</code> service can be disabled with the following command:
-<pre>$ sudo systemctl mask --now xinetd.service</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93903-3</td>
-<td>Remove NIS Client</td>
-<td>The Network Information Service (NIS), formerly known as Yellow Pages,
-is a client-server directory service protocol used to distribute system configuration
-files. The NIS client (<code>ypbind</code>) was used to bind a system to an NIS server
-and receive the distributed configuration files.</td>
-</tr>
-<tr>
-<td>CCE-93902-5</td>
-<td>Uninstall ypserv Package</td>
-<td>The <code>ypserv</code> package can be removed with the following command:
-<pre>
-$ sudo zypper remove ypserv</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93901-7</td>
-<td>Uninstall rsh Package</td>
-<td>
-The <code>rsh</code> package contains the client commands
-
-for the rsh services</td>
-</tr>
-<tr>
 <td>CCE-93741-7</td>
 <td>Remove Host-Based Authentication Files</td>
 <td>The <code>shosts.equiv</code> file lists remote hosts and users that are trusted by the local
@@ -3340,91 +1763,11 @@ to delete them from any location:
        </td>
 </tr>
 <tr>
-<td>CCE-93900-9</td>
-<td>Uninstall talk Package</td>
-<td>The <code>talk</code> package contains the client program for the
-Internet talk protocol, which allows the user to chat with other users on
-different systems. Talk is a communication program which copies lines from one
-terminal to the terminal of another user.
-The <code>talk</code> package can be removed with the following command:
-<pre>
-$ sudo zypper remove talk</pre>
-       </td>
-</tr>
-<tr>
 <td>CCE-93899-3</td>
 <td>Uninstall telnet-server Package</td>
 <td>The <code>telnet-server</code> package can be removed with the following command:
 <pre>
 $ sudo zypper remove telnet-server</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93898-5</td>
-<td>Remove telnet Clients</td>
-<td>The telnet client allows users to start connections to other systems via
-the telnet protocol.</td>
-</tr>
-<tr>
-<td>CCE-93897-7</td>
-<td>Uninstall CUPS Package</td>
-<td>The <code>cups</code> package can be removed with the following command:
-<pre>
-$ sudo zypper remove cups</pre>
-      </td>
-</tr>
-<tr>
-<td>CCE-93896-9</td>
-<td>Disable the CUPS Service</td>
-<td>
-The <code>cups</code> service can be disabled with the following command:
-<pre>$ sudo systemctl mask --now cups.service</pre>
-      </td>
-</tr>
-<tr>
-<td>CCE-93895-1</td>
-<td>Uninstall squid Package</td>
-<td>The <code>squid</code> package can be removed with the following command: <pre> $ sudo zypper remove squid</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93894-4</td>
-<td>Disable Squid</td>
-<td>
-The <code>squid</code> service can be disabled with the following command:
-<pre>$ sudo systemctl mask --now squid.service</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93893-6</td>
-<td>Uninstall Samba Package</td>
-<td>The <code>samba</code> package can be removed with the following command: <pre> $ sudo zypper remove samba</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93892-8</td>
-<td>Disable Samba</td>
-<td>
-The <code>smb</code> service can be disabled with the following command:
-<pre>$ sudo systemctl mask --now smb.service</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93891-0</td>
-<td>Uninstall net-snmp Package</td>
-<td>
-The <code>net-snmp</code> package provides the snmpd service.
-The <code>net-snmp</code> package can be removed with the following command:
-<pre>
-$ sudo zypper remove net-snmp</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93890-2</td>
-<td>Disable snmpd Service</td>
-<td>
-The <code>snmpd</code> service can be disabled with the following command:
-<pre>$ sudo systemctl mask --now snmpd.service</pre>
        </td>
 </tr>
 <tr>
@@ -3443,30 +1786,6 @@ $ sudo zypper install openssh-server</pre>
 
 The <code>sshd</code> service can be enabled with the following command:
 <pre>$ sudo systemctl enable sshd.service</pre>
-      </td>
-</tr>
-<tr>
-<td>CCE-93889-4</td>
-<td>Verify Group Who Owns SSH Server config file</td>
-<td>
-To properly set the group owner of <code>/etc/ssh/sshd_config</code>, run the command:
-<pre>$ sudo chgrp root /etc/ssh/sshd_config</pre>
-      </td>
-</tr>
-<tr>
-<td>CCE-93888-6</td>
-<td>Verify Owner on SSH Server config file</td>
-<td>
-To properly set the owner of <code>/etc/ssh/sshd_config</code>, run the command:
-<pre>$ sudo chown root /etc/ssh/sshd_config </pre>
-      </td>
-</tr>
-<tr>
-<td>CCE-93887-8</td>
-<td>Verify Permissions on SSH Server config file</td>
-<td>
-To properly set the permissions of <code>/etc/ssh/sshd_config</code>, run the command:
-<pre>$ sudo chmod 0600 /etc/ssh/sshd_config</pre>
       </td>
 </tr>
 <tr>
@@ -3530,26 +1849,6 @@ preempt any SSH setting made in <code>/etc/ssh/sshd_config</code>. Keep in mind 
 some processes may stop SSH from correctly detecting that the user is idle.</td>
 </tr>
 <tr>
-<td>CCE-93886-0</td>
-<td>Disable Host-Based Authentication</td>
-<td>SSH's cryptographic host-based authentication is
-more secure than <code>.rhosts</code> authentication. However, it is
-not recommended that hosts unilaterally trust one another, even
-within an organization.
-<br>
-The default SSH configuration disables host-based authentication. The appropriate
-configuration is used if no value is set for <code>HostbasedAuthentication</code>.
-<br>
-To explicitly disable host-based authentication, add or correct the
-following line in
-
-
-<code>/etc/ssh/sshd_config</code>:
-
-<pre>HostbasedAuthentication no</pre>
-       </td>
-</tr>
-<tr>
 <td>CCE-93650-0</td>
 <td>Disable SSH Access via Empty Passwords</td>
 <td>Disallow SSH login with empty passwords.
@@ -3568,24 +1867,6 @@ Any accounts with empty passwords should be disabled immediately, and PAM config
 should prevent users from being able to assign themselves empty passwords.</td>
 </tr>
 <tr>
-<td>CCE-93885-2</td>
-<td>Disable SSH Support for .rhosts Files</td>
-<td>SSH can emulate the behavior of the obsolete rsh
-command in allowing users to enable insecure access to their
-accounts via <code>.rhosts</code> files.
-<br>
-The default SSH configuration disables support for <code>.rhosts</code>. The appropriate
-configuration is used if no value is set for <code>IgnoreRhosts</code>.
-<br>
-To explicitly disable support for .rhosts files, add or correct the following line in
-
-
-<code>/etc/ssh/sshd_config</code>:
-
-<pre>IgnoreRhosts yes</pre>
-       </td>
-</tr>
-<tr>
 <td>CCE-93644-3</td>
 <td>Disable SSH Root Login</td>
 <td>The root user should never be allowed to login to a
@@ -3596,18 +1877,6 @@ To disable root login via SSH, add or correct the following line in
 <code>/etc/ssh/sshd_config</code>:
 
 <pre>PermitRootLogin no</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93884-5</td>
-<td>Disable SSH TCP Forwarding</td>
-<td>The <code>AllowTcpForwarding</code> parameter specifies whether TCP forwarding is permitted.
-To disable TCP forwarding, add or correct the following line in
-
-
-<code>/etc/ssh/sshd_config</code>:
-
-<pre>AllowTcpForwarding no</pre>
        </td>
 </tr>
 <tr>
@@ -3661,22 +1930,6 @@ To explicitly disable Environment options, add or correct the following
        </td>
 </tr>
 <tr>
-<td>CCE-93883-7</td>
-<td>Enable PAM</td>
-<td>UsePAM Enables the Pluggable Authentication Module interface. If set to “yes” this will
-enable PAM authentication using ChallengeResponseAuthentication and
-PasswordAuthentication in addition to PAM account and session module processing for all
-authentication types.
-
-To enable PAM authentication, add or correct the following line in
-
-
-<code>/etc/ssh/sshd_config</code>:
-
-<pre>UsePAM yes</pre>
-       </td>
-</tr>
-<tr>
 <td>CCE-93647-6</td>
 <td>Enable Use of Strict Mode Checking</td>
 <td>SSHs <code>StrictModes</code> option checks file and ownership permissions in
@@ -3708,34 +1961,6 @@ Another section contains information on how to create an
 appropriate system-wide warning banner.</td>
 </tr>
 <tr>
-<td>CCE-93882-9</td>
-<td>Limit Users' SSH Access</td>
-<td>By default, the SSH configuration allows any user with an account
-to access the system. There are several options available to limit
-which users and group can access the system via SSH. It is
-recommended that at least one of the following options be leveraged:
-- AllowUsers variable gives the system administrator the option of
-  allowing specific users to ssh into the system. The list consists of
-  space separated user names. Numeric user IDs are not recognized with
-  this variable. If a system administrator wants to restrict user
-  access further by specifically allowing a user's access only from a
-  particular host, the entry can be specified in the form of user@host.
-- AllowGroups variable gives the system administrator the option of
-  allowing specific groups of users to ssh into the system. The list
-  consists of space separated group names. Numeric group IDs are not
-  recognized with this variable.
-- DenyUsers variable gives the system administrator the option of
-  denying specific users to ssh into the system. The list consists of
-  space separated user names. Numeric user IDs are not recognized with
-  this variable. If a system administrator wants to restrict user
-  access further by specifically denying a user's access from a
-  particular host, the entry can be specified in the form of user@host.
-- DenyGroups variable gives the system administrator the option of
-  denying specific groups of users to ssh into the system. The list
-  consists of space separated group names. Numeric group IDs are not
-  recognized with this variable.</td>
-</tr>
-<tr>
 <td>CCE-93645-0</td>
 <td>Enable SSH Print Last Log</td>
 <td>Ensure that SSH will display the date and time of the last successful account logon.
@@ -3752,14 +1977,6 @@ To explicitly enable LastLog in SSH, add or correct the following line in
        </td>
 </tr>
 <tr>
-<td>CCE-93881-1</td>
-<td>Ensure SSH LoginGraceTime is configured</td>
-<td>The <code>LoginGraceTime</code> parameter to the SSH server specifies the time allowed for successful authentication to
-the SSH server. The longer the Grace period is the more open unauthenticated connections
-can exist. Like other session controls in this session the Grace Period should be limited to
-appropriate limits to ensure the service is available for needed access.</td>
-</tr>
-<tr>
 <td>CCE-93643-5</td>
 <td>Set SSH Daemon LogLevel to VERBOSE</td>
 <td>The <code>VERBOSE</code> parameter configures the SSH daemon to record login and logout activity.
@@ -3770,36 +1987,6 @@ SSH, add or correct the following line in
 <code>/etc/ssh/sshd_config</code>:
 
 <pre>LogLevel VERBOSE</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93880-3</td>
-<td>Set SSH authentication attempt limit</td>
-<td>The <code>MaxAuthTries</code> parameter specifies the maximum number of authentication attempts
-permitted per connection. Once the number of failures reaches half this value, additional failures are logged.
-to set MaxAUthTries edit <code>/etc/ssh/sshd_config</code> as follows:
-<pre>MaxAuthTries <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sshd_max_auth_tries_value" use="legacy"></xccdf-1.2:sub>
-        </pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93879-5</td>
-<td>Set SSH MaxSessions limit</td>
-<td>The <code>MaxSessions</code> parameter specifies the maximum number of open sessions permitted
-from a given connection. To set MaxSessions edit
-<code>/etc/ssh/sshd_config</code> as follows: <pre>MaxSessions <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_sshd_max_sessions" use="legacy"></xccdf-1.2:sub>
-        </pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93878-7</td>
-<td>Ensure SSH MaxStartups is configured</td>
-<td>The MaxStartups parameter specifies the maximum number of concurrent unauthenticated
-connections to the SSH daemon. Additional connections will be dropped until authentication
-succeeds or the LoginGraceTime expires for a connection. To configure MaxStartups, you should
-add or edit the following line in the <code>/etc/ssh/sshd_config</code> file:
-<pre>MaxStartups <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_sshd_set_maxstartups" use="legacy"></xccdf-1.2:sub>
-        </pre>
        </td>
 </tr>
 <tr>
@@ -3858,36 +2045,6 @@ This rule ensures that there are configured MACs mentioned
 above (or their subset), keeping the given order of algorithms.</td>
 </tr>
 <tr>
-<td>CCE-93877-9</td>
-<td>Use Only Strong Ciphers</td>
-<td>Limit the ciphers to strong algorithms.
-Counter (CTR) mode is also preferred over cipher-block chaining (CBC) mode.
-The following line in <code>/etc/ssh/sshd_config</code>
-demonstrates use of those ciphers:
-<pre>Ciphers chacha20-poly1305@openssh.com,aes256-gcm@openssh.com,aes128-gcm@openssh.com,aes256-ctr,aes192-ctr,aes128-ctr</pre>
-The man page <code>sshd_config(5)</code> contains a list of supported ciphers.</td>
-</tr>
-<tr>
-<td>CCE-93876-1</td>
-<td>Use Only Strong Key Exchange algorithms</td>
-<td>Limit the Key Exchange to strong algorithms.
-The following line in <code>/etc/ssh/sshd_config</code> demonstrates use
-of those:
-<pre>KexAlgorithms <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sshd_strong_kex" use="legacy"></xccdf-1.2:sub>
-        </pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93875-3</td>
-<td>Use Only Strong MACs</td>
-<td>Limit the MACs to strong hash algorithms.
-The following line in <code>/etc/ssh/sshd_config</code> demonstrates use
-of those MACs:
-<pre>MACs <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sshd_strong_macs" use="legacy"></xccdf-1.2:sub>
-        </pre>
-       </td>
-</tr>
-<tr>
 <td>CCE-93718-5</td>
 <td>Configure SSSD's Memory Cache to Expire</td>
 <td>SSSD's memory cache should be configured to set to expire records after
@@ -3916,39 +2073,9 @@ offline_credentials_expiration = 1
       </td>
 </tr>
 <tr>
-<td>CCE-93874-6</td>
-<td>Remove the X Windows Package Group</td>
-<td>By removing the xorg-x11-server-common package, the system no longer has X Windows
-installed. If X Windows is not installed then the system cannot boot into graphical user mode.
-This prevents the system from being accidentally or maliciously booted into a <code>graphical.target</code>
-mode. To do so, run the following command:
-<pre>$ sudo zypper groupremove "X Window System"</pre>
-        <pre>$ sudo zypper remove xorg-x11-server-common</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93873-8</td>
-<td>Disable graphical user interface</td>
-<td>By removing the following packages,  the system no longer has X Windows installed.
-
-<code>xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</code>
-
-If X Windows is not installed then the system cannot boot into graphical user mode.
-This prevents the system from being accidentally or maliciously booted into a <code>graphical.target</code>
-mode. To do so, run the following command:
-
-<pre>sudo zypper remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</pre>
-       </td>
-</tr>
-<tr>
 <td>CCE-94096-5</td>
 <td>Ensure the default plugins for the audit dispatcher are Installed</td>
 <td>The audit-audispd-plugins package should be installed.</td>
-</tr>
-<tr>
-<td>CCE-93872-0</td>
-<td>Ensure the audit-libs package as a part of audit Subsystem is Installed</td>
-<td>The audit-libs package should be installed.</td>
 </tr>
 <tr>
 <td>CCE-93756-5</td>
@@ -3967,26 +2094,6 @@ The <code>auditd</code> service can be enabled with the following command:
      </td>
 </tr>
 <tr>
-<td>CCE-93871-2</td>
-<td>Enable Auditing for Processes Which Start Prior to the Audit Daemon</td>
-<td>To ensure all processes can be audited, even those which start
-prior to the audit daemon, add the argument <code>audit=1</code> to the default
-GRUB 2 command line for the Linux operating system.
-Configure the default Grub2 kernel command line to contain audit=1 as follows:
-<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"</pre>
-     </td>
-</tr>
-<tr>
-<td>CCE-93870-4</td>
-<td>Extend Audit Backlog Limit for the Audit Daemon</td>
-<td>To improve the kernel capacity to queue all log events, even those which occurred
-prior to the audit daemon, add the argument <code>audit_backlog_limit=8192</code> to the default
-GRUB 2 command line for the Linux operating system.
-Configure the default Grub2 kernel command line to contain audit_backlog_limit=8192 as follows:
-<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit_backlog_limit=8192"</pre>
-     </td>
-</tr>
-<tr>
 <td>CCE-93739-1</td>
 <td>Remove Default Configuration to Disable Syscall Auditing</td>
 <td>By default, SUSE Linux Enterprise Micro 5 ships an audit rule to disable syscall
@@ -3999,130 +2106,44 @@ To make sure that syscall auditing works, this line must be removed from
       </td>
 </tr>
 <tr>
-<td>CCE-93869-6</td>
-<td>Make the auditd Configuration Immutable</td>
-<td>If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following line to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code> in order to make the auditd configuration
-immutable:
-<pre>-e 2</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file in order to make the auditd configuration
-immutable:
-<pre>-e 2</pre>
-With this setting, a reboot will be required to change any audit rules.</td>
-</tr>
-<tr>
-<td>CCE-93868-8</td>
-<td>Record Events that Modify the System's Mandatory Access Controls</td>
-<td>If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following line to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>:
-
-<pre>-w /etc/selinux/ -p wa -k MAC-policy</pre>
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file:
-
-<pre>-w /etc/selinux/ -p wa -k MAC-policy</pre>
-      </td>
-</tr>
-<tr>
-<td>CCE-93867-0</td>
-<td>Record Events that Modify the System's Mandatory Access Controls in usr/share</td>
-<td>If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following line to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>:
-<pre>-w /usr/share/selinux/ -p wa -k MAC-policy</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-w /usr/share/selinux/ -p wa -k MAC-policy</pre>
-      </td>
-</tr>
-<tr>
 <td>CCE-93654-2</td>
 <td>Ensure auditd Collects Information on Exporting to Media (successful)</td>
 <td>At a minimum, the audit system should collect media exportation
 events for all users and root. If the <code>auditd</code> daemon is configured to
 use the <code>augenrules</code> program to read audit rules during daemon startup
 (the default), add the following line to a file with suffix <code>.rules</code> in
-the directory <code>/etc/audit/rules.d</code>, setting ARCH to either b32 or b64 as
-appropriate for your system:
+the directory <code>/etc/audit/rules.d</code>, setting ARCH to either b32 for
+32-bit system, or having two lines for both b32 and b64 in case your
+system is 64-bit:
 <pre>-a always,exit -F arch=ARCH -S mount -F auid&gt;=1000 -F auid!=unset -F key=export</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file, setting ARCH to either b32 or b64 as
-appropriate for your system:
+<code>/etc/audit/audit.rules</code> file, setting ARCH to either b32 for
+32-bit system, or having two lines for both b32 and b64 in case your
+system is 64-bit:
 <pre>-a always,exit -F arch=ARCH -S mount -F auid&gt;=1000 -F auid!=unset -F key=export</pre>
-      </td>
-</tr>
-<tr>
-<td>CCE-93866-2</td>
-<td>Record Events that Modify the System's Network Environment</td>
-<td>If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, setting ARCH to either b32 or b64 as
-appropriate for your system:
-<pre>-a always,exit -F arch=ARCH -S sethostname,setdomainname -F key=audit_rules_networkconfig_modification
--w /etc/issue -p wa -k audit_rules_networkconfig_modification
--w /etc/issue.net -p wa -k audit_rules_networkconfig_modification
--w /etc/hosts -p wa -k audit_rules_networkconfig_modification
-
--w /etc/sysconfig/network -p wa -k audit_rules_networkconfig_modification</pre>
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file, setting ARCH to either b32 or b64 as
-appropriate for your system:
-<pre>-a always,exit -F arch=ARCH -S sethostname,setdomainname -F key=audit_rules_networkconfig_modification
--w /etc/issue -p wa -k audit_rules_networkconfig_modification
--w /etc/issue.net -p wa -k audit_rules_networkconfig_modification
--w /etc/hosts -p wa -k audit_rules_networkconfig_modification
--w /etc/sysconfig/network -p wa -k audit_rules_networkconfig_modification</pre>
-      </td>
-</tr>
-<tr>
-<td>CCE-93865-4</td>
-<td>Record Attempts to Alter Process and Session Initiation Information</td>
-<td>The audit system already collects process information for all
-users and root. If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
-edits of files involved in storing such process information:
-<pre>-w /var/run/utmp -p wa -k session
--w /var/log/btmp -p wa -k session
--w /var/log/wtmp -p wa -k session</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file in order to watch for attempted manual
-edits of files involved in storing such process information:
-<pre>-w /var/run/utmp -p wa -k session
--w /var/log/btmp -p wa -k session
--w /var/log/wtmp -p wa -k session</pre>
       </td>
 </tr>
 <tr>
 <td>CCE-93725-0</td>
 <td>Record Attempts to Alter Process and Session Initiation Information btmp</td>
 <td>The audit system already collects process information for all
-users and root. If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
-edits of files involved in storing such process information:
+users and root.
+
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
 <pre>-w /var/log/btmp -p wa -k session</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file in order to watch for attempted manual
-edits of files involved in storing such process information:
+<code>/etc/audit/audit.rules</code>:
+
 <pre>-w /var/log/btmp -p wa -k session</pre>
       </td>
 </tr>
@@ -4130,34 +2151,46 @@ edits of files involved in storing such process information:
 <td>CCE-93723-5</td>
 <td>Record Attempts to Alter Process and Session Initiation Information utmp</td>
 <td>The audit system already collects process information for all
-users and root. If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
-edits of files involved in storing such process information:
-<pre>-w /run/utmp -p wa -k session</pre>
+users and root.
+
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /var/run/utmp -p wa -k session</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file in order to watch for attempted manual
-edits of files involved in storing such process information:
-<pre>-w /run/utmp -p wa -k session</pre>
+<code>/etc/audit/audit.rules</code>:
+
+<pre>-w /var/run/utmp -p wa -k session</pre>
       </td>
 </tr>
 <tr>
 <td>CCE-93724-3</td>
 <td>Record Attempts to Alter Process and Session Initiation Information wtmp</td>
 <td>The audit system already collects process information for all
-users and root. If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
-edits of files involved in storing such process information:
-<pre> -w /var/log/wtmp -p wa -k session</pre>
+users and root.
+
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /var/log/wtmp -p wa -k session</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file in order to watch for attempted manual
-edits of files involved in storing such process information:
-<pre> -w /var/log/wtmp -p wa -k session</pre>
+<code>/etc/audit/audit.rules</code>:
+
+<pre>-w /var/log/wtmp -p wa -k session</pre>
       </td>
 </tr>
 <tr>
@@ -4184,180 +2217,125 @@ If both the "b32" and "b64" audit rules for "SGID" files are not defined, this i
 <tr>
 <td>CCE-93674-0</td>
 <td>Ensure auditd Collects System Administrator Actions</td>
-<td>At a minimum, the audit system should collect administrator actions
-for all users and root. If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the default),
-add the following line to a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code>:
-<pre>-w /etc/sudoers -p wa -k actions
--w /etc/sudoers.d/ -p wa -k actions</pre>
+<td>
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /etc/sudoers -p wa -k actions</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-w /etc/sudoers -p wa -k actions
--w /etc/sudoers.d/ -p wa -k actions</pre>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code>:
+
+<pre>-w /etc/sudoers -p wa -k actions</pre>
+
+
+
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /etc/sudoers.d/ -p wa -k actions</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code>:
+
+<pre>-w /etc/sudoers.d/ -p wa -k actions</pre>
       </td>
 </tr>
 <tr>
 <td>CCE-93657-5</td>
 <td>Record Events that Modify User/Group Information - /etc/group</td>
-<td>If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
-account changes:
-<br>
-       <br>
-       <pre>-w /etc/group -p wa -k audit_rules_usergroup_modification</pre>
-       <br>
-       <br>
+<td>
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /etc/group -p wa -k audit_rules_usergroup_modification</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
-account changes:
-<br>
-       <br>
-       <pre>-w /etc/group -p wa -k audit_rules_usergroup_modification</pre>
-      </td>
-</tr>
-<tr>
-<td>CCE-93864-7</td>
-<td>Record Events that Modify User/Group Information - /etc/gshadow</td>
-<td>If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
-account changes:
-<br>
-       <br>
-       <pre>-w /etc/gshadow -p wa -k audit_rules_usergroup_modification</pre>
-       <br>
-       <br>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
-account changes:
-<br>
-       <br>
-       <pre>-w /etc/gshadow -p wa -k audit_rules_usergroup_modification</pre>
+<code>/etc/audit/audit.rules</code>:
+
+<pre>-w /etc/group -p wa -k audit_rules_usergroup_modification</pre>
       </td>
 </tr>
 <tr>
 <td>CCE-93659-1</td>
 <td>Record Events that Modify User/Group Information - /etc/security/opasswd</td>
-<td>If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
-account changes:
-<br>
-       <br>
-       <pre>-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
-       <br>
-       <br>
+<td>
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
-account changes:
-<br>
-       <br>
-       <pre>-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
+<code>/etc/audit/audit.rules</code>:
+
+<pre>-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
       </td>
 </tr>
 <tr>
 <td>CCE-93656-7</td>
 <td>Record Events that Modify User/Group Information - /etc/passwd</td>
-<td>If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
-account changes:
-<br>
-       <br>
-       <pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
-       <br>
-       <br>
+<td>
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
-account changes:
-<br>
-       <br>
-       <pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+<code>/etc/audit/audit.rules</code>:
+
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
       </td>
 </tr>
 <tr>
 <td>CCE-93658-3</td>
 <td>Record Events that Modify User/Group Information - /etc/shadow</td>
-<td>If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
-account changes:
-<br>
-       <br>
-       <pre>-w /etc/shadow -p wa -k audit_rules_usergroup_modification</pre>
-       <br>
-       <br>
+<td>
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /etc/shadow -p wa -k audit_rules_usergroup_modification</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
-account changes:
-<br>
-       <br>
-       <pre>-w /etc/shadow -p wa -k audit_rules_usergroup_modification</pre>
-      </td>
-</tr>
-<tr>
-<td>CCE-93863-9</td>
-<td>Record Attempts to perform maintenance activities</td>
-<td>The SUSE Linux Enterprise Micro 5 operating system must generate audit records for
-privileged activities, nonlocal maintenance, diagnostic sessions and
-other system-level access.
+<code>/etc/audit/audit.rules</code>:
 
-Verify the operating system audits activities performed during nonlocal
-maintenance and diagnostic sessions. Run the following command:
-<pre>$ sudo auditctl -l | grep sudo.log
--w /var/log/sudo.log -p wa -k maintenance</pre>
+<pre>-w /etc/shadow -p wa -k audit_rules_usergroup_modification</pre>
       </td>
-</tr>
-<tr>
-<td>CCE-93862-1</td>
-<td>Record Events that Modify the System's Discretionary Access Controls - chmod</td>
-<td>At a minimum, the audit system should collect file permission
-changes for all users and root. If the <code>auditd</code> daemon is configured to
-use the <code>augenrules</code> program to read audit rules during daemon startup
-(the default), add the following line to a file with suffix <code>.rules</code> in
-the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S chmod -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S chmod -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S chmod -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S chmod -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93861-3</td>
-<td>Record Events that Modify the System's Discretionary Access Controls - chown</td>
-<td>At a minimum, the audit system should collect file permission
-changes for all users and root. If the <code>auditd</code> daemon is configured to
-use the <code>augenrules</code> program to read audit rules during daemon startup
-(the default), add the following line to a file with suffix <code>.rules</code> in
-the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S chown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S chown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S chown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S chown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-       </td>
 </tr>
 <tr>
 <td>CCE-93653-4</td>
@@ -4376,66 +2354,6 @@ utility to read audit rules during daemon startup, add the following line to
 <pre>-a always,exit -F arch=b32 -S fchmod -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fchmod -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93860-5</td>
-<td>Record Events that Modify the System's Discretionary Access Controls - fchmodat</td>
-<td>At a minimum, the audit system should collect file permission
-changes for all users and root. If the <code>auditd</code> daemon is configured to
-use the <code>augenrules</code> program to read audit rules during daemon startup
-(the default), add the following line to a file with suffix <code>.rules</code> in
-the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S fchmodat -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S fchmodat -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S fchmodat -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S fchmodat -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93859-7</td>
-<td>Record Events that Modify the System's Discretionary Access Controls - fchown</td>
-<td>At a minimum, the audit system should collect file permission
-changes for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following line to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S fchown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S fchown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S fchown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S fchown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93858-9</td>
-<td>Record Events that Modify the System's Discretionary Access Controls - fchownat</td>
-<td>At a minimum, the audit system should collect file permission
-changes for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following line to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S fchownat -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S fchownat -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S fchownat -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S fchownat -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
        </td>
 </tr>
 <tr>
@@ -4467,25 +2385,6 @@ If the system is 64 bit then also add the following line:
        </td>
 </tr>
 <tr>
-<td>CCE-93857-1</td>
-<td>Record Events that Modify the System's Discretionary Access Controls - fsetxattr</td>
-<td>At a minimum, the audit system should collect file permission
-changes for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following line to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-       </td>
-</tr>
-<tr>
 <td>CCE-93652-6</td>
 <td>Record Events that Modify the System's Discretionary Access Controls - lchown</td>
 <td>At a minimum, the audit system should collect file permission
@@ -4502,99 +2401,6 @@ utility to read audit rules during daemon startup, add the following line to
 <pre>-a always,exit -F arch=b32 -S lchown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lchown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93856-3</td>
-<td>Record Events that Modify the System's Discretionary Access Controls - lremovexattr</td>
-<td>At a minimum, the audit system should collect file permission
-changes for all users and root.
-<br>
-        <br>
-If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following line to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-        <br>
-        <br>
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-        <br>
-        <br>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-        <br>
-        <br>
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93855-5</td>
-<td>Record Events that Modify the System's Discretionary Access Controls - lsetxattr</td>
-<td>At a minimum, the audit system should collect file permission
-changes for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following line to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93854-8</td>
-<td>Record Events that Modify the System's Discretionary Access Controls - removexattr</td>
-<td>At a minimum, the audit system should collect file permission
-changes for all users and root.
-<br>
-        <br>
-If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
-program to read audit rules during daemon startup (the default), add the
-following line to a file with suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-        <br>
-        <br>
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-        <br>
-        <br>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-        <br>
-        <br>
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93853-0</td>
-<td>Record Events that Modify the System's Discretionary Access Controls - setxattr</td>
-<td>At a minimum, the audit system should collect file permission
-changes for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following line to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
        </td>
 </tr>
 <tr>
@@ -4619,242 +2425,169 @@ If the system is 64 bit then also add the following line:
 <tr>
 <td>CCE-93618-7</td>
 <td>Record Any Attempts to Run chacl</td>
-<td>At a minimum, the audit system should collect any execution attempt
-of the <code>chacl</code> command for all users and root. If the <code>auditd</code>
-daemon is configured to use the <code>augenrules</code> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F path=/usr/bin/chacl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/chacl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
 <td>CCE-93616-1</td>
 <td>Record Any Attempts to Run chmod</td>
-<td>At a minimum, the audit system should collect any execution attempt
-of the <code>chmod</code> command for all users and root. If the <code>auditd</code>
-daemon is configured to use the <code>augenrules</code> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F path=/usr/bin/chmod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/chmod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
 <td>CCE-93617-9</td>
 <td>Record Any Attempts to Run setfacl</td>
-<td>At a minimum, the audit system should collect any execution attempt
-of the <code>setfacl</code> command for all users and root. If the <code>auditd</code>
-daemon is configured to use the <code>augenrules</code> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
 <td>CCE-93619-5</td>
 <td>Record Any Attempts to Run chcon</td>
-<td>At a minimum, the audit system should collect any execution attempt
-of the <code>chcon</code> command for all users and root. If the <code>auditd</code>
-daemon is configured to use the <code>augenrules</code> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
 <td>CCE-93620-3</td>
 <td>Record Any Attempts to Run rm</td>
-<td>At a minimum, the audit system should collect any execution attempt
-of the <code>rm</code> command for all users and root. If the <code>auditd</code>
-daemon is configured to use the <code>augenrules</code> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F path=/usr/bin/rm -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/rm -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
 <td>CCE-94098-1</td>
 <td>Record Any Attempts to Run semanage</td>
-<td>At a minimum, the audit system should collect any execution attempt
-of the <code>semanage</code> command for all users and root. If the <code>auditd</code>
-daemon is configured to use the <code>augenrules</code> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
 <td>CCE-94099-9</td>
 <td>Record Any Attempts to Run setfiles</td>
-<td>At a minimum, the audit system should collect any execution attempt
-of the <code>setfiles</code> command for all users and root. If the <code>auditd</code>
-daemon is configured to use the <code>augenrules</code> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
 <td>CCE-94100-5</td>
 <td>Record Any Attempts to Run setsebool</td>
-<td>At a minimum, the audit system should collect any execution attempt
-of the <code>setsebool</code> command for all users and root. If the <code>auditd</code>
-daemon is configured to use the <code>augenrules</code> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93852-2</td>
-<td>Ensure auditd Collects File Deletion Events by User - rename</td>
-<td>At a minimum, the audit system should collect file deletion events
-for all users and root. If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following line to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, setting ARCH to either b32 or b64 as
-appropriate for your system:
-<pre>-a always,exit -F arch=ARCH -S rename -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file, setting ARCH to either b32 or b64 as
-appropriate for your system:
-<pre>-a always,exit -F arch=ARCH -S rename -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93851-4</td>
-<td>Ensure auditd Collects File Deletion Events by User - renameat</td>
-<td>At a minimum, the audit system should collect file deletion events
-for all users and root. If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following line to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, setting ARCH to either b32 or b64 as
-appropriate for your system:
-<pre>-a always,exit -F arch=ARCH -S renameat -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file, setting ARCH to either b32 or b64 as
-appropriate for your system:
-<pre>-a always,exit -F arch=ARCH -S renameat -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93849-8</td>
-<td>Ensure auditd Collects File Deletion Events by User - unlink</td>
-<td>At a minimum, the audit system should collect file deletion events
-for all users and root. If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following line to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, setting ARCH to either b32 or b64 as
-appropriate for your system:
-<pre>-a always,exit -F arch=ARCH -S unlink -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file, setting ARCH to either b32 or b64 as
-appropriate for your system:
-<pre>-a always,exit -F arch=ARCH -S unlink -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93850-6</td>
-<td>Ensure auditd Collects File Deletion Events by User - unlinkat</td>
-<td>At a minimum, the audit system should collect file deletion events
-for all users and root. If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following line to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, setting ARCH to either b32 or b64 as
-appropriate for your system:
-<pre>-a always,exit -F arch=ARCH -S unlinkat -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file, setting ARCH to either b32 or b64 as
-appropriate for your system:
-<pre>-a always,exit -F arch=ARCH -S unlinkat -F auid&gt;=1000 -F auid!=unset -F key=delete</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93848-0</td>
-<td>Record Unsuccessful Access Attempts to Files - creat</td>
-<td>At a minimum, the audit system should collect unauthorized file
-accesses for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93847-2</td>
-<td>Record Unsuccessful Access Attempts to Files - ftruncate</td>
-<td>At a minimum, the audit system should collect unauthorized file
-accesses for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
        </td>
 </tr>
 <tr>
@@ -4886,34 +2619,6 @@ If the system is 64 bit then also add the following lines:
        </td>
 </tr>
 <tr>
-<td>CCE-93845-6</td>
-<td>Record Unsuccessful Access Attempts to Files - openat</td>
-<td>At a minimum, the audit system should collect unauthorized file
-accesses for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-       </td>
-</tr>
-<tr>
 <td>CCE-93667-4</td>
 <td>Record Unsuccessful Delete Attempts to Files - rename</td>
 <td>The audit system should collect unsuccessful file deletion
@@ -4931,50 +2636,6 @@ If the system is 64 bit then also add the following lines:
 -a always,exit -F arch=b64 -S rename -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
 -a always,exit -F arch=b64 -S rename -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
        </td>
-</tr>
-<tr>
-<td>CCE-93844-9</td>
-<td>Record Unsuccessful Access Attempts to Files - truncate</td>
-<td>At a minimum, the audit system should collect unauthorized file
-accesses for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93843-1</td>
-<td>Ensure auditd Collects Information on Kernel Module Loading and Unloading</td>
-<td>To capture kernel module loading and unloading events, use following lines, setting ARCH to
-either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
-<pre>
--a always,exit -F arch=<i>ARCH</i> -S init_module,finit_module,delete_module -F key=modules
-</pre>
-
-The place to add the lines depends on a way <code>auditd</code> daemon is configured. If it is configured
-to use the <code>augenrules</code> program (the default), add the lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
-add the lines to file <code>/etc/audit/audit.rules</code>.</td>
 </tr>
 <tr>
 <td>CCE-93675-7</td>
@@ -5010,52 +2671,25 @@ b64 as appropriate for your system:
        </td>
 </tr>
 <tr>
-<td>CCE-93842-3</td>
-<td>Ensure auditd Collects Information on Kernel Module Loading - init_module</td>
-<td>To capture kernel module loading events, use following line, setting ARCH to
-either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
-
-<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F key=modules</pre>
-
-
-Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
-to use the <code>augenrules</code> program (the default), add the line to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
-add the line to file <code>/etc/audit/audit.rules</code>.</td>
-</tr>
-<tr>
-<td>CCE-93841-5</td>
-<td>Record Attempts to Alter Logon and Logout Events - faillog</td>
-<td>The audit system already collects login information for all users
-and root. If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
-edits of files involved in storing logon events:
-<pre>-w /var/log/faillog -p wa -k logins</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file in order to watch for unattempted manual
-edits of files involved in storing logon events:
-<pre>-w /var/log/faillog -p wa -k logins</pre>
-       </td>
-</tr>
-<tr>
 <td>CCE-93665-8</td>
 <td>Record Attempts to Alter Logon and Logout Events - lastlog</td>
 <td>The audit system already collects login information for all users
-and root. If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
-edits of files involved in storing logon events:
+and root.
+
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
 <pre>-w /var/log/lastlog -p wa -k logins</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file in order to watch for unattempted manual
-edits of files involved in storing logon events:
+<code>/etc/audit/audit.rules</code>:
+
 <pre>-w /var/log/lastlog -p wa -k logins</pre>
        </td>
 </tr>
@@ -5063,91 +2697,127 @@ edits of files involved in storing logon events:
 <td>CCE-93664-1</td>
 <td>Record Attempts to Alter Logon and Logout Events - tallylog</td>
 <td>The audit system already collects login information for all users
-and root. If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
-edits of files involved in storing logon events:
+and root.
+
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
 <pre>-w /var/log/tallylog -p wa -k logins</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file in order to watch for unattempted manual
-edits of files involved in storing logon events:
+<code>/etc/audit/audit.rules</code>:
+
 <pre>-w /var/log/tallylog -p wa -k logins</pre>
        </td>
 </tr>
 <tr>
 <td>CCE-93607-0</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - chage</td>
-<td>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <code>auditd</code> daemon is
-configured to use the <code>augenrules</code> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add a line of the following
-form to <code>/etc/audit/audit.rules</code>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
 <td>CCE-93610-4</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - chfn</td>
-<td>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <code>auditd</code> daemon is
-configured to use the <code>augenrules</code> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F path=/usr/bin/chfn -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add a line of the following
-form to <code>/etc/audit/audit.rules</code>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/chfn -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
 <td>CCE-93605-4</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - chsh</td>
-<td>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <code>auditd</code> daemon is
-configured to use the <code>augenrules</code> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add a line of the following
-form to <code>/etc/audit/audit.rules</code>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
 <td>CCE-93608-8</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - crontab</td>
-<td>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <code>auditd</code> daemon is
-configured to use the <code>augenrules</code> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add a line of the following
-form to <code>/etc/audit/audit.rules</code>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
 <td>CCE-93603-9</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - gpasswd</td>
-<td>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <code>auditd</code> daemon is
-configured to use the <code>augenrules</code> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add a line of the following
-form to <code>/etc/audit/audit.rules</code>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
@@ -5165,16 +2835,22 @@ suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <tr>
 <td>CCE-93615-3</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - kmod</td>
-<td>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <code>auditd</code> daemon is
-configured to use the <code>augenrules</code> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-w /usr/bin/kmod -p x -k modules</pre>
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add a line of the following
-form to <code>/etc/audit/audit.rules</code>:
-<pre>-w /usr/bin/kmod -p x -k modules</pre>
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
@@ -5195,47 +2871,63 @@ form to <code>/etc/audit/audit.rules</code>:
 <tr>
 <td>CCE-93604-7</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - newgrp</td>
-<td>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <code>auditd</code> daemon is
-configured to use the <code>augenrules</code> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add a line of the following
-form to <code>/etc/audit/audit.rules</code>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
 <td>CCE-93622-9</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - pam_timestamp_check</td>
-<td>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <code>auditd</code> daemon is
-configured to use the <code>augenrules</code> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/sbin/pam_timestamp_check
--F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/sbin/pam_timestamp_check -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add a line of the following
-form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/sbin/pam_timestamp_check
--F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/sbin/pam_timestamp_check -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
 <td>CCE-93602-1</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - passwd</td>
-<td>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <code>auditd</code> daemon is
-configured to use the <code>augenrules</code> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add a line of the following
-form to <code>/etc/audit/audit.rules</code>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
@@ -5253,196 +2945,149 @@ suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <tr>
 <td>CCE-93611-2</td>
 <td>Record Any Attempts to Run ssh-agent</td>
-<td>At a minimum, the audit system should collect any execution attempt
-of the <code>ssh-agent</code> command for all users and root. If the <code>auditd</code>
-daemon is configured to use the <code>augenrules</code> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-ssh-agent</pre>
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-ssh-agent</pre>
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
 <td>CCE-94071-8</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - ssh-keysign</td>
-<td>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <code>auditd</code> daemon is
-configured to use the <code>augenrules</code> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F path=/usr/lib/ssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add a line of the following
-form to <code>/etc/audit/audit.rules</code>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/lib/ssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
 <td>CCE-93623-7</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - su</td>
-<td>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <code>auditd</code> daemon is
-configured to use the <code>augenrules</code> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add a line of the following
-form to <code>/etc/audit/audit.rules</code>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
 <td>CCE-93624-5</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - sudo</td>
-<td>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <code>auditd</code> daemon is
-configured to use the <code>augenrules</code> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add a line of the following
-form to <code>/etc/audit/audit.rules</code>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
 <td>CCE-93609-6</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - sudoedit</td>
-<td>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <code>auditd</code> daemon is
-configured to use the <code>augenrules</code> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add a line of the following
-form to <code>/etc/audit/audit.rules</code>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
 <td>CCE-93606-2</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - unix_chkpwd</td>
-<td>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <code>auditd</code> daemon is
-configured to use the <code>augenrules</code> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add a line of the following
-form to <code>/etc/audit/audit.rules</code>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
 <td>CCE-93621-1</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - usermod</td>
-<td>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the <code>auditd</code> daemon is
-configured to use the <code>augenrules</code> program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<td>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix <code>.rules</code>
+in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add a line of the following
-form to <code>/etc/audit/audit.rules</code>:
+utility to read audit rules during daemon startup, add a line of the
+following form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
-</tr>
-<tr>
-<td>CCE-93840-7</td>
-<td>Record attempts to alter time through adjtimex</td>
-<td>If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following line to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S adjtimex -F key=audit_time_rules</pre>
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S adjtimex -F key=audit_time_rules</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S adjtimex -F key=audit_time_rules</pre>
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S adjtimex -F key=audit_time_rules</pre>
-The -k option allows for the specification of a key in string form that can be
-used for better reporting capability through ausearch and aureport. Multiple
-system calls can be defined on the same line to save space if desired, but is
-not required. See an example of multiple combined syscalls:
-<pre>-a always,exit -F arch=b64 -S adjtimex,settimeofday -F key=audit_time_rules</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93839-9</td>
-<td>Record attempts to alter time through settimeofday</td>
-<td>If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following line to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S settimeofday -F key=audit_time_rules</pre>
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S settimeofday -F key=audit_time_rules</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S settimeofday -F key=audit_time_rules</pre>
-If the system is 64 bit then also add the following line:
-<pre>-a always,exit -F arch=b64 -S settimeofday -F key=audit_time_rules</pre>
-The -k option allows for the specification of a key in string form that can be
-used for better reporting capability through ausearch and aureport. Multiple
-system calls can be defined on the same line to save space if desired, but is
-not required. See an example of multiple combined syscalls:
-<pre>-a always,exit -F arch=b64 -S adjtimex,settimeofday -F key=audit_time_rules</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93838-1</td>
-<td>Record Attempts to Alter Time Through stime</td>
-<td>If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following line to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code> for both 32 bit and 64 bit systems:
-<pre>-a always,exit -F arch=b32 -S stime -F key=audit_time_rules</pre>
-Since the 64 bit version of the "stime" system call is not defined in the audit
-lookup table, the corresponding "-F arch=b64" form of this rule is not expected
-to be defined on 64 bit systems (the aforementioned "-F arch=b32" stime rule
-form itself is sufficient for both 32 bit and 64 bit systems). If the
-<code>auditd</code> daemon is configured to use the <code>auditctl</code> utility to
-read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file for both 32 bit and 64 bit systems:
-<pre>-a always,exit -F arch=b32 -S stime -F key=audit_time_rules</pre>
-Since the 64 bit version of the "stime" system call is not defined in the audit
-lookup table, the corresponding "-F arch=b64" form of this rule is not expected
-to be defined on 64 bit systems (the aforementioned "-F arch=b32" stime rule
-form itself is sufficient for both 32 bit and 64 bit systems). The -k option
-allows for the specification of a key in string form that can be used for
-better reporting capability through ausearch and aureport. Multiple system
-calls can be defined on the same line to save space if desired, but is not
-required. See an example of multiple combined system calls:
-<pre>-a always,exit -F arch=b64 -S adjtimex,settimeofday -F key=audit_time_rules</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-93837-3</td>
-<td>Record Attempts to Alter the localtime File</td>
-<td>If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the default),
-add the following line to a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code>:
-<pre>-w /etc/localtime -p wa -k audit_time_rules</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-w /etc/localtime -p wa -k audit_time_rules</pre>
-The -k option allows for the specification of a key in string form that can
-be used for better reporting capability through ausearch and aureport and
-should always be used.</td>
 </tr>
 <tr>
 <td>CCE-93707-8</td>
@@ -5555,55 +3200,6 @@ via email for those situations:
 <pre>action_mail_acct = <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_auditd_action_mail_acct" use="legacy"></xccdf-1.2:sub>
        </pre>
       </td>
-</tr>
-<tr>
-<td>CCE-93836-5</td>
-<td>Configure auditd admin_space_left Action on Low Disk Space</td>
-<td>The <code>auditd</code> service can be configured to take an action
-when disk space is running low but prior to running out of space completely.
-Edit the file <code>/etc/audit/auditd.conf</code>. Add or modify the following line,
-substituting <i>ACTION</i> appropriately:
-<pre>admin_space_left_action = <i>ACTION</i>
-       </pre>
-Set this value to <code>single</code> to cause the system to switch to single user
-mode for corrective action. Acceptable values also include <code>suspend</code> and
-<code>halt</code>. For certain systems, the need for availability
-outweighs the need to log all actions, and a different setting should be
-determined. Details regarding all possible values for <i>ACTION</i> are described in the
-<code>auditd.conf</code> man page.</td>
-</tr>
-<tr>
-<td>CCE-93835-7</td>
-<td>Configure auditd Max Log File Size</td>
-<td>Determine the amount of audit data (in megabytes)
-which should be retained in each log file. Edit the file
-<code>/etc/audit/auditd.conf</code>. Add or modify the following line, substituting
-the correct value of <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_auditd_max_log_file" use="legacy"></xccdf-1.2:sub> for <i>STOREMB</i>:
-<pre>max_log_file = <i>STOREMB</i>
-       </pre>
-Set the value to <code>6</code> (MB) or higher for general-purpose systems.
-Larger values, of course,
-support retention of even more audit data.</td>
-</tr>
-<tr>
-<td>CCE-93834-0</td>
-<td>Configure auditd max_log_file_action Upon Reaching Maximum Log Size</td>
-<td>The default action to take when the logs reach their maximum size
-is to rotate the log files, discarding the oldest one. To configure the action taken
-by <code>auditd</code>, add or correct the line in <code>/etc/audit/auditd.conf</code>:
-<pre>max_log_file_action = <i>ACTION</i>
-       </pre>
-Possible values for <i>ACTION</i> are described in the <code>auditd.conf</code> man
-page. These include:
-<ul>
-<li><code>ignore</code></li>
-<li><code>syslog</code></li>
-<li><code>suspend</code></li>
-<li><code>rotate</code></li>
-<li><code>keep_logs</code></li>
-</ul>
-Set the <code><i>ACTION</i></code> to <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_auditd_max_log_file_action" use="legacy"></xccdf-1.2:sub></code>.
-The setting is case-insensitive.</td>
 </tr>
 <tr>
 <td>CCE-93788-8</td>

@@ -48,9 +48,9 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>378</td>
+			<td>373</td>
 			<td>0</td>
-			<td>378</td>
+			<td>373</td>
 			<td>100.00%</td>
 			<td>
 				
@@ -76,7 +76,7 @@
 
 <tr>
 	<td>V-248521</td>
-	<td>366</td>
+	<td></td>
 	<td>high</td>
 	<td>OL 8 must be a vendor-supported release.</td>
 	<td>SRG-OS-ID</td>
@@ -102,7 +102,7 @@ Linux vendor, Oracle Corporation is responsible for providing security patches.<
 
 <tr>
 	<td>V-248523</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 vendor-packaged system security patches and updates must be installed and up to date.</td>
 	<td>SRG-OS-ID</td>
@@ -129,7 +129,7 @@ dictates.</pre></td>
 
 <tr>
 	<td>V-256978</td>
-	<td>1749</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must ensure cryptographic verification of vendor software packages.</td>
 	<td>SRG-OS-ID</td>
@@ -166,38 +166,49 @@ sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-oracle
 
 <tr>
 	<td>V-248524</td>
-	<td>3123</td>
+	<td></td>
 	<td>high</td>
 	<td>OL 8 must implement NIST FIPS-validated cryptography for the following: To provision digital signatures, to generate cryptographic hashes, and to protect data requiring data-at-rest protections in accordance with applicable federal laws, Executive Orders, directives, policies, regulations, and standards.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Overriding the system crypto policy makes the behavior of the OpenSSH client
-violate expectations, and makes system configuration more fragmented. By
-specifying a cipher list with the order of ciphers being in a “strongest to
-weakest” orientation, the system will automatically attempt to use the
-strongest cipher for securing SSH connections.</pre></td>
-	<td><pre>To verify if the OpenSSH client uses defined Cipher suite in the Crypto Policy, run:
-$ grep -i ciphers /etc/crypto-policies/back-ends/openssh.config
-and verify that the line matches:
-Ciphers 
-      Is it the case that Crypto Policy for OpenSSH client is not configured correctly?
+	<td><pre>Overriding the system crypto policy makes the behavior of the Libreswan
+service violate expectations, and makes system configuration more
+fragmented.</pre></td>
+	<td><pre>Verify that the IPSec service uses the system crypto policy.
+
+If the ipsec service is not installed is not applicable.
+
+Check to see if the "IPsec" service is active with the following command:
+
+$ systemctl status ipsec
+
+ipsec.service - Internet Key Exchange (IKE) Protocol Daemon for IPsec
+Loaded: loaded (/usr/lib/systemd/system/ipsec.service; disabled)
+Active: inactive (dead)
+
+If the "IPsec" service is active, check to see if it is using the system crypto policy with the following command:
+
+$ sudo grep include /etc/ipsec.conf /etc/ipsec.d/*.conf
+
+/etc/ipsec.conf:include /etc/crypto-policies/back-ends/libreswan.config
+      Is it the case that the "IPsec" service is active and the ipsec configuration file does not contain does not contain <tt>include /etc/crypto-policies/back-ends/libreswan.config</tt>?
       </pre></td>
 	<td><pre>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
-OpenSSH is supported by system crypto policy, but the OpenSSH configuration may be
-set up incorrectly.
+Libreswan is supported by system crypto policy, but the Libreswan configuration may be
+set up to ignore it.
 
-To check that Crypto Policies settings for ciphers are configured correctly, ensure that
-/etc/crypto-policies/back-ends/openssh.config contains the following
-line and is not commented out:
-Ciphers 
-              
+To check that Crypto Policies settings are configured correctly, ensure that the /etc/ipsec.conf
+includes the appropriate configuration file.
+In /etc/ipsec.conf, make sure that the following line
+is not commented out or superseded by later includes:
+include /etc/crypto-policies/back-ends/libreswan.config
             </pre></td>
 	<td>OL08-00-010020</td>
-	<td>harden_sshd_ciphers_openssh_conf_crypto_policy</td>
+	<td>configure_libreswan_crypto_policy</td>
 </tr>
 
 <tr>
 	<td>V-248525</td>
-	<td>2476</td>
+	<td></td>
 	<td>high</td>
 	<td>All OL 8 local disk partitions must implement cryptographic mechanisms to prevent unauthorized disclosure or modification of all information that requires at-rest protection.</td>
 	<td>SRG-OS-ID</td>
@@ -256,7 +267,7 @@ the Oracle Linux 8 Documentation web site:
 
 <tr>
 	<td>V-248526</td>
-	<td>1388</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must display the Standard Mandatory DOD Notice and Consent Banner before granting local or remote access to the system via an SSH logon.</td>
 	<td>SRG-OS-ID</td>
@@ -287,7 +298,7 @@ appropriate system-wide warning banner.</pre></td>
 
 <tr>
 	<td>V-248527</td>
-	<td>1388</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must display a banner before granting local or remote access to the system via a graphical user logon.</td>
 	<td>SRG-OS-ID</td>
@@ -327,7 +338,7 @@ The banner text must also be set.</pre></td>
 
 <tr>
 	<td>V-248528</td>
-	<td>1388</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must display the Standard Mandatory DoD Notice and Consent Banner before granting local or remote access to the system via a graphical user logon.</td>
 	<td>SRG-OS-ID</td>
@@ -367,7 +378,7 @@ to begin and end the string with ' and use \n for new lines.</pre></td>
 
 <tr>
 	<td>V-248529</td>
-	<td>1388</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must display the Standard Mandatory DoD Notice and Consent Banner before granting local or remote access to the system via a command line user logon.</td>
 	<td>SRG-OS-ID</td>
@@ -428,7 +439,7 @@ OR:
 
 <tr>
 	<td>V-248530</td>
-	<td>67</td>
+	<td></td>
 	<td>medium</td>
 	<td>All OL 8 remote access methods must be monitored.</td>
 	<td>SRG-OS-ID</td>
@@ -438,7 +449,9 @@ cyber attacks and ensure ongoing compliance with organizational policies
 surrounding the use of remote access methods.</pre></td>
 	<td><pre>To verify that remote access methods are logging to rsyslog,
 run the following command:
+
 grep -rE '(auth.\*|authpriv.\*|daemon.\*)' /etc/rsyslog.*
+
 The output should contain auth.*, authpriv.*, and daemon.*
 pointing to a log file.
       Is it the case that remote access methods are not logging to rsyslog?
@@ -462,7 +475,7 @@ not, use the following as an example configuration:
 
 <tr>
 	<td>V-248531</td>
-	<td>1991</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8, for PKI-based authentication, must validate certificates by constructing a certification path (which includes status information) to an accepted trust anchor.</td>
 	<td>SRG-OS-ID</td>
@@ -511,7 +524,7 @@ Public Key Algorithm: rsaEncryption
 
 <tr>
 	<td>V-248532</td>
-	<td>186</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8, for certificate-based authentication, must enforce authorized access to the corresponding private key.</td>
 	<td>SRG-OS-ID</td>
@@ -534,7 +547,7 @@ Oracle Linux 8, for certificate-based authentication, must enforce authorized ac
 
 <tr>
 	<td>V-248533</td>
-	<td>196</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must encrypt all stored passwords with a FIPS 140-2 approved cryptographic hashing algorithm.</td>
 	<td>SRG-OS-ID</td>
@@ -566,7 +579,7 @@ ENCRYPT_METHOD
 
 <tr>
 	<td>V-248534</td>
-	<td>196</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must employ FIPS 140-2 approved cryptographic hashing algorithms for all stored passwords.</td>
 	<td>SRG-OS-ID</td>
@@ -601,7 +614,7 @@ this is a finding.</pre></td>
 
 <tr>
 	<td>V-252650</td>
-	<td>366</td>
+	<td></td>
 	<td>high</td>
 	<td>The OL 8 operating system must not have accounts configured with blank or null passwords.</td>
 	<td>SRG-OS-ID</td>
@@ -631,14 +644,14 @@ $ sudo passwd -l [username]
 
 <tr>
 	<td>V-248535</td>
-	<td>196</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 shadow password suite must be configured to use a sufficient number of hashing rounds.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Passwords need to be protected at all times, and encryption is the standard
-method for protecting passwords. If passwords are not encrypted, they can
+	<td><pre>Passwords need to be protected at all times, and hashing is the standard
+method for protecting passwords. If passwords are not hashed, they can
 be plainly read (i.e., clear text) and easily compromised. Passwords
-that are encrypted with a weak algorithm are no more protected than if
+that are hashed with a weak algorithm are no more protected than if
 they are kept in plain text.
 
               
@@ -664,7 +677,7 @@ If either is set, they must have the minimum value of .</pre></td>
 
 <tr>
 	<td>V-248537</td>
-	<td>213</td>
+	<td></td>
 	<td>high</td>
 	<td>OL 8 operating systems booted with United Extensible Firmware Interface (UEFI) must require authentication upon booting into single-user mode and maintenance.</td>
 	<td>SRG-OS-ID</td>
@@ -700,7 +713,7 @@ When prompted, enter the password that was selected.
 
 <tr>
 	<td>V-248538</td>
-	<td>213</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 operating systems booted with United Extensible Firmware Interface (UEFI) must have a unique name for the grub superusers account when booting into single-user mode and maintenance.</td>
 	<td>SRG-OS-ID</td>
@@ -729,7 +742,10 @@ admin, or administrator for the grub2 superuser account.
             
 Change the superuser to a different username (The default is 'root').
 $ sed -i 's/\(set superusers=\).*/\1"<unique user ID>"/g' /etc/grub.d/01_users
-            
+The line mentioned above must be followed by the line
+export superusers
+so that the superusers is honored.
+
             
 Once the superuser account has been added,
 update the
@@ -742,7 +758,7 @@ grubby --update-kernel=ALL --env=/boot/grub2/grubenv
 
 <tr>
 	<td>V-248539</td>
-	<td>213</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 operating systems booted with a BIOS must have a unique name for the grub superusers account when booting into single-user and maintenance modes.</td>
 	<td>SRG-OS-ID</td>
@@ -771,7 +787,10 @@ admin, or administrator for the grub2 superuser account.
             
 Change the superuser to a different username (The default is 'root').
 $ sed -i 's/\(set superusers=\).*/\1"<unique user ID>"/g' /etc/grub.d/01_users
-            
+The line mentioned above must be followed by the line
+export superusers
+so that the superusers is honored.
+
             
 Once the superuser account has been added,
 update the
@@ -784,7 +803,7 @@ grubby --update-kernel=ALL --env=/boot/grub2/grubenv
 
 <tr>
 	<td>V-248540</td>
-	<td>213</td>
+	<td></td>
 	<td>high</td>
 	<td>OL 8 operating systems booted with a BIOS must require authentication upon booting into single-user and maintenance modes.</td>
 	<td>SRG-OS-ID</td>
@@ -822,7 +841,7 @@ When prompted, enter the password that was selected.
 
 <tr>
 	<td>V-248541</td>
-	<td>213</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 operating systems must require authentication upon booting into rescue mode.</td>
 	<td>SRG-OS-ID</td>
@@ -855,7 +874,7 @@ in /usr/lib/systemd/system/rescue.service.</pre></td>
 
 <tr>
 	<td>V-248542</td>
-	<td>213</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 operating systems must require authentication upon booting into emergency mode.</td>
 	<td>SRG-OS-ID</td>
@@ -898,7 +917,7 @@ in /usr/lib/systemd/system/emergency.service.</pre></td>
 
 <tr>
 	<td>V-248543</td>
-	<td>803</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 "pam_unix.so" module must be configured in the system-auth file to use a FIPS 140-2 approved cryptographic hashing algorithm for system authentication.</td>
 	<td>SRG-OS-ID</td>
@@ -943,7 +962,7 @@ This will help ensure that new passwords for local users will be stored using th
 
 <tr>
 	<td>V-248544</td>
-	<td>803</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 "pam_unix.so" module must be configured in the password-auth file to use a FIPS 140-2 approved cryptographic hashing algorithm for system authentication.</td>
 	<td>SRG-OS-ID</td>
@@ -986,7 +1005,7 @@ This will help ensure that new passwords for local users will be stored using th
 
 <tr>
 	<td>V-248545</td>
-	<td>803</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must prevent system daemons from using Kerberos for authentication.</td>
 	<td>SRG-OS-ID</td>
@@ -1007,7 +1026,7 @@ To prevent using Kerberos by system daemons, remove the Kerberos keytab files, e
 
 <tr>
 	<td>V-248546</td>
-	<td>803</td>
+	<td></td>
 	<td>medium</td>
 	<td>The krb5-workstation package must not be installed on OL 8.</td>
 	<td>SRG-OS-ID</td>
@@ -1027,7 +1046,7 @@ $ sudo yum erase krb5-workstation
 
 <tr>
 	<td>V-248547</td>
-	<td>803</td>
+	<td></td>
 	<td>medium</td>
 	<td>The krb5-server package must not be installed on OL 8.</td>
 	<td>SRG-OS-ID</td>
@@ -1052,7 +1071,7 @@ intended for use as a Kerberos Server it should be removed.</pre></td>
 
 <tr>
 	<td>V-248548</td>
-	<td>1084</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must use a Linux Security Module configured to enforce limits on system services.</td>
 	<td>SRG-OS-ID</td>
@@ -1082,7 +1101,7 @@ SELINUX=
 
 <tr>
 	<td>V-248549</td>
-	<td>1084</td>
+	<td></td>
 	<td>low</td>
 	<td>OL 8 must have the "policycoreutils" package installed.</td>
 	<td>SRG-OS-ID</td>
@@ -1111,7 +1130,7 @@ $ sudo yum install policycoreutils
 
 <tr>
 	<td>V-248551</td>
-	<td>1090</td>
+	<td></td>
 	<td>medium</td>
 	<td>A sticky bit must be set on all OL 8 public directories to prevent unauthorized and unintended information transferred via shared system resources.</td>
 	<td>SRG-OS-ID</td>
@@ -1153,7 +1172,7 @@ $ sudo chmod +t DIR
 
 <tr>
 	<td>V-248552</td>
-	<td>2361</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must be configured so that all network connections associated with SSH traffic terminate after becoming unresponsive.</td>
 	<td>SRG-OS-ID</td>
@@ -1189,7 +1208,7 @@ a keep alive message.</pre></td>
 
 <tr>
 	<td>V-248553</td>
-	<td>2361</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must be configured so that all network connections associated with SSH traffic are terminated after 10 minutes of becoming unresponsive.</td>
 	<td>SRG-OS-ID</td>
@@ -1227,7 +1246,7 @@ some processes may stop SSH from correctly detecting that the user is idle.</pre
 
 <tr>
 	<td>V-248554</td>
-	<td>1314</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 "/var/log/messages" file must have mode 0640 or less permissive.</td>
 	<td>SRG-OS-ID</td>
@@ -1250,7 +1269,7 @@ $ sudo chmod 0600 /var/log/messages
 
 <tr>
 	<td>V-248555</td>
-	<td>1314</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 "/var/log/messages" file must be owned by root.</td>
 	<td>SRG-OS-ID</td>
@@ -1263,7 +1282,8 @@ If properly configured, the output should indicate the following owner:
 root
       Is it the case that /var/log/messages does not have an owner of root?
       </pre></td>
-	<td><pre> To properly set the owner of /var/log/messages, run the command: $ sudo chown root /var/log/messages 
+	<td><pre> To properly set the owner of /var/log/messages, run the command:
+$ sudo chown root /var/log/messages 
             </pre></td>
 	<td>OL08-00-010220</td>
 	<td>file_owner_var_log_messages</td>
@@ -1271,7 +1291,7 @@ root
 
 <tr>
 	<td>V-248556</td>
-	<td>1314</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 "/var/log/messages" file must be group-owned by root.</td>
 	<td>SRG-OS-ID</td>
@@ -1281,10 +1301,15 @@ the system and should only be accessed by authorized personnel.</pre></td>
 run the command:
 $ ls -lL /var/log/messages
 If properly configured, the output should indicate the following group-owner:
+
+  root 
+  
+      Is it the case that /var/log/messages does not have a group owner of
 root
-      Is it the case that /var/log/messages does not have a group owner of root?
+?
       </pre></td>
-	<td><pre> To properly set the group owner of /var/log/messages, run the command: $ sudo chgrp root /var/log/messages
+	<td><pre> To properly set the group owner of /var/log/messages, run the command:
+$ sudo chgrp root /var/log/messages
             </pre></td>
 	<td>OL08-00-010230</td>
 	<td>file_groupowner_var_log_messages</td>
@@ -1292,7 +1317,7 @@ root
 
 <tr>
 	<td>V-248557</td>
-	<td>1314</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 "/var/log" directory must have mode 0755 or less permissive.</td>
 	<td>SRG-OS-ID</td>
@@ -1316,7 +1341,7 @@ $ sudo chmod 0755 /var/log
 
 <tr>
 	<td>V-248558</td>
-	<td>1314</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 "/var/log" directory must be owned by root.</td>
 	<td>SRG-OS-ID</td>
@@ -1330,7 +1355,8 @@ If properly configured, the output should indicate the following owner:
 root
       Is it the case that /var/log does not have an owner of root?
       </pre></td>
-	<td><pre> To properly set the owner of /var/log, run the command: $ sudo chown root /var/log 
+	<td><pre> To properly set the owner of /var/log, run the command:
+$ sudo chown root /var/log 
             </pre></td>
 	<td>OL08-00-010250</td>
 	<td>file_owner_var_log</td>
@@ -1338,7 +1364,7 @@ root
 
 <tr>
 	<td>V-248559</td>
-	<td>1314</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 "/var/log" directory must be group-owned by root.</td>
 	<td>SRG-OS-ID</td>
@@ -1349,10 +1375,15 @@ personnel.</pre></td>
 run the command:
 $ ls -lL /var/log
 If properly configured, the output should indicate the following group-owner:
+
+  root 
+  
+      Is it the case that /var/log does not have a group owner of
 root
-      Is it the case that /var/log does not have a group owner of root?
+?
       </pre></td>
-	<td><pre> To properly set the group owner of /var/log, run the command: $ sudo chgrp root /var/log
+	<td><pre> To properly set the group owner of /var/log, run the command:
+$ sudo chgrp root /var/log
             </pre></td>
 	<td>OL08-00-010260</td>
 	<td>file_groupowner_var_log</td>
@@ -1360,7 +1391,7 @@ root
 
 <tr>
 	<td>V-248560</td>
-	<td>1453</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 SSH daemon must be configured to use system-wide crypto policies.</td>
 	<td>SRG-OS-ID</td>
@@ -1388,7 +1419,7 @@ in the /etc/sysconfig/sshd.</pre></td>
 
 <tr>
 	<td>V-248561</td>
-	<td>877</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 SSH server must be configured to use only Message Authentication Codes (MACs) employing FIPS 140-2 validated cryptographic hash algorithms.</td>
 	<td>SRG-OS-ID</td>
@@ -1417,7 +1448,7 @@ text and is not commented out:
 
 <tr>
 	<td>V-248562</td>
-	<td>877</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 SSH server must be configured to use only ciphers employing FIPS 140-2 validated cryptographic algorithms.</td>
 	<td>SRG-OS-ID</td>
@@ -1448,7 +1479,7 @@ text and is not commented out:
 
 <tr>
 	<td>V-248563</td>
-	<td>366</td>
+	<td></td>
 	<td>low</td>
 	<td>The OL 8 SSH server must be configured to use strong entropy.</td>
 	<td>SRG-OS-ID</td>
@@ -1474,7 +1505,7 @@ SSH_USE_STRONG_RNG=32
 
 <tr>
 	<td>V-248564</td>
-	<td>1453</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 operating system must implement DoD-approved encryption in the OpenSSL package.</td>
 	<td>SRG-OS-ID</td>
@@ -1501,7 +1532,7 @@ if there is a [ crypto_policy ] section that contains the .include /etc/crypto-p
 
 <tr>
 	<td>V-248565</td>
-	<td>1453</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 operating system must implement DoD-approved TLS encryption in the OpenSSL package.</td>
 	<td>SRG-OS-ID</td>
@@ -1544,7 +1575,7 @@ DTLS.MinProtocol = DTLSv1.2
 
 <tr>
 	<td>V-248566</td>
-	<td>1453</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 operating system must implement DoD-approved TLS encryption in the GnuTLS package.</td>
 	<td>SRG-OS-ID</td>
@@ -1572,7 +1603,7 @@ line and is not commented out:
 
 <tr>
 	<td>V-248567</td>
-	<td>1499</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 system commands must have mode 755 or less permissive.</td>
 	<td>SRG-OS-ID</td>
@@ -1605,7 +1636,7 @@ $ sudo chmod go-w FILE
 
 <tr>
 	<td>V-248568</td>
-	<td>1499</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 system commands must be owned by root.</td>
 	<td>SRG-OS-ID</td>
@@ -1638,7 +1669,7 @@ $ sudo chown root FILE
 
 <tr>
 	<td>V-248569</td>
-	<td>1499</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 system commands must be group-owned by root or a system account.</td>
 	<td>SRG-OS-ID</td>
@@ -1679,7 +1710,7 @@ $ sudo chgrp root FILE
 
 <tr>
 	<td>V-248570</td>
-	<td>1499</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 library files must have mode 755 or less permissive.</td>
 	<td>SRG-OS-ID</td>
@@ -1713,7 +1744,7 @@ $ sudo chmod go-w FILE
 
 <tr>
 	<td>V-252651</td>
-	<td>1499</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 library directories must have mode 755 or less permissive.</td>
 	<td>SRG-OS-ID</td>
@@ -1759,7 +1790,7 @@ $ sudo chmod go-w DIR
 
 <tr>
 	<td>V-248571</td>
-	<td>1499</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 library files must be owned by root.</td>
 	<td>SRG-OS-ID</td>
@@ -1793,7 +1824,7 @@ $ sudo chown root FILE
 
 <tr>
 	<td>V-252652</td>
-	<td>1499</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 library directories must be owned by root.</td>
 	<td>SRG-OS-ID</td>
@@ -1828,7 +1859,7 @@ $ sudo chown root DIR
 
 <tr>
 	<td>V-248572</td>
-	<td>1499</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 library files must be group-owned by root.</td>
 	<td>SRG-OS-ID</td>
@@ -1865,7 +1896,7 @@ $ sudo chgrp root FILE
 
 <tr>
 	<td>V-252653</td>
-	<td>1499</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 library directories must be group-owned by root or a system account.</td>
 	<td>SRG-OS-ID</td>
@@ -1902,7 +1933,7 @@ $ sudo chgrp root DIR
 
 <tr>
 	<td>V-256979</td>
-	<td>1744</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must be configured to allow sending email notifications of unauthorized configuration changes to designated personnel.</td>
 	<td>SRG-OS-ID</td>
@@ -1922,7 +1953,7 @@ $ sudo yum install mailx
 
 <tr>
 	<td>V-252654</td>
-	<td>2696</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 operating system must use a file integrity tool to verify correct operation of all security functions.</td>
 	<td>SRG-OS-ID</td>
@@ -1956,9 +1987,9 @@ If this check produces any unexpected output, investigate.</pre></td>
 
 <tr>
 	<td>V-248573</td>
-	<td>2702</td>
+	<td></td>
 	<td>medium</td>
-	<td>The OL 8 file integrity tool must notify the System Administrator (SA) when changes to the baseline configuration or anomalies in the operation of any security functions are discovered within an organizationally defined frequency.</td>
+	<td>The OL 8 file integrity tool must notify the system administrator (SA) when changes to the baseline configuration or anomalies in the operation of any security functions are discovered within an organizationally defined frequency.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Unauthorized changes to the baseline configuration could make the system vulnerable
 to various attacks or allow unauthorized access to the operating system. Changes to
@@ -1993,7 +2024,7 @@ AIDE can be executed periodically through other means; this is merely one exampl
 
 <tr>
 	<td>V-248574</td>
-	<td>1749</td>
+	<td></td>
 	<td>high</td>
 	<td>YUM must be configured to prevent the installation of patches, service packs, device drivers, or OL 8 system components that have not been digitally signed using a certificate that is recognized and approved by the organization.</td>
 	<td>SRG-OS-ID</td>
@@ -2021,7 +2052,7 @@ gpgcheck=0
 
 <tr>
 	<td>V-248575</td>
-	<td>1749</td>
+	<td></td>
 	<td>high</td>
 	<td>OL 8 must prevent the installation of software, patches, service packs, device drivers, or operating system components of local packages without verification they have been digitally signed using a certificate that is issued by a Certificate Authority (CA) that is recognized and approved by the organization.</td>
 	<td>SRG-OS-ID</td>
@@ -2051,7 +2082,7 @@ packages, set the localpkg_gpgcheck to 1 in /etc/yum.conf.</pre></td>
 
 <tr>
 	<td>V-248576</td>
-	<td>1749</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must prevent the loading of a new kernel for later execution.</td>
 	<td>SRG-OS-ID</td>
@@ -2074,7 +2105,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248577</td>
-	<td>2165</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must enable kernel parameters to enforce Discretionary Access Control (DAC) on symlinks.</td>
 	<td>SRG-OS-ID</td>
@@ -2100,7 +2131,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248578</td>
-	<td>2165</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must enable kernel parameters to enforce Discretionary Access Control (DAC) on hardlinks.</td>
 	<td>SRG-OS-ID</td>
@@ -2124,7 +2155,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248579</td>
-	<td>1090</td>
+	<td></td>
 	<td>low</td>
 	<td>OL 8 must restrict access to the kernel message buffer.</td>
 	<td>SRG-OS-ID</td>
@@ -2146,7 +2177,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248580</td>
-	<td>1090</td>
+	<td></td>
 	<td>low</td>
 	<td>OL 8 must prevent kernel profiling by unprivileged users.</td>
 	<td>SRG-OS-ID</td>
@@ -2167,7 +2198,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-252655</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must specify the default "include" directory for the /etc/sudoers file.</td>
 	<td>SRG-OS-ID</td>
@@ -2197,7 +2228,7 @@ Note that the '#' character doesn't denote a comment in the configuration file.<
 
 <tr>
 	<td>V-248581</td>
-	<td>2038</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must require users to provide a password for privilege escalation.</td>
 	<td>SRG-OS-ID</td>
@@ -2223,7 +2254,7 @@ in /etc/sudoers.d/.</pre></td>
 
 <tr>
 	<td>V-248582</td>
-	<td>2038</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must require users to reauthenticate for privilege escalation and changing roles.</td>
 	<td>SRG-OS-ID</td>
@@ -2248,7 +2279,7 @@ any sudo configuration snippets in /etc/sudoers.d/.</pre></td>
 
 <tr>
 	<td>V-248583</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must restrict privilege elevation to authorized personnel.</td>
 	<td>SRG-OS-ID</td>
@@ -2273,7 +2304,7 @@ ALL ALL=(ALL) ALL
 
 <tr>
 	<td>V-248584</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must use the invoking user's password for privilege escalation when using "sudo".</td>
 	<td>SRG-OS-ID</td>
@@ -2309,7 +2340,7 @@ or if cvtsudoers not supported:
 
 <tr>
 	<td>V-248585</td>
-	<td>2038</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must require reauthentication when using the "sudo" command.</td>
 	<td>SRG-OS-ID</td>
@@ -2341,7 +2372,7 @@ and the user will not have to re-authenticate for privileged actions until the u
 
 <tr>
 	<td>V-252656</td>
-	<td>2038</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 operating system must not be configured to bypass password requirements for privilege escalation.</td>
 	<td>SRG-OS-ID</td>
@@ -2363,7 +2394,7 @@ If any occurrences of "pam_succeed_if" is returned from the command, this is a f
 
 <tr>
 	<td>V-248586</td>
-	<td>1948</td>
+	<td></td>
 	<td>low</td>
 	<td>OL 8 must have the package required for multifactor authentication installed.</td>
 	<td>SRG-OS-ID</td>
@@ -2397,7 +2428,7 @@ $ sudo yum install openssl-pkcs11
 
 <tr>
 	<td>V-248587</td>
-	<td>1948</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must implement certificate status checking for multifactor authentication.</td>
 	<td>SRG-OS-ID</td>
@@ -2423,7 +2454,7 @@ multifactor solutions are checked via Online Certificate Status Protocol (OCSP).
 
 <tr>
 	<td>V-248588</td>
-	<td>1953</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must accept Personal Identity Verification (PIV) credentials.</td>
 	<td>SRG-OS-ID</td>
@@ -2452,7 +2483,7 @@ $ sudo yum install opensc
 
 <tr>
 	<td>V-248589</td>
-	<td>2824</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must implement non-executable data to protect its memory from unauthorized code execution.</td>
 	<td>SRG-OS-ID</td>
@@ -2484,7 +2515,7 @@ on AMD-based systems.</pre></td>
 
 <tr>
 	<td>V-248590</td>
-	<td>1084</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must clear the page allocator to prevent use-after-free attacks.</td>
 	<td>SRG-OS-ID</td>
@@ -2523,7 +2554,7 @@ Run the following command to update command line for already installed kernels:#
 
 <tr>
 	<td>V-248591</td>
-	<td>1084</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must disable virtual syscalls.</td>
 	<td>SRG-OS-ID</td>
@@ -2559,9 +2590,9 @@ Run the following command to update command line for already installed kernels:#
 
 <tr>
 	<td>V-248592</td>
-	<td>1084</td>
+	<td></td>
 	<td>medium</td>
-	<td>OL 8 must clear SLUB/SLAB objects to prevent use-after-free attacks.</td>
+	<td>OL 8 must clear memory when it is freed to prevent use-after-free attacks.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Poisoning writes an arbitrary value to freed objects, so any modification or
 reference to that object after being freed or before being initialized will be
@@ -2601,7 +2632,7 @@ Run the following command to update command line for already installed kernels:#
 
 <tr>
 	<td>V-248593</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must not let Meltdown and Spectre exploit critical vulnerabilities in modern processors.</td>
 	<td>SRG-OS-ID</td>
@@ -2631,7 +2662,7 @@ Run the following command to update command line for already installed kernels:
 
 <tr>
 	<td>V-248594</td>
-	<td>2824</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must implement address space layout randomization (ASLR) to protect its memory from unauthorized code execution.</td>
 	<td>SRG-OS-ID</td>
@@ -2657,7 +2688,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248595</td>
-	<td>2617</td>
+	<td></td>
 	<td>low</td>
 	<td>YUM must remove all software components after updated versions have been installed on OL 8.</td>
 	<td>SRG-OS-ID</td>
@@ -2684,7 +2715,7 @@ to 1 in /etc/yum.conf.</pre></td>
 
 <tr>
 	<td>V-248596</td>
-	<td>2696</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must enable the SELinux targeted policy.</td>
 	<td>SRG-OS-ID</td>
@@ -2722,7 +2753,7 @@ use cases.</pre></td>
 
 <tr>
 	<td>V-248597</td>
-	<td>366</td>
+	<td></td>
 	<td>high</td>
 	<td>There must be no "shosts.equiv" files on the OL 8 operating system.</td>
 	<td>SRG-OS-ID</td>
@@ -2744,7 +2775,7 @@ $ sudo rm /[path]/[to]/[file]/shosts.equiv
 
 <tr>
 	<td>V-248598</td>
-	<td>366</td>
+	<td></td>
 	<td>high</td>
 	<td>There must be no ".shosts" files on the OL 8 operating system.</td>
 	<td>SRG-OS-ID</td>
@@ -2770,7 +2801,7 @@ $ sudo find / -name '.shosts' -type f -delete
 
 <tr>
 	<td>V-248600</td>
-	<td>366</td>
+	<td></td>
 	<td>low</td>
 	<td>OL 8 must have the packages required to use the hardware random number generator entropy gatherer service.</td>
 	<td>SRG-OS-ID</td>
@@ -2790,7 +2821,7 @@ $ sudo yum install rng-tools
 
 <tr>
 	<td>V-248599</td>
-	<td>366</td>
+	<td></td>
 	<td>low</td>
 	<td>OL 8 must enable the hardware random number generator entropy gatherer service.</td>
 	<td>SRG-OS-ID</td>
@@ -2815,7 +2846,7 @@ $ sudo systemctl enable rngd.service
 
 <tr>
 	<td>V-248601</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 SSH public host key files must have mode "0644" or less permissive.</td>
 	<td>SRG-OS-ID</td>
@@ -2836,7 +2867,7 @@ If properly configured, the output should indicate the following permissions:
 
 <tr>
 	<td>V-248602</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 SSH private host key files must have mode "0640" or less permissive.</td>
 	<td>SRG-OS-ID</td>
@@ -2858,7 +2889,7 @@ If they are owned by the root user, but by a dedicated group ssh_keys, they can 
 
 <tr>
 	<td>V-248603</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 SSH daemon must perform strict mode checking of home directory configuration files.</td>
 	<td>SRG-OS-ID</td>
@@ -2892,7 +2923,7 @@ StrictModes yes
 
 <tr>
 	<td>V-248605</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 SSH daemon must not allow authentication using known host's authentication.</td>
 	<td>SRG-OS-ID</td>
@@ -2924,7 +2955,7 @@ IgnoreUserKnownHosts yes
 
 <tr>
 	<td>V-248606</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 SSH daemon must not allow Kerberos authentication, except to fulfill documented and validated mission requirements.</td>
 	<td>SRG-OS-ID</td>
@@ -2959,7 +2990,7 @@ KerberosAuthentication no
 
 <tr>
 	<td>V-248607</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 SSH daemon must not allow GSSAPI authentication, except to fulfill documented and validated mission requirements.</td>
 	<td>SRG-OS-ID</td>
@@ -2993,7 +3024,7 @@ GSSAPIAuthentication no
 
 <tr>
 	<td>V-248608</td>
-	<td>366</td>
+	<td></td>
 	<td>low</td>
 	<td>OL 8 must use a separate file system for "/var".</td>
 	<td>SRG-OS-ID</td>
@@ -3017,7 +3048,7 @@ or logical volume at installation time, or migrate it using LVM.</pre></td>
 
 <tr>
 	<td>V-248609</td>
-	<td>366</td>
+	<td></td>
 	<td>low</td>
 	<td>OL 8 must use a separate file system for "/var/log".</td>
 	<td>SRG-OS-ID</td>
@@ -3040,7 +3071,7 @@ volume at installation time, or migrate it using LVM.</pre></td>
 
 <tr>
 	<td>V-248610</td>
-	<td>366</td>
+	<td></td>
 	<td>low</td>
 	<td>OL 8 must use a separate file system for the system audit data path.</td>
 	<td>SRG-OS-ID</td>
@@ -3067,7 +3098,7 @@ audit logs that will be created by the auditing daemon.</pre></td>
 
 <tr>
 	<td>V-248611</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must use a separate file system for "/tmp".</td>
 	<td>SRG-OS-ID</td>
@@ -3089,7 +3120,7 @@ logical volume at installation time, or migrate it using LVM.</pre></td>
 
 <tr>
 	<td>V-248612</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must use a separate file system for /var/tmp.</td>
 	<td>SRG-OS-ID</td>
@@ -3111,7 +3142,7 @@ logical volume at installation time, or migrate it using LVM.</pre></td>
 
 <tr>
 	<td>V-248613</td>
-	<td>770</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must not permit direct logons to the root account using remote access via SSH.</td>
 	<td>SRG-OS-ID</td>
@@ -3143,7 +3174,7 @@ PermitRootLogin no
 
 <tr>
 	<td>V-248615</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must have the rsyslog service enabled and active.</td>
 	<td>SRG-OS-ID</td>
@@ -3168,7 +3199,7 @@ $ sudo systemctl enable rsyslog.service
 
 <tr>
 	<td>V-248616</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must prevent files with the setuid and setgid bit set from being executed on file systems that contain user home directories.</td>
 	<td>SRG-OS-ID</td>
@@ -3193,7 +3224,7 @@ Add the nosuid option to the fourth column of
 
 <tr>
 	<td>V-248617</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must prevent files with the setuid and setgid bit set from being executed on the /boot directory.</td>
 	<td>SRG-OS-ID</td>
@@ -3218,7 +3249,7 @@ Add the nosuid option to the fourth column of
 
 <tr>
 	<td>V-248618</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must prevent files with the setuid and setgid bit set from being executed on the /boot/efi directory.</td>
 	<td>SRG-OS-ID</td>
@@ -3243,7 +3274,7 @@ Add the nosuid option to the fourth column of
 
 <tr>
 	<td>V-248619</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must prevent special devices on non-root local partitions.</td>
 	<td>SRG-OS-ID</td>
@@ -3272,7 +3303,7 @@ Add the nodev option to the fourth column of
 
 <tr>
 	<td>V-248620</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 file systems that contain user home directories must not execute binary files.</td>
 	<td>SRG-OS-ID</td>
@@ -3297,7 +3328,7 @@ Add the noexec option to the fourth column of
 
 <tr>
 	<td>V-248621</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 file systems must not interpret character or block special devices from untrusted file systems.</td>
 	<td>SRG-OS-ID</td>
@@ -3327,7 +3358,7 @@ Add the nodev option to the fourth column of
 
 <tr>
 	<td>V-248622</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 file systems must not execute binary files on removable media.</td>
 	<td>SRG-OS-ID</td>
@@ -3353,7 +3384,7 @@ Add the noexec option to the fourth column of
 
 <tr>
 	<td>V-248623</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must prevent files with the setuid and setgid bit set from being executed on file systems that are used with removable media.</td>
 	<td>SRG-OS-ID</td>
@@ -3382,7 +3413,7 @@ Add the nosuid option to the fourth column of
 
 <tr>
 	<td>V-248624</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 file systems must not execute binary files that are imported via Network File System (NFS).</td>
 	<td>SRG-OS-ID</td>
@@ -3404,7 +3435,7 @@ any NFS mounts.</pre></td>
 
 <tr>
 	<td>V-248625</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 file systems must not interpret character or block special devices that are imported via NFS.</td>
 	<td>SRG-OS-ID</td>
@@ -3425,7 +3456,7 @@ any NFS mounts.</pre></td>
 
 <tr>
 	<td>V-248626</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must prevent files with the setuid and setgid bit set from being executed on file systems that are imported via Network File System (NFS).</td>
 	<td>SRG-OS-ID</td>
@@ -3446,7 +3477,7 @@ any NFS mounts.</pre></td>
 
 <tr>
 	<td>V-248627</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>Local OL 8 initialization files must not execute world-writable programs.</td>
 	<td>SRG-OS-ID</td>
@@ -3473,7 +3504,7 @@ $ sudo chmod o-w FILE
 
 <tr>
 	<td>V-248628</td>
-	<td>1665</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must disable kernel dumps unless needed.</td>
 	<td>SRG-OS-ID</td>
@@ -3518,7 +3549,7 @@ $ sudo systemctl mask --now kdump.service
 
 <tr>
 	<td>V-248629</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must disable the "kernel.core_pattern".</td>
 	<td>SRG-OS-ID</td>
@@ -3543,7 +3574,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248630</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must disable acquiring, saving, and processing core dumps.</td>
 	<td>SRG-OS-ID</td>
@@ -3569,7 +3600,7 @@ By masking the unit, core dump processing is disabled.</pre></td>
 
 <tr>
 	<td>V-248631</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must disable core dumps for all users.</td>
 	<td>SRG-OS-ID</td>
@@ -3592,7 +3623,7 @@ $ grep core /etc/security/limits.conf
 
 <tr>
 	<td>V-248632</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must disable storing core dumps.</td>
 	<td>SRG-OS-ID</td>
@@ -3618,7 +3649,7 @@ can be set to none to disable storing core dumps permanently.</pre></td>
 
 <tr>
 	<td>V-248633</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must disable core dump backtraces.</td>
 	<td>SRG-OS-ID</td>
@@ -3649,7 +3680,7 @@ be generated.</pre></td>
 
 <tr>
 	<td>V-248634</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>For OL 8 systems using Domain Name Servers (DNS) resolution, at least two name servers must be configured.</td>
 	<td>SRG-OS-ID</td>
@@ -3692,7 +3723,7 @@ nameserver 192.168.0.2
 
 <tr>
 	<td>V-248635</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>Executable search paths within the initialization files of all local interactive OL 8 users must only contain paths that resolve to the system default or the user's home directory.</td>
 	<td>SRG-OS-ID</td>
@@ -3721,7 +3752,7 @@ directory other than the users home directory.</pre></td>
 
 <tr>
 	<td>V-248636</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>All OL 8 world-writable directories must be owned by root, sys, bin, or an application user.</td>
 	<td>SRG-OS-ID</td>
@@ -3744,7 +3775,7 @@ appropriate owner.</pre></td>
 
 <tr>
 	<td>V-248637</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>All OL 8 world-writable directories must be group-owned by root, sys, bin, or an application group.</td>
 	<td>SRG-OS-ID</td>
@@ -3770,7 +3801,7 @@ appropriate group.</pre></td>
 
 <tr>
 	<td>V-248638</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>All OL 8 local interactive users must have a home directory assigned in the "/etc/passwd" file.</td>
 	<td>SRG-OS-ID</td>
@@ -3796,7 +3827,7 @@ Therefore, this rule will report a finding for home directories like /users,
 
 <tr>
 	<td>V-248639</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>All OL 8 local interactive user home directories must have mode "0750" or less permissive.</td>
 	<td>SRG-OS-ID</td>
@@ -3820,7 +3851,7 @@ $ sudo chmod 0750 /home/USER
 
 <tr>
 	<td>V-248640</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>All OL 8 local interactive user home directory files must have mode "0750" or less permissive.</td>
 	<td>SRG-OS-ID</td>
@@ -3843,7 +3874,7 @@ Files that begin with a "." are excluded from this requirement.</pre></td>
 
 <tr>
 	<td>V-248641</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>All OL 8 local interactive user home directories must be group-owned by the home directory owner's primary group.</td>
 	<td>SRG-OS-ID</td>
@@ -3871,7 +3902,7 @@ are group-owners of one and only one home directory.</pre></td>
 
 <tr>
 	<td>V-248642</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must be configured so that all files and directories contained in local interactive user home directories are group-owned by a group of which the home directory owner is a member.</td>
 	<td>SRG-OS-ID</td>
@@ -3897,7 +3928,7 @@ to an interactive user is group-owned by an interactive user.</pre></td>
 
 <tr>
 	<td>V-248643</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>All OL 8 local interactive user home directories defined in the "/etc/passwd" file must exist.</td>
 	<td>SRG-OS-ID</td>
@@ -3927,7 +3958,7 @@ $ sudo mkdir /home/USER
 
 <tr>
 	<td>V-248644</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>All OL 8 local interactive user accounts must be assigned a home directory upon creation.</td>
 	<td>SRG-OS-ID</td>
@@ -3954,7 +3985,7 @@ parameter in /etc/login.defs to yes as follows:
 
 <tr>
 	<td>V-248645</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>All OL 8 local initialization files must have mode "0740" or less permissive.</td>
 	<td>SRG-OS-ID</td>
@@ -3978,7 +4009,7 @@ $ sudo chmod 0740 /home/USER/.INIT_FILE
 
 <tr>
 	<td>V-248646</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>All OL 8 files and directories must have a valid owner.</td>
 	<td>SRG-OS-ID</td>
@@ -4014,7 +4045,7 @@ $ sudo find MOUNTPOINT -xdev -nouser 2>/dev/null
 
 <tr>
 	<td>V-248647</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>All OL 8 files and directories must have a valid group owner.</td>
 	<td>SRG-OS-ID</td>
@@ -4053,7 +4084,7 @@ $ sudo find MOUNTPOINT -xdev -nogroup 2>/dev/null
 
 <tr>
 	<td>V-248648</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>A separate OL 8 filesystem must be used for user home directories (such as "/home" or an equivalent).</td>
 	<td>SRG-OS-ID</td>
@@ -4077,7 +4108,7 @@ mountpoint can instead be configured later.</pre></td>
 
 <tr>
 	<td>V-248649</td>
-	<td>366</td>
+	<td></td>
 	<td>high</td>
 	<td>Unattended or automatic logon via the OL 8 graphical user interface must not be allowed.</td>
 	<td>SRG-OS-ID</td>
@@ -4104,7 +4135,7 @@ AutomaticLoginEnable=false
 
 <tr>
 	<td>V-248650</td>
-	<td>366</td>
+	<td></td>
 	<td>high</td>
 	<td>OL 8 must not allow users to override SSH environment variables.</td>
 	<td>SRG-OS-ID</td>
@@ -4136,7 +4167,7 @@ PermitUserEnvironment no
 
 <tr>
 	<td>V-248651</td>
-	<td>16</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 temporary user accounts must be provisioned with an expiration time of 72 hours or less.</td>
 	<td>SRG-OS-ID</td>
@@ -4178,7 +4209,7 @@ period of 72 hours.</pre></td>
 
 <tr>
 	<td>V-248652</td>
-	<td>2238</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 systems below version 8.2 must automatically lock an account when three unsuccessful logon attempts occur.</td>
 	<td>SRG-OS-ID</td>
@@ -4211,7 +4242,7 @@ depending on the OS version.</pre></td>
 
 <tr>
 	<td>V-248653</td>
-	<td>2238</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 systems, versions 8.2 and above, must automatically lock an account when three unsuccessful logon attempts occur.</td>
 	<td>SRG-OS-ID</td>
@@ -4244,7 +4275,7 @@ depending on the OS version.</pre></td>
 
 <tr>
 	<td>V-248654</td>
-	<td>2238</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 systems below version 8.2 must automatically lock an account when three unsuccessful logon attempts occur during a 15-minute time period.</td>
 	<td>SRG-OS-ID</td>
@@ -4277,7 +4308,7 @@ depending on the OS version.</pre></td>
 
 <tr>
 	<td>V-248655</td>
-	<td>2238</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 systems, versions 8.2 and above, must automatically lock an account when three unsuccessful logon attempts occur during a 15-minute time period.</td>
 	<td>SRG-OS-ID</td>
@@ -4310,7 +4341,7 @@ depending on the OS version.</pre></td>
 
 <tr>
 	<td>V-248656</td>
-	<td>2238</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 systems below version 8.2 must automatically lock an account until the locked account is released by an administrator when three unsuccessful logon attempts occur during a 15-minute time period.</td>
 	<td>SRG-OS-ID</td>
@@ -4348,7 +4379,7 @@ to unlock a user. This should be done using the faillock tool.</pre></td>
 
 <tr>
 	<td>V-248657</td>
-	<td>2238</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 systems, versions 8.2 and above, must automatically lock an account until the locked account is released by an administrator when three unsuccessful logon attempts occur during a 15-minute time period.</td>
 	<td>SRG-OS-ID</td>
@@ -4386,7 +4417,7 @@ to unlock a user. This should be done using the faillock tool.</pre></td>
 
 <tr>
 	<td>V-248658</td>
-	<td>2238</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 systems below version 8.2 must ensure account lockouts persist.</td>
 	<td>SRG-OS-ID</td>
@@ -4411,14 +4442,19 @@ depending on the OS version.
 
 The chosen profile expects the directory to be 
                 
-              .</pre></td>
+              .
+
+To configure the tally directory, add the following line to /etc/security/faillock.conf:
+dir = 
+              
+            </pre></td>
 	<td>OL08-00-020016</td>
 	<td>accounts_passwords_pam_faillock_dir</td>
 </tr>
 
 <tr>
 	<td>V-248659</td>
-	<td>2238</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 systems, versions 8.2 and above, must ensure account lockouts persist.</td>
 	<td>SRG-OS-ID</td>
@@ -4443,14 +4479,19 @@ depending on the OS version.
 
 The chosen profile expects the directory to be 
                 
-              .</pre></td>
+              .
+
+To configure the tally directory, add the following line to /etc/security/faillock.conf:
+dir = 
+              
+            </pre></td>
 	<td>OL08-00-020017</td>
 	<td>accounts_passwords_pam_faillock_dir</td>
 </tr>
 
 <tr>
 	<td>V-248660</td>
-	<td>2238</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 systems below version 8.2 must prevent system messages from being presented when three unsuccessful logon attempts occur.</td>
 	<td>SRG-OS-ID</td>
@@ -4478,7 +4519,7 @@ depending on the OS version.</pre></td>
 
 <tr>
 	<td>V-248661</td>
-	<td>2238</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 systems, versions 8.2 and above, must prevent system messages from being presented when three unsuccessful logon attempts occur.</td>
 	<td>SRG-OS-ID</td>
@@ -4506,7 +4547,7 @@ depending on the OS version.</pre></td>
 
 <tr>
 	<td>V-248662</td>
-	<td>2238</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 systems below version 8.2 must log user name information when unsuccessful logon attempts occur.</td>
 	<td>SRG-OS-ID</td>
@@ -4525,7 +4566,7 @@ audit
 
 <tr>
 	<td>V-248663</td>
-	<td>2238</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 systems, versions 8.2 and above, must log user name information when unsuccessful logon attempts occur.</td>
 	<td>SRG-OS-ID</td>
@@ -4544,7 +4585,7 @@ audit
 
 <tr>
 	<td>V-248664</td>
-	<td>2238</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 systems below version 8.2 must include root when automatically locking an account until the locked account is released by an administrator when three unsuccessful logon attempts occur during a 15-minute time period.</td>
 	<td>SRG-OS-ID</td>
@@ -4571,7 +4612,7 @@ depending on the OS version.</pre></td>
 
 <tr>
 	<td>V-248665</td>
-	<td>2238</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 systems, versions 8.2 and above, must include root when automatically locking an account until the locked account is released by an administrator when three unsuccessful logon attempts occur during a 15-minute time period.</td>
 	<td>SRG-OS-ID</td>
@@ -4598,7 +4639,7 @@ depending on the OS version.</pre></td>
 
 <tr>
 	<td>V-248666</td>
-	<td>54</td>
+	<td></td>
 	<td>low</td>
 	<td>OL 8 must limit the number of concurrent sessions to 10 for all accounts and/or account types.</td>
 	<td>SRG-OS-ID</td>
@@ -4631,7 +4672,7 @@ a file under /etc/security/limits.d/:
 
 <tr>
 	<td>V-248667</td>
-	<td>2238</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must configure the use of the pam_faillock.so module in the /etc/pam.d/system-auth file.</td>
 	<td>SRG-OS-ID</td>
@@ -4653,7 +4694,7 @@ account required pam_faillock.so
 
 <tr>
 	<td>V-248668</td>
-	<td>2238</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must configure the use of the pam_faillock.so module in the /etc/pam.d/password-auth file.</td>
 	<td>SRG-OS-ID</td>
@@ -4675,7 +4716,7 @@ account required pam_faillock.so
 
 <tr>
 	<td>V-248669</td>
-	<td>2238</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 systems, versions 8.2 and above, must configure SELinux context type to allow the use of a non-default faillock tally directory.</td>
 	<td>SRG-OS-ID</td>
@@ -4706,7 +4747,7 @@ records is stored. The configured directory must have the correct SELinux contex
 
 <tr>
 	<td>V-248670</td>
-	<td>2238</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 systems below version 8.2 must configure SELinux context type to allow the use of a non-default faillock tally directory.</td>
 	<td>SRG-OS-ID</td>
@@ -4737,7 +4778,7 @@ records is stored. The configured directory must have the correct SELinux contex
 
 <tr>
 	<td>V-248671</td>
-	<td>58</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must enable a user session lock until that user reestablishes access using established identification and authentication procedures for graphical user sessions.</td>
 	<td>SRG-OS-ID</td>
@@ -4770,7 +4811,7 @@ After the settings have been set, run dconf update.</pre></td>
 
 <tr>
 	<td>V-248672</td>
-	<td>60</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must initiate a session lock for graphical user interfaces when the screensaver is activated.</td>
 	<td>SRG-OS-ID</td>
@@ -4795,7 +4836,7 @@ After the settings have been set, run dconf update.</pre></td>
 
 <tr>
 	<td>V-248673</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must disable the user list at logon for graphical user interfaces.</td>
 	<td>SRG-OS-ID</td>
@@ -4831,7 +4872,7 @@ After the settings have been set, run dconf update.</pre></td>
 
 <tr>
 	<td>V-257259</td>
-	<td>1133</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must terminate idle user sessions.</td>
 	<td>SRG-OS-ID</td>
@@ -4855,137 +4896,8 @@ StopIdleSessionSec=
 </tr>
 
 <tr>
-	<td>V-248674</td>
-	<td>58</td>
-	<td>medium</td>
-	<td>OL 8 must have the tmux package installed.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre>A session time-out lock is a temporary action taken when a user stops work and moves away from the immediate
-physical vicinity of the information system but does not logout because of the temporary nature of the absence.
-Rather than relying on the user to manually lock their operation system session prior to vacating the vicinity,
-operating systems need to be able to identify when a user's session has idled and take action to initiate the
-session lock.
-
-                
-The tmux package allows for a session lock to be implemented and configured.</pre></td>
-	<td><pre>Run the following command to determine if the tmux package is installed: $ rpm -q tmux
-      Is it the case that the package is not installed?
-      </pre></td>
-	<td><pre>To enable console screen locking, install the tmux package.
-The tmux package can be installed with the following command:
-
-$ sudo yum install tmux
-A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not want to log out because of the temporary nature of the absence.
-The session lock is implemented at the point where session activity can be determined.
-Rather than be forced to wait for a period of time to expire before the user session can be locked, Oracle Linux 8 needs to provide users with the ability to manually invoke a session lock so users can secure their session if it is necessary to temporarily vacate the immediate physical vicinity.
-Instruct users to begin new terminal sessions with the following command:
-$ tmux
-The console can now be locked with the following key combination:
-ctrl+b :lock-session
-              </pre></td>
-	<td>OL08-00-020039</td>
-	<td>package_tmux_installed</td>
-</tr>
-
-<tr>
-	<td>V-248675</td>
-	<td>58</td>
-	<td>medium</td>
-	<td>OL 8 must enable a user session lock until that user re-establishes access using established identification and authentication procedures for command line sessions.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre>The tmux package allows for a session lock to be implemented and configured.
-However, the session lock is implemented by an external command. The tmux
-default configuration does not contain an effective session lock.</pre></td>
-	<td><pre>Verify Oracle Linux 8 enables the user to initiate a session lock trhough key bindings with the following commands:
-
-$ grep "lock-session" /etc/tmux.conf
-
-bind X lock-session
-
-Then, verify that the /etc/tmux.conf file can be read by other users than root:
-
-$ sudo ls -al /etc/tmux.conf
-      Is it the case that the "lock-session" is not bound to a specific key?
-      </pre></td>
-	<td><pre>To set a key binding for the screen locking in tmux terminal multiplexer,
-the session-lock command must be bound to a key.
-Add the following line to /etc/tmux.conf:
-bind X lock-session.
-The console can now be locked with the following key combination:
-Ctrl+b Shift+x
-              </pre></td>
-	<td>OL08-00-020040</td>
-	<td>configure_tmux_lock_keybinding</td>
-</tr>
-
-<tr>
-	<td>V-248676</td>
-	<td>58</td>
-	<td>medium</td>
-	<td>OL 8 must ensure session control is automatically started at shell initialization.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre>Unlike bash itself, the tmux terminal multiplexer
-provides a mechanism to lock sessions after period of inactivity.
-A session lock is a temporary action taken when a user stops work and moves away from the
-immediate physical vicinity of the information system but does not want to
-log out because of the temporary nature of the absence.</pre></td>
-	<td><pre>Verify Oracle Linux 8 shell initialization file is configured to start each shell with the tmux terminal multiplexer.
-
-Determine the location of the tmux script with the following command:
-
-$ sudo grep tmux /etc/bashrc /etc/profile.d/*
-
-/etc/profile.d/tmux.sh:  case "$name" in (sshd|login) tmux ;; esac
-
-Review the tmux script by using the following example:
-
-$ cat /etc/profile.d/tmux.sh
-
-if [ "$PS1" ]; then
-parent=$(ps -o ppid= -p $$)
-name=$(ps -o comm= -p $parent)
-case "$name" in (sshd|login) tmux ;; esac
-fi
-
-If the shell file is not configured as the example above, is commented out, or is missing, this is a finding.
-
-Determine if tmux is currently running with the following command:
-
-$ sudo ps all | grep tmux | grep -v grep
-      Is it the case that the command does not produce output?
-      </pre></td>
-	<td><pre>The tmux terminal multiplexer is used to implement
-automatic session locking. It should be started from
-/etc/bashrc or drop-in files within /etc/profile.d/.</pre></td>
-	<td>OL08-00-020041</td>
-	<td>configure_bashrc_tmux</td>
-</tr>
-
-<tr>
-	<td>V-248677</td>
-	<td>58</td>
-	<td>low</td>
-	<td>OL 8 must prevent users from disabling session control mechanisms.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre>Not listing tmux among permitted shells
-prevents malicious program running as user
-from lowering security by disabling the screen lock.</pre></td>
-	<td><pre>To verify that tmux is not listed as allowed shell on the system
-run the following command:
-$ grep 'tmux$' /etc/shells
-The output should be empty.
-      Is it the case that tmux is listed in /etc/shells?
-      </pre></td>
-	<td><pre>The tmux terminal multiplexer is used to implement
-automatic session locking. It should not be listed in
-/etc/shells.</pre></td>
-	<td>OL08-00-020042</td>
-	<td>no_tmux_in_shells</td>
-</tr>
-
-<tr>
 	<td>V-248678</td>
-	<td>58</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must enable a user session lock until that user reestablishes access using established identification and authentication procedures for command line sessions.</td>
 	<td>SRG-OS-ID</td>
@@ -5019,7 +4931,7 @@ $ sudo yum install kbd
 
 <tr>
 	<td>V-248679</td>
-	<td>58</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must be able to initiate directly a session lock for all connection types using smartcard when the smartcard is removed.</td>
 	<td>SRG-OS-ID</td>
@@ -5053,7 +4965,7 @@ After the settings have been set, run dconf update.</pre></td>
 
 <tr>
 	<td>V-248680</td>
-	<td>60</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must automatically lock graphical user sessions after 15 minutes of inactivity.</td>
 	<td>SRG-OS-ID</td>
@@ -5085,37 +4997,8 @@ idle-delay=uint32 900
 </tr>
 
 <tr>
-	<td>V-248681</td>
-	<td>60</td>
-	<td>medium</td>
-	<td>OL 8 must automatically lock command line user sessions after 15 minutes of inactivity.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre>Locking the session after a period of inactivity limits the
-potential exposure if the session is left unattended.</pre></td>
-	<td><pre>Verify Oracle Linux 8 initiates a session lock after 15 minutes of inactivity.
-
-Check the value of the system inactivity timeout with the following command:
-
-$ grep -i lock-after-time /etc/tmux.conf
-
-set -g lock-after-time 900
-
-Then, verify that the /etc/tmux.conf file can be read by other users than root:
-
-$ sudo ls -al /etc/tmux.conf
-      Is it the case that "lock-after-time" is not set to "900" or less in the global tmux configuration file to enforce session lock after inactivity?
-      </pre></td>
-	<td><pre>To enable console screen locking in tmux terminal multiplexer
-after a period of inactivity,
-the lock-after-time option has to be set to a value greater than 0 and less than
-or equal to 900 in /etc/tmux.conf.</pre></td>
-	<td>OL08-00-020070</td>
-	<td>configure_tmux_lock_after_time</td>
-</tr>
-
-<tr>
 	<td>V-248682</td>
-	<td>60</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must prevent a user from overriding the session lock-delay setting for the graphical user interface.</td>
 	<td>SRG-OS-ID</td>
@@ -5142,7 +5025,7 @@ After the settings have been set, run dconf update.</pre></td>
 
 <tr>
 	<td>V-248683</td>
-	<td>60</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must prevent a user from overriding the session idle-delay setting for the graphical user interface.</td>
 	<td>SRG-OS-ID</td>
@@ -5169,7 +5052,7 @@ After the settings have been set, run dconf update.</pre></td>
 
 <tr>
 	<td>V-248684</td>
-	<td>60</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must prevent a user from overriding the session lock-enabled setting for the graphical user interface.</td>
 	<td>SRG-OS-ID</td>
@@ -5202,7 +5085,7 @@ After the settings have been set, run dconf update.</pre></td>
 
 <tr>
 	<td>V-248685</td>
-	<td>187</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must map the authenticated identity to the user or group account for PKI-based authentication.</td>
 	<td>SRG-OS-ID</td>
@@ -5236,7 +5119,7 @@ domains = testing.test
 
 <tr>
 	<td>V-248686</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must ensure the password complexity module is enabled in the password-auth file.</td>
 	<td>SRG-OS-ID</td>
@@ -5258,7 +5141,7 @@ password    requisite                                    pam_pwquality.so.</pre>
 
 <tr>
 	<td>V-252657</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must ensure the password complexity module is enabled in the system-auth file.</td>
 	<td>SRG-OS-ID</td>
@@ -5280,7 +5163,7 @@ password    requisite                                    pam_pwquality.so.</pre>
 
 <tr>
 	<td>V-252658</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 systems below version 8.4 must ensure the password complexity module in the system-auth file is configured for three retries or less.</td>
 	<td>SRG-OS-ID</td>
@@ -5309,7 +5192,7 @@ per session.</pre></td>
 
 <tr>
 	<td>V-252659</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 systems below version 8.4 must ensure the password complexity module in the password-auth file is configured for three retries or less.</td>
 	<td>SRG-OS-ID</td>
@@ -5338,7 +5221,7 @@ per session.</pre></td>
 
 <tr>
 	<td>V-252660</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 systems, version 8.4 and above, must ensure the password complexity module is configured for three retries or less.</td>
 	<td>SRG-OS-ID</td>
@@ -5367,7 +5250,7 @@ per session.</pre></td>
 
 <tr>
 	<td>V-248687</td>
-	<td>193</td>
+	<td></td>
 	<td>low</td>
 	<td>OL 8 must enforce password complexity by requiring that at least one uppercase character be used.</td>
 	<td>SRG-OS-ID</td>
@@ -5399,7 +5282,7 @@ length credit for each uppercase character. Modify the ucredit setting in
 
 <tr>
 	<td>V-248688</td>
-	<td>193</td>
+	<td></td>
 	<td>low</td>
 	<td>OL 8 must enforce password complexity by requiring that at least one lowercase character be used.</td>
 	<td>SRG-OS-ID</td>
@@ -5433,7 +5316,7 @@ length credit for each lowercase character. Modify the lcredit setting in
 
 <tr>
 	<td>V-248689</td>
-	<td>194</td>
+	<td></td>
 	<td>low</td>
 	<td>OL 8 must enforce password complexity by requiring that at least one numeric character be used.</td>
 	<td>SRG-OS-ID</td>
@@ -5468,7 +5351,7 @@ length credit for each digit. Modify the dcredit setting in
 
 <tr>
 	<td>V-248690</td>
-	<td>195</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must require the maximum number of repeating characters of the same character class be limited to four when passwords are changed.</td>
 	<td>SRG-OS-ID</td>
@@ -5497,7 +5380,7 @@ to prevent a run of ( + 1) or more identical characters.</pre></td>
 
 <tr>
 	<td>V-248691</td>
-	<td>195</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must require the maximum number of repeating characters be limited to three when passwords are changed.</td>
 	<td>SRG-OS-ID</td>
@@ -5530,7 +5413,7 @@ run of ( + 1) or more identical characters.</pre></td>
 
 <tr>
 	<td>V-248692</td>
-	<td>195</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must require the change of at least four character classes when passwords are changed.</td>
 	<td>SRG-OS-ID</td>
@@ -5575,7 +5458,7 @@ differing categories of characters when changing passwords.</pre></td>
 
 <tr>
 	<td>V-248693</td>
-	<td>195</td>
+	<td></td>
 	<td>low</td>
 	<td>OL 8 must require the change of at least eight characters when passwords are changed.</td>
 	<td>SRG-OS-ID</td>
@@ -5614,7 +5497,7 @@ when changing passwords.</pre></td>
 
 <tr>
 	<td>V-248694</td>
-	<td>198</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 passwords for new users or password changes must have a 24 hours/one day minimum password lifetime restriction in "/etc/shadow".</td>
 	<td>SRG-OS-ID</td>
@@ -5639,7 +5522,7 @@ $ sudo chage -m 1 USER
 
 <tr>
 	<td>V-248695</td>
-	<td>198</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 passwords for new users or password changes must have a 24 hours/one day minimum password lifetime restriction in "/etc/login.defs".</td>
 	<td>SRG-OS-ID</td>
@@ -5677,7 +5560,7 @@ The profile requirement is
 
 <tr>
 	<td>V-248696</td>
-	<td>199</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 user account passwords must have a 60-day maximum password lifetime restriction.</td>
 	<td>SRG-OS-ID</td>
@@ -5714,7 +5597,7 @@ The profile requirement is
 
 <tr>
 	<td>V-248697</td>
-	<td>199</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 user account passwords must be configured so that existing passwords are restricted to a 60-day maximum lifetime.</td>
 	<td>SRG-OS-ID</td>
@@ -5742,7 +5625,7 @@ $ sudo chage -M
 
 <tr>
 	<td>V-248699</td>
-	<td>205</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 passwords must have a minimum of 15 characters.</td>
 	<td>SRG-OS-ID</td>
@@ -5772,7 +5655,7 @@ after pam_pwquality to set minimum password length requirements.</pre></td>
 
 <tr>
 	<td>V-248700</td>
-	<td>205</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 passwords for new users must have a minimum of 15 characters.</td>
 	<td>SRG-OS-ID</td>
@@ -5808,7 +5691,7 @@ information about enforcing password quality requirements.</pre></td>
 
 <tr>
 	<td>V-248701</td>
-	<td>804</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 duplicate User IDs (UIDs) must not exist for interactive users.</td>
 	<td>SRG-OS-ID</td>
@@ -5827,7 +5710,7 @@ $ sudo awk -F ":" 'list[$3]++{print $1, $3}' /etc/passwd
 
 <tr>
 	<td>V-248702</td>
-	<td>768</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must implement multifactor authentication for access to interactive accounts.</td>
 	<td>SRG-OS-ID</td>
@@ -5879,7 +5762,7 @@ include the "allow_missing_name" option, like in the following example:
 
 <tr>
 	<td>V-248703</td>
-	<td>795</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 system-auth file must disable access to the system for account identifiers (individuals, groups, roles, and devices) with 35 days of inactivity.</td>
 	<td>SRG-OS-ID</td>
@@ -5918,7 +5801,7 @@ useradd man page for more information.</pre></td>
 
 <tr>
 	<td>V-248704</td>
-	<td>795</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 password-auth file must disable access to the system for account identifiers (individuals, groups, roles, and devices) with 35 days of inactivity.</td>
 	<td>SRG-OS-ID</td>
@@ -5951,7 +5834,7 @@ the example output.</pre></td>
 
 <tr>
 	<td>V-248705</td>
-	<td>1314</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 lastlog command must have a mode of "0750" or less permissive.</td>
 	<td>SRG-OS-ID</td>
@@ -5974,7 +5857,7 @@ $ sudo chmod 0750 /usr/bin/lastlog
 
 <tr>
 	<td>V-248706</td>
-	<td>1314</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 lastlog command must be owned by root.</td>
 	<td>SRG-OS-ID</td>
@@ -5989,7 +5872,8 @@ root
       </pre></td>
 	<td><pre>
 To properly set the owner of /usr/bin/lastlog, run the command:
-$ sudo chown root /usr/bin/lastlog 
+
+  $ sudo chown root /usr/bin/lastlog 
           </pre></td>
 	<td>OL08-00-020263</td>
 	<td>file_ownership_lastlog</td>
@@ -5997,7 +5881,7 @@ $ sudo chown root /usr/bin/lastlog
 
 <tr>
 	<td>V-248707</td>
-	<td>1314</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 lastlog command must be group-owned by root.</td>
 	<td>SRG-OS-ID</td>
@@ -6007,12 +5891,17 @@ attackers, thus compromising its confidentiality.</pre></td>
 run the command:
 $ ls -lL /var/log/lastlog
 If properly configured, the output should indicate the following group-owner:
+
+  root 
+  
+      Is it the case that /var/log/lastlog does not have a group owner of
 root
-      Is it the case that /var/log/lastlog does not have a group owner of root?
+?
       </pre></td>
 	<td><pre>
 To properly set the group owner of /var/log/lastlog, run the command:
-$ sudo chgrp root /var/log/lastlog
+
+  $ sudo chgrp root /var/log/lastlog
           </pre></td>
 	<td>OL08-00-020264</td>
 	<td>file_groupownership_lastlog</td>
@@ -6020,7 +5909,7 @@ $ sudo chgrp root /var/log/lastlog
 
 <tr>
 	<td>V-248708</td>
-	<td>1682</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must automatically expire temporary accounts within 72 hours.</td>
 	<td>SRG-OS-ID</td>
@@ -6062,7 +5951,7 @@ period of 72 hours.</pre></td>
 
 <tr>
 	<td>V-248709</td>
-	<td>1619</td>
+	<td></td>
 	<td>low</td>
 	<td>All OL 8 passwords must contain at least one special character.</td>
 	<td>SRG-OS-ID</td>
@@ -6097,7 +5986,7 @@ to require use of a special character in passwords.</pre></td>
 
 <tr>
 	<td>V-248710</td>
-	<td>2007</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must prohibit the use of cached authentications after one day.</td>
 	<td>SRG-OS-ID</td>
@@ -6139,7 +6028,7 @@ offline_credentials_expiration = 1
 
 <tr>
 	<td>V-248711</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must prevent the use of dictionary words for passwords.</td>
 	<td>SRG-OS-ID</td>
@@ -6169,7 +6058,7 @@ dictcheck is set to 1 passwords will be checked for dictionary words.</pre></td>
 
 <tr>
 	<td>V-248712</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must enforce a delay of at least four seconds between logon prompts following a failed logon attempt.</td>
 	<td>SRG-OS-ID</td>
@@ -6192,7 +6081,7 @@ FAIL_DELAY
 
 <tr>
 	<td>V-248713</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must not have unnecessary accounts.</td>
 	<td>SRG-OS-ID</td>
@@ -6226,7 +6115,7 @@ $ sudo userdel unauthorized_user
 
 <tr>
 	<td>V-248714</td>
-	<td>366</td>
+	<td></td>
 	<td>high</td>
 	<td>OL 8 must not allow accounts configured with blank or null passwords.</td>
 	<td>SRG-OS-ID</td>
@@ -6261,7 +6150,7 @@ should prevent users from being able to assign themselves empty passwords.</pre>
 
 <tr>
 	<td>V-248715</td>
-	<td>366</td>
+	<td></td>
 	<td>high</td>
 	<td>OL 8 must not allow blank or null passwords in the system-auth file.</td>
 	<td>SRG-OS-ID</td>
@@ -6292,7 +6181,7 @@ to prevent logins with empty passwords.</pre></td>
 
 <tr>
 	<td>V-248716</td>
-	<td>366</td>
+	<td></td>
 	<td>high</td>
 	<td>OL 8 must not allow blank or null passwords in the password-auth file.</td>
 	<td>SRG-OS-ID</td>
@@ -6323,7 +6212,7 @@ to prevent logins with empty passwords.</pre></td>
 
 <tr>
 	<td>V-248717</td>
-	<td>52</td>
+	<td></td>
 	<td>low</td>
 	<td>OL 8 must display the date and time of the last successful account logon upon logon.</td>
 	<td>SRG-OS-ID</td>
@@ -6349,7 +6238,7 @@ And make sure that the silent option is not set for this specific line.</pre></t
 
 <tr>
 	<td>V-248718</td>
-	<td>52</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must display the date and time of the last successful account logon upon an SSH logon.</td>
 	<td>SRG-OS-ID</td>
@@ -6381,7 +6270,7 @@ PrintLastLog yes
 
 <tr>
 	<td>V-248719</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 default permissions must be defined in such a way that all authenticated users can read and modify only their own files.</td>
 	<td>SRG-OS-ID</td>
@@ -6406,7 +6295,7 @@ UMASK
 
 <tr>
 	<td>V-248720</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must set the umask value to 077 for all local interactive user accounts.</td>
 	<td>SRG-OS-ID</td>
@@ -6437,7 +6326,7 @@ $ sudo find /home -maxdepth 2 -type f -name ".[^.]*" -exec grep -iH -d skip --ex
 
 <tr>
 	<td>V-248721</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must define default permissions for logon and non-logon shells.</td>
 	<td>SRG-OS-ID</td>
@@ -6465,7 +6354,7 @@ considered during the check and properly remediated, if necessary.</pre></td>
 
 <tr>
 	<td>V-248722</td>
-	<td>2234</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 audit system must be configured to audit the execution of privileged functions and prevent all software from executing at higher privilege levels than users executing the software.</td>
 	<td>SRG-OS-ID</td>
@@ -6513,7 +6402,7 @@ If both the "b32" and "b64" audit rules for "SGID" files are not defined, this i
 
 <tr>
 	<td>V-248723</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>Cron logging must be implemented in OL 8.</td>
 	<td>SRG-OS-ID</td>
@@ -6543,7 +6432,7 @@ cron.* action(type="omfile" file="/var/log/cron")
 
 <tr>
 	<td>V-248724</td>
-	<td>139</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 System Administrator (SA) and Information System Security Officer (ISSO) (at a minimum) must be alerted of an audit processing failure event.</td>
 	<td>SRG-OS-ID</td>
@@ -6569,7 +6458,7 @@ action_mail_acct =
 
 <tr>
 	<td>V-248725</td>
-	<td>139</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 Information System Security Officer (ISSO) and System Administrator (SA) (at a minimum) must have mail aliases to be notified of an audit processing failure.</td>
 	<td>SRG-OS-ID</td>
@@ -6599,7 +6488,7 @@ postmaster: root
 
 <tr>
 	<td>V-248726</td>
-	<td>140</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 System must take appropriate action when an audit processing failure occurs.</td>
 	<td>SRG-OS-ID</td>
@@ -6637,7 +6526,7 @@ auditd.conf man page.</pre></td>
 
 <tr>
 	<td>V-248728</td>
-	<td>140</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 audit system must take appropriate action when the audit storage volume is full.</td>
 	<td>SRG-OS-ID</td>
@@ -6675,7 +6564,7 @@ auditd.conf man page.</pre></td>
 
 <tr>
 	<td>V-248729</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 audit system must audit local events.</td>
 	<td>SRG-OS-ID</td>
@@ -6697,7 +6586,7 @@ This is the default setting.</pre></td>
 
 <tr>
 	<td>V-248730</td>
-	<td>1851</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must label all offloaded audit logs before sending them to the central log server.</td>
 	<td>SRG-OS-ID</td>
@@ -6723,7 +6612,7 @@ in /etc/audit/auditd.conf.</pre></td>
 
 <tr>
 	<td>V-248731</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must resolve audit information before writing to disk.</td>
 	<td>SRG-OS-ID</td>
@@ -6747,7 +6636,7 @@ in /etc/audit/auditd.conf.</pre></td>
 
 <tr>
 	<td>V-248732</td>
-	<td>164</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 audit logs must have a mode of "0600" or less permissive to prevent unauthorized read access.</td>
 	<td>SRG-OS-ID</td>
@@ -6775,7 +6664,7 @@ By default, audit_log_file is "/var/log/audit/audit.log".</pre></td>
 
 <tr>
 	<td>V-248733</td>
-	<td>164</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 audit logs must be owned by root to prevent unauthorized read access.</td>
 	<td>SRG-OS-ID</td>
@@ -6795,7 +6684,8 @@ configured via log_file parameter in /etc/audit/auditd.conf
 or by default, the path for audit log is /var/log/audit/.
 
 To properly set the owner of /var/log/audit/*, run the command:
-$ sudo chown root /var/log/audit/* 
+
+  $ sudo chown root /var/log/audit/* 
         </pre></td>
 	<td>OL08-00-030080</td>
 	<td>file_ownership_var_log_audit_stig</td>
@@ -6803,7 +6693,7 @@ $ sudo chown root /var/log/audit/*
 
 <tr>
 	<td>V-248734</td>
-	<td>164</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 audit logs must be group-owned by root to prevent unauthorized read access.</td>
 	<td>SRG-OS-ID</td>
@@ -6834,7 +6724,8 @@ be configured via log_file parameter in /etc/audit/auditd.conf
 or, by default, the path for audit log is /var/log/audit/.
 
 To properly set the group owner of /var/log/audit/*, run the command:
-$ sudo chgrp root /var/log/audit/*
+
+  $ sudo chgrp root /var/log/audit/*
         </pre></td>
 	<td>OL08-00-030090</td>
 	<td>file_group_ownership_var_log_audit</td>
@@ -6842,7 +6733,7 @@ $ sudo chgrp root /var/log/audit/*
 
 <tr>
 	<td>V-248735</td>
-	<td>164</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 audit log directory must be owned by root to prevent unauthorized read access.</td>
 	<td>SRG-OS-ID</td>
@@ -6868,7 +6759,8 @@ The audit log directory must be owned by "root"
 	<td><pre>All audit directories must be owned by root user. By default, the path for audit log is /var/log/audit/.
 
 To properly set the owner of /var/log/audit, run the command:
-$ sudo chown root /var/log/audit 
+
+  $ sudo chown root /var/log/audit 
         </pre></td>
 	<td>OL08-00-030100</td>
 	<td>directory_ownership_var_log_audit</td>
@@ -6876,7 +6768,7 @@ $ sudo chown root /var/log/audit
 
 <tr>
 	<td>V-248736</td>
-	<td>164</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 audit log directory must be group-owned by root to prevent unauthorized read access.</td>
 	<td>SRG-OS-ID</td>
@@ -6903,7 +6795,8 @@ The audit log directory must be group-owned by "root".
 	<td><pre>All audit directories must be group owned by root user. By default, the path for audit log is /var/log/audit/.
 
 To properly set the group owner of /var/log/audit, run the command:
-$ sudo chgrp root /var/log/audit
+
+  $ sudo chgrp root /var/log/audit
         </pre></td>
 	<td>OL08-00-030110</td>
 	<td>directory_group_ownership_var_log_audit</td>
@@ -6911,7 +6804,7 @@ $ sudo chgrp root /var/log/audit
 
 <tr>
 	<td>V-248737</td>
-	<td>164</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 audit log directory must have a mode of 0700 or less permissive to prevent unauthorized read access.</td>
 	<td>SRG-OS-ID</td>
@@ -6953,7 +6846,7 @@ By default,
 
 <tr>
 	<td>V-248738</td>
-	<td>164</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 audit system must protect auditing rules from unauthorized change.</td>
 	<td>SRG-OS-ID</td>
@@ -6986,7 +6879,7 @@ With this setting, a reboot will be required to change any audit rules.</pre></t
 
 <tr>
 	<td>V-248739</td>
-	<td>164</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 audit system must protect logon UIDs from unauthorized change.</td>
 	<td>SRG-OS-ID</td>
@@ -7026,37 +6919,37 @@ immutable:
 
 <tr>
 	<td>V-248740</td>
-	<td>2132</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for all account creation events that affect "/etc/shadow".</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>In addition to auditing new user and group accounts, these watches
 will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
-	<td><pre>Verify Oracle Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd with the following command:
+	<td><pre>
+Verify Oracle Linux 8 generates audit records for all events that affect "/etc/shadow" with the following command:
 
-$  sudo auditctl -l | grep -E '(/etc/shadow)'
+$ sudo auditctl -l | grep /etc/shadow
 
--w /etc/shadow -p wa -k identity
+-w /etc/shadow -p wa -k audit_rules_usergroup_modification
       Is it the case that command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>If the auditd daemon is configured to use the
-augenrules program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix .rules in the
-directory /etc/audit/rules.d, in order to capture events that modify
-account changes:
+	<td><pre>
 
-          
-          -w /etc/shadow -p wa -k audit_rules_usergroup_modification
-          
-          
+
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix .rules in the
+directory /etc/audit/rules.d:
+
+-w /etc/shadow -p wa -k audit_rules_usergroup_modification
+
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following lines to
-/etc/audit/audit.rules file, in order to capture events that modify
-account changes:
+/etc/audit/audit.rules:
 
-          
-          -w /etc/shadow -p wa -k audit_rules_usergroup_modification
+-w /etc/shadow -p wa -k audit_rules_usergroup_modification
         </pre></td>
 	<td>OL08-00-030130</td>
 	<td>audit_rules_usergroup_modification_shadow</td>
@@ -7064,37 +6957,37 @@ account changes:
 
 <tr>
 	<td>V-248741</td>
-	<td>2132</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for all account creation events that affect "/etc/security/opasswd".</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>In addition to auditing new user and group accounts, these watches
 will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
-	<td><pre>Verify Oracle Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
+	<td><pre>
+Verify Oracle Linux 8 generates audit records for all events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | grep -E '(/etc/security/opasswd)'
+$ sudo auditctl -l | grep /etc/security/opasswd
 
--w /etc/security/opasswd -p wa -k identity
+-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>If the auditd daemon is configured to use the
-augenrules program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix .rules in the
-directory /etc/audit/rules.d, in order to capture events that modify
-account changes:
+	<td><pre>
 
-          
-          -w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification
-          
-          
+
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix .rules in the
+directory /etc/audit/rules.d:
+
+-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification
+
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following lines to
-/etc/audit/audit.rules file, in order to capture events that modify
-account changes:
+/etc/audit/audit.rules:
 
-          
-          -w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification
+-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification
         </pre></td>
 	<td>OL08-00-030140</td>
 	<td>audit_rules_usergroup_modification_opasswd</td>
@@ -7102,37 +6995,37 @@ account changes:
 
 <tr>
 	<td>V-248742</td>
-	<td>2132</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for all account creation events that affect "/etc/passwd".</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>In addition to auditing new user and group accounts, these watches
 will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
-	<td><pre>Verify Oracle Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/passwd" with the following command:
+	<td><pre>
+Verify Oracle Linux 8 generates audit records for all events that affect "/etc/passwd" with the following command:
 
-$  sudo auditctl -l | grep -E '(/etc/passwd)'
+$ sudo auditctl -l | grep /etc/passwd
 
--w /etc/passwd -p wa -k identity
+-w /etc/passwd -p wa -k audit_rules_usergroup_modification
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>If the auditd daemon is configured to use the
-augenrules program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix .rules in the
-directory /etc/audit/rules.d, in order to capture events that modify
-account changes:
+	<td><pre>
 
-          
-          -w /etc/passwd -p wa -k audit_rules_usergroup_modification
-          
-          
+
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix .rules in the
+directory /etc/audit/rules.d:
+
+-w /etc/passwd -p wa -k audit_rules_usergroup_modification
+
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following lines to
-/etc/audit/audit.rules file, in order to capture events that modify
-account changes:
+/etc/audit/audit.rules:
 
-          
-          -w /etc/passwd -p wa -k audit_rules_usergroup_modification
+-w /etc/passwd -p wa -k audit_rules_usergroup_modification
         </pre></td>
 	<td>OL08-00-030150</td>
 	<td>audit_rules_usergroup_modification_passwd</td>
@@ -7140,39 +7033,37 @@ account changes:
 
 <tr>
 	<td>V-248743</td>
-	<td>2132</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for all account creation events that affect "/etc/gshadow".</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>In addition to auditing new user and group accounts, these watches
 will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
-	<td><pre>Verify Oracle Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/gshadow" with the following command:
+	<td><pre>
+Verify Oracle Linux 8 generates audit records for all events that affect "/etc/gshadow" with the following command:
 
-$ sudo auditctl -l | grep -E '(/etc/gshadow)'
+$ sudo auditctl -l | grep /etc/gshadow
 
--w /etc/gshadow -p wa -k identity
-
-If the command does not return a line, or the line is commented out, this is a finding.
+-w /etc/gshadow -p wa -k audit_rules_usergroup_modification
       Is it the case that the system is not configured to audit account changes?
       </pre></td>
-	<td><pre>If the auditd daemon is configured to use the
-augenrules program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix .rules in the
-directory /etc/audit/rules.d, in order to capture events that modify
-account changes:
+	<td><pre>
 
-          
-          -w /etc/gshadow -p wa -k audit_rules_usergroup_modification
-          
-          
+
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix .rules in the
+directory /etc/audit/rules.d:
+
+-w /etc/gshadow -p wa -k audit_rules_usergroup_modification
+
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following lines to
-/etc/audit/audit.rules file, in order to capture events that modify
-account changes:
+/etc/audit/audit.rules:
 
-          
-          -w /etc/gshadow -p wa -k audit_rules_usergroup_modification
+-w /etc/gshadow -p wa -k audit_rules_usergroup_modification
         </pre></td>
 	<td>OL08-00-030160</td>
 	<td>audit_rules_usergroup_modification_gshadow</td>
@@ -7180,37 +7071,37 @@ account changes:
 
 <tr>
 	<td>V-248744</td>
-	<td>2132</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for all account creation events that affect "/etc/group".</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>In addition to auditing new user and group accounts, these watches
 will alert the system administrator(s) to any modifications. Any unexpected
 users, groups, or modifications should be investigated for legitimacy.</pre></td>
-	<td><pre>Verify Oracle Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/group" with the following command:
+	<td><pre>
+Verify Oracle Linux 8 generates audit records for all events that affect "/etc/group" with the following command:
 
-$ sudo auditctl -l | grep -E '(/etc/group)'
+$ sudo auditctl -l | grep /etc/group
 
--w /etc/group -p wa -k identity
+-w /etc/group -p wa -k audit_rules_usergroup_modification
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>If the auditd daemon is configured to use the
-augenrules program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix .rules in the
-directory /etc/audit/rules.d, in order to capture events that modify
-account changes:
+	<td><pre>
 
-          
-          -w /etc/group -p wa -k audit_rules_usergroup_modification
-          
-          
+
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix .rules in the
+directory /etc/audit/rules.d:
+
+-w /etc/group -p wa -k audit_rules_usergroup_modification
+
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following lines to
-/etc/audit/audit.rules file, in order to capture events that modify
-account changes:
+/etc/audit/audit.rules:
 
-          
-          -w /etc/group -p wa -k audit_rules_usergroup_modification
+-w /etc/group -p wa -k audit_rules_usergroup_modification
         </pre></td>
 	<td>OL08-00-030170</td>
 	<td>audit_rules_usergroup_modification_group</td>
@@ -7218,7 +7109,7 @@ account changes:
 
 <tr>
 	<td>V-248745</td>
-	<td>2132</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers".</td>
 	<td>SRG-OS-ID</td>
@@ -7227,22 +7118,31 @@ of what was executed on the system, as well as, for accountability purposes.
 Editing the sudoers file may be sign of an attacker trying to
 establish persistent methods to a system, auditing the editing of the sudoers
 files mitigates this risk.</pre></td>
-	<td><pre>Verify Oracle Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers" with the following command:
+	<td><pre>
+Verify Oracle Linux 8 generates audit records for all events that affect "/etc/sudoers" with the following command:
 
 $ sudo auditctl -l | grep /etc/sudoers
 
--w /etc/sudoers -p wa -k identity
+-w /etc/sudoers -p wa -k actions
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
 	<td><pre>At a minimum, the audit system should collect administrator actions
-for all users and root. If the auditd daemon is configured to use the
-augenrules program to read audit rules during daemon startup (the default),
-add the following line to a file with suffix .rules in the directory
-/etc/audit/rules.d:
+for all users and root.
+
+
+
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix .rules in the
+directory /etc/audit/rules.d:
+
 -w /etc/sudoers -p wa -k actions
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add the following line to
-/etc/audit/audit.rules file:
+utility to read audit rules during daemon startup, add the following lines to
+/etc/audit/audit.rules:
+
 -w /etc/sudoers -p wa -k actions
         </pre></td>
 	<td>OL08-00-030171</td>
@@ -7251,7 +7151,7 @@ utility to read audit rules during daemon startup, add the following line to
 
 <tr>
 	<td>V-248746</td>
-	<td>2132</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/".</td>
 	<td>SRG-OS-ID</td>
@@ -7260,22 +7160,31 @@ of what was executed on the system, as well as, for accountability purposes.
 Editing the sudoers file may be sign of an attacker trying to
 establish persistent methods to a system, auditing the editing of the sudoers
 files mitigates this risk.</pre></td>
-	<td><pre>Verify Oracle Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
+	<td><pre>
+Verify Oracle Linux 8 generates audit records for all events that affect "/etc/sudoers.d/" with the following command:
 
-$ sudo auditctl -l | grep/etc/sudoers.d
+$ sudo auditctl -l | grep /etc/sudoers.d/
 
--w /etc/sudoers.d/ -p wa -k identity
+-w /etc/sudoers.d/ -p wa -k actions
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
 	<td><pre>At a minimum, the audit system should collect administrator actions
-for all users and root. If the auditd daemon is configured to use the
-augenrules program to read audit rules during daemon startup (the default),
-add the following line to a file with suffix .rules in the directory
-/etc/audit/rules.d:
+for all users and root.
+
+
+
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix .rules in the
+directory /etc/audit/rules.d:
+
 -w /etc/sudoers.d/ -p wa -k actions
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add the following line to
-/etc/audit/audit.rules file:
+utility to read audit rules during daemon startup, add the following lines to
+/etc/audit/audit.rules:
+
 -w /etc/sudoers.d/ -p wa -k actions
         </pre></td>
 	<td>OL08-00-030172</td>
@@ -7284,7 +7193,7 @@ utility to read audit rules during daemon startup, add the following line to
 
 <tr>
 	<td>V-248519</td>
-	<td>1814</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 audit package must be installed.</td>
 	<td>SRG-OS-ID</td>
@@ -7299,7 +7208,7 @@ utility to read audit rules during daemon startup, add the following line to
 
 <tr>
 	<td>V-248520</td>
-	<td>1814</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 audit records must contain information to establish what type of events occurred, the source of events, where events occurred, and the outcome of events.</td>
 	<td>SRG-OS-ID</td>
@@ -7333,7 +7242,7 @@ $ sudo systemctl enable auditd.service
 
 <tr>
 	<td>V-248747</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "su" command.</td>
 	<td>SRG-OS-ID</td>
@@ -7355,15 +7264,21 @@ $ sudo auditctl -l | grep su
 -a always,exit -F path=/usr/bin/su -F perm=x -F auid>=1000 -F auid!=unset -k privileged-su
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the auditd daemon is
-configured to use the augenrules program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix .rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/usr/bin/su -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add a line of the following
-form to /etc/audit/audit.rules:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/bin/su -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030190</td>
@@ -7372,7 +7287,7 @@ form to /etc/audit/audit.rules:
 
 <tr>
 	<td>V-248748</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 audit system must be configured to audit any use of the "setxattr", "fsetxattr", "lsetxattr", "removexattr", "fremovexattr", and "lremovexattr" system calls.</td>
 	<td>SRG-OS-ID</td>
@@ -7412,7 +7327,7 @@ If the system is 64 bit then also add the following line:
 
 <tr>
 	<td>V-248753</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "chage" command.</td>
 	<td>SRG-OS-ID</td>
@@ -7434,15 +7349,21 @@ $ sudo auditctl -l | grep chage
 -a always,exit -F path=/usr/bin/chage -F perm=x -F auid>=1000 -F auid!=unset -k privileged-chage
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the auditd daemon is
-configured to use the augenrules program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix .rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/usr/bin/chage -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add a line of the following
-form to /etc/audit/audit.rules:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/bin/chage -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030250</td>
@@ -7451,7 +7372,7 @@ form to /etc/audit/audit.rules:
 
 <tr>
 	<td>V-248754</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any uses of the "chcon" command.</td>
 	<td>SRG-OS-ID</td>
@@ -7473,15 +7394,21 @@ $ sudo auditctl -l | grep chcon
 -a always,exit -F path=/usr/bin/chcon -F perm=x -F auid>=1000 -F auid!=unset -k perm_mod
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect any execution attempt
-of the chcon command for all users and root. If the auditd
-daemon is configured to use the augenrules program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-.rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/usr/bin/chcon -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add the following lines to
-/etc/audit/audit.rules file:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/bin/chcon -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030260</td>
@@ -7490,7 +7417,7 @@ utility to read audit rules during daemon startup, add the following lines to
 
 <tr>
 	<td>V-248756</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "ssh-agent" command.</td>
 	<td>SRG-OS-ID</td>
@@ -7508,16 +7435,22 @@ $ sudo auditctl -l | grep ssh-agent
 -a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid>=1000 -F auid!=unset -k privileged-ssh-agent
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect any execution attempt
-of the ssh-agent command for all users and root. If the auditd
-daemon is configured to use the augenrules program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-.rules in the directory /etc/audit/rules.d:
--a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid>=1000 -F auid!=unset -k privileged-ssh-agent
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
+-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add the following lines to
-/etc/audit/audit.rules file:
--a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid>=1000 -F auid!=unset -k privileged-ssh-agent
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
+-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030280</td>
 	<td>audit_rules_privileged_commands_ssh_agent</td>
@@ -7525,7 +7458,7 @@ utility to read audit rules during daemon startup, add the following lines to
 
 <tr>
 	<td>V-248757</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "passwd" command.</td>
 	<td>SRG-OS-ID</td>
@@ -7547,15 +7480,21 @@ $ sudo auditctl -l | grep passwd
 -a always,exit -F path=/usr/bin/passwd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-passwd
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the auditd daemon is
-configured to use the augenrules program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix .rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/usr/bin/passwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add a line of the following
-form to /etc/audit/audit.rules:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/bin/passwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030290</td>
@@ -7564,7 +7503,7 @@ form to /etc/audit/audit.rules:
 
 <tr>
 	<td>V-248758</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "mount" command.</td>
 	<td>SRG-OS-ID</td>
@@ -7586,15 +7525,21 @@ $ sudo auditctl -l | grep mount
 -a always,exit -F path=/usr/bin/mount -F perm=x -F auid>=1000 -F auid!=unset -k privileged-mount
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the auditd daemon is
-configured to use the augenrules program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix .rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/usr/bin/mount -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add a line of the following
-form to /etc/audit/audit.rules:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/bin/mount -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030300</td>
@@ -7603,7 +7548,7 @@ form to /etc/audit/audit.rules:
 
 <tr>
 	<td>V-248759</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "umount" command.</td>
 	<td>SRG-OS-ID</td>
@@ -7625,15 +7570,21 @@ $ sudo auditctl -l | grep umount
 -a always,exit -F path=/usr/bin/umount -F perm=x -F auid>=1000 -F auid!=unset -k privileged-umount
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the auditd daemon is
-configured to use the augenrules program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix .rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/usr/bin/umount -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add a line of the following
-form to /etc/audit/audit.rules:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/bin/umount -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030301</td>
@@ -7642,7 +7593,7 @@ form to /etc/audit/audit.rules:
 
 <tr>
 	<td>V-248760</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "mount" syscall.</td>
 	<td>SRG-OS-ID</td>
@@ -7661,13 +7612,15 @@ If the system is configured to audit this activity, it will return a line.
 events for all users and root. If the auditd daemon is configured to
 use the augenrules program to read audit rules during daemon startup
 (the default), add the following line to a file with suffix .rules in
-the directory /etc/audit/rules.d, setting ARCH to either b32 or b64 as
-appropriate for your system:
+the directory /etc/audit/rules.d, setting ARCH to either b32 for
+32-bit system, or having two lines for both b32 and b64 in case your
+system is 64-bit:
 -a always,exit -F arch=ARCH -S mount -F auid>=1000 -F auid!=unset -F key=export
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following line to
-/etc/audit/audit.rules file, setting ARCH to either b32 or b64 as
-appropriate for your system:
+/etc/audit/audit.rules file, setting ARCH to either b32 for
+32-bit system, or having two lines for both b32 and b64 in case your
+system is 64-bit:
 -a always,exit -F arch=ARCH -S mount -F auid>=1000 -F auid!=unset -F key=export
         </pre></td>
 	<td>OL08-00-030302</td>
@@ -7676,7 +7629,7 @@ appropriate for your system:
 
 <tr>
 	<td>V-248761</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "unix_update" command.</td>
 	<td>SRG-OS-ID</td>
@@ -7698,15 +7651,21 @@ $ sudo auditctl -l | grep unix_update
 -a always,exit -F path=/usr/bin/unix_update -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix_update
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the auditd daemon is
-configured to use the augenrules program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix .rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/usr/sbin/unix_update -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add a line of the following
-form to /etc/audit/audit.rules:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/sbin/unix_update -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030310</td>
@@ -7715,7 +7674,7 @@ form to /etc/audit/audit.rules:
 
 <tr>
 	<td>V-248762</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "postdrop" command.</td>
 	<td>SRG-OS-ID</td>
@@ -7737,15 +7696,21 @@ $ sudo auditctl -l | grep postdrop
 -a always,exit -F path=/usr/bin/postdrop -F perm=x -F auid>=1000 -F auid!=unset -k privileged-postdrop
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the auditd daemon is
-configured to use the augenrules program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix .rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add a line of the following
-form to /etc/audit/audit.rules:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030311</td>
@@ -7754,7 +7719,7 @@ form to /etc/audit/audit.rules:
 
 <tr>
 	<td>V-248763</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "postqueue" command.</td>
 	<td>SRG-OS-ID</td>
@@ -7776,15 +7741,21 @@ $ sudo auditctl -l | grep postqueue
 -a always,exit -F path=/usr/bin/postqueue -F perm=x -F auid>=1000 -F auid!=unset -k privileged-postqueue
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the auditd daemon is
-configured to use the augenrules program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix .rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add a line of the following
-form to /etc/audit/audit.rules:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030312</td>
@@ -7793,7 +7764,7 @@ form to /etc/audit/audit.rules:
 
 <tr>
 	<td>V-248764</td>
-	<td>169</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "semanage" command.</td>
 	<td>SRG-OS-ID</td>
@@ -7815,15 +7786,21 @@ $ sudo auditctl -l | grep semanage
 -a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect any execution attempt
-of the semanage command for all users and root. If the auditd
-daemon is configured to use the augenrules program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-.rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add the following lines to
-/etc/audit/audit.rules file:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/sbin/semanage -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030313</td>
@@ -7832,7 +7809,7 @@ utility to read audit rules during daemon startup, add the following lines to
 
 <tr>
 	<td>V-248765</td>
-	<td>169</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "setfiles" command.</td>
 	<td>SRG-OS-ID</td>
@@ -7854,15 +7831,21 @@ $ sudo auditctl -l | grep setfiles
 -a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix-update
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect any execution attempt
-of the setfiles command for all users and root. If the auditd
-daemon is configured to use the augenrules program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-.rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add the following lines to
-/etc/audit/audit.rules file:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/sbin/setfiles -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030314</td>
@@ -7871,7 +7854,7 @@ utility to read audit rules during daemon startup, add the following lines to
 
 <tr>
 	<td>V-248766</td>
-	<td>169</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "userhelper" command.</td>
 	<td>SRG-OS-ID</td>
@@ -7893,15 +7876,21 @@ $ sudo auditctl -l | grep userhelper
 -a always,exit -F path=/usr/bin/userhelper -F perm=x -F auid>=1000 -F auid!=unset -k privileged-userhelper
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the auditd daemon is
-configured to use the augenrules program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix .rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add a line of the following
-form to /etc/audit/audit.rules:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030315</td>
@@ -7910,7 +7899,7 @@ form to /etc/audit/audit.rules:
 
 <tr>
 	<td>V-248767</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "setsebool" command.</td>
 	<td>SRG-OS-ID</td>
@@ -7932,15 +7921,21 @@ $ sudo auditctl -l | grep setsebool
 -a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid>=1000 -F auid!=unset -k privileged
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect any execution attempt
-of the setsebool command for all users and root. If the auditd
-daemon is configured to use the augenrules program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-.rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add the following lines to
-/etc/audit/audit.rules file:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/sbin/setsebool -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030316</td>
@@ -7949,7 +7944,7 @@ utility to read audit rules during daemon startup, add the following lines to
 
 <tr>
 	<td>V-248768</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "unix_chkpwd" command.</td>
 	<td>SRG-OS-ID</td>
@@ -7971,15 +7966,21 @@ $ sudo auditctl -l | grep unix_chkpwd
 -a always,exit -F path=/usr/bin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-unix_chkpwd
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the auditd daemon is
-configured to use the augenrules program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix .rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add a line of the following
-form to /etc/audit/audit.rules:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030317</td>
@@ -7988,7 +7989,7 @@ form to /etc/audit/audit.rules:
 
 <tr>
 	<td>V-248769</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "ssh-keysign" command.</td>
 	<td>SRG-OS-ID</td>
@@ -8007,18 +8008,24 @@ unusual activity.</pre></td>
 
 $ sudo auditctl -l | grep ssh-keysign
 
--a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid>=1000 -F auid!=unset -k privileged-ssh-keysign
+-a always,exit -F path=/usr/libexec/openssh/ssh-keysignssh-keysign -F perm=x -F auid>=1000 -F auid!=unset -k privileged-ssh-keysign
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the auditd daemon is
-configured to use the augenrules program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix .rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add a line of the following
-form to /etc/audit/audit.rules:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030320</td>
@@ -8027,7 +8034,7 @@ form to /etc/audit/audit.rules:
 
 <tr>
 	<td>V-248770</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "setfacl" command.</td>
 	<td>SRG-OS-ID</td>
@@ -8044,15 +8051,21 @@ $ sudo auditctl -l | grep setfacl
 -a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid>=1000 -F auid!=unset -k perm_mod
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect any execution attempt
-of the setfacl command for all users and root. If the auditd
-daemon is configured to use the augenrules program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-.rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add the following lines to
-/etc/audit/audit.rules file:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030330</td>
@@ -8061,7 +8074,7 @@ utility to read audit rules during daemon startup, add the following lines to
 
 <tr>
 	<td>V-248771</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "pam_timestamp_check" command.</td>
 	<td>SRG-OS-ID</td>
@@ -8083,18 +8096,22 @@ $ sudo auditctl -l | grep pam_timestamp_check
 -a always,exit -F path=/usr/sbin/pam_timestamp_check -F perm=x -F auid>=1000 -F auid!=unset -k privileged-pam_timestamp_check
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the auditd daemon is
-configured to use the augenrules program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix .rules in the directory /etc/audit/rules.d:
--a always,exit -F path=/usr/sbin/pam_timestamp_check
--F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
+-a always,exit -F path=/usr/sbin/pam_timestamp_check -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add a line of the following
-form to /etc/audit/audit.rules:
--a always,exit -F path=/usr/sbin/pam_timestamp_check
--F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
+-a always,exit -F path=/usr/sbin/pam_timestamp_check -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030340</td>
 	<td>audit_rules_privileged_commands_pam_timestamp_check</td>
@@ -8102,7 +8119,7 @@ form to /etc/audit/audit.rules:
 
 <tr>
 	<td>V-248772</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "newgrp" command.</td>
 	<td>SRG-OS-ID</td>
@@ -8124,15 +8141,21 @@ $ sudo auditctl -l | grep newgrp
 -a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid>=1000 -F auid!=unset -k privileged-newgrp
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the auditd daemon is
-configured to use the augenrules program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix .rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add a line of the following
-form to /etc/audit/audit.rules:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030350</td>
@@ -8141,7 +8164,7 @@ form to /etc/audit/audit.rules:
 
 <tr>
 	<td>V-248773</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "init_module" and "finit_module" system calls.</td>
 	<td>SRG-OS-ID</td>
@@ -8173,7 +8196,7 @@ add the line to file /etc/audit/audit.rules.</pre></td>
 
 <tr>
 	<td>V-248774</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "rename", "unlink", "rmdir", "renameat", and "unlinkat" system calls.</td>
 	<td>SRG-OS-ID</td>
@@ -8191,13 +8214,13 @@ If the system is configured to audit this activity, it will return a line.
 for all users and root. If the auditd daemon is configured to use the
 augenrules program to read audit rules during daemon startup (the
 default), add the following line to a file with suffix .rules in the
-directory /etc/audit/rules.d, setting ARCH to either b32 or b64 as
-appropriate for your system:
+directory /etc/audit/rules.d, setting ARCH to either b32 for 32-bit
+system, or having two lines for both b32 and b64 in case your system is 64-bit:
 -a always,exit -F arch=ARCH -S unlinkat -F auid>=1000 -F auid!=unset -F key=delete
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following line to
-/etc/audit/audit.rules file, setting ARCH to either b32 or b64 as
-appropriate for your system:
+/etc/audit/audit.rules file, setting ARCH to either b32 for 32-bit
+system, or having two lines for both b32 and b64 in case your system is 64-bit:
 -a always,exit -F arch=ARCH -S unlinkat -F auid>=1000 -F auid!=unset -F key=delete
           </pre></td>
 	<td>OL08-00-030361</td>
@@ -8206,7 +8229,7 @@ appropriate for your system:
 
 <tr>
 	<td>V-248779</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "gpasswd" command.</td>
 	<td>SRG-OS-ID</td>
@@ -8228,15 +8251,21 @@ $ sudo auditctl -l | grep gpasswd
 -a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid>=1000 -F auid!=unset -k privileged-gpasswd
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the auditd daemon is
-configured to use the augenrules program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix .rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add a line of the following
-form to /etc/audit/audit.rules:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030370</td>
@@ -8245,7 +8274,7 @@ form to /etc/audit/audit.rules:
 
 <tr>
 	<td>V-248781</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the delete_module syscall.</td>
 	<td>SRG-OS-ID</td>
@@ -8277,7 +8306,7 @@ add the line to file /etc/audit/audit.rules.</pre></td>
 
 <tr>
 	<td>V-248782</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "crontab" command.</td>
 	<td>SRG-OS-ID</td>
@@ -8299,15 +8328,21 @@ $ sudo auditctl -l | grep crontab
 -a always,exit -F path=/usr/bin/crontab -F perm=x -F auid>=1000 -F auid!=unset -k privileged-crontab
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the auditd daemon is
-configured to use the augenrules program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix .rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/usr/bin/crontab -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add a line of the following
-form to /etc/audit/audit.rules:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/bin/crontab -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030400</td>
@@ -8316,7 +8351,7 @@ form to /etc/audit/audit.rules:
 
 <tr>
 	<td>V-248783</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "chsh" command.</td>
 	<td>SRG-OS-ID</td>
@@ -8338,15 +8373,21 @@ $ sudo auditctl -l | grep chsh
 -a always,exit -F path=/usr/bin/chsh -F perm=x -F auid>=1000 -F auid!=unset -k privileged-chsh
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the auditd daemon is
-configured to use the augenrules program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix .rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/usr/bin/chsh -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add a line of the following
-form to /etc/audit/audit.rules:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/bin/chsh -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030410</td>
@@ -8355,7 +8396,7 @@ form to /etc/audit/audit.rules:
 
 <tr>
 	<td>V-248784</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "truncate", "ftruncate", "creat", "open", "openat", and "open_by_handle_at" system calls.</td>
 	<td>SRG-OS-ID</td>
@@ -8409,7 +8450,7 @@ If the system is 64 bit then also add the following lines:
 
 <tr>
 	<td>V-248790</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "chown", "fchown", "fchownat", and "lchown" system calls.</td>
 	<td>SRG-OS-ID</td>
@@ -8445,7 +8486,7 @@ If the system is 64 bit then also add the following line:
 
 <tr>
 	<td>V-248791</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "chmod", "fchmod", and "fchmodat" system calls.</td>
 	<td>SRG-OS-ID</td>
@@ -8481,7 +8522,7 @@ If the system is 64 bit then also add the following line:
 
 <tr>
 	<td>V-248797</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "sudo" command.</td>
 	<td>SRG-OS-ID</td>
@@ -8503,15 +8544,21 @@ $ sudo auditctl -l | grep sudo
 -a always,exit -F path=/usr/bin/sudo -F perm=x -F auid>=1000 -F auid!=unset -k privileged-sudo
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the auditd daemon is
-configured to use the augenrules program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix .rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/usr/bin/sudo -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add a line of the following
-form to /etc/audit/audit.rules:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/bin/sudo -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030550</td>
@@ -8520,7 +8567,7 @@ form to /etc/audit/audit.rules:
 
 <tr>
 	<td>V-248798</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "usermod" command.</td>
 	<td>SRG-OS-ID</td>
@@ -8542,15 +8589,21 @@ $ sudo auditctl -l | grep usermod
 -a always,exit -F path=/usr/bin/usermod -F perm=x -F auid>=1000 -F auid!=unset -k privileged-usermod
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the auditd daemon is
-configured to use the augenrules program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix .rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add a line of the following
-form to /etc/audit/audit.rules:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030560</td>
@@ -8559,7 +8612,7 @@ form to /etc/audit/audit.rules:
 
 <tr>
 	<td>V-248799</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "chacl" command.</td>
 	<td>SRG-OS-ID</td>
@@ -8576,15 +8629,21 @@ $ sudo auditctl -l | grep chacl
 -a always,exit -F path=/usr/bin/chacl -F perm=x -F auid>=1000 -F auid!=unset -k perm_mod
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect any execution attempt
-of the chacl command for all users and root. If the auditd
-daemon is configured to use the augenrules program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-.rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/usr/bin/chacl -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add the following lines to
-/etc/audit/audit.rules file:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/bin/chacl -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030570</td>
@@ -8593,7 +8652,7 @@ utility to read audit rules during daemon startup, add the following lines to
 
 <tr>
 	<td>V-248800</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any use of the "kmod" command.</td>
 	<td>SRG-OS-ID</td>
@@ -8611,15 +8670,21 @@ $ sudo auditctl -l | grep kmod
 -a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -k privileged-kmod
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
-	<td><pre>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. If the auditd daemon is
-configured to use the augenrules program to read audit rules during
-daemon startup (the default), add a line of the following form to a file with
-suffix .rules in the directory /etc/audit/rules.d:
+	<td><pre>
+
+
+At a minimum, the audit system should collect the execution of privileged
+commands for all users and root.
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add
+a line of the following form to a file with suffix .rules
+in the directory /etc/audit/rules.d:
 -a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+
 If the auditd daemon is configured to use the auditctl
-utility to read audit rules during daemon startup, add a line of the following
-form to /etc/audit/audit.rules:
+utility to read audit rules during daemon startup, add a line of the
+following form to /etc/audit/audit.rules:
 -a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL08-00-030580</td>
@@ -8628,13 +8693,14 @@ form to /etc/audit/audit.rules:
 
 <tr>
 	<td>V-248801</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any attempted modifications to the "faillock" log file.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Manual editing of these files may indicate nefarious activity, such
 as an attacker attempting to remove evidence of an intrusion.</pre></td>
-	<td><pre>Verify Oracle Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
+	<td><pre>
+Verify Oracle Linux 8 generates audit records for all events that affect "" with the following command:
 
 $ sudo auditctl -l | grep 
 
@@ -8642,16 +8708,22 @@ $ sudo auditctl -l | grep
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
 	<td><pre>The audit system already collects login information for all users
-and root. If the auditd daemon is configured to use the
-augenrules program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix .rules in the
-directory /etc/audit/rules.d in order to watch for attempted manual
-edits of files involved in storing logon events:
+and root.
+
+
+
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix .rules in the
+directory /etc/audit/rules.d:
+
 -w  -p wa -k logins
+
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following lines to
-/etc/audit/audit.rules file in order to watch for unattempted manual
-edits of files involved in storing logon events:
+/etc/audit/audit.rules:
+
 -w  -p wa -k logins
           </pre></td>
 	<td>OL08-00-030590</td>
@@ -8660,13 +8732,14 @@ edits of files involved in storing logon events:
 
 <tr>
 	<td>V-248802</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must generate audit records for any attempted modifications to the "lastlog" file.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Manual editing of these files may indicate nefarious activity, such
 as an attacker attempting to remove evidence of an intrusion.</pre></td>
-	<td><pre>Verify Oracle Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/var/log/lastlog" with the following command:
+	<td><pre>
+Verify Oracle Linux 8 generates audit records for all events that affect "/var/log/lastlog" with the following command:
 
 $ sudo auditctl -l | grep /var/log/lastlog
 
@@ -8674,16 +8747,22 @@ $ sudo auditctl -l | grep /var/log/lastlog
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
 	<td><pre>The audit system already collects login information for all users
-and root. If the auditd daemon is configured to use the
-augenrules program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix .rules in the
-directory /etc/audit/rules.d in order to watch for attempted manual
-edits of files involved in storing logon events:
+and root.
+
+
+
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix .rules in the
+directory /etc/audit/rules.d:
+
 -w /var/log/lastlog -p wa -k logins
+
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following lines to
-/etc/audit/audit.rules file in order to watch for unattempted manual
-edits of files involved in storing logon events:
+/etc/audit/audit.rules:
+
 -w /var/log/lastlog -p wa -k logins
           </pre></td>
 	<td>OL08-00-030600</td>
@@ -8692,7 +8771,7 @@ edits of files involved in storing logon events:
 
 <tr>
 	<td>V-248803</td>
-	<td>2884</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must enable auditing of processes that start prior to the audit daemon.</td>
 	<td>SRG-OS-ID</td>
@@ -8730,7 +8809,7 @@ Run the following command to update command line for already installed kernels:#
 
 <tr>
 	<td>V-248804</td>
-	<td>2884</td>
+	<td></td>
 	<td>low</td>
 	<td>OL 8 must allocate an "audit_backlog_limit" of sufficient size to capture processes that start prior to the audit daemon.</td>
 	<td>SRG-OS-ID</td>
@@ -8768,7 +8847,7 @@ Run the following command to update command line for already installed kernels:#
 
 <tr>
 	<td>V-248805</td>
-	<td>172</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must enable Linux audit logging for the USBGuard daemon.</td>
 	<td>SRG-OS-ID</td>
@@ -8791,7 +8870,7 @@ needs to be set to LinuxAudit.</pre></td>
 
 <tr>
 	<td>V-248806</td>
-	<td>171</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must allow only the Information System Security Manager (ISSM) (or individuals or roles appointed by the ISSM) to select which auditable events are to be audited.</td>
 	<td>SRG-OS-ID</td>
@@ -8818,7 +8897,7 @@ $ sudo chmod 0600 /etc/audit/rules.d/*.rules
 
 <tr>
 	<td>V-248807</td>
-	<td>1493</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 audit tools must have a mode of "0755" or less permissive.</td>
 	<td>SRG-OS-ID</td>
@@ -8842,7 +8921,7 @@ Audit tools must have a mode of 0755 or less permissive.</pre></td>
 
 <tr>
 	<td>V-248808</td>
-	<td>1495</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 audit tools must be owned by root.</td>
 	<td>SRG-OS-ID</td>
@@ -8874,7 +8953,7 @@ Audit tools must have the correct owner.</pre></td>
 
 <tr>
 	<td>V-248809</td>
-	<td>1495</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 audit tools must be group-owned by root.</td>
 	<td>SRG-OS-ID</td>
@@ -8906,7 +8985,7 @@ Audit tools must have the correct group owner.</pre></td>
 
 <tr>
 	<td>V-248810</td>
-	<td>1496</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must use cryptographic mechanisms to protect the integrity of audit tools.</td>
 	<td>SRG-OS-ID</td>
@@ -8957,7 +9036,7 @@ If one or more lines are missing, this is a finding.
 
 <tr>
 	<td>V-248811</td>
-	<td>1849</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must allocate audit record storage capacity to store at least one week of audit records when audit records are not immediately sent to a central audit record storage facility.</td>
 	<td>SRG-OS-ID</td>
@@ -9017,7 +9096,7 @@ $ sudo df -h /var/log/audit/
 
 <tr>
 	<td>V-248812</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must have the packages required for offloading audit logs installed.</td>
 	<td>SRG-OS-ID</td>
@@ -9034,7 +9113,7 @@ system logging services.</pre></td>
 
 <tr>
 	<td>V-248813</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must have the packages required for encrypting offloaded audit logs installed.</td>
 	<td>SRG-OS-ID</td>
@@ -9056,7 +9135,7 @@ $ sudo yum install rsyslog-gnutls
 
 <tr>
 	<td>V-248814</td>
-	<td>1851</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 audit records must be offloaded onto a different system or storage media from the system being audited.</td>
 	<td>SRG-OS-ID</td>
@@ -9069,10 +9148,16 @@ place to view the status of multiple hosts within the enterprise.</pre></td>
 /etc/rsyslog.conf.
 If using UDP, a line similar to the following should be present:
  *.* @
+or
+*.* action(type="omfwd" ... target="" protocol="udp")
 If using TCP, a line similar to the following should be present:
  *.* @@
+or
+*.* action(type="omfwd" ... target="" protocol="tcp")
 If using RELP, a line similar to the following should be present:
  *.* :omrelp:
+or
+*.* action(type="omfwd" ... target="" protocol="relp")
       Is it the case that no evidence that the audit logs are being off-loaded to another system or media?
       </pre></td>
 	<td><pre>To configure rsyslog to send logs to a remote log server,
@@ -9097,17 +9182,32 @@ To use UDP for log message delivery:
               
             
             
+Or in RainerScript:
+*.* action(type="omfwd" ... target="
+                
+              " protocol="udp")
+            
 To use TCP for log message delivery:
 *.* @@
                 
               
             
             
+Or in RainerScript:
+*.* action(type="omfwd" ... target="
+                
+              " protocol="tcp")
+            
 To use RELP for log message delivery:
 *.* :omrelp:
                 
               
             
+            
+Or in RainerScript:
+*.* action(type="omfwd" ... target="
+                
+              " protocol="relp")
             
 There must be a resolvable DNS CNAME or Alias record set to "" for logs to be sent correctly to the centralized logging utility.</pre></td>
 	<td>OL08-00-030690</td>
@@ -9116,7 +9216,7 @@ There must be a resolvable DNS CNAME or Alias record set to "" for logs to be se
 
 <tr>
 	<td>V-248815</td>
-	<td>1851</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must take appropriate action when the internal event queue is full.</td>
 	<td>SRG-OS-ID</td>
@@ -9141,7 +9241,7 @@ to one of the following values: syslog, single, halt.</pre></td>
 
 <tr>
 	<td>V-248816</td>
-	<td>1851</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must encrypt the transfer of audit records offloaded onto a different system or media from the system being audited.</td>
 	<td>SRG-OS-ID</td>
@@ -9178,7 +9278,7 @@ global(DefaultNetstreamDriver="gtls")
 
 <tr>
 	<td>V-248817</td>
-	<td>1851</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must authenticate the remote logging server for offloading audit logs.</td>
 	<td>SRG-OS-ID</td>
@@ -9211,7 +9311,7 @@ action(type="omfwd" Target="some.example.com" StreamDriverAuthMode="x509/name")
 
 <tr>
 	<td>V-248818</td>
-	<td>1855</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must take action when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity.</td>
 	<td>SRG-OS-ID</td>
@@ -9237,7 +9337,7 @@ notify the user of an issue.</pre></td>
 
 <tr>
 	<td>V-248819</td>
-	<td>1855</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must notify the System Administrator (SA) and Information System Security Officer (ISSO) (at a minimum) when allocated audit record storage volume 75 percent utilization.</td>
 	<td>SRG-OS-ID</td>
@@ -9289,7 +9389,7 @@ also include suspend, single, and halt.</pre></td>
 
 <tr>
 	<td>V-248820</td>
-	<td>2046</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must compare internal information system clocks at least every 24 hours with a server synchronized to an authoritative time source, such as the United States Naval Observatory (USNO) time servers, or a time server designated for the appropriate DOD network (NIPRNet/SIPRNet), and/or the Global Positioning System (GPS).</td>
 	<td>SRG-OS-ID</td>
@@ -9307,7 +9407,7 @@ A line with the appropriate server should be returned, any line returned startin
 
 <tr>
 	<td>V-248821</td>
-	<td>381</td>
+	<td></td>
 	<td>low</td>
 	<td>OL 8 must disable the chrony daemon from acting as a server.</td>
 	<td>SRG-OS-ID</td>
@@ -9328,7 +9428,7 @@ for server operation and to operate strictly in a client-only mode.</pre></td>
 
 <tr>
 	<td>V-248822</td>
-	<td>381</td>
+	<td></td>
 	<td>low</td>
 	<td>OL 8 must disable network management of the chrony daemon.</td>
 	<td>SRG-OS-ID</td>
@@ -9348,7 +9448,7 @@ for management connections made by chronyc.</pre></td>
 
 <tr>
 	<td>V-248823</td>
-	<td>381</td>
+	<td></td>
 	<td>high</td>
 	<td>OL 8 must not have the telnet-server package installed.</td>
 	<td>SRG-OS-ID</td>
@@ -9379,7 +9479,7 @@ $ sudo yum erase telnet-server
 
 <tr>
 	<td>V-248824</td>
-	<td>381</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must not have any automated bug reporting tools installed.</td>
 	<td>SRG-OS-ID</td>
@@ -9405,7 +9505,7 @@ $ sudo yum erase abrt
 
 <tr>
 	<td>V-248825</td>
-	<td>381</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must not have the sendmail package installed.</td>
 	<td>SRG-OS-ID</td>
@@ -9428,7 +9528,7 @@ $ sudo yum erase sendmail
 
 <tr>
 	<td>V-248826</td>
-	<td>381</td>
+	<td></td>
 	<td>low</td>
 	<td>OL 8 must enable mitigations against processor-based vulnerabilities.</td>
 	<td>SRG-OS-ID</td>
@@ -9466,7 +9566,7 @@ Run the following command to update command line for already installed kernels:#
 
 <tr>
 	<td>V-248827</td>
-	<td>381</td>
+	<td></td>
 	<td>high</td>
 	<td>OL 8 must not have the rsh-server package installed.</td>
 	<td>SRG-OS-ID</td>
@@ -9490,7 +9590,7 @@ $ sudo yum erase rsh-server
 
 <tr>
 	<td>V-248828</td>
-	<td>381</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must cover or disable the built-in or attached camera when not in use.</td>
 	<td>SRG-OS-ID</td>
@@ -9522,7 +9622,7 @@ install uvcvideo /bin/true
 
 <tr>
 	<td>V-248829</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must not have the asynchronous transfer mode (ATM) kernel module installed if not required for operational support.</td>
 	<td>SRG-OS-ID</td>
@@ -9557,7 +9657,7 @@ blacklist atm
 
 <tr>
 	<td>V-248830</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must not have the Controller Area Network (CAN) kernel module installed if not required for operational support.</td>
 	<td>SRG-OS-ID</td>
@@ -9592,7 +9692,7 @@ blacklist can
 
 <tr>
 	<td>V-248831</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must not have the stream control transmission protocol (SCTP) kernel module installed if not required for operational support.</td>
 	<td>SRG-OS-ID</td>
@@ -9628,7 +9728,7 @@ blacklist sctp
 
 <tr>
 	<td>V-248832</td>
-	<td>381</td>
+	<td></td>
 	<td>low</td>
 	<td>OL 8 must disable the transparent inter-process communication (TIPC) protocol.</td>
 	<td>SRG-OS-ID</td>
@@ -9663,7 +9763,7 @@ blacklist tipc
 
 <tr>
 	<td>V-248833</td>
-	<td>381</td>
+	<td></td>
 	<td>low</td>
 	<td>OL 8 must disable mounting of cramfs.</td>
 	<td>SRG-OS-ID</td>
@@ -9701,7 +9801,7 @@ decompress the image.</pre></td>
 
 <tr>
 	<td>V-248834</td>
-	<td>381</td>
+	<td></td>
 	<td>low</td>
 	<td>OL 8 must disable IEEE 1394 (FireWire) Support.</td>
 	<td>SRG-OS-ID</td>
@@ -9735,7 +9835,7 @@ blacklist firewire-core
 
 <tr>
 	<td>V-248835</td>
-	<td>382</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must be configured to prohibit or restrict the use of functions, ports, protocols, and/or services as defined in the Ports, Protocols, and Services Management (PPSM) Category Assignments List (CAL) and vulnerability assessments.</td>
 	<td>SRG-OS-ID</td>
@@ -9780,7 +9880,7 @@ firewall-cmd --permanent --add-service=service_name
 
 <tr>
 	<td>V-248836</td>
-	<td>778</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 file system automounter must be disabled unless required.</td>
 	<td>SRG-OS-ID</td>
@@ -9832,7 +9932,7 @@ $ sudo systemctl mask --now autofs.service
 
 <tr>
 	<td>V-248837</td>
-	<td>3959</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must be configured to disable the ability to use USB mass storage devices.</td>
 	<td>SRG-OS-ID</td>
@@ -9869,7 +9969,7 @@ insmod program to load the module manually.</pre></td>
 
 <tr>
 	<td>V-248839</td>
-	<td>2314</td>
+	<td></td>
 	<td>medium</td>
 	<td>An OL 8 firewall must employ a deny-all, allow-by-exception policy for allowing connections to other systems.</td>
 	<td>SRG-OS-ID</td>
@@ -9900,7 +10000,7 @@ The default "drop" zone will drop all incoming network packets unless it is expl
 
 <tr>
 	<td>V-248840</td>
-	<td>2314</td>
+	<td></td>
 	<td>medium</td>
 	<td>A firewall must be installed on OL 8.</td>
 	<td>SRG-OS-ID</td>
@@ -9925,7 +10025,7 @@ $ sudo yum install firewalld
 
 <tr>
 	<td>V-248841</td>
-	<td>2314</td>
+	<td></td>
 	<td>medium</td>
 	<td>A firewall must be active on OL 8.</td>
 	<td>SRG-OS-ID</td>
@@ -9950,7 +10050,7 @@ $ sudo systemctl enable firewalld.service
 
 <tr>
 	<td>V-248842</td>
-	<td>2418</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 wireless network adapters must be disabled.</td>
 	<td>SRG-OS-ID</td>
@@ -9990,7 +10090,7 @@ $ sudo nmcli radio all off
 
 <tr>
 	<td>V-248843</td>
-	<td>2418</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 Bluetooth must be disabled.</td>
 	<td>SRG-OS-ID</td>
@@ -10020,7 +10120,7 @@ install bluetooth /bin/true
 
 <tr>
 	<td>V-248844</td>
-	<td>1764</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must mount "/dev/shm" with the "nodev" option.</td>
 	<td>SRG-OS-ID</td>
@@ -10045,7 +10145,7 @@ Add the nodev option to the fourth column of
 
 <tr>
 	<td>V-248845</td>
-	<td>1764</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must mount "/dev/shm" with the "nosuid" option.</td>
 	<td>SRG-OS-ID</td>
@@ -10070,7 +10170,7 @@ Add the nosuid option to the fourth column of
 
 <tr>
 	<td>V-248846</td>
-	<td>1764</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must mount "/dev/shm" with the "noexec" option.</td>
 	<td>SRG-OS-ID</td>
@@ -10096,7 +10196,7 @@ Add the noexec option to the fourth column of
 
 <tr>
 	<td>V-248847</td>
-	<td>1764</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must mount "/tmp" with the "nodev" option.</td>
 	<td>SRG-OS-ID</td>
@@ -10121,7 +10221,7 @@ Add the nodev option to the fourth column of
 
 <tr>
 	<td>V-248848</td>
-	<td>1764</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must mount "/tmp" with the "nosuid" option.</td>
 	<td>SRG-OS-ID</td>
@@ -10146,7 +10246,7 @@ Add the nosuid option to the fourth column of
 
 <tr>
 	<td>V-248849</td>
-	<td>1764</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must mount "/tmp" with the "noexec" option.</td>
 	<td>SRG-OS-ID</td>
@@ -10171,7 +10271,7 @@ Add the noexec option to the fourth column of
 
 <tr>
 	<td>V-248850</td>
-	<td>1764</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must mount "/var/log" with the "nodev" option.</td>
 	<td>SRG-OS-ID</td>
@@ -10198,7 +10298,7 @@ Add the nodev option to the fourth column of
 
 <tr>
 	<td>V-248851</td>
-	<td>1764</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must mount "/var/log" with the "nosuid" option.</td>
 	<td>SRG-OS-ID</td>
@@ -10224,7 +10324,7 @@ Add the nosuid option to the fourth column of
 
 <tr>
 	<td>V-248852</td>
-	<td>1764</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must mount "/var/log" with the "noexec" option.</td>
 	<td>SRG-OS-ID</td>
@@ -10249,7 +10349,7 @@ Add the noexec option to the fourth column of
 
 <tr>
 	<td>V-248853</td>
-	<td>1764</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must mount "/var/log/audit" with the "nodev" option.</td>
 	<td>SRG-OS-ID</td>
@@ -10276,7 +10376,7 @@ Add the nodev option to the fourth column of
 
 <tr>
 	<td>V-248854</td>
-	<td>1764</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must mount "/var/log/audit" with the "nosuid" option.</td>
 	<td>SRG-OS-ID</td>
@@ -10302,7 +10402,7 @@ Add the nosuid option to the fourth column of
 
 <tr>
 	<td>V-248855</td>
-	<td>1764</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must mount "/var/log/audit" with the "noexec" option.</td>
 	<td>SRG-OS-ID</td>
@@ -10327,7 +10427,7 @@ Add the noexec option to the fourth column of
 
 <tr>
 	<td>V-248856</td>
-	<td>1764</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must mount "/var/tmp" with the "nodev" option.</td>
 	<td>SRG-OS-ID</td>
@@ -10352,7 +10452,7 @@ Add the nodev option to the fourth column of
 
 <tr>
 	<td>V-248857</td>
-	<td>1764</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must mount "/var/tmp" with the "nosuid" option.</td>
 	<td>SRG-OS-ID</td>
@@ -10377,7 +10477,7 @@ Add the nosuid option to the fourth column of
 
 <tr>
 	<td>V-248858</td>
-	<td>1764</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must mount "/var/tmp" with the "noexec" option.</td>
 	<td>SRG-OS-ID</td>
@@ -10402,7 +10502,7 @@ Add the noexec option to the fourth column of
 
 <tr>
 	<td>V-248859</td>
-	<td>1774</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 "fapolicy" module must be installed.</td>
 	<td>SRG-OS-ID</td>
@@ -10422,7 +10522,7 @@ $ sudo yum install fapolicyd
 
 <tr>
 	<td>V-248860</td>
-	<td>1774</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 "fapolicy" module must be enabled.</td>
 	<td>SRG-OS-ID</td>
@@ -10447,7 +10547,7 @@ $ sudo systemctl enable fapolicyd.service
 
 <tr>
 	<td>V-248861</td>
-	<td>1774</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 fapolicy module must be configured to employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs.</td>
 	<td>SRG-OS-ID</td>
@@ -10485,7 +10585,7 @@ deny perm=any all : all
 
 <tr>
 	<td>V-248862</td>
-	<td>3959</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must have the USBGuard installed.</td>
 	<td>SRG-OS-ID</td>
@@ -10507,7 +10607,7 @@ $ sudo yum install usbguard
 
 <tr>
 	<td>V-248863</td>
-	<td>1958</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must block unauthorized peripherals before establishing a connection.</td>
 	<td>SRG-OS-ID</td>
@@ -10532,7 +10632,7 @@ devices.</pre></td>
 
 <tr>
 	<td>V-248864</td>
-	<td>3959</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must enable the USBGuard.</td>
 	<td>SRG-OS-ID</td>
@@ -10557,7 +10657,7 @@ $ sudo systemctl enable usbguard.service
 
 <tr>
 	<td>V-248865</td>
-	<td>2385</td>
+	<td></td>
 	<td>medium</td>
 	<td>A firewall must be able to protect against or limit the effects of denial-of-service (DoS) attacks by ensuring OL 8 can implement rate-limiting measures on impacted network interfaces.</td>
 	<td>SRG-OS-ID</td>
@@ -10580,7 +10680,7 @@ FirewallBackend=nftables
 
 <tr>
 	<td>V-248866</td>
-	<td>2422</td>
+	<td></td>
 	<td>medium</td>
 	<td>All OL 8 networked systems must have SSH installed.</td>
 	<td>SRG-OS-ID</td>
@@ -10601,7 +10701,7 @@ $ sudo yum install openssh-server
 
 <tr>
 	<td>V-248867</td>
-	<td>2422</td>
+	<td></td>
 	<td>medium</td>
 	<td>All OL 8 networked systems must have and implement SSH to protect the confidentiality and integrity of transmitted and received information, as well as information during preparation for transmission.</td>
 	<td>SRG-OS-ID</td>
@@ -10634,7 +10734,7 @@ $ sudo systemctl enable sshd.service
 
 <tr>
 	<td>V-248868</td>
-	<td>68</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must force a frequent session key renegotiation for SSH connections to the server.</td>
 	<td>SRG-OS-ID</td>
@@ -10669,7 +10769,7 @@ RekeyLimit
 
 <tr>
 	<td>V-248869</td>
-	<td>366</td>
+	<td></td>
 	<td>high</td>
 	<td>The x86 Ctrl-Alt-Delete key sequence must be disabled on OL 8.</td>
 	<td>SRG-OS-ID</td>
@@ -10708,7 +10808,7 @@ as this file may be restored during future system updates.</pre></td>
 
 <tr>
 	<td>V-248870</td>
-	<td>366</td>
+	<td></td>
 	<td>high</td>
 	<td>The x86 Ctrl-Alt-Delete key sequence in OL 8 must be disabled if a graphical user interface is installed.</td>
 	<td>SRG-OS-ID</td>
@@ -10745,7 +10845,7 @@ After the settings have been set, run dconf update.</pre></td>
 
 <tr>
 	<td>V-248871</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must disable the systemd Ctrl-Alt-Delete burst key sequence.</td>
 	<td>SRG-OS-ID</td>
@@ -10775,7 +10875,7 @@ CtrlAltDelBurstAction=none
 
 <tr>
 	<td>V-248872</td>
-	<td>366</td>
+	<td></td>
 	<td>low</td>
 	<td>OL 8 must disable the debug-shell systemd service.</td>
 	<td>SRG-OS-ID</td>
@@ -10824,7 +10924,7 @@ $ sudo systemctl mask --now debug-shell.service
 
 <tr>
 	<td>V-248873</td>
-	<td>366</td>
+	<td></td>
 	<td>high</td>
 	<td>The Trivial File Transfer Protocol (TFTP) server package must not be installed if not required for OL 8 operational support.</td>
 	<td>SRG-OS-ID</td>
@@ -10848,7 +10948,7 @@ $ rpm -q tftp-server
 
 <tr>
 	<td>V-248874</td>
-	<td>366</td>
+	<td></td>
 	<td>high</td>
 	<td>The root account must be the only account having unrestricted access to the OL 8 system.</td>
 	<td>SRG-OS-ID</td>
@@ -10877,7 +10977,7 @@ assigned.</pre></td>
 
 <tr>
 	<td>V-248875</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must prevent IPv4 Internet Control Message Protocol (ICMP) redirect messages from being accepted.</td>
 	<td>SRG-OS-ID</td>
@@ -10903,7 +11003,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248876</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must prevent IPv6 Internet Control Message Protocol (ICMP) redirect messages from being accepted.</td>
 	<td>SRG-OS-ID</td>
@@ -10924,7 +11024,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248877</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must not send Internet Control Message Protocol (ICMP) redirects.</td>
 	<td>SRG-OS-ID</td>
@@ -10949,7 +11049,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248878</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must not respond to Internet Control Message Protocol (ICMP) echoes sent to a broadcast address.</td>
 	<td>SRG-OS-ID</td>
@@ -10974,7 +11074,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248879</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must not forward IPv4 source-routed packets.</td>
 	<td>SRG-OS-ID</td>
@@ -11003,7 +11103,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248880</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must not forward IPv6 source-routed packets.</td>
 	<td>SRG-OS-ID</td>
@@ -11032,7 +11132,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248881</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must not forward IPv4 source-routed packets by default.</td>
 	<td>SRG-OS-ID</td>
@@ -11060,7 +11160,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248882</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must not forward IPv6 source-routed packets by default.</td>
 	<td>SRG-OS-ID</td>
@@ -11088,7 +11188,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-252662</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must not enable IPv4 packet forwarding unless the system is a router.</td>
 	<td>SRG-OS-ID</td>
@@ -11111,7 +11211,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248883</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must not enable IPv6 packet forwarding unless the system is a router.</td>
 	<td>SRG-OS-ID</td>
@@ -11134,7 +11234,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248884</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must not accept router advertisements on all IPv6 interfaces.</td>
 	<td>SRG-OS-ID</td>
@@ -11155,7 +11255,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248885</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must not accept router advertisements on all IPv6 interfaces by default.</td>
 	<td>SRG-OS-ID</td>
@@ -11176,7 +11276,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248886</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must not allow interfaces to perform Internet Control Message Protocol (ICMP) redirects by default.</td>
 	<td>SRG-OS-ID</td>
@@ -11201,7 +11301,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248887</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must ignore IPv4 Internet Control Message Protocol (ICMP) redirect messages.</td>
 	<td>SRG-OS-ID</td>
@@ -11228,7 +11328,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248888</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must ignore IPv6 Internet Control Message Protocol (ICMP) redirect messages.</td>
 	<td>SRG-OS-ID</td>
@@ -11249,7 +11349,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248889</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must disable access to the network "bpf" syscall from unprivileged processes.</td>
 	<td>SRG-OS-ID</td>
@@ -11271,7 +11371,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248890</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must restrict the use of "ptrace" to descendant processes.</td>
 	<td>SRG-OS-ID</td>
@@ -11296,7 +11396,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248891</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must restrict exposed kernel pointer addresses access.</td>
 	<td>SRG-OS-ID</td>
@@ -11341,7 +11441,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248892</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must disable the use of user namespaces.</td>
 	<td>SRG-OS-ID</td>
@@ -11376,7 +11476,7 @@ to large non-zero value.</pre></td>
 
 <tr>
 	<td>V-248893</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must use reverse path filtering on all IPv4 interfaces.</td>
 	<td>SRG-OS-ID</td>
@@ -11419,7 +11519,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248894</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must enable hardening for the Berkeley Packet Filter Just-in-time compiler.</td>
 	<td>SRG-OS-ID</td>
@@ -11442,7 +11542,7 @@ To make sure that the setting is persistent, add the following line to a file in
 
 <tr>
 	<td>V-248895</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must be configured to prevent unrestricted mail relaying.</td>
 	<td>SRG-OS-ID</td>
@@ -11464,7 +11564,7 @@ $ sudo postconf -e 'smtpd_client_restrictions = permit_mynetworks,reject'
 
 <tr>
 	<td>V-248896</td>
-	<td>366</td>
+	<td></td>
 	<td>low</td>
 	<td>The OL 8 file integrity tool must be configured to verify extended attributes.</td>
 	<td>SRG-OS-ID</td>
@@ -11493,7 +11593,7 @@ The remediation provided with this rule adds xattrs to all rule sets available i
 
 <tr>
 	<td>V-248897</td>
-	<td>366</td>
+	<td></td>
 	<td>low</td>
 	<td>The OL 8 file integrity tool must be configured to verify Access Control Lists (ACLs).</td>
 	<td>SRG-OS-ID</td>
@@ -11522,28 +11622,30 @@ The remediation provided with this rule adds acl to all rule sets available in
 
 <tr>
 	<td>V-248898</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>The graphical display manager must not be installed on OL 8 unless approved.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Unnecessary service packages must not be installed to decrease the attack surface of the system. X windows has a long history of security
-vulnerabilities and should not be installed unless approved and documented.</pre></td>
+	<td><pre>Unnecessary service packages must not be installed to decrease the attack surface of the system.
+X windows has a long history of security vulnerabilities and should not be installed unless approved and documented.</pre></td>
 	<td><pre>To ensure the X Windows package group is removed, run the following command:
-
-$ rpm -qi xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland
-
+$ rpm -qi xorg-x11-server-Xorg
+$ rpm -qi xorg-x11-server-common
+$ rpm -qi xorg-x11-server-utils
+$ rpm -qi xorg-x11-server-Xwayland
 For each package mentioned above you should receive following line:
 package <package> is not installed
       Is it the case that xorg related packages are not removed and run level is not correctly configured?
       </pre></td>
-	<td><pre>By removing the following packages,  the system no longer has X Windows installed.
-
-xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland
+	<td><pre>By removing the following packages, the system no longer has X Windows installed.
+ xorg-x11-server-Xorg
+            xorg-x11-server-common
+            xorg-x11-server-utils
+            xorg-x11-server-Xwayland
 
 If X Windows is not installed then the system cannot boot into graphical user mode.
 This prevents the system from being accidentally or maliciously booted into a graphical.target
 mode. To do so, run the following command:
-
 sudo yum remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland
           </pre></td>
 	<td>OL08-00-040320</td>
@@ -11552,7 +11654,7 @@ sudo yum remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-util
 
 <tr>
 	<td>V-252663</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>The graphical display manager must not be the default target on OL 8 unless approved.</td>
 	<td>SRG-OS-ID</td>
@@ -11579,7 +11681,7 @@ Created symlink from /etc/systemd/system/default.target to /usr/lib/systemd/syst
 
 <tr>
 	<td>V-248899</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 network interfaces must not be in promiscuous mode.</td>
 	<td>SRG-OS-ID</td>
@@ -11609,7 +11711,7 @@ $ sudo ip link set dev device_name multicast off promisc off
 
 <tr>
 	<td>V-248900</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 remote X connections for interactive users must be disabled unless to fulfill documented and validated mission requirements.</td>
 	<td>SRG-OS-ID</td>
@@ -11647,7 +11749,7 @@ X11Forwarding no
 
 <tr>
 	<td>V-248901</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>The OL 8 SSH daemon must prevent remote hosts from connecting to the proxy display.</td>
 	<td>SRG-OS-ID</td>
@@ -11684,7 +11786,7 @@ X11UseLocalhost yes
 
 <tr>
 	<td>V-255898</td>
-	<td>1453</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 SSH server must be configured to use only FIPS-validated key exchange algorithms.</td>
 	<td>SRG-OS-ID</td>
@@ -11711,7 +11813,7 @@ order of algorithms.</pre></td>
 
 <tr>
 	<td>V-248902</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>If the Trivial File Transfer Protocol (TFTP) server is required, the OL 8 TFTP daemon must be configured to operate in secure mode.</td>
 	<td>SRG-OS-ID</td>
@@ -11748,7 +11850,7 @@ server_args = -s
 
 <tr>
 	<td>V-248903</td>
-	<td>366</td>
+	<td></td>
 	<td>high</td>
 	<td>A File Transfer Protocol (FTP) server package must not be installed unless mission essential on OL 8.</td>
 	<td>SRG-OS-ID</td>
@@ -11766,7 +11868,7 @@ $ rpm -q vsftpd
 
 <tr>
 	<td>V-248904</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must not have the "gssproxy" package installed if not required for operational support.</td>
 	<td>SRG-OS-ID</td>
@@ -11788,7 +11890,7 @@ $ sudo yum erase gssproxy
 
 <tr>
 	<td>V-248905</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must not have the "iprutils" package installed if not required for operational support.</td>
 	<td>SRG-OS-ID</td>
@@ -11809,7 +11911,7 @@ $ sudo yum erase iprutils
 
 <tr>
 	<td>V-248906</td>
-	<td>366</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must not have the "tuned" package installed if not required for operational support.</td>
 	<td>SRG-OS-ID</td>
@@ -11832,7 +11934,7 @@ $ sudo yum erase tuned
 
 <tr>
 	<td>V-248907</td>
-	<td>2235</td>
+	<td></td>
 	<td>medium</td>
 	<td>OL 8 must prevent nonprivileged users from executing privileged functions, including disabling, circumventing, or altering implemented security safeguards/countermeasures.</td>
 	<td>SRG-OS-ID</td>
