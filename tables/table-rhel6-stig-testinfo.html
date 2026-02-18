@@ -154,12 +154,17 @@ come from Red Hat (and to connect to the Red Hat Network to receive them),
 the Red Hat GPG key must properly be installed. To install the Red Hat GPG
 key, run:
 <pre>$ sudo subscription-manager register</pre>
+
 If the system is not connected to the Internet or an RHN Satellite, then
 install the Red Hat GPG key from trusted media such as the Red Hat
 installation CD-ROM or DVD. Assuming the disc is mounted in
 <code>/media/cdrom</code>, use the following command as the root user to import
 it into the keyring:
 <pre>$ sudo rpm --import /media/cdrom/RPM-GPG-KEY</pre>
+
+Alternatively, the key may be pre-loaded during the RHEL installation. In
+such cases, the key can be installed by running the following command:
+<pre>sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-key-redhat-release</pre>
 </td>
 <td></td>
 <td></td>
@@ -1425,7 +1430,7 @@ ExecShield.</td>
 <tr>
 <td>sysctl_net_ipv4_conf_default_send_redirects</td>
 <td>medium</td>
-<td>Disable Kernel Parameter for Sending ICMP Redirects by Default</td>
+<td>Disable Kernel Parameter for Sending ICMP Redirects on all IPv4 Interfaces by Default</td>
 <td xml:lang="en-US">ICMP redirect messages are used by routers to inform hosts that a more
 direct route exists for a particular destination. These messages contain information
 from the system's route table possibly revealing portions of the network topology.
@@ -1443,7 +1448,7 @@ If this is not the system default value, add the following line to a file in the
 <tr>
 <td>sysctl_net_ipv4_conf_all_send_redirects</td>
 <td>medium</td>
-<td>Disable Kernel Parameter for Sending ICMP Redirects for All Interfaces</td>
+<td>Disable Kernel Parameter for Sending ICMP Redirects on all IPv4 Interfaces</td>
 <td xml:lang="en-US">ICMP redirect messages are used by routers to inform hosts that a more
 direct route exists for a particular destination. These messages contain information
 from the system's route table possibly revealing portions of the network topology.
@@ -1461,7 +1466,7 @@ If this is not the system default value, add the following line to a file in the
 <tr>
 <td>sysctl_net_ipv4_ip_forward</td>
 <td>medium</td>
-<td>Disable Kernel Parameter for IP Forwarding</td>
+<td>Disable Kernel Parameter for IP Forwarding on IPv4 Interfaces</td>
 <td xml:lang="en-US">Routing protocol daemons are typically used on routers to exchange
 network topology information with other routers. If this capability is used when
 not required, system network information may be unnecessarily transmitted across
@@ -1478,7 +1483,7 @@ If this is not the system default value, add the following line to a file in the
 <tr>
 <td>sysctl_net_ipv4_conf_all_accept_source_route</td>
 <td>medium</td>
-<td>Configure Kernel Parameter for Accepting IPv4 Source-Routed Packets for All Interfaces</td>
+<td>Disable Kernel Parameter for Accepting Source-Routed Packets on all IPv4 Interfaces</td>
 <td xml:lang="en-US">Source-routed packets allow the source of the packet to suggest routers
 forward the packet along a different path than configured on the router,
 which can be used to bypass network security measures. This requirement
@@ -1499,7 +1504,7 @@ If this is not the system default value, add the following line to a file in the
 <tr>
 <td>sysctl_net_ipv4_conf_all_accept_redirects</td>
 <td>medium</td>
-<td>Configure Kernel Parameter for Accepting ICMP Redirects for All Interfaces</td>
+<td>Disable Accepting ICMP Redirects for All IPv4 Interfaces</td>
 <td xml:lang="en-US">ICMP redirect messages are used by routers to inform hosts that a more
 direct route exists for a particular destination. These messages modify the
 host's route table and are unauthenticated. An illicit ICMP redirect
@@ -1519,7 +1524,7 @@ If this is not the system default value, add the following line to a file in the
 <tr>
 <td>sysctl_net_ipv4_conf_all_secure_redirects</td>
 <td>medium</td>
-<td>Configure Kernel Parameter for Accepting Secure Redirects for All Interfaces</td>
+<td>Disable Kernel Parameter for Accepting Secure ICMP Redirects on all IPv4 Interfaces</td>
 <td xml:lang="en-US">Accepting "secure" ICMP redirects (from those gateways listed as
 default gateways) has few legitimate uses. It should be disabled unless it is
 absolutely required.</td>
@@ -1535,7 +1540,7 @@ If this is not the system default value, add the following line to a file in the
 <tr>
 <td>sysctl_net_ipv4_conf_all_log_martians</td>
 <td>unknown</td>
-<td>Configure Kernel Parameter to Log Martian Packets</td>
+<td>Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces</td>
 <td xml:lang="en-US">The presence of "martian" packets (which have impossible addresses)
 as well as spoofed packets, source-routed packets, and redirects could be a
 sign of nefarious network activity. Logging these packets enables this activity
@@ -1552,7 +1557,7 @@ If this is not the system default value, add the following line to a file in the
 <tr>
 <td>sysctl_net_ipv4_conf_default_accept_source_route</td>
 <td>medium</td>
-<td>Configure Kernel Parameter for Accepting Source-Routed Packets By Default</td>
+<td>Disable Kernel Parameter for Accepting Source-Routed Packets on IPv4 Interfaces by Default</td>
 <td xml:lang="en-US">Source-routed packets allow the source of the packet to suggest routers
 forward the packet along a different path than configured on the router,
 which can be used to bypass network security measures.
@@ -1589,7 +1594,7 @@ If this is not the system default value, add the following line to a file in the
 <tr>
 <td>sysctl_net_ipv4_conf_default_accept_redirects</td>
 <td>medium</td>
-<td>Configure Kernel Parameter for Accepting ICMP Redirects By Default</td>
+<td>Disable Kernel Parameter for Accepting ICMP Redirects by Default on IPv4 Interfaces</td>
 <td xml:lang="en-US">ICMP redirect messages are used by routers to inform hosts that a more
 direct route exists for a particular destination. These messages modify the
 host's route table and are unauthenticated. An illicit ICMP redirect
@@ -1608,7 +1613,7 @@ If this is not the system default value, add the following line to a file in the
 <tr>
 <td>sysctl_net_ipv4_icmp_echo_ignore_broadcasts</td>
 <td>medium</td>
-<td>Configure Kernel Parameter to Ignore ICMP Broadcast Echo Requests</td>
+<td>Enable Kernel Parameter to Ignore ICMP Broadcast Echo Requests on IPv4 Interfaces</td>
 <td xml:lang="en-US">Responding to broadcast (ICMP) echoes facilitates network mapping
 and provides a vector for amplification attacks.
 <br>
@@ -1626,7 +1631,7 @@ If this is not the system default value, add the following line to a file in the
 <tr>
 <td>sysctl_net_ipv4_icmp_ignore_bogus_error_responses</td>
 <td>unknown</td>
-<td>Configure Kernel Parameter to Ignore Bogus ICMP Error Responses</td>
+<td>Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces</td>
 <td xml:lang="en-US">Ignoring bogus ICMP error responses reduces
 log size, although some activity would not be logged.</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.icmp_ignore_bogus_error_responses</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.icmp_ignore_bogus_error_responses=1</pre>
@@ -1640,7 +1645,7 @@ If this is not the system default value, add the following line to a file in the
 <tr>
 <td>sysctl_net_ipv4_tcp_syncookies</td>
 <td>medium</td>
-<td>Configure Kernel Parameter to Use TCP Syncookies</td>
+<td>Enable Kernel Parameter to Use TCP Syncookies on IPv4 Interfaces</td>
 <td xml:lang="en-US">A TCP SYN flood attack can cause a denial of service by filling a
 system's TCP connection table with connections in the SYN_RCVD state.
 Syncookies can be used to track a connection when a subsequent ACK is received,
@@ -1659,7 +1664,7 @@ If this is not the system default value, add the following line to a file in the
 <tr>
 <td>sysctl_net_ipv4_conf_all_rp_filter</td>
 <td>medium</td>
-<td>Configure Kernel Parameter to Use Reverse Path Filtering for All Interfaces</td>
+<td>Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces</td>
 <td xml:lang="en-US">Enabling reverse path filtering drops packets with source addresses
 that should not have been able to be received on the interface they were
 received on. It should not be used on systems which are routers for
@@ -1677,7 +1682,7 @@ If this is not the system default value, add the following line to a file in the
 <tr>
 <td>sysctl_net_ipv4_conf_default_rp_filter</td>
 <td>medium</td>
-<td>Configure Kernel Parameter to Use Reverse Path Filtering by Default</td>
+<td>Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces by Default</td>
 <td xml:lang="en-US">Enabling reverse path filtering drops packets with source addresses
 that should not have been able to be received on the interface they were
 received on. It should not be used on systems which are routers for
@@ -1694,7 +1699,7 @@ If this is not the system default value, add the following line to a file in the
 <tr>
 <td>sysctl_net_ipv6_conf_default_accept_redirects</td>
 <td>medium</td>
-<td>Configure Accepting IPv6 Redirects By Default</td>
+<td>Disable Kernel Parameter for Accepting ICMP Redirects by Default on IPv6 Interfaces</td>
 <td xml:lang="en-US">An illicit ICMP redirect message could result in a man-in-the-middle attack.</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_redirects=0</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_redirects = 0</pre>
@@ -2533,12 +2538,15 @@ to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S fchown -F auid&gt;=500 -F auid!=unset -F key=perm_mod</pre>
+
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fchown -F auid&gt;=500 -F auid!=unset -F key=perm_mod</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S fchown -F auid&gt;=500 -F auid!=unset -F key=perm_mod</pre>
+
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fchown -F auid&gt;=500 -F auid!=unset -F key=perm_mod</pre>
 </td>
@@ -2852,13 +2860,13 @@ the following form to a file with suffix <code>.rules</code> in the directory
 <code>/etc/audit/rules.d</code> for each setuid / setgid program on the system,
 replacing the <i>SETUID_PROG_PATH</i> part with the full path of that setuid /
 setgid program in the list:
-<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F perm=x -F auid&gt;=500 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F perm=x -F auid&gt;=500 -F auid!=unset -F key=special-config-changes</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code> for each setuid / setgid program on the
 system, replacing the <i>SETUID_PROG_PATH</i> part with the full path of that
 setuid / setgid program in the list:
-<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F perm=x -F auid&gt;=500 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F perm=x -F auid&gt;=500 -F auid!=unset -F key=special-config-changes</pre>
 </td>
 <td></td>
 <td></td>
@@ -4802,7 +4810,7 @@ the correct values:
 <tr>
 <td>kernel_module_bluetooth_disabled</td>
 <td>medium</td>
-<td>Disable Bluetooth Kernel Modules</td>
+<td>Disable Bluetooth Kernel Module</td>
 <td xml:lang="en-US">If Bluetooth functionality must be disabled, preventing the kernel
 from loading the kernel module provides an additional safeguard against its
 activation.</td>

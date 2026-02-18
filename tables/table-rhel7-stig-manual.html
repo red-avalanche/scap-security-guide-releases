@@ -314,13 +314,13 @@ Note: If the system does not have GNOME installed, this requirement is Not Appli
 
 Check to see if the screen lock is enabled with the following command:
 
-# grep -i lock-enabled /etc/dconf/db/local.d/00-screensaver
+# grep -i lock-enabled /etc/dconf/db/local.d/*
 lock-enabled=true
 
 If the "lock-enabled" setting is missing or is not set to "true", this is a finding.</td>
 <td>Configure the operating system to enable a user's session lock until that user re-establishes access using established identification and authentication procedures.
 
-Create a database to contain the system-wide screensaver settings (if it does not already exist) with the following command:
+Create a database to contain the system-wide screensaver settings (if it does not already exist) with the following example:
 
 # touch /etc/dconf/db/local.d/00-screensaver
 
@@ -333,7 +333,7 @@ Update the system databases:
 
 # dconf update
 
-Users must log out and back in again before the system-wide settings take effect.</td>
+Users must log out and back in again before the system-wide settings take effect. </td>
 </tr>
 <tr>
 <td>V-71893</td>
@@ -378,9 +378,10 @@ Users must log out and back in again before the system-wide settings take effect
 <td>CCI-000057</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must have the screen package installed.</td>
-<td>A session time-out lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not log out because of the temporary nature of the absence. Rather than relying on the user to manually lock their operating system session prior to vacating the vicinity, operating systems need to be able to identify when a user's session has idled and take action to initiate the session lock.
+<td>:  A session time-out lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not log out because of the temporary nature of the absence. Rather than relying on the user to manually lock their operating system session prior to vacating the vicinity, operating systems need to be able to identify when a user's session has idled and take action to initiate the session lock.
 
-The screen package allows for a session lock to be implemented and configured.</td>
+The screen and tmux packages allow for a session lock to be implemented and configured.
+</td>
 <td>Verify the operating system has the screen package installed.
 
 Check to see if the screen package is installed with the following command:
@@ -388,12 +389,23 @@ Check to see if the screen package is installed with the following command:
 # yum list installed screen
 screen-4.3.1-3-x86_64.rpm
 
-If is not installed, this is a finding.</td>
-<td>Install the screen package to allow the initiation a session lock after a 15-minute period of inactivity for graphical users interfaces.
+If the screen package is not installed, check to see if the tmux package is installed with the following command:
+
+#yum list installed tmux
+tmux-1.8-4.el7.x86_64.rpm 
+
+If either the screen package or the tmux package is not installed, this is a finding.</td>
+<td>Install the screen package to allow the initiation of a session lock after a 15-minute period of inactivity.
 
 Install the screen program (if it is not on the system) with the following command:
 
-# yum install screen</td>
+# yum install screen   
+
+OR
+
+Install the tmux program (if it is not on the system) with the following command:
+
+#yum install tmux</td>
 </tr>
 <tr>
 <td>V-71899</td>
@@ -1155,7 +1167,7 @@ For systems that are running RHEL 7.2 or newer, this is Not Applicable.
 
 Check to see if an encrypted root password is set. On systems that use a BIOS, use the following command:
 
-# grep -i ^password_pbkdf2 /boot/grub2/grub.cfg
+# grep -i password_pbkdf2 /boot/grub2/grub.cfg
 
 password_pbkdf2 [superusers-account] [password-hash]
 
@@ -1646,17 +1658,17 @@ A reboot is required for the changes to take effect.</td>
 <td>A locally logged-on user who presses Ctrl-Alt-Delete, when at the console, can reboot the system. If accidentally pressed, as could happen in the case of a mixed OS environment, this can create the risk of short-term loss of availability of systems due to unintentional reboot. In the GNOME graphical environment, risk of unintentional reboot from the Ctrl-Alt-Delete sequence is reduced because the user will be prompted before any action is taken.</td>
 <td>Verify the operating system is not configured to reboot the system when Ctrl-Alt-Delete is pressed.
 
-Check that the ctrl.alt.del.target is masked and not active with the following command:
+Check that the ctrl-alt-del.target is masked and not active with the following command:
 
-# systemctl status ctrl.alt.del.target
+# systemctl status ctrl-alt-del.target
 
 ctrl-alt-del.target
 Loaded: masked (/dev/null; bad)
 Active: inactive (dead)
 
-If the ctrl.alt.del.target is not masked, this is a finding.
+If the ctrl-alt-del.target is not masked, this is a finding.
 
-If the ctrl.alt.del.target is active, this is a finding.</td>
+If the ctrl-alt-del.target is active, this is a finding.</td>
 <td>Configure the system to disable the Ctrl-Alt_Delete sequence for the command line with the following command:
 
 # systemctl mask ctrl-alt-del.target
@@ -1706,7 +1718,7 @@ Check the version of the operating system with the following command:
 
 Red Hat Enterprise Linux Server release 7.4 (Maipo)
 
-Current End of Life for RHEL 7.1 is 31 March 2017
+Current End of Life for RHEL 7.1 is 31 March 2017.
 
 Current End of Life for RHEL 7.2 is 30 November 2017.
 
@@ -1714,7 +1726,9 @@ Current End of Life for RHEL 7.3 is 30 November 2018.
 
 Current End of Life for RHEL 7.4 is 31 August 2019.
 
-Current End of Life for RHEL 7.5 is 30 April 2020
+Current End of Life for RHEL 7.5 is 30 April 2020.
+
+Current End of Life for RHEL 7.6 is 31 October 2020.
 
 If the release is not supported by the vendor, this is a finding.</td>
 <td>Upgrade to a supported version of the operating system.</td>
@@ -2499,10 +2513,19 @@ Check that a file system/partition has been created for "/tmp" with the followin
 # systemctl is-enabled tmp.mount
 enabled
 
-If the "tmp.mount" service is not enabled, this is a finding.</td>
+If the "tmp.mount" service is not enabled, check to see if "/tmp" is defined in the fstab with a device and mount point:
+
+# grep -i /tmp /etc/fstab
+UUID=a411dc99-f2a1-4c87-9e05-184977be8539 /tmp   ext4   rw,relatime,discard,data=ordered,nosuid,noexec, 0 0
+
+If "tmp.mount" service is not enabled and the "/tmp" directory is not defined in the fstab with a device and mount point, this is a finding. </td>
 <td>Start the "tmp.mount" service with the following command:
 
-# systemctl enable tmp.mount</td>
+# systemctl enable tmp.mount
+   
+OR
+
+Edit the "/etc/fstab" file and ensure the "/tmp" directory is defined in the fstab with a device and mount point.</td>
 </tr>
 <tr>
 <td>V-72067</td>
@@ -3911,14 +3934,14 @@ Check the file system rule in "/etc/audit/audit.rules" with the following comman
 
 # grep -i /usr/bin/passwd /etc/audit/audit.rules
 
--a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged-passwd
+-a always,exit -F path=/usr/bin/passwd -F auid&gt;=1000 -F auid!=4294967295 -k privileged-passwd
 
 If the command does not return any output, this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "passwd" command occur.
 
 Add or update the following rule in "/etc/audit/rules.d/audit.rules":
 
--a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged-passwd
+-a always,exit -F path=/usr/bin/passwd -F auid&gt;=1000 -F auid!=4294967295 -k privileged-passwd
 
 The audit daemon must be restarted for the changes to take effect.</td>
 </tr>
@@ -3965,16 +3988,16 @@ Check the file system rule in "/etc/audit/audit.rules" with the following comman
 
 # grep -i /usr/bin/gpasswd /etc/audit/audit.rules
 
--a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged-passwd
+-a always,exit -F path=/usr/bin/gpasswd -F auid&gt;=1000 -F auid!=4294967295 -k privileged-passwd
 
 If the command does not return any output, this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "gpasswd" command occur.
 
 Add or update the following rule in "/etc/audit/rules.d/audit.rules":
 
--a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged-passwd
+-a always,exit -F path=/usr/bin/gpasswd -F auid&gt;=1000 -F auid!=4294967295 -k privileged-passwd
 
-The audit daemon must be restarted for the changes to take effect.</td>
+The audit daemon must be restarted for the changes to take effect. </td>
 </tr>
 <tr>
 <td>V-72155</td>
@@ -3992,14 +4015,14 @@ Check the file system rule in "/etc/audit/audit.rules" with the following comman
 
 # grep -i /usr/bin/chage /etc/audit/audit.rules
 
--a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged-passwd
+-a always,exit -F path=/usr/bin/chage -F auid&gt;=1000 -F auid!=4294967295 -k privileged-passwd
 
 If the command does not return any output, this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "chage" command occur.
 
 Add or update the following rule in "/etc/audit/rules.d/audit.rules":
 
--a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged-passwd
+-a always,exit -F path=/usr/bin/chage -F auid&gt;=1000 -F auid!=4294967295 -k privileged-passwd
 
 The audit daemon must be restarted for the changes to take effect.</td>
 </tr>
@@ -4019,14 +4042,14 @@ Check the file system rule in "/etc/audit/audit.rules" with the following comman
 
 # grep -i /usr/sbin/userhelper /etc/audit/audit.rules
 
--a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged-passwd
+-a always,exit -F path=/usr/sbin/userhelper -F auid&gt;=1000 -F auid!=4294967295 -k privileged-passwd
 
 If the command does not return any output, this is a finding.</td>
 <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to use the "userhelper" command occur.
 
 Add or update the following rule in "/etc/audit/rules.d/audit.rules":
 
--a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -k privileged-passwd
+-a always,exit -F path=/usr/sbin/userhelper -F auid&gt;=1000 -F auid!=4294967295 -k privileged-passwd
 
 The audit daemon must be restarted for the changes to take effect.</td>
 </tr>
@@ -5572,7 +5595,7 @@ Check that "pam_lastlog" is used and not silent with the following command:
 session required pam_lastlog.so showfailed
 
 If "pam_lastlog" is missing from "/etc/pam.d/postlogin" file, or the silent option is present, this is a finding.</td>
-<td>Configure the operating system to provide users with feedback on when account accesses last occurred by setting the required configuration options in "/etc/pam.d/postlogin-ac". 
+<td>Configure the operating system to provide users with feedback on when account accesses last occurred by setting the required configuration options in "/etc/pam.d/postlogin". 
 
 Add the following line to the top of "/etc/pam.d/postlogin":
 
@@ -6163,8 +6186,6 @@ Remote access is access to DoD nonpublic information systems by an authorized us
 
 This requirement only applies to components where this is specific to the function of the device or has the concept of an organizational user (e.g., VPN, proxy capability). This does not apply to authentication for the purpose of configuring the device itself (management).
 
-Requires further clarification from NIST.
-
 Satisfies: SRG-OS-000375-GPOS-00160, SRG-OS-000375-GPOS-00161, SRG-OS-000375-GPOS-00162</td>
 <td>Verify the operating system has the packages required for multifactor authentication installed.
 
@@ -6176,15 +6197,13 @@ esc-1.1.0-26.el7.noarch.rpm
 # yum list installed pam_pkcs11
 pam_pkcs11-0.6.2-14.el7.noarch.rpm
 
-# yum list installed authconfig-gtk
-authconfig-gtk-6.1.12-19.el7.noarch.rpm
 
-If the "esc", "pam_pkcs11", and "authconfig-gtk" packages are not installed, this is a finding.</td>
+If the "esc" and "pam_pkcs11" packages are not installed, this is a finding.</td>
 <td>Configure the operating system to implement multifactor authentication by installing the required packages.
 
-Install the "esc", "pam_pkcs11", "authconfig", and "authconfig-gtk" packages on the system with the following command:
+Install the "esc" and "pam_pkcs11" packages on the system with the following command:
 
-# yum install esc pam_pkcs11 authconfig-gtk</td>
+# yum install esc pam_pkcs11</td>
 </tr>
 <tr>
 <td>V-72427</td>
@@ -6669,6 +6688,49 @@ Issue the following command to make the changes take effect:
 # sysctl --system</td>
 </tr>
 <tr>
+<td>V-78995</td>
+<td>CCI-000057</td>
+<td>medium</td>
+<td>The Red Hat Enterprise Linux operating system must prevent a user from overriding the screensaver lock-enabled setting for the graphical user interface.</td>
+<td>A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not want to log out because of the temporary nature of the absence.
+
+The session lock is implemented at the point where session activity can be determined.
+
+The ability to enable/disable a session lock is given to the user by default. Disabling the user’s ability to disengage the graphical user interface session lock provides the assurance that all sessions will lock after the specified period of time.
+</td>
+<td>Verify the operating system prevents a user from overriding the screensaver lock-enabled setting for the graphical user interface. 
+
+Note: If the system does not have GNOME installed, this requirement is Not Applicable. The screen program must be installed to lock sessions on the console.
+
+Determine which profile the system database is using with the following command:
+# grep system-db /etc/dconf/profile/user
+
+system-db:local
+
+Check for the lock-enabled setting with the following command:
+
+Note: The example below is using the database "local" for the system, so the path is "/etc/dconf/db/local.d". This path must be modified if a database other than "local" is being used.
+
+# grep -i lock-enabled /etc/dconf/db/local.d/locks/*
+
+/org/gnome/desktop/screensaver/lock-enabled
+
+If the command does not return a result, this is a finding.
+</td>
+<td>Configure the operating system to prevent a user from overriding a screensaver lock after a 15-minute period of inactivity for graphical user interfaces.
+
+Create a database to contain the system-wide screensaver settings (if it does not already exist) with the following command: 
+
+Note: The example below is using the database "local" for the system, so if the system is using another database in "/etc/dconf/profile/user", the file should be created under the appropriate subdirectory.
+
+# touch /etc/dconf/db/local.d/locks/session
+
+Add the setting to lock the screensaver lock-enabled setting:
+
+/org/gnome/desktop/screensaver/lock-enabled
+</td>
+</tr>
+<tr>
 <td>V-78997</td>
 <td>CCI-000057</td>
 <td>medium</td>
@@ -6879,22 +6941,20 @@ export superusers</td>
 <td>low</td>
 <td>The Red Hat Enterprise Linux operating system must mount /dev/shm with the nodev option.</td>
 <td>The "nodev" mount option causes the system to not interpret character or block special devices. Executing character or block special devices from untrusted file systems increases the opportunity for unprivileged users to attain unauthorized administrative access.</td>
-<td>Verify that the "nodev" option is configured for /dev/shm.
+<td>Verify that the "nodev" option is configured for /dev/shm:
 
-Check that the operating system is configured to use the "nodev" option for /dev/shm with the following command:
 
-# cat /etc/fstab | grep /dev/shm | grep nodev
+# cat /etc/fstab | grep /dev/shm
+tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0
 
-tmpfs   /dev/shm   tmpfs   defaults,nodev,nosuid,noexec   0 0
-
-If the "nodev" option is not present on the line for "/dev/shm", this is a finding.
+If any results are returned and the "nodev" option is not listed, this is a finding.
 
 Verify "/dev/shm" is mounted with the "nodev" option:
 
 # mount | grep "/dev/shm" | grep nodev
 
 If no results are returned, this is a finding.</td>
-<td>Configure the "/etc/fstab" to use the "nodev" option for all lines containing "/dev/shm".</td>
+<td>Configure the system so that /dev/shm is mounted with the "nodev" option.</td>
 </tr>
 <tr>
 <td>V-81011</td>
@@ -6902,22 +6962,20 @@ If no results are returned, this is a finding.</td>
 <td>low</td>
 <td>The Red Hat Enterprise Linux operating system must mount /dev/shm with the nosuid option.</td>
 <td>The "nosuid" mount option causes the system to not execute "setuid" and "setgid" files with owner privileges. This option must be used for mounting any file system not containing approved "setuid" and "setguid" files. Executing files from untrusted file systems increases the opportunity for unprivileged users to attain unauthorized administrative access.</td>
-<td>Verify that the "nosuid" option is configured for /dev/shm.
+<td>Verify that the "nosuid" option is configured for /dev/shm:
 
-Check that the operating system is configured to use the "nosuid" option for /dev/shm with the following command:
+# cat /etc/fstab | grep /dev/shm
 
-# cat /etc/fstab | grep /dev/shm | grep nosuid
+tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0
 
-tmpfs   /dev/shm   tmpfs   defaults,nodev,nosuid,noexec   0 0
-
-If the "nosuid" option is not present on the line for "/dev/shm", this is a finding.
+If any results are returned and the "nosuid" option is not listed, this is a finding.
 
 Verify "/dev/shm" is mounted with the "nosuid" option:
 
 # mount | grep "/dev/shm" | grep nosuid
 
 If no results are returned, this is a finding.</td>
-<td>Configure the "/etc/fstab" to use the "nosuid" option for all lines containing "/dev/shm".</td>
+<td>Configure the system so that /dev/shm is mounted with the "nosuid" option.</td>
 </tr>
 <tr>
 <td>V-81013</td>
@@ -6925,22 +6983,20 @@ If no results are returned, this is a finding.</td>
 <td>low</td>
 <td>The Red Hat Enterprise Linux operating system must mount /dev/shm with the noexec option.</td>
 <td>The "noexec" mount option causes the system to not execute binary files. This option must be used for mounting any file system not containing approved binary files as they may be incompatible. Executing files from untrusted file systems increases the opportunity for unprivileged users to attain unauthorized administrative access.</td>
-<td>Verify that the "noexec" option is configured for /dev/shm.
+<td>Verify that the "noexec" option is configured for /dev/shm:
 
-Check that the operating system is configured to use the "noexec" option for /dev/shm with the following command:
+# cat /etc/fstab | grep /dev/shm
 
-# cat /etc/fstab | grep /dev/shm | grep noexec
+tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0
 
-tmpfs   /dev/shm   tmpfs   defaults,nodev,nosuid,noexec   0 0
-
-If the "noexec" option is not present on the line for "/dev/shm", this is a finding.
+If any results are returned and the "noexec" option is not listed, this is a finding.
 
 Verify "/dev/shm" is mounted with the "noexec" option:
 
 # mount | grep "/dev/shm" | grep noexec
 
 If no results are returned, this is a finding.</td>
-<td>Configure the "/etc/fstab" to use the "noexec" option for all lines containing "/dev/shm".</td>
+<td>Configure the system so that /dev/shm is mounted with the "noexec" option.</td>
 </tr>
 <tr>
 <td>V-81015</td>
@@ -7057,6 +7113,96 @@ name_format = hostname
 The audit daemon must be restarted for changes to take effect:
 
 # service auditd restart</td>
+</tr>
+<tr>
+<td>V-92251</td>
+<td>CCI-000366</td>
+<td>medium</td>
+<td>The Red Hat Enterprise Linux operating system must use a reverse-path filter for IPv4 network traffic when possible on all interfaces.</td>
+<td>Enabling reverse path filtering drops packets with source addresses that should not have been able to be received on the interface they were received on. It should not be used on systems which are routers for complicated networks, but is helpful for end hosts and routers serving small networks.</td>
+<td>Verify the system uses a reverse-path filter for IPv4:
+
+# grep net.ipv4.conf.all.rp_filter /etc/sysctl.conf /etc/sysctl.d/*
+net.ipv4.conf.all.rp_filter = 1
+
+If "net.ipv4.conf.all.rp_filter" is not configured in the /etc/sysctl.conf file or in the /etc/sysctl.d/ directory, is commented out, or does not have a value of "1", this is a finding.
+
+Check that the operating system implements the accept source route variable with the following command:
+
+# /sbin/sysctl -a | grep net.ipv4.conf.all.rp_filter
+net.ipv4.conf.all.rp_filter = 1
+
+If the returned line does not have a value of "1", this is a finding.</td>
+<td>Set the system to the required kernel parameter by adding the following line to "/etc/sysctl.conf" or a configuration file in the /etc/sysctl.d/ directory (or modify the line to have the required value):
+
+net.ipv4.conf.all.rp_filter = 1 
+
+Issue the following command to make the changes take effect:
+
+# sysctl --system</td>
+</tr>
+<tr>
+<td>V-92253</td>
+<td>CCI-000366</td>
+<td>medium</td>
+<td>The Red Hat Enterprise Linux operating system must use a reverse-path filter for IPv4 network traffic when possible by default.</td>
+<td>Enabling reverse path filtering drops packets with source addresses that should not have been able to be received on the interface they were received on. It should not be used on systems which are routers for complicated networks, but is helpful for end hosts and routers serving small networks.</td>
+<td>Verify the system uses a reverse-path filter for IPv4:
+
+# grep net.ipv4.conf.default.rp_filter /etc/sysctl.conf /etc/sysctl.d/*
+net.ipv4.conf.default.rp_filter = 1
+
+If "net.ipv4.conf.default.rp_filter" is not configured in the /etc/sysctl.conf file or in the /etc/sysctl.d/ directory, is commented out, or does not have a value of "1", this is a finding.
+
+Check that the operating system implements the accept source route variable with the following command:
+
+# /sbin/sysctl -a | grep net.ipv4.conf.default.rp_filter
+net.ipv4.conf.default.rp_filter = 1
+
+If the returned line does not have a value of "1", this is a finding.</td>
+<td>Set the system to the required kernel parameter by adding the following line to "/etc/sysctl.conf" or a configuration file in the /etc/sysctl.d/ directory (or modify the line to have the required value):
+
+net.ipv4.conf.default.rp_filter = 1 
+
+Issue the following command to make the changes take effect:
+
+# sysctl --system</td>
+</tr>
+<tr>
+<td>V-92255</td>
+<td>CCI-001263</td>
+<td>medium</td>
+<td>The Red Hat Enterprise Linux operating system must have a host-based intrusion detection tool installed.</td>
+<td>Adding host-based intrusion detection tools can provide the capability to automatically take actions in response to malicious behavior, which can provide additional agility in reacting to network threats. These tools also often include a reporting capability to provide network awareness of the system, which may not otherwise exist in an organization's systems management regime.</td>
+<td>Ask the SA or ISSO if a host-based intrusion detection application is loaded on the system. Per OPORD 16-0080, the preferred intrusion detection system is McAfee HBSS available through the U.S. Cyber Command (USCYBERCOM).
+
+If another host-based intrusion detection application is in use, such as SELinux, this must be documented and approved by the local Authorizing Official.
+
+Procedure:
+Examine the system to determine if the Host Intrusion Prevention System (HIPS) is installed:
+
+# rpm -qa | grep MFEhiplsm
+
+Verify that the McAfee HIPS module is active on the system:
+
+# ps -ef | grep -i “hipclient”
+
+If the MFEhiplsm package is not installed, check for another intrusion detection system:
+
+# find / -name &lt;daemon name&gt;
+
+Where &lt;daemon name&gt; is the name of the primary application daemon to determine if the application is loaded on the system.
+
+Determine if the application is active on the system:
+
+# ps -ef | grep -i &lt;daemon name&gt;
+
+If the MFEhiplsm package is not installed and an alternate host-based intrusion detection application has not been documented for use, this is a finding.
+
+If no host-based intrusion detection system is installed and running on the system, this is a finding.</td>
+<td>Install and enable the latest McAfee HIPS package, available from USCYBERCOM.
+
+Note: If the system does not support the McAfee HIPS package, install and enable a supported intrusion detection system application and document its use with the Authorizing Official.</td>
 </tr>
 </table>
 </body>

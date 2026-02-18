@@ -636,6 +636,102 @@ is reached.</td>
 <td></td>
 </tr>
 <tr>
+<td>3.1.13</td>
+<td>Use Only FIPS 140-2 Validated Ciphers</td>
+<td xml:lang="en-US">Limit the ciphers to those algorithms which are FIPS-approved.
+Counter (CTR) mode is also preferred over cipher-block chaining (CBC) mode.
+The following line in <code>/etc/ssh/sshd_config</code>
+demonstrates use of FIPS-approved ciphers:
+<pre>Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc</pre>
+The man page <code>sshd_config(5)</code> contains a list of supported ciphers.</td>
+<td xml:lang="en-US">Unapproved mechanisms that are used for authentication to the cryptographic module are not verified and therefore
+cannot be relied upon to provide confidentiality or integrity, and system data may be compromised.
+<br>
+Operating systems utilizing encryption are required to use FIPS-compliant mechanisms for authenticating to
+cryptographic modules.
+<br>
+FIPS 140-2 is the current standard for validating that mechanisms used to access cryptographic modules
+utilize authentication that meets industry and government requirements. For government systems, this allows
+Security Levels 1, 2, 3, or 4 for use on Red Hat Enterprise Linux 8.</td>
+<td></td>
+</tr>
+<tr>
+<td>3.13.11</td>
+<td>Use Only FIPS 140-2 Validated Ciphers</td>
+<td xml:lang="en-US">Limit the ciphers to those algorithms which are FIPS-approved.
+Counter (CTR) mode is also preferred over cipher-block chaining (CBC) mode.
+The following line in <code>/etc/ssh/sshd_config</code>
+demonstrates use of FIPS-approved ciphers:
+<pre>Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc</pre>
+The man page <code>sshd_config(5)</code> contains a list of supported ciphers.</td>
+<td xml:lang="en-US">Unapproved mechanisms that are used for authentication to the cryptographic module are not verified and therefore
+cannot be relied upon to provide confidentiality or integrity, and system data may be compromised.
+<br>
+Operating systems utilizing encryption are required to use FIPS-compliant mechanisms for authenticating to
+cryptographic modules.
+<br>
+FIPS 140-2 is the current standard for validating that mechanisms used to access cryptographic modules
+utilize authentication that meets industry and government requirements. For government systems, this allows
+Security Levels 1, 2, 3, or 4 for use on Red Hat Enterprise Linux 8.</td>
+<td></td>
+</tr>
+<tr>
+<td>3.13.8</td>
+<td>Use Only FIPS 140-2 Validated Ciphers</td>
+<td xml:lang="en-US">Limit the ciphers to those algorithms which are FIPS-approved.
+Counter (CTR) mode is also preferred over cipher-block chaining (CBC) mode.
+The following line in <code>/etc/ssh/sshd_config</code>
+demonstrates use of FIPS-approved ciphers:
+<pre>Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc</pre>
+The man page <code>sshd_config(5)</code> contains a list of supported ciphers.</td>
+<td xml:lang="en-US">Unapproved mechanisms that are used for authentication to the cryptographic module are not verified and therefore
+cannot be relied upon to provide confidentiality or integrity, and system data may be compromised.
+<br>
+Operating systems utilizing encryption are required to use FIPS-compliant mechanisms for authenticating to
+cryptographic modules.
+<br>
+FIPS 140-2 is the current standard for validating that mechanisms used to access cryptographic modules
+utilize authentication that meets industry and government requirements. For government systems, this allows
+Security Levels 1, 2, 3, or 4 for use on Red Hat Enterprise Linux 8.</td>
+<td></td>
+</tr>
+<tr>
+<td>3.1.13</td>
+<td>Use Only FIPS 140-2 Validated MACs</td>
+<td xml:lang="en-US">Limit the MACs to those hash algorithms which are FIPS-approved.
+The following line in <code>/etc/ssh/sshd_config</code>
+demonstrates use of FIPS-approved MACs:
+<pre>MACs hmac-sha2-512,hmac-sha2-256,hmac-sha1</pre>
+The man page <code>sshd_config(5)</code> contains a list of supported MACs.</td>
+<td xml:lang="en-US">DoD Information Systems are required to use FIPS-approved cryptographic hash
+functions. The only SSHv2 hash algorithms meeting this requirement is SHA2.</td>
+<td></td>
+</tr>
+<tr>
+<td>3.13.11</td>
+<td>Use Only FIPS 140-2 Validated MACs</td>
+<td xml:lang="en-US">Limit the MACs to those hash algorithms which are FIPS-approved.
+The following line in <code>/etc/ssh/sshd_config</code>
+demonstrates use of FIPS-approved MACs:
+<pre>MACs hmac-sha2-512,hmac-sha2-256,hmac-sha1</pre>
+The man page <code>sshd_config(5)</code> contains a list of supported MACs.</td>
+<td xml:lang="en-US">DoD Information Systems are required to use FIPS-approved cryptographic hash
+functions. The only SSHv2 hash algorithms meeting this requirement is SHA2.</td>
+<td></td>
+</tr>
+<tr>
+<td>3.13.8</td>
+<td>Use Only FIPS 140-2 Validated MACs</td>
+<td xml:lang="en-US">Limit the MACs to those hash algorithms which are FIPS-approved.
+The following line in <code>/etc/ssh/sshd_config</code>
+demonstrates use of FIPS-approved MACs:
+<pre>MACs hmac-sha2-512,hmac-sha2-256,hmac-sha1</pre>
+The man page <code>sshd_config(5)</code> contains a list of supported MACs.</td>
+<td xml:lang="en-US">DoD Information Systems are required to use FIPS-approved cryptographic hash
+functions. The only SSHv2 hash algorithms meeting this requirement is SHA2.</td>
+<td></td>
+</tr>
+<tr>
 <td>3.1.12</td>
 <td>Enable Use of Privilege Separation</td>
 <td xml:lang="en-US">When enabled, SSH will create an unprivileged child process that
@@ -1557,12 +1653,15 @@ to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S fchown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fchown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S fchown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fchown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
@@ -2237,13 +2336,13 @@ the following form to a file with suffix <code>.rules</code> in the directory
 <code>/etc/audit/rules.d</code> for each setuid / setgid program on the system,
 replacing the <i>SETUID_PROG_PATH</i> part with the full path of that setuid /
 setgid program in the list:
-<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code> for each setuid / setgid program on the
 system, replacing the <i>SETUID_PROG_PATH</i> part with the full path of that
 setuid / setgid program in the list:
-<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -2265,11 +2364,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -2291,11 +2390,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -2317,11 +2416,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -2343,11 +2442,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -2369,11 +2468,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -2395,11 +2494,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -2421,11 +2520,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -2447,11 +2546,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/postdrop -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -2473,11 +2572,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/postqueue -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -2499,11 +2598,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/libexec/pt_chown -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/pt_chown -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/libexec/pt_chown -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/pt_chown -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -2525,11 +2624,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/key-sign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/key-sign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -2551,11 +2650,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -2577,11 +2676,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -2603,11 +2702,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -2629,11 +2728,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -2655,11 +2754,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -2681,11 +2780,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -2866,7 +2965,7 @@ these events could serve as evidence of potential system compromise.</td>
 </tr>
 <tr>
 <td>3.1.7</td>
-<td>Record Unauthorized Access Attempts to Files (unsuccessful) - creat</td>
+<td>Record Unsuccessful Access Attempts to Files - creat</td>
 <td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
 accesses for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
@@ -2894,7 +2993,7 @@ these events could serve as evidence of potential system compromise.</td>
 </tr>
 <tr>
 <td>3.1.7</td>
-<td>Record Unauthorized Access Attempts to Files (unsuccessful) - ftruncate</td>
+<td>Record Unsuccessful Access Attempts to Files - ftruncate</td>
 <td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
 accesses for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
@@ -2902,15 +3001,18 @@ startup (the default), add the following lines to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
 -a always,exit -F arch=b32 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
 If the system is 64 bit then also add the following lines:
 <pre>
 -a always,exit -F arch=b64 -S ftruncate -F exiu=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
 -a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
 -a always,exit -F arch=b32 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
 If the system is 64 bit then also add the following lines:
 <pre>
 -a always,exit -F arch=b64 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
@@ -2922,7 +3024,7 @@ these events could serve as evidence of potential system compromise.</td>
 </tr>
 <tr>
 <td>3.1.7</td>
-<td>Record Unauthorized Access Attempts to Files (unsuccessful) - open</td>
+<td>Record Unsuccessful Access Attempts to Files - open</td>
 <td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
 accesses for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
@@ -2930,15 +3032,18 @@ startup (the default), add the following lines to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
 -a always,exit -F arch=b32 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
 If the system is 64 bit then also add the following lines:
 <pre>
 -a always,exit -F arch=b64 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
 -a always,exit -F arch=b64 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
 -a always,exit -F arch=b32 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
 If the system is 64 bit then also add the following lines:
 <pre>
 -a always,exit -F arch=b64 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
@@ -2950,7 +3055,7 @@ these events could serve as evidence of potential system compromise.</td>
 </tr>
 <tr>
 <td>3.1.7</td>
-<td>Record Unauthorized Access Attempts to Files (unsuccessful) - open_by_handle_at</td>
+<td>Record Unsuccessful Access Attempts to Files - open_by_handle_at</td>
 <td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
 accesses for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
@@ -2978,16 +3083,19 @@ these events could serve as evidence of potential system compromise.</td>
 </tr>
 <tr>
 <td>3.1.7</td>
-<td>Record Unauthorized Creation Attempts to Files - open_by_handle_at O_CREAT</td>
+<td>Record Unsuccessful Creation Attempts to Files - open_by_handle_at O_CREAT</td>
 <td xml:lang="en-US">The audit system should collect unauthorized file accesses for
 all users and root. The <code>open_by_handle_at</code> syscall can be used to create new files
 when O_CREAT flag is specified.
+
 The following auidt rules will asure that unsuccessful attempts to create a
 file via <code>open_by_handle_at</code> syscall are collected.
+
 If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
 program to read audit rules during daemon startup (the default), add the
 rules below to a file with suffix <code>.rules</code> in the directory
 <code>/etc/audit/rules.d</code>.
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the rules below to
 <code>/etc/audit/audit.rules</code> file.
@@ -2995,6 +3103,7 @@ utility to read audit rules during daemon startup, add the rules below to
 -a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
 -a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
 </pre>
+
 If the system is 64 bit then also add the following lines:
 <pre>
 -a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
@@ -3007,16 +3116,19 @@ these events could serve as evidence of potential system compromise.</td>
 </tr>
 <tr>
 <td>3.1.7</td>
-<td>Record Unauthorized Modification Attempts to Files - open_by_handle_at O_TRUNC</td>
+<td>Record Unsuccessful Modification Attempts to Files - open_by_handle_at O_TRUNC_WRITE</td>
 <td xml:lang="en-US">The audit system should collect detailed unauthorized file accesses for
 all users and root. The <code>open_by_handle_at</code> syscall can be used to modify files
-if called for write operation of with O_TRUNC flag.
+if called for write operation of with O_TRUNC_WRITE flag.
+
 The following auidt rules will asure that unsuccessful attempts to modify a
 file via <code>open_by_handle_at</code> syscall are collected.
+
 If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
 program to read audit rules during daemon startup (the default), add the
 rules below to a file with suffix <code>.rules</code> in the directory
 <code>/etc/audit/rules.d</code>.
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the rules below to
 <code>/etc/audit/audit.rules</code> file.
@@ -3024,6 +3136,7 @@ utility to read audit rules during daemon startup, add the rules below to
 -a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
 -a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
 </pre>
+
 If the system is 64 bit then also add the following lines:
 <pre>
 -a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
@@ -3077,16 +3190,19 @@ rule will not catch events better recorded by the more specific rule.</td>
 </tr>
 <tr>
 <td>3.1.7</td>
-<td>Record Unauthorized Creation Attempts to Files - open O_CREAT</td>
+<td>Record Unsuccessful Creation Attempts to Files - open O_CREAT</td>
 <td xml:lang="en-US">The audit system should collect unauthorized file accesses for
 all users and root. The <code>open</code> syscall can be used to create new files
 when O_CREAT flag is specified.
+
 The following auidt rules will asure that unsuccessful attempts to create a
 file via <code>open</code> syscall are collected.
+
 If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
 program to read audit rules during daemon startup (the default), add the
 rules below to a file with suffix <code>.rules</code> in the directory
 <code>/etc/audit/rules.d</code>.
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the rules below to
 <code>/etc/audit/audit.rules</code> file.
@@ -3094,6 +3210,7 @@ utility to read audit rules during daemon startup, add the rules below to
 -a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
 -a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
 </pre>
+
 If the system is 64 bit then also add the following lines:
 <pre>
 -a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
@@ -3106,10 +3223,10 @@ these events could serve as evidence of potential system compromise.</td>
 </tr>
 <tr>
 <td>3.1.7</td>
-<td>Record Unauthorized Modification Attempts to Files - open O_TRUNC</td>
+<td>Record Unsuccessful Modification Attempts to Files - open O_TRUNC_WRITE</td>
 <td xml:lang="en-US">The audit system should collect detailed unauthorized file accesses for
 all users and root. The <code>open</code> syscall can be used to modify files
-if called for write operation of with O_TRUNC flag.
+if called for write operation of with O_TRUNC_WRITE flag.
 The following auidt rules will asure that unsuccessful attempts to modify a
 file via <code>open</code> syscall are collected.
 If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
@@ -3176,7 +3293,7 @@ rule will not catch events better recorded by the more specific rule.</td>
 </tr>
 <tr>
 <td>3.1.7</td>
-<td>Record Unauthorized Access Attempts to Files (unsuccessful) - openat</td>
+<td>Record Unsuccessful Access Attempts to Files - openat</td>
 <td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
 accesses for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
@@ -3184,15 +3301,18 @@ startup (the default), add the following lines to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
 -a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
 If the system is 64 bit then also add the following lines:
 <pre>
 -a always,exit -F arch=b64 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
 -a always,exit -F arch=b64 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
 -a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
 If the system is 64 bit then also add the following lines:
 <pre>
 -a always,exit -F arch=b64 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
@@ -3204,16 +3324,19 @@ these events could serve as evidence of potential system compromise.</td>
 </tr>
 <tr>
 <td>3.1.7</td>
-<td>Record Unauthorized Creation Attempts to Files - openat O_CREAT</td>
+<td>Record Unsuccessful Creation Attempts to Files - openat O_CREAT</td>
 <td xml:lang="en-US">The audit system should collect unauthorized file accesses for
 all users and root. The <code>openat</code> syscall can be used to create new files
 when O_CREAT flag is specified.
+
 The following auidt rules will asure that unsuccessful attempts to create a
 file via <code>openat</code> syscall are collected.
+
 If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
 program to read audit rules during daemon startup (the default), add the
 rules below to a file with suffix <code>.rules</code> in the directory
 <code>/etc/audit/rules.d</code>.
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the rules below to
 <code>/etc/audit/audit.rules</code> file.
@@ -3221,6 +3344,7 @@ utility to read audit rules during daemon startup, add the rules below to
 -a always,exit -F arch=b32 -S openat -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
 -a always,exit -F arch=b32 -S openat -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
 </pre>
+
 If the system is 64 bit then also add the following lines:
 <pre>
 -a always,exit -F arch=b64 -S openat -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
@@ -3233,16 +3357,19 @@ these events could serve as evidence of potential system compromise.</td>
 </tr>
 <tr>
 <td>3.1.7</td>
-<td>Record Unauthorized Modification Attempts to Files - openat O_TRUNC</td>
+<td>Record Unsuccessful Modification Attempts to Files - openat O_TRUNC_WRITE</td>
 <td xml:lang="en-US">The audit system should collect detailed unauthorized file accesses for
 all users and root. The <code>openat</code> syscall can be used to modify files
-if called for write operation of with O_TRUNC flag.
+if called for write operation of with O_TRUNC_WRITE flag.
+
 The following auidt rules will asure that unsuccessful attempts to modify a
 file via <code>openat</code> syscall are collected.
+
 If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
 program to read audit rules during daemon startup (the default), add the
 rules below to a file with suffix <code>.rules</code> in the directory
 <code>/etc/audit/rules.d</code>.
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the rules below to
 <code>/etc/audit/audit.rules</code> file.
@@ -3250,6 +3377,7 @@ utility to read audit rules during daemon startup, add the rules below to
 -a always,exit -F arch=b32 -S openat -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
 -a always,exit -F arch=b32 -S openat -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
 </pre>
+
 If the system is 64 bit then also add the following lines:
 <pre>
 -a always,exit -F arch=b64 -S openat -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
@@ -3347,7 +3475,7 @@ these events could serve as evidence of potential system compromise.</td>
 </tr>
 <tr>
 <td>3.1.7</td>
-<td>Record Unauthorized Access Attempts to Files (unsuccessful) - truncate</td>
+<td>Record Unsuccessful Access Attempts to Files - truncate</td>
 <td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
 accesses for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
@@ -3355,15 +3483,18 @@ startup (the default), add the following lines to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
 -a always,exit -F arch=b32 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
 If the system is 64 bit then also add the following lines:
 <pre>
 -a always,exit -F arch=b64 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
 -a always,exit -F arch=b64 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
 -a always,exit -F arch=b32 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
 If the system is 64 bit then also add the following lines:
 <pre>
 -a always,exit -F arch=b64 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
@@ -3381,11 +3512,13 @@ attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following lines to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file.
 <pre>-a always,exit -F arch=b32 -S unlink -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
 -a always,exit -F arch=b32 -S unlink -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+
 If the system is 64 bit then also add the following lines:
 <pre>
 -a always,exit -F arch=b64 -S unlink -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
@@ -3403,11 +3536,13 @@ attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following lines to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file.
 <pre>-a always,exit -F arch=b32 -S unlinkat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
 -a always,exit -F arch=b32 -S unlinkat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+
 If the system is 64 bit then also add the following lines:
 <pre>
 -a always,exit -F arch=b64 -S unlinkat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
@@ -4181,7 +4316,7 @@ accepted.</td>
 </tr>
 <tr>
 <td>3.1.20</td>
-<td>Configure Accepting IPv6 Router Advertisements on All Interfaces</td>
+<td>Configure Accepting Router Advertisements on All IPv6 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.accept_ra</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.accept_ra=0</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_ra = 0</pre>
 </td>
@@ -4190,7 +4325,7 @@ If this is not the system default value, add the following line to a file in the
 </tr>
 <tr>
 <td>3.1.20</td>
-<td>Configure Accepting IPv6 Redirects on All Interfaces</td>
+<td>Disable Accepting ICMP Redirects for All IPv6 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.accept_redirects=0</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_redirects = 0</pre>
 </td>
@@ -4199,7 +4334,7 @@ If this is not the system default value, add the following line to a file in the
 </tr>
 <tr>
 <td>3.1.20</td>
-<td>Configure Kernel Parameter for Accepting IPv6 Source-Routed Packets for All Interfaces</td>
+<td>Disable Kernel Parameter for Accepting Source-Routed Packets on all IPv6 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.accept_source_route=0</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_source_route = 0</pre>
 </td>
@@ -4215,7 +4350,7 @@ uses. It should be disabled unless it is absolutely required.</td>
 </tr>
 <tr>
 <td>3.1.20</td>
-<td>Configure Accepting IPv6 Router Advertisements by Default</td>
+<td>Disable Accepting Router Advertisements on all IPv6 Interfaces by Default</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.accept_ra</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_ra=0</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_ra = 0</pre>
 </td>
@@ -4224,7 +4359,7 @@ If this is not the system default value, add the following line to a file in the
 </tr>
 <tr>
 <td>3.1.20</td>
-<td>Configure Accepting IPv6 Redirects By Default</td>
+<td>Disable Kernel Parameter for Accepting ICMP Redirects by Default on IPv6 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_redirects=0</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_redirects = 0</pre>
 </td>
@@ -4233,7 +4368,7 @@ If this is not the system default value, add the following line to a file in the
 </tr>
 <tr>
 <td>3.1.20</td>
-<td>Configure Kernel Parameter for Accepting Source-Routed Packets for Interfaces By Default</td>
+<td>Disable Kernel Parameter for Accepting Source-Routed Packets on IPv6 Interfaces by Default</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_source_route=0</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_source_route = 0</pre>
 </td>
@@ -4291,7 +4426,7 @@ the vulnerability to exploitation.</td>
 </tr>
 <tr>
 <td>3.1.20</td>
-<td>Configure Kernel Parameter for Accepting ICMP Redirects for All Interfaces</td>
+<td>Disable Accepting ICMP Redirects for All IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.accept_redirects=0</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.accept_redirects = 0</pre>
 </td>
@@ -4306,7 +4441,7 @@ disabled unless absolutely required."</td>
 </tr>
 <tr>
 <td>3.1.20</td>
-<td>Configure Kernel Parameter for Accepting IPv4 Source-Routed Packets for All Interfaces</td>
+<td>Disable Kernel Parameter for Accepting Source-Routed Packets on all IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.accept_source_route=0</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.accept_source_route = 0</pre>
 </td>
@@ -4322,7 +4457,7 @@ uses. It should be disabled unless it is absolutely required.</td>
 </tr>
 <tr>
 <td>3.1.20</td>
-<td>Configure Kernel Parameter to Log Martian Packets</td>
+<td>Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.log_martians</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.log_martians=1</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.log_martians = 1</pre>
 </td>
@@ -4334,7 +4469,7 @@ to be detected.</td>
 </tr>
 <tr>
 <td>3.1.20</td>
-<td>Configure Kernel Parameter to Use Reverse Path Filtering for All Interfaces</td>
+<td>Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.rp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.rp_filter=1</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.rp_filter = 1</pre>
 </td>
@@ -4347,7 +4482,7 @@ networks.</td>
 </tr>
 <tr>
 <td>3.1.20</td>
-<td>Configure Kernel Parameter for Accepting Secure Redirects for All Interfaces</td>
+<td>Disable Kernel Parameter for Accepting Secure ICMP Redirects on all IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.secure_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.secure_redirects=0</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.secure_redirects = 0</pre>
 </td>
@@ -4358,7 +4493,7 @@ absolutely required.</td>
 </tr>
 <tr>
 <td>3.1.20</td>
-<td>Configure Kernel Parameter for Accepting ICMP Redirects By Default</td>
+<td>Disable Kernel Parameter for Accepting ICMP Redirects by Default on IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.accept_redirects=0</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.accept_redirects = 0</pre>
 </td>
@@ -4372,7 +4507,7 @@ be disabled unless absolutely required.</td>
 </tr>
 <tr>
 <td>3.1.20</td>
-<td>Configure Kernel Parameter for Accepting Source-Routed Packets By Default</td>
+<td>Disable Kernel Parameter for Accepting Source-Routed Packets on IPv4 Interfaces by Default</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.accept_source_route=0</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.accept_source_route = 0</pre>
 </td>
@@ -4388,7 +4523,7 @@ router.</td>
 </tr>
 <tr>
 <td>3.1.20</td>
-<td>Configure Kernel Parameter to Log Martian Packets By Default</td>
+<td>Enable Kernel Paremeter to Log Martian Packets on all IPv4 Interfaces by Default</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.log_martians</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.log_martians=1</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.log_martians = 1</pre>
 </td>
@@ -4400,7 +4535,7 @@ to be detected.</td>
 </tr>
 <tr>
 <td>3.1.20</td>
-<td>Configure Kernel Parameter to Use Reverse Path Filtering by Default</td>
+<td>Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces by Default</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.rp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.rp_filter=1</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.rp_filter = 1</pre>
 </td>
@@ -4424,7 +4559,7 @@ absolutely required.</td>
 </tr>
 <tr>
 <td>3.1.20</td>
-<td>Configure Kernel Parameter to Ignore ICMP Broadcast Echo Requests</td>
+<td>Enable Kernel Parameter to Ignore ICMP Broadcast Echo Requests on IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.icmp_echo_ignore_broadcasts</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.icmp_echo_ignore_broadcasts=1</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.icmp_echo_ignore_broadcasts = 1</pre>
 </td>
@@ -4437,7 +4572,7 @@ addresses makes the system slightly more difficult to enumerate on the network.<
 </tr>
 <tr>
 <td>3.1.20</td>
-<td>Configure Kernel Parameter to Ignore Bogus ICMP Error Responses</td>
+<td>Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.icmp_ignore_bogus_error_responses</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.icmp_ignore_bogus_error_responses=1</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.icmp_ignore_bogus_error_responses = 1</pre>
 </td>
@@ -4447,7 +4582,7 @@ log size, although some activity would not be logged.</td>
 </tr>
 <tr>
 <td>3.1.20</td>
-<td>Configure Kernel Parameter to Use TCP Syncookies</td>
+<td>Enable Kernel Parameter to Use TCP Syncookies on IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.tcp_syncookies</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.tcp_syncookies=1</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.tcp_syncookies = 1</pre>
 </td>
@@ -4461,7 +4596,7 @@ enables the system to continue servicing valid connection requests.</td>
 </tr>
 <tr>
 <td>3.1.20</td>
-<td>Disable Kernel Parameter for Sending ICMP Redirects for All Interfaces</td>
+<td>Disable Kernel Parameter for Sending ICMP Redirects on all IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.send_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.send_redirects=0</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.send_redirects = 0</pre>
 </td>
@@ -4474,7 +4609,7 @@ The ability to send ICMP redirects is only appropriate for systems acting as rou
 </tr>
 <tr>
 <td>3.1.20</td>
-<td>Disable Kernel Parameter for Sending ICMP Redirects by Default</td>
+<td>Disable Kernel Parameter for Sending ICMP Redirects on all IPv4 Interfaces by Default</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.send_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.send_redirects=0</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.send_redirects = 0</pre>
 </td>
@@ -4487,7 +4622,7 @@ The ability to send ICMP redirects is only appropriate for systems acting as rou
 </tr>
 <tr>
 <td>3.1.20</td>
-<td>Disable Kernel Parameter for IP Forwarding</td>
+<td>Disable Kernel Parameter for IP Forwarding on IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.ip_forward</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.ip_forward=0</pre>
 If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.ip_forward = 0</pre>
 </td>
@@ -4530,7 +4665,7 @@ the system against exploitation of any flaws in its implementation.</td>
 </tr>
 <tr>
 <td>3.1.16</td>
-<td>Disable Bluetooth Kernel Modules</td>
+<td>Disable Bluetooth Kernel Module</td>
 <td xml:lang="en-US">The kernel's module loading system can be configured to prevent
 loading of the Bluetooth module. Add the following to
 the appropriate <code>/etc/modprobe.d</code> configuration file
@@ -5779,12 +5914,17 @@ come from Red Hat (and to connect to the Red Hat Network to receive them),
 the Red Hat GPG key must properly be installed. To install the Red Hat GPG
 key, run:
 <pre>$ sudo subscription-manager register</pre>
+
 If the system is not connected to the Internet or an RHN Satellite, then
 install the Red Hat GPG key from trusted media such as the Red Hat
 installation CD-ROM or DVD. Assuming the disc is mounted in
 <code>/media/cdrom</code>, use the following command as the root user to import
 it into the keyring:
 <pre>$ sudo rpm --import /media/cdrom/RPM-GPG-KEY</pre>
+
+Alternatively, the key may be pre-loaded during the RHEL installation. In
+such cases, the key can be installed by running the following command:
+<pre>sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-key-redhat-release</pre>
 </td>
 <td xml:lang="en-US">Changes to software components can have significant effects on the overall
 security of the operating system. This requirement ensures the software has
