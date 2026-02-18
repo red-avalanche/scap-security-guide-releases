@@ -6,7 +6,7 @@
 # This is a *draft* SCAP profile for Red Hat Certified Cloud Providers
 #
 # Benchmark ID:  RHEL-6
-# Benchmark Version:  0.1.42
+# Benchmark Version:  0.1.43
 #
 # XCCDF Version:  1.1
 #
@@ -827,6 +827,8 @@ replace_or_append '/etc/ssh/sshd_config' '^ClientAliveInterval' $sshd_idle_timeo
 # BEGIN fix (28 / 94) for 'sshd_set_keepalive'
 ###############################################################################
 (>&2 echo "Remediating rule 28/94: 'sshd_set_keepalive'")
+
+var_sshd_set_keepalive="0"
 # Function to replace configuration setting in config file or add the configuration setting if
 # it does not exist.
 #
@@ -905,7 +907,7 @@ function replace_or_append {
   fi
 }
 
-replace_or_append '/etc/ssh/sshd_config' '^ClientAliveCountMax' '0' 'CCE-26282-4' '%s %s'
+replace_or_append '/etc/ssh/sshd_config' '^ClientAliveCountMax' "$var_sshd_set_keepalive" 'CCE-26282-4' '%s %s'
 
 # END fix for 'sshd_set_keepalive'
 

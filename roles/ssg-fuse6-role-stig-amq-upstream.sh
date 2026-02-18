@@ -6,7 +6,7 @@
 # This is a *draft* profile for STIG. This profile is being developed under the DoD consensus model to become a STIG in coordination with DISA FSO.
 #
 # Benchmark ID:  Jboss-Fuse-6
-# Benchmark Version:  0.1.42
+# Benchmark Version:  0.1.43
 #
 # XCCDF Version:  1.1
 #

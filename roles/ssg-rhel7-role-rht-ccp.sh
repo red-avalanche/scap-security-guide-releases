@@ -3,10 +3,13 @@
 # Bash remediation role for profile rht-ccp
 # Profile Title:  Red Hat Corporate Profile for Certified Cloud Providers (RH CCP)
 # Profile Description:
-# This profile contains the minimum security relevant \n \ configuration settings recommended by Red Hat, Inc for \n \ Red Hat Enterprise Linux 7 instances deployed by Red Hat Certified \n \ Cloud Providers.
+# This profile contains the minimum security relevant
+# configuration settings recommended by Red Hat, Inc for
+# Red Hat Enterprise Linux 7 instances deployed by Red Hat Certified
+# Cloud Providers.
 #
 # Benchmark ID:  RHEL-7
-# Benchmark Version:  0.1.42
+# Benchmark Version:  0.1.43
 #
 # XCCDF Version:  1.1
 #
@@ -676,6 +679,8 @@ replace_or_append '/etc/ssh/sshd_config' '^ClientAliveInterval' $sshd_idle_timeo
 # BEGIN fix (14 / 70) for 'sshd_set_keepalive'
 ###############################################################################
 (>&2 echo "Remediating rule 14/70: 'sshd_set_keepalive'")
+
+var_sshd_set_keepalive="0"
 # Function to replace configuration setting in config file or add the configuration setting if
 # it does not exist.
 #
@@ -754,7 +759,7 @@ function replace_or_append {
   fi
 }
 
-replace_or_append '/etc/ssh/sshd_config' '^ClientAliveCountMax' '0' 'CCE-27082-7' '%s %s'
+replace_or_append '/etc/ssh/sshd_config' '^ClientAliveCountMax' "$var_sshd_set_keepalive" 'CCE-27082-7' '%s %s'
 
 # END fix for 'sshd_set_keepalive'
 

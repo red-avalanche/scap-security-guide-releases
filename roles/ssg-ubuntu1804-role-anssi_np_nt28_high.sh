@@ -6,7 +6,7 @@
 # This profile contains items for GNU/Linux installations storing sensitive informations that can be accessible from unauthenticated or uncontroled networks.
 #
 # Benchmark ID:  UBUNTU-BIONIC
-# Benchmark Version:  0.1.42
+# Benchmark Version:  0.1.43
 #
 # XCCDF Version:  1.1
 #
