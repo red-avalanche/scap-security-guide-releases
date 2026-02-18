@@ -1,5 +1,6 @@
+<!DOCTYPE html>
 <html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-<head>
+<head lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>DISA STIG for Oracle Linux 8</title>
 </head>
@@ -1405,8 +1406,7 @@ by configuring the bootloader password.
   <td xml:lang="en-US">
 Single-user mode is intended as a system recovery
 method, providing a single user root access to the system by
-providing a boot option at startup. By default, no authentication
-is performed if single-user mode is selected.
+providing a boot option at startup.
 <br /><br />
 By default, single-user mode is protected by requiring a password and is set
 in <tt>/usr/lib/systemd/system/rescue.service</tt>.
@@ -1476,9 +1476,8 @@ must be set upon account creation.
   <td xml:lang="en-US">
 Temporary accounts are established as part of normal account activation
 procedures when there is a need for short-term accounts. In the event
-temporary or emergency accounts are required, configure the system to
-terminate them after a documented time period. For every temporary and
-emergency account, run the following command to set an expiration date on
+temporary accounts are required, configure the system to
+terminate them after a documented time period. For every temporary account, run the following command to set an expiration date on
 it, substituting <tt><i>USER</i></tt> and <tt><i>YYYY-MM-DD</i></tt>
 appropriately:
 <pre>$ sudo chage -E <i>YYYY-MM-DD USER</i></pre>
@@ -2058,6 +2057,50 @@ and validated.
   <td>var_system_crypto_policy=fips</td>
 </tr>
 <tr>
+  <td>IA-4(e)</td>
+  <td>N/A</td>
+  <td>Set Account Expiration Following Inactivity in password-auth</td>
+  <td xml:lang="en-US">
+Verify the account identifiers (individuals, groups, roles, and devices) are disabled after
+<tt>35</tt> or less days of inactivity by
+checking the account inactivity value with the following command:
+<pre>grep 'inactive\|pam_unix' /etc/pam.d/password-auth | grep -w auth
+
+auth required pam_lastlog.so inactive=35
+auth sufficient pam_unix.so</pre>
+The line with the inactive parameter should be placed before <tt>pam_unix.so</tt> module as in
+the example output.
+  </td>
+  <td xml:lang="en-US">
+Inactive identifiers pose a risk to systems and applications because attackers may exploit an
+inactive identifier and potentially obtain undetected access to the system. Owners of inactive
+accounts will not notice if unauthorized access to their user account has been obtained.
+  </td>
+  <td>var_account_disable_inactivity=35</td>
+</tr>
+<tr>
+  <td>IA-4(e)</td>
+  <td>N/A</td>
+  <td>Set Account Expiration Following Inactivity in system-auth</td>
+  <td xml:lang="en-US">
+Verify the account identifiers (individuals, groups, roles, and devices) are disabled after
+<tt>35</tt> or less days of inactivity by
+checking the account inactivity value with the following command:
+<pre>grep 'inactive\|pam_unix' /etc/pam.d/password-auth | grep -w auth
+
+auth required pam_lastlog.so inactive=35
+auth sufficient pam_unix.so</pre>
+The line with the inactive parameter should be placed before <tt>pam_unix.so</tt> module as in
+the example output.
+  </td>
+  <td xml:lang="en-US">
+Inactive identifiers pose a risk to systems and applications because attackers may exploit an
+inactive identifier and potentially obtain undetected access to the system. Owners of inactive
+accounts will not notice if unauthorized access to their user account has been obtained.
+  </td>
+  <td>var_account_disable_inactivity=35</td>
+</tr>
+<tr>
   <td>IA-4(e)<br/>AC-2(3)<br/>CM-6(a)</td>
   <td>N/A</td>
   <td>Set Account Expiration Following Inactivity</td>
@@ -2520,11 +2563,17 @@ more difficult by ensuring a larger search space.
   <td xml:lang="en-US">
 Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
+<br /><br />
+In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter
+<tt>remember</tt> is present and it has a value equal to or greater than
+<tt>5</tt>. For example:
+<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<tt>5</tt> use_authtok</pre>
+<i>control_flag</i> should be one of the next values: <tt><tt>ol8</tt></tt><br />
   </td>
   <td xml:lang="en-US">
 Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
   </td>
-  <td></td>
+  <td>var_password_pam_remember_control_flag=ol8<br/>var_password_pam_remember=5</td>
 </tr>
 <tr>
   <td>IA-5(f)<br/>IA-5(1)(e)</td>
@@ -2533,11 +2582,18 @@ Preventing re-use of previous passwords helps ensure that a compromised password
   <td xml:lang="en-US">
 Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
+<br /><br />
+In the file <tt>/etc/pam.d/system-auth</tt>, make sure the parameter
+<tt>remember</tt> is present and it has a value equal to or greater than
+<tt>5</tt>
+For example:
+<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<tt>5</tt> use_authtok</pre>
+<i>control_flag</i> should be one of the next values: <tt><tt>ol8</tt></tt><br />
   </td>
   <td xml:lang="en-US">
 Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
   </td>
-  <td></td>
+  <td>var_password_pam_remember_control_flag=ol8<br/>var_password_pam_remember=5</td>
 </tr>
 <tr>
   <td>IA-5(c)<br/>IA-5(1)(a)<br/>CM-6(a)<br/>IA-5(4)</td>
@@ -2919,9 +2975,9 @@ If any interactive user password hash does not begin with <tt>$6</tt>,
 this is a finding.
   </td>
   <td xml:lang="en-US">
-The system must use a strong hashing algorithm to store the password. The
-system must use a sufficient number of hashing rounds to ensure the required
-level of entropy.
+Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised.
   </td>
   <td></td>
 </tr>
@@ -2987,7 +3043,8 @@ but does not have an assigned password, it may be possible to log
 into the account without authentication. Remove any instances of the
 <tt>nullok</tt> in
 
-<tt>/etc/pam.d/system-auth</tt>
+<tt>/etc/pam.d/system-auth</tt> and
+<tt>/etc/pam.d/password-auth</tt>
 
 to prevent logins with empty passwords.
   </td>
@@ -3303,9 +3360,9 @@ recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>aut
 depending on the OS version.
   </td>
   <td xml:lang="en-US">
-Locking out user accounts after a number of incorrect attempts prevents direct password
-guessing attacks. In combination with the <tt>silent</tt> option, user enumeration attacks
-are also mitigated.
+By limiting the number of failed logon attempts, the risk of unauthorized system access via
+user password guessing, also known as brute-forcing, is reduced. Limits are imposed by locking
+the account.
   </td>
   <td></td>
 </tr>
@@ -3357,11 +3414,14 @@ pam_faillock.so module requires multiple entries in pam files. These entries mus
 defined to work as expected. In order to avoid any errors when manually editing these files,
 it is recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.
+
+If <tt>unlock_time</tt> is set to <tt>0</tt>, manual intervention by an administrator is required
+to unlock a user. This should be done using the <tt>faillock</tt> tool.
   </td>
   <td xml:lang="en-US">
-Locking out user accounts after a number of incorrect attempts prevents direct password
-guessing attacks. Ensuring that an administrator is involved in unlocking locked accounts
-draws appropriate attention to such situations.
+By limiting the number of failed logon attempts the risk of unauthorized system
+access via user password guessing, otherwise known as brute-forcing, is reduced.
+Limits are imposed by locking the account.
   </td>
   <td></td>
 </tr>
@@ -3457,11 +3517,9 @@ If no <tt>server</tt> or <tt>pool</tt> directives are configured, the rule evalu
 to pass.
   </td>
   <td xml:lang="en-US">
-Inaccurate time stamps make it more difficult to correlate
-events and can lead to an inaccurate analysis. Determining the correct
-time a particular event occurred on a system is critical when conducting
-forensic analysis and investigating system events. Sources outside the
-configured acceptable allowance (drift) may be inaccurate.
+Inaccurate time stamps make it more difficult to correlate events and can lead to an inaccurate analysis. Determining the correct time a particular event occurred on a system is critical when conducting forensic analysis and investigating system events. Sources outside the configured acceptable allowance (drift) may be inaccurate.
+Synchronizing internal information system clocks provides uniformity of time stamps for information systems with multiple system clocks and systems connected over a network.
+Organizations should consider endpoints that may not have regular access to the authoritative time server (e.g., mobile, teleworking, and tactical endpoints).
   </td>
   <td>var_time_service_set_maxpoll=18_hours</td>
 </tr>
@@ -4139,14 +4197,14 @@ and whether to enter single-user mode.
   <td>Enable SLUB/SLAB allocator poisoning</td>
   <td xml:lang="en-US">
 To enable poisoning of SLUB/SLAB objects,
-add the argument <tt>slub_debug=P</tt> to the default
+add the argument <tt>slub_debug=<tt>P</tt></tt> to the default
 GRUB 2 command line for the Linux operating system.
-To ensure that <tt>slub_debug=P</tt> is added as a kernel command line
-argument to newly installed kernels, add <tt>slub_debug=P</tt> to the
+To ensure that <tt>slub_debug=<tt>P</tt></tt> is added as a kernel command line
+argument to newly installed kernels, add <tt>slub_debug=<tt>P</tt></tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... slub_debug=P ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="slub_debug=P"</pre>
+<pre>GRUB_CMDLINE_LINUX="... slub_debug=<tt>P</tt> ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="slub_debug=<tt>P</tt>"</pre>
   </td>
   <td xml:lang="en-US">
 Poisoning writes an arbitrary value to freed objects, so any modification or
@@ -4155,7 +4213,7 @@ detected and prevented.
 This prevents many types of use-after-free vulnerabilities at little performance cost.
 Also prevents leak of data and detection of corrupted memory.
   </td>
-  <td></td>
+  <td>var_slub_debug_options=P</td>
 </tr>
 <tr>
   <td>CM-6(a)</td>
@@ -4276,7 +4334,7 @@ should not be able to execute SUID or SGID binaries from boot partitions.
   <td>Add noexec Option to /home</td>
   <td xml:lang="en-US">
 The <tt>noexec</tt> mount option can be used to prevent binaries from being
-executed out of <tt>/home</tt>. 
+executed out of <tt>/home</tt>.
 Add the <code>noexec</code> option to the fourth column of
 <tt>/etc/fstab</tt> for the line which controls mounting of
 <code>/home</code>.
@@ -4913,7 +4971,12 @@ on the system can initiate privileged actions on the target system.
 The sudoers security policy requires that users authenticate themselves before they can use sudo.
 When sudoers requires authentication, it validates the invoking user's credentials.
 The expected output for:
-<pre>sudo egrep -i '(!rootpw|!targetpw|!runaspw)' /etc/sudoers /etc/sudoers.d/* | grep -v '#'</pre>
+<pre> sudo cvtsudoers -f sudoers /etc/sudoers | grep -E '^Defaults !?(rootpw|targetpw|runaspw)$' </pre>
+<pre> Defaults !targetpw
+      Defaults !rootpw
+      Defaults !runaspw </pre>
+or if cvtsudoers not supported:
+<pre> sudo find /etc/sudoers /etc/sudoers.d \( \! -name '*~' -a \! -name '*.*' \) -exec grep -E --with-filename '^[[:blank:]]*Defaults[[:blank:]](.*[[:blank:]])?!?\b(rootpw|targetpw|runaspw)' -- {} \; </pre>
 <pre> /etc/sudoers:Defaults !targetpw
       /etc/sudoers:Defaults !rootpw
       /etc/sudoers:Defaults !runaspw </pre>
@@ -5169,6 +5232,32 @@ operation.
   <td></td>
 </tr>
 <tr>
+  <td>AC-7 (a)</td>
+  <td>N/A</td>
+  <td>An SELinux Context must be configured for the pam_faillock.so records directory</td>
+  <td xml:lang="en-US">
+The <tt>dir</tt> configuration option in PAM pam_faillock.so module defines where the lockout
+records is stored. The configured directory must have the correct SELinux context.
+  </td>
+  <td xml:lang="en-US">
+Not having the correct SELinux context on the pam_faillock.so records directory may lead to
+unauthorized access to the directory.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>AC-7 (a)</td>
+  <td>N/A</td>
+  <td>Account Lockouts Must Be Logged</td>
+  <td xml:lang="en-US">
+PAM faillock locks an account due to excessive password failures, this event must be logged.
+  </td>
+  <td xml:lang="en-US">
+Without auditing of these events it may be harder or impossible to identify what an attacker did after an attack.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>AC-7(b)<br/>CM-6(a)</td>
   <td>N/A</td>
   <td>Ensure the Logon Failure Delay is Set Correctly in login.defs</td>
@@ -5182,6 +5271,29 @@ Increasing the time between a failed authentication attempt and re-prompting to
 enter credentials helps to slow a single-threaded brute force attack.
   </td>
   <td>var_accounts_fail_delay=4</td>
+</tr>
+<tr>
+  <td>AC-7(b)<br/>AC-7(a)<br/>AC-7.1(ii)</td>
+  <td>N/A</td>
+  <td>Lock Accounts Must Persist</td>
+  <td xml:lang="en-US">
+This rule ensures that the system lock out accounts using <tt>pam_faillock.so</tt> persist
+after system reboot. From "Pam_Faillock" man pages:
+<pre>Note that the default directory that "pam_faillock" uses is usually cleared on system
+boot so the access will be reenabled after system reboot. If that is undesirable, a different
+tally directory must be set with the "dir" option.</pre>
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.
+  </td>
+  <td xml:lang="en-US">
+Locking out user accounts after a number of incorrect attempts prevents direct password
+guessing attacks. In combination with the <tt>silent</tt> option, user enumeration attacks
+are also mitigated.
+  </td>
+  <td></td>
 </tr>
 <tr>
   <td>SI-7<br/>SI-7(1)<br/>CM-6(a)</td>
@@ -5224,6 +5336,23 @@ The remediation provided with this rule adds <tt>xattrs</tt> to all rule sets av
   <td xml:lang="en-US">
 Extended attributes in file systems are used to contain arbitrary data and file metadata
 with security implications.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>CM-7 (2)<br/>CM-7 (5) (b)<br/>CM-6 b</td>
+  <td>N/A</td>
+  <td>Configure Fapolicy Module to Employ a Deny-all, Permit-by-exception Policy to Allow the Execution of Authorized Software Programs.</td>
+  <td xml:lang="en-US">
+The Fapolicy module must be configured to employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs and to prevent unauthorized software from running.
+  </td>
+  <td xml:lang="en-US">
+Utilizing a whitelist provides a configuration management method for allowing the execution of only authorized software.
+Using only authorized software decreases risk by limiting the number of potential vulnerabilities. Verification of whitelisted software occurs prior to execution or at system startup.
+
+Proceed with caution with enforcing the use of this daemon.
+Improper configuration may render the system non-functional.
+The "fapolicyd" API is not namespace aware and can cause issues when launching or running containers.
   </td>
   <td></td>
 </tr>
@@ -6820,7 +6949,7 @@ The timestamp_timeout should be configured by making sure that the
 <tt>timestamp_timeout</tt> tag exists in
 <tt>/etc/sudoers</tt> configuration file or any sudo configuration snippets
 in <tt>/etc/sudoers.d/</tt>.
-If the value is set to an integer less than 0, the user's time stamp will not expire 
+If the value is set to an integer less than 0, the user's time stamp will not expire
 and the user will not have to re-authenticate for privileged actions until the user's session is terminated.
   </td>
   <td xml:lang="en-US">
@@ -6911,6 +7040,10 @@ System running in FIPS mode is indicated by kernel parameter
 <tt>'crypto.fips_enabled'</tt>. This parameter should be set to <tt>1</tt> in FIPS mode.
 To enable FIPS mode, run the following command:
 <pre>fips-mode-setup --enable</pre>
+
+To enable strict FIPS compliance, the fips=1 kernel option needs to be added to the kernel boot
+parameters during system installation so key generation is done with FIPS-approved algorithms
+and continuous monitoring tests in place.
   </td>
   <td xml:lang="en-US">
 Use of weak or untested encryption algorithms undermines the purposes of utilizing encryption to
@@ -7698,6 +7831,28 @@ The system's default number of rounds is 5000.
 Using a higher number of rounds makes password cracking attacks more difficult.
   </td>
   <td>var_password_pam_unix_rounds=5000</td>
+</tr>
+<tr>
+  <td></td>
+  <td>N/A</td>
+  <td>Do Not Show System Messages When Unsuccessful Logon Attempts Occur</td>
+  <td xml:lang="en-US">
+This rule ensures the system prevents informative messages from being presented to the user
+pertaining to logon information after a number of incorrect login attempts using
+<tt>pam_faillock.so</tt>.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.
+  </td>
+  <td xml:lang="en-US">
+The pam_faillock module without the silent option will leak information about the existence or
+non-existence of a user account in the system because the failures are not recorded for unknown
+users. The message about the user account being locked is never displayed for non-existing user
+accounts allowing the adversary to infer that a particular account exists or not on the system.
+  </td>
+  <td></td>
 </tr>
 <tr>
   <td></td>
@@ -8726,9 +8881,12 @@ Access Card.
 Administrators can configure authorized <tt>sudo</tt> users via drop-in files, and it is possible to include
 other directories and configuration files from the file currently being parsed.
 
-Make sure that <tt>/etc/sudoers</tt> only includes drop-in configuration files from <tt>/etc/sudoers.d</tt>.
-The <tt>/etc/sudoers</tt> should contain only one <tt>#includedir</tt> directive pointing to
-<tt>/etc/sudoers.d</tt>, and no file in <tt>/etc/sudoers.d/</tt> should include other files or directories.
+Make sure that <tt>/etc/sudoers</tt> only includes drop-in configuration files from <tt>/etc/sudoers.d</tt>,
+or that no drop-in file is included.
+Either the <tt>/etc/sudoers</tt> should contain only one <tt>#includedir</tt> directive pointing to
+<tt>/etc/sudoers.d</tt>, and no file in <tt>/etc/sudoers.d/</tt> should include other files or directories;
+Or the <tt>/etc/sudoers</tt> should not contain any <tt>#include</tt>,
+<tt>@include</tt>, <tt>#includedir</tt> or <tt>@includedir</tt> directives.
 Note that the '#' character doesn't denote a comment in the configuration file.
   </td>
   <td xml:lang="en-US">

@@ -1,5 +1,6 @@
+<!DOCTYPE html>
 <html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-<head>
+<head lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>DISA STIG for Red Hat Enterprise Linux 8</title>
 </head>
@@ -1381,8 +1382,7 @@ by configuring the bootloader password.
   <td xml:lang="en-US">
 Single-user mode is intended as a system recovery
 method, providing a single user root access to the system by
-providing a boot option at startup. By default, no authentication
-is performed if single-user mode is selected.
+providing a boot option at startup.
 <br /><br />
 By default, single-user mode is protected by requiring a password and is set
 in <tt>/usr/lib/systemd/system/rescue.service</tt>.
@@ -1452,9 +1452,8 @@ must be set upon account creation.
   <td xml:lang="en-US">
 Temporary accounts are established as part of normal account activation
 procedures when there is a need for short-term accounts. In the event
-temporary or emergency accounts are required, configure the system to
-terminate them after a documented time period. For every temporary and
-emergency account, run the following command to set an expiration date on
+temporary accounts are required, configure the system to
+terminate them after a documented time period. For every temporary account, run the following command to set an expiration date on
 it, substituting <tt><i>USER</i></tt> and <tt><i>YYYY-MM-DD</i></tt>
 appropriately:
 <pre>$ sudo chage -E <i>YYYY-MM-DD USER</i></pre>
@@ -1877,6 +1876,31 @@ lack of prompt attention to patching could result in a system compromise.
   <td></td>
 </tr>
 <tr>
+  <td>AC-2(5)<br/>AC-12<br/>AC-17(a)<br/>SC-10<br/>CM-6(a)</td>
+  <td>CCE-83405-1</td>
+  <td>Set SSH Client Alive Count Max to zero</td>
+  <td xml:lang="en-US">
+The SSH server sends at most <tt>ClientAliveCountMax</tt> messages
+during a SSH session and waits for a response from the SSH client.
+The option <tt>ClientAliveInterval</tt> configures timeout after
+each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
+receive a response from the client, then the connection is considered idle
+and terminated.
+
+To ensure the SSH idle timeout occurs precisely when the
+<tt>ClientAliveInterval</tt> is set, set the <tt>ClientAliveCountMax</tt> to
+value of <tt>0</tt> in
+
+
+<tt>/etc/ssh/sshd_config</tt>:
+  </td>
+  <td xml:lang="en-US">
+This ensures a user login will be terminated as soon as the <tt>ClientAliveInterval</tt>
+is reached.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>SI-2(6)<br/>CM-11(a)<br/>CM-11(b)<br/>CM-6(a)</td>
   <td>CCE-82476-3</td>
   <td>Ensure yum Removes Previous Package Versions</td>
@@ -1944,16 +1968,15 @@ information system (e.g., module or policy filter).
   <td>Enable authselect</td>
   <td xml:lang="en-US">
 Configure user authentication setup to use the <tt>authselect</tt> tool.
-
 If authselect profile is selected, the rule will enable the <tt>sssd</tt> profile.
   </td>
   <td xml:lang="en-US">
 Authselect is a successor to authconfig.
-It is a tool to select system authentication and identity sources from a list of supported profiles
-instead of letting the administrator build the PAM stack with a tool.
+It is a tool to select system authentication and identity sources from a list of supported
+profiles instead of letting the administrator manually build the PAM stack.
 
-That way, it avoids potential breakage of configuration,
-as it ships several tested profiles that are well tested and supported and that each solve a use-case.
+That way, it avoids potential breakage of configuration, as it ships several tested profiles
+that are well tested and supported to solve different use-cases.
   </td>
   <td>var_authselect_profile=sssd</td>
 </tr>
@@ -2463,11 +2486,17 @@ more difficult by ensuring a larger search space.
   <td xml:lang="en-US">
 Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
+<br /><br />
+In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter
+<tt>remember</tt> is present and it has a value equal to or greater than
+<tt>5</tt>. For example:
+<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<tt>5</tt> use_authtok</pre>
+<i>control_flag</i> should be one of the next values: <tt><tt>required</tt></tt><br />
   </td>
   <td xml:lang="en-US">
 Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
   </td>
-  <td></td>
+  <td>var_password_pam_remember_control_flag=required<br/>var_password_pam_remember=5</td>
 </tr>
 <tr>
   <td>IA-5(f)<br/>IA-5(1)(e)</td>
@@ -2476,11 +2505,18 @@ Preventing re-use of previous passwords helps ensure that a compromised password
   <td xml:lang="en-US">
 Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
+<br /><br />
+In the file <tt>/etc/pam.d/system-auth</tt>, make sure the parameter
+<tt>remember</tt> is present and it has a value equal to or greater than
+<tt>5</tt>
+For example:
+<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<tt>5</tt> use_authtok</pre>
+<i>control_flag</i> should be one of the next values: <tt><tt>required</tt></tt><br />
   </td>
   <td xml:lang="en-US">
 Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
   </td>
-  <td></td>
+  <td>var_password_pam_remember_control_flag=required<br/>var_password_pam_remember=5</td>
 </tr>
 <tr>
   <td>IA-5(c)<br/>IA-5(1)(a)<br/>CM-6(a)<br/>IA-5(4)</td>
@@ -2821,9 +2857,9 @@ If any interactive user password hash does not begin with <tt>$6</tt>,
 this is a finding.
   </td>
   <td xml:lang="en-US">
-The system must use a strong hashing algorithm to store the password. The
-system must use a sufficient number of hashing rounds to ensure the required
-level of entropy.
+Passwords need to be protected at all times, and encryption is the standard method for
+protecting passwords. If passwords are not encrypted, they can be plainly read
+(i.e., clear text) and easily compromised.
   </td>
   <td></td>
 </tr>
@@ -2889,7 +2925,8 @@ but does not have an assigned password, it may be possible to log
 into the account without authentication. Remove any instances of the
 <tt>nullok</tt> in
 
-<tt>/etc/pam.d/system-auth</tt>
+<tt>/etc/pam.d/system-auth</tt> and
+<tt>/etc/pam.d/password-auth</tt>
 
 to prevent logins with empty passwords.
   </td>
@@ -3215,9 +3252,9 @@ recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>aut
 depending on the OS version.
   </td>
   <td xml:lang="en-US">
-Locking out user accounts after a number of incorrect attempts prevents direct password
-guessing attacks. In combination with the <tt>silent</tt> option, user enumeration attacks
-are also mitigated.
+By limiting the number of failed logon attempts, the risk of unauthorized system access via
+user password guessing, also known as brute-forcing, is reduced. Limits are imposed by locking
+the account.
   </td>
   <td></td>
 </tr>
@@ -3269,11 +3306,14 @@ pam_faillock.so module requires multiple entries in pam files. These entries mus
 defined to work as expected. In order to avoid any errors when manually editing these files,
 it is recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.
+
+If <tt>unlock_time</tt> is set to <tt>0</tt>, manual intervention by an administrator is required
+to unlock a user. This should be done using the <tt>faillock</tt> tool.
   </td>
   <td xml:lang="en-US">
-Locking out user accounts after a number of incorrect attempts prevents direct password
-guessing attacks. Ensuring that an administrator is involved in unlocking locked accounts
-draws appropriate attention to such situations.
+By limiting the number of failed logon attempts the risk of unauthorized system
+access via user password guessing, otherwise known as brute-forcing, is reduced.
+Limits are imposed by locking the account.
   </td>
   <td></td>
 </tr>
@@ -3369,11 +3409,9 @@ If no <tt>server</tt> or <tt>pool</tt> directives are configured, the rule evalu
 to pass.
   </td>
   <td xml:lang="en-US">
-Inaccurate time stamps make it more difficult to correlate
-events and can lead to an inaccurate analysis. Determining the correct
-time a particular event occurred on a system is critical when conducting
-forensic analysis and investigating system events. Sources outside the
-configured acceptable allowance (drift) may be inaccurate.
+Inaccurate time stamps make it more difficult to correlate events and can lead to an inaccurate analysis. Determining the correct time a particular event occurred on a system is critical when conducting forensic analysis and investigating system events. Sources outside the configured acceptable allowance (drift) may be inaccurate.
+Synchronizing internal information system clocks provides uniformity of time stamps for information systems with multiple system clocks and systems connected over a network.
+Organizations should consider endpoints that may not have regular access to the authoritative time server (e.g., mobile, teleworking, and tactical endpoints).
   </td>
   <td>var_time_service_set_maxpoll=18_hours</td>
 </tr>
@@ -4014,14 +4052,14 @@ and whether to enter single-user mode.
   <td>Enable SLUB/SLAB allocator poisoning</td>
   <td xml:lang="en-US">
 To enable poisoning of SLUB/SLAB objects,
-add the argument <tt>slub_debug=P</tt> to the default
+add the argument <tt>slub_debug=<tt>P</tt></tt> to the default
 GRUB 2 command line for the Linux operating system.
-To ensure that <tt>slub_debug=P</tt> is added as a kernel command line
-argument to newly installed kernels, add <tt>slub_debug=P</tt> to the
+To ensure that <tt>slub_debug=<tt>P</tt></tt> is added as a kernel command line
+argument to newly installed kernels, add <tt>slub_debug=<tt>P</tt></tt> to the
 default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
-<pre>GRUB_CMDLINE_LINUX="... slub_debug=P ..."</pre>
-Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="slub_debug=P"</pre>
+<pre>GRUB_CMDLINE_LINUX="... slub_debug=<tt>P</tt> ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="slub_debug=<tt>P</tt>"</pre>
   </td>
   <td xml:lang="en-US">
 Poisoning writes an arbitrary value to freed objects, so any modification or
@@ -4030,7 +4068,7 @@ detected and prevented.
 This prevents many types of use-after-free vulnerabilities at little performance cost.
 Also prevents leak of data and detection of corrupted memory.
   </td>
-  <td></td>
+  <td>var_slub_debug_options=P</td>
 </tr>
 <tr>
   <td>CM-6(a)</td>
@@ -4128,12 +4166,30 @@ software.
   <td></td>
 </tr>
 <tr>
+  <td>CM-6(b)<br/>CM-6.1(iv)</td>
+  <td>CCE-86038-7</td>
+  <td>Add nosuid Option to /boot/efi</td>
+  <td xml:lang="en-US">
+The <tt>nosuid</tt> mount option can be used to prevent
+execution of setuid programs in <tt>/boot/efi</tt>. The SUID and SGID permissions
+should not be required on the boot partition.
+Add the <code>nosuid</code> option to the fourth column of
+<tt>/etc/fstab</tt> for the line which controls mounting of
+<code>/boot/efi</code>.
+  </td>
+  <td xml:lang="en-US">
+The presence of SUID and SGID executables should be tightly controlled. Users
+should not be able to execute SUID or SGID binaries from boot partitions.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>CM-6(b)</td>
   <td>CCE-83328-5</td>
   <td>Add noexec Option to /home</td>
   <td xml:lang="en-US">
 The <tt>noexec</tt> mount option can be used to prevent binaries from being
-executed out of <tt>/home</tt>. 
+executed out of <tt>/home</tt>.
 Add the <code>noexec</code> option to the fourth column of
 <tt>/etc/fstab</tt> for the line which controls mounting of
 <code>/home</code>.
@@ -4639,6 +4695,32 @@ may be able to log into the system as another user.
   <td></td>
 </tr>
 <tr>
+  <td>CM-6(a)<br/>AC-17(a)<br/>AC-2(5)<br/>AC-12<br/>AC-17(a)<br/>SC-10<br/>CM-6(a)</td>
+  <td>CCE-80906-1</td>
+  <td>Set SSH Idle Timeout Interval</td>
+  <td xml:lang="en-US">
+SSH allows administrators to set an idle timeout interval. After this interval
+has passed, the idle user will be automatically logged out.
+<br /><br />
+To set an idle timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
+follows:
+<pre>ClientAliveInterval <b><tt>10_minutes</tt></b></pre>
+<br/><br/>
+The timeout <b>interval</b> is given in seconds. For example, have a timeout
+of 10 minutes, set <b>interval</b> to 600.
+<br /><br />
+If a shorter timeout has already been set for the login shell, that value will
+preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
+some processes may stop SSH  from correctly detecting that the user is idle.
+  </td>
+  <td xml:lang="en-US">
+Terminating an idle ssh session within a short time period reduces the window of
+opportunity for unauthorized personnel to take control of a management session
+enabled on the console or console port that has been let unattended.
+  </td>
+  <td>sshd_idle_timeout_value=10_minutes</td>
+</tr>
+<tr>
   <td>CM-6(b)</td>
   <td>CCE-84058-7</td>
   <td>Prevent remote hosts from connecting to the proxy display</td>
@@ -4721,7 +4803,12 @@ on the system can initiate privileged actions on the target system.
 The sudoers security policy requires that users authenticate themselves before they can use sudo.
 When sudoers requires authentication, it validates the invoking user's credentials.
 The expected output for:
-<pre>sudo egrep -i '(!rootpw|!targetpw|!runaspw)' /etc/sudoers /etc/sudoers.d/* | grep -v '#'</pre>
+<pre> sudo cvtsudoers -f sudoers /etc/sudoers | grep -E '^Defaults !?(rootpw|targetpw|runaspw)$' </pre>
+<pre> Defaults !targetpw
+      Defaults !rootpw
+      Defaults !runaspw </pre>
+or if cvtsudoers not supported:
+<pre> sudo find /etc/sudoers /etc/sudoers.d \( \! -name '*~' -a \! -name '*.*' \) -exec grep -E --with-filename '^[[:blank:]]*Defaults[[:blank:]](.*[[:blank:]])?!?\b(rootpw|targetpw|runaspw)' -- {} \; </pre>
 <pre> /etc/sudoers:Defaults !targetpw
       /etc/sudoers:Defaults !rootpw
       /etc/sudoers:Defaults !runaspw </pre>
@@ -4820,6 +4907,21 @@ To make sure that the setting is persistent, add the following line to a file in
 When hardened, the extended Berkeley Packet Filter just-in-time compiler
 will randomize any kernel addresses in the BPF programs and maps,
 and will not expose the JIT addresses in <tt>/proc/kallsyms</tt>.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>CM-6(b)</td>
+  <td>CCE-86220-1</td>
+  <td>Disable Kernel Parameter for IPv4 Forwarding on all IPv4 Interfaces</td>
+  <td xml:lang="en-US">
+To set the runtime status of the <code>net.ipv4.conf.all.forwarding</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.forwarding=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>net.ipv4.conf.all.forwarding = 0</pre>
+  </td>
+  <td xml:lang="en-US">
+IP forwarding permits the kernel to forward packets from one network
+interface to another. The ability to forward packets between two networks is
+only appropriate for systems acting as routers.
   </td>
   <td></td>
 </tr>
@@ -4979,7 +5081,7 @@ operation.
 <tr>
   <td>AC-7 (a)</td>
   <td>CCE-86107-0</td>
-  <td>Account lockouts must be logged</td>
+  <td>Account Lockouts Must Be Logged</td>
   <td xml:lang="en-US">
 PAM faillock locks an account due to excessive password failures, this event must be logged.
   </td>
@@ -5885,22 +5987,6 @@ addresses makes the system slightly more difficult to enumerate on the network.
   <td></td>
 </tr>
 <tr>
-  <td>CM-7(a)<br/>CM-7(b)<br/>SC-5<br/>CM-6(a)<br/>SC-7(a)</td>
-  <td>CCE-81024-2</td>
-  <td>Disable Kernel Parameter for IP Forwarding on IPv4 Interfaces</td>
-  <td xml:lang="en-US">
-To set the runtime status of the <code>net.ipv4.ip_forward</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.ip_forward=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>net.ipv4.ip_forward = 0</pre>
-  </td>
-  <td xml:lang="en-US">
-Routing protocol daemons are typically used on routers to exchange
-network topology information with other routers. If this capability is used when
-not required, system network information may be unnecessarily transmitted across
-the network.
-  </td>
-  <td></td>
-</tr>
-<tr>
   <td>CM-7(a)<br/>CM-7(b)<br/>CM-6(a)</td>
   <td>CCE-81006-9</td>
   <td>Configure Accepting Router Advertisements on All IPv6 Interfaces</td>
@@ -6565,7 +6651,7 @@ The timestamp_timeout should be configured by making sure that the
 <tt>timestamp_timeout</tt> tag exists in
 <tt>/etc/sudoers</tt> configuration file or any sudo configuration snippets
 in <tt>/etc/sudoers.d/</tt>.
-If the value is set to an integer less than 0, the user's time stamp will not expire 
+If the value is set to an integer less than 0, the user's time stamp will not expire
 and the user will not have to re-authenticate for privileged actions until the user's session is terminated.
   </td>
   <td xml:lang="en-US">
@@ -6656,6 +6742,10 @@ System running in FIPS mode is indicated by kernel parameter
 <tt>'crypto.fips_enabled'</tt>. This parameter should be set to <tt>1</tt> in FIPS mode.
 To enable FIPS mode, run the following command:
 <pre>fips-mode-setup --enable</pre>
+
+To enable strict FIPS compliance, the fips=1 kernel option needs to be added to the kernel boot
+parameters during system installation so key generation is done with FIPS-approved algorithms
+and continuous monitoring tests in place.
   </td>
   <td xml:lang="en-US">
 Use of weak or untested encryption algorithms undermines the purposes of utilizing encryption to
@@ -8532,9 +8622,12 @@ Access Card.
 Administrators can configure authorized <tt>sudo</tt> users via drop-in files, and it is possible to include
 other directories and configuration files from the file currently being parsed.
 
-Make sure that <tt>/etc/sudoers</tt> only includes drop-in configuration files from <tt>/etc/sudoers.d</tt>.
-The <tt>/etc/sudoers</tt> should contain only one <tt>#includedir</tt> directive pointing to
-<tt>/etc/sudoers.d</tt>, and no file in <tt>/etc/sudoers.d/</tt> should include other files or directories.
+Make sure that <tt>/etc/sudoers</tt> only includes drop-in configuration files from <tt>/etc/sudoers.d</tt>,
+or that no drop-in file is included.
+Either the <tt>/etc/sudoers</tt> should contain only one <tt>#includedir</tt> directive pointing to
+<tt>/etc/sudoers.d</tt>, and no file in <tt>/etc/sudoers.d/</tt> should include other files or directories;
+Or the <tt>/etc/sudoers</tt> should not contain any <tt>#include</tt>,
+<tt>@include</tt>, <tt>#includedir</tt> or <tt>@includedir</tt> directives.
 Note that the '#' character doesn't denote a comment in the configuration file.
   </td>
   <td xml:lang="en-US">
