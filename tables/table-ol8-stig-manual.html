@@ -263,7 +263,7 @@ $ sudo fips-mode-setup --enable
 
 Reboot the system for the changes to take effect.</pre></td>
 	<td>OL08-00-010020</td>
-	<td>SV-248524r853747_rule</td>
+	<td>SV-248524r877398_rule</td>
 </tr>
 
 <tr>
@@ -685,7 +685,7 @@ Edit/modify the following line in the "/etc/login.defs" file and set "[ENCRYPT_M
  
 ENCRYPT_METHOD SHA512</pre></td>
 	<td>OL08-00-010110</td>
-	<td>SV-248533r779165_rule</td>
+	<td>SV-248533r877397_rule</td>
 </tr>
 
 <tr>
@@ -708,7 +708,7 @@ Password hashes "!" or "*" indicate inactive accounts not available for logon an
 If any interactive user password hash does not begin with "$6$", this is a finding.</pre></td>
 	<td><pre>Lock all interactive user accounts not using SHA-512 hashing until the passwords can be regenerated with SHA-512.</pre></td>
 	<td>OL08-00-010120</td>
-	<td>SV-248534r779168_rule</td>
+	<td>SV-248534r877397_rule</td>
 </tr>
 
 <tr>
@@ -722,7 +722,7 @@ If any interactive user password hash does not begin with "$6$", this is a findi
 Passwords need to be protected at all times, and encryption is the standard method for protecting passwords. If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised.</pre></td>
 	<td><pre>Check that a minimum number of hash rounds is configured by running the following command:
 
-$ sudo egrep "^SHA_CRYPT_" /etc/login.defs
+     $ sudo grep -E "^SHA_CRYPT_" /etc/login.defs
 
 If only one of "SHA_CRYPT_MIN_ROUNDS" or "SHA_CRYPT_MAX_ROUNDS" is set, and this value is below "5000", this is a finding.
 
@@ -733,7 +733,7 @@ Edit/modify the following line in the "/etc/login.defs" file and set "SHA_CRYPT_
  
 SHA_CRYPT_MIN_ROUNDS 5000</pre></td>
 	<td>OL08-00-010130</td>
-	<td>SV-248535r818601_rule</td>
+	<td>SV-248535r880546_rule</td>
 </tr>
 
 <tr>
@@ -1355,7 +1355,7 @@ If the "CRYPTO_POLICY" is uncommented, this is a finding.</pre></td>
 
 A reboot is required for the changes to take effect.</pre></td>
 	<td>OL08-00-010287</td>
-	<td>SV-248560r818614_rule</td>
+	<td>SV-248560r877394_rule</td>
 </tr>
 
 <tr>
@@ -1388,7 +1388,7 @@ Update the "/etc/crypto-policies/back-ends/opensshserver.config" file to include
  
 A reboot is required for the changes to take effect.</pre></td>
 	<td>OL08-00-010290</td>
-	<td>SV-248561r779249_rule</td>
+	<td>SV-248561r877395_rule</td>
 </tr>
 
 <tr>
@@ -1419,7 +1419,7 @@ CRYPTO_POLICY='-oCiphers=aes256-ctr,aes192-ctr,aes128-ctr'
  
 A reboot is required for the changes to take effect.</pre></td>
 	<td>OL08-00-010291</td>
-	<td>SV-248562r779252_rule</td>
+	<td>SV-248562r877395_rule</td>
 </tr>
 
 <tr>
@@ -1485,7 +1485,7 @@ $ sudo fips-mode-setup --enable
 
 A reboot is required for the changes to take effect.</pre></td>
 	<td>OL08-00-010293</td>
-	<td>SV-248564r779258_rule</td>
+	<td>SV-248564r877394_rule</td>
 </tr>
 
 <tr>
@@ -1533,7 +1533,7 @@ DTLS.MinProtocol = DTLSv1.2
 
 A reboot is required for the changes to take effect.</pre></td>
 	<td>OL08-00-010294</td>
-	<td>SV-248565r818617_rule</td>
+	<td>SV-248565r877394_rule</td>
 </tr>
 
 <tr>
@@ -1562,7 +1562,7 @@ If the "gnutls.config" does not list "-VERS-DTLS0.9:-VERS-SSL3.0:-VERS-TLS1.0:-V
  
 A reboot is required for the changes to take effect.</pre></td>
 	<td>OL08-00-010295</td>
-	<td>SV-248566r818619_rule</td>
+	<td>SV-248566r877394_rule</td>
 </tr>
 
 <tr>
@@ -1709,7 +1709,7 @@ $ sudo chgrp root [FILE]</pre></td>
 	<td>SRG-OS-000363-GPOS-00150</td>
 	<td><pre>Unauthorized changes to the baseline configuration could make the system vulnerable to various attacks or allow unauthorized access to the operating system. Changes to operating system configurations can have unintended side effects, some of which may be relevant to security.
 
-Detecting such changes and providing an automated response can help avoid unintended, negative consequences that could ultimately affect the security state of the operating system. The operating system's Information Management Officer (IMO)/Information System Security Officer (ISSO) and SAs must be notified via email and/or monitoring system trap when there is an unauthorized modification of a configuration item.
+Detecting such changes and providing an automated response can help avoid unintended, negative consequences that could ultimately affect the security state of the operating system. The operating system's Information System Security Manager (ISSM)/Information System Security Officer (ISSO) and SAs must be notified via email and/or monitoring system trap when there is an unauthorized modification of a configuration item.
 
 Notifications provided by information systems include messages to local computer consoles and/or hardware indications, such as lights.
 
@@ -1720,42 +1720,36 @@ OL 8 comes with many optional software packages, including the file integrity to
 Satisfies: SRG-OS-000363-GPOS-00150, SRG-OS-000446-GPOS-00200, SRG-OS-000447-GPOS-00201</pre></td>
 	<td><pre>Verify the operating system routinely checks the baseline configuration for unauthorized changes and notifies the SA when anomalies in the operation of any security functions are discovered.
 
-Determine if AIDE is installed on the system with the following command:
-
-$ sudo yum list installed aide
-
-If AIDE is not installed, ask the SA how file integrity checks are performed on the system.
-
 Check that OL 8 routinely executes a file integrity scan for changes to the system baseline. The command used in the example will use a daily occurrence.
 
 Check the cron directories for scripts controlling the execution and notification of results of the file integrity application. For example, if AIDE is installed on the system, use the following commands:
 
-$ sudo ls -al /etc/cron.* | grep aide
+     $ sudo ls -al /etc/cron.* | grep aide
 
--rwxr-xr-x 1 root root 29 Nov 22 2015 aide
+     -rwxr-xr-x 1 root root 29 Nov 22 2015 aide
 
-$ sudo grep aide /etc/crontab /var/spool/cron/root
+     $ sudo grep aide /etc/crontab /var/spool/cron/root
 
-/etc/crontab: 30 04 * * * /root/aide
-/var/spool/cron/root: 30 04 * * * /root/aide
+     /etc/crontab: 30 04 * * * /root/aide
+     /var/spool/cron/root: 30 04 * * * /root/aide
 
-$ sudo more /etc/cron.daily/aide
+     $ sudo more /etc/cron.daily/aide
 
-#!/bin/bash 
-/usr/sbin/aide --check | /bin/mail -s "$HOSTNAME - Daily aide integrity check run" root@sysname.mil
+     #!/bin/bash 
+     /usr/sbin/aide --check | /var/spool/mail -s "$HOSTNAME - Daily aide integrity check run" root@sysname.mil
 
 If the file integrity application does not exist, a script file controlling the execution of the file integrity application does not exist, or the file integrity application does not notify designated personnel of changes, this is a finding.</pre></td>
 	<td><pre>Configure the file integrity tool to run automatically on the system at least weekly and to notify designated personnel if baseline configurations are changed in an unauthorized manner. The AIDE tool can be configured to email designated personnel with the use of the cron system.
 
 The following example output is generic. It will set cron to run AIDE daily and to send an email at the completion of the analysis.
 
-$ sudo more /etc/cron.daily/aide
+     $ sudo more /etc/cron.daily/aide
 
-#!/bin/bash
+     #!/bin/bash
 
-/usr/sbin/aide --check | /bin/mail -s "$HOSTNAME - Daily aide integrity check run" root@sysname.mil</pre></td>
+     /usr/sbin/aide --check | /var/spool/mail -s "$HOSTNAME - Daily aide integrity check run" root@sysname.mil</pre></td>
 	<td>OL08-00-010360</td>
-	<td>SV-248573r853752_rule</td>
+	<td>SV-248573r880570_rule</td>
 </tr>
 
 <tr>
@@ -1782,7 +1776,7 @@ If there is no process to validate certificates that is approved by the organiza
 
 gpgcheck=1</pre></td>
 	<td>OL08-00-010370</td>
-	<td>SV-248574r853753_rule</td>
+	<td>SV-248574r877463_rule</td>
 </tr>
 
 <tr>
@@ -1811,7 +1805,7 @@ Set the "localpkg_gpgcheck" option to "True" in the "/etc/dnf/dnf.conf" file:
 
 localpkg_gpgcheck=True</pre></td>
 	<td>OL08-00-010371</td>
-	<td>SV-248575r853754_rule</td>
+	<td>SV-248575r877463_rule</td>
 </tr>
 
 <tr>
@@ -1868,7 +1862,7 @@ Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>OL08-00-010372</td>
-	<td>SV-248576r860910_rule</td>
+	<td>SV-248576r877463_rule</td>
 </tr>
 
 <tr>
@@ -2159,12 +2153,12 @@ When operating systems provide the capability to escalate a functional capabilit
 Satisfies: SRG-OS-000373-GPOS-00156, SRG-OS-000373-GPOS-00157, SRG-OS-000373-GPOS-00158</pre></td>
 	<td><pre>Verify that the "/etc/sudoers" file has no occurrences of "!authenticate" by running the following command:
 
-$ sudo egrep -i !authenticate /etc/sudoers /etc/sudoers.d/*
+     $ sudo grep -Ei !authenticate /etc/sudoers /etc/sudoers.d/*
 
 If any occurrences of "!authenticate" return from the command, this is a finding.</pre></td>
 	<td><pre>Remove any occurrence of "!authenticate" found in the "/etc/sudoers" file or files in the "/etc/sudoers.d" directory.</pre></td>
 	<td>OL08-00-010381</td>
-	<td>SV-248582r853764_rule</td>
+	<td>SV-248582r880551_rule</td>
 </tr>
 
 <tr>
@@ -2197,26 +2191,26 @@ ALL     ALL=(ALL:ALL) ALL</pre></td>
 For more information on each of the listed configurations, reference the sudoers(5) manual page.</pre></td>
 	<td><pre>Verify that the sudoers security policy is configured to use the invoking user's password for privilege escalation.
 
-$ sudo egrep -ir '(rootpw|targetpw|runaspw)' /etc/sudoers /etc/sudoers.d* | grep -v '#'
+     $ sudo grep -Eir '(rootpw|targetpw|runaspw)' /etc/sudoers /etc/sudoers.d* | grep -v '#'
 
-/etc/sudoers:Defaults !targetpw
-/etc/sudoers:Defaults !rootpw
-/etc/sudoers:Defaults !runaspw
+     /etc/sudoers:Defaults !targetpw
+     /etc/sudoers:Defaults !rootpw
+     /etc/sudoers:Defaults !runaspw
 
 If conflicting results are returned, this is a finding.
 If "Defaults !targetpw" is not defined, this is a finding.
 If "Defaults !rootpw" is not defined, this is a finding.
 If "Defaults !runaspw" is not defined, this is a finding.</pre></td>
 	<td><pre>Define the following in the Defaults section of the /etc/sudoers file or a configuration file in the /etc/sudoers.d/ directory:
-Defaults !targetpw
-Defaults !rootpw
-Defaults !runaspw
+     Defaults !targetpw
+     Defaults !rootpw
+     Defaults !runaspw
 
 Remove any configurations that conflict with the above from the following locations: 
-/etc/sudoers
-/etc/sudoers.d/</pre></td>
+     /etc/sudoers
+     /etc/sudoers.d/</pre></td>
 	<td>OL08-00-010383</td>
-	<td>SV-248584r858621_rule</td>
+	<td>SV-248584r880554_rule</td>
 </tr>
 
 <tr>
@@ -2234,23 +2228,25 @@ If the value is set to an integer less than 0, the user's time stamp will not ex
 Satisfies: SRG-OS-000373-GPOS-00156, SRG-OS-000373-GPOS-00157, SRG-OS-000373-GPOS-00158</pre></td>
 	<td><pre>Verify the operating system requires re-authentication when using the "sudo" command to elevate privileges.
 
-$ sudo egrep -ir 'timestamp_timeout' /etc/sudoers /etc/sudoers.d*
-/etc/sudoers:Defaults timestamp_timeout=0
+     $ sudo grep -Eir 'timestamp_timeout' /etc/sudoers /etc/sudoers.d*
+     /etc/sudoers:Defaults timestamp_timeout=0
 
 If conflicting results are returned, this is a finding.
 
 If "timestamp_timeout" is set to a negative number, is commented out, or no results are returned, this is a finding.</pre></td>
 	<td><pre>Configure the "sudo" command to require re-authentication.
+
 Edit the /etc/sudoers file:
-$ sudo visudo
+     $ sudo visudo
 
 Add or modify the following line:
-Defaults timestamp_timeout=[value]
+     Defaults timestamp_timeout=[value]
+
 Note: The "[value]" must be a number that is greater than or equal to "0".
 
 Remove any duplicate or conflicting lines from /etc/sudoers and /etc/sudoers.d/ files.</pre></td>
 	<td>OL08-00-010384</td>
-	<td>SV-248585r860916_rule</td>
+	<td>SV-248585r880557_rule</td>
 </tr>
 
 <tr>
@@ -2772,27 +2768,27 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td>V-248602</td>
 	<td>CCI-000366</td>
 	<td>medium</td>
-	<td>The OL 8 SSH private host key files must have mode "0600" or less permissive.</td>
+	<td>The OL 8 SSH private host key files must have mode "0640" or less permissive.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>If an unauthorized user obtains the private SSH host key file, the host could be impersonated.</pre></td>
-	<td><pre>Verify the SSH private host key files have mode "0600" or less permissive with the following command: 
+	<td><pre>Verify the SSH private host key files have mode "0640" or less permissive with the following command: 
  
-$ sudo ls -alL /etc/ssh/ssh_host*key 
+     $ sudo ls -alL /etc/ssh/ssh_host*key 
  
--rw------- 1 root wheel 668 Nov 28 06:43 ssh_host_dsa_key 
--rw------- 1 root wheel 582 Nov 28 06:43 ssh_host_key 
--rw------- 1 root wheel 887 Nov 28 06:43 ssh_host_rsa_key 
+     -rw-r----- 1 root wheel 668 Nov 28 06:43 ssh_host_dsa_key 
+     -rw-r----- 1 root wheel 582 Nov 28 06:43 ssh_host_key 
+     -rw-r----- 1 root wheel 887 Nov 28 06:43 ssh_host_rsa_key 
  
-If any private host key file has a mode more permissive than "0600", this is a finding.</pre></td>
-	<td><pre>Configure the mode of SSH private host key files under "/etc/ssh" to "0600" with the following command: 
+If any private host key file has a mode more permissive than "0640", this is a finding.</pre></td>
+	<td><pre>Configure the mode of SSH private host key files under "/etc/ssh" to "0640" with the following command: 
  
-$ sudo chmod 0600 /etc/ssh/ssh_host*key 
+     $ sudo chmod 0640 /etc/ssh/ssh_host*key 
  
 The SSH daemon must be restarted for the changes to take effect. To restart the SSH daemon, run the following command: 
  
-$ sudo systemctl restart sshd.service</pre></td>
+     $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-010490</td>
-	<td>SV-248602r779372_rule</td>
+	<td>SV-248602r880541_rule</td>
 </tr>
 
 <tr>
@@ -2821,30 +2817,6 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-010500</td>
 	<td>SV-248603r858568_rule</td>
-</tr>
-
-<tr>
-	<td>V-248604</td>
-	<td>CCI-000366</td>
-	<td>medium</td>
-	<td>The OL 8 SSH daemon must not allow compression or must only allow compression after successful authentication.</td>
-	<td>SRG-OS-000480-GPOS-00227</td>
-	<td><pre>If compression is allowed in an SSH connection prior to authentication, vulnerabilities in the compression software could result in compromise of the system from an unauthenticated connection, potentially with root privileges.</pre></td>
-	<td><pre>Verify the SSH daemon performs compression after a user successfully authenticates with the following command:
-
-$ sudo grep -ir compression /etc/ssh/sshd_config*
-
-Compression delayed
-
-If the "Compression" keyword is set to "yes" or is missing, or if the returned line is commented out, this is a finding.
-If conflicting results are returned, this is a finding.</pre></td>
-	<td><pre>Uncomment the "Compression" keyword in "/etc/ssh/sshd_config" on the system (this file may be named differently or be in a different location if using a version of SSH that is provided by a third-party vendor) and set the value to "delayed" or "no": 
- 
-Compression no 
- 
-The SSH service must be restarted for changes to take effect.</pre></td>
-	<td>OL08-00-010510</td>
-	<td>SV-248604r858570_rule</td>
 </tr>
 
 <tr>
@@ -3742,24 +3714,24 @@ $ sudo chmod 0750 /home/smithj/<file or directory></pre></td>
  
 Note: This may miss local interactive users that have been assigned a privileged User Identifier (UID). Evidence of interactive use may be obtained from a number of log files containing system logon information. The returned directory "/home/smithj" is used as an example. 
  
-$ sudo ls -ld $(awk -F: '($3>=1000)&&($1!="nobody"){print $6}' /etc/passwd) 
+     $ sudo ls -ld $(awk -F: '($3>=1000)&&($1!="nobody"){print $6}' /etc/passwd) 
  
-drwxr-x--- 2 smithj admin 4096 Jun 5 12:41 smithj 
+     drwxr-x--- 2 smithj admin 4096 Jun 5 12:41 smithj 
  
 Check the user's primary group with the following command: 
  
-$ sudo grep $(grep smithj /etc/passwd | awk -F: ‘{print $4}’) /etc/group
+     $ sudo grep $(grep smithj /etc/passwd | awk -F: '{print $4}') /etc/group
  
-admin:x:250:smithj,jonesj,jacksons 
+     admin:x:250:smithj,jonesj,jacksons 
  
 If the user home directory referenced in "/etc/passwd" is not group-owned by that user’s primary GID, this is a finding.</pre></td>
 	<td><pre>Change the group owner of a local interactive user’s home directory to the group found in "/etc/passwd" using the following command. 
  
 Note: The example will be for the user "smithj", who has a home directory of "/home/smithj" and has a primary group of users. 
  
-$ sudo chgrp users /home/smithj</pre></td>
+     $ sudo chgrp users /home/smithj</pre></td>
 	<td>OL08-00-010740</td>
-	<td>SV-248641r779489_rule</td>
+	<td>SV-248641r880567_rule</td>
 </tr>
 
 <tr>
@@ -3974,7 +3946,7 @@ Add or edit the line for the "AutomaticLoginEnable" parameter in the [daemon] se
 [daemon] 
 AutomaticLoginEnable=false</pre></td>
 	<td>OL08-00-010820</td>
-	<td>SV-248649r779513_rule</td>
+	<td>SV-248649r877377_rule</td>
 </tr>
 
 <tr>
@@ -4002,7 +3974,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
  
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-010830</td>
-	<td>SV-248650r858580_rule</td>
+	<td>SV-248650r877377_rule</td>
 </tr>
 
 <tr>
@@ -4624,7 +4596,7 @@ Add the following line to the top of "/etc/security/limits.conf" or in a ".conf"
  
 * hard maxlogins 10</pre></td>
 	<td>OL08-00-020024</td>
-	<td>SV-248666r779564_rule</td>
+	<td>SV-248666r877399_rule</td>
 </tr>
 
 <tr>
@@ -4943,20 +4915,26 @@ The session lock is implemented at the point where session activity can be deter
 Tmux is a terminal multiplexer that enables a number of terminals to be created, accessed, and controlled from a single screen.
 
 Satisfies: SRG-OS-000028-GPOS-00009, SRG-OS-000030-GPOS-00011</pre></td>
-	<td><pre>Verify the operating system enables the user to initiate a session lock with the following command:
+	<td><pre>Verify the operating system enables the user to manually initiate a session lock with the following command:
 
-$ sudo grep -i lock-command /etc/tmux.conf
+     $ sudo grep -Ei lock-command|lock-session /etc/tmux.conf
 
-set -g lock-command vlock
+     set -g lock-command vlock
+     bind X lock-session
 
-If the "lock-command" is not set in the global settings to call "vlock", this is a finding.</pre></td>
-	<td><pre>Configure the operating system to enable a user to initiate a session lock via tmux.
+If the "lock-command" is not set and "lock-session" is not bound to a specific keyboard key in the global settings, this is a finding.</pre></td>
+	<td><pre>Configure the operating system to enable a user to manually initiate a session lock via tmux. This configuration binds the uppercase letter "X" to manually initiate a session lock after the prefix key "Ctrl + b" has been sent. The complete key sequence is thus "Ctrl + b" then "Shift + x" to lock tmux.
 
-Create a global configuration file "/etc/tmux.conf" and add the following line:
+Create a global configuration file "/etc/tmux.conf" and add the following lines:
 
-set -g lock-command vlock</pre></td>
+     set -g lock-command vlock
+     bind X lock-session
+
+Reload tmux configuration to take effect. This can be performed in tmux while it is running:
+
+     $ tmux source-file /etc/tmux.conf</pre></td>
 	<td>OL08-00-020040</td>
-	<td>SV-248675r779591_rule</td>
+	<td>SV-248675r880564_rule</td>
 </tr>
 
 <tr>
@@ -4976,21 +4954,22 @@ Satisfies: SRG-OS-000028-GPOS-00009, SRG-OS-000030-GPOS-00011</pre></td>
 
 Determine if tmux is currently running:
 
-$ sudo ps all | grep tmux | grep -v grep
+     $ sudo ps all | grep tmux | grep -v grep
 
 If the command does not produce output, this is a finding.
  
 Determine the location of the tmux script:
 
-$ sudo grep tmux /etc/profile.d/*
-/etc/profile.d/tmux.sh:  case "$name" in (sshd|login) exec tmux ;; esac
+     $ sudo grep tmux /etc/profile.d/*
+     /etc/profile.d/tmux.sh:  case "$name" in (sshd|login) tmux ;; esac
 
 Review the tmux script by using the following example:
-$ sudo cat /etc/profile.d/tmux.sh
+     $ sudo cat /etc/profile.d/tmux.sh
+
 if [ "$PS1" ]; then
 	parent=$(ps -o ppid= -p $$)
 	name=$(ps -o comm= -p $parent)
-	case "$name" in (sshd|login) exec tmux ;; esac
+	case "$name" in (sshd|login) tmux ;; esac
 fi
 
 If "tmux" is not configured as the example above, is commented out or missing, this is a finding.</pre></td>
@@ -4999,12 +4978,12 @@ If "tmux" is not configured as the example above, is commented out or missing, t
 if [ "$PS1" ]; then
 	parent=$(ps -o ppid= -p $$)
 	name=$(ps -o comm= -p $parent)
-	case "$name" in (sshd|login) exec tmux ;; esac
+	case "$name" in (sshd|login) tmux ;; esac
 fi
 
 This setting will take effect at next logon.</pre></td>
 	<td>OL08-00-020041</td>
-	<td>SV-248676r818653_rule</td>
+	<td>SV-248676r880538_rule</td>
 </tr>
 
 <tr>
@@ -6601,7 +6580,7 @@ name_format = hostname
  
 The audit daemon must be restarted for changes to take effect.</pre></td>
 	<td>OL08-00-030062</td>
-	<td>SV-248730r853795_rule</td>
+	<td>SV-248730r877390_rule</td>
 </tr>
 
 <tr>
@@ -8701,15 +8680,15 @@ To address this risk, audit tools must be cryptographically signed to provide th
  
 Check the selection lines to ensure AIDE is configured to add/check with the following command: 
  
-$ sudo egrep '(\/usr\/sbin\/(audit|au|rsys))' /etc/aide.conf 
+     $ sudo grep -E '(\/usr\/sbin\/(audit|au|rsys))' /etc/aide.conf 
  
-/usr/sbin/auditctl p+i+n+u+g+s+b+acl+xattrs+sha512 
-/usr/sbin/auditd p+i+n+u+g+s+b+acl+xattrs+sha512 
-/usr/sbin/ausearch p+i+n+u+g+s+b+acl+xattrs+sha512 
-/usr/sbin/aureport p+i+n+u+g+s+b+acl+xattrs+sha512 
-/usr/sbin/autrace p+i+n+u+g+s+b+acl+xattrs+sha512 
-/usr/sbin/rsyslogd p+i+n+u+g+s+b+acl+xattrs+sha512 
-/usr/sbin/augenrules p+i+n+u+g+s+b+acl+xattrs+sha512 
+     /usr/sbin/auditctl p+i+n+u+g+s+b+acl+xattrs+sha512 
+     /usr/sbin/auditd p+i+n+u+g+s+b+acl+xattrs+sha512 
+     /usr/sbin/ausearch p+i+n+u+g+s+b+acl+xattrs+sha512 
+     /usr/sbin/aureport p+i+n+u+g+s+b+acl+xattrs+sha512 
+     /usr/sbin/autrace p+i+n+u+g+s+b+acl+xattrs+sha512 
+     /usr/sbin/rsyslogd p+i+n+u+g+s+b+acl+xattrs+sha512 
+     /usr/sbin/augenrules p+i+n+u+g+s+b+acl+xattrs+sha512 
  
 If any of the audit tools listed above do not have an appropriate selection line, this is a finding.</pre></td>
 	<td><pre>Add or update the following lines to "/etc/aide.conf" to protect the integrity of the audit tools. 
@@ -8723,7 +8702,7 @@ If any of the audit tools listed above do not have an appropriate selection line
 /usr/sbin/rsyslogd p+i+n+u+g+s+b+acl+xattrs+sha512 
 /usr/sbin/augenrules p+i+n+u+g+s+b+acl+xattrs+sha512</pre></td>
 	<td>OL08-00-030650</td>
-	<td>SV-248810r833241_rule</td>
+	<td>SV-248810r880559_rule</td>
 </tr>
 
 <tr>
@@ -8761,7 +8740,7 @@ If audit records are stored on a partition made specifically for audit records, 
  
 If audit records are not stored on a partition made specifically for audit records, a new partition with sufficient space will need be to be created.</pre></td>
 	<td>OL08-00-030660</td>
-	<td>SV-248811r853838_rule</td>
+	<td>SV-248811r877391_rule</td>
 </tr>
 
 <tr>
@@ -8871,7 +8850,7 @@ If there is no evidence that the audit logs are being offloaded to another syste
  
 *.* @@[remoteloggingserver]:[port]</pre></td>
 	<td>OL08-00-030690</td>
-	<td>SV-248814r853839_rule</td>
+	<td>SV-248814r877390_rule</td>
 </tr>
 
 <tr>
@@ -8902,7 +8881,7 @@ overflow_action = syslog
  
 The audit daemon must be restarted for changes to take effect.</pre></td>
 	<td>OL08-00-030700</td>
-	<td>SV-248815r853840_rule</td>
+	<td>SV-248815r877390_rule</td>
 </tr>
 
 <tr>
@@ -8940,7 +8919,7 @@ If there is no evidence that the transfer of the audit logs being offloaded to a
 $DefaultNetstreamDriver gtls 
 $ActionSendStreamDriverMode 1</pre></td>
 	<td>OL08-00-030710</td>
-	<td>SV-248816r853841_rule</td>
+	<td>SV-248816r877390_rule</td>
 </tr>
 
 <tr>
@@ -8975,7 +8954,7 @@ If there is no evidence that the transfer of the audit logs being offloaded to a
  
 $ActionSendStreamDriverAuthMode x509/name</pre></td>
 	<td>OL08-00-030720</td>
-	<td>SV-248817r853842_rule</td>
+	<td>SV-248817r877390_rule</td>
 </tr>
 
 <tr>
@@ -8998,7 +8977,7 @@ If there is no evidence that real-time alerts are configured on the system, this
  
 space_left = 25%</pre></td>
 	<td>OL08-00-030730</td>
-	<td>SV-248818r853843_rule</td>
+	<td>SV-248818r877389_rule</td>
 </tr>
 
 <tr>
@@ -9023,7 +9002,7 @@ space_left_action = email
 
 Note: Option names and values in the auditd.conf file are case insensitive.</pre></td>
 	<td>OL08-00-030731</td>
-	<td>SV-248819r853844_rule</td>
+	<td>SV-248819r877389_rule</td>
 </tr>
 
 <tr>
@@ -9058,7 +9037,7 @@ If the "maxpoll" option is set to a number greater than "16" or the line is comm
  
 server [ntp.server.name] iburst maxpoll 16</pre></td>
 	<td>OL08-00-030740</td>
-	<td>SV-248820r853845_rule</td>
+	<td>SV-248820r877038_rule</td>
 </tr>
 
 <tr>
@@ -10689,7 +10668,7 @@ The SSH daemon must be restarted for the settings to take effect.
  
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>OL08-00-040161</td>
-	<td>SV-248868r858586_rule</td>
+	<td>SV-248868r877398_rule</td>
 </tr>
 
 <tr>
@@ -11998,27 +11977,23 @@ If AIDE is installed, ensure the "xattrs" rule is present on all uncommented fil
  
 OL 8 installation media come with a file integrity tool, Advanced Intrusion Detection Environment (AIDE).</pre></td>
 	<td><pre>Verify the file integrity tool is configured to verify ACLs. 
- 
-Note: AIDE is highly configurable at install time. This requirement assumes the "aide.conf" file is under the "/etc" directory. 
- 
-If AIDE is not installed, ask the System Administrator how file integrity checks are performed on the system. 
- 
+
 Use the following command to determine if the file is in a location other than "/etc/aide/aide.conf": 
  
-$ sudo find / -name aide.conf 
+     $ sudo find / -name aide.conf 
  
 Check the "aide.conf" file to determine if the "acl" rule has been added to the rule list being applied to the files and directories selection lists with the following command: 
  
-$ sudo egrep "[+]?acl" /etc/aide.conf 
+     $ sudo grep -E "[+]?acl" /etc/aide.conf 
  
-VarFile = OwnerMode+n+l+X+acl 
+     VarFile = OwnerMode+n+l+X+acl 
  
 If the "acl" rule is not being used on all selection lines in the "/etc/aide.conf" file or is commented out, or ACLs are not being checked by another file integrity tool, this is a finding.</pre></td>
 	<td><pre>Configure the file integrity tool to check file and directory ACLs. 
  
 If AIDE is installed, ensure the "acl" rule is present on all file and directory selection lists.</pre></td>
 	<td>OL08-00-040310</td>
-	<td>SV-248897r780257_rule</td>
+	<td>SV-248897r880561_rule</td>
 </tr>
 
 <tr>
@@ -12286,7 +12261,7 @@ Use the following command to map an existing user to the "user_u" role:
  
 $ sudo semanage login -m -s user_u <username></pre></td>
 	<td>OL08-00-040400</td>
-	<td>SV-248907r853877_rule</td>
+	<td>SV-248907r877392_rule</td>
 </tr>
 
 <tr>
@@ -12390,19 +12365,57 @@ This requirement applies to the OL 8 operating system performing security functi
 	<td><pre>Verify that Advanced Intrusion Detection Environment (AIDE) is installed and verifies the correct operation of all security functions.
 
 Check that the AIDE package is installed with the following command:
+     $ sudo rpm -q aide
 
-$ sudo rpm -q aide
+     aide-0.16-14.el8_5.1.x86_64
 
-aide-0.16-14.el8.x86_64
+If AIDE is not installed, ask the System Administrator how file integrity checks are performed on the system. 
 
-If AIDE is not installed, ask the System Administrator how file integrity checks are performed on the system.
+If there is no application installed to perform integrity checks, this is a finding.
 
-If there is no application installed to perform integrity checks, this is a finding.</pre></td>
-	<td><pre>Install the AIDE package by running the following command:
+If AIDE is installed, check if it has been initialized with the following command:
+     $ sudo /usr/sbin/aide --check
 
-$ sudo yum install aide</pre></td>
+If the output is "Couldn't open file /var/lib/aide/aide.db.gz for reading", this is a finding.</pre></td>
+	<td><pre>Install AIDE, initialize it, and perform a manual check.
+
+Install AIDE:
+     $ sudo yum install aide
+
+Initialize it:
+     $ sudo /usr/sbin/aide --init
+
+Example output:
+     Number of entries:      48623
+
+     ---------------------------------------------------
+     The attributes of the (uncompressed) database(s):
+     ---------------------------------------------------
+
+     /var/lib/aide/aide.db.new.gz
+       SHA1     : LTAVQ8tFJthsrf4m9gfRpnf1vyc=
+       SHA256   : NJ9+uzRQKSwmLQ8A6IpKNvYjVKGbhSjt
+                  BeJBVcmOVrI=
+       SHA512   : 7d8I/F6A1b07E4ZuGeilZjefRgJJ/F20
+                  eC2xoag1OsOVpctt3Mi7Jjjf3vFW4xoY
+                  5mdS6/ImQpm0xtlTLOPeQQ==
+
+     End timestamp: 2022-10-20 10:50:52 -0700 (run time: 0m 46s)
+
+The new database will need to be renamed to be read by AIDE:
+     $ sudo mv /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz
+
+Perform a manual check:
+     $ sudo /usr/sbin/aide --check
+
+Example output:
+     Start timestamp: 2022-10-20 11:03:16 -0700 (AIDE 0.16)
+     AIDE found differences between database and filesystem!!
+     ...
+	 
+Done.</pre></td>
 	<td>OL08-00-010359</td>
-	<td>SV-252654r854183_rule</td>
+	<td>SV-252654r880573_rule</td>
 </tr>
 
 <tr>
@@ -12413,32 +12426,32 @@ $ sudo yum install aide</pre></td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>The "sudo" command allows authorized users to run programs (including shells) as other users, system users, and root. The "/etc/sudoers" file is used to configure authorized "sudo" users as well as the programs they are allowed to run. Some configuration options in the "/etc/sudoers" file allow configured users to run programs without re-authenticating. Use of these configuration options makes it easier for one compromised account to be used to compromise other accounts.
 
-It is possible to include other sudoers files from within the sudoers file currently being parsed using the #include and #includedir directives.  When sudo reaches this line it will suspend processing of the current file (/etc/sudoers) and switch to the specified file/directory.  Once the end of the included file(s) are reached, the rest of /etc/sudoers will be processed.  Files that are included may themselves include other files.  A hard limit of 128 nested include files is enforced to prevent include file loops.</pre></td>
+It is possible to include other sudoers files from within the sudoers file currently being parsed using the #include and #includedir directives. When sudo reaches this line it will suspend processing of the current file (/etc/sudoers) and switch to the specified file/directory. Once the end of the included file(s) are reached, the rest of /etc/sudoers will be processed. Files that are included may themselves include other files. A hard limit of 128 nested include files is enforced to prevent include file loops.</pre></td>
 	<td><pre>Note: If the "include" and "includedir" directives are not present in the /etc/sudoers file, this requirement is not applicable.
 
 Verify the operating system specifies only the default "include" directory for the /etc/sudoers file with the following command:
 
-$ sudo grep include /etc/sudoers
+     $ sudo grep include /etc/sudoers
 
-#includedir /etc/sudoers.d
+     #includedir /etc/sudoers.d
 
 If the results are not "/etc/sudoers.d" or additional files or directories are specified, this is a finding.
 
 Verify the operating system does not have nested "include" files or directories within the /etc/sudoers.d directory with the following command:
 
-$ sudo egrep -r include /etc/sudoers.d
+     $ sudo grep -Er include /etc/sudoers.d
 
 If results are returned, this is a finding.</pre></td>
 	<td><pre>Configure the /etc/sudoers file to only include the /etc/sudoers.d directory.
 
 Edit the /etc/sudoers file with the following command:
 
-$ sudo visudo
+     $ sudo visudo
 
 Add or modify the following line:
-#includedir /etc/sudoers.d</pre></td>
+     #includedir /etc/sudoers.d</pre></td>
 	<td>OL08-00-010379</td>
-	<td>SV-252655r833205_rule</td>
+	<td>SV-252655r880549_rule</td>
 </tr>
 
 <tr>
@@ -12712,6 +12725,33 @@ $ sudo systemctl set-default multi-user.target
 A reboot is required for the changes to take effect.</pre></td>
 	<td>OL08-00-040321</td>
 	<td>SV-252663r818785_rule</td>
+</tr>
+
+<tr>
+	<td>V-255898</td>
+	<td>CCI-001453</td>
+	<td>medium</td>
+	<td>OL 8 SSH server must be configured to use only FIPS-validated key exchange algorithms.</td>
+	<td>SRG-OS-000250-GPOS-00093</td>
+	<td><pre>Without cryptographic integrity protections provided by FIPS-validated cryptographic algorithms, information can be viewed and altered by unauthorized users without detection.
+
+OL 8 incorporates system-wide crypto policies by default. The SSH configuration file has no effect on the ciphers, MACs, or algorithms unless specifically defined in the /etc/sysconfig/sshd file. The employed algorithms can be viewed in the /etc/crypto-policies/back-ends/opensshserver.config file.
+
+The system will attempt to use the first algorithm presented by the client that matches the server list. Listing the values "strongest to weakest" is a method to ensure the use of the strongest algorithm available to secure the SSH connection.</pre></td>
+	<td><pre>Verify that the SSH server is configured to use only FIPS-validated key exchange algorithms:
+
+     $ sudo grep -i kexalgorithms /etc/crypto-policies/back-ends/opensshserver.config
+
+     CRYPTO_POLICY='-oKexAlgorithms=ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512'
+
+If the entries following "KexAlgorithms" have any algorithms defined other than "ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512", appear in different order than shown, are missing, or commented out, this is a finding.</pre></td>
+	<td><pre>Configure the SSH server to use only FIPS-validated key exchange algorithms by adding or modifying the following line in "/etc/crypto-policies/back-ends/opensshserver.config":
+
+-oKexAlgorithms=ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512
+
+A reboot is required for the changes to take effect.</pre></td>
+	<td>OL08-00-040342</td>
+	<td>SV-255898r880544_rule</td>
 </tr>
 
 </table>

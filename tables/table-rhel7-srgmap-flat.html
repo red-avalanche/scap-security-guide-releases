@@ -15487,6 +15487,41 @@ differing categories of characters when changing passwords.</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must store only encrypted representations of passwords.</td>
 
+    <td>CCE-86062-7: Ensure system-auth and password-auth files are symbolic links pointing
+to system-auth-local and password-auth-local</td>
+
+    <td>Passwords need to be protected at all times, and encryption is the standard method for protecting passwords. If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised.</td>
+    <td>Red Hat Enterprise Linux 7 must be configured to prevent overwriting of custom authentication
+configuration settings by the authconfig utility.
+This can be avoided by creating new local configuration files and creating new or moving
+existing symbolic links to them. The authconfig utility will recognize the local configuration
+files and not overwrite them, while writing its own settings to the original configuration
+files.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system stores only encrypted representations of passwords. If it does not, this is a finding.</td>
+    <td>Verify "system-auth" and "password-auth" files are symbolic
+links pointing to "system-auth-local" and "password-auth-local":
+<pre>$ sudo ls -l /etc/pam.d/{password,system}-auth</pre> Is it the case that The system-auth and password-auth files are not symbolic links or they
+do not point to system-auth-local password-auth-local?</td>
+    <td>Configure the operating system to store only encrypted representations of passwords.</td>
+    <td>Red Hat Enterprise Linux 7 must be configured to prevent overwriting of custom authentication
+configuration settings by the authconfig utility.
+This can be avoided by creating new local configuration files and creating new or moving
+existing symbolic links to them. The authconfig utility will recognize the local configuration
+files and not overwrite them, while writing its own settings to the original configuration
+files.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-000196</td>
+    <td>SRG-OS-000073-GPOS-00041</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must store only encrypted representations of passwords.</td>
+
     <td>CCE-82038-1: Set Password Hashing Algorithm in /etc/libuser.conf</td>
 
     <td>Passwords need to be protected at all times, and encryption is the standard method for protecting passwords. If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised.</td>
@@ -15525,8 +15560,8 @@ algorithm for password hashing:
 
     <td>Passwords need to be protected at all times, and encryption is the standard method for protecting passwords. If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised.</td>
     <td>In <tt>/etc/login.defs</tt>, add or correct the following line to ensure
-the system will use SHA-512 as the hashing algorithm:
-<pre>ENCRYPT_METHOD SHA512</pre></td>
+the system will use <sub idref="var_password_hashing_algorithm" /> as the hashing algorithm:
+<pre>ENCRYPT_METHOD <sub idref="var_password_hashing_algorithm" /></pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system stores only encrypted representations of passwords. If it does not, this is a finding.</td>
     <td>
@@ -15536,11 +15571,11 @@ Check the hashing algorithm that is being used to hash passwords with the follow
 
 $ sudo grep -i ENCRYPT_METHOD /etc/login.defs
 
-ENCRYPT_METHOD SHA512 Is it the case that ENCRYPT_METHOD is not set to SHA512?</td>
+ENCRYPT_METHOD <sub idref="var_password_hashing_algorithm" /> Is it the case that ENCRYPT_METHOD is not set to <sub idref="var_password_hashing_algorithm" />?</td>
     <td>Configure the operating system to store only encrypted representations of passwords.</td>
     <td>In <tt>/etc/login.defs</tt>, add or correct the following line to ensure
-the system will use SHA-512 as the hashing algorithm:
-<pre>ENCRYPT_METHOD SHA512</pre></td>
+the system will use <sub idref="var_password_hashing_algorithm" /> as the hashing algorithm:
+<pre>ENCRYPT_METHOD <sub idref="var_password_hashing_algorithm" /></pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -20013,6 +20048,45 @@ demonstrates use of FIPS-approved ciphers:
 <pre>Ciphers aes256-ctr,aes192-ctr,aes128-ctr</pre>
 This rule ensures that there are configured ciphers mentioned
 above (or their subset), keeping the given order of algorithms.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-001453</td>
+    <td>SRG-OS-000250-GPOS-00093</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must implement cryptography to protect the integrity of remote access sessions.</td>
+
+    <td>CCE-86061-9: Use Only FIPS 140-2 Validated Key Exchange Algorithms</td>
+
+    <td>Without cryptographic integrity protections, information can be altered by unauthorized users without detection.
+
+Remote access (e.g., RDP) is access to DoD nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
+
+Cryptographic mechanisms used for protecting the integrity of information include, for example, signed hash functions using asymmetric cryptography enabling distribution of the public key to verify the hash information while maintaining the confidentiality of the secret key used to generate the hash.</td>
+    <td>Limit the key exchange algorithms to those  which are FIPS-approved.
+Add or modify the following line in <tt>/etc/ssh/sshd_config</tt>
+<pre>KexAlgorithms ecdh-sha1-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256</pre>
+This rule ensures that only the key exchange algorithms mentioned
+above (or their subset) are configured for use, keeping the given
+order of algorithms.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system implements cryptography to protect the integrity of remote access sessions. If it does not, this is a finding.</td>
+    <td>Only FIPS-approved key exchange algorithms must be used. To verify that only FIPS-approved
+key exchange algorithms are in use, run the following command:
+<pre>$ sudo grep -i kexalgorithms /etc/ssh/sshd_config</pre>
+The output should contain only following algorithms (or a subset) in the exact order:
+<pre>KexAlgorithms ecdh-sha1-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256</pre> Is it the case that KexAlgorithms option is commented out, contains non-approved algorithms, or the FIPS-approved algorithms are not in the exact order?</td>
+    <td>Configure the operating system to implement cryptography to protect the integrity of remote access sessions.</td>
+    <td>Limit the key exchange algorithms to those  which are FIPS-approved.
+Add or modify the following line in <tt>/etc/ssh/sshd_config</tt>
+<pre>KexAlgorithms ecdh-sha1-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256</pre>
+This rule ensures that only the key exchange algorithms mentioned
+above (or their subset) are configured for use, keeping the given
+order of algorithms.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -24659,7 +24733,7 @@ in <tt>/etc/sudoers.d/</tt>.</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must require users to re-authenticate for privilege escalation.</td>
 
-    <td>CCE-85963-7: The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+    <td>CCE-85963-7: Require Re-Authentication When Using the sudo Command</td>
 
     <td>Without re-authentication, users may access resources or perform tasks for which they do not have authorization. 
 
@@ -24770,7 +24844,7 @@ in <tt>/etc/sudoers.d/</tt>.</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must require users to re-authenticate when changing roles.</td>
 
-    <td>CCE-85963-7: The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+    <td>CCE-85963-7: Require Re-Authentication When Using the sudo Command</td>
 
     <td>Without re-authentication, users may access resources or perform tasks for which they do not have authorization. 
 
@@ -24881,7 +24955,7 @@ in <tt>/etc/sudoers.d/</tt>.</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must require users to re-authenticate when changing authenticators.</td>
 
-    <td>CCE-85963-7: The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+    <td>CCE-85963-7: Require Re-Authentication When Using the sudo Command</td>
 
     <td>Without re-authentication, users may access resources or perform tasks for which they do not have authorization. 
 
@@ -43694,7 +43768,7 @@ Note: The example is for a system that is configured to create users home direct
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
 
-    <td>CCE-80526-7: User Initialization Files Must Be Group-Owned By The Primary User</td>
+    <td>CCE-80526-7: User Initialization Files Must Be Group-Owned By The Primary Group</td>
 
     <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
 
@@ -43866,7 +43940,7 @@ home directory assigned in <tt>/etc/passwd</tt>:
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
 
-    <td>CCE-80534-1: All User Files and Directories In The Home Directory Must Be Group-Owned By The Primary User</td>
+    <td>CCE-80534-1: All User Files and Directories In The Home Directory Must Be Group-Owned By The Primary Group</td>
 
     <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
 
@@ -44534,7 +44608,7 @@ To properly set the group owner of <code>/etc/cron.allow</code>, run the command
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
 
-    <td>CCE-80532-5: All Interactive User Home Directories Must Be Group-Owned By The Primary User</td>
+    <td>CCE-80532-5: All Interactive User Home Directories Must Be Group-Owned By The Primary Group</td>
 
     <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
 

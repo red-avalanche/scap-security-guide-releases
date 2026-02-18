@@ -304,6 +304,20 @@ records is stored. The configured directory must have the correct SELinux contex
 
       <table>
         <tr>
+          <td>Account Lockouts Must Persist</td>
+          <td>By setting a `dir` in the faillock configuration account lockouts will persist across reboots.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Account Lockouts Must Be Logged</td>
+          <td>PAM faillock locks an account due to excessive password failures, this event must be logged.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Lock Accounts After Failed Password Attempts</td>
           <td>This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <tt>pam_faillock.so</tt>.
@@ -461,30 +475,6 @@ For example:
 <pre>/org/gnome/login-screen/banner-message-enable</pre>
 After the settings have been set, run <tt>dconf update</tt>.
 The banner text must also be set.</td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
-          <td>Set the GNOME3 Login Warning Banner Text</td>
-          <td>In the default graphical environment, configuring the login warning banner text
-in the GNOME Display Manager's login screen can be configured on the login
-screen by setting <tt>banner-message-text</tt> to <tt>'<i>APPROVED_BANNER</i>'</tt>
-where <i>APPROVED_BANNER</i> is the approved banner for your environment.
-<br /><br />
-To enable, add or edit <tt>banner-message-text</tt> to
-
-<tt>/etc/dconf/db/distro.d/00-security-settings</tt>. For example:
-<pre>[org/gnome/login-screen]
-banner-message-text='<i>APPROVED_BANNER</i>'</pre>
-Once the setting has been added, add a lock to
-<tt>/etc/dconf/db/distro.d/locks/00-security-settings-lock</tt> to prevent user modification.
-For example:
-<pre>/org/gnome/login-screen/banner-message-text</pre>
-
-After the settings have been set, run <tt>dconf update</tt>.
-When entering a warning banner that spans several lines, remember
-to begin and end the string with <tt>'</tt> and use <tt>\n</tt> for new lines.</td>
         </tr>
       </table>
 
@@ -4197,19 +4187,6 @@ To properly set the owner of <code>/var/log/audit</code>, run the command:
 
       <table>
         <tr>
-          <td>System Audit Logs Must Have Mode 0750 or Less Permissive</td>
-          <td>
-If <tt>log_group</tt> in <tt>/etc/audit/auditd.conf</tt> is set to a group other than the <tt>root</tt>
-group account, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0750 /var/log/audit</pre>
-<br />
-Otherwise, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0700 /var/log/audit</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>System Audit Logs Must Be Group Owned By Root</td>
           <td>All audit logs must be group owned by root user. The path for audit log can
 be configured via <tt>log_file</tt> parameter in <pre>/etc/audit/auditd.conf</pre>
@@ -4326,19 +4303,6 @@ To properly set the owner of <code>/var/log/audit</code>, run the command:
 
       <table>
         <tr>
-          <td>System Audit Logs Must Have Mode 0750 or Less Permissive</td>
-          <td>
-If <tt>log_group</tt> in <tt>/etc/audit/auditd.conf</tt> is set to a group other than the <tt>root</tt>
-group account, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0750 /var/log/audit</pre>
-<br />
-Otherwise, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0700 /var/log/audit</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>System Audit Logs Must Be Group Owned By Root</td>
           <td>All audit logs must be group owned by root user. The path for audit log can
 be configured via <tt>log_file</tt> parameter in <pre>/etc/audit/auditd.conf</pre>
@@ -4450,19 +4414,6 @@ group account, change the group ownership of the audit directories to this speci
 
 To properly set the owner of <code>/var/log/audit</code>, run the command:
 <pre>$ sudo chown root /var/log/audit </pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
-          <td>System Audit Logs Must Have Mode 0750 or Less Permissive</td>
-          <td>
-If <tt>log_group</tt> in <tt>/etc/audit/auditd.conf</tt> is set to a group other than the <tt>root</tt>
-group account, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0750 /var/log/audit</pre>
-<br />
-Otherwise, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0700 /var/log/audit</pre></td>
         </tr>
       </table>
 
@@ -6515,7 +6466,20 @@ If the private key is stolen, this will lead to the compromise of the authentica
 Both the holders of a digital certificate and the issuing authority must protect the computers, storage devices, or whatever they use to keep the private keys.</td>
 
 
-    <td></td>
+    <td>
+
+      <table>
+        <tr>
+          <td>Verify the SSH Private Key Files Have a Passcode</td>
+          <td>When creating SSH key pairs, always use a passcode.
+<br />
+You can create such keys with the following command:
+<pre>$ sudo ssh-keygen -n [passphrase]</pre>
+Red Hat Enterprise Linux 9, for certificate-based authentication, must enforce authorized access to the corresponding private key.</td>
+        </tr>
+      </table>
+
+    </td>
 </tr>
 
   <tr>
@@ -6810,6 +6774,32 @@ this is a finding.</td>
 
       <table>
         <tr>
+          <td>Set number of Password Hashing Rounds - password-auth</td>
+          <td>Configure the number or rounds for the password hashing algorithm. This can be
+accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
+<br /><br />
+In file <tt>/etc/pam.d/password-auth</tt> append <tt>rounds=<sub idref="var_password_pam_unix_rounds" /></tt>
+to the <tt>pam_unix.so</tt> entry, as shown below:
+<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<sub idref="var_password_pam_unix_rounds" /></pre>
+The system's default number of rounds is 5000.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Set number of Password Hashing Rounds - system-auth</td>
+          <td>Configure the number or rounds for the password hashing algorithm. This can be
+accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
+<br /><br />
+In file <tt>/etc/pam.d/system-auth</tt> append <tt>rounds=<sub idref="var_password_pam_unix_rounds" /></tt>
+to the <tt>pam_unix.so</tt> entry, as shown below:
+<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<sub idref="var_password_pam_unix_rounds" /></pre>
+The system's default number of rounds is 5000.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Set Password Hashing Algorithm in /etc/libuser.conf</td>
           <td>In <tt>/etc/libuser.conf</tt>, add or correct the following line in its
 <tt>[defaults]</tt> section to ensure the system will use the SHA-512
@@ -6822,8 +6812,8 @@ algorithm for password hashing:
         <tr>
           <td>Set Password Hashing Algorithm in /etc/login.defs</td>
           <td>In <tt>/etc/login.defs</tt>, add or correct the following line to ensure
-the system will use SHA-512 as the hashing algorithm:
-<pre>ENCRYPT_METHOD SHA512</pre></td>
+the system will use <sub idref="var_password_hashing_algorithm" /> as the hashing algorithm:
+<pre>ENCRYPT_METHOD <sub idref="var_password_hashing_algorithm" /></pre></td>
         </tr>
       </table>
 
@@ -7292,6 +7282,20 @@ The <tt>cramfs</tt> filesystem type is a compressed read-only
 Linux filesystem embedded in small footprint systems. A
 <tt>cramfs</tt> image can be used without having to first
 decompress the image.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Disable SCTP Support</td>
+          <td>The Stream Control Transmission Protocol (SCTP) is a
+transport layer protocol, designed to support the idea of
+message-oriented communication, with several streams of messages
+within one connection.
+
+To configure the system to prevent the <code>sctp</code>
+kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
+<pre>install sctp /bin/true</pre></td>
         </tr>
       </table>
 
@@ -9064,30 +9068,6 @@ For example:
 <pre>/org/gnome/login-screen/banner-message-enable</pre>
 After the settings have been set, run <tt>dconf update</tt>.
 The banner text must also be set.</td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
-          <td>Set the GNOME3 Login Warning Banner Text</td>
-          <td>In the default graphical environment, configuring the login warning banner text
-in the GNOME Display Manager's login screen can be configured on the login
-screen by setting <tt>banner-message-text</tt> to <tt>'<i>APPROVED_BANNER</i>'</tt>
-where <i>APPROVED_BANNER</i> is the approved banner for your environment.
-<br /><br />
-To enable, add or edit <tt>banner-message-text</tt> to
-
-<tt>/etc/dconf/db/distro.d/00-security-settings</tt>. For example:
-<pre>[org/gnome/login-screen]
-banner-message-text='<i>APPROVED_BANNER</i>'</pre>
-Once the setting has been added, add a lock to
-<tt>/etc/dconf/db/distro.d/locks/00-security-settings-lock</tt> to prevent user modification.
-For example:
-<pre>/org/gnome/login-screen/banner-message-text</pre>
-
-After the settings have been set, run <tt>dconf update</tt>.
-When entering a warning banner that spans several lines, remember
-to begin and end the string with <tt>'</tt> and use <tt>\n</tt> for new lines.</td>
         </tr>
       </table>
 
@@ -11436,6 +11416,15 @@ to one of the following values: <tt>syslog</tt>, <tt>single</tt>, <tt>halt</tt>.
 
       <table>
         <tr>
+          <td>Install audispd-plugins Package</td>
+          <td>The <code>audispd-plugins</code> package can be installed with the following command:
+<pre>
+$ sudo dnf install audispd-plugins</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Ensure Rsyslog Authenticates Off-Loaded Audit Records</td>
           <td>Rsyslogd is a system utility providing support for message logging. Support
 for both internet and UNIX domain sockets enables this utility to support both local
@@ -12656,7 +12645,7 @@ in <tt>/etc/sudoers.d/</tt>.</td>
 
       <table>
         <tr>
-          <td>The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+          <td>Require Re-Authentication When Using the sudo Command</td>
           <td>The sudo <tt>timestamp_timeout</tt> tag sets the amount of time sudo password prompt waits.
 The default <tt>timestamp_timeout</tt> value is 5 minutes.
 The timestamp_timeout should be configured by making sure that the
@@ -12726,7 +12715,7 @@ in <tt>/etc/sudoers.d/</tt>.</td>
 
       <table>
         <tr>
-          <td>The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+          <td>Require Re-Authentication When Using the sudo Command</td>
           <td>The sudo <tt>timestamp_timeout</tt> tag sets the amount of time sudo password prompt waits.
 The default <tt>timestamp_timeout</tt> value is 5 minutes.
 The timestamp_timeout should be configured by making sure that the
@@ -12786,7 +12775,7 @@ in <tt>/etc/sudoers.d/</tt>.</td>
 
       <table>
         <tr>
-          <td>The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+          <td>Require Re-Authentication When Using the sudo Command</td>
           <td>The sudo <tt>timestamp_timeout</tt> tag sets the amount of time sudo password prompt waits.
 The default <tt>timestamp_timeout</tt> value is 5 minutes.
 The timestamp_timeout should be configured by making sure that the
@@ -13543,22 +13532,6 @@ If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
 <pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
-          <td>Record Any Attempts to Run restorecon</td>
-          <td>At a minimum, the audit system should collect any execution attempt
-of the <tt>restorecon</tt> command for all users and root. If the <tt>auditd</tt>
-daemon is configured to use the <tt>augenrules</tt> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
-If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -15381,15 +15354,6 @@ default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... slub_debug=<sub idref="var_slub_debug_options" /> ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="slub_debug=<sub idref="var_slub_debug_options" />"</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
-          <td>Enable ExecShield via sysctl</td>
-          <td>By default on Red Hat Enterprise Linux 9 64-bit systems, ExecShield is
-enabled and can only be disabled if the hardware does not support
-ExecShield or is disabled in <tt>/etc/default/grub</tt>.</td>
         </tr>
       </table>
 
@@ -17923,22 +17887,6 @@ utility to read audit rules during daemon startup, add the following lines to
 
       <table>
         <tr>
-          <td>Record Any Attempts to Run restorecon</td>
-          <td>At a minimum, the audit system should collect any execution attempt
-of the <tt>restorecon</tt> command for all users and root. If the <tt>auditd</tt>
-daemon is configured to use the <tt>augenrules</tt> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
-If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Record Any Attempts to Run semanage</td>
           <td>At a minimum, the audit system should collect any execution attempt
 of the <tt>semanage</tt> command for all users and root. If the <tt>auditd</tt>
@@ -18013,22 +17961,6 @@ If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
 <pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
-          <td>Record Any Attempts to Run restorecon</td>
-          <td>At a minimum, the audit system should collect any execution attempt
-of the <tt>restorecon</tt> command for all users and root. If the <tt>auditd</tt>
-daemon is configured to use the <tt>augenrules</tt> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
-If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -22214,7 +22146,7 @@ To properly set the group owner of <code>/etc/ssh/sshd_config</code>, run the co
 
       <table>
         <tr>
-          <td>All Interactive User Home Directories Must Be Group-Owned By The Primary User</td>
+          <td>All Interactive User Home Directories Must Be Group-Owned By The Primary Group</td>
           <td>Change the group owner of interactive users home directory to the
 group found in <tt>/etc/passwd</tt>. To change the group owner of
 interactive users home directory, use the following command:
@@ -22640,6 +22572,20 @@ kernel module from being loaded, add the following line to the file <code>/etc/m
 
       <table>
         <tr>
+          <td>Disable SCTP Support</td>
+          <td>The Stream Control Transmission Protocol (SCTP) is a
+transport layer protocol, designed to support the idea of
+message-oriented communication, with several streams of messages
+within one connection.
+
+To configure the system to prevent the <code>sctp</code>
+kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
+<pre>install sctp /bin/true</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Disable Modprobe Loading of USB Storage Driver</td>
           <td>To prevent USB storage devices from being used, configure the kernel module loading system
 to prevent automatic loading of the USB storage driver.
@@ -22663,18 +22609,6 @@ untrusted networks. As such, IPsec can be used to circumvent certain
 network requirements such as filtering. Verify that if any IPsec connection
 (<tt>conn</tt>) configured in <tt>/etc/ipsec.conf</tt> and <tt>/etc/ipsec.d</tt>
 exists is an approved organizational connection.</td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
-          <td>Add nosuid Option to /boot/efi</td>
-          <td>The <tt>nosuid</tt> mount option can be used to prevent
-execution of setuid programs in <tt>/boot/efi</tt>. The SUID and SGID permissions
-should not be required on the boot partition.
-Add the <code>nosuid</code> option to the fourth column of
-<tt>/etc/fstab</tt> for the line which controls mounting of
-<code>/boot/efi</code>.</td>
         </tr>
       </table>
 
@@ -22949,20 +22883,6 @@ $ sudo dnf install firewalld</pre></td>
 
       <table>
         <tr>
-          <td>Remove the GDM Package Group</td>
-          <td>
-By removing the <tt>gdm</tt> package, the system no longer has GNOME installed
-
-installed. If X Windows is not installed then the system cannot boot into graphical user mode.
-This prevents the system from being accidentally or maliciously booted into a <tt>graphical.target</tt>
-mode. To do so, run the following command:
-
-<pre>$ sudo yum remove gdm</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Ensure gnutls-utils is installed</td>
           <td>The <code>gnutls-utils</code> package can be installed with the following command:
 <pre>
@@ -22996,6 +22916,15 @@ and IKE, which permits the creation of secure tunnels over
 untrusted networks. The <code>libreswan</code> package can be installed with the following command:
 <pre>
 $ sudo dnf install libreswan</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure nss-tools is installed</td>
+          <td>The <code>nss-tools</code> package can be installed with the following command:
+<pre>
+$ sudo dnf install nss-tools</pre></td>
         </tr>
       </table>
 
@@ -23644,14 +23573,6 @@ To make sure that the setting is persistent, add the following line to a file in
 
       <table>
         <tr>
-          <td>Disable Kernel Parameter for Accepting Secure ICMP Redirects on all IPv4 Interfaces</td>
-          <td>To set the runtime status of the <code>net.ipv4.conf.all.secure_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.secure_redirects=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>net.ipv4.conf.all.secure_redirects = 0</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Disable Kernel Parameter for Sending ICMP Redirects on all IPv4 Interfaces</td>
           <td>To set the runtime status of the <code>net.ipv4.conf.all.send_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.send_redirects=0</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>net.ipv4.conf.all.send_redirects = 0</pre></td>
@@ -23695,14 +23616,6 @@ To make sure that the setting is persistent, add the following line to a file in
           <td>Enable Kernel Parameter to Ignore ICMP Broadcast Echo Requests on IPv4 Interfaces</td>
           <td>To set the runtime status of the <code>net.ipv4.icmp_echo_ignore_broadcasts</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.icmp_echo_ignore_broadcasts=1</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>net.ipv4.icmp_echo_ignore_broadcasts = 1</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
-          <td>Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces</td>
-          <td>To set the runtime status of the <code>net.ipv4.icmp_ignore_bogus_error_responses</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.icmp_ignore_bogus_error_responses=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>net.ipv4.icmp_ignore_bogus_error_responses = 1</pre></td>
         </tr>
       </table>
 
@@ -23813,21 +23726,6 @@ and ensure the <tt>ExecStart</tt> line on that file includes the <tt>-s</tt> opt
           <td>Using Kerberos on all exported mounts prevents a malicious client or user from
 impersonating a system user. To cryptography authenticate users to the NFS server,
 add <tt>sec=krb5:krb5i:krb5p</tt> to each export in <tt>/etc/exports</tt>.</td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
-          <td>Disable graphical user interface</td>
-          <td>By removing the following packages,  the system no longer has X Windows installed.
-
-<tt>xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</tt>
-
-If X Windows is not installed then the system cannot boot into graphical user mode.
-This prevents the system from being accidentally or maliciously booted into a <tt>graphical.target</tt>
-mode. To do so, run the following command:
-
-<pre>sudo dnf remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</pre></td>
         </tr>
       </table>
 

@@ -6198,7 +6198,20 @@ If the private key is stolen, this will lead to the compromise of the authentica
 Both the holders of a digital certificate and the issuing authority must protect the computers, storage devices, or whatever they use to keep the private keys.</td>
 
 
-    <td></td>
+    <td>
+
+      <table>
+        <tr>
+          <td>Verify the SSH Private Key Files Have a Passcode</td>
+          <td>When creating SSH key pairs, always use a passcode.
+<br />
+You can create such keys with the following command:
+<pre>$ sudo ssh-keygen -n [passphrase]</pre>
+Red Hat Enterprise Linux 8, for certificate-based authentication, must enforce authorized access to the corresponding private key.</td>
+        </tr>
+      </table>
+
+    </td>
 </tr>
 
   <tr>
@@ -6455,8 +6468,8 @@ this is a finding.</td>
         <tr>
           <td>Set Password Hashing Algorithm in /etc/login.defs</td>
           <td>In <tt>/etc/login.defs</tt>, add or correct the following line to ensure
-the system will use SHA-512 as the hashing algorithm:
-<pre>ENCRYPT_METHOD SHA512</pre></td>
+the system will use <sub idref="var_password_hashing_algorithm" /> as the hashing algorithm:
+<pre>ENCRYPT_METHOD <sub idref="var_password_hashing_algorithm" /></pre></td>
         </tr>
       </table>
 
@@ -9221,6 +9234,18 @@ To check that Crypto Policies settings are configured correctly, ensure that
 <tt>/etc/crypto-policies/back-ends/opensshserver.config</tt> contains the following
 text and is not commented out:
 <tt>-oMACS=hmac-sha2-512,hmac-sha2-256</tt></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Use Only FIPS 140-2 Validated Key Exchange Algorithms</td>
+          <td>Limit the key exchange algorithms to those  which are FIPS-approved.
+Add or modify the following line in <tt>/etc/crypto-policies/back-ends/opensshserver.config</tt>
+<pre>CRYPTO_POLICY='-oKexAlgorithms=ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512'</pre>
+This rule ensures that only the key exchange algorithms mentioned
+above (or their subset) are configured for use, keeping the given
+order of algorithms.</td>
         </tr>
       </table>
 
@@ -12070,7 +12095,7 @@ in <tt>/etc/sudoers.d/</tt>.</td>
 
       <table>
         <tr>
-          <td>The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+          <td>Require Re-Authentication When Using the sudo Command</td>
           <td>The sudo <tt>timestamp_timeout</tt> tag sets the amount of time sudo password prompt waits.
 The default <tt>timestamp_timeout</tt> value is 5 minutes.
 The timestamp_timeout should be configured by making sure that the
@@ -12120,7 +12145,7 @@ in <tt>/etc/sudoers.d/</tt>.</td>
 
       <table>
         <tr>
-          <td>The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+          <td>Require Re-Authentication When Using the sudo Command</td>
           <td>The sudo <tt>timestamp_timeout</tt> tag sets the amount of time sudo password prompt waits.
 The default <tt>timestamp_timeout</tt> value is 5 minutes.
 The timestamp_timeout should be configured by making sure that the
@@ -12170,7 +12195,7 @@ in <tt>/etc/sudoers.d/</tt>.</td>
 
       <table>
         <tr>
-          <td>The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+          <td>Require Re-Authentication When Using the sudo Command</td>
           <td>The sudo <tt>timestamp_timeout</tt> tag sets the amount of time sudo password prompt waits.
 The default <tt>timestamp_timeout</tt> value is 5 minutes.
 The timestamp_timeout should be configured by making sure that the
@@ -20295,7 +20320,7 @@ home directory assigned in <tt>/etc/passwd</tt>:
 
       <table>
         <tr>
-          <td>All User Files and Directories In The Home Directory Must Be Group-Owned By The Primary User</td>
+          <td>All User Files and Directories In The Home Directory Must Be Group-Owned By The Primary Group</td>
           <td>Change the group of a local interactive users files and directories to a
 group that the interactive user is a member of. To change the group owner of a
 local interactive users files and directories, use the following command:
@@ -20513,7 +20538,7 @@ If authselect profile is selected, the rule will enable the <sub idref="var_auth
 
       <table>
         <tr>
-          <td>All Interactive User Home Directories Must Be Group-Owned By The Primary User</td>
+          <td>All Interactive User Home Directories Must Be Group-Owned By The Primary Group</td>
           <td>Change the group owner of interactive users home directory to the
 group found in <tt>/etc/passwd</tt>. To change the group owner of
 interactive users home directory, use the following command:

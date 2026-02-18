@@ -548,6 +548,14 @@ the Red Hat Enterprise Linux 9 Documentation web site:<br>
 .</td>
 </tr>
 <tr>
+<td>CCE-86283-9</td>
+<td>Ensure /dev/shm is configured</td>
+<td>The <code>/dev/shm</code> is a traditional shared memory concept. 
+One program will create a memory portion, which other processes 
+(if permitted) can access. If <code>/dev/shm</code> is not configured, 
+tmpfs will be mounted to /dev/shm by systemd.</td>
+</tr>
+<tr>
 <td>CCE-83468-9</td>
 <td>Ensure /home Located On Separate Partition</td>
 <td>If user home directories will be stored locally, create a separate partition
@@ -1170,7 +1178,7 @@ in <code>/etc/sudoers.d/</code>."</td>
 </tr>
 <tr>
 <td>CCE-90029-0</td>
-<td>The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+<td>Require Re-Authentication When Using the sudo Command</td>
 <td>The sudo <code>timestamp_timeout</code> tag sets the amount of time sudo password prompt waits.
 The default <code>timestamp_timeout</code> value is 5 minutes.
 The timestamp_timeout should be configured by making sure that the
@@ -2016,8 +2024,8 @@ algorithm for password hashing:
 <td>CCE-90590-1</td>
 <td>Set Password Hashing Algorithm in /etc/login.defs</td>
 <td>In <code>/etc/login.defs</code>, add or correct the following line to ensure
-the system will use SHA-512 as the hashing algorithm:
-<pre>ENCRYPT_METHOD SHA512</pre>
+the system will use <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm" use="legacy"></xccdf-1.2:sub> as the hashing algorithm:
+<pre>ENCRYPT_METHOD <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -2421,6 +2429,15 @@ lifetime by running the following command:
 </td>
 </tr>
 <tr>
+<td>CCE-86915-6</td>
+<td>Set Existing Passwords Warning Age</td>
+<td>To configure how many days prior to password expiration that a warning will be issued to
+users, run the command:
+<pre>$ sudo chage --warndays <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub> <i>USER</i></pre>
+The DoD requirement is 7, and CIS recommendation is no less than 7 days.
+This profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
+</tr>
+<tr>
 <td>CCE-83609-8</td>
 <td>Set Password Warning Age</td>
 <td>To specify how many days prior to password
@@ -2430,6 +2447,14 @@ edit the file <code>/etc/login.defs</code> and add or correct
 <pre>PASS_WARN_AGE <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub></pre>
 The DoD requirement is 7.
 The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
+</tr>
+<tr>
+<td>CCE-86759-8</td>
+<td>Set existing passwords a period of inactivity before they been locked</td>
+<td>Configure user accounts that have been inactive for over a given period of time 
+to be automatically disabled by running the following command:
+<pre>$ sudo chage --inactive 30<i>USER</i></pre>
+</td>
 </tr>
 <tr>
 <td>CCE-83618-9</td>
@@ -2453,6 +2478,11 @@ Password hashes <code>!</code> or <code>*</code> indicate inactive accounts not
 available for logon and are not evaluated.
 If any interactive user password hash does not begin with <code>$6</code>,
 this is a finding.</td>
+</tr>
+<tr>
+<td>CCE-86526-1</td>
+<td>Ensure all users last password change date is in the past</td>
+<td>All users should have a password change date in the past.</td>
 </tr>
 <tr>
 <td>CCE-83615-5</td>
@@ -2508,6 +2538,11 @@ Perform a password reset:
 Lock an account:
 <pre>$ sudo passwd -l [username]</pre>
 </td>
+</tr>
+<tr>
+<td>CCE-86756-4</td>
+<td>Verify No .forward Files Exist</td>
+<td>The <code>.forward</code> file specifies an email address to forward the user's mail to.</td>
 </tr>
 <tr>
 <td>CCE-83616-3</td>
@@ -2734,7 +2769,7 @@ home directory assigned in <code>/etc/passwd</code>:
 </tr>
 <tr>
 <td>CCE-83629-6</td>
-<td>All Interactive User Home Directories Must Be Group-Owned By The Primary User</td>
+<td>All Interactive User Home Directories Must Be Group-Owned By The Primary Group</td>
 <td>Change the group owner of interactive users home directory to the
 group found in <code>/etc/passwd</code>. To change the group owner of
 interactive users home directory, use the following command:
@@ -3121,6 +3156,20 @@ If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-w /etc/selinux/ -p wa -k MAC-policy</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86343-1</td>
+<td>Record Events that Modify the System's Mandatory Access Controls in usr/share</td>
+<td>If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+<pre>-w /usr/share/selinux/ -p wa -k MAC-policy</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following line to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-w /usr/share/selinux/ -p wa -k MAC-policy</pre>
 </td>
 </tr>
 <tr>
@@ -9265,6 +9314,13 @@ The <code>rsyslog</code> service can be enabled with the following command:
 </td>
 </tr>
 <tr>
+<td>CCE-88322-3</td>
+<td>Ensure rsyslog Default File Permissions Configured</td>
+<td>rsyslog will create logfiles that do not already exist on the system.
+This settings controls what permissions will be applied to these newly
+created files.</td>
+</tr>
+<tr>
 <td>CCE-83994-4</td>
 <td>Ensure cron Is Logging To Rsyslog</td>
 <td>Cron logging must be implemented to spot intrusions or trace
@@ -9311,30 +9367,46 @@ When using <code>rsyslogd</code> to off-load logs off an encryption system must 
 <td>CCE-83834-2</td>
 <td>Ensure Log Files Are Owned By Appropriate Group</td>
 <td>The group-owner of all log files written by
-<code>rsyslog</code> should be <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_groupowner_logfiles_value" use="legacy"></xccdf-1.2:sub></code>.
+<code>rsyslog</code> should be
+
+<code>root</code>.
+
 These log files are determined by the second part of each Rule line in
 <code>/etc/rsyslog.conf</code> and typically all appear in <code>/var/log</code>.
 For each log file <i>LOGFILE</i> referenced in <code>/etc/rsyslog.conf</code>,
 run the following command to inspect the file's group owner:
 <pre>$ ls -l <i>LOGFILE</i></pre>
-If the owner is not <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_groupowner_logfiles_value" use="legacy"></xccdf-1.2:sub></code>, run the following command to
+If the owner is not
+
+<code>root</code>,
+
+run the following command to
 correct this:
-<pre>$ sudo chgrp <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_groupowner_logfiles_value" use="legacy"></xccdf-1.2:sub> <i>LOGFILE</i></pre>
+
+<pre>$ sudo chgrp root <i>LOGFILE</i></pre>
 </td>
 </tr>
 <tr>
 <td>CCE-83946-4</td>
 <td>Ensure Log Files Are Owned By Appropriate User</td>
 <td>The owner of all log files written by
-<code>rsyslog</code> should be <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_owner_logfiles_value" use="legacy"></xccdf-1.2:sub></code>.
+<code>rsyslog</code> should be
+
+<code>root</code>.
+
 These log files are determined by the second part of each Rule line in
 <code>/etc/rsyslog.conf</code> and typically all appear in <code>/var/log</code>.
 For each log file <i>LOGFILE</i> referenced in <code>/etc/rsyslog.conf</code>,
 run the following command to inspect the file's owner:
 <pre>$ ls -l <i>LOGFILE</i></pre>
-If the owner is not <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_owner_logfiles_value" use="legacy"></xccdf-1.2:sub></code>, run the following command to
+If the owner is not
+
+<code>root</code>,
+
+run the following command to
 correct this:
-<pre>$ sudo chown <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_owner_logfiles_value" use="legacy"></xccdf-1.2:sub> <i>LOGFILE</i></pre>
+
+<pre>$ sudo chown root <i>LOGFILE</i></pre>
 </td>
 </tr>
 <tr>
@@ -9349,7 +9421,14 @@ inspect the file's permissions:
 <pre>$ ls -l <i>LOGFILE</i></pre>
 If the permissions are not 600 or more restrictive, run the following
 command to correct this:
-<pre>$ sudo chmod 0600 <i>LOGFILE</i></pre>"</td>
+<pre>$ sudo chmod 600 <i>LOGFILE</i></pre>"</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure logging is configured</td>
+<td>The <code>/etc/rsyslog.conf</code> and <code>/etc/rsyslog.d/*.conf</code> files
+specifies rules for logging and which files are to be used to log certain
+classes of messages.</td>
 </tr>
 <tr>
 <td>CCE-87960-1</td>
@@ -9393,14 +9472,40 @@ Utilities exist to accept remote export of journald logs.</td>
 If the logs are only stored in volatile memory they will we lost upon reboot.</td>
 </tr>
 <tr>
+<td>CCE-87606-0</td>
+<td>Disable systemd-journal-remote Socket</td>
+<td>Journald supports the ability to receive messages from remote hosts,
+thus acting as a log server. Clients should not receive data from
+other hosts.
+NOTE:
+    The same package, systemd-journal-remote , is used for both sending
+    logs to remote hosts and receiving incoming logs.
+    With regards to receiving logs, there are two Systemd unit files;
+    systemd-journal-remote.socket and systemd-journal-remote.service.</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure logrotate is Installed</td>
+<td>logrotate is installed by default. The <code>logrotate</code> package can be installed with the following command: <pre> $ sudo dnf install logrotate</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-83993-6</td>
 <td>Ensure Logrotate Runs Periodically</td>
 <td>The <code>logrotate</code> utility allows for the automatic rotation of
 log files.  The frequency of rotation is specified in <code>/etc/logrotate.conf</code>,
-which triggers a cron task.  To configure logrotate to run daily, add or correct
+which triggers a cron task or a timer.  To configure logrotate to run daily, add or correct
 the following line in <code>/etc/logrotate.conf</code>:
 <pre># rotate log files <i>frequency</i>
 daily</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Enable logrotate Timer</td>
+<td>
+The <code>logrotate</code> timer can be enabled with the following command:
+<pre>$ sudo systemctl enable logrotate.timer</pre>
 </td>
 </tr>
 <tr>
@@ -9671,8 +9776,8 @@ network.</td>
 <tr>
 <td></td>
 <td>Set configuration for loopback traffic</td>
-<td>Configure the loopback interface to accept traffic. 
-Configure all other interfaces to deny traffic to the loopback 
+<td>Configure the loopback interface to accept traffic.
+Configure all other interfaces to deny traffic to the loopback
 network.</td>
 </tr>
 <tr>
@@ -14761,6 +14866,20 @@ and ensure the following line appears in the <code>[publish]</code> section:
 </td>
 </tr>
 <tr>
+<td>CCE-86516-2</td>
+<td>Uninstall avahi-autoipd Server Package</td>
+<td>If the system does not need to have an Avahi server which implements 
+the DNS Service Discovery and Multicast DNS protocols,
+the avahi-autoipd and avahi packages can be uninstalled.</td>
+</tr>
+<tr>
+<td>CCE-86513-9</td>
+<td>Uninstall avahi Server Package</td>
+<td>If the system does not need to have an Avahi server which implements 
+the DNS Service Discovery and Multicast DNS protocols,
+the avahi-autoipd and avahi packages can be uninstalled.</td>
+</tr>
+<tr>
 <td>CCE-90824-4</td>
 <td>Disable Avahi Server Software</td>
 <td>
@@ -15183,6 +15302,17 @@ The <code>dhcpd</code> service can be disabled with the following command:
 </td>
 </tr>
 <tr>
+<td>CCE-86063-5</td>
+<td>Uninstall dnsmasq Package</td>
+<td>dnsmasq is a lightweight tool that provides DNS caching, DNS forwarding and
+DHCP (Dynamic Host Configuration Protocol) services.
+<br>
+The <code>dnsmasq</code> package can be removed with the following command:
+<pre>
+$ sudo dnf erase dnsmasq</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-86505-5</td>
 <td>Uninstall bind Package</td>
 <td>The <code>named</code> service is provided by the <code>bind</code> package.
@@ -15225,6 +15355,18 @@ The <code>fapolicyd</code> service can be enabled with the following command:
 <td>CCE-86018-9</td>
 <td>fapolicyd Must be Configured to Limit Access to Users Home Folders</td>
 <td>fapolicyd needs be configured so that users cannot give access to their home folders to other users.</td>
+</tr>
+<tr>
+<td>CCE-86075-9</td>
+<td>Remove ftp Package</td>
+<td>FTP (File Transfer Protocol) is a traditional and widely used standard tool for
+transferring files between a server and clients over a network, especially where no
+authentication is necessary (permits anonymous users to connect to a server).
+<br>
+The <code>ftp</code> package can be removed with the following command:
+<pre>
+$ sudo dnf erase ftp</pre>
+</td>
 </tr>
 <tr>
 <td>CCE-84159-3</td>
@@ -15289,6 +15431,14 @@ The <code>httpd</code> service can be disabled with the following command:
 </td>
 </tr>
 <tr>
+<td>CCE-88035-1</td>
+<td>Uninstall nginx Package</td>
+<td>The <code>nginx</code> package can be removed with the following command:
+<pre>
+$ sudo dnf erase nginx</pre>
+</td>
+</tr>
+<tr>
 <td></td>
 <td>Set Permissions on All Configuration Files Inside /etc/httpd/conf.d/</td>
 <td> To properly set the permissions of <code>/etc/http/conf.d/*</code>, run the command: <pre>$ sudo chmod 0640 /etc/http/conf.d/*</pre>
@@ -15304,6 +15454,14 @@ The <code>httpd</code> service can be disabled with the following command:
 <td></td>
 <td>Set Permissions on All Configuration Files Inside /etc/httpd/conf.modules.d/</td>
 <td> To properly set the permissions of <code>/etc/http/conf.modules.d/*</code>, run the command: <pre>$ sudo chmod 0640 /etc/http/conf.modules.d/*</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-88120-1</td>
+<td>Uninstall cyrus-imapd Package</td>
+<td>The <code>cyrus-imapd</code> package can be removed with the following command:
+<pre>
+$ sudo dnf erase cyrus-imapd</pre>
 </td>
 </tr>
 <tr>
@@ -15357,9 +15515,7 @@ $ sudo dnf erase openldap-clients</pre>
 <tr>
 <td></td>
 <td>Uninstall openldap-servers Package</td>
-<td>
-The openldap-servers package is not installed by default on a Red Hat Enterprise Linux 9
-
+<td>The openldap-servers package is not installed by default on a Red Hat Enterprise Linux 9
 system. It is needed only by the OpenLDAP server, not by the
 clients which use LDAP for authentication. If the system is not
 intended for use as an LDAP Server it should be removed.</td>
@@ -16111,6 +16267,15 @@ processed before <code>02-rekey-limit.conf</code> containing definition of
 <code>RekeyLimit</code>.</td>
 </tr>
 <tr>
+<td>CCE-86553-5</td>
+<td>Verify the SSH Private Key Files Have a Passcode</td>
+<td>When creating SSH key pairs, always use a passcode.
+<br>
+You can create such keys with the following command:
+<pre>$ sudo ssh-keygen -n [passphrase]</pre>
+Red Hat Enterprise Linux 9, for certificate-based authentication, must enforce authorized access to the corresponding private key.</td>
+</tr>
+<tr>
 <td>CCE-90271-8</td>
 <td>Set SSH Client Alive Count Max to zero</td>
 <td>The SSH server sends at most <code>ClientAliveCountMax</code> messages
@@ -16477,7 +16642,7 @@ Another section contains information on how to create an
 appropriate system-wide warning banner.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-87979-1</td>
 <td>Enable SSH Warning Banner</td>
 <td>To enable the warning banner and ensure it is consistent
 across the system, add or correct the following line in

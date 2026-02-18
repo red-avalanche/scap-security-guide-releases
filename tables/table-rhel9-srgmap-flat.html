@@ -656,6 +656,56 @@ records is stored. The configured directory must have the correct SELinux contex
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must enforce the limit of three consecutive invalid logon attempts by a user during a 15-minute time period.</td>
 
+    <td>CCE-86108-8: Account Lockouts Must Be Logged</td>
+
+    <td>By limiting the number of failed logon attempts, the risk of unauthorized system access via user password guessing, otherwise known as brute-force attacks, is reduced. Limits are imposed by locking the account.</td>
+    <td>PAM faillock locks an account due to excessive password failures, this event must be logged.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify that the operating system enforces the limit of three consecutive invalid logon attempts by a user during a 15-minute time period. If it does not, this is a finding.</td>
+    <td>Verify the "/etc/security/faillock.conf" file is configured to log user name information when unsuccessful logon attempts occur:
+
+$ sudo grep audit /etc/security/faillock.conf
+
+audit Is it the case that the "audit" option is not set, is missing or commented out?</td>
+    <td>Configure the operating system to enforce the limit of three consecutive invalid logon attempts by a user during a 15-minute time period.</td>
+    <td>PAM faillock locks an account due to excessive password failures, this event must be logged.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-000044</td>
+    <td>SRG-OS-000021-GPOS-00005</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must enforce the limit of three consecutive invalid logon attempts by a user during a 15-minute time period.</td>
+
+    <td>CCE-86080-9: Account Lockouts Must Persist</td>
+
+    <td>By limiting the number of failed logon attempts, the risk of unauthorized system access via user password guessing, otherwise known as brute-force attacks, is reduced. Limits are imposed by locking the account.</td>
+    <td>By setting a `dir` in the faillock configuration account lockouts will persist across reboots.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify that the operating system enforces the limit of three consecutive invalid logon attempts by a user during a 15-minute time period. If it does not, this is a finding.</td>
+    <td>Verify the "/etc/security/faillock.conf" file is configured use a non-default faillock directory to ensure contents persist after reboot:
+
+$ sudo grep 'dir =' /etc/security/faillock.conf
+
+dir = /var/log/faillock Is it the case that the "dir" option is not set to a non-default documented tally log directory, is missing or commented out?</td>
+    <td>Configure the operating system to enforce the limit of three consecutive invalid logon attempts by a user during a 15-minute time period.</td>
+    <td>By setting a `dir` in the faillock configuration account lockouts will persist across reboots.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-000044</td>
+    <td>SRG-OS-000021-GPOS-00005</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must enforce the limit of three consecutive invalid logon attempts by a user during a 15-minute time period.</td>
+
     <td>CCE-86100-5: Account Lockouts Must Be Logged</td>
 
     <td>By limiting the number of failed logon attempts, the risk of unauthorized system access via user password guessing, otherwise known as brute-force attacks, is reduced. Limits are imposed by locking the account.</td>
@@ -1140,133 +1190,6 @@ For example:
 <pre>/org/gnome/login-screen/banner-message-enable</pre>
 After the settings have been set, run <tt>dconf update</tt>.
 The banner text must also be set.</td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
-  <tr>
-    <td>CCI-000048</td>
-    <td>SRG-OS-000023-GPOS-00006</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must display the Standard Mandatory DoD Notice and Consent Banner before granting local or remote access to the system.</td>
-
-    <td>CCE-86529-5: Set the GNOME3 Login Warning Banner Text</td>
-
-    <td>Display of a standardized and approved use notification before granting access to the operating system ensures privacy and security notification verbiage used is consistent with applicable federal laws, Executive Orders, directives, policies, regulations, standards, and guidance.
-
-System use notifications are required only for access via logon interfaces with human users and are not required when such human interfaces do not exist.
-
-The banner must be formatted in accordance with applicable DoD policy. Use the following verbiage for operating systems that can accommodate banners of 1300 characters:
-
-"You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.
-
-By using this IS (which includes any device attached to this IS), you consent to the following conditions:
-
--The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.
-
--At any time, the USG may inspect and seize data stored on this IS.
-
--Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose.
-
--This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.
-
--Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details."
-
-Use the following verbiage for operating systems that have severe limitations on the number of characters that can be displayed in the banner:
-
-"I've readconsent to terms in IS user agreem't."</td>
-    <td>In the default graphical environment, configuring the login warning banner text
-in the GNOME Display Manager's login screen can be configured on the login
-screen by setting <tt>banner-message-text</tt> to <tt>'<i>APPROVED_BANNER</i>'</tt>
-where <i>APPROVED_BANNER</i> is the approved banner for your environment.
-<br /><br />
-To enable, add or edit <tt>banner-message-text</tt> to
-
-<tt>/etc/dconf/db/distro.d/00-security-settings</tt>. For example:
-<pre>[org/gnome/login-screen]
-banner-message-text='<i>APPROVED_BANNER</i>'</pre>
-Once the setting has been added, add a lock to
-<tt>/etc/dconf/db/distro.d/locks/00-security-settings-lock</tt> to prevent user modification.
-For example:
-<pre>/org/gnome/login-screen/banner-message-text</pre>
-
-After the settings have been set, run <tt>dconf update</tt>.
-When entering a warning banner that spans several lines, remember
-to begin and end the string with <tt>'</tt> and use <tt>\n</tt> for new lines.</td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system displays the Standard Mandatory DoD Notice and Consent Banner before granting access to the system.
-
-The banner must be formatted in accordance with applicable DoD policy. Use the following verbiage for operating systems that can accommodate banners of 1300 characters:
-
-"You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.
-
-By using this IS (which includes any device attached to this IS), you consent to the following conditions:
-
--The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.
-
--At any time, the USG may inspect and seize data stored on this IS.
-
--Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose.
-
--This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.
-
--Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details."
-
-Use the following verbiage for operating systems that have severe limitations on the number of characters that can be displayed in the banner:
-
-"I've read & consent to terms in IS user agreem't."
-
-If it does not, this is a finding.</td>
-    <td>
-To ensure the login warning banner text is properly set, run the following:
-<pre>$ grep banner-message-text /etc/dconf/db/distro.d/*</pre>
-If properly configured, the proper banner text will appear.
-To ensure the login warning banner text is locked and cannot be changed by a user, run the following:
-<pre>$ grep banner-message-text /etc/dconf/db/distro.d/locks/*</pre>
-If properly configured, the output should be <tt>/org/gnome/login-screen/banner-message-text</tt>. Is it the case that it does not?</td>
-    <td>Configure the operating system to display the Standard Mandatory DoD Notice and Consent Banner before granting access to the system.
-
-The banner must be formatted in accordance with applicable DoD policy. Use the following verbiage for operating systems that can accommodate banners of 1300 characters:
-
-"You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.
-
-By using this IS (which includes any device attached to this IS), you consent to the following conditions:
-
--The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.
-
--At any time, the USG may inspect and seize data stored on this IS.
-
--Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose.
-
--This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.
-
--Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details."
-
-Use the following verbiage for operating systems that have severe limitations on the number of characters that can be displayed in the banner:
-
-"I've read & consent to terms in IS user agreem't."
-
-If it does not, this is a finding.</td>
-    <td>In the default graphical environment, configuring the login warning banner text
-in the GNOME Display Manager's login screen can be configured on the login
-screen by setting <tt>banner-message-text</tt> to <tt>'<i>APPROVED_BANNER</i>'</tt>
-where <i>APPROVED_BANNER</i> is the approved banner for your environment.
-<br /><br />
-To enable, add or edit <tt>banner-message-text</tt> to
-
-<tt>/etc/dconf/db/distro.d/00-security-settings</tt>. For example:
-<pre>[org/gnome/login-screen]
-banner-message-text='<i>APPROVED_BANNER</i>'</pre>
-Once the setting has been added, add a lock to
-<tt>/etc/dconf/db/distro.d/locks/00-security-settings-lock</tt> to prevent user modification.
-For example:
-<pre>/org/gnome/login-screen/banner-message-text</pre>
-
-After the settings have been set, run <tt>dconf update</tt>.
-When entering a warning banner that spans several lines, remember
-to begin and end the string with <tt>'</tt> and use <tt>\n</tt> for new lines.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -11303,60 +11226,6 @@ To properly set the owner of <code>/var/log/audit</code>, run the command:
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must protect audit information from unauthorized read access.</td>
 
-    <td>CCE-83734-4: System Audit Logs Must Have Mode 0750 or Less Permissive</td>
-
-    <td>Unauthorized disclosure of audit records can reveal system and configuration data to attackers, thus compromising its confidentiality.
-
-Audit information includes all information (e.g., audit records, audit settings, audit reports) needed to successfully audit operating system activity.</td>
-    <td>
-If <tt>log_group</tt> in <tt>/etc/audit/auditd.conf</tt> is set to a group other than the <tt>root</tt>
-group account, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0750 /var/log/audit</pre>
-<br />
-Otherwise, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0700 /var/log/audit</pre></td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system protects audit information from unauthorized read access. If it does not, this is a finding.</td>
-    <td>Verify the audit log directories have a correct mode or less permissive mode.
-
-Find the location of the audit logs:
-
-$ sudo grep "^log_file" /etc/audit/auditd.conf
-
-
-Find the group that owns audit logs:
-
-$ sudo grep "^log_group" /etc/audit/auditd.conf
-
-
-Run the following command to check the mode of the system audit logs:
-
-$ sudo stat -c "%a %n" [audit_log_directory]
-
-Replace "[audit_log_directory]" to the correct audit log directory path, by default this location is "/var/log/audit".
-
-
-If the log_group is "root" or is not set, the correct permissions are 0700, otherwise they are 0750. Is it the case that audit logs have a more permissive mode?</td>
-    <td>Configure the operating system to protect audit information from unauthorized read access.</td>
-    <td>
-If <tt>log_group</tt> in <tt>/etc/audit/auditd.conf</tt> is set to a group other than the <tt>root</tt>
-group account, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0750 /var/log/audit</pre>
-<br />
-Otherwise, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0700 /var/log/audit</pre></td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
-  <tr>
-    <td>CCI-000162</td>
-    <td>SRG-OS-000057-GPOS-00027</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must protect audit information from unauthorized read access.</td>
-
     <td>CCE-89603-5: System Audit Logs Must Be Group Owned By Root</td>
 
     <td>Unauthorized disclosure of audit records can reveal system and configuration data to attackers, thus compromising its confidentiality.
@@ -11683,62 +11552,6 @@ The audit log directory must be owned by "root" Is it the case that the director
 
 To properly set the owner of <code>/var/log/audit</code>, run the command:
 <pre>$ sudo chown root /var/log/audit </pre></td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
-  <tr>
-    <td>CCI-000163</td>
-    <td>SRG-OS-000058-GPOS-00028</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must protect audit information from unauthorized modification.</td>
-
-    <td>CCE-83734-4: System Audit Logs Must Have Mode 0750 or Less Permissive</td>
-
-    <td>If audit information were to become compromised, then forensic analysis and discovery of the true source of potentially malicious system activity is impossible to achieve.
-
-To ensure the veracity of audit information, the operating system must protect audit information from unauthorized modification.
-
-Audit information includes all information (e.g., audit records, audit settings, audit reports) needed to successfully audit information system activity.</td>
-    <td>
-If <tt>log_group</tt> in <tt>/etc/audit/auditd.conf</tt> is set to a group other than the <tt>root</tt>
-group account, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0750 /var/log/audit</pre>
-<br />
-Otherwise, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0700 /var/log/audit</pre></td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system protects audit information from unauthorized modification. If it does not, this is a finding.</td>
-    <td>Verify the audit log directories have a correct mode or less permissive mode.
-
-Find the location of the audit logs:
-
-$ sudo grep "^log_file" /etc/audit/auditd.conf
-
-
-Find the group that owns audit logs:
-
-$ sudo grep "^log_group" /etc/audit/auditd.conf
-
-
-Run the following command to check the mode of the system audit logs:
-
-$ sudo stat -c "%a %n" [audit_log_directory]
-
-Replace "[audit_log_directory]" to the correct audit log directory path, by default this location is "/var/log/audit".
-
-
-If the log_group is "root" or is not set, the correct permissions are 0700, otherwise they are 0750. Is it the case that audit logs have a more permissive mode?</td>
-    <td>Configure the operating system to protect audit information from unauthorized modification.</td>
-    <td>
-If <tt>log_group</tt> in <tt>/etc/audit/auditd.conf</tt> is set to a group other than the <tt>root</tt>
-group account, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0750 /var/log/audit</pre>
-<br />
-Otherwise, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0700 /var/log/audit</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -12083,62 +11896,6 @@ The audit log directory must be owned by "root" Is it the case that the director
 
 To properly set the owner of <code>/var/log/audit</code>, run the command:
 <pre>$ sudo chown root /var/log/audit </pre></td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
-  <tr>
-    <td>CCI-000164</td>
-    <td>SRG-OS-000059-GPOS-00029</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must protect audit information from unauthorized deletion.</td>
-
-    <td>CCE-83734-4: System Audit Logs Must Have Mode 0750 or Less Permissive</td>
-
-    <td>If audit information were to become compromised, then forensic analysis and discovery of the true source of potentially malicious system activity is impossible to achieve.
-
-To ensure the veracity of audit information, the operating system must protect audit information from unauthorized deletion. This requirement can be achieved through multiple methods, which will depend upon system architecture and design.
-
-Audit information includes all information (e.g., audit records, audit settings, audit reports) needed to successfully audit information system activity.</td>
-    <td>
-If <tt>log_group</tt> in <tt>/etc/audit/auditd.conf</tt> is set to a group other than the <tt>root</tt>
-group account, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0750 /var/log/audit</pre>
-<br />
-Otherwise, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0700 /var/log/audit</pre></td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system protects audit information from unauthorized deletion. If it does not, this is a finding.</td>
-    <td>Verify the audit log directories have a correct mode or less permissive mode.
-
-Find the location of the audit logs:
-
-$ sudo grep "^log_file" /etc/audit/auditd.conf
-
-
-Find the group that owns audit logs:
-
-$ sudo grep "^log_group" /etc/audit/auditd.conf
-
-
-Run the following command to check the mode of the system audit logs:
-
-$ sudo stat -c "%a %n" [audit_log_directory]
-
-Replace "[audit_log_directory]" to the correct audit log directory path, by default this location is "/var/log/audit".
-
-
-If the log_group is "root" or is not set, the correct permissions are 0700, otherwise they are 0750. Is it the case that audit logs have a more permissive mode?</td>
-    <td>Configure the operating system to protect audit information from unauthorized deletion.</td>
-    <td>
-If <tt>log_group</tt> in <tt>/etc/audit/auditd.conf</tt> is set to a group other than the <tt>root</tt>
-group account, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0750 /var/log/audit</pre>
-<br />
-Otherwise, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0700 /var/log/audit</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -20042,12 +19799,15 @@ Public Key Algorithm: rsaEncryption Is it the case that root CA file is not a Do
 
 
 
+
   <tr>
-    <td>V-56685</td>
+    <td>CCI-000186</td>
     <td>SRG-OS-000067-GPOS-00035</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system, for PKI-based authentication, must enforce authorized access to the corresponding private key.</td>
-    <td></td>
+
+    <td>CCE-86553-5: Verify the SSH Private Key Files Have a Passcode</td>
+
     <td> If the private key is discovered, an attacker can use the key to authenticate as an authorized user and gain access to the network infrastructure.
 
 The cornerstone of the PKI is the private key used to encrypt or digitally sign information.
@@ -20055,17 +19815,28 @@ The cornerstone of the PKI is the private key used to encrypt or digitally sign 
 If the private key is stolen, this will lead to the compromise of the authentication and non-repudiation gained through PKI because the attacker can use the private key to digitally sign documents and pretend to be the authorized user.
 
 Both the holders of a digital certificate and the issuing authority must protect the computers, storage devices, or whatever they use to keep the private keys.</td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
+    <td>When creating SSH key pairs, always use a passcode.
+<br />
+You can create such keys with the following command:
+<pre>$ sudo ssh-keygen -n [passphrase]</pre>
+Red Hat Enterprise Linux 9, for certificate-based authentication, must enforce authorized access to the corresponding private key.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system, for PKI-based authentication, enforces authorized access to the corresponding private key. If it does not, this is a finding.</td>
+    <td>For each private key stored on the system, use the following command:
+<pre>$ sudo ssh-keygen -y -f /path/to/file</pre>
+If the contents of the key are displayed, this is a finding. Is it the case that no ssh private key is accessible without a passcode?</td>
+    <td>Configure the operating system, for PKI-based authentication, to enforce authorized access to the corresponding private key.</td>
+    <td>When creating SSH key pairs, always use a passcode.
+<br />
+You can create such keys with the following command:
+<pre>$ sudo ssh-keygen -n [passphrase]</pre>
+Red Hat Enterprise Linux 9, for certificate-based authentication, must enforce authorized access to the corresponding private key.</td>
+    <td>medium</td>
     <td></td>
     <td></td>
     <td></td>
   </tr>
+
 
 
 
@@ -20761,6 +20532,78 @@ this is a finding.</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must store only encrypted representations of passwords.</td>
 
+    <td>CCE-83615-5: Set number of Password Hashing Rounds - password-auth</td>
+
+    <td>Passwords need to be protected at all times, and encryption is the standard method for protecting passwords. If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised.</td>
+    <td>Configure the number or rounds for the password hashing algorithm. This can be
+accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
+<br /><br />
+In file <tt>/etc/pam.d/password-auth</tt> append <tt>rounds=<sub idref="var_password_pam_unix_rounds" /></tt>
+to the <tt>pam_unix.so</tt> entry, as shown below:
+<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<sub idref="var_password_pam_unix_rounds" /></pre>
+The system's default number of rounds is 5000.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system stores only encrypted representations of passwords. If it does not, this is a finding.</td>
+    <td>To verify the number of rounds for the password hashing algorithm is configured, run the following command:
+<pre>$ sudo grep rounds /etc/pam.d/password-auth</pre>
+The output should show the following match:
+<pre>password sufficient pam_unix.so sha512 rounds=<sub idref="var_password_pam_unix_rounds" /></pre> Is it the case that rounds is not set to <sub idref="var_password_pam_unix_rounds" /> or is commented out?</td>
+    <td>Configure the operating system to store only encrypted representations of passwords.</td>
+    <td>Configure the number or rounds for the password hashing algorithm. This can be
+accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
+<br /><br />
+In file <tt>/etc/pam.d/password-auth</tt> append <tt>rounds=<sub idref="var_password_pam_unix_rounds" /></tt>
+to the <tt>pam_unix.so</tt> entry, as shown below:
+<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<sub idref="var_password_pam_unix_rounds" /></pre>
+The system's default number of rounds is 5000.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-000196</td>
+    <td>SRG-OS-000073-GPOS-00041</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must store only encrypted representations of passwords.</td>
+
+    <td>CCE-83621-3: Set number of Password Hashing Rounds - system-auth</td>
+
+    <td>Passwords need to be protected at all times, and encryption is the standard method for protecting passwords. If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised.</td>
+    <td>Configure the number or rounds for the password hashing algorithm. This can be
+accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
+<br /><br />
+In file <tt>/etc/pam.d/system-auth</tt> append <tt>rounds=<sub idref="var_password_pam_unix_rounds" /></tt>
+to the <tt>pam_unix.so</tt> entry, as shown below:
+<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<sub idref="var_password_pam_unix_rounds" /></pre>
+The system's default number of rounds is 5000.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system stores only encrypted representations of passwords. If it does not, this is a finding.</td>
+    <td>To verify the number of rounds for the password hashing algorithm is configured, run the following command:
+<pre>$ sudo grep rounds /etc/pam.d/system-auth</pre>
+The output should show the following match:
+<pre>password sufficient pam_unix.so sha512 rounds=<sub idref="var_password_pam_unix_rounds" /></pre> Is it the case that rounds is not set to <sub idref="var_password_pam_unix_rounds" /> or is commented out?</td>
+    <td>Configure the operating system to store only encrypted representations of passwords.</td>
+    <td>Configure the number or rounds for the password hashing algorithm. This can be
+accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
+<br /><br />
+In file <tt>/etc/pam.d/system-auth</tt> append <tt>rounds=<sub idref="var_password_pam_unix_rounds" /></tt>
+to the <tt>pam_unix.so</tt> entry, as shown below:
+<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<sub idref="var_password_pam_unix_rounds" /></pre>
+The system's default number of rounds is 5000.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-000196</td>
+    <td>SRG-OS-000073-GPOS-00041</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must store only encrypted representations of passwords.</td>
+
     <td>CCE-88865-1: Set Password Hashing Algorithm in /etc/libuser.conf</td>
 
     <td>Passwords need to be protected at all times, and encryption is the standard method for protecting passwords. If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised.</td>
@@ -20799,8 +20642,8 @@ algorithm for password hashing:
 
     <td>Passwords need to be protected at all times, and encryption is the standard method for protecting passwords. If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised.</td>
     <td>In <tt>/etc/login.defs</tt>, add or correct the following line to ensure
-the system will use SHA-512 as the hashing algorithm:
-<pre>ENCRYPT_METHOD SHA512</pre></td>
+the system will use <sub idref="var_password_hashing_algorithm" /> as the hashing algorithm:
+<pre>ENCRYPT_METHOD <sub idref="var_password_hashing_algorithm" /></pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system stores only encrypted representations of passwords. If it does not, this is a finding.</td>
     <td>Verify that the shadow password suite configuration is set to encrypt password with a FIPS 140-3 approved cryptographic hashing algorithm.
@@ -20810,11 +20653,11 @@ Check the hashing algorithm that is being used to hash passwords with the follow
 
 $ sudo grep -i ENCRYPT_METHOD /etc/login.defs
 
-ENCRYPT_METHOD SHA512 Is it the case that ENCRYPT_METHOD is not set to SHA512?</td>
+ENCRYPT_METHOD <sub idref="var_password_hashing_algorithm" /> Is it the case that ENCRYPT_METHOD is not set to <sub idref="var_password_hashing_algorithm" />?</td>
     <td>Configure the operating system to store only encrypted representations of passwords.</td>
     <td>In <tt>/etc/login.defs</tt>, add or correct the following line to ensure
-the system will use SHA-512 as the hashing algorithm:
-<pre>ENCRYPT_METHOD SHA512</pre></td>
+the system will use <sub idref="var_password_hashing_algorithm" /> as the hashing algorithm:
+<pre>ENCRYPT_METHOD <sub idref="var_password_hashing_algorithm" /></pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -21984,6 +21827,51 @@ Linux filesystem embedded in small footprint systems. A
 <tt>cramfs</tt> image can be used without having to first
 decompress the image.</td>
     <td>low</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-000381</td>
+    <td>SRG-OS-000095-GPOS-00049</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must be configured to disable non-essential capabilities.</td>
+
+    <td>CCE-84139-5: Disable SCTP Support</td>
+
+    <td>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore may remain unsecured. They increase the risk to the platform by providing additional attack vectors.
+
+Operating systems are capable of providing a wide variety of functions and services. Some of the functions and services, provided by default, may not be necessary to support essential organizational operations (e.g., key missions, functions).
+
+Examples of non-essential capabilities include, but are not limited to, games, software packages, tools, and demonstration software, not related to requirements or providing a wide array of functionality not required for every mission, but which cannot be disabled.</td>
+    <td>The Stream Control Transmission Protocol (SCTP) is a
+transport layer protocol, designed to support the idea of
+message-oriented communication, with several streams of messages
+within one connection.
+
+To configure the system to prevent the <code>sctp</code>
+kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
+<pre>install sctp /bin/true</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system is configured to disable non-essential capabilities. If it does not, this is a finding.</td>
+    <td>
+If the system is configured to prevent the loading of the <code>sctp</code> kernel module,
+it will contain lines inside any file in <code>/etc/modprobe.d</code> or the deprecated<code> /etc/modprobe.conf</code>.
+These lines instruct the module loading system to run another program (such as <code>/bin/true</code>) upon a module <code>install</code> event.
+
+Run the following command to search for such lines in all files in <code>/etc/modprobe.d</code> and the deprecated <code>/etc/modprobe.conf</code>:
+<pre>$ grep -r sctp /etc/modprobe.conf /etc/modprobe.d</pre> Is it the case that no line is returned?</td>
+    <td>Configure the operating system to disable non-essential capabilities.</td>
+    <td>The Stream Control Transmission Protocol (SCTP) is a
+transport layer protocol, designed to support the idea of
+message-oriented communication, with several streams of messages
+within one connection.
+
+To configure the system to prevent the <code>sctp</code>
+kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
+<pre>install sctp /bin/true</pre></td>
+    <td>medium</td>
     <td></td>
     <td></td>
     <td></td>
@@ -26415,131 +26303,6 @@ For example:
 <pre>/org/gnome/login-screen/banner-message-enable</pre>
 After the settings have been set, run <tt>dconf update</tt>.
 The banner text must also be set.</td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
-  <tr>
-    <td>CCI-001384</td>
-    <td>SRG-OS-000228-GPOS-00088</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>Any publically accessible connection to the operating system must display the Standard Mandatory DoD Notice and Consent Banner before granting access to the system.</td>
-
-    <td>CCE-86529-5: Set the GNOME3 Login Warning Banner Text</td>
-
-    <td>Display of a standardized and approved use notification before granting access to the publicly accessible operating system ensures privacy and security notification verbiage used is consistent with applicable federal laws, Executive Orders, directives, policies, regulations, standards, and guidance.
-
-System use notifications are required only for access via logon interfaces with human users and are not required when such human interfaces do not exist.
-
-The banner must be formatted in accordance with applicable DoD policy. Use the following verbiage for operating systems that can accommodate banners of 1300 characters:
-
-"You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.
-
-By using this IS (which includes any device attached to this IS), you consent to the following conditions:
-
--The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.
-
--At any time, the USG may inspect and seize data stored on this IS.
-
--Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose.
-
--This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.
-
--Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details."
-
-Use the following verbiage for operating systems that have severe limitations on the number of characters that can be displayed in the banner:
-
-"I've readconsent to terms in IS user agreem't."</td>
-    <td>In the default graphical environment, configuring the login warning banner text
-in the GNOME Display Manager's login screen can be configured on the login
-screen by setting <tt>banner-message-text</tt> to <tt>'<i>APPROVED_BANNER</i>'</tt>
-where <i>APPROVED_BANNER</i> is the approved banner for your environment.
-<br /><br />
-To enable, add or edit <tt>banner-message-text</tt> to
-
-<tt>/etc/dconf/db/distro.d/00-security-settings</tt>. For example:
-<pre>[org/gnome/login-screen]
-banner-message-text='<i>APPROVED_BANNER</i>'</pre>
-Once the setting has been added, add a lock to
-<tt>/etc/dconf/db/distro.d/locks/00-security-settings-lock</tt> to prevent user modification.
-For example:
-<pre>/org/gnome/login-screen/banner-message-text</pre>
-
-After the settings have been set, run <tt>dconf update</tt>.
-When entering a warning banner that spans several lines, remember
-to begin and end the string with <tt>'</tt> and use <tt>\n</tt> for new lines.</td>
-    <td>Applicable - Configurable</td>
-    <td>Verify any publically accessible connection to the operating system displays the Standard Mandatory DoD Notice and Consent Banner before granting access to the system. 
-
-The banner must be formatted in accordance with applicable DoD policy. Use the following verbiage for operating systems that can accommodate banners of 1300 characters:
-
-"You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.
-
-By using this IS (which includes any device attached to this IS), you consent to the following conditions:
-
--The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.
-
--At any time, the USG may inspect and seize data stored on this IS.
-
--Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose.
-
--This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.
-
--Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details."
-
-Use the following verbiage for operating systems that have severe limitations on the number of characters that can be displayed in the banner:
-
-"I've read & consent to terms in IS user agreem't."
-
-If it does not, this is a finding.</td>
-    <td>
-To ensure the login warning banner text is properly set, run the following:
-<pre>$ grep banner-message-text /etc/dconf/db/distro.d/*</pre>
-If properly configured, the proper banner text will appear.
-To ensure the login warning banner text is locked and cannot be changed by a user, run the following:
-<pre>$ grep banner-message-text /etc/dconf/db/distro.d/locks/*</pre>
-If properly configured, the output should be <tt>/org/gnome/login-screen/banner-message-text</tt>. Is it the case that it does not?</td>
-    <td>Configure any publically accessible connection to the operating system to display the Standard Mandatory DoD Notice and Consent Banner before granting access to the system.
-
-The banner must be formatted in accordance with applicable DoD policy. Use the following verbiage for operating systems that can accommodate banners of 1300 characters:
-
-"You are accessing a U.S. Government (USG) Information System (IS) that is provided for USG-authorized use only.
-
-By using this IS (which includes any device attached to this IS), you consent to the following conditions:
-
--The USG routinely intercepts and monitors communications on this IS for purposes including, but not limited to, penetration testing, COMSEC monitoring, network operations and defense, personnel misconduct (PM), law enforcement (LE), and counterintelligence (CI) investigations.
-
--At any time, the USG may inspect and seize data stored on this IS.
-
--Communications using, or data stored on, this IS are not private, are subject to routine monitoring, interception, and search, and may be disclosed or used for any USG-authorized purpose.
-
--This IS includes security measures (e.g., authentication and access controls) to protect USG interests--not for your personal benefit or privacy.
-
--Notwithstanding the above, using this IS does not constitute consent to PM, LE or CI investigative searching or monitoring of the content of privileged communications, or work product, related to personal representation or services by attorneys, psychotherapists, or clergy, and their assistants. Such communications and work product are private and confidential. See User Agreement for details."
-
-Use the following verbiage for operating systems that have severe limitations on the number of characters that can be displayed in the banner:
-
-"I've read & consent to terms in IS user agreem't."</td>
-    <td>In the default graphical environment, configuring the login warning banner text
-in the GNOME Display Manager's login screen can be configured on the login
-screen by setting <tt>banner-message-text</tt> to <tt>'<i>APPROVED_BANNER</i>'</tt>
-where <i>APPROVED_BANNER</i> is the approved banner for your environment.
-<br /><br />
-To enable, add or edit <tt>banner-message-text</tt> to
-
-<tt>/etc/dconf/db/distro.d/00-security-settings</tt>. For example:
-<pre>[org/gnome/login-screen]
-banner-message-text='<i>APPROVED_BANNER</i>'</pre>
-Once the setting has been added, add a lock to
-<tt>/etc/dconf/db/distro.d/locks/00-security-settings-lock</tt> to prevent user modification.
-For example:
-<pre>/org/gnome/login-screen/banner-message-text</pre>
-
-After the settings have been set, run <tt>dconf update</tt>.
-When entering a warning banner that spans several lines, remember
-to begin and end the string with <tt>'</tt> and use <tt>\n</tt> for new lines.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -32184,6 +31947,33 @@ to one of the following values: <tt>syslog</tt>, <tt>single</tt>, <tt>halt</tt>.
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must off-load audit records onto a different system or media from the system being audited.</td>
 
+    <td>CCE-83648-6: Install audispd-plugins Package</td>
+
+    <td>Information stored in one location is vulnerable to accidental or incidental deletion or alteration.
+
+Off-loading is a common process in information systems with limited audit storage capacity.</td>
+    <td>The <code>audispd-plugins</code> package can be installed with the following command:
+<pre>
+$ sudo dnf install audispd-plugins</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system off-loads audit records onto a different system or media from the system being audited. If it does not, this is a finding.</td>
+    <td>Run the following command to determine if the <code>audispd-plugins</code> package is installed: <pre>$ rpm -q audispd-plugins</pre> Is it the case that the package is not installed?</td>
+    <td>Configure the operating system to off-load audit records onto a different system or media from the system being audited.</td>
+    <td>The <code>audispd-plugins</code> package can be installed with the following command:
+<pre>
+$ sudo dnf install audispd-plugins</pre></td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-001851</td>
+    <td>SRG-OS-000342-GPOS-00133</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must off-load audit records onto a different system or media from the system being audited.</td>
+
     <td>CCE-86871-1: Ensure Rsyslog Authenticates Off-Loaded Audit Records</td>
 
     <td>Information stored in one location is vulnerable to accidental or incidental deletion or alteration.
@@ -35106,7 +34896,7 @@ in <tt>/etc/sudoers.d/</tt>.</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must require users to re-authenticate for privilege escalation.</td>
 
-    <td>CCE-90029-0: The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+    <td>CCE-90029-0: Require Re-Authentication When Using the sudo Command</td>
 
     <td>Without re-authentication, users may access resources or perform tasks for which they do not have authorization. 
 
@@ -35280,7 +35070,7 @@ in <tt>/etc/sudoers.d/</tt>.</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must require users to re-authenticate when changing roles.</td>
 
-    <td>CCE-90029-0: The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+    <td>CCE-90029-0: Require Re-Authentication When Using the sudo Command</td>
 
     <td>Without re-authentication, users may access resources or perform tasks for which they do not have authorization. 
 
@@ -35422,7 +35212,7 @@ in <tt>/etc/sudoers.d/</tt>.</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must require users to re-authenticate when changing authenticators.</td>
 
-    <td>CCE-90029-0: The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+    <td>CCE-90029-0: Require Re-Authentication When Using the sudo Command</td>
 
     <td>Without re-authentication, users may access resources or perform tasks for which they do not have authorization. 
 
@@ -37347,55 +37137,6 @@ If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
 <pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
-  <tr>
-    <td>CCI-002884</td>
-    <td>SRG-OS-000392-GPOS-00172</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must audit all activities performed during nonlocal maintenance and diagnostic sessions.</td>
-
-    <td>CCE-83749-2: Record Any Attempts to Run restorecon</td>
-
-    <td>If events associated with nonlocal administrative access or diagnostic sessions are not logged, a major tool for assessing and investigating attacks would not be available.
-
-This requirement addresses auditing-related issues associated with maintenance tools used specifically for diagnostic and repair actions on organizational information systems.
-
-Nonlocal maintenance and diagnostic activities are those activities conducted by individuals communicating through a network, either an external network (e.g., the Internet) or an internal network. Local maintenance and diagnostic activities are those activities carried out by individuals physically present at the information system or information system component and not communicating across a network connection.
-
-This requirement applies to hardware/software diagnostic test equipment or tools. This requirement does not cover hardware/software components that may support information system maintenance, yet are a part of the system, for example, the software implementing "ping," "ls," "ipconfig," or the hardware and software implementing the monitoring port of an Ethernet switch.</td>
-    <td>At a minimum, the audit system should collect any execution attempt
-of the <tt>restorecon</tt> command for all users and root. If the <tt>auditd</tt>
-daemon is configured to use the <tt>augenrules</tt> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
-If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system audits all activities performed during nonlocal maintenance and diagnostic sessions. If it does not, this is a finding.</td>
-    <td>Verify that Red Hat Enterprise Linux 9 is configured to audit the execution of the "restorecon" command with the following command:
-
-$ sudo auditctl -l | grep restorecon
-
--a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid>=1000 -F auid!=unset -k privileged-restorecon Is it the case that the command does not return a line, or the line is commented out?</td>
-    <td>Configure the operating system to audit all activities performed during nonlocal maintenance and diagnostic sessions.</td>
-    <td>At a minimum, the audit system should collect any execution attempt
-of the <tt>restorecon</tt> command for all users and root. If the <tt>auditd</tt>
-daemon is configured to use the <tt>augenrules</tt> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
-If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -42352,15 +42093,7 @@ If "dmesg" does not show "NX (Execute Disable) protection" active, check the cpu
 $ sudo grep flags /proc/cpuinfo
 flags : fpu vme de pse tsc ms nx rdtscp lm constant_ts
 
-The output should contain the "nx" flag.
-
-Then, verify that there are no log messsages stating that NX is disabled in the system log. Run the following command:
-$ sudo grep -P "^.+protection: disabled.+" /var/log/dmesg
-The output should be empty.
-
-Then, check that NX is not disabled in the kernel command line.
-$ sudo grep -P ".+noexec[0-9]*=off.+" /proc/cmdline
-The output should be empty. Is it the case that NX is disabled?</td>
+The output should contain the "nx" flag. Is it the case that NX is disabled?</td>
     <td>Configure the operating system to implement non-executable data to protect its memory from unauthorized code execution.</td>
     <td>Reboot the system and enter the BIOS or Setup configuration menu.
 Navigate the BIOS configuration menu and make sure that the option is enabled. The setting may be located
@@ -42416,48 +42149,6 @@ default Grub2 command line for Linux operating systems. Modify the line within
 <tt>/etc/default/grub</tt> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... slub_debug=<sub idref="var_slub_debug_options" /> ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="slub_debug=<sub idref="var_slub_debug_options" />"</pre></td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
-  <tr>
-    <td>CCI-002824</td>
-    <td>SRG-OS-000433-GPOS-00192</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must implement non-executable data to protect its memory from unauthorized code execution.</td>
-
-    <td>CCE-83970-4: Enable ExecShield via sysctl</td>
-
-    <td>Some adversaries launch attacks with the intent of executing code in non-executable regions of memory or in memory locations that are prohibited. Security safeguards employed to protect memory include, for example, data execution prevention and address space layout randomization. Data execution prevention safeguards can either be hardware-enforced or software-enforced with hardware providing the greater strength of mechanism.
-
-Examples of attacks are buffer overflow attacks.</td>
-    <td>By default on Red Hat Enterprise Linux 9 64-bit systems, ExecShield is
-enabled and can only be disabled if the hardware does not support
-ExecShield or is disabled in <tt>/etc/default/grub</tt>.</td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system implements non-executable data to protect its memory from unauthorized code execution. If it does not, this is a finding.</td>
-    <td>To verify ExecShield is enabled on 64-bit Red Hat Enterprise Linux 9 systems,
-run the following command:
-<pre>$ dmesg | grep '[NX|DX]*protection'</pre>
-The output should not contain <tt>'disabled by kernel command line option'</tt>.
-Inspect the form of default GRUB 2 command line for the Linux operating system
-in <tt>/etc/default/grub</tt>. If it includes <tt>noexec=off</tt>,
-then the parameter will be configured for newly installed kernels.
-First check if the GRUB recovery is enabled:
-<pre>$ sudo grep 'GRUB_DISABLE_RECOVERY' /etc/default/grub</pre>
-If this option is set to true, then check that a line is output by the following command:
-<pre>$ sudo grep 'GRUB_CMDLINE_LINUX_DEFAULT.*noexec=off.*' /etc/default/grub</pre>
-If the recovery is disabled, check the line with
-<pre>$ sudo grep 'GRUB_CMDLINE_LINUX.*noexec=off.*' /etc/default/grub</pre>.Moreover, command line parameters for currently installed kernels should be checked as well.
-Run the following command:
-<pre>$ sudo grubby --info=ALL | grep args | grep -v 'noexec=off'</pre>
-The command should not return any output. Is it the case that ExecShield is not supported by the hardware, is not enabled, or has been disabled by the kernel configuration.?</td>
-    <td>Configure the operating system to implement non-executable data to protect its memory from unauthorized code execution.</td>
-    <td>By default on Red Hat Enterprise Linux 9 64-bit systems, ExecShield is
-enabled and can only be disabled if the hardware does not support
-ExecShield or is disabled in <tt>/etc/default/grub</tt>.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -49170,51 +48861,6 @@ utility to read audit rules during daemon startup, add the following lines to
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must generate audit records when successful/unsuccessful attempts to modify security objects occur.</td>
 
-    <td>CCE-83749-2: Record Any Attempts to Run restorecon</td>
-
-    <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
-
-Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
-    <td>At a minimum, the audit system should collect any execution attempt
-of the <tt>restorecon</tt> command for all users and root. If the <tt>auditd</tt>
-daemon is configured to use the <tt>augenrules</tt> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
-If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system generates audit records when successful/unsuccessful attempts to modify security objects occur. If it does not, this is a finding.</td>
-    <td>Verify that Red Hat Enterprise Linux 9 is configured to audit the execution of the "restorecon" command with the following command:
-
-$ sudo auditctl -l | grep restorecon
-
--a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid>=1000 -F auid!=unset -k privileged-restorecon Is it the case that the command does not return a line, or the line is commented out?</td>
-    <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to modify security objects occur.</td>
-    <td>At a minimum, the audit system should collect any execution attempt
-of the <tt>restorecon</tt> command for all users and root. If the <tt>auditd</tt>
-daemon is configured to use the <tt>augenrules</tt> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
-If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
-  <tr>
-    <td>CCI-000172</td>
-    <td>SRG-OS-000463-GPOS-00207</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must generate audit records when successful/unsuccessful attempts to modify security objects occur.</td>
-
     <td>CCE-83750-0: Record Any Attempts to Run semanage</td>
 
     <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -49388,51 +49034,6 @@ If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
 <pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
-  <tr>
-    <td>CCI-000172</td>
-    <td>SRG-OS-000465-GPOS-00209</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must generate audit records when successful/unsuccessful attempts to modify categories of information (e.g., classification levels) occur.</td>
-
-    <td>CCE-83749-2: Record Any Attempts to Run restorecon</td>
-
-    <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
-
-Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
-    <td>At a minimum, the audit system should collect any execution attempt
-of the <tt>restorecon</tt> command for all users and root. If the <tt>auditd</tt>
-daemon is configured to use the <tt>augenrules</tt> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
-If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system generates audit records when successful/unsuccessful attempts to modify categories of information (e.g., classification levels) occur. If it does not, this is a finding.</td>
-    <td>Verify that Red Hat Enterprise Linux 9 is configured to audit the execution of the "restorecon" command with the following command:
-
-$ sudo auditctl -l | grep restorecon
-
--a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid>=1000 -F auid!=unset -k privileged-restorecon Is it the case that the command does not return a line, or the line is commented out?</td>
-    <td>Configure the operating system to generate audit records when successful/unsuccessful attempts to modify categories of information (e.g., classification levels) occur.</td>
-    <td>At a minimum, the audit system should collect any execution attempt
-of the <tt>restorecon</tt> command for all users and root. If the <tt>auditd</tt>
-daemon is configured to use the <tt>augenrules</tt> program to read audit rules
-during daemon startup (the default), add the following lines to a file with suffix
-<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
-If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
-utility to read audit rules during daemon startup, add the following lines to
-<tt>/etc/audit/audit.rules</tt> file:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -60544,7 +60145,7 @@ To properly set the group owner of <code>/etc/ssh/sshd_config</code>, run the co
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
 
-    <td>CCE-83629-6: All Interactive User Home Directories Must Be Group-Owned By The Primary User</td>
+    <td>CCE-83629-6: All Interactive User Home Directories Must Be Group-Owned By The Primary Group</td>
 
     <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
 
@@ -61985,6 +61586,49 @@ kernel module from being loaded, add the following line to the file <code>/etc/m
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
 
+    <td>CCE-84139-5: Disable SCTP Support</td>
+
+    <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
+
+Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
+    <td>The Stream Control Transmission Protocol (SCTP) is a
+transport layer protocol, designed to support the idea of
+message-oriented communication, with several streams of messages
+within one connection.
+
+To configure the system to prevent the <code>sctp</code>
+kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
+<pre>install sctp /bin/true</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
+    <td>
+If the system is configured to prevent the loading of the <code>sctp</code> kernel module,
+it will contain lines inside any file in <code>/etc/modprobe.d</code> or the deprecated<code> /etc/modprobe.conf</code>.
+These lines instruct the module loading system to run another program (such as <code>/bin/true</code>) upon a module <code>install</code> event.
+
+Run the following command to search for such lines in all files in <code>/etc/modprobe.d</code> and the deprecated <code>/etc/modprobe.conf</code>:
+<pre>$ grep -r sctp /etc/modprobe.conf /etc/modprobe.d</pre> Is it the case that no line is returned?</td>
+    <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
+    <td>The Stream Control Transmission Protocol (SCTP) is a
+transport layer protocol, designed to support the idea of
+message-oriented communication, with several streams of messages
+within one connection.
+
+To configure the system to prevent the <code>sctp</code>
+kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
+<pre>install sctp /bin/true</pre></td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-000366</td>
+    <td>SRG-OS-000480-GPOS-00227</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
+
     <td>CCE-83851-6: Disable Modprobe Loading of USB Storage Driver</td>
 
     <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
@@ -62070,43 +61714,6 @@ untrusted networks. As such, IPsec can be used to circumvent certain
 network requirements such as filtering. Verify that if any IPsec connection
 (<tt>conn</tt>) configured in <tt>/etc/ipsec.conf</tt> and <tt>/etc/ipsec.d</tt>
 exists is an approved organizational connection.</td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
-  <tr>
-    <td>CCI-000366</td>
-    <td>SRG-OS-000480-GPOS-00227</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-
-    <td>CCE-86040-3: Add nosuid Option to /boot/efi</td>
-
-    <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
-
-Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
-    <td>The <tt>nosuid</tt> mount option can be used to prevent
-execution of setuid programs in <tt>/boot/efi</tt>. The SUID and SGID permissions
-should not be required on the boot partition.
-Add the <code>nosuid</code> option to the fourth column of
-<tt>/etc/fstab</tt> for the line which controls mounting of
-<code>/boot/efi</code>.</td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
-    <td>Verify the <tt>nosuid</tt> option is configured for the <tt>/boot/efi</tt> mount point,
-    run the following command:
-    <pre>$ sudo mount | grep '\s/boot/efi\s'</pre>
-    <pre>. . . /boot/efi . . . nosuid . . .</pre>
- Is it the case that the "/boot/efi" file system does not have the "nosuid" option set?</td>
-    <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-    <td>The <tt>nosuid</tt> mount option can be used to prevent
-execution of setuid programs in <tt>/boot/efi</tt>. The SUID and SGID permissions
-should not be required on the boot partition.
-Add the <code>nosuid</code> option to the fourth column of
-<tt>/etc/fstab</tt> for the line which controls mounting of
-<code>/boot/efi</code>.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -62914,46 +62521,6 @@ $ sudo dnf install firewalld</pre></td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
 
-    <td>CCE-83549-6: Remove the GDM Package Group</td>
-
-    <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
-
-Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
-    <td>
-By removing the <tt>gdm</tt> package, the system no longer has GNOME installed
-
-installed. If X Windows is not installed then the system cannot boot into graphical user mode.
-This prevents the system from being accidentally or maliciously booted into a <tt>graphical.target</tt>
-mode. To do so, run the following command:
-
-<pre>$ sudo yum remove gdm</pre></td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
-    <td>To ensure the gdm package group is removed, run the following command:
-<pre>$ rpm -qi gdm</pre>
-The output should be:
-<pre>package gdm is not installed</pre> Is it the case that gdm has not been removed?</td>
-    <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-    <td>
-By removing the <tt>gdm</tt> package, the system no longer has GNOME installed
-
-installed. If X Windows is not installed then the system cannot boot into graphical user mode.
-This prevents the system from being accidentally or maliciously booted into a <tt>graphical.target</tt>
-mode. To do so, run the following command:
-
-<pre>$ sudo yum remove gdm</pre></td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
-  <tr>
-    <td>CCI-000366</td>
-    <td>SRG-OS-000480-GPOS-00227</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-
     <td>CCE-83494-5: Ensure gnutls-utils is installed</td>
 
     <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
@@ -63056,6 +62623,33 @@ and IKE, which permits the creation of secure tunnels over
 untrusted networks. The <code>libreswan</code> package can be installed with the following command:
 <pre>
 $ sudo dnf install libreswan</pre></td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-000366</td>
+    <td>SRG-OS-000480-GPOS-00227</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
+
+    <td>CCE-89706-6: Ensure nss-tools is installed</td>
+
+    <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
+
+Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
+    <td>The <code>nss-tools</code> package can be installed with the following command:
+<pre>
+$ sudo dnf install nss-tools</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
+    <td>Run the following command to determine if the <code>nss-tools</code> package is installed: <pre>$ rpm -q nss-tools</pre> Is it the case that the package is not installed?</td>
+    <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
+    <td>The <code>nss-tools</code> package can be installed with the following command:
+<pre>
+$ sudo dnf install nss-tools</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -65144,35 +64738,6 @@ To make sure that the setting is persistent, add the following line to a file in
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
 
-    <td>CCE-84016-5: Disable Kernel Parameter for Accepting Secure ICMP Redirects on all IPv4 Interfaces</td>
-
-    <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
-
-Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
-    <td>To set the runtime status of the <code>net.ipv4.conf.all.secure_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.secure_redirects=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>net.ipv4.conf.all.secure_redirects = 0</pre></td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
-    <td>The runtime status of the <code>net.ipv4.conf.all.secure_redirects</code> kernel parameter can be queried
-by running the following command:
-<pre>$ sysctl net.ipv4.conf.all.secure_redirects</pre>
-<code>0</code>.
- Is it the case that the correct value is not returned?</td>
-    <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-    <td>To set the runtime status of the <code>net.ipv4.conf.all.secure_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.secure_redirects=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>net.ipv4.conf.all.secure_redirects = 0</pre></td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
-  <tr>
-    <td>CCI-000366</td>
-    <td>SRG-OS-000480-GPOS-00227</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-
     <td>CCE-83997-7: Disable Kernel Parameter for Sending ICMP Redirects on all IPv4 Interfaces</td>
 
     <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
@@ -65336,35 +64901,6 @@ by running the following command:
     <td>To set the runtime status of the <code>net.ipv4.icmp_echo_ignore_broadcasts</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.icmp_echo_ignore_broadcasts=1</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>net.ipv4.icmp_echo_ignore_broadcasts = 1</pre></td>
     <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
-  <tr>
-    <td>CCI-000366</td>
-    <td>SRG-OS-000480-GPOS-00227</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-
-    <td>CCE-84015-7: Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces</td>
-
-    <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
-
-Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
-    <td>To set the runtime status of the <code>net.ipv4.icmp_ignore_bogus_error_responses</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.icmp_ignore_bogus_error_responses=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>net.ipv4.icmp_ignore_bogus_error_responses = 1</pre></td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
-    <td>The runtime status of the <code>net.ipv4.icmp_ignore_bogus_error_responses</code> kernel parameter can be queried
-by running the following command:
-<pre>$ sysctl net.ipv4.icmp_ignore_bogus_error_responses</pre>
-<code>1</code>.
- Is it the case that the correct value is not returned?</td>
-    <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-    <td>To set the runtime status of the <code>net.ipv4.icmp_ignore_bogus_error_responses</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.icmp_ignore_bogus_error_responses=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>net.ipv4.icmp_ignore_bogus_error_responses = 1</pre></td>
-    <td>unknown</td>
     <td></td>
     <td></td>
     <td></td>
@@ -65754,50 +65290,6 @@ This is not applicable if NFS is not implemented. Is it the case that the settin
     <td>Using Kerberos on all exported mounts prevents a malicious client or user from
 impersonating a system user. To cryptography authenticate users to the NFS server,
 add <tt>sec=krb5:krb5i:krb5p</tt> to each export in <tt>/etc/exports</tt>.</td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
-  <tr>
-    <td>CCI-000366</td>
-    <td>SRG-OS-000480-GPOS-00227</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-
-    <td>CCE-84106-4: Disable graphical user interface</td>
-
-    <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
-
-Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
-    <td>By removing the following packages,  the system no longer has X Windows installed.
-
-<tt>xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</tt>
-
-If X Windows is not installed then the system cannot boot into graphical user mode.
-This prevents the system from being accidentally or maliciously booted into a <tt>graphical.target</tt>
-mode. To do so, run the following command:
-
-<pre>sudo dnf remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</pre></td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
-    <td>To ensure the X Windows package group is removed, run the following command:
-
-<pre>$ rpm -qi xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</pre>
-
-For each <tt>package</tt> mentioned above you should receive following line:
-<pre>package &lt;package&gt; is not installed</pre> Is it the case that xorg related packages are not removed and run level is not correctly configured?</td>
-    <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-    <td>By removing the following packages,  the system no longer has X Windows installed.
-
-<tt>xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</tt>
-
-If X Windows is not installed then the system cannot boot into graphical user mode.
-This prevents the system from being accidentally or maliciously booted into a <tt>graphical.target</tt>
-mode. To do so, run the following command:
-
-<pre>sudo dnf remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>

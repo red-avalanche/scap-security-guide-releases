@@ -6,7 +6,7 @@
 <body>
 <br><br><div style="text-align: center; font-size: x-large; font-weight:bold">DISA STIG for Oracle Linux 8</div>
 <div style="text-align: center; font-size: normal ">This profile contains configuration checks that align to the
-DISA STIG for Oracle Linux 8 V1R4.</div>
+DISA STIG for Oracle Linux 8 V1R5.</div>
 <br><br><style type="text/css">
 		table
 		{
@@ -1604,7 +1604,7 @@ The output should not return any interactive users.
 <tr>
 <td>xccdf_org.ssgproject.content_rule_accounts_users_home_files_groupownership</td>
 <td>medium</td>
-<td>All User Files and Directories In The Home Directory Must Be Group-Owned By The Primary User</td>
+<td>All User Files and Directories In The Home Directory Must Be Group-Owned By The Primary Group</td>
 <td>If a local interactive users files are group-owned by a group of which the
 user is not a member, unintended users may be able to access them.</td>
 <td>Change the group of a local interactive users files and directories to a
@@ -4839,14 +4839,6 @@ $ sudo grep flags /proc/cpuinfo
 flags : fpu vme de pse tsc ms nx rdtscp lm constant_ts
 
 The output should contain the "nx" flag.
-
-Then, verify that there are no log messsages stating that NX is disabled in the system log. Run the following command:
-$ sudo grep -P "^.+protection: disabled.+" /var/log/dmesg
-The output should be empty.
-
-Then, check that NX is not disabled in the kernel command line.
-$ sudo grep -P ".+noexec[0-9]*=off.+" /proc/cmdline
-The output should be empty.
       Is it the case that NX is disabled?
       </pre></td>
 <td>SRG-OS-000433-GPOS-00192<br>SRG-OS-000433-GPOS-00193<br>
@@ -4971,9 +4963,9 @@ clean_requirements_on_remove=1
 <td></td>
 </tr>
 <tr>
-<td>xccdf_org.ssgproject.content_rule_configure_bashrc_exec_tmux</td>
+<td>xccdf_org.ssgproject.content_rule_configure_bashrc_tmux</td>
 <td>medium</td>
-<td>Support session locking with tmux</td>
+<td>Support session locking with tmux (not enforcing)</td>
 <td>Unlike <code>bash</code> itself, the <code>tmux</code> terminal multiplexer
 provides a mechanism to lock sessions after period of inactivity.
 A session lock is a temporary action taken when a user stops work and moves away from the
@@ -4988,7 +4980,7 @@ Determine the location of the tmux script with the following command:
 
 $ sudo grep tmux /etc/bashrc /etc/profile.d/*
 
-/etc/profile.d/tmux.sh:  case "$name" in (sshd|login) exec tmux ;; esac
+/etc/profile.d/tmux.sh:  case "$name" in (sshd|login) tmux ;; esac
 
 Review the tmux script by using the following example:
 
@@ -4997,7 +4989,7 @@ $ cat /etc/profile.d/tmux.sh
 if [ "$PS1" ]; then
 parent=$(ps -o ppid= -p $$)
 name=$(ps -o comm= -p $parent)
-case "$name" in (sshd|login) exec tmux ;; esac
+case "$name" in (sshd|login) tmux ;; esac
 fi
 
 If the shell file is not configured as the example above, is commented out, or is missing, this is a finding.
@@ -5368,6 +5360,38 @@ $ sudo ls -al /etc/tmux.conf
 <td>CCI-000056<br>CCI-000058<br>
 </td>
 <td>AC-11 b<br>AC-11 a<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_configure_tmux_lock_keybinding</td>
+<td>low</td>
+<td>Configure the tmux lock session key binding</td>
+<td>The <code>tmux</code> package allows for a session lock to be implemented and configured.
+However, the session lock is implemented by an external command. The <code>tmux</code>
+default configuration does not contain an effective session lock.</td>
+<td>To set a key binding for the screen locking in <code>tmux</code> terminal multiplexer,
+the <code>session-lock</code> command must be bound to a key.
+Add the following line to <code>/etc/tmux.conf</code>:
+<pre>bind X lock-session</pre>.
+The console can now be locked with the following key combination:
+<pre>Ctrl+b Shift+x</pre>
+</td>
+<td><pre>Verify Oracle Linux 8 enables the user to initiate a session lock trhough key bindings with the following commands:
+
+$ grep "lock-session" /etc/tmux.conf
+
+bind X lock-session
+
+Then, verify that the /etc/tmux.conf file can be read by other users than root:
+
+$ sudo ls -al /etc/tmux.conf
+      Is it the case that the "lock-session" is not bound to a specific key?
+      </pre></td>
+<td>SRG-OS-000028-GPOS-00009<br>
+</td>
+<td>CCI-000056<br>
+</td>
+<td>AC-11 b<br>
 </td>
 </tr>
 <tr>
@@ -6686,7 +6710,7 @@ root
 <tr>
 <td>xccdf_org.ssgproject.content_rule_file_groupownership_home_directories</td>
 <td>medium</td>
-<td>All Interactive User Home Directories Must Be Group-Owned By The Primary User</td>
+<td>All Interactive User Home Directories Must Be Group-Owned By The Primary Group</td>
 <td>If the Group Identifier (GID) of a local interactive users home directory is
 not the same as the primary GID of the user, this would allow unauthorized
 access to the users files, and users that share the same group may not be
@@ -10830,8 +10854,8 @@ that are encrypted with a weak algorithm are no more protected than if they are 
 <br><br>
 Using a stronger hashing algorithm makes password cracking attacks more difficult.</td>
 <td>In <code>/etc/login.defs</code>, add or correct the following line to ensure
-the system will use SHA-512 as the hashing algorithm:
-<pre>ENCRYPT_METHOD SHA512</pre>
+the system will use <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm" use="legacy"></xccdf-1.2:sub> as the hashing algorithm:
+<pre>ENCRYPT_METHOD <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 <td><pre>
 Verify that the shadow password suite configuration is set to encrypt password with a FIPS 140-2 approved cryptographic hashing algorithm.
@@ -10840,8 +10864,8 @@ Check the hashing algorithm that is being used to hash passwords with the follow
 
 $ sudo grep -i ENCRYPT_METHOD /etc/login.defs
 
-ENCRYPT_METHOD SHA512
-      Is it the case that ENCRYPT_METHOD is not set to SHA512?
+ENCRYPT_METHOD 
+      Is it the case that ENCRYPT_METHOD is not set to &lt;sub idref="var_password_hashing_algorithm" /&gt;?
       </pre></td>
 <td>SRG-OS-000073-GPOS-00041<br>
 </td>
@@ -10992,34 +11016,6 @@ $ sudo ssh-keygen -y -f /path/to/file
 </td>
 </tr>
 <tr>
-<td>xccdf_org.ssgproject.content_rule_sshd_disable_compression</td>
-<td>medium</td>
-<td>Disable Compression Or Set Compression to delayed</td>
-<td>If compression is allowed in an SSH connection prior to authentication,
-vulnerabilities in the compression software could result in compromise of the
-system from an unauthenticated connection, potentially with root privileges.</td>
-<td>Compression is useful for slow network connections over long
-distances but can cause performance issues on local LANs. If use of compression
-is required, it should be enabled only after a user has authenticated; otherwise,
-it should be disabled. To disable compression or delay compression until after
-a user has successfully authenticated, add or correct the following line in the
-<code>/etc/ssh/sshd_config</code> file:
-<pre>Compression <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_sshd_disable_compression" use="legacy"></xccdf-1.2:sub></pre>
-</td>
-<td><pre>To check if compression is enabled or set correctly, run the
-following command:
-$ sudo grep Compression /etc/ssh/sshd_config
-If configured properly, output should be no or delayed.
-      Is it the case that it is commented out, or is not set to no or delayed?
-      </pre></td>
-<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
-</td>
-<td>CCI-000366<br>
-</td>
-<td>CM-6 b<br>
-</td>
-</tr>
-<tr>
 <td>xccdf_org.ssgproject.content_rule_sshd_disable_empty_passwords</td>
 <td>high</td>
 <td>Disable SSH Access via Empty Passwords</td>
@@ -11096,8 +11092,8 @@ If a line indicating no is returned, then the required value is set.
 <td>Disable Kerberos Authentication</td>
 <td>Kerberos authentication for SSH is often implemented using GSSAPI. If Kerberos
 is enabled through SSH, the SSH daemon provides a means of access to the
-system's Kerberos implementation. 
-Configuring these settings for the SSH daemon provides additional assurance that remote logon via SSH will not use unused methods of authentication, even in the event of misconfiguration elsewhere. </td>
+system's Kerberos implementation.
+Configuring these settings for the SSH daemon provides additional assurance that remote logon via SSH will not use unused methods of authentication, even in the event of misconfiguration elsewhere.</td>
 <td>Unless needed, SSH should not permit extraneous or unnecessary
 authentication mechanisms like Kerberos.
 <br>
@@ -11467,6 +11463,34 @@ the ClientAliveInterval is set.
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_sshd_use_approved_kex_ordered_stig</td>
+<td>medium</td>
+<td>Use Only FIPS 140-2 Validated Key Exchange Algorithms</td>
+<td>DoD information systems are required to use FIPS-approved key exchange algorithms.
+The system will attempt to use the first algorithm presented by the client that matches
+the server list. Listing the values "strongest to weakest" is a method to ensure the use
+of the strongest algorithm available to secure the SSH connection.</td>
+<td>Limit the key exchange algorithms to those  which are FIPS-approved.
+Add or modify the following line in <code>/etc/crypto-policies/back-ends/opensshserver.config</code>
+<pre>CRYPTO_POLICY='-oKexAlgorithms=ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512'</pre>
+This rule ensures that only the key exchange algorithms mentioned
+above (or their subset) are configured for use, keeping the given
+order of algorithms.</td>
+<td><pre>Only FIPS-approved key exchange algorithms must be used. To verify that only FIPS-approved
+key exchange algorithms are in use, run the following command:
+$ sudo grep -i kexalgorithms /etc/crypto-policies/back-ends/opensshserver.config
+The output should contain only following algorithms (or a subset) in the exact order:
+CRYPTO_POLICY='-oKexAlgorithms=ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512'
+      Is it the case that KexAlgorithms option is commented out, contains non-approved algorithms, or the FIPS-approved algorithms are not in the exact order?
+      </pre></td>
+<td>SRG-OS-000250-GPOS-00093<br>
+</td>
+<td>CCI-001453<br>
+</td>
+<td>AC-17 (2)<br>
+</td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_sshd_use_strong_rng</td>
 <td>low</td>
 <td>SSH server uses strong entropy to seed</td>
@@ -11502,7 +11526,7 @@ server and client displays if the sshd proxy display is configured to listen
 on the wildcard address. By default, sshd binds the forwarding server to the
 loopback address and sets the hostname part of the <code>DISPLAY</code>
 environment variable to localhost. This prevents remote hosts from
-connecting to the proxy display.  </td>
+connecting to the proxy display.</td>
 <td>The SSH daemon should prevent remote hosts from connecting to the proxy
 display.
 <br>
@@ -11787,7 +11811,7 @@ The command should return no output.
 <tr>
 <td>xccdf_org.ssgproject.content_rule_sudo_require_reauthentication</td>
 <td>medium</td>
-<td>The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+<td>Require Re-Authentication When Using the sudo Command</td>
 <td>Without re-authentication, users may access resources or perform tasks for which they
 do not have authorization.
 <br><br>

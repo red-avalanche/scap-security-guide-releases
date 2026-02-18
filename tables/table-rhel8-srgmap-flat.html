@@ -1560,13 +1560,13 @@ The console can now be locked with the following key combination:
     <td>Verify the operating system retains a user's session lock until that user reestablishes access using established identification and authentication procedures. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 enables the user to initiate a session lock trhough key bindings with the following commands:
 
-<pre>$ grep "bind X lock-session" /etc/tmux.conf</pre>
+<pre>$ grep "lock-session" /etc/tmux.conf</pre>
 
 <pre>bind X lock-session</pre>
 
 Then, verify that the /etc/tmux.conf file can be read by other users than root:
 
-<pre>$ sudo ls -al /etc/tmux.conf</pre> Is it the case that the "lock-session" is not bound to the X key?</td>
+<pre>$ sudo ls -al /etc/tmux.conf</pre> Is it the case that the "lock-session" is not bound to a specific key?</td>
     <td>Configure the operating system to retain a user's session lock until that user reestablishes access using established identification and authentication procedures.</td>
     <td>To set a key binding for the screen locking in <tt>tmux</tt> terminal multiplexer,
 the <tt>session-lock</tt> command must be bound to a key.
@@ -2071,13 +2071,13 @@ The console can now be locked with the following key combination:
     <td>Verify the operating system provides the capability for users to directly initiate a session lock for all connection types. If it does not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 8 enables the user to initiate a session lock trhough key bindings with the following commands:
 
-<pre>$ grep "bind X lock-session" /etc/tmux.conf</pre>
+<pre>$ grep "lock-session" /etc/tmux.conf</pre>
 
 <pre>bind X lock-session</pre>
 
 Then, verify that the /etc/tmux.conf file can be read by other users than root:
 
-<pre>$ sudo ls -al /etc/tmux.conf</pre> Is it the case that the "lock-session" is not bound to the X key?</td>
+<pre>$ sudo ls -al /etc/tmux.conf</pre> Is it the case that the "lock-session" is not bound to a specific key?</td>
     <td>Configure the operating system to provide the capability for users to directly initiate a session lock for all connection types.</td>
     <td>To set a key binding for the screen locking in <tt>tmux</tt> terminal multiplexer,
 the <tt>session-lock</tt> command must be bound to a key.
@@ -18975,12 +18975,15 @@ This requirement verifies that a certification path to an accepted trust anchor 
 
 
 
+
   <tr>
-    <td>V-56685</td>
+    <td>CCI-000186</td>
     <td>SRG-OS-000067-GPOS-00035</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system, for PKI-based authentication, must enforce authorized access to the corresponding private key.</td>
-    <td></td>
+
+    <td>CCE-90781-6: Verify the SSH Private Key Files Have a Passcode</td>
+
     <td> If the private key is discovered, an attacker can use the key to authenticate as an authorized user and gain access to the network infrastructure.
 
 The cornerstone of the PKI is the private key used to encrypt or digitally sign information.
@@ -18988,17 +18991,28 @@ The cornerstone of the PKI is the private key used to encrypt or digitally sign 
 If the private key is stolen, this will lead to the compromise of the authentication and non-repudiation gained through PKI because the attacker can use the private key to digitally sign documents and pretend to be the authorized user.
 
 Both the holders of a digital certificate and the issuing authority must protect the computers, storage devices, or whatever they use to keep the private keys.</td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
+    <td>When creating SSH key pairs, always use a passcode.
+<br />
+You can create such keys with the following command:
+<pre>$ sudo ssh-keygen -n [passphrase]</pre>
+Red Hat Enterprise Linux 8, for certificate-based authentication, must enforce authorized access to the corresponding private key.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system, for PKI-based authentication, enforces authorized access to the corresponding private key. If it does not, this is a finding.</td>
+    <td>For each private key stored on the system, use the following command:
+<pre>$ sudo ssh-keygen -y -f /path/to/file</pre>
+If the contents of the key are displayed, this is a finding. Is it the case that no ssh private key is accessible without a passcode?</td>
+    <td>Configure the operating system, for PKI-based authentication, to enforce authorized access to the corresponding private key.</td>
+    <td>When creating SSH key pairs, always use a passcode.
+<br />
+You can create such keys with the following command:
+<pre>$ sudo ssh-keygen -n [passphrase]</pre>
+Red Hat Enterprise Linux 8, for certificate-based authentication, must enforce authorized access to the corresponding private key.</td>
+    <td>medium</td>
     <td></td>
     <td></td>
     <td></td>
   </tr>
+
 
 
 
@@ -19556,8 +19570,8 @@ this is a finding.</td>
 
     <td>Passwords need to be protected at all times, and encryption is the standard method for protecting passwords. If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised.</td>
     <td>In <tt>/etc/login.defs</tt>, add or correct the following line to ensure
-the system will use SHA-512 as the hashing algorithm:
-<pre>ENCRYPT_METHOD SHA512</pre></td>
+the system will use <sub idref="var_password_hashing_algorithm" /> as the hashing algorithm:
+<pre>ENCRYPT_METHOD <sub idref="var_password_hashing_algorithm" /></pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system stores only encrypted representations of passwords. If it does not, this is a finding.</td>
     <td>
@@ -19567,11 +19581,11 @@ Check the hashing algorithm that is being used to hash passwords with the follow
 
 $ sudo grep -i ENCRYPT_METHOD /etc/login.defs
 
-ENCRYPT_METHOD SHA512 Is it the case that ENCRYPT_METHOD is not set to SHA512?</td>
+ENCRYPT_METHOD <sub idref="var_password_hashing_algorithm" /> Is it the case that ENCRYPT_METHOD is not set to <sub idref="var_password_hashing_algorithm" />?</td>
     <td>Configure the operating system to store only encrypted representations of passwords.</td>
     <td>In <tt>/etc/login.defs</tt>, add or correct the following line to ensure
-the system will use SHA-512 as the hashing algorithm:
-<pre>ENCRYPT_METHOD SHA512</pre></td>
+the system will use <sub idref="var_password_hashing_algorithm" /> as the hashing algorithm:
+<pre>ENCRYPT_METHOD <sub idref="var_password_hashing_algorithm" /></pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -26526,6 +26540,45 @@ text and is not commented out:
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must implement cryptography to protect the integrity of remote access sessions.</td>
 
+    <td>CCE-86059-3: Use Only FIPS 140-2 Validated Key Exchange Algorithms</td>
+
+    <td>Without cryptographic integrity protections, information can be altered by unauthorized users without detection.
+
+Remote access (e.g., RDP) is access to DoD nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
+
+Cryptographic mechanisms used for protecting the integrity of information include, for example, signed hash functions using asymmetric cryptography enabling distribution of the public key to verify the hash information while maintaining the confidentiality of the secret key used to generate the hash.</td>
+    <td>Limit the key exchange algorithms to those  which are FIPS-approved.
+Add or modify the following line in <tt>/etc/crypto-policies/back-ends/opensshserver.config</tt>
+<pre>CRYPTO_POLICY='-oKexAlgorithms=ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512'</pre>
+This rule ensures that only the key exchange algorithms mentioned
+above (or their subset) are configured for use, keeping the given
+order of algorithms.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system implements cryptography to protect the integrity of remote access sessions. If it does not, this is a finding.</td>
+    <td>Only FIPS-approved key exchange algorithms must be used. To verify that only FIPS-approved
+key exchange algorithms are in use, run the following command:
+<pre>$ sudo grep -i kexalgorithms /etc/crypto-policies/back-ends/opensshserver.config</pre>
+The output should contain only following algorithms (or a subset) in the exact order:
+<pre>CRYPTO_POLICY='-oKexAlgorithms=ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512'</pre> Is it the case that KexAlgorithms option is commented out, contains non-approved algorithms, or the FIPS-approved algorithms are not in the exact order?</td>
+    <td>Configure the operating system to implement cryptography to protect the integrity of remote access sessions.</td>
+    <td>Limit the key exchange algorithms to those  which are FIPS-approved.
+Add or modify the following line in <tt>/etc/crypto-policies/back-ends/opensshserver.config</tt>
+<pre>CRYPTO_POLICY='-oKexAlgorithms=ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256,diffie-hellman-group14-sha256,diffie-hellman-group16-sha512,diffie-hellman-group18-sha512'</pre>
+This rule ensures that only the key exchange algorithms mentioned
+above (or their subset) are configured for use, keeping the given
+order of algorithms.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-001453</td>
+    <td>SRG-OS-000250-GPOS-00093</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must implement cryptography to protect the integrity of remote access sessions.</td>
+
     <td>CCE-84027-2: Set kernel parameter 'crypto.fips_enabled' to 1</td>
 
     <td>Without cryptographic integrity protections, information can be altered by unauthorized users without detection.
@@ -33162,7 +33215,7 @@ in <tt>/etc/sudoers.d/</tt>.</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must require users to re-authenticate for privilege escalation.</td>
 
-    <td>CCE-87838-9: The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+    <td>CCE-87838-9: Require Re-Authentication When Using the sudo Command</td>
 
     <td>Without re-authentication, users may access resources or perform tasks for which they do not have authorization. 
 
@@ -33273,7 +33326,7 @@ in <tt>/etc/sudoers.d/</tt>.</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must require users to re-authenticate when changing roles.</td>
 
-    <td>CCE-87838-9: The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+    <td>CCE-87838-9: Require Re-Authentication When Using the sudo Command</td>
 
     <td>Without re-authentication, users may access resources or perform tasks for which they do not have authorization. 
 
@@ -33384,7 +33437,7 @@ in <tt>/etc/sudoers.d/</tt>.</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must require users to re-authenticate when changing authenticators.</td>
 
-    <td>CCE-87838-9: The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+    <td>CCE-87838-9: Require Re-Authentication When Using the sudo Command</td>
 
     <td>Without re-authentication, users may access resources or perform tasks for which they do not have authorization. 
 
@@ -39285,15 +39338,7 @@ If "dmesg" does not show "NX (Execute Disable) protection" active, check the cpu
 $ sudo grep flags /proc/cpuinfo
 flags : fpu vme de pse tsc ms nx rdtscp lm constant_ts
 
-The output should contain the "nx" flag.
-
-Then, verify that there are no log messsages stating that NX is disabled in the system log. Run the following command:
-$ sudo grep -P "^.+protection: disabled.+" /var/log/dmesg
-The output should be empty.
-
-Then, check that NX is not disabled in the kernel command line.
-$ sudo grep -P ".+noexec[0-9]*=off.+" /proc/cmdline
-The output should be empty. Is it the case that NX is disabled?</td>
+The output should contain the "nx" flag. Is it the case that NX is disabled?</td>
     <td>Configure the operating system to implement non-executable data to protect its memory from unauthorized code execution.</td>
     <td>Reboot the system and enter the BIOS or Setup configuration menu.
 Navigate the BIOS configuration menu and make sure that the option is enabled. The setting may be located
@@ -54515,7 +54560,7 @@ home directory assigned in <tt>/etc/passwd</tt>:
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
 
-    <td>CCE-86534-5: All User Files and Directories In The Home Directory Must Be Group-Owned By The Primary User</td>
+    <td>CCE-86534-5: All User Files and Directories In The Home Directory Must Be Group-Owned By The Primary Group</td>
 
     <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
 
@@ -55166,7 +55211,7 @@ If authselect profile is selected, the rule will enable the <sub idref="var_auth
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
 
-    <td>CCE-83434-1: All Interactive User Home Directories Must Be Group-Owned By The Primary User</td>
+    <td>CCE-83434-1: All Interactive User Home Directories Must Be Group-Owned By The Primary Group</td>
 
     <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
 

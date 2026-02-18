@@ -344,6 +344,14 @@ be configured not to be mounted automatically with the <code>noauto</code> mount
 option.</td>
 </tr>
 <tr>
+<td>CCE-92477-9</td>
+<td>Ensure /dev/shm is configured</td>
+<td>The <code>/dev/shm</code> is a traditional shared memory concept. 
+One program will create a memory portion, which other processes 
+(if permitted) can access. If <code>/dev/shm</code> is not configured, 
+tmpfs will be mounted to /dev/shm by systemd.</td>
+</tr>
+<tr>
 <td>CCE-85639-3</td>
 <td>Ensure /home Located On Separate Partition</td>
 <td>If user home directories will be stored locally, create a separate partition
@@ -413,6 +421,19 @@ for temporary file storage. Ensure it has its own partition or
 logical volume at installation time, or migrate it using LVM.</td>
 </tr>
 <tr>
+<td>CCE-92502-4</td>
+<td>Remove the GDM Package Group</td>
+<td>
+By removing the <code>gdm</code> package, the system no longer has GNOME installed
+
+installed. If X Windows is not installed then the system cannot boot into graphical user mode.
+This prevents the system from being accidentally or maliciously booted into a <code>graphical.target</code>
+mode. To do so, run the following command:
+
+<pre>$ sudo yum remove gdm</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-83288-1</td>
 <td>Make sure that the dconf databases are up-to-date with regards to respective keyfiles</td>
 <td>By default, DConf uses a binary database as a data backend.
@@ -438,6 +459,24 @@ should be set as follows:
 system-db:gdm
 </pre>
 </td>
+</tr>
+<tr>
+<td>CCE-92520-6</td>
+<td>Disable the GNOME3 Login User List</td>
+<td>In the default graphical environment, users logging directly into the
+system are greeted with a login screen that displays all known users.
+This functionality should be disabled by setting <code>disable-user-list</code>
+to <code>true</code>.
+<br><br>
+To disable, add or edit <code>disable-user-list</code> to
+<code>/etc/dconf/db/gdm.d/00-security-settings</code>. For example:
+<pre>[org/gnome/login-screen]
+disable-user-list=true</pre>
+Once the setting has been added, add a lock to
+<code>/etc/dconf/db/gdm.d/locks/00-security-settings-lock</code> to prevent
+user modification. For example:
+<pre>/org/gnome/login-screen/disable-user-list</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
 </tr>
 <tr>
 <td>CCE-85723-5</td>
@@ -688,7 +727,7 @@ in <code>/etc/sudoers.d/</code>."</td>
 </tr>
 <tr>
 <td>CCE-85764-9</td>
-<td>The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+<td>Require Re-Authentication When Using the sudo Command</td>
 <td>The sudo <code>timestamp_timeout</code> tag sets the amount of time sudo password prompt waits.
 The default <code>timestamp_timeout</code> value is 5 minutes.
 The timestamp_timeout should be configured by making sure that the
@@ -842,6 +881,12 @@ packages, set the <code>localpkg_gpgcheck</code> to <code>1</code> in <code>/etc
 any repos, remove any lines from files in <code>/etc/yum.repos.d</code> of the form:
 <pre>gpgcheck=0</pre>
 </td>
+</tr>
+<tr>
+<td>CCE-92489-4</td>
+<td>Ensure package manager repositories are configured</td>
+<td>Systems need to have package manager repositories configured to ensure they receive the
+latest patches and updates.</td>
 </tr>
 <tr>
 <td>CCE-85796-1</td>
@@ -1391,42 +1436,6 @@ Add <code>ucredit=-1</code> after pam_cracklib.so to require use of an upper
 case character in passwords.</td>
 </tr>
 <tr>
-<td>CCE-85784-7</td>
-<td>Ensure PAM Enforces Password Requirements - Minimum Digit Characters</td>
-<td>The pam_pwquality module's <code>dcredit</code> parameter controls requirements for
-usage of digits in a password. When set to a negative number, any password will be required to
-contain that many digits. When set to a positive number, pam_pwquality will grant +1 additional
-length credit for each digit. Modify the <code>dcredit</code> setting in
-<code>/etc/security/pwquality.conf</code> to require the use of a digit in passwords.</td>
-</tr>
-<tr>
-<td>CCE-85840-7</td>
-<td>Ensure PAM Enforces Password Requirements - Minimum Lowercase Characters</td>
-<td>The pam_pwquality module's <code>lcredit</code> parameter controls requirements for
-usage of lowercase letters in a password. When set to a negative number, any password will be required to
-contain that many lowercase characters. When set to a positive number, pam_pwquality will grant +1 additional
-length credit for each lowercase character. Modify the <code>lcredit</code> setting in
-<code>/etc/security/pwquality.conf</code> to require the use of a lowercase character in passwords.</td>
-</tr>
-<tr>
-<td>CCE-85785-4</td>
-<td>Ensure PAM Enforces Password Requirements - Minimum Length</td>
-<td>The pam_pwquality module's <code>minlen</code> parameter controls requirements for
-minimum characters required in a password. Add <code>minlen=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_minlen" use="legacy"></xccdf-1.2:sub></code>
-after pam_pwquality to set minimum password length requirements.</td>
-</tr>
-<tr>
-<td>CCE-91157-8</td>
-<td>Ensure PAM Enforces Password Requirements - Minimum Special Characters</td>
-<td>The pam_pwquality module's <code>ocredit=</code> parameter controls requirements for
-usage of special (or "other") characters in a password. When set to a negative number,
-any password will be required to contain that many special characters.
-When set to a positive number, pam_pwquality will grant +1
-additional length credit for each special character. Modify the <code>ocredit</code> setting
-in <code>/etc/security/pwquality.conf</code> to equal <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_ocredit" use="legacy"></xccdf-1.2:sub>
-to require use of a special character in passwords.</td>
-</tr>
-<tr>
 <td></td>
 <td>Ensure PAM Enforces Password Requirements - Authentication Retry Prompts Permitted Per-Session</td>
 <td>To configure the number of retry prompts that are permitted per-session:
@@ -1439,15 +1448,6 @@ Edit the <code>pam_pwquality.so</code> statement in
 <code>retry=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_retry" use="legacy"></xccdf-1.2:sub></code>, or a lower value if site
 policy is more restrictive. The DoD requirement is a maximum of 3 prompts
 per session.</td>
-</tr>
-<tr>
-<td>CCE-85786-2</td>
-<td>Ensure PAM Enforces Password Requirements - Minimum Uppercase Characters</td>
-<td>The pam_pwquality module's <code>ucredit=</code> parameter controls requirements for
-usage of uppercase letters in a password. When set to a negative number, any password will be required to
-contain that many uppercase characters. When set to a positive number, pam_pwquality will grant +1 additional
-length credit for each uppercase character. Modify the <code>ucredit</code> setting in
-<code>/etc/security/pwquality.conf</code> to require the use of an uppercase character in passwords.</td>
 </tr>
 <tr>
 <td>CCE-85754-0</td>
@@ -1480,8 +1480,8 @@ algorithm for password hashing:
 <td>CCE-83279-0</td>
 <td>Set Password Hashing Algorithm in /etc/login.defs</td>
 <td>In <code>/etc/login.defs</code>, add or correct the following line to ensure
-the system will use SHA-512 as the hashing algorithm:
-<pre>ENCRYPT_METHOD SHA512</pre>
+the system will use <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm" use="legacy"></xccdf-1.2:sub> as the hashing algorithm:
+<pre>ENCRYPT_METHOD <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -1881,6 +1881,15 @@ lifetime by running the following command:
 </td>
 </tr>
 <tr>
+<td>CCE-92479-5</td>
+<td>Set Existing Passwords Warning Age</td>
+<td>To configure how many days prior to password expiration that a warning will be issued to
+users, run the command:
+<pre>$ sudo chage --warndays <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub> <i>USER</i></pre>
+The DoD requirement is 7, and CIS recommendation is no less than 7 days.
+This profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
+</tr>
+<tr>
 <td>CCE-91335-0</td>
 <td>Set Password Warning Age</td>
 <td>To specify how many days prior to password
@@ -1921,6 +1930,11 @@ Password hashes <code>!</code> or <code>*</code> indicate inactive accounts not
 available for logon and are not evaluated.
 If any interactive user password hash does not begin with <code>$6</code>,
 this is a finding.</td>
+</tr>
+<tr>
+<td>CCE-92504-0</td>
+<td>Ensure all users last password change date is in the past</td>
+<td>All users should have a password change date in the past.</td>
 </tr>
 <tr>
 <td>CCE-91173-5</td>
@@ -2171,7 +2185,7 @@ export TMOUT</td>
 </tr>
 <tr>
 <td>CCE-91408-5</td>
-<td>User Initialization Files Must Be Group-Owned By The Primary User</td>
+<td>User Initialization Files Must Be Group-Owned By The Primary Group</td>
 <td>Change the group owner of interactive users files to the group found
 in <pre>/etc/passwd</pre> for the user. To change the group owner of a local
 interactive user home directory, use the following command:
@@ -2227,7 +2241,7 @@ home directory assigned in <code>/etc/passwd</code>:
 </tr>
 <tr>
 <td>CCE-91405-1</td>
-<td>All User Files and Directories In The Home Directory Must Be Group-Owned By The Primary User</td>
+<td>All User Files and Directories In The Home Directory Must Be Group-Owned By The Primary Group</td>
 <td>Change the group of a local interactive users files and directories to a
 group that the interactive user is a member of. To change the group owner of a
 local interactive users files and directories, use the following command:
@@ -2266,7 +2280,7 @@ the owner of the directory.</td>
 </tr>
 <tr>
 <td>CCE-85711-0</td>
-<td>All Interactive User Home Directories Must Be Group-Owned By The Primary User</td>
+<td>All Interactive User Home Directories Must Be Group-Owned By The Primary Group</td>
 <td>Change the group owner of interactive users home directory to the
 group found in <code>/etc/passwd</code>. To change the group owner of
 interactive users home directory, use the following command:
@@ -2462,6 +2476,20 @@ If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-w /etc/selinux/ -p wa -k MAC-policy</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-92515-6</td>
+<td>Record Events that Modify the System's Mandatory Access Controls in usr/share</td>
+<td>If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+<pre>-w /usr/share/selinux/ -p wa -k MAC-policy</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following line to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-w /usr/share/selinux/ -p wa -k MAC-policy</pre>
 </td>
 </tr>
 <tr>
@@ -3548,14 +3576,14 @@ If the system is 64 bit then also add the following lines:
 <td>Record Unsuccessful Delete Attempts to Files - renameat</td>
 <td>
 The operating system must generate audit records for all uses of the <code>renameat</code> system call.
-Without generating audit records specific to the security and mission needs of the organization, it would be 
+Without generating audit records specific to the security and mission needs of the organization, it would be
 difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
 Audit records can be generated from various components within the information system (e.g., module or policy filter).
-Add or update the following lines to <code>/etc/audit/rules.d/audit.rules</code> to configure the operating system to generate 
-an audit record for all uses of the <code>renameat</code> system call:  
+Add or update the following lines to <code>/etc/audit/rules.d/audit.rules</code> to configure the operating system to generate
+an audit record for all uses of the <code>renameat</code> system call:
 <pre>
 -a always,exit -F arch=b32 -S renameat -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
--a always,exit -F arch=b64 -S renameat -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod 
+-a always,exit -F arch=b64 -S renameat -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
 </pre>
 </td>
 </tr>
@@ -3606,11 +3634,11 @@ If the system is 64 bit then also add the following lines:
 <td>Record Unsuccessful Delete Attempts to Files - unlink</td>
 <td>
 The operating system must generate audit records for all uses of the <code>unlink</code> system call.
-Without generating audit records specific to the security and mission needs of the organization, it would be 
+Without generating audit records specific to the security and mission needs of the organization, it would be
 difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
 Audit records can be generated from various components within the information system (e.g., module or policy filter).
-Add or update the following lines to <code>/etc/audit/rules.d/audit.rules</code> to configure the operating system to generate 
-an audit record for all uses of the <code>unlink</code> system call:  
+Add or update the following lines to <code>/etc/audit/rules.d/audit.rules</code> to configure the operating system to generate
+an audit record for all uses of the <code>unlink</code> system call:
 <pre>
 -a always,exit -F arch=b32 -S unlink -F auid&gt;=1000 -F auid!=-1 -k perm_mod
 -a always,exit -F arch=b64 -S unlink -F auid&gt;=1000 -F auid!=-1 -k perm_mod </pre>
@@ -3621,11 +3649,11 @@ an audit record for all uses of the <code>unlink</code> system call:
 <td>Record Unsuccessful Delete Attempts to Files - unlinkat</td>
 <td>
 The operating system must generate audit records for all uses of the <code>unlinkat</code> system call.
-Without generating audit records specific to the security and mission needs of the organization, it would be 
+Without generating audit records specific to the security and mission needs of the organization, it would be
 difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
 Audit records can be generated from various components within the information system (e.g., module or policy filter).
-Add or update the following lines to <code>/etc/audit/rules.d/audit.rules</code> to configure the operating system to generate 
-an audit record for all uses of the <code>unlinkat</code> system call:  
+Add or update the following lines to <code>/etc/audit/rules.d/audit.rules</code> to configure the operating system to generate
+an audit record for all uses of the <code>unlinkat</code> system call:
 <pre>
 -a always,exit -F arch=b32 -S unlinkat -F auid&gt;=1000 -F auid!=-1 -k perm_mod
 -a always,exit -F arch=b64 -S unlinkat -F auid&gt;=1000 -F auid!=-1 -k perm_mod</pre>
@@ -4676,6 +4704,20 @@ $ sudo zypper install pam_apparmor</pre>
 </td>
 </tr>
 <tr>
+<td>CCE-92548-7</td>
+<td>All AppArmor Profiles are in enforce or complain mode</td>
+<td>AppArmor profiles define what resources applications are able to access.
+To set all profiles to either <code>enforce</code> or <code>complain</code>  mode
+run the following command to set all profiles to <code>enforce</code> mode:
+<pre>$ sudo aa-enforce /etc/apparmor.d/*</pre>
+run the following command to set all profiles to <code>complain</code> mode:
+<pre>$ sudo aa-complain /etc/apparmor.d/*</pre>
+To list unconfined processes run the following command:
+<pre>$ sudo aa-unconfined</pre>
+Any unconfined processes may need to have a profile created or activated
+for them and then be restarted.</td>
+</tr>
+<tr>
 <td>CCE-85752-4</td>
 <td>Ensure AppArmor is Active and Configured</td>
 <td>Verify that the Apparmor tool is configured to
@@ -5625,45 +5667,68 @@ When using <code>rsyslogd</code> to off-load logs off an encryption system must 
 <td>CCE-85838-1</td>
 <td>Ensure Log Files Are Owned By Appropriate Group</td>
 <td>The group-owner of all log files written by
-<code>rsyslog</code> should be <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_groupowner_logfiles_value" use="legacy"></xccdf-1.2:sub></code>.
+<code>rsyslog</code> should be
+
+<code>root</code>.
+
 These log files are determined by the second part of each Rule line in
 <code>/etc/rsyslog.conf</code> and typically all appear in <code>/var/log</code>.
 For each log file <i>LOGFILE</i> referenced in <code>/etc/rsyslog.conf</code>,
 run the following command to inspect the file's group owner:
 <pre>$ ls -l <i>LOGFILE</i></pre>
-If the owner is not <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_groupowner_logfiles_value" use="legacy"></xccdf-1.2:sub></code>, run the following command to
+If the owner is not
+
+<code>root</code>,
+
+run the following command to
 correct this:
-<pre>$ sudo chgrp <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_groupowner_logfiles_value" use="legacy"></xccdf-1.2:sub> <i>LOGFILE</i></pre>
+
+<pre>$ sudo chgrp root <i>LOGFILE</i></pre>
 </td>
 </tr>
 <tr>
 <td>CCE-85839-9</td>
 <td>Ensure Log Files Are Owned By Appropriate User</td>
 <td>The owner of all log files written by
-<code>rsyslog</code> should be <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_owner_logfiles_value" use="legacy"></xccdf-1.2:sub></code>.
+<code>rsyslog</code> should be
+
+<code>root</code>.
+
 These log files are determined by the second part of each Rule line in
 <code>/etc/rsyslog.conf</code> and typically all appear in <code>/var/log</code>.
 For each log file <i>LOGFILE</i> referenced in <code>/etc/rsyslog.conf</code>,
 run the following command to inspect the file's owner:
 <pre>$ ls -l <i>LOGFILE</i></pre>
-If the owner is not <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_owner_logfiles_value" use="legacy"></xccdf-1.2:sub></code>, run the following command to
+If the owner is not
+
+<code>root</code>,
+
+run the following command to
 correct this:
-<pre>$ sudo chown <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_file_owner_logfiles_value" use="legacy"></xccdf-1.2:sub> <i>LOGFILE</i></pre>
+
+<pre>$ sudo chown root <i>LOGFILE</i></pre>
 </td>
 </tr>
 <tr>
 <td>CCE-85837-3</td>
 <td>Ensure System Log Files Have Correct Permissions</td>
 <td>The file permissions for all log files written by <code>rsyslog</code> should
-be set to 600, or more restrictive. These log files are determined by the
+be set to 640, or more restrictive. These log files are determined by the
 second part of each Rule line in <code>/etc/rsyslog.conf</code> and typically
 all appear in <code>/var/log</code>. For each log file <i>LOGFILE</i>
 referenced in <code>/etc/rsyslog.conf</code>, run the following command to
 inspect the file's permissions:
 <pre>$ ls -l <i>LOGFILE</i></pre>
-If the permissions are not 600 or more restrictive, run the following
+If the permissions are not 640 or more restrictive, run the following
 command to correct this:
-<pre>$ sudo chmod 0600 <i>LOGFILE</i></pre>"</td>
+<pre>$ sudo chmod 640 <i>LOGFILE</i></pre>"</td>
+</tr>
+<tr>
+<td>CCE-92497-7</td>
+<td>Ensure logging is configured</td>
+<td>The <code>/etc/rsyslog.conf</code> and <code>/etc/rsyslog.d/*.conf</code> files
+specifies rules for logging and which files are to be used to log certain
+classes of messages.</td>
 </tr>
 <tr>
 <td></td>
@@ -5693,14 +5758,28 @@ Utilities exist to accept remote export of journald logs.</td>
 If the logs are only stored in volatile memory they will we lost upon reboot.</td>
 </tr>
 <tr>
+<td></td>
+<td>Ensure logrotate is Installed</td>
+<td>logrotate is installed by default. The <code>logrotate</code> package can be installed with the following command: <pre> $ sudo zypper install logrotate</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-85850-6</td>
 <td>Ensure Logrotate Runs Periodically</td>
 <td>The <code>logrotate</code> utility allows for the automatic rotation of
 log files.  The frequency of rotation is specified in <code>/etc/logrotate.conf</code>,
-which triggers a cron task.  To configure logrotate to run daily, add or correct
+which triggers a cron task or a timer.  To configure logrotate to run daily, add or correct
 the following line in <code>/etc/logrotate.conf</code>:
 <pre># rotate log files <i>frequency</i>
 daily</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Enable logrotate Timer</td>
+<td>
+The <code>logrotate</code> timer can be enabled with the following command:
+<pre>$ sudo systemctl enable logrotate.timer</pre>
 </td>
 </tr>
 <tr>
@@ -5823,6 +5902,26 @@ Promiscuous mode of an interface can be disabled with the following command:
 <td>Firewalld can be configured with many backends, such as nftables.</td>
 </tr>
 <tr>
+<td>CCE-92556-0</td>
+<td>Ensure network interfaces are assigned to appropriate zone</td>
+<td>Firewall zones define the trust level of network connections or interfaces.
+Note: Changing firewall settings while connected over network can result in 
+being locked out of the system.</td>
+</tr>
+<tr>
+<td>CCE-92552-9</td>
+<td>Ensure Unnecessary Services and Ports Are Not Accepted</td>
+<td>Services and ports can be accepted or explicitly rejected or dropped by a zone.
+For every zone, a default behavior can be set that handles incoming traffic that 
+is not further specified. Such behavior is defined by setting the target of the zone. 
+The possible options are:
+- <code>ACCEPT</code> - accepts all incoming packets except those disabled by a specific rule.
+- <code>REJECT</code> - disables all incoming packets except those that have been allowed in
+   specific rules and the source machine is informed about the rejection.
+- <code>DROP</code> - disables all incoming packets except those that have been allowed in
+   specific rules and no information sent to the source machine.</td>
+</tr>
+<tr>
 <td>CCE-85698-9</td>
 <td>Install firewalld Package</td>
 <td>The <code>firewalld</code> package can be installed with the following command:
@@ -5935,8 +6034,8 @@ network.</td>
 <tr>
 <td>CCE-91345-9</td>
 <td>Set configuration for loopback traffic</td>
-<td>Configure the loopback interface to accept traffic. 
-Configure all other interfaces to deny traffic to the loopback 
+<td>Configure the loopback interface to accept traffic.
+Configure all other interfaces to deny traffic to the loopback
 network.</td>
 </tr>
 <tr>
@@ -6217,7 +6316,7 @@ To make sure that the setting is persistent, add the following line to a file in
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92482-9</td>
 <td>Enable Kernel Paremeter to Log Martian Packets on all IPv4 Interfaces by Default</td>
 <td>To set the runtime status of the <code>net.ipv4.conf.default.log_martians</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.log_martians=1</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.log_martians = 1</pre>
@@ -6341,6 +6440,16 @@ $ sudo zypper remove nftables</pre>
 </td>
 </tr>
 <tr>
+<td>CCE-92560-2</td>
+<td>Verify nftables Service is Enabled</td>
+<td>The nftables service allows for the loading of nftables rulesets during boot,
+or starting on the nftables service
+
+The <code>nftables</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable nftables.service</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-92529-7</td>
 <td>Verify nftables service disabled</td>
 <td>nftables is a subsystem of the Linux kernel providing filtering and classification of network
@@ -6349,6 +6458,17 @@ The <code>nftables</code> package can be removed with the following command:
 <pre>
 $ sudo zypper remove nftables</pre>
 </td>
+</tr>
+<tr>
+<td>CCE-92564-4</td>
+<td>Ensure all outbound and established connections are configured for nftables</td>
+<td>Configure the nftables firewall rules for new outbound and established connections</td>
+</tr>
+<tr>
+<td>CCE-92569-3</td>
+<td>Ensure a Table Exists for Nftables</td>
+<td>Tables in nftables hold chains. Each table only has one address family and only applies
+to packets of this family. Tables can have one of six families.</td>
 </tr>
 <tr>
 <td></td>
@@ -7831,6 +7951,20 @@ and ensure the following line appears in the <code>[publish]</code> section:
 </td>
 </tr>
 <tr>
+<td>CCE-92465-4</td>
+<td>Uninstall avahi-autoipd Server Package</td>
+<td>If the system does not need to have an Avahi server which implements 
+the DNS Service Discovery and Multicast DNS protocols,
+the avahi-autoipd and avahi packages can be uninstalled.</td>
+</tr>
+<tr>
+<td>CCE-92464-7</td>
+<td>Uninstall avahi Server Package</td>
+<td>If the system does not need to have an Avahi server which implements 
+the DNS Service Discovery and Multicast DNS protocols,
+the avahi-autoipd and avahi packages can be uninstalled.</td>
+</tr>
+<tr>
 <td>CCE-91321-0</td>
 <td>Disable Avahi Server Software</td>
 <td>
@@ -8157,14 +8291,24 @@ option time-offset</pre>
 </td>
 </tr>
 <tr>
+<td>CCE-92511-5</td>
+<td>Uninstall DHCP Client Package</td>
+<td>If the system does not need to act as a DHCP client,
+the dhcp-client package can be uninstalled.
+The <code>dhcp-client</code> package can be removed with the following command:
+<pre>
+$ sudo zypper remove dhcp-client</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-85759-9</td>
 <td>Uninstall DHCP Server Package</td>
 <td>If the system does not need to act as a DHCP server,
 the dhcp package can be uninstalled.
 
-The <code>dhcp</code> package can be removed with the following command:
+The <code>dhcp-server</code> package can be removed with the following command:
 <pre>
-$ sudo zypper remove dhcp</pre>
+$ sudo zypper remove dhcp-server</pre>
 </td>
 </tr>
 <tr>
@@ -8283,17 +8427,15 @@ The <code>dovecot</code> service can be disabled with the following command:
 <td>Ensure LDAP client is not installed</td>
 <td>The Lightweight Directory Access Protocol (LDAP) is a service that provides
 a method for looking up information from a central database.
-The <code>openldap-clients</code> package can be removed with the following command:
+The <code>openldap2-client</code> package can be removed with the following command:
 <pre>
-$ sudo zypper remove openldap-clients</pre>
+$ sudo zypper remove openldap2-client</pre>
 </td>
 </tr>
 <tr>
 <td>CCE-91283-2</td>
 <td>Uninstall openldap-servers Package</td>
-<td>
-The openldap-servers package is not installed by default on a SUSE Linux Enterprise 15
-
+<td>The openldap2 package is not installed by default on a SUSE Linux Enterprise 15
 system. It is needed only by the OpenLDAP server, not by the
 clients which use LDAP for authentication. If the system is not
 intended for use as an LDAP Server it should be removed.</td>

@@ -6,7 +6,7 @@
 <body>
 <br><br><div style="text-align: center; font-size: x-large; font-weight:bold">DISA STIG with GUI for Oracle Linux 7</div>
 <div style="text-align: center; font-size: normal ">This profile contains configuration checks that align to the
-DISA STIG with GUI for Oracle Linux V2R9.
+DISA STIG with GUI for Oracle Linux V2R10.
 
 Warning: The installation and use of a Graphical User Interface (GUI)
 increases your attack vector and decreases your overall security posture. If
@@ -1021,7 +1021,7 @@ Note: The example is for a system that is configured to create users home direct
 <tr>
 <td>xccdf_org.ssgproject.content_rule_accounts_user_dot_group_ownership</td>
 <td>medium</td>
-<td>User Initialization Files Must Be Group-Owned By The Primary User</td>
+<td>User Initialization Files Must Be Group-Owned By The Primary Group</td>
 <td>Local initialization files for interactive users are used to configure the
 user's shell environment upon logon. Malicious modification of these files could
 compromise accounts upon logon.</td>
@@ -1162,7 +1162,7 @@ The output should not return any interactive users.
 <tr>
 <td>xccdf_org.ssgproject.content_rule_accounts_users_home_files_groupownership</td>
 <td>medium</td>
-<td>All User Files and Directories In The Home Directory Must Be Group-Owned By The Primary User</td>
+<td>All User Files and Directories In The Home Directory Must Be Group-Owned By The Primary Group</td>
 <td>If a local interactive users files are group-owned by a group of which the
 user is not a member, unintended users may be able to access them.</td>
 <td>Change the group of a local interactive users files and directories to a
@@ -4150,6 +4150,33 @@ to indicate how the audit logs are off-loaded to a different system or media.
 <td></td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_authconfig_config_files_symlinks</td>
+<td>medium</td>
+<td>Ensure system-auth and password-auth files are symbolic links pointing
+to system-auth-local and password-auth-local</td>
+<td>When using the authconfig utility to modify authentication configuration settings,
+the "system-auth" and "password-auth" files and any custom settings that they may
+contain are overwritten.</td>
+<td>Oracle Linux 7 must be configured to prevent overwriting of custom authentication
+configuration settings by the authconfig utility.
+This can be avoided by creating new local configuration files and creating new or moving
+existing symbolic links to them. The authconfig utility will recognize the local configuration
+files and not overwrite them, while writing its own settings to the original configuration
+files.</td>
+<td><pre>Verify "system-auth" and "password-auth" files are symbolic
+links pointing to "system-auth-local" and "password-auth-local":
+$ sudo ls -l /etc/pam.d/{password,system}-auth
+      Is it the case that The system-auth and password-auth files are not symbolic links or they
+do not point to system-auth-local password-auth-local?
+      </pre></td>
+<td>SRG-OS-000073-GPOS-00041<br>
+</td>
+<td>CCI-000196<br>
+</td>
+<td>IA-5 (1) (c)<br>
+</td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_banner_etc_issue</td>
 <td>medium</td>
 <td>Modify the System Login Banner</td>
@@ -5098,7 +5125,7 @@ root
 <tr>
 <td>xccdf_org.ssgproject.content_rule_file_groupownership_home_directories</td>
 <td>medium</td>
-<td>All Interactive User Home Directories Must Be Group-Owned By The Primary User</td>
+<td>All Interactive User Home Directories Must Be Group-Owned By The Primary Group</td>
 <td>If the Group Identifier (GID) of a local interactive users home directory is
 not the same as the primary GID of the user, this would allow unauthorized
 access to the users files, and users that share the same group may not be
@@ -6398,6 +6425,36 @@ $ rpm -q rsh-server
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_package_screen_installed</td>
+<td>medium</td>
+<td>Install the screen Package</td>
+<td>A session time-out lock is a temporary action taken when a user stops work and moves away from the immediate
+physical vicinity of the information system but does not logout because of the temporary nature of the absence.
+Rather than relying on the user to manually lock their operation system session prior to vacating the vicinity,
+operating systems need to be able to identify when a user's session has idled and take action to initiate the
+session lock.
+<br><br>
+The <code>screen</code> package allows for a session lock to be implemented and configured.</td>
+<td>To enable console screen locking, install the <code>screen</code> package.
+The <code>screen</code> package can be installed with the following command:
+<pre>
+$ sudo yum install screen</pre>
+Instruct users to begin new terminal sessions with the following command:
+<pre>$ screen</pre>
+The console can now be locked with the following key combination:
+<pre>ctrl+a x</pre>
+</td>
+<td><pre>Run the following command to determine if the screen package is installed: $ rpm -q screen
+      Is it the case that the package is not installed?
+      </pre></td>
+<td>SRG-OS-000029-GPOS-00010<br>SRG-OS-000030-GPOS-00011<br>
+</td>
+<td>CCI-000057<br>CCI-000058<br>
+</td>
+<td>AC-11 a<br>AC-11 a<br>
+</td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_package_telnet-server_removed</td>
 <td>high</td>
 <td>Uninstall telnet-server Package</td>
@@ -7495,8 +7552,8 @@ that are encrypted with a weak algorithm are no more protected than if they are 
 <br><br>
 Using a stronger hashing algorithm makes password cracking attacks more difficult.</td>
 <td>In <code>/etc/login.defs</code>, add or correct the following line to ensure
-the system will use SHA-512 as the hashing algorithm:
-<pre>ENCRYPT_METHOD SHA512</pre>
+the system will use <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm" use="legacy"></xccdf-1.2:sub> as the hashing algorithm:
+<pre>ENCRYPT_METHOD <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_algorithm" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 <td><pre>
 Verify that the shadow password suite configuration is set to encrypt password with a FIPS 140-2 approved cryptographic hashing algorithm.
@@ -7505,8 +7562,8 @@ Check the hashing algorithm that is being used to hash passwords with the follow
 
 $ sudo grep -i ENCRYPT_METHOD /etc/login.defs
 
-ENCRYPT_METHOD SHA512
-      Is it the case that ENCRYPT_METHOD is not set to SHA512?
+ENCRYPT_METHOD 
+      Is it the case that ENCRYPT_METHOD is not set to &lt;sub idref="var_password_hashing_algorithm" /&gt;?
       </pre></td>
 <td>SRG-OS-000073-GPOS-00041<br>
 </td>
@@ -7834,8 +7891,8 @@ If a line indicating no is returned, then the required value is set.
 <td>Disable Kerberos Authentication</td>
 <td>Kerberos authentication for SSH is often implemented using GSSAPI. If Kerberos
 is enabled through SSH, the SSH daemon provides a means of access to the
-system's Kerberos implementation. 
-Configuring these settings for the SSH daemon provides additional assurance that remote logon via SSH will not use unused methods of authentication, even in the event of misconfiguration elsewhere. </td>
+system's Kerberos implementation.
+Configuring these settings for the SSH daemon provides additional assurance that remote logon via SSH will not use unused methods of authentication, even in the event of misconfiguration elsewhere.</td>
 <td>Unless needed, SSH should not permit extraneous or unnecessary
 authentication mechanisms like Kerberos.
 <br>
@@ -8273,6 +8330,34 @@ aes256-ctr,aes192-ctr,aes128-ctr
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_sshd_use_approved_kex_ordered_stig</td>
+<td>medium</td>
+<td>Use Only FIPS 140-2 Validated Key Exchange Algorithms</td>
+<td>DoD information systems are required to use FIPS-approved key exchange algorithms.
+The system will attempt to use the first algorithm presented by the client that matches
+the server list. Listing the values "strongest to weakest" is a method to ensure the use
+of the strongest algorithm available to secure the SSH connection.</td>
+<td>Limit the key exchange algorithms to those  which are FIPS-approved.
+Add or modify the following line in <code>/etc/ssh/sshd_config</code>
+<pre>KexAlgorithms ecdh-sha1-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256</pre>
+This rule ensures that only the key exchange algorithms mentioned
+above (or their subset) are configured for use, keeping the given
+order of algorithms.</td>
+<td><pre>Only FIPS-approved key exchange algorithms must be used. To verify that only FIPS-approved
+key exchange algorithms are in use, run the following command:
+$ sudo grep -i kexalgorithms /etc/ssh/sshd_config
+The output should contain only following algorithms (or a subset) in the exact order:
+KexAlgorithms ecdh-sha1-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-hellman-group-exchange-sha256
+      Is it the case that KexAlgorithms option is commented out, contains non-approved algorithms, or the FIPS-approved algorithms are not in the exact order?
+      </pre></td>
+<td>SRG-OS-000250-GPOS-00093<br>
+</td>
+<td>CCI-001453<br>
+</td>
+<td>AC-17 (2)<br>
+</td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_sshd_use_approved_macs_ordered_stig</td>
 <td>medium</td>
 <td>Use Only FIPS 140-2 Validated MACs</td>
@@ -8332,7 +8417,7 @@ server and client displays if the sshd proxy display is configured to listen
 on the wildcard address. By default, sshd binds the forwarding server to the
 loopback address and sets the hostname part of the <code>DISPLAY</code>
 environment variable to localhost. This prevents remote hosts from
-connecting to the proxy display.  </td>
+connecting to the proxy display.</td>
 <td>The SSH daemon should prevent remote hosts from connecting to the proxy
 display.
 <br>
@@ -8558,7 +8643,7 @@ The command should return no output.
 <tr>
 <td>xccdf_org.ssgproject.content_rule_sudo_require_reauthentication</td>
 <td>medium</td>
-<td>The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+<td>Require Re-Authentication When Using the sudo Command</td>
 <td>Without re-authentication, users may access resources or perform tasks for which they
 do not have authorization.
 <br><br>
