@@ -191,7 +191,7 @@ it into the keyring:
 
 Alternatively, the key may be pre-loaded during the RHEL installation. In
 such cases, the key can be installed by running the following command:
-<pre>sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-key-redhat-release</pre>
+<pre>sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release</pre>
 </td>
 </tr>
 <tr>
@@ -3363,9 +3363,6 @@ to have an audit trail of modules that have been introduced into the kernel.</td
 <td>To capture kernel module loading and unloading events, use following lines, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 <pre>
--w /usr/sbin/insmod -p x -k modules
--w /usr/sbin/rmmod -p x -k modules
--w /usr/sbin/modprobe -p x -k modules
 
 -a always,exit -F arch=<i>ARCH</i> -S init_module,delete_module -F key=modules
 
@@ -3644,7 +3641,7 @@ To set an idle timeout interval, edit the following line in <code>/etc/ssh/sshd_
 follows:
 <pre>ClientAliveInterval <b><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="sshd_idle_timeout_value"></ns0:sub></b></pre>
 The timeout <b>interval</b> is given in seconds. To have a timeout
-of 15 minutes, set <b>interval</b> to 900.
+of e.g. 10 minutes, set <b>interval</b> to 600.
 <br><br>
 If a shorter timeout has already been set for the login
 shell, that value will preempt any SSH
@@ -3801,7 +3798,7 @@ access restriction in some configurations.</td>
           		If , this is a finding.
           		</td>
 <td>To ensure users are not able to override environment
-options to the SSH daemon, add or correct the following line
+variables of the SSH daemon, add or correct the following line
 in <code>/etc/ssh/sshd_config</code>:
 <pre>PermitUserEnvironment no</pre>
 </td>
@@ -4538,14 +4535,15 @@ computer viruses, as well as to limit their spread to other systems.</td>
 
           		If , this is a finding.
           		</td>
-<td>Install virus scanning software, which uses signatures to search for the
-presence of viruses on the filesystem.
-Ensure virus definition files are no older than 7 days, or their last release.
+<td>Virus scanning software can be used to protect a system from penetration from
+computer viruses and to limit their spread through intermediate systems.
 
-Configure the virus scanning software to perform scans dynamically on all
-accessed files.  If this is not possible, configure the
-system to scan all altered files on the system on a daily
-basis. If the system processes inbound SMTP mail, configure the virus scanner
+The virus scanning software should be configured to perform scans dynamically
+on accessed files. If this capability is not available, the system must be
+configured to scan, at a minimum, all altered files on the system on a daily
+basis.
+
+If the system processes inbound SMTP mail, the virus scanner must be configured
 to scan all received mail.</td>
 </tr>
 <tr>

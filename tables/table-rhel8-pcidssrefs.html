@@ -191,7 +191,7 @@ To set an idle timeout interval, edit the following line in <code>/etc/ssh/sshd_
 follows:
 <pre>ClientAliveInterval <b><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="sshd_idle_timeout_value"></ns0:sub></b></pre>
 The timeout <b>interval</b> is given in seconds. To have a timeout
-of 15 minutes, set <b>interval</b> to 900.
+of e.g. 10 minutes, set <b>interval</b> to 600.
 <br><br>
 If a shorter timeout has already been set for the login
 shell, that value will preempt any SSH
@@ -1016,16 +1016,1247 @@ malicious processes that attempt to delete log files to conceal their presence.<
 <td></td>
 </tr>
 <tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
+<td>Ensure auditd Collects Unauthorized Access Attempts to Files (unsuccessful)</td>
+<td xml:lang="en-US">At a minimum the audit system should collect unauthorized file
+accesses for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
+<td>Ensure auditd Collects Unauthorized Access Attempts to Files (unsuccessful)</td>
+<td xml:lang="en-US">At a minimum the audit system should collect unauthorized file
+accesses for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
+<td>Record Unsuccessful Access Attempts to Files - creat</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
+accesses for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
+<td>Record Unsuccessful Access Attempts to Files - creat</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
+accesses for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
+<td>Record Unsuccessful Access Attempts to Files - ftruncate</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
+accesses for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S ftruncate -F exiu=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
+<td>Record Unsuccessful Access Attempts to Files - ftruncate</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
+accesses for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S ftruncate -F exiu=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
+<td>Record Unsuccessful Access Attempts to Files - open</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
+accesses for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
+<td>Record Unsuccessful Access Attempts to Files - open</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
+accesses for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
+<td>Record Unsuccessful Access Attempts to Files - open_by_handle_at</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
+accesses for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
+<td>Record Unsuccessful Access Attempts to Files - open_by_handle_at</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
+accesses for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
+<td>Record Unsuccessful Creation Attempts to Files - open_by_handle_at O_CREAT</td>
+<td xml:lang="en-US">The audit system should collect unauthorized file accesses for
+all users and root. The <code>open_by_handle_at</code> syscall can be used to create new files
+when O_CREAT flag is specified.
+
+The following auidt rules will asure that unsuccessful attempts to create a
+file via <code>open_by_handle_at</code> syscall are collected.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+rules below to a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the rules below to
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
+<td>Record Unsuccessful Creation Attempts to Files - open_by_handle_at O_CREAT</td>
+<td xml:lang="en-US">The audit system should collect unauthorized file accesses for
+all users and root. The <code>open_by_handle_at</code> syscall can be used to create new files
+when O_CREAT flag is specified.
+
+The following auidt rules will asure that unsuccessful attempts to create a
+file via <code>open_by_handle_at</code> syscall are collected.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+rules below to a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the rules below to
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
+<td>Record Unsuccessful Modification Attempts to Files - open_by_handle_at O_TRUNC_WRITE</td>
+<td xml:lang="en-US">The audit system should collect detailed unauthorized file accesses for
+all users and root. The <code>open_by_handle_at</code> syscall can be used to modify files
+if called for write operation of with O_TRUNC_WRITE flag.
+
+The following auidt rules will asure that unsuccessful attempts to modify a
+file via <code>open_by_handle_at</code> syscall are collected.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+rules below to a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the rules below to
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
+<td>Record Unsuccessful Modification Attempts to Files - open_by_handle_at O_TRUNC_WRITE</td>
+<td xml:lang="en-US">The audit system should collect detailed unauthorized file accesses for
+all users and root. The <code>open_by_handle_at</code> syscall can be used to modify files
+if called for write operation of with O_TRUNC_WRITE flag.
+
+The following auidt rules will asure that unsuccessful attempts to modify a
+file via <code>open_by_handle_at</code> syscall are collected.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+rules below to a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the rules below to
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
+<td>Ensure auditd Unauthorized Access Attempts To open_by_handle_at Are Ordered Correctly</td>
+<td xml:lang="en-US">The audit system should collect detailed unauthorized file
+accesses for all users and root.
+To correctly identify unsuccessful creation, unsuccessful modification and unsuccessful access
+of files via <code>open_by_handle_at</code> syscall the audit rules collecting these events need to be in certain order.
+The more specific rules need to come before the less specific rules. The reason for that is that more
+specific rules cover a subset of events covered in the less specific rules, thus, they need to come
+before to not be overshadowed by less specific rules, which match a bigger set of events.
+Make sure that rules for unsuccessful calls of <code>open_by_handle_at</code> syscall are in the order shown below.
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), check the order of
+rules below in a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, check the order of rules below in
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+-a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+-a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+</pre>
+</td>
+<td xml:lang="en-US">The more specific rules cover a subset of events covered by the less specific rules.
+By ordering them from more specific to less specific, it is assured that the less specific
+rule will not catch events better recorded by the more specific rule.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
+<td>Ensure auditd Unauthorized Access Attempts To open_by_handle_at Are Ordered Correctly</td>
+<td xml:lang="en-US">The audit system should collect detailed unauthorized file
+accesses for all users and root.
+To correctly identify unsuccessful creation, unsuccessful modification and unsuccessful access
+of files via <code>open_by_handle_at</code> syscall the audit rules collecting these events need to be in certain order.
+The more specific rules need to come before the less specific rules. The reason for that is that more
+specific rules cover a subset of events covered in the less specific rules, thus, they need to come
+before to not be overshadowed by less specific rules, which match a bigger set of events.
+Make sure that rules for unsuccessful calls of <code>open_by_handle_at</code> syscall are in the order shown below.
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), check the order of
+rules below in a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, check the order of rules below in
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+-a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+-a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+</pre>
+</td>
+<td xml:lang="en-US">The more specific rules cover a subset of events covered by the less specific rules.
+By ordering them from more specific to less specific, it is assured that the less specific
+rule will not catch events better recorded by the more specific rule.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
+<td>Record Unsuccessful Creation Attempts to Files - open O_CREAT</td>
+<td xml:lang="en-US">The audit system should collect unauthorized file accesses for
+all users and root. The <code>open</code> syscall can be used to create new files
+when O_CREAT flag is specified.
+
+The following auidt rules will asure that unsuccessful attempts to create a
+file via <code>open</code> syscall are collected.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+rules below to a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the rules below to
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
+<td>Record Unsuccessful Creation Attempts to Files - open O_CREAT</td>
+<td xml:lang="en-US">The audit system should collect unauthorized file accesses for
+all users and root. The <code>open</code> syscall can be used to create new files
+when O_CREAT flag is specified.
+
+The following auidt rules will asure that unsuccessful attempts to create a
+file via <code>open</code> syscall are collected.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+rules below to a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the rules below to
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
+<td>Record Unsuccessful Modification Attempts to Files - open O_TRUNC_WRITE</td>
+<td xml:lang="en-US">The audit system should collect detailed unauthorized file accesses for
+all users and root. The <code>open</code> syscall can be used to modify files
+if called for write operation of with O_TRUNC_WRITE flag.
+The following auidt rules will asure that unsuccessful attempts to modify a
+file via <code>open</code> syscall are collected.
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+rules below to a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the rules below to
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
+<td>Record Unsuccessful Modification Attempts to Files - open O_TRUNC_WRITE</td>
+<td xml:lang="en-US">The audit system should collect detailed unauthorized file accesses for
+all users and root. The <code>open</code> syscall can be used to modify files
+if called for write operation of with O_TRUNC_WRITE flag.
+The following auidt rules will asure that unsuccessful attempts to modify a
+file via <code>open</code> syscall are collected.
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+rules below to a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the rules below to
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
+<td>Ensure auditd Rules For Unauthorized Attempts To open Are Ordered Correctly</td>
+<td xml:lang="en-US">The audit system should collect detailed unauthorized file
+accesses for all users and root.
+To correctly identify unsuccessful creation, unsuccessful modification and unsuccessful access
+of files via <code>open</code> syscall the audit rules collecting these events need to be in certain order.
+The more specific rules need to come before the less specific rules. The reason for that is that more
+specific rules cover a subset of events covered in the less specific rules, thus, they need to come
+before to not be overshadowed by less specific rules, which match a bigger set of events.
+Make sure that rules for unsuccessful calls of <code>open</code> syscall are in the order shown below.
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), check the order of
+rules below in a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, check the order of rules below in
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+-a always,exit -F arch=b32 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+-a always,exit -F arch=b64 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+</pre>
+</td>
+<td xml:lang="en-US">The more specific rules cover a subset of events covered by the less specific rules.
+By ordering them from more specific to less specific, it is assured that the less specific
+rule will not catch events better recorded by the more specific rule.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
+<td>Ensure auditd Rules For Unauthorized Attempts To open Are Ordered Correctly</td>
+<td xml:lang="en-US">The audit system should collect detailed unauthorized file
+accesses for all users and root.
+To correctly identify unsuccessful creation, unsuccessful modification and unsuccessful access
+of files via <code>open</code> syscall the audit rules collecting these events need to be in certain order.
+The more specific rules need to come before the less specific rules. The reason for that is that more
+specific rules cover a subset of events covered in the less specific rules, thus, they need to come
+before to not be overshadowed by less specific rules, which match a bigger set of events.
+Make sure that rules for unsuccessful calls of <code>open</code> syscall are in the order shown below.
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), check the order of
+rules below in a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, check the order of rules below in
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+-a always,exit -F arch=b32 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+-a always,exit -F arch=b64 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+</pre>
+</td>
+<td xml:lang="en-US">The more specific rules cover a subset of events covered by the less specific rules.
+By ordering them from more specific to less specific, it is assured that the less specific
+rule will not catch events better recorded by the more specific rule.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
+<td>Record Unsuccessful Access Attempts to Files - openat</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
+accesses for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
+<td>Record Unsuccessful Access Attempts to Files - openat</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
+accesses for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
+<td>Record Unsuccessful Creation Attempts to Files - openat O_CREAT</td>
+<td xml:lang="en-US">The audit system should collect unauthorized file accesses for
+all users and root. The <code>openat</code> syscall can be used to create new files
+when O_CREAT flag is specified.
+
+The following auidt rules will asure that unsuccessful attempts to create a
+file via <code>openat</code> syscall are collected.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+rules below to a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the rules below to
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S openat -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S openat -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S openat -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S openat -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
+<td>Record Unsuccessful Creation Attempts to Files - openat O_CREAT</td>
+<td xml:lang="en-US">The audit system should collect unauthorized file accesses for
+all users and root. The <code>openat</code> syscall can be used to create new files
+when O_CREAT flag is specified.
+
+The following auidt rules will asure that unsuccessful attempts to create a
+file via <code>openat</code> syscall are collected.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+rules below to a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the rules below to
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S openat -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S openat -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S openat -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S openat -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
+<td>Record Unsuccessful Modification Attempts to Files - openat O_TRUNC_WRITE</td>
+<td xml:lang="en-US">The audit system should collect detailed unauthorized file accesses for
+all users and root. The <code>openat</code> syscall can be used to modify files
+if called for write operation of with O_TRUNC_WRITE flag.
+
+The following auidt rules will asure that unsuccessful attempts to modify a
+file via <code>openat</code> syscall are collected.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+rules below to a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the rules below to
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S openat -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S openat -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S openat -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S openat -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
+<td>Record Unsuccessful Modification Attempts to Files - openat O_TRUNC_WRITE</td>
+<td xml:lang="en-US">The audit system should collect detailed unauthorized file accesses for
+all users and root. The <code>openat</code> syscall can be used to modify files
+if called for write operation of with O_TRUNC_WRITE flag.
+
+The following auidt rules will asure that unsuccessful attempts to modify a
+file via <code>openat</code> syscall are collected.
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+rules below to a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the rules below to
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S openat -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S openat -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S openat -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S openat -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
+<td>Ensure auditd Rules For Unauthorized Attempts To openat Are Ordered Correctly</td>
+<td xml:lang="en-US">The audit system should collect detailed unauthorized file
+accesses for all users and root.
+To correctly identify unsuccessful creation, unsuccessful modification and unsuccessful access
+of files via <code>openat</code> syscall the audit rules collecting these events need to be in certain order.
+The more specific rules need to come before the less specific rules. The reason for that is that more
+specific rules cover a subset of events covered in the less specific rules, thus, they need to come
+before to not be overshadowed by less specific rules, which match a bigger set of events.
+Make sure that rules for unsuccessful calls of <code>openat</code> syscall are in the order shown below.
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), check the order of
+rules below in a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, check the order of rules below in
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S openat -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S openat -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S openat -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S openat -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+-a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S openat -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S openat -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S openat -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S openat -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+-a always,exit -F arch=b64 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+</pre>
+</td>
+<td xml:lang="en-US">The more specific rules cover a subset of events covered by the less specific rules.
+By ordering them from more specific to less specific, it is assured that the less specific
+rule will not catch events better recorded by the more specific rule.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
+<td>Ensure auditd Rules For Unauthorized Attempts To openat Are Ordered Correctly</td>
+<td xml:lang="en-US">The audit system should collect detailed unauthorized file
+accesses for all users and root.
+To correctly identify unsuccessful creation, unsuccessful modification and unsuccessful access
+of files via <code>openat</code> syscall the audit rules collecting these events need to be in certain order.
+The more specific rules need to come before the less specific rules. The reason for that is that more
+specific rules cover a subset of events covered in the less specific rules, thus, they need to come
+before to not be overshadowed by less specific rules, which match a bigger set of events.
+Make sure that rules for unsuccessful calls of <code>openat</code> syscall are in the order shown below.
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), check the order of
+rules below in a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, check the order of rules below in
+<code>/etc/audit/audit.rules</code> file.
+<pre>
+-a always,exit -F arch=b32 -S openat -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S openat -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b32 -S openat -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S openat -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b32 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+-a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S openat -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S openat -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
+-a always,exit -F arch=b64 -S openat -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S openat -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
+-a always,exit -F arch=b64 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+-a always,exit -F arch=b64 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
+</pre>
+</td>
+<td xml:lang="en-US">The more specific rules cover a subset of events covered by the less specific rules.
+By ordering them from more specific to less specific, it is assured that the less specific
+rule will not catch events better recorded by the more specific rule.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
+<td>Record Unsuccessul Delete Attempts to Files - rename</td>
+<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+attempts for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file.
+<pre>-a always,exit -F arch=b32 -S rename -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b32 -S rename -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S rename -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b64 -S rename -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to delete files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
+<td>Record Unsuccessul Delete Attempts to Files - rename</td>
+<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+attempts for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file.
+<pre>-a always,exit -F arch=b32 -S rename -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b32 -S rename -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S rename -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b64 -S rename -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to delete files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
+<td>Record Unsuccessul Delete Attempts to Files - renameat</td>
+<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+attempts for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file.
+<pre>-a always,exit -F arch=b32 -S renameat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b32 -S renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S renameat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b64 -S renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to delete files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
+<td>Record Unsuccessul Delete Attempts to Files - renameat</td>
+<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+attempts for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file.
+<pre>-a always,exit -F arch=b32 -S renameat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b32 -S renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S renameat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b64 -S renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to delete files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
+<td>Record Unsuccessful Access Attempts to Files - truncate</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
+accesses for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
+<td>Record Unsuccessful Access Attempts to Files - truncate</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
+accesses for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F arch=b32 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F arch=b32 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b32 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
+<td>Record Unsuccessul Delete Attempts to Files - unlink</td>
+<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+attempts for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file.
+<pre>-a always,exit -F arch=b32 -S unlink -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b32 -S unlink -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S unlink -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b64 -S unlink -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to delete files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
+<td>Record Unsuccessul Delete Attempts to Files - unlink</td>
+<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+attempts for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file.
+<pre>-a always,exit -F arch=b32 -S unlink -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b32 -S unlink -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S unlink -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b64 -S unlink -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to delete files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
+<td>Record Unsuccessul Delete Attempts to Files - unlinkat</td>
+<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+attempts for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file.
+<pre>-a always,exit -F arch=b32 -S unlinkat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b32 -S unlinkat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S unlinkat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b64 -S unlinkat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to delete files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
+<td>Record Unsuccessul Delete Attempts to Files - unlinkat</td>
+<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+attempts for all users and root. If the <code>auditd</code> daemon is configured
+to use the <code>augenrules</code> program to read audit rules during daemon
+startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file.
+<pre>-a always,exit -F arch=b32 -S unlinkat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b32 -S unlinkat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+
+If the system is 64 bit then also add the following lines:
+<pre>
+-a always,exit -F arch=b64 -S unlinkat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b64 -S unlinkat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+</td>
+<td xml:lang="en-US">Unsuccessful attempts to delete files could be an indicator of malicious activity on a system. Auditing
+these events could serve as evidence of potential system compromise.</td>
+<td></td>
+</tr>
+<tr>
 <td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.7</a></td>
 <td>Ensure auditd Collects Information on Kernel Module Loading and Unloading</td>
 <td xml:lang="en-US">To capture kernel module loading and unloading events, use following lines, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
 <pre>
--w /usr/sbin/insmod -p x -k modules
--w /usr/sbin/rmmod -p x -k modules
--w /usr/sbin/modprobe -p x -k modules
 
--a always,exit -F arch=<i>ARCH</i> -S init_module,finit_module,create_module,delete_module -F key=modules
+-a always,exit -F arch=<i>ARCH</i> -S init_module,finit_module,delete_module -F key=modules
 
 </pre>
 
@@ -1091,57 +2322,6 @@ to use the <code>augenrules</code> program (the default), add the line to a file
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
 add the line to file <code>/etc/audit/audit.rules</code>.</td>
 <td xml:lang="en-US">The addition of kernel modules can be used to alter the behavior of
-the kernel and potentially introduce malicious code into kernel space. It is important
-to have an audit trail of modules that have been introduced into the kernel.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.7</a></td>
-<td>Ensure auditd Collects Information on Kernel Module Loading - insmod</td>
-<td xml:lang="en-US">To capture invocation of insmod, utility used to insert modules into kernel,
-use the following line:
-<pre>-w /usr/sbin/insmod -p x -k modules</pre>
-Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
-to use the <code>augenrules</code> program (the default), add the line to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
-add the line to file <code>/etc/audit/audit.rules</code>.</td>
-<td xml:lang="en-US">The addition of kernel modules can be used to alter the behavior of
-the kernel and potentially introduce malicious code into kernel space. It is important
-to have an audit trail of modules that have been introduced into the kernel.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.7</a></td>
-<td>Ensure auditd Collects Information on Kernel Module Loading and Unloading - modprobe</td>
-<td xml:lang="en-US">To capture invocation of modprobe, utility used to insert / remove modules from kernel,
-add the following line:
-<pre>-w /usr/sbin/modprobe -p x -k modules</pre>
-Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
-to use the <code>augenrules</code> program (the default), add the line to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
-add the line to file <code>/etc/audit/audit.rules</code>.</td>
-<td xml:lang="en-US">The addition/removal of kernel modules can be used to alter the behavior of
-the kernel and potentially introduce malicious code into kernel space. It is important
-to have an audit trail of modules that have been introduced into the kernel.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.7</a></td>
-<td>Ensure auditd Collects Information on Kernel Module Unloading - rmmod</td>
-<td xml:lang="en-US">To capture invocation of rmmod, utility used to remove modules from kernel,
-add the following line:
-<pre>-w /usr/sbin/rmmod -p x -k modules</pre>
-Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
-to use the <code>augenrules</code> program (the default), add the line to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
-add the line to file <code>/etc/audit/audit.rules</code>.</td>
-<td xml:lang="en-US">The removal of kernel modules can be used to alter the behavior of
 the kernel and potentially introduce malicious code into kernel space. It is important
 to have an audit trail of modules that have been introduced into the kernel.</td>
 <td></td>
@@ -1399,1240 +2579,6 @@ should always be used.</td>
 nefarious activities in log files, as well as to confuse network services that
 are highly dependent upon an accurate system time (such as sshd). All changes
 to the system time should be audited.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
-<td>Ensure auditd Collects Unauthorized Access Attempts to Files (unsuccessful)</td>
-<td xml:lang="en-US">At a minimum the audit system should collect unauthorized file
-accesses for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
-<td>Ensure auditd Collects Unauthorized Access Attempts to Files (unsuccessful)</td>
-<td xml:lang="en-US">At a minimum the audit system should collect unauthorized file
-accesses for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S creat,open,openat,open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
-<td>Record Unsuccessful Access Attempts to Files - creat</td>
-<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
-accesses for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
-<td>Record Unsuccessful Access Attempts to Files - creat</td>
-<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
-accesses for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
-<td>Record Unsuccessful Access Attempts to Files - ftruncate</td>
-<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
-accesses for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S ftruncate -F exiu=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
-<td>Record Unsuccessful Access Attempts to Files - ftruncate</td>
-<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
-accesses for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S ftruncate -F exiu=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
-<td>Record Unsuccessful Access Attempts to Files - open</td>
-<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
-accesses for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
-<td>Record Unsuccessful Access Attempts to Files - open</td>
-<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
-accesses for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
-<td>Record Unsuccessful Access Attempts to Files - open_by_handle_at</td>
-<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
-accesses for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
-<td>Record Unsuccessful Access Attempts to Files - open_by_handle_at</td>
-<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
-accesses for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S open_by_handle_at,truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
-<td>Record Unsuccessful Creation Attempts to Files - open_by_handle_at O_CREAT</td>
-<td xml:lang="en-US">The audit system should collect unauthorized file accesses for
-all users and root. The <code>open_by_handle_at</code> syscall can be used to create new files
-when O_CREAT flag is specified.
-
-The following auidt rules will asure that unsuccessful attempts to create a
-file via <code>open_by_handle_at</code> syscall are collected.
-
-If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
-program to read audit rules during daemon startup (the default), add the
-rules below to a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the rules below to
-<code>/etc/audit/audit.rules</code> file.
-<pre>
--a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
-</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
-</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
-<td>Record Unsuccessful Creation Attempts to Files - open_by_handle_at O_CREAT</td>
-<td xml:lang="en-US">The audit system should collect unauthorized file accesses for
-all users and root. The <code>open_by_handle_at</code> syscall can be used to create new files
-when O_CREAT flag is specified.
-
-The following auidt rules will asure that unsuccessful attempts to create a
-file via <code>open_by_handle_at</code> syscall are collected.
-
-If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
-program to read audit rules during daemon startup (the default), add the
-rules below to a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the rules below to
-<code>/etc/audit/audit.rules</code> file.
-<pre>
--a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
-</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
-</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
-<td>Record Unsuccessful Modification Attempts to Files - open_by_handle_at O_TRUNC_WRITE</td>
-<td xml:lang="en-US">The audit system should collect detailed unauthorized file accesses for
-all users and root. The <code>open_by_handle_at</code> syscall can be used to modify files
-if called for write operation of with O_TRUNC_WRITE flag.
-
-The following auidt rules will asure that unsuccessful attempts to modify a
-file via <code>open_by_handle_at</code> syscall are collected.
-
-If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
-program to read audit rules during daemon startup (the default), add the
-rules below to a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the rules below to
-<code>/etc/audit/audit.rules</code> file.
-<pre>
--a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
-</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
-</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
-<td>Record Unsuccessful Modification Attempts to Files - open_by_handle_at O_TRUNC_WRITE</td>
-<td xml:lang="en-US">The audit system should collect detailed unauthorized file accesses for
-all users and root. The <code>open_by_handle_at</code> syscall can be used to modify files
-if called for write operation of with O_TRUNC_WRITE flag.
-
-The following auidt rules will asure that unsuccessful attempts to modify a
-file via <code>open_by_handle_at</code> syscall are collected.
-
-If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
-program to read audit rules during daemon startup (the default), add the
-rules below to a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the rules below to
-<code>/etc/audit/audit.rules</code> file.
-<pre>
--a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
-</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
-</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
-<td>Ensure auditd Unauthorized Access Attempts To open_by_handle_at Are Ordered Correctly</td>
-<td xml:lang="en-US">The audit system should collect detailed unauthorized file
-accesses for all users and root.
-To correctly identify unsuccessful creation, unsuccessful modification and unsuccessful access
-of files via <code>open_by_handle_at</code> syscall the audit rules collecting these events need to be in certain order.
-The more specific rules need to come before the less specific rules. The reason for that is that more
-specific rules cover a subset of events covered in the less specific rules, thus, they need to come
-before to not be overshadowed by less specific rules, which match a bigger set of events.
-Make sure that rules for unsuccessful calls of <code>open_by_handle_at</code> syscall are in the order shown below.
-If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
-program to read audit rules during daemon startup (the default), check the order of
-rules below in a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code>.
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, check the order of rules below in
-<code>/etc/audit/audit.rules</code> file.
-<pre>
--a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
--a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
-</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
--a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
-</pre>
-</td>
-<td xml:lang="en-US">The more specific rules cover a subset of events covered by the less specific rules.
-By ordering them from more specific to less specific, it is assured that the less specific
-rule will not catch events better recorded by the more specific rule.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
-<td>Ensure auditd Unauthorized Access Attempts To open_by_handle_at Are Ordered Correctly</td>
-<td xml:lang="en-US">The audit system should collect detailed unauthorized file
-accesses for all users and root.
-To correctly identify unsuccessful creation, unsuccessful modification and unsuccessful access
-of files via <code>open_by_handle_at</code> syscall the audit rules collecting these events need to be in certain order.
-The more specific rules need to come before the less specific rules. The reason for that is that more
-specific rules cover a subset of events covered in the less specific rules, thus, they need to come
-before to not be overshadowed by less specific rules, which match a bigger set of events.
-Make sure that rules for unsuccessful calls of <code>open_by_handle_at</code> syscall are in the order shown below.
-If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
-program to read audit rules during daemon startup (the default), check the order of
-rules below in a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code>.
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, check the order of rules below in
-<code>/etc/audit/audit.rules</code> file.
-<pre>
--a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b32 -S open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
--a always,exit -F arch=b32 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
-</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b64 -S open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
--a always,exit -F arch=b64 -S open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
-</pre>
-</td>
-<td xml:lang="en-US">The more specific rules cover a subset of events covered by the less specific rules.
-By ordering them from more specific to less specific, it is assured that the less specific
-rule will not catch events better recorded by the more specific rule.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
-<td>Record Unsuccessful Creation Attempts to Files - open O_CREAT</td>
-<td xml:lang="en-US">The audit system should collect unauthorized file accesses for
-all users and root. The <code>open</code> syscall can be used to create new files
-when O_CREAT flag is specified.
-
-The following auidt rules will asure that unsuccessful attempts to create a
-file via <code>open</code> syscall are collected.
-
-If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
-program to read audit rules during daemon startup (the default), add the
-rules below to a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the rules below to
-<code>/etc/audit/audit.rules</code> file.
-<pre>
--a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
-</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
-</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
-<td>Record Unsuccessful Creation Attempts to Files - open O_CREAT</td>
-<td xml:lang="en-US">The audit system should collect unauthorized file accesses for
-all users and root. The <code>open</code> syscall can be used to create new files
-when O_CREAT flag is specified.
-
-The following auidt rules will asure that unsuccessful attempts to create a
-file via <code>open</code> syscall are collected.
-
-If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
-program to read audit rules during daemon startup (the default), add the
-rules below to a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the rules below to
-<code>/etc/audit/audit.rules</code> file.
-<pre>
--a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
-</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
-</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
-<td>Record Unsuccessful Modification Attempts to Files - open O_TRUNC_WRITE</td>
-<td xml:lang="en-US">The audit system should collect detailed unauthorized file accesses for
-all users and root. The <code>open</code> syscall can be used to modify files
-if called for write operation of with O_TRUNC_WRITE flag.
-The following auidt rules will asure that unsuccessful attempts to modify a
-file via <code>open</code> syscall are collected.
-If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
-program to read audit rules during daemon startup (the default), add the
-rules below to a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code>.
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the rules below to
-<code>/etc/audit/audit.rules</code> file.
-<pre>
--a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
-</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
-</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
-<td>Record Unsuccessful Modification Attempts to Files - open O_TRUNC_WRITE</td>
-<td xml:lang="en-US">The audit system should collect detailed unauthorized file accesses for
-all users and root. The <code>open</code> syscall can be used to modify files
-if called for write operation of with O_TRUNC_WRITE flag.
-The following auidt rules will asure that unsuccessful attempts to modify a
-file via <code>open</code> syscall are collected.
-If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
-program to read audit rules during daemon startup (the default), add the
-rules below to a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code>.
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the rules below to
-<code>/etc/audit/audit.rules</code> file.
-<pre>
--a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
-</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
-</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
-<td>Ensure auditd Rules For Unauthorized Attempts To open Are Ordered Correctly</td>
-<td xml:lang="en-US">The audit system should collect detailed unauthorized file
-accesses for all users and root.
-To correctly identify unsuccessful creation, unsuccessful modification and unsuccessful access
-of files via <code>open</code> syscall the audit rules collecting these events need to be in certain order.
-The more specific rules need to come before the less specific rules. The reason for that is that more
-specific rules cover a subset of events covered in the less specific rules, thus, they need to come
-before to not be overshadowed by less specific rules, which match a bigger set of events.
-Make sure that rules for unsuccessful calls of <code>open</code> syscall are in the order shown below.
-If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
-program to read audit rules during daemon startup (the default), check the order of
-rules below in a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code>.
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, check the order of rules below in
-<code>/etc/audit/audit.rules</code> file.
-<pre>
--a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b32 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
--a always,exit -F arch=b32 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
-</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b64 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
--a always,exit -F arch=b64 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
-</pre>
-</td>
-<td xml:lang="en-US">The more specific rules cover a subset of events covered by the less specific rules.
-By ordering them from more specific to less specific, it is assured that the less specific
-rule will not catch events better recorded by the more specific rule.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
-<td>Ensure auditd Rules For Unauthorized Attempts To open Are Ordered Correctly</td>
-<td xml:lang="en-US">The audit system should collect detailed unauthorized file
-accesses for all users and root.
-To correctly identify unsuccessful creation, unsuccessful modification and unsuccessful access
-of files via <code>open</code> syscall the audit rules collecting these events need to be in certain order.
-The more specific rules need to come before the less specific rules. The reason for that is that more
-specific rules cover a subset of events covered in the less specific rules, thus, they need to come
-before to not be overshadowed by less specific rules, which match a bigger set of events.
-Make sure that rules for unsuccessful calls of <code>open</code> syscall are in the order shown below.
-If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
-program to read audit rules during daemon startup (the default), check the order of
-rules below in a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code>.
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, check the order of rules below in
-<code>/etc/audit/audit.rules</code> file.
-<pre>
--a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b32 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
--a always,exit -F arch=b32 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
-</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b64 -S open -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
--a always,exit -F arch=b64 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
-</pre>
-</td>
-<td xml:lang="en-US">The more specific rules cover a subset of events covered by the less specific rules.
-By ordering them from more specific to less specific, it is assured that the less specific
-rule will not catch events better recorded by the more specific rule.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
-<td>Record Unsuccessful Access Attempts to Files - openat</td>
-<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
-accesses for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
-<td>Record Unsuccessful Access Attempts to Files - openat</td>
-<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
-accesses for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
-<td>Record Unsuccessful Creation Attempts to Files - openat O_CREAT</td>
-<td xml:lang="en-US">The audit system should collect unauthorized file accesses for
-all users and root. The <code>openat</code> syscall can be used to create new files
-when O_CREAT flag is specified.
-
-The following auidt rules will asure that unsuccessful attempts to create a
-file via <code>openat</code> syscall are collected.
-
-If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
-program to read audit rules during daemon startup (the default), add the
-rules below to a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the rules below to
-<code>/etc/audit/audit.rules</code> file.
-<pre>
--a always,exit -F arch=b32 -S openat -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b32 -S openat -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
-</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S openat -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b64 -S openat -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
-</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
-<td>Record Unsuccessful Creation Attempts to Files - openat O_CREAT</td>
-<td xml:lang="en-US">The audit system should collect unauthorized file accesses for
-all users and root. The <code>openat</code> syscall can be used to create new files
-when O_CREAT flag is specified.
-
-The following auidt rules will asure that unsuccessful attempts to create a
-file via <code>openat</code> syscall are collected.
-
-If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
-program to read audit rules during daemon startup (the default), add the
-rules below to a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the rules below to
-<code>/etc/audit/audit.rules</code> file.
-<pre>
--a always,exit -F arch=b32 -S openat -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b32 -S openat -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
-</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S openat -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b64 -S openat -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
-</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
-<td>Record Unsuccessful Modification Attempts to Files - openat O_TRUNC_WRITE</td>
-<td xml:lang="en-US">The audit system should collect detailed unauthorized file accesses for
-all users and root. The <code>openat</code> syscall can be used to modify files
-if called for write operation of with O_TRUNC_WRITE flag.
-
-The following auidt rules will asure that unsuccessful attempts to modify a
-file via <code>openat</code> syscall are collected.
-
-If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
-program to read audit rules during daemon startup (the default), add the
-rules below to a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the rules below to
-<code>/etc/audit/audit.rules</code> file.
-<pre>
--a always,exit -F arch=b32 -S openat -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b32 -S openat -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
-</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S openat -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b64 -S openat -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
-</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
-<td>Record Unsuccessful Modification Attempts to Files - openat O_TRUNC_WRITE</td>
-<td xml:lang="en-US">The audit system should collect detailed unauthorized file accesses for
-all users and root. The <code>openat</code> syscall can be used to modify files
-if called for write operation of with O_TRUNC_WRITE flag.
-
-The following auidt rules will asure that unsuccessful attempts to modify a
-file via <code>openat</code> syscall are collected.
-
-If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
-program to read audit rules during daemon startup (the default), add the
-rules below to a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the rules below to
-<code>/etc/audit/audit.rules</code> file.
-<pre>
--a always,exit -F arch=b32 -S openat -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b32 -S openat -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
-</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S openat -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b64 -S openat -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
-</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
-<td>Ensure auditd Rules For Unauthorized Attempts To openat Are Ordered Correctly</td>
-<td xml:lang="en-US">The audit system should collect detailed unauthorized file
-accesses for all users and root.
-To correctly identify unsuccessful creation, unsuccessful modification and unsuccessful access
-of files via <code>openat</code> syscall the audit rules collecting these events need to be in certain order.
-The more specific rules need to come before the less specific rules. The reason for that is that more
-specific rules cover a subset of events covered in the less specific rules, thus, they need to come
-before to not be overshadowed by less specific rules, which match a bigger set of events.
-Make sure that rules for unsuccessful calls of <code>openat</code> syscall are in the order shown below.
-If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
-program to read audit rules during daemon startup (the default), check the order of
-rules below in a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code>.
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, check the order of rules below in
-<code>/etc/audit/audit.rules</code> file.
-<pre>
--a always,exit -F arch=b32 -S openat -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b32 -S openat -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b32 -S openat -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b32 -S openat -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b32 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
--a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
-</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S openat -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b64 -S openat -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b64 -S openat -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b64 -S openat -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b64 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
--a always,exit -F arch=b64 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
-</pre>
-</td>
-<td xml:lang="en-US">The more specific rules cover a subset of events covered by the less specific rules.
-By ordering them from more specific to less specific, it is assured that the less specific
-rule will not catch events better recorded by the more specific rule.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
-<td>Ensure auditd Rules For Unauthorized Attempts To openat Are Ordered Correctly</td>
-<td xml:lang="en-US">The audit system should collect detailed unauthorized file
-accesses for all users and root.
-To correctly identify unsuccessful creation, unsuccessful modification and unsuccessful access
-of files via <code>openat</code> syscall the audit rules collecting these events need to be in certain order.
-The more specific rules need to come before the less specific rules. The reason for that is that more
-specific rules cover a subset of events covered in the less specific rules, thus, they need to come
-before to not be overshadowed by less specific rules, which match a bigger set of events.
-Make sure that rules for unsuccessful calls of <code>openat</code> syscall are in the order shown below.
-If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
-program to read audit rules during daemon startup (the default), check the order of
-rules below in a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code>.
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, check the order of rules below in
-<code>/etc/audit/audit.rules</code> file.
-<pre>
--a always,exit -F arch=b32 -S openat -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b32 -S openat -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b32 -S openat -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b32 -S openat -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b32 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
--a always,exit -F arch=b32 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
-</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S openat -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b64 -S openat -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-create
--a always,exit -F arch=b64 -S openat -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b64 -S openat -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-modification
--a always,exit -F arch=b64 -S openat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
--a always,exit -F arch=b64 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccesful-access
-</pre>
-</td>
-<td xml:lang="en-US">The more specific rules cover a subset of events covered by the less specific rules.
-By ordering them from more specific to less specific, it is assured that the less specific
-rule will not catch events better recorded by the more specific rule.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
-<td>Record Unsuccessul Delete Attempts to Files - rename</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
-attempts for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file.
-<pre>-a always,exit -F arch=b32 -S rename -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b32 -S rename -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S rename -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b64 -S rename -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to delete files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
-<td>Record Unsuccessul Delete Attempts to Files - rename</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
-attempts for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file.
-<pre>-a always,exit -F arch=b32 -S rename -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b32 -S rename -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S rename -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b64 -S rename -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to delete files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
-<td>Record Unsuccessul Delete Attempts to Files - renameat</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
-attempts for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file.
-<pre>-a always,exit -F arch=b32 -S renameat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b32 -S renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S renameat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b64 -S renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to delete files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
-<td>Record Unsuccessul Delete Attempts to Files - renameat</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
-attempts for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file.
-<pre>-a always,exit -F arch=b32 -S renameat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b32 -S renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S renameat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b64 -S renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to delete files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
-<td>Record Unsuccessful Access Attempts to Files - truncate</td>
-<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
-accesses for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
-<td>Record Unsuccessful Access Attempts to Files - truncate</td>
-<td xml:lang="en-US">At a minimum, the audit system should collect unauthorized file
-accesses for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F arch=b32 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F arch=b32 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b32 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
--a always,exit -F arch=b64 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to access files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
-<td>Record Unsuccessul Delete Attempts to Files - unlink</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
-attempts for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file.
-<pre>-a always,exit -F arch=b32 -S unlink -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b32 -S unlink -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S unlink -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b64 -S unlink -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to delete files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
-<td>Record Unsuccessul Delete Attempts to Files - unlink</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
-attempts for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file.
-<pre>-a always,exit -F arch=b32 -S unlink -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b32 -S unlink -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S unlink -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b64 -S unlink -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to delete files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.4</a></td>
-<td>Record Unsuccessul Delete Attempts to Files - unlinkat</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
-attempts for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file.
-<pre>-a always,exit -F arch=b32 -S unlinkat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b32 -S unlinkat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S unlinkat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b64 -S unlinkat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to delete files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.2.1</a></td>
-<td>Record Unsuccessul Delete Attempts to Files - unlinkat</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
-attempts for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file.
-<pre>-a always,exit -F arch=b32 -S unlinkat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b32 -S unlinkat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
-
-If the system is 64 bit then also add the following lines:
-<pre>
--a always,exit -F arch=b64 -S unlinkat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b64 -S unlinkat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
-</td>
-<td xml:lang="en-US">Unsuccessful attempts to delete files could be an indicator of malicious activity on a system. Auditing
-these events could serve as evidence of potential system compromise.</td>
 <td></td>
 </tr>
 <tr>
@@ -3446,7 +3392,7 @@ it into the keyring:
 
 Alternatively, the key may be pre-loaded during the RHEL installation. In
 such cases, the key can be installed by running the following command:
-<pre>sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-key-redhat-release</pre>
+<pre>sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release</pre>
 </td>
 <td xml:lang="en-US">Changes to software components can have significant effects on the overall
 security of the operating system. This requirement ensures the software has
@@ -3552,20 +3498,6 @@ users from using unauthorized smart cards.</td>
 </tr>
 <tr>
 <td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=64">Req-8.3</a></td>
-<td>Configure NSS DB To Use opensc</td>
-<td xml:lang="en-US">The <code>opensc</code> module should be configured for use over the
-<code>Coolkey PKCS#11</code> module in the NSS database. To configure the
-NSS database ot use the <code>opensc</code> module, run the following
-command:
-<pre>$ sudo pkcs11-switch opensc</pre>
-</td>
-<td xml:lang="en-US">Smart card login provides two-factor authentication stronger than
-that provided by a username and password combination. Smart cards leverage PKI
-(public key infrastructure) in order to provide and verify credentials.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=64">Req-8.3</a></td>
 <td>Force opensc To Use Defined Smart Card Driver</td>
 <td xml:lang="en-US">The OpenSC smart card tool can auto-detect smart card drivers; however by
 forcing the smart card driver in use by your organization, opensc will no longer
@@ -3584,21 +3516,6 @@ that provided by a username and password combination. Smart cards leverage PKI
 (public key infrastructure) in order to provide and verify credentials.
 Forcing the smart card driver in use by your organization helps to prevent
 users from using unauthorized smart cards.</td>
-<td></td>
-</tr>
-<tr>
-<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=64">Req-8.3</a></td>
-<td>Enable Smart Card Login</td>
-<td xml:lang="en-US">To enable smart card authentication, consult the documentation at:
-<ul><li><b><a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System-Level_Authentication_Guide/smartcards.html#authconfig-smartcards">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System-Level_Authentication_Guide/smartcards.html#authconfig-smartcards</a></b></li></ul>
-
-
-For guidance on enabling SSH to authenticate against a Common Access Card (CAC), consult documentation at:
-<ul><li><b><a href="https://access.redhat.com/solutions/82273">https://access.redhat.com/solutions/82273</a></b></li></ul>
-</td>
-<td xml:lang="en-US">Smart card login provides two-factor authentication stronger than
-that provided by a username and password combination. Smart cards leverage PKI
-(public key infrastructure) in order to provide and verify credentials.</td>
 <td></td>
 </tr>
 <tr>
