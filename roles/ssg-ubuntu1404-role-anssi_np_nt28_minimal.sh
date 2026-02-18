@@ -6,7 +6,7 @@
 # This profile contains items to be applied systematically.
 #
 # Benchmark ID:  UBUNTU-TRUSTY
-# Benchmark Version:  0.1.38
+# Benchmark Version:  0.1.39
 #
 # XCCDF Version:  1.1
 #
@@ -22,90 +22,9 @@
 ###############################################################################
 
 ###############################################################################
-# BEGIN fix (1 / 11) for 'file_permissions_etc_shadow'
+# BEGIN fix (1 / 11) for 'package_nis_removed'
 ###############################################################################
-(>&2 echo "Remediating rule 1/11: 'file_permissions_etc_shadow'")
-chmod 0640 /etc/shadow
-# END fix for 'file_permissions_etc_shadow'
-
-###############################################################################
-# BEGIN fix (2 / 11) for 'file_permissions_etc_gshadow'
-###############################################################################
-(>&2 echo "Remediating rule 2/11: 'file_permissions_etc_gshadow'")
-chmod 0640 /etc/gshadow
-# END fix for 'file_permissions_etc_gshadow'
-
-###############################################################################
-# BEGIN fix (3 / 11) for 'file_permissions_etc_passwd'
-###############################################################################
-(>&2 echo "Remediating rule 3/11: 'file_permissions_etc_passwd'")
-chmod 0644 /etc/passwd
-# END fix for 'file_permissions_etc_passwd'
-
-###############################################################################
-# BEGIN fix (4 / 11) for 'file_permissions_etc_group'
-###############################################################################
-(>&2 echo "Remediating rule 4/11: 'file_permissions_etc_group'")
-chmod 0644 /etc/group
-# END fix for 'file_permissions_etc_group'
-
-###############################################################################
-# BEGIN fix (5 / 11) for 'sudo_remove_nopasswd'
-###############################################################################
-(>&2 echo "Remediating rule 5/11: 'sudo_remove_nopasswd'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'sudo_remove_nopasswd'
-
-###############################################################################
-# BEGIN fix (6 / 11) for 'sudo_remove_no_authenticate'
-###############################################################################
-(>&2 echo "Remediating rule 6/11: 'sudo_remove_no_authenticate'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'sudo_remove_no_authenticate'
-
-###############################################################################
-# BEGIN fix (7 / 11) for 'package_telnetd_removed'
-###############################################################################
-(>&2 echo "Remediating rule 7/11: 'package_telnetd_removed'")
-# CAUTION: This remediation script will remove telnetd
-#	   from the system, and may remove any packages
-#	   that depend on telnetd. Execute this
-#	   remediation AFTER testing on a non-production
-#	   system!
-
-apt-get remove --purge telnetd
-# END fix for 'package_telnetd_removed'
-
-###############################################################################
-# BEGIN fix (8 / 11) for 'package_inetutils-telnetd_removed'
-###############################################################################
-(>&2 echo "Remediating rule 8/11: 'package_inetutils-telnetd_removed'")
-# CAUTION: This remediation script will remove inetutils-telnetd
-#	   from the system, and may remove any packages
-#	   that depend on inetutils-telnetd. Execute this
-#	   remediation AFTER testing on a non-production
-#	   system!
-
-apt-get remove --purge inetutils-telnetd
-# END fix for 'package_inetutils-telnetd_removed'
-
-###############################################################################
-# BEGIN fix (9 / 11) for 'package_telnetd-ssl_removed'
-###############################################################################
-(>&2 echo "Remediating rule 9/11: 'package_telnetd-ssl_removed'")
-# CAUTION: This remediation script will remove telnetd-ssl
-#	   from the system, and may remove any packages
-#	   that depend on telnetd-ssl. Execute this
-#	   remediation AFTER testing on a non-production
-#	   system!
-
-apt-get remove --purge telnetd-ssl
-# END fix for 'package_telnetd-ssl_removed'
-
-###############################################################################
-# BEGIN fix (10 / 11) for 'package_nis_removed'
-###############################################################################
-(>&2 echo "Remediating rule 10/11: 'package_nis_removed'")
+(>&2 echo "Remediating rule 1/11: 'package_nis_removed'")
 # CAUTION: This remediation script will remove nis
 #	   from the system, and may remove any packages
 #	   that depend on nis. Execute this
@@ -116,9 +35,90 @@ apt-get remove --purge nis
 # END fix for 'package_nis_removed'
 
 ###############################################################################
-# BEGIN fix (11 / 11) for 'apt_conf_disallow_unauthenticated'
+# BEGIN fix (2 / 11) for 'package_telnetd_removed'
 ###############################################################################
-(>&2 echo "Remediating rule 11/11: 'apt_conf_disallow_unauthenticated'")
+(>&2 echo "Remediating rule 2/11: 'package_telnetd_removed'")
+# CAUTION: This remediation script will remove telnetd
+#	   from the system, and may remove any packages
+#	   that depend on telnetd. Execute this
+#	   remediation AFTER testing on a non-production
+#	   system!
+
+apt-get remove --purge telnetd
+# END fix for 'package_telnetd_removed'
+
+###############################################################################
+# BEGIN fix (3 / 11) for 'package_telnetd-ssl_removed'
+###############################################################################
+(>&2 echo "Remediating rule 3/11: 'package_telnetd-ssl_removed'")
+# CAUTION: This remediation script will remove telnetd-ssl
+#	   from the system, and may remove any packages
+#	   that depend on telnetd-ssl. Execute this
+#	   remediation AFTER testing on a non-production
+#	   system!
+
+apt-get remove --purge telnetd-ssl
+# END fix for 'package_telnetd-ssl_removed'
+
+###############################################################################
+# BEGIN fix (4 / 11) for 'package_inetutils-telnetd_removed'
+###############################################################################
+(>&2 echo "Remediating rule 4/11: 'package_inetutils-telnetd_removed'")
+# CAUTION: This remediation script will remove inetutils-telnetd
+#	   from the system, and may remove any packages
+#	   that depend on inetutils-telnetd. Execute this
+#	   remediation AFTER testing on a non-production
+#	   system!
+
+apt-get remove --purge inetutils-telnetd
+# END fix for 'package_inetutils-telnetd_removed'
+
+###############################################################################
+# BEGIN fix (5 / 11) for 'apt_conf_disallow_unauthenticated'
+###############################################################################
+(>&2 echo "Remediating rule 5/11: 'apt_conf_disallow_unauthenticated'")
 # FIX FOR THIS RULE IS MISSING
 # END fix for 'apt_conf_disallow_unauthenticated'
+
+###############################################################################
+# BEGIN fix (6 / 11) for 'sudo_remove_no_authenticate'
+###############################################################################
+(>&2 echo "Remediating rule 6/11: 'sudo_remove_no_authenticate'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'sudo_remove_no_authenticate'
+
+###############################################################################
+# BEGIN fix (7 / 11) for 'sudo_remove_nopasswd'
+###############################################################################
+(>&2 echo "Remediating rule 7/11: 'sudo_remove_nopasswd'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'sudo_remove_nopasswd'
+
+###############################################################################
+# BEGIN fix (8 / 11) for 'file_permissions_etc_group'
+###############################################################################
+(>&2 echo "Remediating rule 8/11: 'file_permissions_etc_group'")
+chmod 0644 /etc/group
+# END fix for 'file_permissions_etc_group'
+
+###############################################################################
+# BEGIN fix (9 / 11) for 'file_permissions_etc_shadow'
+###############################################################################
+(>&2 echo "Remediating rule 9/11: 'file_permissions_etc_shadow'")
+chmod 0640 /etc/shadow
+# END fix for 'file_permissions_etc_shadow'
+
+###############################################################################
+# BEGIN fix (10 / 11) for 'file_permissions_etc_gshadow'
+###############################################################################
+(>&2 echo "Remediating rule 10/11: 'file_permissions_etc_gshadow'")
+chmod 0640 /etc/gshadow
+# END fix for 'file_permissions_etc_gshadow'
+
+###############################################################################
+# BEGIN fix (11 / 11) for 'file_permissions_etc_passwd'
+###############################################################################
+(>&2 echo "Remediating rule 11/11: 'file_permissions_etc_passwd'")
+chmod 0644 /etc/passwd
+# END fix for 'file_permissions_etc_passwd'
 

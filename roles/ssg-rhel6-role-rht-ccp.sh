@@ -6,7 +6,7 @@
 # This is a *draft* SCAP profile for Red Hat Certified Cloud Providers
 #
 # Benchmark ID:  RHEL-6
-# Benchmark Version:  0.1.38
+# Benchmark Version:  0.1.39
 #
 # XCCDF Version:  1.1
 #
@@ -22,221 +22,9 @@
 ###############################################################################
 
 ###############################################################################
-# BEGIN fix (1 / 94) for 'partition_for_tmp'
+# BEGIN fix (1 / 94) for 'service_avahi-daemon_disabled'
 ###############################################################################
-(>&2 echo "Remediating rule 1/94: 'partition_for_tmp'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'partition_for_tmp'
-
-###############################################################################
-# BEGIN fix (2 / 94) for 'partition_for_var'
-###############################################################################
-(>&2 echo "Remediating rule 2/94: 'partition_for_var'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'partition_for_var'
-
-###############################################################################
-# BEGIN fix (3 / 94) for 'partition_for_var_log'
-###############################################################################
-(>&2 echo "Remediating rule 3/94: 'partition_for_var_log'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'partition_for_var_log'
-
-###############################################################################
-# BEGIN fix (4 / 94) for 'partition_for_var_log_audit'
-###############################################################################
-(>&2 echo "Remediating rule 4/94: 'partition_for_var_log_audit'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'partition_for_var_log_audit'
-
-###############################################################################
-# BEGIN fix (5 / 94) for 'ensure_redhat_gpgkey_installed'
-###############################################################################
-(>&2 echo "Remediating rule 5/94: 'ensure_redhat_gpgkey_installed'")
-# The two fingerprints below are retrieved from https://access.redhat.com/security/team/key
-readonly REDHAT_RELEASE_2_FINGERPRINT="567E 347A D004 4ADE 55BA 8A5F 199E 2F91 FD43 1D51"
-readonly REDHAT_AUXILIARY_FINGERPRINT="43A6 E49C 4A38 F4BE 9ABF 2A53 4568 9C88 2FA6 58E0"
-# Location of the key we would like to import (once it's integrity verified)
-readonly REDHAT_RELEASE_KEY="/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release"
-
-RPM_GPG_DIR_PERMS=$(stat -c %a "$(dirname "$REDHAT_RELEASE_KEY")")
-
-# Verify /etc/pki/rpm-gpg directory permissions are safe
-if [ "${RPM_GPG_DIR_PERMS}" -le "755" ]
-then
-  # If they are safe, try to obtain fingerprints from the key file
-  # (to ensure there won't be e.g. CRC error).
-  IFS=$'\n' GPG_OUT=($(gpg --with-fingerprint "${REDHAT_RELEASE_KEY}" | grep 'Key fingerprint ='))
-  GPG_RESULT=$?
-  # Reset IFS back to default
-  unset IFS
-  # No CRC error, safe to proceed
-  if [ "${GPG_RESULT}" -eq "0" ]
-  then
-    tr -s ' ' <<< "${GPG_OUT}" | grep -vE "${REDHAT_RELEASE_2_FINGERPRINT}|${REDHAT_AUXILIARY_FINGERPRINT}" || {
-      # If file doesn't contains any keys with unknown fingerprint, import it
-      rpm --import "${REDHAT_RELEASE_KEY}"
-    }
-  fi
-fi
-# END fix for 'ensure_redhat_gpgkey_installed'
-
-###############################################################################
-# BEGIN fix (6 / 94) for 'ensure_gpgcheck_globally_activated'
-###############################################################################
-(>&2 echo "Remediating rule 6/94: 'ensure_gpgcheck_globally_activated'")
-# Function to replace configuration setting in config file or add the configuration setting if
-# it does not exist.
-#
-# Expects four arguments:
-#
-# config_file:		Configuration file that will be modified
-# key:			Configuration option to change
-# value:		Value of the configuration option to change
-# cce:			The CCE identifier or '@CCENUM@' if no CCE identifier exists
-#
-# Optional arugments:
-#
-# format:		Optional argument to specify the format of how key/value should be
-# 			modified/appended in the configuration file. The default is key = value.
-#
-# Example Call(s):
-#
-#     With default format of 'key = value':
-#     replace_or_append '/etc/sysctl.conf' '^kernel.randomize_va_space' '2' '@CCENUM@'
-#
-#     With custom key/value format:
-#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' 'disabled' '@CCENUM@' '%s=%s'
-#
-#     With a variable:
-#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' $var_selinux_state '@CCENUM@' '%s=%s'
-#
-function replace_or_append {
-  local config_file=$1
-  local key=$2
-  local value=$3
-  local cce=$4
-  local format=$5
-
-  # Check sanity of the input
-  if [ $# -lt "3" ]
-  then
-        echo "Usage: replace_or_append 'config_file_location' 'key_to_search' 'new_value'"
-        echo
-        echo "If symlinks need to be taken into account, add yes/no to the last argument"
-        echo "to allow to 'follow_symlinks'."
-        echo "Aborting."
-        exit 1
-  fi
-
-  # Test if the config_file is a symbolic link. If so, use --follow-symlinks with sed.
-  # Otherwise, regular sed command will do.
-  if test -L $config_file; then
-    sed_command="sed -i --follow-symlinks"
-  else
-    sed_command="sed -i"
-  fi
-
-  # Test that the cce arg is not empty or does not equal @CCENUM@.
-  # If @CCENUM@ exists, it means that there is no CCE assigned.
-  if ! [ "x$cce" = x ] && [ "$cce" != '@CCENUM@' ]; then
-    cce="CCE-${cce}"
-  else
-    cce="CCE"
-  fi
-
-  # Strip any search characters in the key arg so that the key can be replaced without
-  # adding any search characters to the config file.
-  stripped_key=$(sed "s/[\^=\$,;+]*//g" <<< $key)
-
-  # If there is no print format specified in the last arg, use the default format.
-  if ! [ "x$format" = x ] ; then
-    printf -v formatted_output "$format" "$stripped_key" "$value"
-  else
-    formatted_output="$stripped_key = $value"
-  fi
-
-  # If the key exists, change it. Otherwise, add it to the config_file.
-  if `grep -qi "$key" $config_file` ; then
-    eval '$sed_command "s/$key.*/$formatted_output/g" $config_file'
-  else
-    # \n is precaution for case where file ends without trailing newline
-    echo -e "\n# Per $cce: Set $formatted_output in $config_file" >> $config_file
-    echo -e "$formatted_output" >> $config_file
-  fi
-
-}
-
-replace_or_append '/etc/yum.conf' '^gpgcheck' '1' 'CCE-26709-6'
-# END fix for 'ensure_gpgcheck_globally_activated'
-
-###############################################################################
-# BEGIN fix (7 / 94) for 'ensure_gpgcheck_never_disabled'
-###############################################################################
-(>&2 echo "Remediating rule 7/94: 'ensure_gpgcheck_never_disabled'")
-sed -i 's/gpgcheck=.*/gpgcheck=1/g' /etc/yum.repos.d/*
-# END fix for 'ensure_gpgcheck_never_disabled'
-
-###############################################################################
-# BEGIN fix (8 / 94) for 'security_patches_up_to_date'
-###############################################################################
-(>&2 echo "Remediating rule 8/94: 'security_patches_up_to_date'")
-yum -y update
-# END fix for 'security_patches_up_to_date'
-
-###############################################################################
-# BEGIN fix (9 / 94) for 'package_aide_installed'
-###############################################################################
-(>&2 echo "Remediating rule 9/94: 'package_aide_installed'")
-# Function to install or uninstall packages on RHEL and Fedora systems.
-#
-# Example Call(s):
-#
-#     package_command install aide
-#     package_command remove telnet-server
-#
-function package_command {
-
-# Load function arguments into local variables
-local package_operation=$1
-local package=$2
-
-# Check sanity of the input
-if [ $# -ne "2" ]
-then
-  echo "Usage: package_command 'install/uninstall' 'rpm_package_name"
-  echo "Aborting."
-  exit 1
-fi
-
-# If dnf is installed, use dnf; otherwise, use yum
-if [ -f "/usr/bin/dnf" ] ; then
-  install_util="/usr/bin/dnf"
-else
-  install_util="/usr/bin/yum"
-fi
-
-if [ "$package_operation" != 'remove' ] ; then
-  # If the rpm is not installed, install the rpm
-  if ! /bin/rpm -q --quiet $package; then
-    $install_util -y $package_operation $package
-  fi
-else
-  # If the rpm is installed, uninstall the rpm
-  if /bin/rpm -q --quiet $package; then
-    $install_util -y $package_operation $package
-  fi
-fi
-
-}
-
-package_command install aide
-# END fix for 'package_aide_installed'
-
-###############################################################################
-# BEGIN fix (10 / 94) for 'service_autofs_disabled'
-###############################################################################
-(>&2 echo "Remediating rule 10/94: 'service_autofs_disabled'")
+(>&2 echo "Remediating rule 1/94: 'service_avahi-daemon_disabled'")
 # Function to enable/disable and start/stop services on RHEL and Fedora systems.
 #
 # Example Call(s):
@@ -286,20 +74,24 @@ else
 fi
 
 # If chkconfig_util is not empty, use chkconfig/service commands.
-if ! [ "x$chkconfig_util" = x ] ; then
+if [ "x$chkconfig_util" != x ] ; then
   $service_util $service $service_operation
   $chkconfig_util --level 0123456 $service $chkconfig_state
 else
   $service_util $service_operation $service
   $service_util $service_state $service
+  # The service may not be running because it has been started and failed,
+  # so let's reset the state so OVAL checks pass.
+  # Service should be 'inactive', not 'failed' after reboot though.
+  $service_util reset-failed $service
 fi
 
 # Test if local variable xinetd is empty using non-bashism.
 # If empty, then xinetd is not being used.
-if ! [ "x$xinetd" = x ] ; then
+if [ "x$xinetd" != x ] ; then
   grep -qi disable /etc/xinetd.d/$xinetd && \
 
-  if ! [ "$service_operation" != 'disable' ] ; then
+  if [ "$service_operation" = 'disable' ] ; then
     sed -i "s/disable.*/disable         = no/gI" /etc/xinetd.d/$xinetd
   else
     sed -i "s/disable.*/disable         = yes/gI" /etc/xinetd.d/$xinetd
@@ -308,1435 +100,129 @@ fi
 
 }
 
-service_command disable autofs
-# END fix for 'service_autofs_disabled'
+service_command disable avahi-daemon
+# END fix for 'service_avahi-daemon_disabled'
 
 ###############################################################################
-# BEGIN fix (11 / 94) for 'userowner_shadow_file'
+# BEGIN fix (2 / 94) for 'service_rlogin_disabled'
 ###############################################################################
-(>&2 echo "Remediating rule 11/94: 'userowner_shadow_file'")
-chown root /etc/shadow
-# END fix for 'userowner_shadow_file'
-
-###############################################################################
-# BEGIN fix (12 / 94) for 'groupowner_shadow_file'
-###############################################################################
-(>&2 echo "Remediating rule 12/94: 'groupowner_shadow_file'")
-chgrp root /etc/shadow
-# END fix for 'groupowner_shadow_file'
-
-###############################################################################
-# BEGIN fix (13 / 94) for 'file_permissions_etc_shadow'
-###############################################################################
-(>&2 echo "Remediating rule 13/94: 'file_permissions_etc_shadow'")
-chmod 0000 /etc/shadow
-# END fix for 'file_permissions_etc_shadow'
-
-###############################################################################
-# BEGIN fix (14 / 94) for 'file_owner_etc_group'
-###############################################################################
-(>&2 echo "Remediating rule 14/94: 'file_owner_etc_group'")
-
-chown root /etc/group
-# END fix for 'file_owner_etc_group'
-
-###############################################################################
-# BEGIN fix (15 / 94) for 'file_groupowner_etc_group'
-###############################################################################
-(>&2 echo "Remediating rule 15/94: 'file_groupowner_etc_group'")
-
-chgrp root /etc/group
-# END fix for 'file_groupowner_etc_group'
-
-###############################################################################
-# BEGIN fix (16 / 94) for 'file_permissions_etc_group'
-###############################################################################
-(>&2 echo "Remediating rule 16/94: 'file_permissions_etc_group'")
-
-chmod 0644 /etc/group
-# END fix for 'file_permissions_etc_group'
-
-###############################################################################
-# BEGIN fix (17 / 94) for 'file_owner_etc_gshadow'
-###############################################################################
-(>&2 echo "Remediating rule 17/94: 'file_owner_etc_gshadow'")
-
-chown root /etc/gshadow
-# END fix for 'file_owner_etc_gshadow'
-
-###############################################################################
-# BEGIN fix (18 / 94) for 'file_groupowner_etc_gshadow'
-###############################################################################
-(>&2 echo "Remediating rule 18/94: 'file_groupowner_etc_gshadow'")
-
-chgrp root /etc/gshadow
-# END fix for 'file_groupowner_etc_gshadow'
-
-###############################################################################
-# BEGIN fix (19 / 94) for 'file_permissions_etc_gshadow'
-###############################################################################
-(>&2 echo "Remediating rule 19/94: 'file_permissions_etc_gshadow'")
-
-chmod 0000 /etc/gshadow
-# END fix for 'file_permissions_etc_gshadow'
-
-###############################################################################
-# BEGIN fix (20 / 94) for 'file_owner_etc_passwd'
-###############################################################################
-(>&2 echo "Remediating rule 20/94: 'file_owner_etc_passwd'")
-
-chown root /etc/passwd
-# END fix for 'file_owner_etc_passwd'
-
-###############################################################################
-# BEGIN fix (21 / 94) for 'file_groupowner_etc_passwd'
-###############################################################################
-(>&2 echo "Remediating rule 21/94: 'file_groupowner_etc_passwd'")
-
-chgrp root /etc/passwd
-# END fix for 'file_groupowner_etc_passwd'
-
-###############################################################################
-# BEGIN fix (22 / 94) for 'file_permissions_etc_passwd'
-###############################################################################
-(>&2 echo "Remediating rule 22/94: 'file_permissions_etc_passwd'")
-
-chmod 0644 /etc/passwd
-# END fix for 'file_permissions_etc_passwd'
-
-###############################################################################
-# BEGIN fix (23 / 94) for 'file_permissions_library_dirs'
-###############################################################################
-(>&2 echo "Remediating rule 23/94: 'file_permissions_library_dirs'")
-DIRS="/lib /lib64 /usr/lib /usr/lib64"
-for dirPath in $DIRS; do
-	find "$dirPath" -perm /022 -type f -exec chmod go-w '{}' \;
-done
-# END fix for 'file_permissions_library_dirs'
-
-###############################################################################
-# BEGIN fix (24 / 94) for 'file_ownership_library_dirs'
-###############################################################################
-(>&2 echo "Remediating rule 24/94: 'file_ownership_library_dirs'")
-for LIBDIR in /usr/lib /usr/lib64 /lib /lib64
-do
-  if [ -d $LIBDIR ]
-  then
-    find -L $LIBDIR \! -user root -exec chown root {} \; 
-  fi
-done
-# END fix for 'file_ownership_library_dirs'
-
-###############################################################################
-# BEGIN fix (25 / 94) for 'file_permissions_binary_dirs'
-###############################################################################
-(>&2 echo "Remediating rule 25/94: 'file_permissions_binary_dirs'")
-DIRS="/bin /usr/bin /usr/local/bin /sbin /usr/sbin /usr/local/sbin /usr/libexec"
-for dirPath in $DIRS; do
-	find "$dirPath" -perm /022 -exec chmod go-w '{}' \;
-done
-# END fix for 'file_permissions_binary_dirs'
-
-###############################################################################
-# BEGIN fix (26 / 94) for 'file_ownership_binary_dirs'
-###############################################################################
-(>&2 echo "Remediating rule 26/94: 'file_ownership_binary_dirs'")
-find /bin/ \
-/usr/bin/ \
-/usr/local/bin/ \
-/sbin/ \
-/usr/sbin/ \
-/usr/local/sbin/ \
-/usr/libexec \
-\! -user root -execdir chown root {} \;
-# END fix for 'file_ownership_binary_dirs'
-
-###############################################################################
-# BEGIN fix (27 / 94) for 'sysctl_kernel_exec_shield'
-###############################################################################
-(>&2 echo "Remediating rule 27/94: 'sysctl_kernel_exec_shield'")
-
-
-#
-# Set runtime for kernel.exec-shield
-#
-/sbin/sysctl -q -n -w kernel.exec-shield=1
-
-#
-# If kernel.exec-shield present in /etc/sysctl.conf, change value to "1"
-#	else, add "kernel.exec-shield = 1" to /etc/sysctl.conf
-#
-# Function to replace configuration setting in config file or add the configuration setting if
-# it does not exist.
-#
-# Expects four arguments:
-#
-# config_file:		Configuration file that will be modified
-# key:			Configuration option to change
-# value:		Value of the configuration option to change
-# cce:			The CCE identifier or '@CCENUM@' if no CCE identifier exists
-#
-# Optional arugments:
-#
-# format:		Optional argument to specify the format of how key/value should be
-# 			modified/appended in the configuration file. The default is key = value.
-#
-# Example Call(s):
-#
-#     With default format of 'key = value':
-#     replace_or_append '/etc/sysctl.conf' '^kernel.randomize_va_space' '2' '@CCENUM@'
-#
-#     With custom key/value format:
-#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' 'disabled' '@CCENUM@' '%s=%s'
-#
-#     With a variable:
-#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' $var_selinux_state '@CCENUM@' '%s=%s'
-#
-function replace_or_append {
-  local config_file=$1
-  local key=$2
-  local value=$3
-  local cce=$4
-  local format=$5
-
-  # Check sanity of the input
-  if [ $# -lt "3" ]
-  then
-        echo "Usage: replace_or_append 'config_file_location' 'key_to_search' 'new_value'"
-        echo
-        echo "If symlinks need to be taken into account, add yes/no to the last argument"
-        echo "to allow to 'follow_symlinks'."
-        echo "Aborting."
-        exit 1
-  fi
-
-  # Test if the config_file is a symbolic link. If so, use --follow-symlinks with sed.
-  # Otherwise, regular sed command will do.
-  if test -L $config_file; then
-    sed_command="sed -i --follow-symlinks"
-  else
-    sed_command="sed -i"
-  fi
-
-  # Test that the cce arg is not empty or does not equal @CCENUM@.
-  # If @CCENUM@ exists, it means that there is no CCE assigned.
-  if ! [ "x$cce" = x ] && [ "$cce" != '@CCENUM@' ]; then
-    cce="CCE-${cce}"
-  else
-    cce="CCE"
-  fi
-
-  # Strip any search characters in the key arg so that the key can be replaced without
-  # adding any search characters to the config file.
-  stripped_key=$(sed "s/[\^=\$,;+]*//g" <<< $key)
-
-  # If there is no print format specified in the last arg, use the default format.
-  if ! [ "x$format" = x ] ; then
-    printf -v formatted_output "$format" "$stripped_key" "$value"
-  else
-    formatted_output="$stripped_key = $value"
-  fi
-
-  # If the key exists, change it. Otherwise, add it to the config_file.
-  if `grep -qi "$key" $config_file` ; then
-    eval '$sed_command "s/$key.*/$formatted_output/g" $config_file'
-  else
-    # \n is precaution for case where file ends without trailing newline
-    echo -e "\n# Per $cce: Set $formatted_output in $config_file" >> $config_file
-    echo -e "$formatted_output" >> $config_file
-  fi
-
-}
-
-replace_or_append '/etc/sysctl.conf' '^kernel.exec-shield' "1" 'CCE-27007-4'
-# END fix for 'sysctl_kernel_exec_shield'
-
-###############################################################################
-# BEGIN fix (28 / 94) for 'sysctl_kernel_randomize_va_space'
-###############################################################################
-(>&2 echo "Remediating rule 28/94: 'sysctl_kernel_randomize_va_space'")
-
-
-#
-# Set runtime for kernel.randomize_va_space
-#
-/sbin/sysctl -q -n -w kernel.randomize_va_space=2
-
-#
-# If kernel.randomize_va_space present in /etc/sysctl.conf, change value to "2"
-#	else, add "kernel.randomize_va_space = 2" to /etc/sysctl.conf
-#
-# Function to replace configuration setting in config file or add the configuration setting if
-# it does not exist.
-#
-# Expects four arguments:
-#
-# config_file:		Configuration file that will be modified
-# key:			Configuration option to change
-# value:		Value of the configuration option to change
-# cce:			The CCE identifier or '@CCENUM@' if no CCE identifier exists
-#
-# Optional arugments:
-#
-# format:		Optional argument to specify the format of how key/value should be
-# 			modified/appended in the configuration file. The default is key = value.
-#
-# Example Call(s):
-#
-#     With default format of 'key = value':
-#     replace_or_append '/etc/sysctl.conf' '^kernel.randomize_va_space' '2' '@CCENUM@'
-#
-#     With custom key/value format:
-#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' 'disabled' '@CCENUM@' '%s=%s'
-#
-#     With a variable:
-#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' $var_selinux_state '@CCENUM@' '%s=%s'
-#
-function replace_or_append {
-  local config_file=$1
-  local key=$2
-  local value=$3
-  local cce=$4
-  local format=$5
-
-  # Check sanity of the input
-  if [ $# -lt "3" ]
-  then
-        echo "Usage: replace_or_append 'config_file_location' 'key_to_search' 'new_value'"
-        echo
-        echo "If symlinks need to be taken into account, add yes/no to the last argument"
-        echo "to allow to 'follow_symlinks'."
-        echo "Aborting."
-        exit 1
-  fi
-
-  # Test if the config_file is a symbolic link. If so, use --follow-symlinks with sed.
-  # Otherwise, regular sed command will do.
-  if test -L $config_file; then
-    sed_command="sed -i --follow-symlinks"
-  else
-    sed_command="sed -i"
-  fi
-
-  # Test that the cce arg is not empty or does not equal @CCENUM@.
-  # If @CCENUM@ exists, it means that there is no CCE assigned.
-  if ! [ "x$cce" = x ] && [ "$cce" != '@CCENUM@' ]; then
-    cce="CCE-${cce}"
-  else
-    cce="CCE"
-  fi
-
-  # Strip any search characters in the key arg so that the key can be replaced without
-  # adding any search characters to the config file.
-  stripped_key=$(sed "s/[\^=\$,;+]*//g" <<< $key)
-
-  # If there is no print format specified in the last arg, use the default format.
-  if ! [ "x$format" = x ] ; then
-    printf -v formatted_output "$format" "$stripped_key" "$value"
-  else
-    formatted_output="$stripped_key = $value"
-  fi
-
-  # If the key exists, change it. Otherwise, add it to the config_file.
-  if `grep -qi "$key" $config_file` ; then
-    eval '$sed_command "s/$key.*/$formatted_output/g" $config_file'
-  else
-    # \n is precaution for case where file ends without trailing newline
-    echo -e "\n# Per $cce: Set $formatted_output in $config_file" >> $config_file
-    echo -e "$formatted_output" >> $config_file
-  fi
-
-}
-
-replace_or_append '/etc/sysctl.conf' '^kernel.randomize_va_space' "2" 'CCE-26999-3'
-# END fix for 'sysctl_kernel_randomize_va_space'
-
-###############################################################################
-# BEGIN fix (29 / 94) for 'enable_selinux_bootloader'
-###############################################################################
-(>&2 echo "Remediating rule 29/94: 'enable_selinux_bootloader'")
-sed -i --follow-symlinks "s/selinux=0//gI" /etc/grub.conf
-sed -i --follow-symlinks "s/enforcing=0//gI" /etc/grub.conf
-# END fix for 'enable_selinux_bootloader'
-
-###############################################################################
-# BEGIN fix (30 / 94) for 'selinux_state'
-###############################################################################
-(>&2 echo "Remediating rule 30/94: 'selinux_state'")
-
-var_selinux_state="enforcing"
-# Function to replace configuration setting in config file or add the configuration setting if
-# it does not exist.
-#
-# Expects four arguments:
-#
-# config_file:		Configuration file that will be modified
-# key:			Configuration option to change
-# value:		Value of the configuration option to change
-# cce:			The CCE identifier or '@CCENUM@' if no CCE identifier exists
-#
-# Optional arugments:
-#
-# format:		Optional argument to specify the format of how key/value should be
-# 			modified/appended in the configuration file. The default is key = value.
-#
-# Example Call(s):
-#
-#     With default format of 'key = value':
-#     replace_or_append '/etc/sysctl.conf' '^kernel.randomize_va_space' '2' '@CCENUM@'
-#
-#     With custom key/value format:
-#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' 'disabled' '@CCENUM@' '%s=%s'
-#
-#     With a variable:
-#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' $var_selinux_state '@CCENUM@' '%s=%s'
-#
-function replace_or_append {
-  local config_file=$1
-  local key=$2
-  local value=$3
-  local cce=$4
-  local format=$5
-
-  # Check sanity of the input
-  if [ $# -lt "3" ]
-  then
-        echo "Usage: replace_or_append 'config_file_location' 'key_to_search' 'new_value'"
-        echo
-        echo "If symlinks need to be taken into account, add yes/no to the last argument"
-        echo "to allow to 'follow_symlinks'."
-        echo "Aborting."
-        exit 1
-  fi
-
-  # Test if the config_file is a symbolic link. If so, use --follow-symlinks with sed.
-  # Otherwise, regular sed command will do.
-  if test -L $config_file; then
-    sed_command="sed -i --follow-symlinks"
-  else
-    sed_command="sed -i"
-  fi
-
-  # Test that the cce arg is not empty or does not equal @CCENUM@.
-  # If @CCENUM@ exists, it means that there is no CCE assigned.
-  if ! [ "x$cce" = x ] && [ "$cce" != '@CCENUM@' ]; then
-    cce="CCE-${cce}"
-  else
-    cce="CCE"
-  fi
-
-  # Strip any search characters in the key arg so that the key can be replaced without
-  # adding any search characters to the config file.
-  stripped_key=$(sed "s/[\^=\$,;+]*//g" <<< $key)
-
-  # If there is no print format specified in the last arg, use the default format.
-  if ! [ "x$format" = x ] ; then
-    printf -v formatted_output "$format" "$stripped_key" "$value"
-  else
-    formatted_output="$stripped_key = $value"
-  fi
-
-  # If the key exists, change it. Otherwise, add it to the config_file.
-  if `grep -qi "$key" $config_file` ; then
-    eval '$sed_command "s/$key.*/$formatted_output/g" $config_file'
-  else
-    # \n is precaution for case where file ends without trailing newline
-    echo -e "\n# Per $cce: Set $formatted_output in $config_file" >> $config_file
-    echo -e "$formatted_output" >> $config_file
-  fi
-
-}
-
-replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' $var_selinux_state 'CCE-26969-6' '%s=%s'
-
-fixfiles onboot
-fixfiles -f relabel
-# END fix for 'selinux_state'
-
-###############################################################################
-# BEGIN fix (31 / 94) for 'selinux_policytype'
-###############################################################################
-(>&2 echo "Remediating rule 31/94: 'selinux_policytype'")
-
-var_selinux_policy_name="targeted"
-# Function to replace configuration setting in config file or add the configuration setting if
-# it does not exist.
-#
-# Expects four arguments:
-#
-# config_file:		Configuration file that will be modified
-# key:			Configuration option to change
-# value:		Value of the configuration option to change
-# cce:			The CCE identifier or '@CCENUM@' if no CCE identifier exists
-#
-# Optional arugments:
-#
-# format:		Optional argument to specify the format of how key/value should be
-# 			modified/appended in the configuration file. The default is key = value.
-#
-# Example Call(s):
-#
-#     With default format of 'key = value':
-#     replace_or_append '/etc/sysctl.conf' '^kernel.randomize_va_space' '2' '@CCENUM@'
-#
-#     With custom key/value format:
-#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' 'disabled' '@CCENUM@' '%s=%s'
-#
-#     With a variable:
-#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' $var_selinux_state '@CCENUM@' '%s=%s'
-#
-function replace_or_append {
-  local config_file=$1
-  local key=$2
-  local value=$3
-  local cce=$4
-  local format=$5
-
-  # Check sanity of the input
-  if [ $# -lt "3" ]
-  then
-        echo "Usage: replace_or_append 'config_file_location' 'key_to_search' 'new_value'"
-        echo
-        echo "If symlinks need to be taken into account, add yes/no to the last argument"
-        echo "to allow to 'follow_symlinks'."
-        echo "Aborting."
-        exit 1
-  fi
-
-  # Test if the config_file is a symbolic link. If so, use --follow-symlinks with sed.
-  # Otherwise, regular sed command will do.
-  if test -L $config_file; then
-    sed_command="sed -i --follow-symlinks"
-  else
-    sed_command="sed -i"
-  fi
-
-  # Test that the cce arg is not empty or does not equal @CCENUM@.
-  # If @CCENUM@ exists, it means that there is no CCE assigned.
-  if ! [ "x$cce" = x ] && [ "$cce" != '@CCENUM@' ]; then
-    cce="CCE-${cce}"
-  else
-    cce="CCE"
-  fi
-
-  # Strip any search characters in the key arg so that the key can be replaced without
-  # adding any search characters to the config file.
-  stripped_key=$(sed "s/[\^=\$,;+]*//g" <<< $key)
-
-  # If there is no print format specified in the last arg, use the default format.
-  if ! [ "x$format" = x ] ; then
-    printf -v formatted_output "$format" "$stripped_key" "$value"
-  else
-    formatted_output="$stripped_key = $value"
-  fi
-
-  # If the key exists, change it. Otherwise, add it to the config_file.
-  if `grep -qi "$key" $config_file` ; then
-    eval '$sed_command "s/$key.*/$formatted_output/g" $config_file'
-  else
-    # \n is precaution for case where file ends without trailing newline
-    echo -e "\n# Per $cce: Set $formatted_output in $config_file" >> $config_file
-    echo -e "$formatted_output" >> $config_file
-  fi
-
-}
-
-replace_or_append '/etc/sysconfig/selinux' '^SELINUXTYPE=' $var_selinux_policy_name 'CCE-26875-5' '%s=%s'
-# END fix for 'selinux_policytype'
-
-###############################################################################
-# BEGIN fix (32 / 94) for 'selinux_all_devicefiles_labeled'
-###############################################################################
-(>&2 echo "Remediating rule 32/94: 'selinux_all_devicefiles_labeled'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'selinux_all_devicefiles_labeled'
-
-###############################################################################
-# BEGIN fix (33 / 94) for 'no_shelllogin_for_systemaccounts'
-###############################################################################
-(>&2 echo "Remediating rule 33/94: 'no_shelllogin_for_systemaccounts'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'no_shelllogin_for_systemaccounts'
-
-###############################################################################
-# BEGIN fix (34 / 94) for 'accounts_no_uid_except_zero'
-###############################################################################
-(>&2 echo "Remediating rule 34/94: 'accounts_no_uid_except_zero'")
-awk -F: '$3 == 0 && $1 != "root" { print $1 }' /etc/passwd | xargs passwd -l
-# END fix for 'accounts_no_uid_except_zero'
-
-###############################################################################
-# BEGIN fix (35 / 94) for 'no_empty_passwords'
-###############################################################################
-(>&2 echo "Remediating rule 35/94: 'no_empty_passwords'")
-sed --follow-symlinks -i 's/\<nullok\>//g' /etc/pam.d/system-auth
-sed --follow-symlinks -i 's/\<nullok\>//g' /etc/pam.d/password-auth
-# END fix for 'no_empty_passwords'
-
-###############################################################################
-# BEGIN fix (36 / 94) for 'accounts_password_all_shadowed'
-###############################################################################
-(>&2 echo "Remediating rule 36/94: 'accounts_password_all_shadowed'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'accounts_password_all_shadowed'
-
-###############################################################################
-# BEGIN fix (37 / 94) for 'accounts_password_minlen_login_defs'
-###############################################################################
-(>&2 echo "Remediating rule 37/94: 'accounts_password_minlen_login_defs'")
-
-var_accounts_password_minlen_login_defs="6"
-
-grep -q ^PASS_MIN_LEN /etc/login.defs && \
-  sed -i "s/PASS_MIN_LEN.*/PASS_MIN_LEN     $var_accounts_password_minlen_login_defs/g" /etc/login.defs
-if ! [ $? -eq 0 ]; then
-    echo "PASS_MIN_LEN      $var_accounts_password_minlen_login_defs" >> /etc/login.defs
-fi
-# END fix for 'accounts_password_minlen_login_defs'
-
-###############################################################################
-# BEGIN fix (38 / 94) for 'accounts_minimum_age_login_defs'
-###############################################################################
-(>&2 echo "Remediating rule 38/94: 'accounts_minimum_age_login_defs'")
-
-var_accounts_minimum_age_login_defs="7"
-
-grep -q ^PASS_MIN_DAYS /etc/login.defs && \
-  sed -i "s/PASS_MIN_DAYS.*/PASS_MIN_DAYS     $var_accounts_minimum_age_login_defs/g" /etc/login.defs
-if ! [ $? -eq 0 ]; then
-    echo "PASS_MIN_DAYS      $var_accounts_minimum_age_login_defs" >> /etc/login.defs
-fi
-# END fix for 'accounts_minimum_age_login_defs'
-
-###############################################################################
-# BEGIN fix (39 / 94) for 'accounts_maximum_age_login_defs'
-###############################################################################
-(>&2 echo "Remediating rule 39/94: 'accounts_maximum_age_login_defs'")
-
-var_accounts_maximum_age_login_defs="60"
-
-grep -q ^PASS_MAX_DAYS /etc/login.defs && \
-  sed -i "s/PASS_MAX_DAYS.*/PASS_MAX_DAYS     $var_accounts_maximum_age_login_defs/g" /etc/login.defs
-if ! [ $? -eq 0 ]; then
-    echo "PASS_MAX_DAYS      $var_accounts_maximum_age_login_defs" >> /etc/login.defs
-fi
-# END fix for 'accounts_maximum_age_login_defs'
-
-###############################################################################
-# BEGIN fix (40 / 94) for 'accounts_password_warn_age_login_defs'
-###############################################################################
-(>&2 echo "Remediating rule 40/94: 'accounts_password_warn_age_login_defs'")
-
-var_accounts_password_warn_age_login_defs="7"
-
-grep -q ^PASS_WARN_AGE /etc/login.defs && \
-  sed -i "s/PASS_WARN_AGE.*/PASS_WARN_AGE     $var_accounts_password_warn_age_login_defs/g" /etc/login.defs
-if ! [ $? -eq 0 ]; then
-    echo "PASS_WARN_AGE      $var_accounts_password_warn_age_login_defs" >> /etc/login.defs
-fi
-# END fix for 'accounts_password_warn_age_login_defs'
-
-###############################################################################
-# BEGIN fix (41 / 94) for 'accounts_password_pam_retry'
-###############################################################################
-(>&2 echo "Remediating rule 41/94: 'accounts_password_pam_retry'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'accounts_password_pam_retry'
-
-###############################################################################
-# BEGIN fix (42 / 94) for 'accounts_password_pam_dcredit'
-###############################################################################
-(>&2 echo "Remediating rule 42/94: 'accounts_password_pam_dcredit'")
-
-var_password_pam_dcredit="-1"
-
-if grep -q "dcredit=" /etc/pam.d/system-auth; then
-	sed -i --follow-symlinks "s/\(dcredit *= *\).*/\1$var_password_pam_dcredit/" /etc/pam.d/system-auth
-else
-	sed -i --follow-symlinks "/pam_cracklib.so/ s/$/ dcredit=$var_password_pam_dcredit/" /etc/pam.d/system-auth
-fi
-# END fix for 'accounts_password_pam_dcredit'
-
-###############################################################################
-# BEGIN fix (43 / 94) for 'accounts_password_pam_ucredit'
-###############################################################################
-(>&2 echo "Remediating rule 43/94: 'accounts_password_pam_ucredit'")
-
-var_password_pam_ucredit="-2"
-
-if grep -q "ucredit=" /etc/pam.d/system-auth; then   
-	sed -i --follow-symlinks "s/\(ucredit *= *\).*/\1$var_password_pam_ucredit/" /etc/pam.d/system-auth
-else
-	sed -i --follow-symlinks "/pam_cracklib.so/ s/$/ ucredit=$var_password_pam_ucredit/" /etc/pam.d/system-auth
-fi
-# END fix for 'accounts_password_pam_ucredit'
-
-###############################################################################
-# BEGIN fix (44 / 94) for 'accounts_password_pam_ocredit'
-###############################################################################
-(>&2 echo "Remediating rule 44/94: 'accounts_password_pam_ocredit'")
-
-var_password_pam_ocredit="-2"
-
-if grep -q "ocredit=" /etc/pam.d/system-auth; then   
-	sed -i --follow-symlinks "s/\(ocredit *= *\).*/\1$var_password_pam_ocredit/" /etc/pam.d/system-auth
-else
-	sed -i --follow-symlinks "/pam_cracklib.so/ s/$/ ocredit=$var_password_pam_ocredit/" /etc/pam.d/system-auth
-fi
-# END fix for 'accounts_password_pam_ocredit'
-
-###############################################################################
-# BEGIN fix (45 / 94) for 'accounts_password_pam_lcredit'
-###############################################################################
-(>&2 echo "Remediating rule 45/94: 'accounts_password_pam_lcredit'")
-
-var_password_pam_lcredit="-2"
-
-if grep -q "lcredit=" /etc/pam.d/system-auth; then   
-	sed -i --follow-symlinks "s/\(lcredit *= *\).*/\1$var_password_pam_lcredit/" /etc/pam.d/system-auth
-else
-	sed -i --follow-symlinks "/pam_cracklib.so/ s/$/ lcredit=$var_password_pam_lcredit/" /etc/pam.d/system-auth
-fi
-# END fix for 'accounts_password_pam_lcredit'
-
-###############################################################################
-# BEGIN fix (46 / 94) for 'accounts_password_pam_difok'
-###############################################################################
-(>&2 echo "Remediating rule 46/94: 'accounts_password_pam_difok'")
-
-var_password_pam_difok="3"
-
-if grep -q "difok=" /etc/pam.d/system-auth; then   
-	sed -i --follow-symlinks "s/\(difok *= *\).*/\1$var_password_pam_difok/" /etc/pam.d/system-auth
-else
-	sed -i --follow-symlinks "/pam_cracklib.so/ s/$/ difok=$var_password_pam_difok/" /etc/pam.d/system-auth
-fi
-# END fix for 'accounts_password_pam_difok'
-
-###############################################################################
-# BEGIN fix (47 / 94) for 'accounts_passwords_pam_faillock_deny'
-###############################################################################
-(>&2 echo "Remediating rule 47/94: 'accounts_passwords_pam_faillock_deny'")
-
-var_accounts_passwords_pam_faillock_deny="5"
-
-AUTH_FILES[0]="/etc/pam.d/system-auth"
-AUTH_FILES[1]="/etc/pam.d/password-auth"
-
-# This script fixes absence of pam_faillock.so in PAM stack or the
-# absense of deny=[0-9]+ in pam_faillock.so arguments
-# When inserting auth pam_faillock.so entries,
-# the entry with preauth argument will be added before pam_unix.so module
-# and entry with authfail argument will be added before pam_deny.so module.
-
-# The placement of pam_faillock.so entries will not be changed
-# if they are already present
-
-for pamFile in "${AUTH_FILES[@]}"
-do
-	
-	# pam_faillock.so already present?
-	if grep -q "^auth.*pam_faillock.so.*" $pamFile; then
-
-		# pam_faillock.so present, deny directive present?
-		if grep -q "^auth.*[default=die].*pam_faillock.so.*authfail.*deny=" $pamFile; then
-
-			# both pam_faillock.so & deny present, just correct deny directive value
-			sed -i --follow-symlinks "s/\(^auth.*required.*pam_faillock.so.*preauth.*silent.*\)\(deny *= *\).*/\1\2$var_accounts_passwords_pam_faillock_deny/" $pamFile
-			sed -i --follow-symlinks "s/\(^auth.*[default=die].*pam_faillock.so.*authfail.*\)\(deny *= *\).*/\1\2$var_accounts_passwords_pam_faillock_deny/" $pamFile
-
-		# pam_faillock.so present, but deny directive not yet
-		else
-
-			# append correct deny value to appropriate places
-			sed -i --follow-symlinks "/^auth.*required.*pam_faillock.so.*preauth.*silent.*/ s/$/ deny=$var_accounts_passwords_pam_faillock_deny/" $pamFile
-			sed -i --follow-symlinks "/^auth.*[default=die].*pam_faillock.so.*authfail.*/ s/$/ deny=$var_accounts_passwords_pam_faillock_deny/" $pamFile
-		fi
-
-	# pam_faillock.so not present yet
-	else
-
-		# insert pam_faillock.so preauth row with proper value of the 'deny' option before pam_unix.so
-		sed -i --follow-symlinks "/^auth.*pam_unix.so.*/i auth        required      pam_faillock.so preauth silent deny=$var_accounts_passwords_pam_faillock_deny" $pamFile
-		# insert pam_faillock.so authfail row with proper value of the 'deny' option before pam_deny.so, after all modules which determine authentication outcome.
-		sed -i --follow-symlinks "/^auth.*pam_deny.so.*/i auth        [default=die] pam_faillock.so authfail deny=$var_accounts_passwords_pam_faillock_deny" $pamFile
-	fi
-
-	# add pam_faillock.so into account phase
-	if ! grep -q "^account.*required.*pam_faillock.so" $pamFile; then
-		sed -i --follow-symlinks "/^account.*required.*pam_unix.so/i account     required      pam_faillock.so" $pamFile
-	fi
-done
-# END fix for 'accounts_passwords_pam_faillock_deny'
-
-###############################################################################
-# BEGIN fix (48 / 94) for 'accounts_password_pam_unix_remember'
-###############################################################################
-(>&2 echo "Remediating rule 48/94: 'accounts_password_pam_unix_remember'")
-
-var_password_pam_unix_remember="5"
-
-AUTH_FILES[0]="/etc/pam.d/system-auth"
-AUTH_FILES[1]="/etc/pam.d/password-auth"
-
-for pamFile in "${AUTH_FILES[@]}"
-do
-	if grep -q "remember=" $pamFile; then
-		sed -i --follow-symlinks "s/\(^password.*sufficient.*pam_unix.so.*\)\(\(remember *= *\)[^ $]*\)/\1remember=$var_password_pam_unix_remember/" $pamFile
-	else
-		sed -i --follow-symlinks "/^password[[:space:]]\+sufficient[[:space:]]\+pam_unix.so/ s/$/ remember=$var_password_pam_unix_remember/" $pamFile
-	fi
-done
-# END fix for 'accounts_password_pam_unix_remember'
-
-###############################################################################
-# BEGIN fix (49 / 94) for 'set_password_hashing_algorithm_systemauth'
-###############################################################################
-(>&2 echo "Remediating rule 49/94: 'set_password_hashing_algorithm_systemauth'")
-
-AUTH_FILES[0]="/etc/pam.d/system-auth"
-AUTH_FILES[1]="/etc/pam.d/password-auth"
-
-for pamFile in "${AUTH_FILES[@]}"
-do
-	if ! grep -q "^password.*sufficient.*pam_unix.so.*sha512" $pamFile; then
-		sed -i --follow-symlinks "/^password.*sufficient.*pam_unix.so/ s/$/ sha512/" $pamFile
-	fi
-done
-# END fix for 'set_password_hashing_algorithm_systemauth'
-
-###############################################################################
-# BEGIN fix (50 / 94) for 'set_password_hashing_algorithm_logindefs'
-###############################################################################
-(>&2 echo "Remediating rule 50/94: 'set_password_hashing_algorithm_logindefs'")
-if grep --silent ^ENCRYPT_METHOD /etc/login.defs ; then
-	sed -i 's/^ENCRYPT_METHOD.*/ENCRYPT_METHOD SHA512/g' /etc/login.defs
-else
-	echo "" >> /etc/login.defs
-	echo "ENCRYPT_METHOD SHA512" >> /etc/login.defs
-fi
-# END fix for 'set_password_hashing_algorithm_logindefs'
-
-###############################################################################
-# BEGIN fix (51 / 94) for 'set_password_hashing_algorithm_libuserconf'
-###############################################################################
-(>&2 echo "Remediating rule 51/94: 'set_password_hashing_algorithm_libuserconf'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'set_password_hashing_algorithm_libuserconf'
-
-###############################################################################
-# BEGIN fix (52 / 94) for 'file_user_owner_grub_conf'
-###############################################################################
-(>&2 echo "Remediating rule 52/94: 'file_user_owner_grub_conf'")
-chown root /etc/grub.conf
-# END fix for 'file_user_owner_grub_conf'
-
-###############################################################################
-# BEGIN fix (53 / 94) for 'file_group_owner_grub_conf'
-###############################################################################
-(>&2 echo "Remediating rule 53/94: 'file_group_owner_grub_conf'")
-chgrp root /etc/grub.conf
-# END fix for 'file_group_owner_grub_conf'
-
-###############################################################################
-# BEGIN fix (54 / 94) for 'file_permissions_grub_conf'
-###############################################################################
-(>&2 echo "Remediating rule 54/94: 'file_permissions_grub_conf'")
-chmod 600 /boot/grub/grub.conf
-# END fix for 'file_permissions_grub_conf'
-
-###############################################################################
-# BEGIN fix (55 / 94) for 'bootloader_password'
-###############################################################################
-(>&2 echo "Remediating rule 55/94: 'bootloader_password'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'bootloader_password'
-
-###############################################################################
-# BEGIN fix (56 / 94) for 'require_singleuser_auth'
-###############################################################################
-(>&2 echo "Remediating rule 56/94: 'require_singleuser_auth'")
-grep -q ^SINGLE /etc/sysconfig/init && \
-  sed -i "s/SINGLE.*/SINGLE=\/sbin\/sulogin/g" /etc/sysconfig/init
-if ! [ $? -eq 0 ]; then
-    echo "SINGLE=/sbin/sulogin" >> /etc/sysconfig/init
-fi
-# END fix for 'require_singleuser_auth'
-
-###############################################################################
-# BEGIN fix (57 / 94) for 'kernel_module_ipv6_option_disabled'
-###############################################################################
-(>&2 echo "Remediating rule 57/94: 'kernel_module_ipv6_option_disabled'")
-
-# Prevent the IPv6 kernel module (ipv6) from loading the IPv6 networking stack
-echo "options ipv6 disable=1" > /etc/modprobe.d/ipv6.conf
-
-# Since according to: https://access.redhat.com/solutions/72733
-# "ipv6 disable=1" options doesn't always disable the IPv6 networking stack from
-# loading, instruct also sysctl configuration to disable IPv6 according to:
-# https://access.redhat.com/solutions/8709#rhel6disable
-
-declare -a IPV6_SETTINGS=("net.ipv6.conf.all.disable_ipv6" "net.ipv6.conf.default.disable_ipv6")
-
-for setting in ${IPV6_SETTINGS[@]}
-do
-	# Set runtime =1 for setting
-	/sbin/sysctl -q -n -w "$setting=1"
-
-	# If setting is present in /etc/sysctl.conf, change value to "1"
-	# else, add "$setting = 1" to /etc/sysctl.conf
-	if grep -q ^"$setting" /etc/sysctl.conf ; then
-		sed -i "s/^$setting.*/$setting = 1/g" /etc/sysctl.conf
-	else
-		echo "" >> /etc/sysctl.conf
-		echo "# Set $setting = 1 per security requirements" >> /etc/sysctl.conf
-		echo "$setting = 1" >> /etc/sysctl.conf
-	fi
-done
-# END fix for 'kernel_module_ipv6_option_disabled'
-
-###############################################################################
-# BEGIN fix (58 / 94) for 'service_ip6tables_enabled'
-###############################################################################
-(>&2 echo "Remediating rule 58/94: 'service_ip6tables_enabled'")
-# Function to enable/disable and start/stop services on RHEL and Fedora systems.
-#
-# Example Call(s):
-#
-#     service_command enable bluetooth
-#     service_command disable bluetooth.service
-#
-#     Using xinetd:
-#     service_command disable rsh.socket xinetd=rsh
-#
-function service_command {
-
-# Load function arguments into local variables
-local service_state=$1
-local service=$2
-local xinetd=$(echo $3 | cut -d'=' -f2)
-
-# Check sanity of the input
-if [ $# -lt "2" ]
-then
-  echo "Usage: service_command 'enable/disable' 'service_name.service'"
-  echo
-  echo "To enable or disable xinetd services add \'xinetd=service_name\'"
-  echo "as the last argument"  
-  echo "Aborting."
-  exit 1
-fi
-
-# If systemctl is installed, use systemctl command; otherwise, use the service/chkconfig commands
-if [ -f "/usr/bin/systemctl" ] ; then
-  service_util="/usr/bin/systemctl"
-else
-  service_util="/sbin/service"
-  chkconfig_util="/sbin/chkconfig"
-fi
-
-# If disable is not specified in arg1, set variables to enable services.
-# Otherwise, variables are to be set to disable services.
-if [ "$service_state" != 'disable' ] ; then
-  service_state="enable"
-  service_operation="start"
-  chkconfig_state="on"
-else
-  service_state="disable"
-  service_operation="stop"
-  chkconfig_state="off"
-fi
-
-# If chkconfig_util is not empty, use chkconfig/service commands.
-if ! [ "x$chkconfig_util" = x ] ; then
-  $service_util $service $service_operation
-  $chkconfig_util --level 0123456 $service $chkconfig_state
-else
-  $service_util $service_operation $service
-  $service_util $service_state $service
-fi
-
-# Test if local variable xinetd is empty using non-bashism.
-# If empty, then xinetd is not being used.
-if ! [ "x$xinetd" = x ] ; then
-  grep -qi disable /etc/xinetd.d/$xinetd && \
-
-  if ! [ "$service_operation" != 'disable' ] ; then
-    sed -i "s/disable.*/disable         = no/gI" /etc/xinetd.d/$xinetd
-  else
-    sed -i "s/disable.*/disable         = yes/gI" /etc/xinetd.d/$xinetd
-  fi
-fi
-
-}
-
-service_command enable ip6tables
-# END fix for 'service_ip6tables_enabled'
-
-###############################################################################
-# BEGIN fix (59 / 94) for 'service_iptables_enabled'
-###############################################################################
-(>&2 echo "Remediating rule 59/94: 'service_iptables_enabled'")
-# Function to enable/disable and start/stop services on RHEL and Fedora systems.
-#
-# Example Call(s):
-#
-#     service_command enable bluetooth
-#     service_command disable bluetooth.service
-#
-#     Using xinetd:
-#     service_command disable rsh.socket xinetd=rsh
-#
-function service_command {
-
-# Load function arguments into local variables
-local service_state=$1
-local service=$2
-local xinetd=$(echo $3 | cut -d'=' -f2)
-
-# Check sanity of the input
-if [ $# -lt "2" ]
-then
-  echo "Usage: service_command 'enable/disable' 'service_name.service'"
-  echo
-  echo "To enable or disable xinetd services add \'xinetd=service_name\'"
-  echo "as the last argument"  
-  echo "Aborting."
-  exit 1
-fi
-
-# If systemctl is installed, use systemctl command; otherwise, use the service/chkconfig commands
-if [ -f "/usr/bin/systemctl" ] ; then
-  service_util="/usr/bin/systemctl"
-else
-  service_util="/sbin/service"
-  chkconfig_util="/sbin/chkconfig"
-fi
-
-# If disable is not specified in arg1, set variables to enable services.
-# Otherwise, variables are to be set to disable services.
-if [ "$service_state" != 'disable' ] ; then
-  service_state="enable"
-  service_operation="start"
-  chkconfig_state="on"
-else
-  service_state="disable"
-  service_operation="stop"
-  chkconfig_state="off"
-fi
-
-# If chkconfig_util is not empty, use chkconfig/service commands.
-if ! [ "x$chkconfig_util" = x ] ; then
-  $service_util $service $service_operation
-  $chkconfig_util --level 0123456 $service $chkconfig_state
-else
-  $service_util $service_operation $service
-  $service_util $service_state $service
-fi
-
-# Test if local variable xinetd is empty using non-bashism.
-# If empty, then xinetd is not being used.
-if ! [ "x$xinetd" = x ] ; then
-  grep -qi disable /etc/xinetd.d/$xinetd && \
-
-  if ! [ "$service_operation" != 'disable' ] ; then
-    sed -i "s/disable.*/disable         = no/gI" /etc/xinetd.d/$xinetd
-  else
-    sed -i "s/disable.*/disable         = yes/gI" /etc/xinetd.d/$xinetd
-  fi
-fi
-
-}
-
-service_command enable iptables
-# END fix for 'service_iptables_enabled'
-
-###############################################################################
-# BEGIN fix (60 / 94) for 'set_iptables_default_rule'
-###############################################################################
-(>&2 echo "Remediating rule 60/94: 'set_iptables_default_rule'")
-sed -i 's/^:INPUT ACCEPT.*/:INPUT DROP [0:0]/g' /etc/sysconfig/iptables
-# END fix for 'set_iptables_default_rule'
-
-###############################################################################
-# BEGIN fix (61 / 94) for 'kernel_module_dccp_disabled'
-###############################################################################
-(>&2 echo "Remediating rule 61/94: 'kernel_module_dccp_disabled'")
-if grep --silent "^install dccp" /etc/modprobe.d/dccp.conf ; then
-	sed -i 's/^install dccp.*/install dccp /bin/true/g' /etc/modprobe.d/dccp.conf
-else
-	echo -e "\n# Disable per security requirements" >> /etc/modprobe.d/dccp.conf
-	echo "install dccp /bin/true" >> /etc/modprobe.d/dccp.conf
-fi
-# END fix for 'kernel_module_dccp_disabled'
-
-###############################################################################
-# BEGIN fix (62 / 94) for 'kernel_module_sctp_disabled'
-###############################################################################
-(>&2 echo "Remediating rule 62/94: 'kernel_module_sctp_disabled'")
-if grep --silent "^install sctp" /etc/modprobe.d/sctp.conf ; then
-	sed -i 's/^install sctp.*/install sctp /bin/true/g' /etc/modprobe.d/sctp.conf
-else
-	echo -e "\n# Disable per security requirements" >> /etc/modprobe.d/sctp.conf
-	echo "install sctp /bin/true" >> /etc/modprobe.d/sctp.conf
-fi
-# END fix for 'kernel_module_sctp_disabled'
-
-###############################################################################
-# BEGIN fix (63 / 94) for 'kernel_module_rds_disabled'
-###############################################################################
-(>&2 echo "Remediating rule 63/94: 'kernel_module_rds_disabled'")
-if grep --silent "^install rds" /etc/modprobe.d/rds.conf ; then
-	sed -i 's/^install rds.*/install rds /bin/true/g' /etc/modprobe.d/rds.conf
-else
-	echo -e "\n# Disable per security requirements" >> /etc/modprobe.d/rds.conf
-	echo "install rds /bin/true" >> /etc/modprobe.d/rds.conf
-fi
-# END fix for 'kernel_module_rds_disabled'
-
-###############################################################################
-# BEGIN fix (64 / 94) for 'kernel_module_tipc_disabled'
-###############################################################################
-(>&2 echo "Remediating rule 64/94: 'kernel_module_tipc_disabled'")
-if grep --silent "^install tipc" /etc/modprobe.d/tipc.conf ; then
-	sed -i 's/^install tipc.*/install tipc /bin/true/g' /etc/modprobe.d/tipc.conf
-else
-	echo -e "\n# Disable per security requirements" >> /etc/modprobe.d/tipc.conf
-	echo "install tipc /bin/true" >> /etc/modprobe.d/tipc.conf
-fi
-# END fix for 'kernel_module_tipc_disabled'
-
-###############################################################################
-# BEGIN fix (65 / 94) for 'file_permissions_var_log_audit'
-###############################################################################
-(>&2 echo "Remediating rule 65/94: 'file_permissions_var_log_audit'")
-
-if `grep -q ^log_group /etc/audit/auditd.conf` ; then
-  GROUP=$(awk -F "=" '/log_group/ {print $2}' /etc/audit/auditd.conf | tr -d ' ')
-  if ! [ "${GROUP}" == 'root' ] ; then
-    chmod 0640 /var/log/audit/audit.log
-    chmod 0440 /var/log/audit/audit.log.*
-  else
-    chmod 0600 /var/log/audit/audit.log
-    chmod 0400 /var/log/audit/audit.log.*
-  fi
-
-  chmod 0640 /etc/audit/audit*
-  chmod 0640 /etc/audit/rules.d/*
-else
-  chmod 0600 /var/log/audit/audit.log
-  chmod 0400 /var/log/audit/audit.log.*
-  chmod 0640 /etc/audit/audit*
-  chmod 0640 /etc/audit/rules.d/*
-fi
-# END fix for 'file_permissions_var_log_audit'
-
-###############################################################################
-# BEGIN fix (66 / 94) for 'service_xinetd_disabled'
-###############################################################################
-(>&2 echo "Remediating rule 66/94: 'service_xinetd_disabled'")
-# Function to enable/disable and start/stop services on RHEL and Fedora systems.
-#
-# Example Call(s):
-#
-#     service_command enable bluetooth
-#     service_command disable bluetooth.service
-#
-#     Using xinetd:
-#     service_command disable rsh.socket xinetd=rsh
-#
-function service_command {
-
-# Load function arguments into local variables
-local service_state=$1
-local service=$2
-local xinetd=$(echo $3 | cut -d'=' -f2)
-
-# Check sanity of the input
-if [ $# -lt "2" ]
-then
-  echo "Usage: service_command 'enable/disable' 'service_name.service'"
-  echo
-  echo "To enable or disable xinetd services add \'xinetd=service_name\'"
-  echo "as the last argument"  
-  echo "Aborting."
-  exit 1
-fi
-
-# If systemctl is installed, use systemctl command; otherwise, use the service/chkconfig commands
-if [ -f "/usr/bin/systemctl" ] ; then
-  service_util="/usr/bin/systemctl"
-else
-  service_util="/sbin/service"
-  chkconfig_util="/sbin/chkconfig"
-fi
-
-# If disable is not specified in arg1, set variables to enable services.
-# Otherwise, variables are to be set to disable services.
-if [ "$service_state" != 'disable' ] ; then
-  service_state="enable"
-  service_operation="start"
-  chkconfig_state="on"
-else
-  service_state="disable"
-  service_operation="stop"
-  chkconfig_state="off"
-fi
-
-# If chkconfig_util is not empty, use chkconfig/service commands.
-if ! [ "x$chkconfig_util" = x ] ; then
-  $service_util $service $service_operation
-  $chkconfig_util --level 0123456 $service $chkconfig_state
-else
-  $service_util $service_operation $service
-  $service_util $service_state $service
-fi
-
-# Test if local variable xinetd is empty using non-bashism.
-# If empty, then xinetd is not being used.
-if ! [ "x$xinetd" = x ] ; then
-  grep -qi disable /etc/xinetd.d/$xinetd && \
-
-  if ! [ "$service_operation" != 'disable' ] ; then
-    sed -i "s/disable.*/disable         = no/gI" /etc/xinetd.d/$xinetd
-  else
-    sed -i "s/disable.*/disable         = yes/gI" /etc/xinetd.d/$xinetd
-  fi
-fi
-
-}
-
-service_command disable xinetd
-# END fix for 'service_xinetd_disabled'
-
-###############################################################################
-# BEGIN fix (67 / 94) for 'package_xinetd_removed'
-###############################################################################
-(>&2 echo "Remediating rule 67/94: 'package_xinetd_removed'")
-# Function to install or uninstall packages on RHEL and Fedora systems.
-#
-# Example Call(s):
-#
-#     package_command install aide
-#     package_command remove telnet-server
-#
-function package_command {
-
-# Load function arguments into local variables
-local package_operation=$1
-local package=$2
-
-# Check sanity of the input
-if [ $# -ne "2" ]
-then
-  echo "Usage: package_command 'install/uninstall' 'rpm_package_name"
-  echo "Aborting."
-  exit 1
-fi
-
-# If dnf is installed, use dnf; otherwise, use yum
-if [ -f "/usr/bin/dnf" ] ; then
-  install_util="/usr/bin/dnf"
-else
-  install_util="/usr/bin/yum"
-fi
-
-if [ "$package_operation" != 'remove' ] ; then
-  # If the rpm is not installed, install the rpm
-  if ! /bin/rpm -q --quiet $package; then
-    $install_util -y $package_operation $package
-  fi
-else
-  # If the rpm is installed, uninstall the rpm
-  if /bin/rpm -q --quiet $package; then
-    $install_util -y $package_operation $package
-  fi
-fi
-
-}
-
-package_command remove xinetd
-# END fix for 'package_xinetd_removed'
-
-###############################################################################
-# BEGIN fix (68 / 94) for 'service_telnetd_disabled'
-###############################################################################
-(>&2 echo "Remediating rule 68/94: 'service_telnetd_disabled'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'service_telnetd_disabled'
-
-###############################################################################
-# BEGIN fix (69 / 94) for 'package_telnet-server_removed'
-###############################################################################
-(>&2 echo "Remediating rule 69/94: 'package_telnet-server_removed'")
-# Function to install or uninstall packages on RHEL and Fedora systems.
-#
-# Example Call(s):
-#
-#     package_command install aide
-#     package_command remove telnet-server
-#
-function package_command {
-
-# Load function arguments into local variables
-local package_operation=$1
-local package=$2
-
-# Check sanity of the input
-if [ $# -ne "2" ]
-then
-  echo "Usage: package_command 'install/uninstall' 'rpm_package_name"
-  echo "Aborting."
-  exit 1
-fi
-
-# If dnf is installed, use dnf; otherwise, use yum
-if [ -f "/usr/bin/dnf" ] ; then
-  install_util="/usr/bin/dnf"
-else
-  install_util="/usr/bin/yum"
-fi
-
-if [ "$package_operation" != 'remove' ] ; then
-  # If the rpm is not installed, install the rpm
-  if ! /bin/rpm -q --quiet $package; then
-    $install_util -y $package_operation $package
-  fi
-else
-  # If the rpm is installed, uninstall the rpm
-  if /bin/rpm -q --quiet $package; then
-    $install_util -y $package_operation $package
-  fi
-fi
-
-}
-
-package_command remove telnet-server
-# END fix for 'package_telnet-server_removed'
-
-###############################################################################
-# BEGIN fix (70 / 94) for 'package_rsh-server_removed'
-###############################################################################
-(>&2 echo "Remediating rule 70/94: 'package_rsh-server_removed'")
-# Function to install or uninstall packages on RHEL and Fedora systems.
-#
-# Example Call(s):
-#
-#     package_command install aide
-#     package_command remove telnet-server
-#
-function package_command {
-
-# Load function arguments into local variables
-local package_operation=$1
-local package=$2
-
-# Check sanity of the input
-if [ $# -ne "2" ]
-then
-  echo "Usage: package_command 'install/uninstall' 'rpm_package_name"
-  echo "Aborting."
-  exit 1
-fi
-
-# If dnf is installed, use dnf; otherwise, use yum
-if [ -f "/usr/bin/dnf" ] ; then
-  install_util="/usr/bin/dnf"
-else
-  install_util="/usr/bin/yum"
-fi
-
-if [ "$package_operation" != 'remove' ] ; then
-  # If the rpm is not installed, install the rpm
-  if ! /bin/rpm -q --quiet $package; then
-    $install_util -y $package_operation $package
-  fi
-else
-  # If the rpm is installed, uninstall the rpm
-  if /bin/rpm -q --quiet $package; then
-    $install_util -y $package_operation $package
-  fi
-fi
-
-}
-
-package_command remove rsh-server
-# END fix for 'package_rsh-server_removed'
-
-###############################################################################
-# BEGIN fix (71 / 94) for 'service_rexec_disabled'
-###############################################################################
-(>&2 echo "Remediating rule 71/94: 'service_rexec_disabled'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'service_rexec_disabled'
-
-###############################################################################
-# BEGIN fix (72 / 94) for 'service_rsh_disabled'
-###############################################################################
-(>&2 echo "Remediating rule 72/94: 'service_rsh_disabled'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'service_rsh_disabled'
-
-###############################################################################
-# BEGIN fix (73 / 94) for 'service_rlogin_disabled'
-###############################################################################
-(>&2 echo "Remediating rule 73/94: 'service_rlogin_disabled'")
+(>&2 echo "Remediating rule 2/94: 'service_rlogin_disabled'")
 # FIX FOR THIS RULE IS MISSING
 # END fix for 'service_rlogin_disabled'
 
 ###############################################################################
-# BEGIN fix (74 / 94) for 'package_ypserv_removed'
+# BEGIN fix (3 / 94) for 'service_rexec_disabled'
 ###############################################################################
-(>&2 echo "Remediating rule 74/94: 'package_ypserv_removed'")
-# Function to install or uninstall packages on RHEL and Fedora systems.
+(>&2 echo "Remediating rule 3/94: 'service_rexec_disabled'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'service_rexec_disabled'
+
+###############################################################################
+# BEGIN fix (4 / 94) for 'service_rsh_disabled'
+###############################################################################
+(>&2 echo "Remediating rule 4/94: 'service_rsh_disabled'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'service_rsh_disabled'
+
+###############################################################################
+# BEGIN fix (5 / 94) for 'package_rsh-server_removed'
+###############################################################################
+(>&2 echo "Remediating rule 5/94: 'package_rsh-server_removed'")
+# Function to remove packages on RHEL, Fedora, Debian, and possibly other systems.
 #
 # Example Call(s):
 #
-#     package_command install aide
-#     package_command remove telnet-server
+#     package_remove telnet-server
 #
-function package_command {
+function package_remove {
 
 # Load function arguments into local variables
-local package_operation=$1
-local package=$2
+local package="$1"
 
 # Check sanity of the input
-if [ $# -ne "2" ]
+if [ $# -ne "1" ]
 then
-  echo "Usage: package_command 'install/uninstall' 'rpm_package_name"
+  echo "Usage: package_remove 'package_name'"
   echo "Aborting."
   exit 1
 fi
 
-# If dnf is installed, use dnf; otherwise, use yum
-if [ -f "/usr/bin/dnf" ] ; then
-  install_util="/usr/bin/dnf"
-else
-  install_util="/usr/bin/yum"
-fi
-
-if [ "$package_operation" != 'remove' ] ; then
-  # If the rpm is not installed, install the rpm
-  if ! /bin/rpm -q --quiet $package; then
-    $install_util -y $package_operation $package
+if which dnf ; then
+  if rpm -q --quiet "$package"; then
+    dnf remove -y "$package"
   fi
-else
-  # If the rpm is installed, uninstall the rpm
-  if /bin/rpm -q --quiet $package; then
-    $install_util -y $package_operation $package
+elif which yum ; then
+  if rpm -q --quiet "$package"; then
+    yum remove -y "$package"
   fi
+elif which apt-get ; then
+  apt-get remove -y "$package"
+else
+  echo "Failed to detect available packaging system, tried dnf, yum and apt-get!"
+  echo "Aborting."
+  exit 1
 fi
 
 }
 
-package_command remove ypserv
-# END fix for 'package_ypserv_removed'
+package_remove rsh-server
+# END fix for 'package_rsh-server_removed'
 
 ###############################################################################
-# BEGIN fix (75 / 94) for 'service_ypbind_disabled'
+# BEGIN fix (6 / 94) for 'package_telnet-server_removed'
 ###############################################################################
-(>&2 echo "Remediating rule 75/94: 'service_ypbind_disabled'")
+(>&2 echo "Remediating rule 6/94: 'package_telnet-server_removed'")
+# Function to remove packages on RHEL, Fedora, Debian, and possibly other systems.
+#
+# Example Call(s):
+#
+#     package_remove telnet-server
+#
+function package_remove {
+
+# Load function arguments into local variables
+local package="$1"
+
+# Check sanity of the input
+if [ $# -ne "1" ]
+then
+  echo "Usage: package_remove 'package_name'"
+  echo "Aborting."
+  exit 1
+fi
+
+if which dnf ; then
+  if rpm -q --quiet "$package"; then
+    dnf remove -y "$package"
+  fi
+elif which yum ; then
+  if rpm -q --quiet "$package"; then
+    yum remove -y "$package"
+  fi
+elif which apt-get ; then
+  apt-get remove -y "$package"
+else
+  echo "Failed to detect available packaging system, tried dnf, yum and apt-get!"
+  echo "Aborting."
+  exit 1
+fi
+
+}
+
+package_remove telnet-server
+# END fix for 'package_telnet-server_removed'
+
+###############################################################################
+# BEGIN fix (7 / 94) for 'service_telnetd_disabled'
+###############################################################################
+(>&2 echo "Remediating rule 7/94: 'service_telnetd_disabled'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'service_telnetd_disabled'
+
+###############################################################################
+# BEGIN fix (8 / 94) for 'service_ypbind_disabled'
+###############################################################################
+(>&2 echo "Remediating rule 8/94: 'service_ypbind_disabled'")
 # Function to enable/disable and start/stop services on RHEL and Fedora systems.
 #
 # Example Call(s):
@@ -1786,20 +272,24 @@ else
 fi
 
 # If chkconfig_util is not empty, use chkconfig/service commands.
-if ! [ "x$chkconfig_util" = x ] ; then
+if [ "x$chkconfig_util" != x ] ; then
   $service_util $service $service_operation
   $chkconfig_util --level 0123456 $service $chkconfig_state
 else
   $service_util $service_operation $service
   $service_util $service_state $service
+  # The service may not be running because it has been started and failed,
+  # so let's reset the state so OVAL checks pass.
+  # Service should be 'inactive', not 'failed' after reboot though.
+  $service_util reset-failed $service
 fi
 
 # Test if local variable xinetd is empty using non-bashism.
 # If empty, then xinetd is not being used.
-if ! [ "x$xinetd" = x ] ; then
+if [ "x$xinetd" != x ] ; then
   grep -qi disable /etc/xinetd.d/$xinetd && \
 
-  if ! [ "$service_operation" != 'disable' ] ; then
+  if [ "$service_operation" = 'disable' ] ; then
     sed -i "s/disable.*/disable         = no/gI" /etc/xinetd.d/$xinetd
   else
     sed -i "s/disable.*/disable         = yes/gI" /etc/xinetd.d/$xinetd
@@ -1812,9 +302,53 @@ service_command disable ypbind
 # END fix for 'service_ypbind_disabled'
 
 ###############################################################################
-# BEGIN fix (76 / 94) for 'service_tftp_disabled'
+# BEGIN fix (9 / 94) for 'package_ypserv_removed'
 ###############################################################################
-(>&2 echo "Remediating rule 76/94: 'service_tftp_disabled'")
+(>&2 echo "Remediating rule 9/94: 'package_ypserv_removed'")
+# Function to remove packages on RHEL, Fedora, Debian, and possibly other systems.
+#
+# Example Call(s):
+#
+#     package_remove telnet-server
+#
+function package_remove {
+
+# Load function arguments into local variables
+local package="$1"
+
+# Check sanity of the input
+if [ $# -ne "1" ]
+then
+  echo "Usage: package_remove 'package_name'"
+  echo "Aborting."
+  exit 1
+fi
+
+if which dnf ; then
+  if rpm -q --quiet "$package"; then
+    dnf remove -y "$package"
+  fi
+elif which yum ; then
+  if rpm -q --quiet "$package"; then
+    yum remove -y "$package"
+  fi
+elif which apt-get ; then
+  apt-get remove -y "$package"
+else
+  echo "Failed to detect available packaging system, tried dnf, yum and apt-get!"
+  echo "Aborting."
+  exit 1
+fi
+
+}
+
+package_remove ypserv
+# END fix for 'package_ypserv_removed'
+
+###############################################################################
+# BEGIN fix (10 / 94) for 'service_tftp_disabled'
+###############################################################################
+(>&2 echo "Remediating rule 10/94: 'service_tftp_disabled'")
 # Function to enable/disable and start/stop services on RHEL and Fedora systems.
 #
 # Example Call(s):
@@ -1864,20 +398,24 @@ else
 fi
 
 # If chkconfig_util is not empty, use chkconfig/service commands.
-if ! [ "x$chkconfig_util" = x ] ; then
+if [ "x$chkconfig_util" != x ] ; then
   $service_util $service $service_operation
   $chkconfig_util --level 0123456 $service $chkconfig_state
 else
   $service_util $service_operation $service
   $service_util $service_state $service
+  # The service may not be running because it has been started and failed,
+  # so let's reset the state so OVAL checks pass.
+  # Service should be 'inactive', not 'failed' after reboot though.
+  $service_util reset-failed $service
 fi
 
 # Test if local variable xinetd is empty using non-bashism.
 # If empty, then xinetd is not being used.
-if ! [ "x$xinetd" = x ] ; then
+if [ "x$xinetd" != x ] ; then
   grep -qi disable /etc/xinetd.d/$xinetd && \
 
-  if ! [ "$service_operation" != 'disable' ] ; then
+  if [ "$service_operation" = 'disable' ] ; then
     sed -i "s/disable.*/disable         = no/gI" /etc/xinetd.d/$xinetd
   else
     sed -i "s/disable.*/disable         = yes/gI" /etc/xinetd.d/$xinetd
@@ -1890,58 +428,53 @@ service_command disable tftp
 # END fix for 'service_tftp_disabled'
 
 ###############################################################################
-# BEGIN fix (77 / 94) for 'package_tftp-server_removed'
+# BEGIN fix (11 / 94) for 'package_tftp-server_removed'
 ###############################################################################
-(>&2 echo "Remediating rule 77/94: 'package_tftp-server_removed'")
-# Function to install or uninstall packages on RHEL and Fedora systems.
+(>&2 echo "Remediating rule 11/94: 'package_tftp-server_removed'")
+# Function to remove packages on RHEL, Fedora, Debian, and possibly other systems.
 #
 # Example Call(s):
 #
-#     package_command install aide
-#     package_command remove telnet-server
+#     package_remove telnet-server
 #
-function package_command {
+function package_remove {
 
 # Load function arguments into local variables
-local package_operation=$1
-local package=$2
+local package="$1"
 
 # Check sanity of the input
-if [ $# -ne "2" ]
+if [ $# -ne "1" ]
 then
-  echo "Usage: package_command 'install/uninstall' 'rpm_package_name"
+  echo "Usage: package_remove 'package_name'"
   echo "Aborting."
   exit 1
 fi
 
-# If dnf is installed, use dnf; otherwise, use yum
-if [ -f "/usr/bin/dnf" ] ; then
-  install_util="/usr/bin/dnf"
-else
-  install_util="/usr/bin/yum"
-fi
-
-if [ "$package_operation" != 'remove' ] ; then
-  # If the rpm is not installed, install the rpm
-  if ! /bin/rpm -q --quiet $package; then
-    $install_util -y $package_operation $package
+if which dnf ; then
+  if rpm -q --quiet "$package"; then
+    dnf remove -y "$package"
   fi
-else
-  # If the rpm is installed, uninstall the rpm
-  if /bin/rpm -q --quiet $package; then
-    $install_util -y $package_operation $package
+elif which yum ; then
+  if rpm -q --quiet "$package"; then
+    yum remove -y "$package"
   fi
+elif which apt-get ; then
+  apt-get remove -y "$package"
+else
+  echo "Failed to detect available packaging system, tried dnf, yum and apt-get!"
+  echo "Aborting."
+  exit 1
 fi
 
 }
 
-package_command remove tftp-server
+package_remove tftp-server
 # END fix for 'package_tftp-server_removed'
 
 ###############################################################################
-# BEGIN fix (78 / 94) for 'service_abrtd_disabled'
+# BEGIN fix (12 / 94) for 'service_xinetd_disabled'
 ###############################################################################
-(>&2 echo "Remediating rule 78/94: 'service_abrtd_disabled'")
+(>&2 echo "Remediating rule 12/94: 'service_xinetd_disabled'")
 # Function to enable/disable and start/stop services on RHEL and Fedora systems.
 #
 # Example Call(s):
@@ -1991,20 +524,24 @@ else
 fi
 
 # If chkconfig_util is not empty, use chkconfig/service commands.
-if ! [ "x$chkconfig_util" = x ] ; then
+if [ "x$chkconfig_util" != x ] ; then
   $service_util $service $service_operation
   $chkconfig_util --level 0123456 $service $chkconfig_state
 else
   $service_util $service_operation $service
   $service_util $service_state $service
+  # The service may not be running because it has been started and failed,
+  # so let's reset the state so OVAL checks pass.
+  # Service should be 'inactive', not 'failed' after reboot though.
+  $service_util reset-failed $service
 fi
 
 # Test if local variable xinetd is empty using non-bashism.
 # If empty, then xinetd is not being used.
-if ! [ "x$xinetd" = x ] ; then
+if [ "x$xinetd" != x ] ; then
   grep -qi disable /etc/xinetd.d/$xinetd && \
 
-  if ! [ "$service_operation" != 'disable' ] ; then
+  if [ "$service_operation" = 'disable' ] ; then
     sed -i "s/disable.*/disable         = no/gI" /etc/xinetd.d/$xinetd
   else
     sed -i "s/disable.*/disable         = yes/gI" /etc/xinetd.d/$xinetd
@@ -2013,91 +550,57 @@ fi
 
 }
 
-service_command disable abrtd
-# END fix for 'service_abrtd_disabled'
+service_command disable xinetd
+# END fix for 'service_xinetd_disabled'
 
 ###############################################################################
-# BEGIN fix (79 / 94) for 'service_ntpdate_disabled'
+# BEGIN fix (13 / 94) for 'package_xinetd_removed'
 ###############################################################################
-(>&2 echo "Remediating rule 79/94: 'service_ntpdate_disabled'")
-# Function to enable/disable and start/stop services on RHEL and Fedora systems.
+(>&2 echo "Remediating rule 13/94: 'package_xinetd_removed'")
+# Function to remove packages on RHEL, Fedora, Debian, and possibly other systems.
 #
 # Example Call(s):
 #
-#     service_command enable bluetooth
-#     service_command disable bluetooth.service
+#     package_remove telnet-server
 #
-#     Using xinetd:
-#     service_command disable rsh.socket xinetd=rsh
-#
-function service_command {
+function package_remove {
 
 # Load function arguments into local variables
-local service_state=$1
-local service=$2
-local xinetd=$(echo $3 | cut -d'=' -f2)
+local package="$1"
 
 # Check sanity of the input
-if [ $# -lt "2" ]
+if [ $# -ne "1" ]
 then
-  echo "Usage: service_command 'enable/disable' 'service_name.service'"
-  echo
-  echo "To enable or disable xinetd services add \'xinetd=service_name\'"
-  echo "as the last argument"  
+  echo "Usage: package_remove 'package_name'"
   echo "Aborting."
   exit 1
 fi
 
-# If systemctl is installed, use systemctl command; otherwise, use the service/chkconfig commands
-if [ -f "/usr/bin/systemctl" ] ; then
-  service_util="/usr/bin/systemctl"
-else
-  service_util="/sbin/service"
-  chkconfig_util="/sbin/chkconfig"
-fi
-
-# If disable is not specified in arg1, set variables to enable services.
-# Otherwise, variables are to be set to disable services.
-if [ "$service_state" != 'disable' ] ; then
-  service_state="enable"
-  service_operation="start"
-  chkconfig_state="on"
-else
-  service_state="disable"
-  service_operation="stop"
-  chkconfig_state="off"
-fi
-
-# If chkconfig_util is not empty, use chkconfig/service commands.
-if ! [ "x$chkconfig_util" = x ] ; then
-  $service_util $service $service_operation
-  $chkconfig_util --level 0123456 $service $chkconfig_state
-else
-  $service_util $service_operation $service
-  $service_util $service_state $service
-fi
-
-# Test if local variable xinetd is empty using non-bashism.
-# If empty, then xinetd is not being used.
-if ! [ "x$xinetd" = x ] ; then
-  grep -qi disable /etc/xinetd.d/$xinetd && \
-
-  if ! [ "$service_operation" != 'disable' ] ; then
-    sed -i "s/disable.*/disable         = no/gI" /etc/xinetd.d/$xinetd
-  else
-    sed -i "s/disable.*/disable         = yes/gI" /etc/xinetd.d/$xinetd
+if which dnf ; then
+  if rpm -q --quiet "$package"; then
+    dnf remove -y "$package"
   fi
+elif which yum ; then
+  if rpm -q --quiet "$package"; then
+    yum remove -y "$package"
+  fi
+elif which apt-get ; then
+  apt-get remove -y "$package"
+else
+  echo "Failed to detect available packaging system, tried dnf, yum and apt-get!"
+  echo "Aborting."
+  exit 1
 fi
 
 }
 
-service_command disable ntpdate
-# END fix for 'service_ntpdate_disabled'
+package_remove xinetd
+# END fix for 'package_xinetd_removed'
 
 ###############################################################################
-# BEGIN fix (80 / 94) for 'service_oddjobd_disabled'
+# BEGIN fix (14 / 94) for 'service_rdisc_disabled'
 ###############################################################################
-(>&2 echo "Remediating rule 80/94: 'service_oddjobd_disabled'")
+(>&2 echo "Remediating rule 14/94: 'service_rdisc_disabled'")
 # Function to enable/disable and start/stop services on RHEL and Fedora systems.
 #
 # Example Call(s):
@@ -2147,176 +650,24 @@ else
 fi
 
 # If chkconfig_util is not empty, use chkconfig/service commands.
-if ! [ "x$chkconfig_util" = x ] ; then
+if [ "x$chkconfig_util" != x ] ; then
   $service_util $service $service_operation
   $chkconfig_util --level 0123456 $service $chkconfig_state
 else
   $service_util $service_operation $service
   $service_util $service_state $service
+  # The service may not be running because it has been started and failed,
+  # so let's reset the state so OVAL checks pass.
+  # Service should be 'inactive', not 'failed' after reboot though.
+  $service_util reset-failed $service
 fi
 
 # Test if local variable xinetd is empty using non-bashism.
 # If empty, then xinetd is not being used.
-if ! [ "x$xinetd" = x ] ; then
+if [ "x$xinetd" != x ] ; then
   grep -qi disable /etc/xinetd.d/$xinetd && \
 
-  if ! [ "$service_operation" != 'disable' ] ; then
-    sed -i "s/disable.*/disable         = no/gI" /etc/xinetd.d/$xinetd
-  else
-    sed -i "s/disable.*/disable         = yes/gI" /etc/xinetd.d/$xinetd
-  fi
-fi
-
-}
-
-service_command disable oddjobd
-# END fix for 'service_oddjobd_disabled'
-
-###############################################################################
-# BEGIN fix (81 / 94) for 'service_qpidd_disabled'
-###############################################################################
-(>&2 echo "Remediating rule 81/94: 'service_qpidd_disabled'")
-# Function to enable/disable and start/stop services on RHEL and Fedora systems.
-#
-# Example Call(s):
-#
-#     service_command enable bluetooth
-#     service_command disable bluetooth.service
-#
-#     Using xinetd:
-#     service_command disable rsh.socket xinetd=rsh
-#
-function service_command {
-
-# Load function arguments into local variables
-local service_state=$1
-local service=$2
-local xinetd=$(echo $3 | cut -d'=' -f2)
-
-# Check sanity of the input
-if [ $# -lt "2" ]
-then
-  echo "Usage: service_command 'enable/disable' 'service_name.service'"
-  echo
-  echo "To enable or disable xinetd services add \'xinetd=service_name\'"
-  echo "as the last argument"  
-  echo "Aborting."
-  exit 1
-fi
-
-# If systemctl is installed, use systemctl command; otherwise, use the service/chkconfig commands
-if [ -f "/usr/bin/systemctl" ] ; then
-  service_util="/usr/bin/systemctl"
-else
-  service_util="/sbin/service"
-  chkconfig_util="/sbin/chkconfig"
-fi
-
-# If disable is not specified in arg1, set variables to enable services.
-# Otherwise, variables are to be set to disable services.
-if [ "$service_state" != 'disable' ] ; then
-  service_state="enable"
-  service_operation="start"
-  chkconfig_state="on"
-else
-  service_state="disable"
-  service_operation="stop"
-  chkconfig_state="off"
-fi
-
-# If chkconfig_util is not empty, use chkconfig/service commands.
-if ! [ "x$chkconfig_util" = x ] ; then
-  $service_util $service $service_operation
-  $chkconfig_util --level 0123456 $service $chkconfig_state
-else
-  $service_util $service_operation $service
-  $service_util $service_state $service
-fi
-
-# Test if local variable xinetd is empty using non-bashism.
-# If empty, then xinetd is not being used.
-if ! [ "x$xinetd" = x ] ; then
-  grep -qi disable /etc/xinetd.d/$xinetd && \
-
-  if ! [ "$service_operation" != 'disable' ] ; then
-    sed -i "s/disable.*/disable         = no/gI" /etc/xinetd.d/$xinetd
-  else
-    sed -i "s/disable.*/disable         = yes/gI" /etc/xinetd.d/$xinetd
-  fi
-fi
-
-}
-
-service_command disable qpidd
-# END fix for 'service_qpidd_disabled'
-
-###############################################################################
-# BEGIN fix (82 / 94) for 'service_rdisc_disabled'
-###############################################################################
-(>&2 echo "Remediating rule 82/94: 'service_rdisc_disabled'")
-# Function to enable/disable and start/stop services on RHEL and Fedora systems.
-#
-# Example Call(s):
-#
-#     service_command enable bluetooth
-#     service_command disable bluetooth.service
-#
-#     Using xinetd:
-#     service_command disable rsh.socket xinetd=rsh
-#
-function service_command {
-
-# Load function arguments into local variables
-local service_state=$1
-local service=$2
-local xinetd=$(echo $3 | cut -d'=' -f2)
-
-# Check sanity of the input
-if [ $# -lt "2" ]
-then
-  echo "Usage: service_command 'enable/disable' 'service_name.service'"
-  echo
-  echo "To enable or disable xinetd services add \'xinetd=service_name\'"
-  echo "as the last argument"  
-  echo "Aborting."
-  exit 1
-fi
-
-# If systemctl is installed, use systemctl command; otherwise, use the service/chkconfig commands
-if [ -f "/usr/bin/systemctl" ] ; then
-  service_util="/usr/bin/systemctl"
-else
-  service_util="/sbin/service"
-  chkconfig_util="/sbin/chkconfig"
-fi
-
-# If disable is not specified in arg1, set variables to enable services.
-# Otherwise, variables are to be set to disable services.
-if [ "$service_state" != 'disable' ] ; then
-  service_state="enable"
-  service_operation="start"
-  chkconfig_state="on"
-else
-  service_state="disable"
-  service_operation="stop"
-  chkconfig_state="off"
-fi
-
-# If chkconfig_util is not empty, use chkconfig/service commands.
-if ! [ "x$chkconfig_util" = x ] ; then
-  $service_util $service $service_operation
-  $chkconfig_util --level 0123456 $service $chkconfig_state
-else
-  $service_util $service_operation $service
-  $service_util $service_state $service
-fi
-
-# Test if local variable xinetd is empty using non-bashism.
-# If empty, then xinetd is not being used.
-if ! [ "x$xinetd" = x ] ; then
-  grep -qi disable /etc/xinetd.d/$xinetd && \
-
-  if ! [ "$service_operation" != 'disable' ] ; then
+  if [ "$service_operation" = 'disable' ] ; then
     sed -i "s/disable.*/disable         = no/gI" /etc/xinetd.d/$xinetd
   else
     sed -i "s/disable.*/disable         = yes/gI" /etc/xinetd.d/$xinetd
@@ -2329,9 +680,9 @@ service_command disable rdisc
 # END fix for 'service_rdisc_disabled'
 
 ###############################################################################
-# BEGIN fix (83 / 94) for 'service_atd_disabled'
+# BEGIN fix (15 / 94) for 'service_oddjobd_disabled'
 ###############################################################################
-(>&2 echo "Remediating rule 83/94: 'service_atd_disabled'")
+(>&2 echo "Remediating rule 15/94: 'service_oddjobd_disabled'")
 # Function to enable/disable and start/stop services on RHEL and Fedora systems.
 #
 # Example Call(s):
@@ -2381,20 +732,352 @@ else
 fi
 
 # If chkconfig_util is not empty, use chkconfig/service commands.
-if ! [ "x$chkconfig_util" = x ] ; then
+if [ "x$chkconfig_util" != x ] ; then
   $service_util $service $service_operation
   $chkconfig_util --level 0123456 $service $chkconfig_state
 else
   $service_util $service_operation $service
   $service_util $service_state $service
+  # The service may not be running because it has been started and failed,
+  # so let's reset the state so OVAL checks pass.
+  # Service should be 'inactive', not 'failed' after reboot though.
+  $service_util reset-failed $service
 fi
 
 # Test if local variable xinetd is empty using non-bashism.
 # If empty, then xinetd is not being used.
-if ! [ "x$xinetd" = x ] ; then
+if [ "x$xinetd" != x ] ; then
   grep -qi disable /etc/xinetd.d/$xinetd && \
 
-  if ! [ "$service_operation" != 'disable' ] ; then
+  if [ "$service_operation" = 'disable' ] ; then
+    sed -i "s/disable.*/disable         = no/gI" /etc/xinetd.d/$xinetd
+  else
+    sed -i "s/disable.*/disable         = yes/gI" /etc/xinetd.d/$xinetd
+  fi
+fi
+
+}
+
+service_command disable oddjobd
+# END fix for 'service_oddjobd_disabled'
+
+###############################################################################
+# BEGIN fix (16 / 94) for 'service_qpidd_disabled'
+###############################################################################
+(>&2 echo "Remediating rule 16/94: 'service_qpidd_disabled'")
+# Function to enable/disable and start/stop services on RHEL and Fedora systems.
+#
+# Example Call(s):
+#
+#     service_command enable bluetooth
+#     service_command disable bluetooth.service
+#
+#     Using xinetd:
+#     service_command disable rsh.socket xinetd=rsh
+#
+function service_command {
+
+# Load function arguments into local variables
+local service_state=$1
+local service=$2
+local xinetd=$(echo $3 | cut -d'=' -f2)
+
+# Check sanity of the input
+if [ $# -lt "2" ]
+then
+  echo "Usage: service_command 'enable/disable' 'service_name.service'"
+  echo
+  echo "To enable or disable xinetd services add \'xinetd=service_name\'"
+  echo "as the last argument"  
+  echo "Aborting."
+  exit 1
+fi
+
+# If systemctl is installed, use systemctl command; otherwise, use the service/chkconfig commands
+if [ -f "/usr/bin/systemctl" ] ; then
+  service_util="/usr/bin/systemctl"
+else
+  service_util="/sbin/service"
+  chkconfig_util="/sbin/chkconfig"
+fi
+
+# If disable is not specified in arg1, set variables to enable services.
+# Otherwise, variables are to be set to disable services.
+if [ "$service_state" != 'disable' ] ; then
+  service_state="enable"
+  service_operation="start"
+  chkconfig_state="on"
+else
+  service_state="disable"
+  service_operation="stop"
+  chkconfig_state="off"
+fi
+
+# If chkconfig_util is not empty, use chkconfig/service commands.
+if [ "x$chkconfig_util" != x ] ; then
+  $service_util $service $service_operation
+  $chkconfig_util --level 0123456 $service $chkconfig_state
+else
+  $service_util $service_operation $service
+  $service_util $service_state $service
+  # The service may not be running because it has been started and failed,
+  # so let's reset the state so OVAL checks pass.
+  # Service should be 'inactive', not 'failed' after reboot though.
+  $service_util reset-failed $service
+fi
+
+# Test if local variable xinetd is empty using non-bashism.
+# If empty, then xinetd is not being used.
+if [ "x$xinetd" != x ] ; then
+  grep -qi disable /etc/xinetd.d/$xinetd && \
+
+  if [ "$service_operation" = 'disable' ] ; then
+    sed -i "s/disable.*/disable         = no/gI" /etc/xinetd.d/$xinetd
+  else
+    sed -i "s/disable.*/disable         = yes/gI" /etc/xinetd.d/$xinetd
+  fi
+fi
+
+}
+
+service_command disable qpidd
+# END fix for 'service_qpidd_disabled'
+
+###############################################################################
+# BEGIN fix (17 / 94) for 'service_abrtd_disabled'
+###############################################################################
+(>&2 echo "Remediating rule 17/94: 'service_abrtd_disabled'")
+# Function to enable/disable and start/stop services on RHEL and Fedora systems.
+#
+# Example Call(s):
+#
+#     service_command enable bluetooth
+#     service_command disable bluetooth.service
+#
+#     Using xinetd:
+#     service_command disable rsh.socket xinetd=rsh
+#
+function service_command {
+
+# Load function arguments into local variables
+local service_state=$1
+local service=$2
+local xinetd=$(echo $3 | cut -d'=' -f2)
+
+# Check sanity of the input
+if [ $# -lt "2" ]
+then
+  echo "Usage: service_command 'enable/disable' 'service_name.service'"
+  echo
+  echo "To enable or disable xinetd services add \'xinetd=service_name\'"
+  echo "as the last argument"  
+  echo "Aborting."
+  exit 1
+fi
+
+# If systemctl is installed, use systemctl command; otherwise, use the service/chkconfig commands
+if [ -f "/usr/bin/systemctl" ] ; then
+  service_util="/usr/bin/systemctl"
+else
+  service_util="/sbin/service"
+  chkconfig_util="/sbin/chkconfig"
+fi
+
+# If disable is not specified in arg1, set variables to enable services.
+# Otherwise, variables are to be set to disable services.
+if [ "$service_state" != 'disable' ] ; then
+  service_state="enable"
+  service_operation="start"
+  chkconfig_state="on"
+else
+  service_state="disable"
+  service_operation="stop"
+  chkconfig_state="off"
+fi
+
+# If chkconfig_util is not empty, use chkconfig/service commands.
+if [ "x$chkconfig_util" != x ] ; then
+  $service_util $service $service_operation
+  $chkconfig_util --level 0123456 $service $chkconfig_state
+else
+  $service_util $service_operation $service
+  $service_util $service_state $service
+  # The service may not be running because it has been started and failed,
+  # so let's reset the state so OVAL checks pass.
+  # Service should be 'inactive', not 'failed' after reboot though.
+  $service_util reset-failed $service
+fi
+
+# Test if local variable xinetd is empty using non-bashism.
+# If empty, then xinetd is not being used.
+if [ "x$xinetd" != x ] ; then
+  grep -qi disable /etc/xinetd.d/$xinetd && \
+
+  if [ "$service_operation" = 'disable' ] ; then
+    sed -i "s/disable.*/disable         = no/gI" /etc/xinetd.d/$xinetd
+  else
+    sed -i "s/disable.*/disable         = yes/gI" /etc/xinetd.d/$xinetd
+  fi
+fi
+
+}
+
+service_command disable abrtd
+# END fix for 'service_abrtd_disabled'
+
+###############################################################################
+# BEGIN fix (18 / 94) for 'service_ntpdate_disabled'
+###############################################################################
+(>&2 echo "Remediating rule 18/94: 'service_ntpdate_disabled'")
+# Function to enable/disable and start/stop services on RHEL and Fedora systems.
+#
+# Example Call(s):
+#
+#     service_command enable bluetooth
+#     service_command disable bluetooth.service
+#
+#     Using xinetd:
+#     service_command disable rsh.socket xinetd=rsh
+#
+function service_command {
+
+# Load function arguments into local variables
+local service_state=$1
+local service=$2
+local xinetd=$(echo $3 | cut -d'=' -f2)
+
+# Check sanity of the input
+if [ $# -lt "2" ]
+then
+  echo "Usage: service_command 'enable/disable' 'service_name.service'"
+  echo
+  echo "To enable or disable xinetd services add \'xinetd=service_name\'"
+  echo "as the last argument"  
+  echo "Aborting."
+  exit 1
+fi
+
+# If systemctl is installed, use systemctl command; otherwise, use the service/chkconfig commands
+if [ -f "/usr/bin/systemctl" ] ; then
+  service_util="/usr/bin/systemctl"
+else
+  service_util="/sbin/service"
+  chkconfig_util="/sbin/chkconfig"
+fi
+
+# If disable is not specified in arg1, set variables to enable services.
+# Otherwise, variables are to be set to disable services.
+if [ "$service_state" != 'disable' ] ; then
+  service_state="enable"
+  service_operation="start"
+  chkconfig_state="on"
+else
+  service_state="disable"
+  service_operation="stop"
+  chkconfig_state="off"
+fi
+
+# If chkconfig_util is not empty, use chkconfig/service commands.
+if [ "x$chkconfig_util" != x ] ; then
+  $service_util $service $service_operation
+  $chkconfig_util --level 0123456 $service $chkconfig_state
+else
+  $service_util $service_operation $service
+  $service_util $service_state $service
+  # The service may not be running because it has been started and failed,
+  # so let's reset the state so OVAL checks pass.
+  # Service should be 'inactive', not 'failed' after reboot though.
+  $service_util reset-failed $service
+fi
+
+# Test if local variable xinetd is empty using non-bashism.
+# If empty, then xinetd is not being used.
+if [ "x$xinetd" != x ] ; then
+  grep -qi disable /etc/xinetd.d/$xinetd && \
+
+  if [ "$service_operation" = 'disable' ] ; then
+    sed -i "s/disable.*/disable         = no/gI" /etc/xinetd.d/$xinetd
+  else
+    sed -i "s/disable.*/disable         = yes/gI" /etc/xinetd.d/$xinetd
+  fi
+fi
+
+}
+
+service_command disable ntpdate
+# END fix for 'service_ntpdate_disabled'
+
+###############################################################################
+# BEGIN fix (19 / 94) for 'service_atd_disabled'
+###############################################################################
+(>&2 echo "Remediating rule 19/94: 'service_atd_disabled'")
+# Function to enable/disable and start/stop services on RHEL and Fedora systems.
+#
+# Example Call(s):
+#
+#     service_command enable bluetooth
+#     service_command disable bluetooth.service
+#
+#     Using xinetd:
+#     service_command disable rsh.socket xinetd=rsh
+#
+function service_command {
+
+# Load function arguments into local variables
+local service_state=$1
+local service=$2
+local xinetd=$(echo $3 | cut -d'=' -f2)
+
+# Check sanity of the input
+if [ $# -lt "2" ]
+then
+  echo "Usage: service_command 'enable/disable' 'service_name.service'"
+  echo
+  echo "To enable or disable xinetd services add \'xinetd=service_name\'"
+  echo "as the last argument"  
+  echo "Aborting."
+  exit 1
+fi
+
+# If systemctl is installed, use systemctl command; otherwise, use the service/chkconfig commands
+if [ -f "/usr/bin/systemctl" ] ; then
+  service_util="/usr/bin/systemctl"
+else
+  service_util="/sbin/service"
+  chkconfig_util="/sbin/chkconfig"
+fi
+
+# If disable is not specified in arg1, set variables to enable services.
+# Otherwise, variables are to be set to disable services.
+if [ "$service_state" != 'disable' ] ; then
+  service_state="enable"
+  service_operation="start"
+  chkconfig_state="on"
+else
+  service_state="disable"
+  service_operation="stop"
+  chkconfig_state="off"
+fi
+
+# If chkconfig_util is not empty, use chkconfig/service commands.
+if [ "x$chkconfig_util" != x ] ; then
+  $service_util $service $service_operation
+  $chkconfig_util --level 0123456 $service $chkconfig_state
+else
+  $service_util $service_operation $service
+  $service_util $service_state $service
+  # The service may not be running because it has been started and failed,
+  # so let's reset the state so OVAL checks pass.
+  # Service should be 'inactive', not 'failed' after reboot though.
+  $service_util reset-failed $service
+fi
+
+# Test if local variable xinetd is empty using non-bashism.
+# If empty, then xinetd is not being used.
+if [ "x$xinetd" != x ] ; then
+  grep -qi disable /etc/xinetd.d/$xinetd && \
+
+  if [ "$service_operation" = 'disable' ] ; then
     sed -i "s/disable.*/disable         = no/gI" /etc/xinetd.d/$xinetd
   else
     sed -i "s/disable.*/disable         = yes/gI" /etc/xinetd.d/$xinetd
@@ -2407,18 +1090,20 @@ service_command disable atd
 # END fix for 'service_atd_disabled'
 
 ###############################################################################
-# BEGIN fix (84 / 94) for 'sshd_allow_only_protocol2'
+# BEGIN fix (20 / 94) for 'sshd_disable_rhosts'
 ###############################################################################
-(>&2 echo "Remediating rule 84/94: 'sshd_allow_only_protocol2'")
+(>&2 echo "Remediating rule 20/94: 'sshd_disable_rhosts'")
 # Function to replace configuration setting in config file or add the configuration setting if
 # it does not exist.
 #
-# Expects four arguments:
+# Expects arguments:
 #
 # config_file:		Configuration file that will be modified
 # key:			Configuration option to change
 # value:		Value of the configuration option to change
 # cce:			The CCE identifier or '@CCENUM@' if no CCE identifier exists
+# format:		The printf-like format string that will be given stripped key and value as arguments,
+#			so e.g. '%s=%s' will result in key=value subsitution (i.e. without spaces around =)
 #
 # Optional arugments:
 #
@@ -2437,34 +1122,31 @@ service_command disable atd
 #     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' $var_selinux_state '@CCENUM@' '%s=%s'
 #
 function replace_or_append {
+  local default_format='%s = %s' case_insensitive_mode=yes sed_case_insensitive_option='' grep_case_insensitive_option=''
   local config_file=$1
   local key=$2
   local value=$3
   local cce=$4
   local format=$5
 
-  # Check sanity of the input
-  if [ $# -lt "3" ]
-  then
-        echo "Usage: replace_or_append 'config_file_location' 'key_to_search' 'new_value'"
-        echo
-        echo "If symlinks need to be taken into account, add yes/no to the last argument"
-        echo "to allow to 'follow_symlinks'."
-        echo "Aborting."
-        exit 1
+  if [ "$case_insensitive_mode" = yes ]; then
+    sed_case_insensitive_option="i"
+    grep_case_insensitive_option="-i"
   fi
+  [ -n "$format" ] || format="$default_format"
+  # Check sanity of the input
+  [ $# -ge "3" ] || { echo "Usage: replace_or_append <config_file_location> <key_to_search> <new_value> [<CCE number or literal '@CCENUM@' if unknown>] [printf-like format, default is '$default_format']" >&2; exit 1; }
 
   # Test if the config_file is a symbolic link. If so, use --follow-symlinks with sed.
   # Otherwise, regular sed command will do.
-  if test -L $config_file; then
-    sed_command="sed -i --follow-symlinks"
-  else
-    sed_command="sed -i"
+  sed_command=('sed' '-i')
+  if test -L "$config_file"; then
+    sed_command+=('--follow-symlinks')
   fi
 
   # Test that the cce arg is not empty or does not equal @CCENUM@.
   # If @CCENUM@ exists, it means that there is no CCE assigned.
-  if ! [ "x$cce" = x ] && [ "$cce" != '@CCENUM@' ]; then
+  if [ -n "$cce" ] && [ "$cce" != '@CCENUM@' ]; then
     cce="CCE-${cce}"
   else
     cce="CCE"
@@ -2472,33 +1154,30 @@ function replace_or_append {
 
   # Strip any search characters in the key arg so that the key can be replaced without
   # adding any search characters to the config file.
-  stripped_key=$(sed "s/[\^=\$,;+]*//g" <<< $key)
+  stripped_key=$(sed 's/[\^=\$,;+]*//g' <<< "$key")
 
-  # If there is no print format specified in the last arg, use the default format.
-  if ! [ "x$format" = x ] ; then
-    printf -v formatted_output "$format" "$stripped_key" "$value"
-  else
-    formatted_output="$stripped_key = $value"
-  fi
+  # shellcheck disable=SC2059
+  printf -v formatted_output "$format" "$stripped_key" "$value"
 
   # If the key exists, change it. Otherwise, add it to the config_file.
-  if `grep -qi "$key" $config_file` ; then
-    eval '$sed_command "s/$key.*/$formatted_output/g" $config_file'
+  # We search for the key string followed by a word boundary (matched by \>),
+  # so if we search for 'setting', 'setting2' won't match.
+  if grep -q $grep_case_insensitive_option "${key}\\>" "$config_file"; then
+    "${sed_command[@]}" "s/${key}\\>.*/$formatted_output/g$sed_case_insensitive_option" "$config_file"
   else
     # \n is precaution for case where file ends without trailing newline
-    echo -e "\n# Per $cce: Set $formatted_output in $config_file" >> $config_file
-    echo -e "$formatted_output" >> $config_file
+    printf '\n# Per %s: Set %s in %s\n' "$cce" "$formatted_output" "$config_file" >> "$config_file"
+    printf '%s\n' "$formatted_output" >> "$config_file"
   fi
-
 }
 
-replace_or_append '/etc/ssh/sshd_config' '^Protocol' '2' 'CCE-27072-8' '%s %s'
-# END fix for 'sshd_allow_only_protocol2'
+replace_or_append '/etc/ssh/sshd_config' '^IgnoreRhosts' 'yes' 'CCE-27124-7' '%s %s'
+# END fix for 'sshd_disable_rhosts'
 
 ###############################################################################
-# BEGIN fix (85 / 94) for 'sshd_set_idle_timeout'
+# BEGIN fix (21 / 94) for 'sshd_set_idle_timeout'
 ###############################################################################
-(>&2 echo "Remediating rule 85/94: 'sshd_set_idle_timeout'")
+(>&2 echo "Remediating rule 21/94: 'sshd_set_idle_timeout'")
 
 sshd_idle_timeout_value="300"
 
@@ -2510,29 +1189,42 @@ fi
 # END fix for 'sshd_set_idle_timeout'
 
 ###############################################################################
-# BEGIN fix (86 / 94) for 'sshd_set_keepalive'
+# BEGIN fix (22 / 94) for 'sshd_enable_warning_banner'
 ###############################################################################
-(>&2 echo "Remediating rule 86/94: 'sshd_set_keepalive'")
-grep -q ^ClientAliveCountMax /etc/ssh/sshd_config && \
-  sed -i "s/ClientAliveCountMax.*/ClientAliveCountMax 0/g" /etc/ssh/sshd_config
+(>&2 echo "Remediating rule 22/94: 'sshd_enable_warning_banner'")
+grep -q ^Banner /etc/ssh/sshd_config && \
+  sed -i "s/Banner.*/Banner \/etc\/issue/g" /etc/ssh/sshd_config
 if ! [ $? -eq 0 ]; then
-    echo "ClientAliveCountMax 0" >> /etc/ssh/sshd_config
+    echo "Banner /etc/issue" >> /etc/ssh/sshd_config
 fi
-# END fix for 'sshd_set_keepalive'
+# END fix for 'sshd_enable_warning_banner'
 
 ###############################################################################
-# BEGIN fix (87 / 94) for 'sshd_disable_rhosts'
+# BEGIN fix (23 / 94) for 'disable_host_auth'
 ###############################################################################
-(>&2 echo "Remediating rule 87/94: 'sshd_disable_rhosts'")
+(>&2 echo "Remediating rule 23/94: 'disable_host_auth'")
+grep -q ^HostbasedAuthentication /etc/ssh/sshd_config && \
+  sed -i "s/HostbasedAuthentication.*/HostbasedAuthentication no/g" /etc/ssh/sshd_config
+if ! [ $? -eq 0 ]; then
+    echo "HostbasedAuthentication no" >> /etc/ssh/sshd_config
+fi
+# END fix for 'disable_host_auth'
+
+###############################################################################
+# BEGIN fix (24 / 94) for 'sshd_disable_empty_passwords'
+###############################################################################
+(>&2 echo "Remediating rule 24/94: 'sshd_disable_empty_passwords'")
 # Function to replace configuration setting in config file or add the configuration setting if
 # it does not exist.
 #
-# Expects four arguments:
+# Expects arguments:
 #
 # config_file:		Configuration file that will be modified
 # key:			Configuration option to change
 # value:		Value of the configuration option to change
 # cce:			The CCE identifier or '@CCENUM@' if no CCE identifier exists
+# format:		The printf-like format string that will be given stripped key and value as arguments,
+#			so e.g. '%s=%s' will result in key=value subsitution (i.e. without spaces around =)
 #
 # Optional arugments:
 #
@@ -2551,34 +1243,31 @@ fi
 #     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' $var_selinux_state '@CCENUM@' '%s=%s'
 #
 function replace_or_append {
+  local default_format='%s = %s' case_insensitive_mode=yes sed_case_insensitive_option='' grep_case_insensitive_option=''
   local config_file=$1
   local key=$2
   local value=$3
   local cce=$4
   local format=$5
 
-  # Check sanity of the input
-  if [ $# -lt "3" ]
-  then
-        echo "Usage: replace_or_append 'config_file_location' 'key_to_search' 'new_value'"
-        echo
-        echo "If symlinks need to be taken into account, add yes/no to the last argument"
-        echo "to allow to 'follow_symlinks'."
-        echo "Aborting."
-        exit 1
+  if [ "$case_insensitive_mode" = yes ]; then
+    sed_case_insensitive_option="i"
+    grep_case_insensitive_option="-i"
   fi
+  [ -n "$format" ] || format="$default_format"
+  # Check sanity of the input
+  [ $# -ge "3" ] || { echo "Usage: replace_or_append <config_file_location> <key_to_search> <new_value> [<CCE number or literal '@CCENUM@' if unknown>] [printf-like format, default is '$default_format']" >&2; exit 1; }
 
   # Test if the config_file is a symbolic link. If so, use --follow-symlinks with sed.
   # Otherwise, regular sed command will do.
-  if test -L $config_file; then
-    sed_command="sed -i --follow-symlinks"
-  else
-    sed_command="sed -i"
+  sed_command=('sed' '-i')
+  if test -L "$config_file"; then
+    sed_command+=('--follow-symlinks')
   fi
 
   # Test that the cce arg is not empty or does not equal @CCENUM@.
   # If @CCENUM@ exists, it means that there is no CCE assigned.
-  if ! [ "x$cce" = x ] && [ "$cce" != '@CCENUM@' ]; then
+  if [ -n "$cce" ] && [ "$cce" != '@CCENUM@' ]; then
     cce="CCE-${cce}"
   else
     cce="CCE"
@@ -2586,44 +1275,63 @@ function replace_or_append {
 
   # Strip any search characters in the key arg so that the key can be replaced without
   # adding any search characters to the config file.
-  stripped_key=$(sed "s/[\^=\$,;+]*//g" <<< $key)
+  stripped_key=$(sed 's/[\^=\$,;+]*//g' <<< "$key")
 
-  # If there is no print format specified in the last arg, use the default format.
-  if ! [ "x$format" = x ] ; then
-    printf -v formatted_output "$format" "$stripped_key" "$value"
-  else
-    formatted_output="$stripped_key = $value"
-  fi
+  # shellcheck disable=SC2059
+  printf -v formatted_output "$format" "$stripped_key" "$value"
 
   # If the key exists, change it. Otherwise, add it to the config_file.
-  if `grep -qi "$key" $config_file` ; then
-    eval '$sed_command "s/$key.*/$formatted_output/g" $config_file'
+  # We search for the key string followed by a word boundary (matched by \>),
+  # so if we search for 'setting', 'setting2' won't match.
+  if grep -q $grep_case_insensitive_option "${key}\\>" "$config_file"; then
+    "${sed_command[@]}" "s/${key}\\>.*/$formatted_output/g$sed_case_insensitive_option" "$config_file"
   else
     # \n is precaution for case where file ends without trailing newline
-    echo -e "\n# Per $cce: Set $formatted_output in $config_file" >> $config_file
-    echo -e "$formatted_output" >> $config_file
+    printf '\n# Per %s: Set %s in %s\n' "$cce" "$formatted_output" "$config_file" >> "$config_file"
+    printf '%s\n' "$formatted_output" >> "$config_file"
   fi
-
 }
 
-replace_or_append '/etc/ssh/sshd_config' '^IgnoreRhosts' 'yes' 'CCE-27124-7' '%s %s'
-# END fix for 'sshd_disable_rhosts'
+replace_or_append '/etc/ssh/sshd_config' '^PermitEmptyPasswords' 'no' 'CCE-26887-0' '%s %s'
+# END fix for 'sshd_disable_empty_passwords'
 
 ###############################################################################
-# BEGIN fix (88 / 94) for 'disable_host_auth'
+# BEGIN fix (25 / 94) for 'sshd_use_approved_ciphers'
 ###############################################################################
-(>&2 echo "Remediating rule 88/94: 'disable_host_auth'")
-grep -q ^HostbasedAuthentication /etc/ssh/sshd_config && \
-  sed -i "s/HostbasedAuthentication.*/HostbasedAuthentication no/g" /etc/ssh/sshd_config
+(>&2 echo "Remediating rule 25/94: 'sshd_use_approved_ciphers'")
+grep -q ^Ciphers /etc/ssh/sshd_config && \
+  sed -i "s/Ciphers.*/Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc/g" /etc/ssh/sshd_config
 if ! [ $? -eq 0 ]; then
-    echo "HostbasedAuthentication no" >> /etc/ssh/sshd_config
+    echo "Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc" >> /etc/ssh/sshd_config
 fi
-# END fix for 'disable_host_auth'
+# END fix for 'sshd_use_approved_ciphers'
 
 ###############################################################################
-# BEGIN fix (89 / 94) for 'sshd_disable_root_login'
+# BEGIN fix (26 / 94) for 'sshd_set_keepalive'
 ###############################################################################
-(>&2 echo "Remediating rule 89/94: 'sshd_disable_root_login'")
+(>&2 echo "Remediating rule 26/94: 'sshd_set_keepalive'")
+grep -q ^ClientAliveCountMax /etc/ssh/sshd_config && \
+  sed -i "s/ClientAliveCountMax.*/ClientAliveCountMax 0/g" /etc/ssh/sshd_config
+if ! [ $? -eq 0 ]; then
+    echo "ClientAliveCountMax 0" >> /etc/ssh/sshd_config
+fi
+# END fix for 'sshd_set_keepalive'
+
+###############################################################################
+# BEGIN fix (27 / 94) for 'sshd_do_not_permit_user_env'
+###############################################################################
+(>&2 echo "Remediating rule 27/94: 'sshd_do_not_permit_user_env'")
+grep -q ^PermitUserEnvironment /etc/ssh/sshd_config && \
+  sed -i "s/PermitUserEnvironment.*/PermitUserEnvironment no/g" /etc/ssh/sshd_config
+if ! [ $? -eq 0 ]; then
+    echo "PermitUserEnvironment no" >> /etc/ssh/sshd_config
+fi
+# END fix for 'sshd_do_not_permit_user_env'
+
+###############################################################################
+# BEGIN fix (28 / 94) for 'sshd_disable_root_login'
+###############################################################################
+(>&2 echo "Remediating rule 28/94: 'sshd_disable_root_login'")
 
 SSHD_CONFIG='/etc/ssh/sshd_config'
 
@@ -2682,53 +1390,304 @@ fi
 # END fix for 'sshd_disable_root_login'
 
 ###############################################################################
-# BEGIN fix (90 / 94) for 'sshd_disable_empty_passwords'
+# BEGIN fix (29 / 94) for 'sshd_allow_only_protocol2'
 ###############################################################################
-(>&2 echo "Remediating rule 90/94: 'sshd_disable_empty_passwords'")
-grep -q ^PermitEmptyPasswords /etc/ssh/sshd_config && \
-  sed -i "s/PermitEmptyPasswords.*/PermitEmptyPasswords no/g" /etc/ssh/sshd_config
-if ! [ $? -eq 0 ]; then
-    echo "PermitEmptyPasswords no" >> /etc/ssh/sshd_config
-fi
-# END fix for 'sshd_disable_empty_passwords'
+(>&2 echo "Remediating rule 29/94: 'sshd_allow_only_protocol2'")
+# Function to replace configuration setting in config file or add the configuration setting if
+# it does not exist.
+#
+# Expects arguments:
+#
+# config_file:		Configuration file that will be modified
+# key:			Configuration option to change
+# value:		Value of the configuration option to change
+# cce:			The CCE identifier or '@CCENUM@' if no CCE identifier exists
+# format:		The printf-like format string that will be given stripped key and value as arguments,
+#			so e.g. '%s=%s' will result in key=value subsitution (i.e. without spaces around =)
+#
+# Optional arugments:
+#
+# format:		Optional argument to specify the format of how key/value should be
+# 			modified/appended in the configuration file. The default is key = value.
+#
+# Example Call(s):
+#
+#     With default format of 'key = value':
+#     replace_or_append '/etc/sysctl.conf' '^kernel.randomize_va_space' '2' '@CCENUM@'
+#
+#     With custom key/value format:
+#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' 'disabled' '@CCENUM@' '%s=%s'
+#
+#     With a variable:
+#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' $var_selinux_state '@CCENUM@' '%s=%s'
+#
+function replace_or_append {
+  local default_format='%s = %s' case_insensitive_mode=yes sed_case_insensitive_option='' grep_case_insensitive_option=''
+  local config_file=$1
+  local key=$2
+  local value=$3
+  local cce=$4
+  local format=$5
+
+  if [ "$case_insensitive_mode" = yes ]; then
+    sed_case_insensitive_option="i"
+    grep_case_insensitive_option="-i"
+  fi
+  [ -n "$format" ] || format="$default_format"
+  # Check sanity of the input
+  [ $# -ge "3" ] || { echo "Usage: replace_or_append <config_file_location> <key_to_search> <new_value> [<CCE number or literal '@CCENUM@' if unknown>] [printf-like format, default is '$default_format']" >&2; exit 1; }
+
+  # Test if the config_file is a symbolic link. If so, use --follow-symlinks with sed.
+  # Otherwise, regular sed command will do.
+  sed_command=('sed' '-i')
+  if test -L "$config_file"; then
+    sed_command+=('--follow-symlinks')
+  fi
+
+  # Test that the cce arg is not empty or does not equal @CCENUM@.
+  # If @CCENUM@ exists, it means that there is no CCE assigned.
+  if [ -n "$cce" ] && [ "$cce" != '@CCENUM@' ]; then
+    cce="CCE-${cce}"
+  else
+    cce="CCE"
+  fi
+
+  # Strip any search characters in the key arg so that the key can be replaced without
+  # adding any search characters to the config file.
+  stripped_key=$(sed 's/[\^=\$,;+]*//g' <<< "$key")
+
+  # shellcheck disable=SC2059
+  printf -v formatted_output "$format" "$stripped_key" "$value"
+
+  # If the key exists, change it. Otherwise, add it to the config_file.
+  # We search for the key string followed by a word boundary (matched by \>),
+  # so if we search for 'setting', 'setting2' won't match.
+  if grep -q $grep_case_insensitive_option "${key}\\>" "$config_file"; then
+    "${sed_command[@]}" "s/${key}\\>.*/$formatted_output/g$sed_case_insensitive_option" "$config_file"
+  else
+    # \n is precaution for case where file ends without trailing newline
+    printf '\n# Per %s: Set %s in %s\n' "$cce" "$formatted_output" "$config_file" >> "$config_file"
+    printf '%s\n' "$formatted_output" >> "$config_file"
+  fi
+}
+
+replace_or_append '/etc/ssh/sshd_config' '^Protocol' '2' 'CCE-27072-8' '%s %s'
+# END fix for 'sshd_allow_only_protocol2'
 
 ###############################################################################
-# BEGIN fix (91 / 94) for 'sshd_enable_warning_banner'
+# BEGIN fix (30 / 94) for 'package_aide_installed'
 ###############################################################################
-(>&2 echo "Remediating rule 91/94: 'sshd_enable_warning_banner'")
-grep -q ^Banner /etc/ssh/sshd_config && \
-  sed -i "s/Banner.*/Banner \/etc\/issue/g" /etc/ssh/sshd_config
-if ! [ $? -eq 0 ]; then
-    echo "Banner /etc/issue" >> /etc/ssh/sshd_config
+(>&2 echo "Remediating rule 30/94: 'package_aide_installed'")
+# Function to install packages on RHEL, Fedora, Debian, and possibly other systems.
+#
+# Example Call(s):
+#
+#     package_install aide
+#
+function package_install {
+
+# Load function arguments into local variables
+local package="$1"
+
+# Check sanity of the input
+if [ $# -ne "1" ]
+then
+  echo "Usage: package_install 'package_name'"
+  echo "Aborting."
+  exit 1
 fi
-# END fix for 'sshd_enable_warning_banner'
+
+if which dnf ; then
+  if ! rpm -q --quiet "$package"; then
+    dnf install -y "$package"
+  fi
+elif which yum ; then
+  if ! rpm -q --quiet "$package"; then
+    yum install -y "$package"
+  fi
+elif which apt-get ; then
+  apt-get install -y "$package"
+else
+  echo "Failed to detect available packaging system, tried dnf, yum and apt-get!"
+  echo "Aborting."
+  exit 1
+fi
+
+}
+
+package_install aide
+# END fix for 'package_aide_installed'
 
 ###############################################################################
-# BEGIN fix (92 / 94) for 'sshd_do_not_permit_user_env'
+# BEGIN fix (31 / 94) for 'partition_for_tmp'
 ###############################################################################
-(>&2 echo "Remediating rule 92/94: 'sshd_do_not_permit_user_env'")
-grep -q ^PermitUserEnvironment /etc/ssh/sshd_config && \
-  sed -i "s/PermitUserEnvironment.*/PermitUserEnvironment no/g" /etc/ssh/sshd_config
-if ! [ $? -eq 0 ]; then
-    echo "PermitUserEnvironment no" >> /etc/ssh/sshd_config
-fi
-# END fix for 'sshd_do_not_permit_user_env'
+(>&2 echo "Remediating rule 31/94: 'partition_for_tmp'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'partition_for_tmp'
 
 ###############################################################################
-# BEGIN fix (93 / 94) for 'sshd_use_approved_ciphers'
+# BEGIN fix (32 / 94) for 'partition_for_var'
 ###############################################################################
-(>&2 echo "Remediating rule 93/94: 'sshd_use_approved_ciphers'")
-grep -q ^Ciphers /etc/ssh/sshd_config && \
-  sed -i "s/Ciphers.*/Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc/g" /etc/ssh/sshd_config
-if ! [ $? -eq 0 ]; then
-    echo "Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc" >> /etc/ssh/sshd_config
-fi
-# END fix for 'sshd_use_approved_ciphers'
+(>&2 echo "Remediating rule 32/94: 'partition_for_var'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'partition_for_var'
 
 ###############################################################################
-# BEGIN fix (94 / 94) for 'service_avahi-daemon_disabled'
+# BEGIN fix (33 / 94) for 'partition_for_var_log_audit'
 ###############################################################################
-(>&2 echo "Remediating rule 94/94: 'service_avahi-daemon_disabled'")
+(>&2 echo "Remediating rule 33/94: 'partition_for_var_log_audit'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'partition_for_var_log_audit'
+
+###############################################################################
+# BEGIN fix (34 / 94) for 'partition_for_var_log'
+###############################################################################
+(>&2 echo "Remediating rule 34/94: 'partition_for_var_log'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'partition_for_var_log'
+
+###############################################################################
+# BEGIN fix (35 / 94) for 'ensure_gpgcheck_globally_activated'
+###############################################################################
+(>&2 echo "Remediating rule 35/94: 'ensure_gpgcheck_globally_activated'")
+# Function to replace configuration setting in config file or add the configuration setting if
+# it does not exist.
+#
+# Expects arguments:
+#
+# config_file:		Configuration file that will be modified
+# key:			Configuration option to change
+# value:		Value of the configuration option to change
+# cce:			The CCE identifier or '@CCENUM@' if no CCE identifier exists
+# format:		The printf-like format string that will be given stripped key and value as arguments,
+#			so e.g. '%s=%s' will result in key=value subsitution (i.e. without spaces around =)
+#
+# Optional arugments:
+#
+# format:		Optional argument to specify the format of how key/value should be
+# 			modified/appended in the configuration file. The default is key = value.
+#
+# Example Call(s):
+#
+#     With default format of 'key = value':
+#     replace_or_append '/etc/sysctl.conf' '^kernel.randomize_va_space' '2' '@CCENUM@'
+#
+#     With custom key/value format:
+#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' 'disabled' '@CCENUM@' '%s=%s'
+#
+#     With a variable:
+#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' $var_selinux_state '@CCENUM@' '%s=%s'
+#
+function replace_or_append {
+  local default_format='%s = %s' case_insensitive_mode=yes sed_case_insensitive_option='' grep_case_insensitive_option=''
+  local config_file=$1
+  local key=$2
+  local value=$3
+  local cce=$4
+  local format=$5
+
+  if [ "$case_insensitive_mode" = yes ]; then
+    sed_case_insensitive_option="i"
+    grep_case_insensitive_option="-i"
+  fi
+  [ -n "$format" ] || format="$default_format"
+  # Check sanity of the input
+  [ $# -ge "3" ] || { echo "Usage: replace_or_append <config_file_location> <key_to_search> <new_value> [<CCE number or literal '@CCENUM@' if unknown>] [printf-like format, default is '$default_format']" >&2; exit 1; }
+
+  # Test if the config_file is a symbolic link. If so, use --follow-symlinks with sed.
+  # Otherwise, regular sed command will do.
+  sed_command=('sed' '-i')
+  if test -L "$config_file"; then
+    sed_command+=('--follow-symlinks')
+  fi
+
+  # Test that the cce arg is not empty or does not equal @CCENUM@.
+  # If @CCENUM@ exists, it means that there is no CCE assigned.
+  if [ -n "$cce" ] && [ "$cce" != '@CCENUM@' ]; then
+    cce="CCE-${cce}"
+  else
+    cce="CCE"
+  fi
+
+  # Strip any search characters in the key arg so that the key can be replaced without
+  # adding any search characters to the config file.
+  stripped_key=$(sed 's/[\^=\$,;+]*//g' <<< "$key")
+
+  # shellcheck disable=SC2059
+  printf -v formatted_output "$format" "$stripped_key" "$value"
+
+  # If the key exists, change it. Otherwise, add it to the config_file.
+  # We search for the key string followed by a word boundary (matched by \>),
+  # so if we search for 'setting', 'setting2' won't match.
+  if grep -q $grep_case_insensitive_option "${key}\\>" "$config_file"; then
+    "${sed_command[@]}" "s/${key}\\>.*/$formatted_output/g$sed_case_insensitive_option" "$config_file"
+  else
+    # \n is precaution for case where file ends without trailing newline
+    printf '\n# Per %s: Set %s in %s\n' "$cce" "$formatted_output" "$config_file" >> "$config_file"
+    printf '%s\n' "$formatted_output" >> "$config_file"
+  fi
+}
+
+replace_or_append '/etc/yum.conf' '^gpgcheck' '1' 'CCE-26709-6'
+# END fix for 'ensure_gpgcheck_globally_activated'
+
+###############################################################################
+# BEGIN fix (36 / 94) for 'security_patches_up_to_date'
+###############################################################################
+(>&2 echo "Remediating rule 36/94: 'security_patches_up_to_date'")
+yum -y update
+# END fix for 'security_patches_up_to_date'
+
+###############################################################################
+# BEGIN fix (37 / 94) for 'ensure_redhat_gpgkey_installed'
+###############################################################################
+(>&2 echo "Remediating rule 37/94: 'ensure_redhat_gpgkey_installed'")
+# The two fingerprints below are retrieved from https://access.redhat.com/security/team/key
+readonly REDHAT_RELEASE_2_FINGERPRINT="567E 347A D004 4ADE 55BA 8A5F 199E 2F91 FD43 1D51"
+readonly REDHAT_AUXILIARY_FINGERPRINT="43A6 E49C 4A38 F4BE 9ABF 2A53 4568 9C88 2FA6 58E0"
+# Location of the key we would like to import (once it's integrity verified)
+readonly REDHAT_RELEASE_KEY="/etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release"
+
+RPM_GPG_DIR_PERMS=$(stat -c %a "$(dirname "$REDHAT_RELEASE_KEY")")
+
+# Verify /etc/pki/rpm-gpg directory permissions are safe
+if [ "${RPM_GPG_DIR_PERMS}" -le "755" ]
+then
+  # If they are safe, try to obtain fingerprints from the key file
+  # (to ensure there won't be e.g. CRC error).
+  IFS=$'\n' GPG_OUT=($(gpg --with-fingerprint "${REDHAT_RELEASE_KEY}" | grep 'Key fingerprint ='))
+  GPG_RESULT=$?
+  # Reset IFS back to default
+  unset IFS
+  # No CRC error, safe to proceed
+  if [ "${GPG_RESULT}" -eq "0" ]
+  then
+    tr -s ' ' <<< "${GPG_OUT}" | grep -vE "${REDHAT_RELEASE_2_FINGERPRINT}|${REDHAT_AUXILIARY_FINGERPRINT}" || {
+      # If file doesn't contains any keys with unknown fingerprint, import it
+      rpm --import "${REDHAT_RELEASE_KEY}"
+    }
+  fi
+fi
+# END fix for 'ensure_redhat_gpgkey_installed'
+
+###############################################################################
+# BEGIN fix (38 / 94) for 'ensure_gpgcheck_never_disabled'
+###############################################################################
+(>&2 echo "Remediating rule 38/94: 'ensure_gpgcheck_never_disabled'")
+sed -i 's/gpgcheck=.*/gpgcheck=1/g' /etc/yum.repos.d/*
+# END fix for 'ensure_gpgcheck_never_disabled'
+
+###############################################################################
+# BEGIN fix (39 / 94) for 'set_iptables_default_rule'
+###############################################################################
+(>&2 echo "Remediating rule 39/94: 'set_iptables_default_rule'")
+sed -i 's/^:INPUT ACCEPT.*/:INPUT DROP [0:0]/g' /etc/sysconfig/iptables
+# END fix for 'set_iptables_default_rule'
+
+###############################################################################
+# BEGIN fix (40 / 94) for 'service_ip6tables_enabled'
+###############################################################################
+(>&2 echo "Remediating rule 40/94: 'service_ip6tables_enabled'")
 # Function to enable/disable and start/stop services on RHEL and Fedora systems.
 #
 # Example Call(s):
@@ -2778,20 +1737,24 @@ else
 fi
 
 # If chkconfig_util is not empty, use chkconfig/service commands.
-if ! [ "x$chkconfig_util" = x ] ; then
+if [ "x$chkconfig_util" != x ] ; then
   $service_util $service $service_operation
   $chkconfig_util --level 0123456 $service $chkconfig_state
 else
   $service_util $service_operation $service
   $service_util $service_state $service
+  # The service may not be running because it has been started and failed,
+  # so let's reset the state so OVAL checks pass.
+  # Service should be 'inactive', not 'failed' after reboot though.
+  $service_util reset-failed $service
 fi
 
 # Test if local variable xinetd is empty using non-bashism.
 # If empty, then xinetd is not being used.
-if ! [ "x$xinetd" = x ] ; then
+if [ "x$xinetd" != x ] ; then
   grep -qi disable /etc/xinetd.d/$xinetd && \
 
-  if ! [ "$service_operation" != 'disable' ] ; then
+  if [ "$service_operation" = 'disable' ] ; then
     sed -i "s/disable.*/disable         = no/gI" /etc/xinetd.d/$xinetd
   else
     sed -i "s/disable.*/disable         = yes/gI" /etc/xinetd.d/$xinetd
@@ -2800,6 +1763,1131 @@ fi
 
 }
 
-service_command disable avahi-daemon
-# END fix for 'service_avahi-daemon_disabled'
+service_command enable ip6tables
+# END fix for 'service_ip6tables_enabled'
+
+###############################################################################
+# BEGIN fix (41 / 94) for 'service_iptables_enabled'
+###############################################################################
+(>&2 echo "Remediating rule 41/94: 'service_iptables_enabled'")
+# Function to enable/disable and start/stop services on RHEL and Fedora systems.
+#
+# Example Call(s):
+#
+#     service_command enable bluetooth
+#     service_command disable bluetooth.service
+#
+#     Using xinetd:
+#     service_command disable rsh.socket xinetd=rsh
+#
+function service_command {
+
+# Load function arguments into local variables
+local service_state=$1
+local service=$2
+local xinetd=$(echo $3 | cut -d'=' -f2)
+
+# Check sanity of the input
+if [ $# -lt "2" ]
+then
+  echo "Usage: service_command 'enable/disable' 'service_name.service'"
+  echo
+  echo "To enable or disable xinetd services add \'xinetd=service_name\'"
+  echo "as the last argument"  
+  echo "Aborting."
+  exit 1
+fi
+
+# If systemctl is installed, use systemctl command; otherwise, use the service/chkconfig commands
+if [ -f "/usr/bin/systemctl" ] ; then
+  service_util="/usr/bin/systemctl"
+else
+  service_util="/sbin/service"
+  chkconfig_util="/sbin/chkconfig"
+fi
+
+# If disable is not specified in arg1, set variables to enable services.
+# Otherwise, variables are to be set to disable services.
+if [ "$service_state" != 'disable' ] ; then
+  service_state="enable"
+  service_operation="start"
+  chkconfig_state="on"
+else
+  service_state="disable"
+  service_operation="stop"
+  chkconfig_state="off"
+fi
+
+# If chkconfig_util is not empty, use chkconfig/service commands.
+if [ "x$chkconfig_util" != x ] ; then
+  $service_util $service $service_operation
+  $chkconfig_util --level 0123456 $service $chkconfig_state
+else
+  $service_util $service_operation $service
+  $service_util $service_state $service
+  # The service may not be running because it has been started and failed,
+  # so let's reset the state so OVAL checks pass.
+  # Service should be 'inactive', not 'failed' after reboot though.
+  $service_util reset-failed $service
+fi
+
+# Test if local variable xinetd is empty using non-bashism.
+# If empty, then xinetd is not being used.
+if [ "x$xinetd" != x ] ; then
+  grep -qi disable /etc/xinetd.d/$xinetd && \
+
+  if [ "$service_operation" = 'disable' ] ; then
+    sed -i "s/disable.*/disable         = no/gI" /etc/xinetd.d/$xinetd
+  else
+    sed -i "s/disable.*/disable         = yes/gI" /etc/xinetd.d/$xinetd
+  fi
+fi
+
+}
+
+service_command enable iptables
+# END fix for 'service_iptables_enabled'
+
+###############################################################################
+# BEGIN fix (42 / 94) for 'kernel_module_ipv6_option_disabled'
+###############################################################################
+(>&2 echo "Remediating rule 42/94: 'kernel_module_ipv6_option_disabled'")
+
+# Prevent the IPv6 kernel module (ipv6) from loading the IPv6 networking stack
+echo "options ipv6 disable=1" > /etc/modprobe.d/ipv6.conf
+
+# Since according to: https://access.redhat.com/solutions/72733
+# "ipv6 disable=1" options doesn't always disable the IPv6 networking stack from
+# loading, instruct also sysctl configuration to disable IPv6 according to:
+# https://access.redhat.com/solutions/8709#rhel6disable
+
+declare -a IPV6_SETTINGS=("net.ipv6.conf.all.disable_ipv6" "net.ipv6.conf.default.disable_ipv6")
+
+for setting in ${IPV6_SETTINGS[@]}
+do
+	# Set runtime =1 for setting
+	/sbin/sysctl -q -n -w "$setting=1"
+
+	# If setting is present in /etc/sysctl.conf, change value to "1"
+	# else, add "$setting = 1" to /etc/sysctl.conf
+	if grep -q ^"$setting" /etc/sysctl.conf ; then
+		sed -i "s/^$setting.*/$setting = 1/g" /etc/sysctl.conf
+	else
+		echo "" >> /etc/sysctl.conf
+		echo "# Set $setting = 1 per security requirements" >> /etc/sysctl.conf
+		echo "$setting = 1" >> /etc/sysctl.conf
+	fi
+done
+# END fix for 'kernel_module_ipv6_option_disabled'
+
+###############################################################################
+# BEGIN fix (43 / 94) for 'kernel_module_dccp_disabled'
+###############################################################################
+(>&2 echo "Remediating rule 43/94: 'kernel_module_dccp_disabled'")
+if grep --silent "^install dccp" /etc/modprobe.d/dccp.conf ; then
+	sed -i 's/^install dccp.*/install dccp /bin/true/g' /etc/modprobe.d/dccp.conf
+else
+	echo -e "\n# Disable per security requirements" >> /etc/modprobe.d/dccp.conf
+	echo "install dccp /bin/true" >> /etc/modprobe.d/dccp.conf
+fi
+# END fix for 'kernel_module_dccp_disabled'
+
+###############################################################################
+# BEGIN fix (44 / 94) for 'kernel_module_rds_disabled'
+###############################################################################
+(>&2 echo "Remediating rule 44/94: 'kernel_module_rds_disabled'")
+if grep --silent "^install rds" /etc/modprobe.d/rds.conf ; then
+	sed -i 's/^install rds.*/install rds /bin/true/g' /etc/modprobe.d/rds.conf
+else
+	echo -e "\n# Disable per security requirements" >> /etc/modprobe.d/rds.conf
+	echo "install rds /bin/true" >> /etc/modprobe.d/rds.conf
+fi
+# END fix for 'kernel_module_rds_disabled'
+
+###############################################################################
+# BEGIN fix (45 / 94) for 'kernel_module_sctp_disabled'
+###############################################################################
+(>&2 echo "Remediating rule 45/94: 'kernel_module_sctp_disabled'")
+if grep --silent "^install sctp" /etc/modprobe.d/sctp.conf ; then
+	sed -i 's/^install sctp.*/install sctp /bin/true/g' /etc/modprobe.d/sctp.conf
+else
+	echo -e "\n# Disable per security requirements" >> /etc/modprobe.d/sctp.conf
+	echo "install sctp /bin/true" >> /etc/modprobe.d/sctp.conf
+fi
+# END fix for 'kernel_module_sctp_disabled'
+
+###############################################################################
+# BEGIN fix (46 / 94) for 'kernel_module_tipc_disabled'
+###############################################################################
+(>&2 echo "Remediating rule 46/94: 'kernel_module_tipc_disabled'")
+if grep --silent "^install tipc" /etc/modprobe.d/tipc.conf ; then
+	sed -i 's/^install tipc.*/install tipc /bin/true/g' /etc/modprobe.d/tipc.conf
+else
+	echo -e "\n# Disable per security requirements" >> /etc/modprobe.d/tipc.conf
+	echo "install tipc /bin/true" >> /etc/modprobe.d/tipc.conf
+fi
+# END fix for 'kernel_module_tipc_disabled'
+
+###############################################################################
+# BEGIN fix (47 / 94) for 'selinux_policytype'
+###############################################################################
+(>&2 echo "Remediating rule 47/94: 'selinux_policytype'")
+
+var_selinux_policy_name="targeted"
+# Function to replace configuration setting in config file or add the configuration setting if
+# it does not exist.
+#
+# Expects arguments:
+#
+# config_file:		Configuration file that will be modified
+# key:			Configuration option to change
+# value:		Value of the configuration option to change
+# cce:			The CCE identifier or '@CCENUM@' if no CCE identifier exists
+# format:		The printf-like format string that will be given stripped key and value as arguments,
+#			so e.g. '%s=%s' will result in key=value subsitution (i.e. without spaces around =)
+#
+# Optional arugments:
+#
+# format:		Optional argument to specify the format of how key/value should be
+# 			modified/appended in the configuration file. The default is key = value.
+#
+# Example Call(s):
+#
+#     With default format of 'key = value':
+#     replace_or_append '/etc/sysctl.conf' '^kernel.randomize_va_space' '2' '@CCENUM@'
+#
+#     With custom key/value format:
+#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' 'disabled' '@CCENUM@' '%s=%s'
+#
+#     With a variable:
+#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' $var_selinux_state '@CCENUM@' '%s=%s'
+#
+function replace_or_append {
+  local default_format='%s = %s' case_insensitive_mode=yes sed_case_insensitive_option='' grep_case_insensitive_option=''
+  local config_file=$1
+  local key=$2
+  local value=$3
+  local cce=$4
+  local format=$5
+
+  if [ "$case_insensitive_mode" = yes ]; then
+    sed_case_insensitive_option="i"
+    grep_case_insensitive_option="-i"
+  fi
+  [ -n "$format" ] || format="$default_format"
+  # Check sanity of the input
+  [ $# -ge "3" ] || { echo "Usage: replace_or_append <config_file_location> <key_to_search> <new_value> [<CCE number or literal '@CCENUM@' if unknown>] [printf-like format, default is '$default_format']" >&2; exit 1; }
+
+  # Test if the config_file is a symbolic link. If so, use --follow-symlinks with sed.
+  # Otherwise, regular sed command will do.
+  sed_command=('sed' '-i')
+  if test -L "$config_file"; then
+    sed_command+=('--follow-symlinks')
+  fi
+
+  # Test that the cce arg is not empty or does not equal @CCENUM@.
+  # If @CCENUM@ exists, it means that there is no CCE assigned.
+  if [ -n "$cce" ] && [ "$cce" != '@CCENUM@' ]; then
+    cce="CCE-${cce}"
+  else
+    cce="CCE"
+  fi
+
+  # Strip any search characters in the key arg so that the key can be replaced without
+  # adding any search characters to the config file.
+  stripped_key=$(sed 's/[\^=\$,;+]*//g' <<< "$key")
+
+  # shellcheck disable=SC2059
+  printf -v formatted_output "$format" "$stripped_key" "$value"
+
+  # If the key exists, change it. Otherwise, add it to the config_file.
+  # We search for the key string followed by a word boundary (matched by \>),
+  # so if we search for 'setting', 'setting2' won't match.
+  if grep -q $grep_case_insensitive_option "${key}\\>" "$config_file"; then
+    "${sed_command[@]}" "s/${key}\\>.*/$formatted_output/g$sed_case_insensitive_option" "$config_file"
+  else
+    # \n is precaution for case where file ends without trailing newline
+    printf '\n# Per %s: Set %s in %s\n' "$cce" "$formatted_output" "$config_file" >> "$config_file"
+    printf '%s\n' "$formatted_output" >> "$config_file"
+  fi
+}
+
+replace_or_append '/etc/sysconfig/selinux' '^SELINUXTYPE=' $var_selinux_policy_name 'CCE-26875-5' '%s=%s'
+# END fix for 'selinux_policytype'
+
+###############################################################################
+# BEGIN fix (48 / 94) for 'enable_selinux_bootloader'
+###############################################################################
+(>&2 echo "Remediating rule 48/94: 'enable_selinux_bootloader'")
+sed -i --follow-symlinks "s/selinux=0//gI" /etc/grub.conf
+sed -i --follow-symlinks "s/enforcing=0//gI" /etc/grub.conf
+# END fix for 'enable_selinux_bootloader'
+
+###############################################################################
+# BEGIN fix (49 / 94) for 'selinux_all_devicefiles_labeled'
+###############################################################################
+(>&2 echo "Remediating rule 49/94: 'selinux_all_devicefiles_labeled'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'selinux_all_devicefiles_labeled'
+
+###############################################################################
+# BEGIN fix (50 / 94) for 'selinux_state'
+###############################################################################
+(>&2 echo "Remediating rule 50/94: 'selinux_state'")
+
+var_selinux_state="enforcing"
+# Function to replace configuration setting in config file or add the configuration setting if
+# it does not exist.
+#
+# Expects arguments:
+#
+# config_file:		Configuration file that will be modified
+# key:			Configuration option to change
+# value:		Value of the configuration option to change
+# cce:			The CCE identifier or '@CCENUM@' if no CCE identifier exists
+# format:		The printf-like format string that will be given stripped key and value as arguments,
+#			so e.g. '%s=%s' will result in key=value subsitution (i.e. without spaces around =)
+#
+# Optional arugments:
+#
+# format:		Optional argument to specify the format of how key/value should be
+# 			modified/appended in the configuration file. The default is key = value.
+#
+# Example Call(s):
+#
+#     With default format of 'key = value':
+#     replace_or_append '/etc/sysctl.conf' '^kernel.randomize_va_space' '2' '@CCENUM@'
+#
+#     With custom key/value format:
+#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' 'disabled' '@CCENUM@' '%s=%s'
+#
+#     With a variable:
+#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' $var_selinux_state '@CCENUM@' '%s=%s'
+#
+function replace_or_append {
+  local default_format='%s = %s' case_insensitive_mode=yes sed_case_insensitive_option='' grep_case_insensitive_option=''
+  local config_file=$1
+  local key=$2
+  local value=$3
+  local cce=$4
+  local format=$5
+
+  if [ "$case_insensitive_mode" = yes ]; then
+    sed_case_insensitive_option="i"
+    grep_case_insensitive_option="-i"
+  fi
+  [ -n "$format" ] || format="$default_format"
+  # Check sanity of the input
+  [ $# -ge "3" ] || { echo "Usage: replace_or_append <config_file_location> <key_to_search> <new_value> [<CCE number or literal '@CCENUM@' if unknown>] [printf-like format, default is '$default_format']" >&2; exit 1; }
+
+  # Test if the config_file is a symbolic link. If so, use --follow-symlinks with sed.
+  # Otherwise, regular sed command will do.
+  sed_command=('sed' '-i')
+  if test -L "$config_file"; then
+    sed_command+=('--follow-symlinks')
+  fi
+
+  # Test that the cce arg is not empty or does not equal @CCENUM@.
+  # If @CCENUM@ exists, it means that there is no CCE assigned.
+  if [ -n "$cce" ] && [ "$cce" != '@CCENUM@' ]; then
+    cce="CCE-${cce}"
+  else
+    cce="CCE"
+  fi
+
+  # Strip any search characters in the key arg so that the key can be replaced without
+  # adding any search characters to the config file.
+  stripped_key=$(sed 's/[\^=\$,;+]*//g' <<< "$key")
+
+  # shellcheck disable=SC2059
+  printf -v formatted_output "$format" "$stripped_key" "$value"
+
+  # If the key exists, change it. Otherwise, add it to the config_file.
+  # We search for the key string followed by a word boundary (matched by \>),
+  # so if we search for 'setting', 'setting2' won't match.
+  if grep -q $grep_case_insensitive_option "${key}\\>" "$config_file"; then
+    "${sed_command[@]}" "s/${key}\\>.*/$formatted_output/g$sed_case_insensitive_option" "$config_file"
+  else
+    # \n is precaution for case where file ends without trailing newline
+    printf '\n# Per %s: Set %s in %s\n' "$cce" "$formatted_output" "$config_file" >> "$config_file"
+    printf '%s\n' "$formatted_output" >> "$config_file"
+  fi
+}
+
+replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' $var_selinux_state 'CCE-26969-6' '%s=%s'
+
+fixfiles onboot
+fixfiles -f relabel
+# END fix for 'selinux_state'
+
+###############################################################################
+# BEGIN fix (51 / 94) for 'accounts_password_minlen_login_defs'
+###############################################################################
+(>&2 echo "Remediating rule 51/94: 'accounts_password_minlen_login_defs'")
+
+var_accounts_password_minlen_login_defs="6"
+
+grep -q ^PASS_MIN_LEN /etc/login.defs && \
+  sed -i "s/PASS_MIN_LEN.*/PASS_MIN_LEN     $var_accounts_password_minlen_login_defs/g" /etc/login.defs
+if ! [ $? -eq 0 ]; then
+    echo "PASS_MIN_LEN      $var_accounts_password_minlen_login_defs" >> /etc/login.defs
+fi
+# END fix for 'accounts_password_minlen_login_defs'
+
+###############################################################################
+# BEGIN fix (52 / 94) for 'accounts_password_warn_age_login_defs'
+###############################################################################
+(>&2 echo "Remediating rule 52/94: 'accounts_password_warn_age_login_defs'")
+
+var_accounts_password_warn_age_login_defs="7"
+
+grep -q ^PASS_WARN_AGE /etc/login.defs && \
+  sed -i "s/PASS_WARN_AGE.*/PASS_WARN_AGE     $var_accounts_password_warn_age_login_defs/g" /etc/login.defs
+if ! [ $? -eq 0 ]; then
+    echo "PASS_WARN_AGE      $var_accounts_password_warn_age_login_defs" >> /etc/login.defs
+fi
+# END fix for 'accounts_password_warn_age_login_defs'
+
+###############################################################################
+# BEGIN fix (53 / 94) for 'accounts_maximum_age_login_defs'
+###############################################################################
+(>&2 echo "Remediating rule 53/94: 'accounts_maximum_age_login_defs'")
+
+var_accounts_maximum_age_login_defs="120"
+
+grep -q ^PASS_MAX_DAYS /etc/login.defs && \
+  sed -i "s/PASS_MAX_DAYS.*/PASS_MAX_DAYS     $var_accounts_maximum_age_login_defs/g" /etc/login.defs
+if ! [ $? -eq 0 ]; then
+    echo "PASS_MAX_DAYS      $var_accounts_maximum_age_login_defs" >> /etc/login.defs
+fi
+# END fix for 'accounts_maximum_age_login_defs'
+
+###############################################################################
+# BEGIN fix (54 / 94) for 'accounts_minimum_age_login_defs'
+###############################################################################
+(>&2 echo "Remediating rule 54/94: 'accounts_minimum_age_login_defs'")
+
+var_accounts_minimum_age_login_defs="7"
+
+grep -q ^PASS_MIN_DAYS /etc/login.defs && \
+  sed -i "s/PASS_MIN_DAYS.*/PASS_MIN_DAYS     $var_accounts_minimum_age_login_defs/g" /etc/login.defs
+if ! [ $? -eq 0 ]; then
+    echo "PASS_MIN_DAYS      $var_accounts_minimum_age_login_defs" >> /etc/login.defs
+fi
+# END fix for 'accounts_minimum_age_login_defs'
+
+###############################################################################
+# BEGIN fix (55 / 94) for 'accounts_no_uid_except_zero'
+###############################################################################
+(>&2 echo "Remediating rule 55/94: 'accounts_no_uid_except_zero'")
+awk -F: '$3 == 0 && $1 != "root" { print $1 }' /etc/passwd | xargs passwd -l
+# END fix for 'accounts_no_uid_except_zero'
+
+###############################################################################
+# BEGIN fix (56 / 94) for 'no_shelllogin_for_systemaccounts'
+###############################################################################
+(>&2 echo "Remediating rule 56/94: 'no_shelllogin_for_systemaccounts'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'no_shelllogin_for_systemaccounts'
+
+###############################################################################
+# BEGIN fix (57 / 94) for 'no_empty_passwords'
+###############################################################################
+(>&2 echo "Remediating rule 57/94: 'no_empty_passwords'")
+sed --follow-symlinks -i 's/\<nullok\>//g' /etc/pam.d/system-auth
+sed --follow-symlinks -i 's/\<nullok\>//g' /etc/pam.d/password-auth
+# END fix for 'no_empty_passwords'
+
+###############################################################################
+# BEGIN fix (58 / 94) for 'accounts_password_all_shadowed'
+###############################################################################
+(>&2 echo "Remediating rule 58/94: 'accounts_password_all_shadowed'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'accounts_password_all_shadowed'
+
+###############################################################################
+# BEGIN fix (59 / 94) for 'set_password_hashing_algorithm_logindefs'
+###############################################################################
+(>&2 echo "Remediating rule 59/94: 'set_password_hashing_algorithm_logindefs'")
+if grep --silent ^ENCRYPT_METHOD /etc/login.defs ; then
+	sed -i 's/^ENCRYPT_METHOD.*/ENCRYPT_METHOD SHA512/g' /etc/login.defs
+else
+	echo "" >> /etc/login.defs
+	echo "ENCRYPT_METHOD SHA512" >> /etc/login.defs
+fi
+# END fix for 'set_password_hashing_algorithm_logindefs'
+
+###############################################################################
+# BEGIN fix (60 / 94) for 'set_password_hashing_algorithm_libuserconf'
+###############################################################################
+(>&2 echo "Remediating rule 60/94: 'set_password_hashing_algorithm_libuserconf'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'set_password_hashing_algorithm_libuserconf'
+
+###############################################################################
+# BEGIN fix (61 / 94) for 'set_password_hashing_algorithm_systemauth'
+###############################################################################
+(>&2 echo "Remediating rule 61/94: 'set_password_hashing_algorithm_systemauth'")
+
+AUTH_FILES[0]="/etc/pam.d/system-auth"
+AUTH_FILES[1]="/etc/pam.d/password-auth"
+
+for pamFile in "${AUTH_FILES[@]}"
+do
+	if ! grep -q "^password.*sufficient.*pam_unix.so.*sha512" $pamFile; then
+		sed -i --follow-symlinks "/^password.*sufficient.*pam_unix.so/ s/$/ sha512/" $pamFile
+	fi
+done
+# END fix for 'set_password_hashing_algorithm_systemauth'
+
+###############################################################################
+# BEGIN fix (62 / 94) for 'accounts_password_pam_unix_remember'
+###############################################################################
+(>&2 echo "Remediating rule 62/94: 'accounts_password_pam_unix_remember'")
+
+var_password_pam_unix_remember="5"
+
+AUTH_FILES[0]="/etc/pam.d/system-auth"
+AUTH_FILES[1]="/etc/pam.d/password-auth"
+
+for pamFile in "${AUTH_FILES[@]}"
+do
+	if grep -q "remember=" $pamFile; then
+		sed -i --follow-symlinks "s/\(^password.*sufficient.*pam_unix.so.*\)\(\(remember *= *\)[^ $]*\)/\1remember=$var_password_pam_unix_remember/" $pamFile
+	else
+		sed -i --follow-symlinks "/^password[[:space:]]\+sufficient[[:space:]]\+pam_unix.so/ s/$/ remember=$var_password_pam_unix_remember/" $pamFile
+	fi
+done
+# END fix for 'accounts_password_pam_unix_remember'
+
+###############################################################################
+# BEGIN fix (63 / 94) for 'accounts_passwords_pam_faillock_deny'
+###############################################################################
+(>&2 echo "Remediating rule 63/94: 'accounts_passwords_pam_faillock_deny'")
+
+var_accounts_passwords_pam_faillock_deny="5"
+
+AUTH_FILES[0]="/etc/pam.d/system-auth"
+AUTH_FILES[1]="/etc/pam.d/password-auth"
+
+# This script fixes absence of pam_faillock.so in PAM stack or the
+# absense of deny=[0-9]+ in pam_faillock.so arguments
+# When inserting auth pam_faillock.so entries,
+# the entry with preauth argument will be added before pam_unix.so module
+# and entry with authfail argument will be added before pam_deny.so module.
+
+# The placement of pam_faillock.so entries will not be changed
+# if they are already present
+
+
+# Invoke the function without args, so its body is substituded right here.
+function set_faillock_option_to_value_in_pam_file {
+	# If invoked with no arguments, exit. This is an intentional behavior.
+	[ $# -gt 1 ] || return 0
+	[ $# -ge 3 ] || die "$0 requires exactly zero, three, or four arguments"
+	[ $# -le 4 ] || die "$0 requires exactly zero, three, or four arguments"
+	local _pamFile="$1" _option="$2" _value="$3" _insert_lines_callback="$4"
+	# pam_faillock.so already present?
+	if grep -q "^auth.*pam_faillock.so.*" "$_pamFile"; then
+
+		# pam_faillock.so present, is the option present?
+		if grep -q "^auth.*[default=die].*pam_faillock.so.*authfail.*$_option=" "$_pamFile"; then
+
+			# both pam_faillock.so & option present, just correct option to the right value
+			sed -i --follow-symlinks "s/\(^auth.*required.*pam_faillock.so.*preauth.*silent.*\)\($_option *= *\).*/\1\2$_value/" "$_pamFile"
+			sed -i --follow-symlinks "s/\(^auth.*[default=die].*pam_faillock.so.*authfail.*\)\($_option *= *\).*/\1\2$_value/" "$_pamFile"
+
+		# pam_faillock.so present, but the option not yet
+		else
+
+			# append correct option value to appropriate places
+			sed -i --follow-symlinks "/^auth.*required.*pam_faillock.so.*preauth.*silent.*/ s/$/ $_option=$_value/" "$_pamFile"
+			sed -i --follow-symlinks "/^auth.*[default=die].*pam_faillock.so.*authfail.*/ s/$/ $_option=$_value/" "$_pamFile"
+		fi
+
+	# pam_faillock.so not present yet
+	else
+		test -z "$_insert_lines_callback" || "$_insert_lines_callback" "$_option" "$_value" "$_pamFile"
+		# insert pam_faillock.so preauth & authfail rows with proper value of the option in question
+	fi
+}
+
+set_faillock_option_to_value_in_pam_file
+
+
+function insert_lines_if_pam_faillock_so_not_present {
+	# insert pam_faillock.so preauth row with proper value of the 'deny' option before pam_unix.so
+	sed -i --follow-symlinks "/^auth.*pam_unix.so.*/i auth        required      pam_faillock.so preauth silent $_option=$_value" $_pamFile
+	# insert pam_faillock.so authfail row with proper value of the 'deny' option before pam_deny.so, after all modules which determine authentication outcome.
+	sed -i --follow-symlinks "/^auth.*pam_deny.so.*/i auth        [default=die] pam_faillock.so authfail $_option=$_value" $_pamFile
+}
+
+
+
+for pamFile in "${AUTH_FILES[@]}"
+do
+	# 'true &&' has to be there due to build system limitation
+	true && set_faillock_option_to_value_in_pam_file "$pamFile" deny "$var_accounts_passwords_pam_faillock_deny" insert_lines_if_pam_faillock_so_not_present
+
+	# add pam_faillock.so into account phase
+	if ! grep -q "^account.*required.*pam_faillock.so" $pamFile; then
+		sed -i --follow-symlinks "/^account.*required.*pam_unix.so/i account     required      pam_faillock.so" $pamFile
+	fi
+done
+# END fix for 'accounts_passwords_pam_faillock_deny'
+
+###############################################################################
+# BEGIN fix (64 / 94) for 'accounts_password_pam_dcredit'
+###############################################################################
+(>&2 echo "Remediating rule 64/94: 'accounts_password_pam_dcredit'")
+
+var_password_pam_dcredit="-1"
+
+if grep -q "dcredit=" /etc/pam.d/system-auth; then
+	sed -i --follow-symlinks "s/\(dcredit *= *\).*/\1$var_password_pam_dcredit/" /etc/pam.d/system-auth
+else
+	sed -i --follow-symlinks "/pam_cracklib.so/ s/$/ dcredit=$var_password_pam_dcredit/" /etc/pam.d/system-auth
+fi
+# END fix for 'accounts_password_pam_dcredit'
+
+###############################################################################
+# BEGIN fix (65 / 94) for 'accounts_password_pam_difok'
+###############################################################################
+(>&2 echo "Remediating rule 65/94: 'accounts_password_pam_difok'")
+
+var_password_pam_difok="3"
+
+if grep -q "difok=" /etc/pam.d/system-auth; then   
+	sed -i --follow-symlinks "s/\(difok *= *\).*/\1$var_password_pam_difok/" /etc/pam.d/system-auth
+else
+	sed -i --follow-symlinks "/pam_cracklib.so/ s/$/ difok=$var_password_pam_difok/" /etc/pam.d/system-auth
+fi
+# END fix for 'accounts_password_pam_difok'
+
+###############################################################################
+# BEGIN fix (66 / 94) for 'accounts_password_pam_ocredit'
+###############################################################################
+(>&2 echo "Remediating rule 66/94: 'accounts_password_pam_ocredit'")
+
+var_password_pam_ocredit="-2"
+
+if grep -q "ocredit=" /etc/pam.d/system-auth; then   
+	sed -i --follow-symlinks "s/\(ocredit *= *\).*/\1$var_password_pam_ocredit/" /etc/pam.d/system-auth
+else
+	sed -i --follow-symlinks "/pam_cracklib.so/ s/$/ ocredit=$var_password_pam_ocredit/" /etc/pam.d/system-auth
+fi
+# END fix for 'accounts_password_pam_ocredit'
+
+###############################################################################
+# BEGIN fix (67 / 94) for 'accounts_password_pam_lcredit'
+###############################################################################
+(>&2 echo "Remediating rule 67/94: 'accounts_password_pam_lcredit'")
+
+var_password_pam_lcredit="-2"
+
+if grep -q "lcredit=" /etc/pam.d/system-auth; then   
+	sed -i --follow-symlinks "s/\(lcredit *= *\).*/\1$var_password_pam_lcredit/" /etc/pam.d/system-auth
+else
+	sed -i --follow-symlinks "/pam_cracklib.so/ s/$/ lcredit=$var_password_pam_lcredit/" /etc/pam.d/system-auth
+fi
+# END fix for 'accounts_password_pam_lcredit'
+
+###############################################################################
+# BEGIN fix (68 / 94) for 'accounts_password_pam_ucredit'
+###############################################################################
+(>&2 echo "Remediating rule 68/94: 'accounts_password_pam_ucredit'")
+
+var_password_pam_ucredit="-2"
+
+if grep -q "ucredit=" /etc/pam.d/system-auth; then   
+	sed -i --follow-symlinks "s/\(ucredit *= *\).*/\1$var_password_pam_ucredit/" /etc/pam.d/system-auth
+else
+	sed -i --follow-symlinks "/pam_cracklib.so/ s/$/ ucredit=$var_password_pam_ucredit/" /etc/pam.d/system-auth
+fi
+# END fix for 'accounts_password_pam_ucredit'
+
+###############################################################################
+# BEGIN fix (69 / 94) for 'accounts_password_pam_retry'
+###############################################################################
+(>&2 echo "Remediating rule 69/94: 'accounts_password_pam_retry'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'accounts_password_pam_retry'
+
+###############################################################################
+# BEGIN fix (70 / 94) for 'file_group_owner_grub_conf'
+###############################################################################
+(>&2 echo "Remediating rule 70/94: 'file_group_owner_grub_conf'")
+chgrp root /etc/grub.conf
+# END fix for 'file_group_owner_grub_conf'
+
+###############################################################################
+# BEGIN fix (71 / 94) for 'file_user_owner_grub_conf'
+###############################################################################
+(>&2 echo "Remediating rule 71/94: 'file_user_owner_grub_conf'")
+chown root /etc/grub.conf
+# END fix for 'file_user_owner_grub_conf'
+
+###############################################################################
+# BEGIN fix (72 / 94) for 'bootloader_password'
+###############################################################################
+(>&2 echo "Remediating rule 72/94: 'bootloader_password'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'bootloader_password'
+
+###############################################################################
+# BEGIN fix (73 / 94) for 'file_permissions_grub_conf'
+###############################################################################
+(>&2 echo "Remediating rule 73/94: 'file_permissions_grub_conf'")
+chmod 600 /boot/grub/grub.conf
+# END fix for 'file_permissions_grub_conf'
+
+###############################################################################
+# BEGIN fix (74 / 94) for 'require_singleuser_auth'
+###############################################################################
+(>&2 echo "Remediating rule 74/94: 'require_singleuser_auth'")
+grep -q ^SINGLE /etc/sysconfig/init && \
+  sed -i "s/SINGLE.*/SINGLE=\/sbin\/sulogin/g" /etc/sysconfig/init
+if ! [ $? -eq 0 ]; then
+    echo "SINGLE=/sbin/sulogin" >> /etc/sysconfig/init
+fi
+# END fix for 'require_singleuser_auth'
+
+###############################################################################
+# BEGIN fix (75 / 94) for 'file_permissions_var_log_audit'
+###############################################################################
+(>&2 echo "Remediating rule 75/94: 'file_permissions_var_log_audit'")
+
+if `grep -q ^log_group /etc/audit/auditd.conf` ; then
+  GROUP=$(awk -F "=" '/log_group/ {print $2}' /etc/audit/auditd.conf | tr -d ' ')
+  if ! [ "${GROUP}" == 'root' ] ; then
+    chmod 0640 /var/log/audit/audit.log
+    chmod 0440 /var/log/audit/audit.log.*
+  else
+    chmod 0600 /var/log/audit/audit.log
+    chmod 0400 /var/log/audit/audit.log.*
+  fi
+
+  chmod 0640 /etc/audit/audit*
+  chmod 0640 /etc/audit/rules.d/*
+else
+  chmod 0600 /var/log/audit/audit.log
+  chmod 0400 /var/log/audit/audit.log.*
+  chmod 0640 /etc/audit/audit*
+  chmod 0640 /etc/audit/rules.d/*
+fi
+# END fix for 'file_permissions_var_log_audit'
+
+###############################################################################
+# BEGIN fix (76 / 94) for 'file_permissions_etc_shadow'
+###############################################################################
+(>&2 echo "Remediating rule 76/94: 'file_permissions_etc_shadow'")
+chmod 0000 /etc/shadow
+# END fix for 'file_permissions_etc_shadow'
+
+###############################################################################
+# BEGIN fix (77 / 94) for 'groupowner_shadow_file'
+###############################################################################
+(>&2 echo "Remediating rule 77/94: 'groupowner_shadow_file'")
+chgrp root /etc/shadow
+# END fix for 'groupowner_shadow_file'
+
+###############################################################################
+# BEGIN fix (78 / 94) for 'file_owner_etc_group'
+###############################################################################
+(>&2 echo "Remediating rule 78/94: 'file_owner_etc_group'")
+
+chown root /etc/group
+# END fix for 'file_owner_etc_group'
+
+###############################################################################
+# BEGIN fix (79 / 94) for 'file_permissions_etc_group'
+###############################################################################
+(>&2 echo "Remediating rule 79/94: 'file_permissions_etc_group'")
+
+chmod 0644 /etc/group
+# END fix for 'file_permissions_etc_group'
+
+###############################################################################
+# BEGIN fix (80 / 94) for 'file_owner_etc_passwd'
+###############################################################################
+(>&2 echo "Remediating rule 80/94: 'file_owner_etc_passwd'")
+
+chown root /etc/passwd
+# END fix for 'file_owner_etc_passwd'
+
+###############################################################################
+# BEGIN fix (81 / 94) for 'file_groupowner_etc_gshadow'
+###############################################################################
+(>&2 echo "Remediating rule 81/94: 'file_groupowner_etc_gshadow'")
+
+chgrp root /etc/gshadow
+# END fix for 'file_groupowner_etc_gshadow'
+
+###############################################################################
+# BEGIN fix (82 / 94) for 'file_groupowner_etc_passwd'
+###############################################################################
+(>&2 echo "Remediating rule 82/94: 'file_groupowner_etc_passwd'")
+
+chgrp root /etc/passwd
+# END fix for 'file_groupowner_etc_passwd'
+
+###############################################################################
+# BEGIN fix (83 / 94) for 'file_owner_etc_gshadow'
+###############################################################################
+(>&2 echo "Remediating rule 83/94: 'file_owner_etc_gshadow'")
+
+chown root /etc/gshadow
+# END fix for 'file_owner_etc_gshadow'
+
+###############################################################################
+# BEGIN fix (84 / 94) for 'file_groupowner_etc_group'
+###############################################################################
+(>&2 echo "Remediating rule 84/94: 'file_groupowner_etc_group'")
+
+chgrp root /etc/group
+# END fix for 'file_groupowner_etc_group'
+
+###############################################################################
+# BEGIN fix (85 / 94) for 'file_permissions_etc_gshadow'
+###############################################################################
+(>&2 echo "Remediating rule 85/94: 'file_permissions_etc_gshadow'")
+
+chmod 0000 /etc/gshadow
+# END fix for 'file_permissions_etc_gshadow'
+
+###############################################################################
+# BEGIN fix (86 / 94) for 'userowner_shadow_file'
+###############################################################################
+(>&2 echo "Remediating rule 86/94: 'userowner_shadow_file'")
+chown root /etc/shadow
+# END fix for 'userowner_shadow_file'
+
+###############################################################################
+# BEGIN fix (87 / 94) for 'file_permissions_etc_passwd'
+###############################################################################
+(>&2 echo "Remediating rule 87/94: 'file_permissions_etc_passwd'")
+
+chmod 0644 /etc/passwd
+# END fix for 'file_permissions_etc_passwd'
+
+###############################################################################
+# BEGIN fix (88 / 94) for 'file_ownership_library_dirs'
+###############################################################################
+(>&2 echo "Remediating rule 88/94: 'file_ownership_library_dirs'")
+for LIBDIR in /usr/lib /usr/lib64 /lib /lib64
+do
+  if [ -d $LIBDIR ]
+  then
+    find -L $LIBDIR \! -user root -exec chown root {} \; 
+  fi
+done
+# END fix for 'file_ownership_library_dirs'
+
+###############################################################################
+# BEGIN fix (89 / 94) for 'file_permissions_binary_dirs'
+###############################################################################
+(>&2 echo "Remediating rule 89/94: 'file_permissions_binary_dirs'")
+DIRS="/bin /usr/bin /usr/local/bin /sbin /usr/sbin /usr/local/sbin /usr/libexec"
+for dirPath in $DIRS; do
+	find "$dirPath" -perm /022 -exec chmod go-w '{}' \;
+done
+# END fix for 'file_permissions_binary_dirs'
+
+###############################################################################
+# BEGIN fix (90 / 94) for 'file_ownership_binary_dirs'
+###############################################################################
+(>&2 echo "Remediating rule 90/94: 'file_ownership_binary_dirs'")
+find /bin/ \
+/usr/bin/ \
+/usr/local/bin/ \
+/sbin/ \
+/usr/sbin/ \
+/usr/local/sbin/ \
+/usr/libexec \
+\! -user root -execdir chown root {} \;
+# END fix for 'file_ownership_binary_dirs'
+
+###############################################################################
+# BEGIN fix (91 / 94) for 'file_permissions_library_dirs'
+###############################################################################
+(>&2 echo "Remediating rule 91/94: 'file_permissions_library_dirs'")
+DIRS="/lib /lib64 /usr/lib /usr/lib64"
+for dirPath in $DIRS; do
+	find "$dirPath" -perm /022 -type f -exec chmod go-w '{}' \;
+done
+# END fix for 'file_permissions_library_dirs'
+
+###############################################################################
+# BEGIN fix (92 / 94) for 'sysctl_kernel_exec_shield'
+###############################################################################
+(>&2 echo "Remediating rule 92/94: 'sysctl_kernel_exec_shield'")
+
+
+#
+# Set runtime for kernel.exec-shield
+#
+/sbin/sysctl -q -n -w kernel.exec-shield=1
+
+#
+# If kernel.exec-shield present in /etc/sysctl.conf, change value to "1"
+#	else, add "kernel.exec-shield = 1" to /etc/sysctl.conf
+#
+# Function to replace configuration setting in config file or add the configuration setting if
+# it does not exist.
+#
+# Expects arguments:
+#
+# config_file:		Configuration file that will be modified
+# key:			Configuration option to change
+# value:		Value of the configuration option to change
+# cce:			The CCE identifier or '@CCENUM@' if no CCE identifier exists
+# format:		The printf-like format string that will be given stripped key and value as arguments,
+#			so e.g. '%s=%s' will result in key=value subsitution (i.e. without spaces around =)
+#
+# Optional arugments:
+#
+# format:		Optional argument to specify the format of how key/value should be
+# 			modified/appended in the configuration file. The default is key = value.
+#
+# Example Call(s):
+#
+#     With default format of 'key = value':
+#     replace_or_append '/etc/sysctl.conf' '^kernel.randomize_va_space' '2' '@CCENUM@'
+#
+#     With custom key/value format:
+#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' 'disabled' '@CCENUM@' '%s=%s'
+#
+#     With a variable:
+#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' $var_selinux_state '@CCENUM@' '%s=%s'
+#
+function replace_or_append {
+  local default_format='%s = %s' case_insensitive_mode=yes sed_case_insensitive_option='' grep_case_insensitive_option=''
+  local config_file=$1
+  local key=$2
+  local value=$3
+  local cce=$4
+  local format=$5
+
+  if [ "$case_insensitive_mode" = yes ]; then
+    sed_case_insensitive_option="i"
+    grep_case_insensitive_option="-i"
+  fi
+  [ -n "$format" ] || format="$default_format"
+  # Check sanity of the input
+  [ $# -ge "3" ] || { echo "Usage: replace_or_append <config_file_location> <key_to_search> <new_value> [<CCE number or literal '@CCENUM@' if unknown>] [printf-like format, default is '$default_format']" >&2; exit 1; }
+
+  # Test if the config_file is a symbolic link. If so, use --follow-symlinks with sed.
+  # Otherwise, regular sed command will do.
+  sed_command=('sed' '-i')
+  if test -L "$config_file"; then
+    sed_command+=('--follow-symlinks')
+  fi
+
+  # Test that the cce arg is not empty or does not equal @CCENUM@.
+  # If @CCENUM@ exists, it means that there is no CCE assigned.
+  if [ -n "$cce" ] && [ "$cce" != '@CCENUM@' ]; then
+    cce="CCE-${cce}"
+  else
+    cce="CCE"
+  fi
+
+  # Strip any search characters in the key arg so that the key can be replaced without
+  # adding any search characters to the config file.
+  stripped_key=$(sed 's/[\^=\$,;+]*//g' <<< "$key")
+
+  # shellcheck disable=SC2059
+  printf -v formatted_output "$format" "$stripped_key" "$value"
+
+  # If the key exists, change it. Otherwise, add it to the config_file.
+  # We search for the key string followed by a word boundary (matched by \>),
+  # so if we search for 'setting', 'setting2' won't match.
+  if grep -q $grep_case_insensitive_option "${key}\\>" "$config_file"; then
+    "${sed_command[@]}" "s/${key}\\>.*/$formatted_output/g$sed_case_insensitive_option" "$config_file"
+  else
+    # \n is precaution for case where file ends without trailing newline
+    printf '\n# Per %s: Set %s in %s\n' "$cce" "$formatted_output" "$config_file" >> "$config_file"
+    printf '%s\n' "$formatted_output" >> "$config_file"
+  fi
+}
+
+replace_or_append '/etc/sysctl.conf' '^kernel.exec-shield' "1" 'CCE-27007-4'
+# END fix for 'sysctl_kernel_exec_shield'
+
+###############################################################################
+# BEGIN fix (93 / 94) for 'sysctl_kernel_randomize_va_space'
+###############################################################################
+(>&2 echo "Remediating rule 93/94: 'sysctl_kernel_randomize_va_space'")
+
+
+#
+# Set runtime for kernel.randomize_va_space
+#
+/sbin/sysctl -q -n -w kernel.randomize_va_space=2
+
+#
+# If kernel.randomize_va_space present in /etc/sysctl.conf, change value to "2"
+#	else, add "kernel.randomize_va_space = 2" to /etc/sysctl.conf
+#
+# Function to replace configuration setting in config file or add the configuration setting if
+# it does not exist.
+#
+# Expects arguments:
+#
+# config_file:		Configuration file that will be modified
+# key:			Configuration option to change
+# value:		Value of the configuration option to change
+# cce:			The CCE identifier or '@CCENUM@' if no CCE identifier exists
+# format:		The printf-like format string that will be given stripped key and value as arguments,
+#			so e.g. '%s=%s' will result in key=value subsitution (i.e. without spaces around =)
+#
+# Optional arugments:
+#
+# format:		Optional argument to specify the format of how key/value should be
+# 			modified/appended in the configuration file. The default is key = value.
+#
+# Example Call(s):
+#
+#     With default format of 'key = value':
+#     replace_or_append '/etc/sysctl.conf' '^kernel.randomize_va_space' '2' '@CCENUM@'
+#
+#     With custom key/value format:
+#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' 'disabled' '@CCENUM@' '%s=%s'
+#
+#     With a variable:
+#     replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' $var_selinux_state '@CCENUM@' '%s=%s'
+#
+function replace_or_append {
+  local default_format='%s = %s' case_insensitive_mode=yes sed_case_insensitive_option='' grep_case_insensitive_option=''
+  local config_file=$1
+  local key=$2
+  local value=$3
+  local cce=$4
+  local format=$5
+
+  if [ "$case_insensitive_mode" = yes ]; then
+    sed_case_insensitive_option="i"
+    grep_case_insensitive_option="-i"
+  fi
+  [ -n "$format" ] || format="$default_format"
+  # Check sanity of the input
+  [ $# -ge "3" ] || { echo "Usage: replace_or_append <config_file_location> <key_to_search> <new_value> [<CCE number or literal '@CCENUM@' if unknown>] [printf-like format, default is '$default_format']" >&2; exit 1; }
+
+  # Test if the config_file is a symbolic link. If so, use --follow-symlinks with sed.
+  # Otherwise, regular sed command will do.
+  sed_command=('sed' '-i')
+  if test -L "$config_file"; then
+    sed_command+=('--follow-symlinks')
+  fi
+
+  # Test that the cce arg is not empty or does not equal @CCENUM@.
+  # If @CCENUM@ exists, it means that there is no CCE assigned.
+  if [ -n "$cce" ] && [ "$cce" != '@CCENUM@' ]; then
+    cce="CCE-${cce}"
+  else
+    cce="CCE"
+  fi
+
+  # Strip any search characters in the key arg so that the key can be replaced without
+  # adding any search characters to the config file.
+  stripped_key=$(sed 's/[\^=\$,;+]*//g' <<< "$key")
+
+  # shellcheck disable=SC2059
+  printf -v formatted_output "$format" "$stripped_key" "$value"
+
+  # If the key exists, change it. Otherwise, add it to the config_file.
+  # We search for the key string followed by a word boundary (matched by \>),
+  # so if we search for 'setting', 'setting2' won't match.
+  if grep -q $grep_case_insensitive_option "${key}\\>" "$config_file"; then
+    "${sed_command[@]}" "s/${key}\\>.*/$formatted_output/g$sed_case_insensitive_option" "$config_file"
+  else
+    # \n is precaution for case where file ends without trailing newline
+    printf '\n# Per %s: Set %s in %s\n' "$cce" "$formatted_output" "$config_file" >> "$config_file"
+    printf '%s\n' "$formatted_output" >> "$config_file"
+  fi
+}
+
+replace_or_append '/etc/sysctl.conf' '^kernel.randomize_va_space' "2" 'CCE-26999-3'
+# END fix for 'sysctl_kernel_randomize_va_space'
+
+###############################################################################
+# BEGIN fix (94 / 94) for 'service_autofs_disabled'
+###############################################################################
+(>&2 echo "Remediating rule 94/94: 'service_autofs_disabled'")
+# Function to enable/disable and start/stop services on RHEL and Fedora systems.
+#
+# Example Call(s):
+#
+#     service_command enable bluetooth
+#     service_command disable bluetooth.service
+#
+#     Using xinetd:
+#     service_command disable rsh.socket xinetd=rsh
+#
+function service_command {
+
+# Load function arguments into local variables
+local service_state=$1
+local service=$2
+local xinetd=$(echo $3 | cut -d'=' -f2)
+
+# Check sanity of the input
+if [ $# -lt "2" ]
+then
+  echo "Usage: service_command 'enable/disable' 'service_name.service'"
+  echo
+  echo "To enable or disable xinetd services add \'xinetd=service_name\'"
+  echo "as the last argument"  
+  echo "Aborting."
+  exit 1
+fi
+
+# If systemctl is installed, use systemctl command; otherwise, use the service/chkconfig commands
+if [ -f "/usr/bin/systemctl" ] ; then
+  service_util="/usr/bin/systemctl"
+else
+  service_util="/sbin/service"
+  chkconfig_util="/sbin/chkconfig"
+fi
+
+# If disable is not specified in arg1, set variables to enable services.
+# Otherwise, variables are to be set to disable services.
+if [ "$service_state" != 'disable' ] ; then
+  service_state="enable"
+  service_operation="start"
+  chkconfig_state="on"
+else
+  service_state="disable"
+  service_operation="stop"
+  chkconfig_state="off"
+fi
+
+# If chkconfig_util is not empty, use chkconfig/service commands.
+if [ "x$chkconfig_util" != x ] ; then
+  $service_util $service $service_operation
+  $chkconfig_util --level 0123456 $service $chkconfig_state
+else
+  $service_util $service_operation $service
+  $service_util $service_state $service
+  # The service may not be running because it has been started and failed,
+  # so let's reset the state so OVAL checks pass.
+  # Service should be 'inactive', not 'failed' after reboot though.
+  $service_util reset-failed $service
+fi
+
+# Test if local variable xinetd is empty using non-bashism.
+# If empty, then xinetd is not being used.
+if [ "x$xinetd" != x ] ; then
+  grep -qi disable /etc/xinetd.d/$xinetd && \
+
+  if [ "$service_operation" = 'disable' ] ; then
+    sed -i "s/disable.*/disable         = no/gI" /etc/xinetd.d/$xinetd
+  else
+    sed -i "s/disable.*/disable         = yes/gI" /etc/xinetd.d/$xinetd
+  fi
+fi
+
+}
+
+service_command disable autofs
+# END fix for 'service_autofs_disabled'
 

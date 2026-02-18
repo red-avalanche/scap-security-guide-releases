@@ -3,13 +3,11 @@
 # Bash remediation role for profile basic-embedded
 # Profile Title:  Basic Profile for Embedded Systems
 # Profile Description:
-# 
 # This profile contains items common to many embedded Linux installations.
 # Regardless of your system's deployment objective, all of these checks should pass.
-# 
 #
 # Benchmark ID:  WRLINUX
-# Benchmark Version:  0.1.38
+# Benchmark Version:  0.1.39
 #
 # XCCDF Version:  1.1
 #
@@ -53,27 +51,18 @@
 # END fix for 'no_netrc_files'
 
 ###############################################################################
-# BEGIN fix (5 / 11) for 'accounts_max_concurrent_login_sessions'
+# BEGIN fix (5 / 11) for 'accounts_umask_etc_login_defs'
 ###############################################################################
-(>&2 echo "Remediating rule 5/11: 'accounts_max_concurrent_login_sessions'")
-
-var_accounts_max_concurrent_login_sessions="1"
-
-if grep -q '^[^#]*\<maxlogins\>' /etc/security/limits.d/*.conf; then
-	sed -i "/^[^#]*\<maxlogins\>/ s/maxlogins.*/maxlogins $var_accounts_max_concurrent_login_sessions/" /etc/security/limits.d/*.conf
-elif grep -q '^[^#]*\<maxlogins\>' /etc/security/limits.conf; then
-	sed -i "/^[^#]*\<maxlogins\>/ s/maxlogins.*/maxlogins $var_accounts_max_concurrent_login_sessions/" /etc/security/limits.conf
-else
-	echo "*	hard	maxlogins	$var_accounts_max_concurrent_login_sessions" >> /etc/security/limits.conf
-fi
-# END fix for 'accounts_max_concurrent_login_sessions'
-
-###############################################################################
-# BEGIN fix (6 / 11) for 'accounts_logon_fail_delay'
-###############################################################################
-(>&2 echo "Remediating rule 6/11: 'accounts_logon_fail_delay'")
+(>&2 echo "Remediating rule 5/11: 'accounts_umask_etc_login_defs'")
 # FIX FOR THIS RULE IS MISSING
-# END fix for 'accounts_logon_fail_delay'
+# END fix for 'accounts_umask_etc_login_defs'
+
+###############################################################################
+# BEGIN fix (6 / 11) for 'accounts_umask_etc_profile'
+###############################################################################
+(>&2 echo "Remediating rule 6/11: 'accounts_umask_etc_profile'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'accounts_umask_etc_profile'
 
 ###############################################################################
 # BEGIN fix (7 / 11) for 'root_path_no_dot'
@@ -97,16 +86,25 @@ fi
 # END fix for 'file_permissions_home_dirs'
 
 ###############################################################################
-# BEGIN fix (10 / 11) for 'accounts_umask_etc_profile'
+# BEGIN fix (10 / 11) for 'accounts_logon_fail_delay'
 ###############################################################################
-(>&2 echo "Remediating rule 10/11: 'accounts_umask_etc_profile'")
+(>&2 echo "Remediating rule 10/11: 'accounts_logon_fail_delay'")
 # FIX FOR THIS RULE IS MISSING
-# END fix for 'accounts_umask_etc_profile'
+# END fix for 'accounts_logon_fail_delay'
 
 ###############################################################################
-# BEGIN fix (11 / 11) for 'accounts_umask_etc_login_defs'
+# BEGIN fix (11 / 11) for 'accounts_max_concurrent_login_sessions'
 ###############################################################################
-(>&2 echo "Remediating rule 11/11: 'accounts_umask_etc_login_defs'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'accounts_umask_etc_login_defs'
+(>&2 echo "Remediating rule 11/11: 'accounts_max_concurrent_login_sessions'")
+
+var_accounts_max_concurrent_login_sessions="1"
+
+if grep -q '^[^#]*\<maxlogins\>' /etc/security/limits.d/*.conf; then
+	sed -i "/^[^#]*\<maxlogins\>/ s/maxlogins.*/maxlogins $var_accounts_max_concurrent_login_sessions/" /etc/security/limits.d/*.conf
+elif grep -q '^[^#]*\<maxlogins\>' /etc/security/limits.conf; then
+	sed -i "/^[^#]*\<maxlogins\>/ s/maxlogins.*/maxlogins $var_accounts_max_concurrent_login_sessions/" /etc/security/limits.conf
+else
+	echo "*	hard	maxlogins	$var_accounts_max_concurrent_login_sessions" >> /etc/security/limits.conf
+fi
+# END fix for 'accounts_max_concurrent_login_sessions'
 

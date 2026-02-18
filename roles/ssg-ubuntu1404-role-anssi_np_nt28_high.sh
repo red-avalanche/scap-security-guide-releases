@@ -6,7 +6,7 @@
 # This profile contains items for GNU/Linux installations storing sensitive informations that can be accessible from unauthenticated or uncontroled networks.
 #
 # Benchmark ID:  UBUNTU-TRUSTY
-# Benchmark Version:  0.1.38
+# Benchmark Version:  0.1.39
 #
 # XCCDF Version:  1.1
 #
@@ -22,123 +22,153 @@
 ###############################################################################
 
 ###############################################################################
-# BEGIN fix (1 / 37) for 'grub2_enable_iommu_force'
+# BEGIN fix (1 / 37) for 'package_nis_removed'
 ###############################################################################
-(>&2 echo "Remediating rule 1/37: 'grub2_enable_iommu_force'")
+(>&2 echo "Remediating rule 1/37: 'package_nis_removed'")
+# CAUTION: This remediation script will remove nis
+#	   from the system, and may remove any packages
+#	   that depend on nis. Execute this
+#	   remediation AFTER testing on a non-production
+#	   system!
+
+apt-get remove --purge nis
+# END fix for 'package_nis_removed'
+
+###############################################################################
+# BEGIN fix (2 / 37) for 'package_telnetd_removed'
+###############################################################################
+(>&2 echo "Remediating rule 2/37: 'package_telnetd_removed'")
+# CAUTION: This remediation script will remove telnetd
+#	   from the system, and may remove any packages
+#	   that depend on telnetd. Execute this
+#	   remediation AFTER testing on a non-production
+#	   system!
+
+apt-get remove --purge telnetd
+# END fix for 'package_telnetd_removed'
+
+###############################################################################
+# BEGIN fix (3 / 37) for 'package_ntpdate_removed'
+###############################################################################
+(>&2 echo "Remediating rule 3/37: 'package_ntpdate_removed'")
+# CAUTION: This remediation script will remove ntpdate
+#	   from the system, and may remove any packages
+#	   that depend on ntpdate. Execute this
+#	   remediation AFTER testing on a non-production
+#	   system!
+
+apt-get remove --purge ntpdate
+# END fix for 'package_ntpdate_removed'
+
+###############################################################################
+# BEGIN fix (4 / 37) for 'package_telnetd-ssl_removed'
+###############################################################################
+(>&2 echo "Remediating rule 4/37: 'package_telnetd-ssl_removed'")
+# CAUTION: This remediation script will remove telnetd-ssl
+#	   from the system, and may remove any packages
+#	   that depend on telnetd-ssl. Execute this
+#	   remediation AFTER testing on a non-production
+#	   system!
+
+apt-get remove --purge telnetd-ssl
+# END fix for 'package_telnetd-ssl_removed'
+
+###############################################################################
+# BEGIN fix (5 / 37) for 'package_inetutils-telnetd_removed'
+###############################################################################
+(>&2 echo "Remediating rule 5/37: 'package_inetutils-telnetd_removed'")
+# CAUTION: This remediation script will remove inetutils-telnetd
+#	   from the system, and may remove any packages
+#	   that depend on inetutils-telnetd. Execute this
+#	   remediation AFTER testing on a non-production
+#	   system!
+
+apt-get remove --purge inetutils-telnetd
+# END fix for 'package_inetutils-telnetd_removed'
+
+###############################################################################
+# BEGIN fix (6 / 37) for 'package_ntp_installed'
+###############################################################################
+(>&2 echo "Remediating rule 6/37: 'package_ntp_installed'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'package_ntp_installed'
+
+###############################################################################
+# BEGIN fix (7 / 37) for 'package_cron_installed'
+###############################################################################
+(>&2 echo "Remediating rule 7/37: 'package_cron_installed'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'package_cron_installed'
+
+###############################################################################
+# BEGIN fix (8 / 37) for 'package_auditd_installed'
+###############################################################################
+(>&2 echo "Remediating rule 8/37: 'package_auditd_installed'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'package_auditd_installed'
+
+###############################################################################
+# BEGIN fix (9 / 37) for 'service_ntpd_enabled'
+###############################################################################
+(>&2 echo "Remediating rule 9/37: 'service_ntpd_enabled'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'service_ntpd_enabled'
+
+###############################################################################
+# BEGIN fix (10 / 37) for 'service_auditd_enabled'
+###############################################################################
+(>&2 echo "Remediating rule 10/37: 'service_auditd_enabled'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'service_auditd_enabled'
+
+###############################################################################
+# BEGIN fix (11 / 37) for 'sshd_set_idle_timeout'
+###############################################################################
+(>&2 echo "Remediating rule 11/37: 'sshd_set_idle_timeout'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'sshd_set_idle_timeout'
+
+###############################################################################
+# BEGIN fix (12 / 37) for 'sshd_disable_root_login'
+###############################################################################
+(>&2 echo "Remediating rule 12/37: 'sshd_disable_root_login'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'sshd_disable_root_login'
+
+###############################################################################
+# BEGIN fix (13 / 37) for 'sshd_set_keepalive'
+###############################################################################
+(>&2 echo "Remediating rule 13/37: 'sshd_set_keepalive'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'sshd_set_keepalive'
+
+###############################################################################
+# BEGIN fix (14 / 37) for 'sshd_disable_empty_passwords'
+###############################################################################
+(>&2 echo "Remediating rule 14/37: 'sshd_disable_empty_passwords'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'sshd_disable_empty_passwords'
+
+###############################################################################
+# BEGIN fix (15 / 37) for 'sshd_allow_only_protocol2'
+###############################################################################
+(>&2 echo "Remediating rule 15/37: 'sshd_allow_only_protocol2'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'sshd_allow_only_protocol2'
+
+###############################################################################
+# BEGIN fix (16 / 37) for 'apt_conf_disallow_unauthenticated'
+###############################################################################
+(>&2 echo "Remediating rule 16/37: 'apt_conf_disallow_unauthenticated'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'apt_conf_disallow_unauthenticated'
+
+###############################################################################
+# BEGIN fix (17 / 37) for 'grub2_enable_iommu_force'
+###############################################################################
+(>&2 echo "Remediating rule 17/37: 'grub2_enable_iommu_force'")
 # FIX FOR THIS RULE IS MISSING
 # END fix for 'grub2_enable_iommu_force'
-
-###############################################################################
-# BEGIN fix (2 / 37) for 'file_permissions_systemmap'
-###############################################################################
-(>&2 echo "Remediating rule 2/37: 'file_permissions_systemmap'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'file_permissions_systemmap'
-
-###############################################################################
-# BEGIN fix (3 / 37) for 'file_permissions_etc_shadow'
-###############################################################################
-(>&2 echo "Remediating rule 3/37: 'file_permissions_etc_shadow'")
-chmod 0640 /etc/shadow
-# END fix for 'file_permissions_etc_shadow'
-
-###############################################################################
-# BEGIN fix (4 / 37) for 'file_permissions_etc_gshadow'
-###############################################################################
-(>&2 echo "Remediating rule 4/37: 'file_permissions_etc_gshadow'")
-chmod 0640 /etc/gshadow
-# END fix for 'file_permissions_etc_gshadow'
-
-###############################################################################
-# BEGIN fix (5 / 37) for 'file_permissions_etc_passwd'
-###############################################################################
-(>&2 echo "Remediating rule 5/37: 'file_permissions_etc_passwd'")
-chmod 0644 /etc/passwd
-# END fix for 'file_permissions_etc_passwd'
-
-###############################################################################
-# BEGIN fix (6 / 37) for 'file_permissions_etc_group'
-###############################################################################
-(>&2 echo "Remediating rule 6/37: 'file_permissions_etc_group'")
-chmod 0644 /etc/group
-# END fix for 'file_permissions_etc_group'
-
-###############################################################################
-# BEGIN fix (7 / 37) for 'sysctl_fs_suid_dumpable'
-###############################################################################
-(>&2 echo "Remediating rule 7/37: 'sysctl_fs_suid_dumpable'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'sysctl_fs_suid_dumpable'
-
-###############################################################################
-# BEGIN fix (8 / 37) for 'sysctl_kernel_randomize_va_space'
-###############################################################################
-(>&2 echo "Remediating rule 8/37: 'sysctl_kernel_randomize_va_space'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'sysctl_kernel_randomize_va_space'
-
-###############################################################################
-# BEGIN fix (9 / 37) for 'partition_for_tmp'
-###############################################################################
-(>&2 echo "Remediating rule 9/37: 'partition_for_tmp'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'partition_for_tmp'
-
-###############################################################################
-# BEGIN fix (10 / 37) for 'partition_for_var'
-###############################################################################
-(>&2 echo "Remediating rule 10/37: 'partition_for_var'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'partition_for_var'
-
-###############################################################################
-# BEGIN fix (11 / 37) for 'partition_for_var_log'
-###############################################################################
-(>&2 echo "Remediating rule 11/37: 'partition_for_var_log'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'partition_for_var_log'
-
-###############################################################################
-# BEGIN fix (12 / 37) for 'partition_for_var_log_audit'
-###############################################################################
-(>&2 echo "Remediating rule 12/37: 'partition_for_var_log_audit'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'partition_for_var_log_audit'
-
-###############################################################################
-# BEGIN fix (13 / 37) for 'partition_for_home'
-###############################################################################
-(>&2 echo "Remediating rule 13/37: 'partition_for_home'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'partition_for_home'
-
-###############################################################################
-# BEGIN fix (14 / 37) for 'sysctl_fs_protected_symlinks'
-###############################################################################
-(>&2 echo "Remediating rule 14/37: 'sysctl_fs_protected_symlinks'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'sysctl_fs_protected_symlinks'
-
-###############################################################################
-# BEGIN fix (15 / 37) for 'sysctl_fs_protected_hardlinks'
-###############################################################################
-(>&2 echo "Remediating rule 15/37: 'sysctl_fs_protected_hardlinks'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'sysctl_fs_protected_hardlinks'
-
-###############################################################################
-# BEGIN fix (16 / 37) for 'sudo_remove_nopasswd'
-###############################################################################
-(>&2 echo "Remediating rule 16/37: 'sudo_remove_nopasswd'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'sudo_remove_nopasswd'
-
-###############################################################################
-# BEGIN fix (17 / 37) for 'sudo_remove_no_authenticate'
-###############################################################################
-(>&2 echo "Remediating rule 17/37: 'sudo_remove_no_authenticate'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'sudo_remove_no_authenticate'
 
 ###############################################################################
 # BEGIN fix (18 / 37) for 'rsyslog_files_ownership'
@@ -169,150 +199,114 @@ chmod 0644 /etc/group
 # END fix for 'ensure_logrotate_activated'
 
 ###############################################################################
-# BEGIN fix (22 / 37) for 'package_telnetd_removed'
+# BEGIN fix (22 / 37) for 'sudo_remove_no_authenticate'
 ###############################################################################
-(>&2 echo "Remediating rule 22/37: 'package_telnetd_removed'")
-# CAUTION: This remediation script will remove telnetd
-#	   from the system, and may remove any packages
-#	   that depend on telnetd. Execute this
-#	   remediation AFTER testing on a non-production
-#	   system!
-
-apt-get remove --purge telnetd
-# END fix for 'package_telnetd_removed'
-
-###############################################################################
-# BEGIN fix (23 / 37) for 'package_inetutils-telnetd_removed'
-###############################################################################
-(>&2 echo "Remediating rule 23/37: 'package_inetutils-telnetd_removed'")
-# CAUTION: This remediation script will remove inetutils-telnetd
-#	   from the system, and may remove any packages
-#	   that depend on inetutils-telnetd. Execute this
-#	   remediation AFTER testing on a non-production
-#	   system!
-
-apt-get remove --purge inetutils-telnetd
-# END fix for 'package_inetutils-telnetd_removed'
-
-###############################################################################
-# BEGIN fix (24 / 37) for 'package_telnetd-ssl_removed'
-###############################################################################
-(>&2 echo "Remediating rule 24/37: 'package_telnetd-ssl_removed'")
-# CAUTION: This remediation script will remove telnetd-ssl
-#	   from the system, and may remove any packages
-#	   that depend on telnetd-ssl. Execute this
-#	   remediation AFTER testing on a non-production
-#	   system!
-
-apt-get remove --purge telnetd-ssl
-# END fix for 'package_telnetd-ssl_removed'
-
-###############################################################################
-# BEGIN fix (25 / 37) for 'package_nis_removed'
-###############################################################################
-(>&2 echo "Remediating rule 25/37: 'package_nis_removed'")
-# CAUTION: This remediation script will remove nis
-#	   from the system, and may remove any packages
-#	   that depend on nis. Execute this
-#	   remediation AFTER testing on a non-production
-#	   system!
-
-apt-get remove --purge nis
-# END fix for 'package_nis_removed'
-
-###############################################################################
-# BEGIN fix (26 / 37) for 'package_ntpdate_removed'
-###############################################################################
-(>&2 echo "Remediating rule 26/37: 'package_ntpdate_removed'")
-# CAUTION: This remediation script will remove ntpdate
-#	   from the system, and may remove any packages
-#	   that depend on ntpdate. Execute this
-#	   remediation AFTER testing on a non-production
-#	   system!
-
-apt-get remove --purge ntpdate
-# END fix for 'package_ntpdate_removed'
-
-###############################################################################
-# BEGIN fix (27 / 37) for 'package_auditd_installed'
-###############################################################################
-(>&2 echo "Remediating rule 27/37: 'package_auditd_installed'")
-# Include source function library.
-
-apt-get install auditd
-# END fix for 'package_auditd_installed'
-
-###############################################################################
-# BEGIN fix (28 / 37) for 'service_auditd_enabled'
-###############################################################################
-(>&2 echo "Remediating rule 28/37: 'service_auditd_enabled'")
+(>&2 echo "Remediating rule 22/37: 'sudo_remove_no_authenticate'")
 # FIX FOR THIS RULE IS MISSING
-# END fix for 'service_auditd_enabled'
+# END fix for 'sudo_remove_no_authenticate'
 
 ###############################################################################
-# BEGIN fix (29 / 37) for 'package_cron_installed'
+# BEGIN fix (23 / 37) for 'sudo_remove_nopasswd'
 ###############################################################################
-(>&2 echo "Remediating rule 29/37: 'package_cron_installed'")
-# Include source function library.
-
-apt-get install cron
-# END fix for 'package_cron_installed'
-
-###############################################################################
-# BEGIN fix (30 / 37) for 'package_ntp_installed'
-###############################################################################
-(>&2 echo "Remediating rule 30/37: 'package_ntp_installed'")
-# Include source function library.
-
-apt-get install ntp
-# END fix for 'package_ntp_installed'
-
-###############################################################################
-# BEGIN fix (31 / 37) for 'service_ntpd_enabled'
-###############################################################################
-(>&2 echo "Remediating rule 31/37: 'service_ntpd_enabled'")
+(>&2 echo "Remediating rule 23/37: 'sudo_remove_nopasswd'")
 # FIX FOR THIS RULE IS MISSING
-# END fix for 'service_ntpd_enabled'
+# END fix for 'sudo_remove_nopasswd'
 
 ###############################################################################
-# BEGIN fix (32 / 37) for 'apt_conf_disallow_unauthenticated'
+# BEGIN fix (24 / 37) for 'partition_for_home'
 ###############################################################################
-(>&2 echo "Remediating rule 32/37: 'apt_conf_disallow_unauthenticated'")
+(>&2 echo "Remediating rule 24/37: 'partition_for_home'")
 # FIX FOR THIS RULE IS MISSING
-# END fix for 'apt_conf_disallow_unauthenticated'
+# END fix for 'partition_for_home'
 
 ###############################################################################
-# BEGIN fix (33 / 37) for 'sshd_allow_only_protocol2'
+# BEGIN fix (25 / 37) for 'partition_for_tmp'
 ###############################################################################
-(>&2 echo "Remediating rule 33/37: 'sshd_allow_only_protocol2'")
+(>&2 echo "Remediating rule 25/37: 'partition_for_tmp'")
 # FIX FOR THIS RULE IS MISSING
-# END fix for 'sshd_allow_only_protocol2'
+# END fix for 'partition_for_tmp'
 
 ###############################################################################
-# BEGIN fix (34 / 37) for 'sshd_set_idle_timeout'
+# BEGIN fix (26 / 37) for 'partition_for_var'
 ###############################################################################
-(>&2 echo "Remediating rule 34/37: 'sshd_set_idle_timeout'")
+(>&2 echo "Remediating rule 26/37: 'partition_for_var'")
 # FIX FOR THIS RULE IS MISSING
-# END fix for 'sshd_set_idle_timeout'
+# END fix for 'partition_for_var'
 
 ###############################################################################
-# BEGIN fix (35 / 37) for 'sshd_set_keepalive'
+# BEGIN fix (27 / 37) for 'partition_for_var_log_audit'
 ###############################################################################
-(>&2 echo "Remediating rule 35/37: 'sshd_set_keepalive'")
+(>&2 echo "Remediating rule 27/37: 'partition_for_var_log_audit'")
 # FIX FOR THIS RULE IS MISSING
-# END fix for 'sshd_set_keepalive'
+# END fix for 'partition_for_var_log_audit'
 
 ###############################################################################
-# BEGIN fix (36 / 37) for 'sshd_disable_root_login'
+# BEGIN fix (28 / 37) for 'partition_for_var_log'
 ###############################################################################
-(>&2 echo "Remediating rule 36/37: 'sshd_disable_root_login'")
+(>&2 echo "Remediating rule 28/37: 'partition_for_var_log'")
 # FIX FOR THIS RULE IS MISSING
-# END fix for 'sshd_disable_root_login'
+# END fix for 'partition_for_var_log'
 
 ###############################################################################
-# BEGIN fix (37 / 37) for 'sshd_disable_empty_passwords'
+# BEGIN fix (29 / 37) for 'sysctl_fs_protected_hardlinks'
 ###############################################################################
-(>&2 echo "Remediating rule 37/37: 'sshd_disable_empty_passwords'")
+(>&2 echo "Remediating rule 29/37: 'sysctl_fs_protected_hardlinks'")
 # FIX FOR THIS RULE IS MISSING
-# END fix for 'sshd_disable_empty_passwords'
+# END fix for 'sysctl_fs_protected_hardlinks'
+
+###############################################################################
+# BEGIN fix (30 / 37) for 'sysctl_fs_protected_symlinks'
+###############################################################################
+(>&2 echo "Remediating rule 30/37: 'sysctl_fs_protected_symlinks'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'sysctl_fs_protected_symlinks'
+
+###############################################################################
+# BEGIN fix (31 / 37) for 'file_permissions_etc_group'
+###############################################################################
+(>&2 echo "Remediating rule 31/37: 'file_permissions_etc_group'")
+chmod 0644 /etc/group
+# END fix for 'file_permissions_etc_group'
+
+###############################################################################
+# BEGIN fix (32 / 37) for 'file_permissions_etc_shadow'
+###############################################################################
+(>&2 echo "Remediating rule 32/37: 'file_permissions_etc_shadow'")
+chmod 0640 /etc/shadow
+# END fix for 'file_permissions_etc_shadow'
+
+###############################################################################
+# BEGIN fix (33 / 37) for 'file_permissions_etc_gshadow'
+###############################################################################
+(>&2 echo "Remediating rule 33/37: 'file_permissions_etc_gshadow'")
+chmod 0640 /etc/gshadow
+# END fix for 'file_permissions_etc_gshadow'
+
+###############################################################################
+# BEGIN fix (34 / 37) for 'file_permissions_etc_passwd'
+###############################################################################
+(>&2 echo "Remediating rule 34/37: 'file_permissions_etc_passwd'")
+chmod 0644 /etc/passwd
+# END fix for 'file_permissions_etc_passwd'
+
+###############################################################################
+# BEGIN fix (35 / 37) for 'file_permissions_systemmap'
+###############################################################################
+(>&2 echo "Remediating rule 35/37: 'file_permissions_systemmap'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'file_permissions_systemmap'
+
+###############################################################################
+# BEGIN fix (36 / 37) for 'sysctl_fs_suid_dumpable'
+###############################################################################
+(>&2 echo "Remediating rule 36/37: 'sysctl_fs_suid_dumpable'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'sysctl_fs_suid_dumpable'
+
+###############################################################################
+# BEGIN fix (37 / 37) for 'sysctl_kernel_randomize_va_space'
+###############################################################################
+(>&2 echo "Remediating rule 37/37: 'sysctl_kernel_randomize_va_space'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'sysctl_kernel_randomize_va_space'
 

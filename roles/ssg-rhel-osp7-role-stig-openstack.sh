@@ -6,7 +6,7 @@
 # Sample profile description.
 #
 # Benchmark ID:  RHEL-7-OSP
-# Benchmark Version:  0.1.38
+# Benchmark Version:  0.1.39
 #
 # XCCDF Version:  1.1
 #
@@ -22,66 +22,60 @@
 ###############################################################################
 
 ###############################################################################
-# BEGIN fix (1 / 32) for 'horizon_file_ownership'
+# BEGIN fix (1 / 32) for 'cinder_glance_tls'
 ###############################################################################
-(>&2 echo "Remediating rule 1/32: 'horizon_file_ownership'")
-chown root /etc/openstack-dashboard/local_settings
-chgrp horizon /etc/openstack-dashboard/local_settings
-# END fix for 'horizon_file_ownership'
+(>&2 echo "Remediating rule 1/32: 'cinder_glance_tls'")
+openstack-config --set /etc/cinder/cinder.conf DEFAULT glance_api_insecure False
+# END fix for 'cinder_glance_tls'
 
 ###############################################################################
-# BEGIN fix (2 / 32) for 'horizon_file_perms'
+# BEGIN fix (2 / 32) for 'cinder_nas_secure_file_permissions'
 ###############################################################################
-(>&2 echo "Remediating rule 2/32: 'horizon_file_perms'")
-chmod 640 /etc/openstack-dashboard/local_settings
-# END fix for 'horizon_file_perms'
+(>&2 echo "Remediating rule 2/32: 'cinder_nas_secure_file_permissions'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'cinder_nas_secure_file_permissions'
 
 ###############################################################################
-# BEGIN fix (3 / 32) for 'horizon_use_ssl'
+# BEGIN fix (3 / 32) for 'cinder_using_keystone'
 ###############################################################################
-(>&2 echo "Remediating rule 3/32: 'horizon_use_ssl'")
-openstack-config --set /etc/openstack-dashboard/local_settings DEFAULT use_ssl True
-# END fix for 'horizon_use_ssl'
+(>&2 echo "Remediating rule 3/32: 'cinder_using_keystone'")
+openstack-config --set /etc/cinder/cinder.conf DEFAULT auth_strategy keystone
+# END fix for 'cinder_using_keystone'
 
 ###############################################################################
-# BEGIN fix (4 / 32) for 'horizon_csrf_cookie_secure'
+# BEGIN fix (4 / 32) for 'cinder_nova_tls'
 ###############################################################################
-(>&2 echo "Remediating rule 4/32: 'horizon_csrf_cookie_secure'")
-openstack-config --set /etc/openstack-dashboard/local_settings DEFAULT CSRF_COOKIE_SECURE True
-# END fix for 'horizon_csrf_cookie_secure'
+(>&2 echo "Remediating rule 4/32: 'cinder_nova_tls'")
+openstack-config --set /etc/cinder/cinder.conf DEFAULT nova_api_insecure False
+# END fix for 'cinder_nova_tls'
 
 ###############################################################################
-# BEGIN fix (5 / 32) for 'horizon_session_cookie_secure'
+# BEGIN fix (5 / 32) for 'cinder_file_perms'
 ###############################################################################
-(>&2 echo "Remediating rule 5/32: 'horizon_session_cookie_secure'")
-openstack-config --set /etc/openstack-dashboard/local_settings DEFAULT SESSION_COOKIE_SECURE True
-# END fix for 'horizon_session_cookie_secure'
+(>&2 echo "Remediating rule 5/32: 'cinder_file_perms'")
+chmod 640 /etc/cinder/cinder.conf
+chmod 640 /etc/cinder/api-paste.ini
+chmod 640 /etc/cinder/policy.json
+chmod 640 /etc/cinder/rootwrap.conf
+# END fix for 'cinder_file_perms'
 
 ###############################################################################
-# BEGIN fix (6 / 32) for 'horizon_session_cookie_httponly'
+# BEGIN fix (6 / 32) for 'cinder_tls_enabled'
 ###############################################################################
-(>&2 echo "Remediating rule 6/32: 'horizon_session_cookie_httponly'")
-openstack-config --set /etc/openstack-dashboard/local_settings DEFAULT SESSION_COOKIE_HTTPONLY True
-# END fix for 'horizon_session_cookie_httponly'
+(>&2 echo "Remediating rule 6/32: 'cinder_tls_enabled'")
+OLD_IDENTITY_URL=$(openstack-config --get /etc/cinder/cinder.conf keystone_authtoken identity_uri)
+NEW_IDENTITY_URI="${OLD_IDENTITY_URI:0:4}s${OLD_IDENTITY_URI:4:-1}"
+openstack-config --set /etc/cinder/cinder.conf keystone_authtoken identity_uri $NEW_IDENTIY_URI
+
+OLD_AUTH_URI=$(openstack-config --get /etc/cinder/cinder.conf keystone_authtoken auth_uri)
+NEW_AUTH_URI="${OLD_AUTH_URI:0:4}s${OLD_AUTH_URI:4:-1}"
+openstack-config --set /etc/cinder/cinder.conf keystone_authtoken auth_uri $NEW_AUTH_URI
+# END fix for 'cinder_tls_enabled'
 
 ###############################################################################
-# BEGIN fix (7 / 32) for 'horizon_password_autocomplete'
+# BEGIN fix (7 / 32) for 'cinder_file_ownership'
 ###############################################################################
-(>&2 echo "Remediating rule 7/32: 'horizon_password_autocomplete'")
-openstack-config --set /etc/openstack-dashboard/local_settings DEFAULT PASSWORD_AUTOCOMPLETE True
-# END fix for 'horizon_password_autocomplete'
-
-###############################################################################
-# BEGIN fix (8 / 32) for 'horizon_disable_password_reveal'
-###############################################################################
-(>&2 echo "Remediating rule 8/32: 'horizon_disable_password_reveal'")
-openstack-config --set /etc/openstack-dashboard/local_settings DEFAULT DISABLE_PASSWORD_REVEAL True
-# END fix for 'horizon_disable_password_reveal'
-
-###############################################################################
-# BEGIN fix (9 / 32) for 'cinder_file_ownership'
-###############################################################################
-(>&2 echo "Remediating rule 9/32: 'cinder_file_ownership'")
+(>&2 echo "Remediating rule 7/32: 'cinder_file_ownership'")
 for file in /etc/cinder/cinder.conf \
 		/etc/cinder/api-paste.ini \
 		/etc/cinder/policy.json \
@@ -92,70 +86,90 @@ done
 # END fix for 'cinder_file_ownership'
 
 ###############################################################################
-# BEGIN fix (10 / 32) for 'cinder_file_perms'
+# BEGIN fix (8 / 32) for 'cinder_osapi_max_request_body'
 ###############################################################################
-(>&2 echo "Remediating rule 10/32: 'cinder_file_perms'")
-chmod 640 /etc/cinder/cinder.conf
-chmod 640 /etc/cinder/api-paste.ini
-chmod 640 /etc/cinder/policy.json
-chmod 640 /etc/cinder/rootwrap.conf
-# END fix for 'cinder_file_perms'
-
-###############################################################################
-# BEGIN fix (11 / 32) for 'cinder_using_keystone'
-###############################################################################
-(>&2 echo "Remediating rule 11/32: 'cinder_using_keystone'")
-openstack-config --set /etc/cinder/cinder.conf DEFAULT auth_strategy keystone
-# END fix for 'cinder_using_keystone'
-
-###############################################################################
-# BEGIN fix (12 / 32) for 'cinder_tls_enabled'
-###############################################################################
-(>&2 echo "Remediating rule 12/32: 'cinder_tls_enabled'")
-OLD_IDENTITY_URL=$(openstack-config --get /etc/cinder/cinder.conf keystone_authtoken identity_uri)
-NEW_IDENTITY_URI="${OLD_IDENTITY_URI:0:4}s${OLD_IDENTITY_URI:4:-1}"
-openstack-config --set /etc/cinder/cinder.conf keystone_authtoken identity_uri $NEW_IDENTIY_URI
-
-OLD_AUTH_URI=$(openstack-config --get /etc/cinder/cinder.conf keystone_authtoken auth_uri)
-NEW_AUTH_URI="${OLD_AUTH_URI:0:4}s${OLD_AUTH_URI:4:-1}"
-openstack-config --set /etc/cinder/cinder.conf keystone_authtoken auth_uri $NEW_AUTH_URI
-
-# END fix for 'cinder_tls_enabled'
-
-###############################################################################
-# BEGIN fix (13 / 32) for 'cinder_nova_tls'
-###############################################################################
-(>&2 echo "Remediating rule 13/32: 'cinder_nova_tls'")
-openstack-config --set /etc/cinder/cinder.conf DEFAULT nova_api_insecure False
-# END fix for 'cinder_nova_tls'
-
-###############################################################################
-# BEGIN fix (14 / 32) for 'cinder_glance_tls'
-###############################################################################
-(>&2 echo "Remediating rule 14/32: 'cinder_glance_tls'")
-openstack-config --set /etc/cinder/cinder.conf DEFAULT glance_api_insecure False
-# END fix for 'cinder_glance_tls'
-
-###############################################################################
-# BEGIN fix (15 / 32) for 'cinder_nas_secure_file_permissions'
-###############################################################################
-(>&2 echo "Remediating rule 15/32: 'cinder_nas_secure_file_permissions'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'cinder_nas_secure_file_permissions'
-
-###############################################################################
-# BEGIN fix (16 / 32) for 'cinder_osapi_max_request_body'
-###############################################################################
-(>&2 echo "Remediating rule 16/32: 'cinder_osapi_max_request_body'")
+(>&2 echo "Remediating rule 8/32: 'cinder_osapi_max_request_body'")
 openstack-config --set /etc/cinder/cinder.conf DEFAULT osapi_max_request_body_size 114688
 # END fix for 'cinder_osapi_max_request_body'
 
 ###############################################################################
-# BEGIN fix (17 / 32) for 'keystone_file_ownership'
+# BEGIN fix (9 / 32) for 'nova_use_keystone'
 ###############################################################################
-(>&2 echo "Remediating rule 17/32: 'keystone_file_ownership'")
+(>&2 echo "Remediating rule 9/32: 'nova_use_keystone'")
+openstack-config --set /etc/nova/nova.conf DEFAULT auth_strategy keystone
+# END fix for 'nova_use_keystone'
+
+###############################################################################
+# BEGIN fix (10 / 32) for 'nova_file_ownership'
+###############################################################################
+(>&2 echo "Remediating rule 10/32: 'nova_file_ownership'")
+for file in /etc/nova/nova.conf \
+		/etc/nova/api-paste.ini \
+		/etc/nova/policy.json \
+		/etc/nova/rootwrap.conf; do
+	chown root $file
+	chgrp nova $file
+done
+# END fix for 'nova_file_ownership'
+
+###############################################################################
+# BEGIN fix (11 / 32) for 'nova_secure_authentication'
+###############################################################################
+(>&2 echo "Remediating rule 11/32: 'nova_secure_authentication'")
+STR_IDENTITY_URI=$(openstack-config --get /etc/nova/nova.conf keystone_authtoken identity_uri)
+NEW_IDENTITY_URI=${STR_IDENTITY_URI:0:4}s${STR_IDENTITY_URI:4:-1}
+openstack-config --set /etc/nova/nova.conf keystone_authtoken identity_uri $NEW_IDENTITY_URI
+
+STR_AUTH_URI=$(openstack-config --get /etc/nova/nova.conf keystone_authtoken auth_uri)
+NEW_AUTH_URI=${STR_AUTH_URI:0:4}s${STR_AUTH_URI:4:-1}
+openstack-config --set /etc/nova/nova.conf keystone_authtoken auth_uri $NEW_AUTH_URI
+# END fix for 'nova_secure_authentication'
+
+###############################################################################
+# BEGIN fix (12 / 32) for 'nova_file_perms'
+###############################################################################
+(>&2 echo "Remediating rule 12/32: 'nova_file_perms'")
+chmod 640 /etc/nova/nova.conf
+chmod 640 /etc/nova/api-paste.ini
+chmod 640 /etc/nova/policy.json
+chmod 640 /etc/nova/rootwrap.conf
+# END fix for 'nova_file_perms'
+
+###############################################################################
+# BEGIN fix (13 / 32) for 'nova_secure_glance'
+###############################################################################
+(>&2 echo "Remediating rule 13/32: 'nova_secure_glance'")
+openstack-config --set /etc/nova/nova.conf DEFAULT glance_api_insecure False
+openstack-config --set /etc/nova/nova.conf glance api_insecure False
+# END fix for 'nova_secure_glance'
+
+###############################################################################
+# BEGIN fix (14 / 32) for 'keystone_disable_admin_token'
+###############################################################################
+(>&2 echo "Remediating rule 14/32: 'keystone_disable_admin_token'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'keystone_disable_admin_token'
+
+###############################################################################
+# BEGIN fix (15 / 32) for 'keystone_file_ownership'
+###############################################################################
+(>&2 echo "Remediating rule 15/32: 'keystone_file_ownership'")
 # FIX FOR THIS RULE IS MISSING
 # END fix for 'keystone_file_ownership'
+
+###############################################################################
+# BEGIN fix (16 / 32) for 'keystone_max_request_body_size'
+###############################################################################
+(>&2 echo "Remediating rule 16/32: 'keystone_max_request_body_size'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'keystone_max_request_body_size'
+
+###############################################################################
+# BEGIN fix (17 / 32) for 'keystone_algorithm_hashing'
+###############################################################################
+(>&2 echo "Remediating rule 17/32: 'keystone_algorithm_hashing'")
+# FIX FOR THIS RULE IS MISSING
+# END fix for 'keystone_algorithm_hashing'
 
 ###############################################################################
 # BEGIN fix (18 / 32) for 'keystone_file_perms'
@@ -172,43 +186,66 @@ openstack-config --set /etc/cinder/cinder.conf DEFAULT osapi_max_request_body_si
 # END fix for 'keystone_use_ssl'
 
 ###############################################################################
-# BEGIN fix (20 / 32) for 'keystone_algorithm_hashing'
+# BEGIN fix (20 / 32) for 'horizon_password_autocomplete'
 ###############################################################################
-(>&2 echo "Remediating rule 20/32: 'keystone_algorithm_hashing'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'keystone_algorithm_hashing'
+(>&2 echo "Remediating rule 20/32: 'horizon_password_autocomplete'")
+openstack-config --set /etc/openstack-dashboard/local_settings DEFAULT PASSWORD_AUTOCOMPLETE True
+# END fix for 'horizon_password_autocomplete'
 
 ###############################################################################
-# BEGIN fix (21 / 32) for 'keystone_max_request_body_size'
+# BEGIN fix (21 / 32) for 'horizon_disable_password_reveal'
 ###############################################################################
-(>&2 echo "Remediating rule 21/32: 'keystone_max_request_body_size'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'keystone_max_request_body_size'
+(>&2 echo "Remediating rule 21/32: 'horizon_disable_password_reveal'")
+openstack-config --set /etc/openstack-dashboard/local_settings DEFAULT DISABLE_PASSWORD_REVEAL True
+# END fix for 'horizon_disable_password_reveal'
 
 ###############################################################################
-# BEGIN fix (22 / 32) for 'keystone_disable_admin_token'
+# BEGIN fix (22 / 32) for 'horizon_use_ssl'
 ###############################################################################
-(>&2 echo "Remediating rule 22/32: 'keystone_disable_admin_token'")
-# FIX FOR THIS RULE IS MISSING
-# END fix for 'keystone_disable_admin_token'
+(>&2 echo "Remediating rule 22/32: 'horizon_use_ssl'")
+openstack-config --set /etc/openstack-dashboard/local_settings DEFAULT use_ssl True
+# END fix for 'horizon_use_ssl'
 
 ###############################################################################
-# BEGIN fix (23 / 32) for 'neutron_file_ownership'
+# BEGIN fix (23 / 32) for 'horizon_file_ownership'
 ###############################################################################
-(>&2 echo "Remediating rule 23/32: 'neutron_file_ownership'")
-for file in /etc/neutron/neutron.conf \
-		/etc/neutron/api-paste.ini \
-		/etc/neutron/policy.json \
-		/etc/neutron/rootwrap.conf; do
-	chown root $file
-	chgrp neutron $file
-done
-# END fix for 'neutron_file_ownership'
+(>&2 echo "Remediating rule 23/32: 'horizon_file_ownership'")
+chown root /etc/openstack-dashboard/local_settings
+chgrp horizon /etc/openstack-dashboard/local_settings
+# END fix for 'horizon_file_ownership'
 
 ###############################################################################
-# BEGIN fix (24 / 32) for 'neutron_file_perms'
+# BEGIN fix (24 / 32) for 'horizon_csrf_cookie_secure'
 ###############################################################################
-(>&2 echo "Remediating rule 24/32: 'neutron_file_perms'")
+(>&2 echo "Remediating rule 24/32: 'horizon_csrf_cookie_secure'")
+openstack-config --set /etc/openstack-dashboard/local_settings DEFAULT CSRF_COOKIE_SECURE True
+# END fix for 'horizon_csrf_cookie_secure'
+
+###############################################################################
+# BEGIN fix (25 / 32) for 'horizon_file_perms'
+###############################################################################
+(>&2 echo "Remediating rule 25/32: 'horizon_file_perms'")
+chmod 640 /etc/openstack-dashboard/local_settings
+# END fix for 'horizon_file_perms'
+
+###############################################################################
+# BEGIN fix (26 / 32) for 'horizon_session_cookie_httponly'
+###############################################################################
+(>&2 echo "Remediating rule 26/32: 'horizon_session_cookie_httponly'")
+openstack-config --set /etc/openstack-dashboard/local_settings DEFAULT SESSION_COOKIE_HTTPONLY True
+# END fix for 'horizon_session_cookie_httponly'
+
+###############################################################################
+# BEGIN fix (27 / 32) for 'horizon_session_cookie_secure'
+###############################################################################
+(>&2 echo "Remediating rule 27/32: 'horizon_session_cookie_secure'")
+openstack-config --set /etc/openstack-dashboard/local_settings DEFAULT SESSION_COOKIE_SECURE True
+# END fix for 'horizon_session_cookie_secure'
+
+###############################################################################
+# BEGIN fix (28 / 32) for 'neutron_file_perms'
+###############################################################################
+(>&2 echo "Remediating rule 28/32: 'neutron_file_perms'")
 chmod 640 /etc/neutron/neutron.conf
 chmod 640 /etc/neutron/api-paste.ini
 chmod 640 /etc/neutron/policy.json
@@ -216,16 +253,16 @@ chmod 640 /etc/neutron/rootwrap.conf
 # END fix for 'neutron_file_perms'
 
 ###############################################################################
-# BEGIN fix (25 / 32) for 'neutron_use_keystone'
+# BEGIN fix (29 / 32) for 'neutron_use_keystone'
 ###############################################################################
-(>&2 echo "Remediating rule 25/32: 'neutron_use_keystone'")
+(>&2 echo "Remediating rule 29/32: 'neutron_use_keystone'")
 openstack-config --set /etc/neutron/neutron.conf DEFAULT auth_strategy keystone
 # END fix for 'neutron_use_keystone'
 
 ###############################################################################
-# BEGIN fix (26 / 32) for 'neutron_use_https'
+# BEGIN fix (30 / 32) for 'neutron_use_https'
 ###############################################################################
-(>&2 echo "Remediating rule 26/32: 'neutron_use_https'")
+(>&2 echo "Remediating rule 30/32: 'neutron_use_https'")
 STR_IDENTITY_URI=$(openstack-config --get /etc/neutron/neutron.conf keystone_authtoken identity_uri)
 NEW_IDENTITY_URI=${STR_IDENTITY_URI:0:4}s${STR_IDENTITY_URI:4:-1}
 openstack-config --set /etc/neutron/neutron.conf keystone_authtoken identity_uri $NEW_IDENTITY_URI
@@ -236,60 +273,22 @@ openstack-config --set /etc/neutron/neutron.conf keystone_authtoken auth_uri $NE
 # END fix for 'neutron_use_https'
 
 ###############################################################################
-# BEGIN fix (27 / 32) for 'neutron_api_use_ssl'
+# BEGIN fix (31 / 32) for 'neutron_api_use_ssl'
 ###############################################################################
-(>&2 echo "Remediating rule 27/32: 'neutron_api_use_ssl'")
+(>&2 echo "Remediating rule 31/32: 'neutron_api_use_ssl'")
 openstack-config --set /etc/neutron/neutron.conf DEFAULT use_ssl True
 # END fix for 'neutron_api_use_ssl'
 
 ###############################################################################
-# BEGIN fix (28 / 32) for 'nova_file_ownership'
+# BEGIN fix (32 / 32) for 'neutron_file_ownership'
 ###############################################################################
-(>&2 echo "Remediating rule 28/32: 'nova_file_ownership'")
-for file in /etc/nova/nova.conf \
-		/etc/nova/api-paste.ini \
-		/etc/nova/policy.json \
-		/etc/nova/rootwrap.conf; do
+(>&2 echo "Remediating rule 32/32: 'neutron_file_ownership'")
+for file in /etc/neutron/neutron.conf \
+		/etc/neutron/api-paste.ini \
+		/etc/neutron/policy.json \
+		/etc/neutron/rootwrap.conf; do
 	chown root $file
-	chgrp nova $file
+	chgrp neutron $file
 done
-# END fix for 'nova_file_ownership'
-
-###############################################################################
-# BEGIN fix (29 / 32) for 'nova_file_perms'
-###############################################################################
-(>&2 echo "Remediating rule 29/32: 'nova_file_perms'")
-chmod 640 /etc/nova/nova.conf
-chmod 640 /etc/nova/api-paste.ini
-chmod 640 /etc/nova/policy.json
-chmod 640 /etc/nova/rootwrap.conf
-# END fix for 'nova_file_perms'
-
-###############################################################################
-# BEGIN fix (30 / 32) for 'nova_use_keystone'
-###############################################################################
-(>&2 echo "Remediating rule 30/32: 'nova_use_keystone'")
-openstack-config --set /etc/nova/nova.conf DEFAULT auth_strategy keystone
-# END fix for 'nova_use_keystone'
-
-###############################################################################
-# BEGIN fix (31 / 32) for 'nova_secure_authentication'
-###############################################################################
-(>&2 echo "Remediating rule 31/32: 'nova_secure_authentication'")
-STR_IDENTITY_URI=$(openstack-config --get /etc/nova/nova.conf keystone_authtoken identity_uri)
-NEW_IDENTITY_URI=${STR_IDENTITY_URI:0:4}s${STR_IDENTITY_URI:4:-1}
-openstack-config --set /etc/nova/nova.conf keystone_authtoken identity_uri $NEW_IDENTITY_URI
-
-STR_AUTH_URI=$(openstack-config --get /etc/nova/nova.conf keystone_authtoken auth_uri)
-NEW_AUTH_URI=${STR_AUTH_URI:0:4}s${STR_AUTH_URI:4:-1}
-openstack-config --set /etc/nova/nova.conf keystone_authtoken auth_uri $NEW_AUTH_URI
-# END fix for 'nova_secure_authentication'
-
-###############################################################################
-# BEGIN fix (32 / 32) for 'nova_secure_glance'
-###############################################################################
-(>&2 echo "Remediating rule 32/32: 'nova_secure_glance'")
-openstack-config --set /etc/nova/nova.conf DEFAULT glance_api_insecure False
-openstack-config --set /etc/nova/nova.conf glance api_insecure False
-# END fix for 'nova_secure_glance'
+# END fix for 'neutron_file_ownership'
 
