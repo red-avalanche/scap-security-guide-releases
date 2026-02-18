@@ -430,14 +430,59 @@ or logical volume at installation time, or migrate it using LVM.</td>
 <table><tr>
 <td>Ensure /var/log Located On Separate Partition</td>
 <td xml:lang="en-US">System logs are stored in the <code>/var/log</code> directory.
-Ensure that it has its own partition or logical
-volume at installation time, or migrate it using LVM.</td>
+<p>
+Partitioning Red Hat CoreOS is a Day 1 operation and cannot
+be changed afterwards. For documentation on how to add a
+MachineConfig manifest that specifies a separate <code>/var/log</code>
+partition, follow:
+
+    <a href="https://docs.openshift.com/container-platform/latest/installing/installing_platform_agnostic/installing-platform-agnostic.html#installation-user-infra-machines-advanced_disk_installing-platform-agnostic">https://docs.openshift.com/container-platform/latest/installing/installing_platform_agnostic/installing-platform-agnostic.html#installation-user-infra-machines-advanced_disk_installing-platform-agnostic</a>
+</p>
+<p>
+Note that the Red Hat OpenShift documentation often references a block
+device, such as <code>/dev/vda</code>. The name of the available block devices depends
+on the underlying infrastructure (bare metal vs cloud), and often the specific
+instance type. For example in AWS, some instance types have NVMe drives
+(<code>/dev/nvme*</code>), others use <code>/dev/xvda*</code>.
+
+You will need to look for relevant documentation for your infrastructure around this.
+In many cases, the simplest thing is to boot a single machine with an Ignition
+configuration that just gives you SSH access, and inspect the block devices via
+e.g. the <code>lsblk</code> command.
+
+For physical hardware, a good best practice is to reference devices via the
+<code>/dev/disk/by-id/</code> or <code>/dev/disk/by-path</code> links.
+</p>
+</td>
 </tr></table>
 <table><tr>
 <td>Ensure /var/log/audit Located On Separate Partition</td>
-<td xml:lang="en-US">Audit logs are stored in the <code>/var/log/audit</code> directory.  Ensure that it
-has its own partition or logical volume at installation time, or migrate it
-later using LVM. Make absolutely certain that it is large enough to store all
+<td xml:lang="en-US">Audit logs are stored in the <code>/var/log/audit</code> directory.
+<p>
+Partitioning Red Hat CoreOS is a Day 1 operation and cannot
+be changed afterwards. For documentation on how to add a
+MachineConfig manifest that specifies a separate <code>/var/log/audit</code>
+partition, follow:
+
+    <a href="https://docs.openshift.com/container-platform/latest/installing/installing_platform_agnostic/installing-platform-agnostic.html#installation-user-infra-machines-advanced_disk_installing-platform-agnostic">https://docs.openshift.com/container-platform/latest/installing/installing_platform_agnostic/installing-platform-agnostic.html#installation-user-infra-machines-advanced_disk_installing-platform-agnostic</a>
+</p>
+<p>
+Note that the Red Hat OpenShift documentation often references a block
+device, such as <code>/dev/vda</code>. The name of the available block devices depends
+on the underlying infrastructure (bare metal vs cloud), and often the specific
+instance type. For example in AWS, some instance types have NVMe drives
+(<code>/dev/nvme*</code>), others use <code>/dev/xvda*</code>.
+
+You will need to look for relevant documentation for your infrastructure around this.
+In many cases, the simplest thing is to boot a single machine with an Ignition
+configuration that just gives you SSH access, and inspect the block devices via
+e.g. the <code>lsblk</code> command.
+
+For physical hardware, a good best practice is to reference devices via the
+<code>/dev/disk/by-id/</code> or <code>/dev/disk/by-path</code> links.
+</p>
+
+Make absolutely certain that it is large enough to store all
 audit logs that will be created by the auditing daemon.</td>
 </tr></table>
 <table><tr>
@@ -808,8 +853,9 @@ To make sure that the setting is persistent, add the following line to a file in
 <td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
 execution of setuid programs in <code>/boot</code>. The SUID and SGID permissions
 should not be required on the boot partition.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nosuid</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/boot</code>.</td>
 </tr></table>
 <table><tr>
@@ -817,8 +863,9 @@ Add the <code>nosuid</code> option to the fourth column of
 <td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
 execution of setuid programs in <code>/home</code>. The SUID and SGID permissions
 should not be required in these user data directories.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nosuid</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/home</code>.</td>
 </tr></table>
 <table><tr>
@@ -827,8 +874,9 @@ Add the <code>nosuid</code> option to the fourth column of
 character or block devices. Legitimate character and block devices should
 exist only in the <code>/dev</code> directory on the root partition or within
 chroot jails built for system services.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nodev</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 
     any non-root local partitions.</td>
 </tr></table>
@@ -2166,12 +2214,32 @@ This requirement is a permanent not a finding. No fix is required.
 <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
 
 Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
-<td><table><tr>
+<td>
+<table><tr>
+<td>Record Events that Modify User/Group Information - /etc/passwd</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+</tr></table>
+<table><tr>
 <td>Product Meets this Requirement</td>
 <td>
 This requirement is a permanent not a finding. No fix is required.
 </td>
-</tr></table></td>
+</tr></table>
+</td>
 </tr>
 <tr>
 <td>CCI-000172</td>
@@ -2181,12 +2249,32 @@ This requirement is a permanent not a finding. No fix is required.
 <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
 
 Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
-<td><table><tr>
+<td>
+<table><tr>
+<td>Record Events that Modify User/Group Information - /etc/passwd</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+</tr></table>
+<table><tr>
 <td>Product Meets this Requirement</td>
 <td>
 This requirement is a permanent not a finding. No fix is required.
 </td>
-</tr></table></td>
+</tr></table>
+</td>
 </tr>
 <tr>
 <td>CCI-000172</td>
@@ -2319,6 +2407,24 @@ This requirement is a permanent not a finding. No fix is required.
 
 Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
 <td>
+<table><tr>
+<td>Record Events that Modify User/Group Information - /etc/passwd</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+</tr></table>
 <table><tr>
 <td>Configure auditing of unsuccessful ownership changes</td>
 <td xml:lang="en-US">Ensure that unsuccessful attempts to change an ownership of files or directories are audited.
@@ -3230,6 +3336,24 @@ This requirement is a permanent not a finding. No fix is required.
 Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
 <td>
 <table><tr>
+<td>Record Events that Modify User/Group Information - /etc/passwd</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+</tr></table>
+<table><tr>
 <td>Configure immutable Audit login UIDs</td>
 <td xml:lang="en-US">Configure kernel to prevent modification of login UIDs once they are set. Changing login UUIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.   
 
@@ -3395,6 +3519,24 @@ For more information on how to configure nodes with the Machine Config
 Operator see
 <a href="https://docs.openshift.com/container-platform/4.6/post_installation_configuration/machine-configuration-tasks.html">the relevant documentation</a>.
 </p>
+</td>
+</tr></table>
+<table><tr>
+<td>Record Events that Modify User/Group Information - /etc/passwd</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
 </td>
 </tr></table>
 <table><tr>
@@ -3646,12 +3788,32 @@ This requirement is a permanent not a finding. No fix is required.
 <td>Reconstruction of harmful events or forensic analysis is not possible if audit records do not contain enough information.
 
 At a minimum, the organization must audit the full-text recording of privileged commands. The organization must maintain audit trails in sufficient detail to reconstruct events to determine the cause and impact of compromise.</td>
-<td><table><tr>
+<td>
+<table><tr>
+<td>Record Events that Modify User/Group Information - /etc/passwd</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+</tr></table>
+<table><tr>
 <td>Product Meets this Requirement</td>
 <td>
 This requirement is a permanent not a finding. No fix is required.
 </td>
-</tr></table></td>
+</tr></table>
+</td>
 </tr>
 <tr>
 <td>CCI-000135</td>
@@ -3869,12 +4031,34 @@ This requirement is a permanent not a finding. No fix is required.
 <td>Unauthorized disclosure of audit records can reveal system and configuration data to attackers, thus compromising its confidentiality.
 
 Audit information includes all information (e.g., audit records, audit settings, audit reports) needed to successfully audit operating system activity.</td>
-<td><table><tr>
+<td>
+<table><tr>
+<td>Configure immutable Audit login UIDs</td>
+<td xml:lang="en-US">Configure kernel to prevent modification of login UIDs once they are set. Changing login UUIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.   
+
+The following rules configure audit as described above:
+<pre>## Make the loginuid immutable. This prevents tampering with the auid.
+--loginuid-immutable
+
+</pre>
+
+The <code>Audit</code> provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/11-loginuid.rules</code>.
+To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
+<pre>
+cp /usr/share/audit/sample-rules/11-loginuid.rules /etc/audit/rules.d/
+</pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+</td>
+</tr></table>
+<table><tr>
 <td>Product Meets this Requirement</td>
 <td>
 This requirement is a permanent not a finding. No fix is required.
 </td>
-</tr></table></td>
+</tr></table>
+</td>
 </tr>
 <tr>
 <td>CCI-000163</td>
@@ -3886,12 +4070,34 @@ This requirement is a permanent not a finding. No fix is required.
 To ensure the veracity of audit information, the operating system must protect audit information from unauthorized modification.
 
 Audit information includes all information (e.g., audit records, audit settings, audit reports) needed to successfully audit information system activity.</td>
-<td><table><tr>
+<td>
+<table><tr>
+<td>Configure immutable Audit login UIDs</td>
+<td xml:lang="en-US">Configure kernel to prevent modification of login UIDs once they are set. Changing login UUIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.   
+
+The following rules configure audit as described above:
+<pre>## Make the loginuid immutable. This prevents tampering with the auid.
+--loginuid-immutable
+
+</pre>
+
+The <code>Audit</code> provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/11-loginuid.rules</code>.
+To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
+<pre>
+cp /usr/share/audit/sample-rules/11-loginuid.rules /etc/audit/rules.d/
+</pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+</td>
+</tr></table>
+<table><tr>
 <td>Product Meets this Requirement</td>
 <td>
 This requirement is a permanent not a finding. No fix is required.
 </td>
-</tr></table></td>
+</tr></table>
+</td>
 </tr>
 <tr>
 <td>CCI-000164</td>
@@ -3903,12 +4109,34 @@ This requirement is a permanent not a finding. No fix is required.
 To ensure the veracity of audit information, the operating system must protect audit information from unauthorized deletion. This requirement can be achieved through multiple methods, which will depend upon system architecture and design.
 
 Audit information includes all information (e.g., audit records, audit settings, audit reports) needed to successfully audit information system activity.</td>
-<td><table><tr>
+<td>
+<table><tr>
+<td>Configure immutable Audit login UIDs</td>
+<td xml:lang="en-US">Configure kernel to prevent modification of login UIDs once they are set. Changing login UUIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.   
+
+The following rules configure audit as described above:
+<pre>## Make the loginuid immutable. This prevents tampering with the auid.
+--loginuid-immutable
+
+</pre>
+
+The <code>Audit</code> provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/11-loginuid.rules</code>.
+To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
+<pre>
+cp /usr/share/audit/sample-rules/11-loginuid.rules /etc/audit/rules.d/
+</pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+</td>
+</tr></table>
+<table><tr>
 <td>Product Meets this Requirement</td>
 <td>
 This requirement is a permanent not a finding. No fix is required.
 </td>
-</tr></table></td>
+</tr></table>
+</td>
 </tr>
 <tr>
 <td>CCI-000169</td>
@@ -3971,6 +4199,24 @@ For more information on how to configure nodes with the Machine Config
 Operator see
 <a href="https://docs.openshift.com/container-platform/4.6/post_installation_configuration/machine-configuration-tasks.html">the relevant documentation</a>.
 </p>
+</td>
+</tr></table>
+<table><tr>
+<td>Record Events that Modify User/Group Information - /etc/passwd</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
 </td>
 </tr></table>
 <table><tr>
@@ -4993,7 +5239,7 @@ Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
 
-<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
 </td>
 </tr></table>
 </td>
@@ -5665,7 +5911,8 @@ This requirement addresses auditing-related issues associated with maintenance t
 Nonlocal maintenance and diagnostic activities are those activities conducted by individuals communicating through a network, either an external network (e.g., the Internet) or an internal network. Local maintenance and diagnostic activities are those activities carried out by individuals physically present at the information system or information system component and not communicating across a network connection.
 
 This requirement applies to hardware/software diagnostic test equipment or tools. This requirement does not cover hardware/software components that may support information system maintenance, yet are a part of the system, for example, the software implementing "ping," "ls," "ipconfig," or the hardware and software implementing the monitoring port of an Ethernet switch.</td>
-<td><table><tr>
+<td>
+<table><tr>
 <td>Enable auditd Service</td>
 <td xml:lang="en-US">The <code>auditd</code> service is an essential userspace component of
 the Linux Auditing System, as it is responsible for writing audit records to
@@ -5702,7 +5949,26 @@ Operator see
 <a href="https://docs.openshift.com/container-platform/4.6/post_installation_configuration/machine-configuration-tasks.html">the relevant documentation</a>.
 </p>
 </td>
-</tr></table></td>
+</tr></table>
+<table><tr>
+<td>Record Events that Modify User/Group Information - /etc/passwd</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+</tr></table>
+</td>
 </tr>
 <tr>
 <td>CCI-001991</td>
@@ -6231,8 +6497,9 @@ being created in <code>/boot</code>.
 Legitimate character and block devices should exist only in
 the <code>/dev</code> directory on the root partition or within chroot
 jails built for system services.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nodev</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/boot</code>.</td>
 </tr></table>
 <table><tr>
@@ -6240,8 +6507,9 @@ Add the <code>nodev</code> option to the fourth column of
 <td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
 execution of setuid programs in <code>/boot</code>. The SUID and SGID permissions
 should not be required on the boot partition.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nosuid</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/boot</code>.</td>
 </tr></table>
 <table><tr>
@@ -6249,8 +6517,9 @@ Add the <code>nosuid</code> option to the fourth column of
 <td xml:lang="en-US">The <code>nodev</code> mount option can be used to prevent creation of device
 files in <code>/dev/shm</code>. Legitimate character and block devices should
 not exist within temporary directories like <code>/dev/shm</code>.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nodev</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/dev/shm</code>.</td>
 </tr></table>
 <table><tr>
@@ -6259,8 +6528,9 @@ Add the <code>nodev</code> option to the fourth column of
 from being executed out of <code>/dev/shm</code>.
 It can be dangerous to allow the execution of binaries
 from world-writable temporary storage directories such as <code>/dev/shm</code>.
-Add the <code>noexec</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>noexec</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/dev/shm</code>.</td>
 </tr></table>
 <table><tr>
@@ -6268,8 +6538,9 @@ Add the <code>noexec</code> option to the fourth column of
 <td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent execution
 of setuid programs in <code>/dev/shm</code>.  The SUID and SGID permissions should not
 be required in these world-writable directories.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nosuid</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/dev/shm</code>.</td>
 </tr></table>
 <table><tr>
@@ -6279,8 +6550,9 @@ being created in <code>/home</code>.
 Legitimate character and block devices should exist only in
 the <code>/dev</code> directory on the root partition or within chroot
 jails built for system services.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nodev</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/home</code>.</td>
 </tr></table>
 <table><tr>
@@ -6288,8 +6560,9 @@ Add the <code>nodev</code> option to the fourth column of
 <td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
 execution of setuid programs in <code>/home</code>. The SUID and SGID permissions
 should not be required in these user data directories.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nosuid</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/home</code>.</td>
 </tr></table>
 <table><tr>
@@ -6298,8 +6571,9 @@ Add the <code>nosuid</code> option to the fourth column of
 character or block devices. Legitimate character and block devices should
 exist only in the <code>/dev</code> directory on the root partition or within
 chroot jails built for system services.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nodev</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 
     any non-root local partitions.</td>
 </tr></table>
@@ -6308,16 +6582,18 @@ Add the <code>nodev</code> option to the fourth column of
 <td xml:lang="en-US">The <code>nodev</code> mount option can be used to prevent device files from
 being created in <code>/tmp</code>. Legitimate character and block devices
 should not exist within temporary directories like <code>/tmp</code>.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nodev</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/tmp</code>.</td>
 </tr></table>
 <table><tr>
 <td>Add noexec Option to /tmp</td>
 <td xml:lang="en-US">The <code>noexec</code> mount option can be used to prevent binaries
 from being executed out of <code>/tmp</code>.
-Add the <code>noexec</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>noexec</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/tmp</code>.</td>
 </tr></table>
 <table><tr>
@@ -6325,8 +6601,9 @@ Add the <code>noexec</code> option to the fourth column of
 <td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
 execution of setuid programs in <code>/tmp</code>. The SUID and SGID permissions
 should not be required in these world-writable directories.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nosuid</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/tmp</code>.</td>
 </tr></table>
 <table><tr>
@@ -6336,16 +6613,18 @@ being created in <code>/var/log/audit</code>.
 Legitimate character and block devices should exist only in
 the <code>/dev</code> directory on the root partition or within chroot
 jails built for system services.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nodev</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/var/log/audit</code>.</td>
 </tr></table>
 <table><tr>
 <td>Add noexec Option to /var/log/audit</td>
 <td xml:lang="en-US">The <code>noexec</code> mount option can be used to prevent binaries
 from being executed out of <code>/var/log/audit</code>.
-Add the <code>noexec</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>noexec</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/var/log/audit</code>.</td>
 </tr></table>
 <table><tr>
@@ -6353,8 +6632,9 @@ Add the <code>noexec</code> option to the fourth column of
 <td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
 execution of setuid programs in <code>/var/log/audit</code>. The SUID and SGID permissions
 should not be required in directories containing audit log files.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nosuid</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/var/log/audit</code>.</td>
 </tr></table>
 <table><tr>
@@ -6364,16 +6644,18 @@ being created in <code>/var/log</code>.
 Legitimate character and block devices should exist only in
 the <code>/dev</code> directory on the root partition or within chroot
 jails built for system services.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nodev</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/var/log</code>.</td>
 </tr></table>
 <table><tr>
 <td>Add noexec Option to /var/log</td>
 <td xml:lang="en-US">The <code>noexec</code> mount option can be used to prevent binaries
 from being executed out of <code>/var/log</code>.
-Add the <code>noexec</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>noexec</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/var/log</code>.</td>
 </tr></table>
 <table><tr>
@@ -6381,8 +6663,9 @@ Add the <code>noexec</code> option to the fourth column of
 <td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
 execution of setuid programs in <code>/var/log</code>. The SUID and SGID permissions
 should not be required in directories containing log files.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nosuid</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/var/log</code>.</td>
 </tr></table>
 <table><tr>
@@ -6392,8 +6675,9 @@ being created in <code>/var</code>.
 Legitimate character and block devices should exist only in
 the <code>/dev</code> directory on the root partition or within chroot
 jails built for system services.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nodev</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/var</code>.</td>
 </tr></table>
 <table><tr>
@@ -6401,16 +6685,18 @@ Add the <code>nodev</code> option to the fourth column of
 <td xml:lang="en-US">The <code>nodev</code> mount option can be used to prevent device files from
 being created in <code>/var/tmp</code>. Legitimate character and block devices
 should not exist within temporary directories like <code>/var/tmp</code>.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nodev</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/var/tmp</code>.</td>
 </tr></table>
 <table><tr>
 <td>Add noexec Option to /var/tmp</td>
 <td xml:lang="en-US">The <code>noexec</code> mount option can be used to prevent binaries
 from being executed out of <code>/var/tmp</code>.
-Add the <code>noexec</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>noexec</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/var/tmp</code>.</td>
 </tr></table>
 <table><tr>
@@ -6418,8 +6704,9 @@ Add the <code>noexec</code> option to the fourth column of
 <td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
 execution of setuid programs in <code>/var/tmp</code>. The SUID and SGID permissions
 should not be required in these world-writable directories.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nosuid</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/var/tmp</code>.</td>
 </tr></table>
 <table><tr>
@@ -8023,7 +8310,44 @@ Note: This rule utilizes a file provided by <code>Audit</code> package to comply
 In order to detect and respond to events that affect user accessibility and application processing, operating systems must audit account enabling actions and, as required, notify the appropriate individuals so they can investigate the event.
 
 To address access requirements, many operating systems can be integrated with enterprise-level authentication/access/auditing mechanisms that meet or exceed access control policy requirements.</td>
-<td><table><tr>
+<td>
+<table><tr>
+<td>Record Events that Modify User/Group Information - /etc/passwd</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+</tr></table>
+<table><tr>
+<td>Record Events that Modify User/Group Information - /etc/passwd</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+<br><br>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
+account changes:
+<br><br>
+<pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+</tr></table>
+<table><tr>
 <td>Perform general configuration of Audit for OSPP</td>
 <td xml:lang="en-US">Configure some basic <code>Audit</code> parameters specific for OSPP profile. 
 In particular, configure <code>Audit</code> to watch for direct modification of files storing system user and group information, and usage of applications with special rights which can change system configuration.
@@ -8123,7 +8447,8 @@ Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
 Note: This rule utilizes a file provided by <code>Audit</code> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
-</tr></table></td>
+</tr></table>
+</td>
 </tr>
 <tr>
 <td>CCI-002165</td>
@@ -8458,9 +8783,32 @@ This requirement enables organizations to extend or limit auditing as necessary 
 The task of allocating audit record storage capacity is usually performed during initial installation of the operating system.</td>
 <td><table><tr>
 <td>Ensure /var/log/audit Located On Separate Partition</td>
-<td xml:lang="en-US">Audit logs are stored in the <code>/var/log/audit</code> directory.  Ensure that it
-has its own partition or logical volume at installation time, or migrate it
-later using LVM. Make absolutely certain that it is large enough to store all
+<td xml:lang="en-US">Audit logs are stored in the <code>/var/log/audit</code> directory.
+<p>
+Partitioning Red Hat CoreOS is a Day 1 operation and cannot
+be changed afterwards. For documentation on how to add a
+MachineConfig manifest that specifies a separate <code>/var/log/audit</code>
+partition, follow:
+
+    <a href="https://docs.openshift.com/container-platform/latest/installing/installing_platform_agnostic/installing-platform-agnostic.html#installation-user-infra-machines-advanced_disk_installing-platform-agnostic">https://docs.openshift.com/container-platform/latest/installing/installing_platform_agnostic/installing-platform-agnostic.html#installation-user-infra-machines-advanced_disk_installing-platform-agnostic</a>
+</p>
+<p>
+Note that the Red Hat OpenShift documentation often references a block
+device, such as <code>/dev/vda</code>. The name of the available block devices depends
+on the underlying infrastructure (bare metal vs cloud), and often the specific
+instance type. For example in AWS, some instance types have NVMe drives
+(<code>/dev/nvme*</code>), others use <code>/dev/xvda*</code>.
+
+You will need to look for relevant documentation for your infrastructure around this.
+In many cases, the simplest thing is to boot a single machine with an Ignition
+configuration that just gives you SSH access, and inspect the block devices via
+e.g. the <code>lsblk</code> command.
+
+For physical hardware, a good best practice is to reference devices via the
+<code>/dev/disk/by-id/</code> or <code>/dev/disk/by-path</code> links.
+</p>
+
+Make absolutely certain that it is large enough to store all
 audit logs that will be created by the auditing daemon.</td>
 </tr></table></td>
 </tr>

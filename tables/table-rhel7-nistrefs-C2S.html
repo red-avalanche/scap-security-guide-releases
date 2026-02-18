@@ -196,7 +196,9 @@ compromose the password.</td>
 <td>Ensure PAM Enforces Password Requirements - Authentication Retry Prompts Permitted Per-Session</td>
 <td xml:lang="en-US">To configure the number of retry prompts that are permitted per-session:
 Edit the <code>pam_pwquality.so</code> statement in
+
 <code>/etc/pam.d/system-auth</code>  to show
+
 <code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if site
 policy is more restrictive. The DoD requirement is a maximum of 3 prompts
 per session.</td>
@@ -352,9 +354,9 @@ written to by unauthorized users.</td>
 <td>Configure Periodic Execution of AIDE</td>
 <td xml:lang="en-US">At a minimum, AIDE should be configured to run a weekly scan.
 To implement a daily execution of AIDE at 4:05am using cron, add the following line to <code>/etc/crontab</code>:
-<pre>05 4 * * * root /usr/sbin/aide --check</pre>
+<pre>05 4 * * * root  --check</pre>
 To implement a weekly execution of AIDE at 4:05am using cron, add the following line to <code>/etc/crontab</code>:
-<pre>05 4 * * 0 root /usr/sbin/aide --check</pre>
+<pre>05 4 * * 0 root  --check</pre>
 AIDE can be executed periodically through other means; this is merely one example.
 The usage of cron's special time codes, such as  <code>@daily</code> and
 <code>@weekly</code> is acceptable.</td>
@@ -3226,7 +3228,8 @@ world-writable directories installed by other software packages.</td>
 <td>CCE-82034-0</td>
 <td>Ensure /var/log Located On Separate Partition</td>
 <td xml:lang="en-US">System logs are stored in the <code>/var/log</code> directory.
-Ensure that it has its own partition or logical
+
+Ensure that <code>/var/log</code> has its own partition or logical
 volume at installation time, or migrate it using LVM.</td>
 <td xml:lang="en-US">Placing <code>/var/log</code> in its own partition
 enables better separation between log files
@@ -3238,9 +3241,11 @@ and other files in <code>/var/</code>.</td>
 <tr>
 <td>CCE-82035-7</td>
 <td>Ensure /var/log/audit Located On Separate Partition</td>
-<td xml:lang="en-US">Audit logs are stored in the <code>/var/log/audit</code> directory.  Ensure that it
-has its own partition or logical volume at installation time, or migrate it
-later using LVM. Make absolutely certain that it is large enough to store all
+<td xml:lang="en-US">Audit logs are stored in the <code>/var/log/audit</code> directory.
+
+Ensure that <code>/var/log/audit</code> has its own partition or logical
+volume at installation time, or migrate it using LVM.
+Make absolutely certain that it is large enough to store all
 audit logs that will be created by the auditing daemon.</td>
 <td xml:lang="en-US">Placing <code>/var/log/audit</code> in its own partition
 enables better separation between audit files
@@ -3479,7 +3484,7 @@ Additionally, a properly configured audit subsystem ensures that actions of
 individual system users can be uniquely traced to those users so they
 can be held accountable for their actions.</td>
 <td></td>
-<td>AC-2(g)<br>AU-3<br>AU-10<br>AU-2(d)<br>AU-12(c)<br>AU-14(1)<br>AC-6(9)<br>CM-6(a)<br>
+<td>AC-2(g)<br>AU-3<br>AU-10<br>AU-2(d)<br>AU-12(c)<br>AU-14(1)<br>AC-6(9)<br>CM-6(a)<br>SI-4(23)<br>
 </td>
 </tr>
 <tr>
@@ -3543,7 +3548,7 @@ in the previous sections in certain environments the <code>ntpd</code> daemon mi
 be preferred to be used rather than the <code>chronyd</code> one. Refer to:
 
     
-    <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html</a>
+    <a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-configuring_ntp_using_the_chrony_suite">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-configuring_ntp_using_the_chrony_suite</a>
 
 for guidance which NTP daemon to choose depending on the environment used.</td>
 <td xml:lang="en-US">Enabling some of <code>chronyd</code> or <code>ntpd</code> services ensures
@@ -4480,10 +4485,9 @@ To make sure that the setting is persistent, add the following line to a file in
 </tr>
 <tr>
 <td>CCE-80175-3</td>
-<td>Disable IPv6 Networking Support Automatic Loading</td>
-<td xml:lang="en-US">To disable support for (<code>ipv6</code>) add the following line to
-<code>/etc/sysctl.d/ipv6.conf</code> (or another file in
-<code>/etc/sysctl.d</code>):
+<td>Disable IPv6 Addressing on All IPv6 Interfaces</td>
+<td xml:lang="en-US">To disable support for (<code>ipv6</code>) addressing on all interface add the following line to
+<code>/etc/sysctl.d/ipv6.conf</code> (or another file in <code>/etc/sysctl.d</code>):
 <pre>net.ipv6.conf.all.disable_ipv6 = 1</pre>
 This disables IPv6 on all network interfaces as other services and system
 functionality require the IPv6 stack loaded to work.</td>

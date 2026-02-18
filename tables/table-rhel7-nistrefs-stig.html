@@ -64,6 +64,28 @@ who may have compromised their credentials.</td>
 </td>
 </tr>
 <tr>
+<td>CCE-88380-1</td>
+<td>Only Authorized Local User Accounts Exist on Operating System</td>
+<td xml:lang="en-US">Enterprise Application tends to use the server or virtual machine exclusively.
+Besides the default operating system user, there should be only authorized local
+users required by the installed softoware groups and applications that exist on
+the operating system. The authorized user list can be customized in the refine
+value variable <code>var_accounts_authorized_local_users_regex</code>.
+OVAL regular expression is used for the user list.
+Configure the system so all accounts on the system are assigned to an active system,
+application, or user account. Remove accounts that do not support approved system
+activities or that allow for a normal user to perform administrative-level actions.
+To remove unauthorized system accounts, use the following command:
+<pre>$ sudo userdel <i>unauthorized_user</i></pre>
+</td>
+<td xml:lang="en-US">Accounts providing no operational purpose provide additional opportunities for
+system compromise. Unnecessary accounts include user accounts for individuals not
+requiring access to the system and application accounts for applications not installed
+on the system.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>CCE-80434-4</td>
 <td>Ensure Home Directories are Created for New Users</td>
 <td xml:lang="en-US">All local interactive user accounts, upon creation, should be assigned a home directory.
@@ -364,7 +386,9 @@ more difficult by ensuring a larger search space.</td>
 <td>Ensure PAM Enforces Password Requirements - Authentication Retry Prompts Permitted Per-Session</td>
 <td xml:lang="en-US">To configure the number of retry prompts that are permitted per-session:
 Edit the <code>pam_pwquality.so</code> statement in
+
 <code>/etc/pam.d/system-auth</code>  to show
+
 <code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if site
 policy is more restrictive. The DoD requirement is a maximum of 3 prompts
 per session.</td>
@@ -695,10 +719,11 @@ user is not a member, unintended users may be able to access them.</td>
 </tr>
 <tr>
 <td>CCE-80533-3</td>
-<td>All User Files and Directories In The Home Directory Must Be Owned By The Primary User</td>
-<td xml:lang="en-US">Change the owner of a interactive users files and directories to that
-owner. To change the of a local interactive users files and
-directories, use the following command:
+<td>All User Files and Directories In The Home Directory Must Have a Valid Owner</td>
+<td xml:lang="en-US">Either remove all files and directories from the system that
+do not have a valid user, or assign a valid user to all unowned
+files and directories. To assign a valid owner to a local
+interactive user's files and directories, use the following command:
 <pre>$ sudo chown -R <i>USER</i> /home/<i>USER</i></pre>
 </td>
 <td xml:lang="en-US">If local interactive users do not own the files in their directories,
@@ -720,13 +745,25 @@ may be able to access or modify them.</td>
 <td></td>
 </tr>
 <tr>
+<td>CCE-86262-3</td>
+<td>Ensure McAfee Endpoint Security for Linux (ENSL) is running</td>
+<td xml:lang="en-US">Install McAfee Endpoint Security for Linux antivirus software
+which is provided for DoD systems and uses signatures to search for the
+presence of viruses on the filesystem.</td>
+<td xml:lang="en-US">Virus scanning software can be used to detect if a system has been compromised by
+computer viruses, as well as to limit their spread to other systems.</td>
+<td></td>
+<td>SI-2(2)<br>
+</td>
+</tr>
+<tr>
 <td>CCE-26952-2</td>
 <td>Configure Periodic Execution of AIDE</td>
 <td xml:lang="en-US">At a minimum, AIDE should be configured to run a weekly scan.
 To implement a daily execution of AIDE at 4:05am using cron, add the following line to <code>/etc/crontab</code>:
-<pre>05 4 * * * root /usr/sbin/aide --check</pre>
+<pre>05 4 * * * root  --check</pre>
 To implement a weekly execution of AIDE at 4:05am using cron, add the following line to <code>/etc/crontab</code>:
-<pre>05 4 * * 0 root /usr/sbin/aide --check</pre>
+<pre>05 4 * * 0 root  --check</pre>
 AIDE can be executed periodically through other means; this is merely one example.
 The usage of cron's special time codes, such as  <code>@daily</code> and
 <code>@weekly</code> is acceptable.</td>
@@ -1190,13 +1227,10 @@ of the <code>chcon</code> command for all users and root. If the <code>auditd</c
 daemon is configured to use the <code>augenrules</code> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-
 <pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
-
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file:
-
 <pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
@@ -1831,13 +1865,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 
--F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign
--F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -2466,22 +2498,6 @@ administrators of the system, who can take appropriate action.</td>
 </td>
 </tr>
 <tr>
-<td>CCE-80537-4</td>
-<td>Configure auditd space_left on Low Disk Space</td>
-<td xml:lang="en-US">The <code>auditd</code> service can be configured to take an action
-when disk space is running low but prior to running out of space completely.
-Edit the file <code>/etc/audit/auditd.conf</code>. Add or modify the following line,
-substituting <i>SIZE_in_MB</i> appropriately:
-<pre>space_left = <i>SIZE_in_MB</i></pre>
-Set this value to the appropriate size in Megabytes cause the system to
-notify the user of an issue.</td>
-<td xml:lang="en-US">Notifying administrators of an impending disk space problem may allow them to
-take corrective action prior to any disruption.</td>
-<td></td>
-<td>AU-5(b)<br>AU-5(2)<br>AU-5(1)<br>AU-5(4)<br>CM-6(a)<br>
-</td>
-</tr>
-<tr>
 <td>CCE-27375-5</td>
 <td>Configure auditd space_left Action on Low Disk Space</td>
 <td xml:lang="en-US">The <code>auditd</code> service can be configured to take an action
@@ -2506,6 +2522,47 @@ also include <code>suspend</code>, <code>single</code>, and <code>halt</code>.</
 allow them to take corrective action prior to any disruption.</td>
 <td></td>
 <td>AU-5(b)<br>AU-5(2)<br>AU-5(1)<br>AU-5(4)<br>CM-6(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-86056-9</td>
+<td>Configure auditd space_left on Low Disk Space</td>
+<td xml:lang="en-US">The <code>auditd</code> service can be configured to take an action
+when disk space is running low but prior to running out of space completely.
+Edit the file <code>/etc/audit/auditd.conf</code>. Add or modify the following line,
+substituting <i>PERCENTAGE</i> appropriately:
+<pre>space_left = <i>PERCENTAGE</i>%</pre>
+Set this value to at least 25 to cause the system to
+notify the user of an issue.</td>
+<td xml:lang="en-US">Notifying administrators of an impending disk space problem may allow them to
+take corrective action prior to any disruption.</td>
+<td></td>
+<td>AU-5(b)<br>AU-5(2)<br>AU-5(1)<br>AU-5(4)<br>CM-6(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-82359-1</td>
+<td>Set hostname as computer node name in audit logs</td>
+<td xml:lang="en-US">To configure Audit daemon to use value returned by gethostname
+syscall as computer node name in the audit events,
+set <code>name_format</code> to <code>hostname</code>
+in <code>/etc/audit/auditd.conf</code>.</td>
+<td xml:lang="en-US">If option <code>name_format</code> is left at its default value of
+<code>none</code>, audit events from different computers may be hard
+to distinguish.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-88073-2</td>
+<td>Appropriate Action Must be Setup When the Internal Audit Event Queue is Full</td>
+<td xml:lang="en-US">The audit system should have an action setup in the event the internal event queue becomes full.
+To setup an overflow action edit <code>/etc/audit/auditd.conf</code>. Set <code>overflow_action</code>
+to one of the following values: <code>syslog</code>, <code>single</code>, <code>halt</code>.</td>
+<td xml:lang="en-US">The audit system should have an action setup in the event the internal event queue becomes full
+so that no data is lost.</td>
+<td></td>
+<td>AU-4(1)<br>
 </td>
 </tr>
 <tr>
@@ -3316,6 +3373,31 @@ system security.</td>
 </td>
 </tr>
 <tr>
+<td>CCE-83562-9</td>
+<td>Set the Boot Loader Admin Username to a Non-Default Value</td>
+<td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
+<br><br>
+To maximize the protection, select a password-protected superuser account with unique name, and modify the
+<code>/etc/grub.d/01_users</code> configuration file to reflect the account name change.
+<br><br>
+Do not to use common administrator account names like root,
+admin, or administrator for the grub2 superuser account.
+<br><br>
+Change the superuser to a different username (The default is 'root').
+<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<br><br>
+Once the superuser account has been added,
+update the
+<code>grub.cfg</code> file by running:
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
+</td>
+<td xml:lang="en-US">Having a non-default grub superuser username makes password-guessing attacks less effective.</td>
+<td></td>
+<td>CM-6(a)<br>
+</td>
+</tr>
+<tr>
 <td>CCE-80359-3</td>
 <td>Enable FIPS Mode in GRUB2</td>
 <td xml:lang="en-US">To ensure FIPS mode is enabled, install package <code>dracut-fips</code>, and rebuild <code>initramfs</code> by running the following commands:
@@ -3383,6 +3465,38 @@ update the
 users with physical access cannot trivially alter
 important bootloader settings. These include which kernel to use,
 and whether to enter single-user mode.</td>
+<td></td>
+<td>CM-6(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-83541-3</td>
+<td>Set the UEFI Boot Loader Admin Username to a Non-Default Value</td>
+<td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
+<br><br>
+To maximize the protection, select a password-protected superuser account with unique name, and modify the
+<code>/etc/grub.d/01_users</code> configuration file to reflect the account name change.
+<br><br>
+It is highly suggested not to use common administrator account names like root,
+admin, or administrator for the grub2 superuser account.
+<br><br>
+Change the superuser to a different username (The default is 'root').
+<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<br><br>
+Once the superuser account has been added,
+update the
+<code>grub.cfg</code> file by running:
+<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
+</td>
+<td xml:lang="en-US">Having a non-default grub superuser username makes password-guessing attacks less effective.
+
+For more information on how to configure the grub2 superuser account and password,
+please refer to
+<ul>
+<li><a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-working_with_the_grub_2_boot_loader#sec-Protecting_GRUB_2_with_a_Password">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-working_with_the_grub_2_boot_loader#sec-Protecting_GRUB_2_with_a_Password</a></li>.
+</ul>
+</td>
 <td></td>
 <td>CM-6(a)<br>
 </td>
@@ -3789,6 +3903,23 @@ $ sudo yum install aide</pre>
 </td>
 </tr>
 <tr>
+<td>CCE-86257-3</td>
+<td>Install McAfee Endpoint Security for Linux (ENSL)</td>
+<td xml:lang="en-US">Install McAfee Endpoint Security for Linux antivirus software
+which is provided for DoD systems and uses signatures to search for the
+presence of viruses on the filesystem.
+
+The <code>mcafeetp</code> package can be installed with the following command:
+<pre>
+$ sudo yum install mcafeetp</pre>
+</td>
+<td xml:lang="en-US">Virus scanning software can be used to detect if a system has been compromised by
+computer viruses, as well as to limit their spread to other systems.</td>
+<td></td>
+<td>SI-2(2)<br>
+</td>
+</tr>
+<tr>
 <td>CCE-80215-7</td>
 <td>Install the OpenSSH Server Package</td>
 <td xml:lang="en-US">The <code>openssh-server</code> package should be installed.
@@ -3934,9 +4065,11 @@ world-writable directories installed by other software packages.</td>
 <tr>
 <td>CCE-82035-7</td>
 <td>Ensure /var/log/audit Located On Separate Partition</td>
-<td xml:lang="en-US">Audit logs are stored in the <code>/var/log/audit</code> directory.  Ensure that it
-has its own partition or logical volume at installation time, or migrate it
-later using LVM. Make absolutely certain that it is large enough to store all
+<td xml:lang="en-US">Audit logs are stored in the <code>/var/log/audit</code> directory.
+
+Ensure that <code>/var/log/audit</code> has its own partition or logical
+volume at installation time, or migrate it using LVM.
+Make absolutely certain that it is large enough to store all
 audit logs that will be created by the auditing daemon.</td>
 <td xml:lang="en-US">Placing <code>/var/log/audit</code> in its own partition
 enables better separation between audit files
@@ -4258,7 +4391,7 @@ Additionally, a properly configured audit subsystem ensures that actions of
 individual system users can be uniquely traced to those users so they
 can be held accountable for their actions.</td>
 <td></td>
-<td>AC-2(g)<br>AU-3<br>AU-10<br>AU-2(d)<br>AU-12(c)<br>AU-14(1)<br>AC-6(9)<br>CM-6(a)<br>
+<td>AC-2(g)<br>AU-3<br>AU-10<br>AU-2(d)<br>AU-12(c)<br>AU-14(1)<br>AC-6(9)<br>CM-6(a)<br>SI-4(23)<br>
 </td>
 </tr>
 <tr>
@@ -4436,7 +4569,7 @@ difficult.</td>
 <td>CCE-80207-4</td>
 <td>Enable Smart Card Login</td>
 <td xml:lang="en-US">To enable smart card authentication, consult the documentation at:
-<ul><li><b><a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System-Level_Authentication_Guide/smartcards.html#authconfig-smartcards">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System-Level_Authentication_Guide/smartcards.html#authconfig-smartcards</a></b></li></ul>
+<ul><li><b><a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system-level_authentication_guide/smartcards#authconfig-smartcards">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system-level_authentication_guide/smartcards#authconfig-smartcards</a></b></li></ul>
 
 
 For guidance on enabling SSH to authenticate against a Common Access Card (CAC), consult documentation at:
@@ -4957,6 +5090,26 @@ is critical that the user re-authenticate.</td>
 </td>
 </tr>
 <tr>
+<td>CCE-85963-7</td>
+<td>The operating system must require Re-Authentication when using the sudo command. Ensure sudo timestamp_timeout is appropriate - sudo timestamp_timeout</td>
+<td xml:lang="en-US">The sudo <code>timestamp_timeout</code> tag sets the amount of time sudo password prompt waits.
+The default <code>timestamp_timeout</code> value is 5 minutes.
+The timestamp_timeout should be configured by making sure that the
+<code>timestamp_timeout</code> tag exists in
+<code>/etc/sudoers</code> configuration file or any sudo configuration snippets
+in <code>/etc/sudoers.d/</code>.
+If the value is set to an integer less than 0, the user's time stamp will not expire 
+and the user will not have to re-authenticate for privileged actions until the user's session is terminated.</td>
+<td xml:lang="en-US">Without re-authentication, users may access resources or perform tasks for which they
+do not have authorization.
+<br><br>
+When operating systems provide the capability to escalate a functional capability, it
+is critical that the user re-authenticate.</td>
+<td></td>
+<td>IA-11<br>
+</td>
+</tr>
+<tr>
 <td>CCE-83423-4</td>
 <td>The operating system must restrict privilege elevation to authorized personnel</td>
 <td xml:lang="en-US">The sudo command allows a user to execute programs with elevated
@@ -5042,6 +5195,21 @@ uses. It should be disabled unless it is absolutely required.</td>
 </td>
 </tr>
 <tr>
+<td>CCE-80167-0</td>
+<td>Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.rp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.rp_filter=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.rp_filter = 1</pre>
+</td>
+<td xml:lang="en-US">Enabling reverse path filtering drops packets with source addresses
+that should not have been able to be received on the interface they were
+received on. It should not be used on systems which are routers for
+complicated networks, but is helpful for end hosts and routers serving small
+networks.</td>
+<td></td>
+<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>SC-7(a)<br>
+</td>
+</tr>
+<tr>
 <td>CCE-80156-3</td>
 <td>Disable Kernel Parameter for Sending ICMP Redirects on all IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.send_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.send_redirects=0</pre>
@@ -5088,6 +5256,21 @@ IPv4 forwarding is enabled and the system is legitimately functioning as a
 router.</td>
 <td></td>
 <td>CM-7(a)<br>CM-7(b)<br>SC-5<br>SC-7(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80168-8</td>
+<td>Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces by Default</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.rp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.rp_filter=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.rp_filter = 1</pre>
+</td>
+<td xml:lang="en-US">Enabling reverse path filtering drops packets with source addresses
+that should not have been able to be received on the interface they were
+received on. It should not be used on systems which are routers for
+complicated networks, but is helpful for end hosts and routers serving small
+networks.</td>
+<td></td>
+<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>SC-7(a)<br>
 </td>
 </tr>
 <tr>

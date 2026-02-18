@@ -826,11 +826,61 @@ users, groups, or modifications should be investigated for legitimacy.</td>
 </tr>
 <tr>
 <td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.5.1</a></td>
+<td>System Audit Directories Must Be Group Owned By Root</td>
+<td xml:lang="en-US">All audit directories must be group owned by root user. By default, the path for audit log is <pre>/var/log/audit/</pre>.
+
+To properly set the group owner of <code>/var/log/audit</code>, run the command:
+<pre>$ sudo chgrp root /var/log/audit</pre>
+If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other than the <code>root</code>
+group account, change the group ownership of the audit directories to this specific group.</td>
+<td xml:lang="en-US">Unauthorized disclosure of audit records can reveal system and configuration data to
+attackers, thus compromising its confidentiality.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.5.1</a></td>
+<td>System Audit Directories Must Be Owned By Root</td>
+<td xml:lang="en-US">All audit directories must be owned by root user. By default, the path for audit log is <pre>/var/log/audit/</pre>.
+
+To properly set the owner of <code>/var/log/audit</code>, run the command:
+<pre>$ sudo chown root /var/log/audit </pre>
+</td>
+<td xml:lang="en-US">Unauthorized disclosure of audit records can reveal system and configuration data to
+attackers, thus compromising its confidentiality.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.5.1</a></td>
+<td>System Audit Logs Must Be Group Owned By Root</td>
+<td xml:lang="en-US">All audit logs must be group owned by root user. By default, the path for audit log is <pre>/var/log/audit/</pre>.
+
+To properly set the group owner of <code>/var/log/audit/*</code>, run the command:
+<pre>$ sudo chgrp root /var/log/audit/*</pre>
+If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other than the <code>root</code>
+group account, change the group ownership of the audit logs to this specific group.</td>
+<td xml:lang="en-US">Unauthorized disclosure of audit records can reveal system and configuration data to
+attackers, thus compromising its confidentiality.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.5.1</a></td>
 <td>System Audit Logs Must Be Owned By Root</td>
 <td xml:lang="en-US">All audit logs must be owned by root user and group. By default, the path for audit log is <pre>/var/log/audit/</pre>.
 
 To properly set the owner of <code>/var/log/audit</code>, run the command:
 <pre>$ sudo chown root /var/log/audit </pre>
+
+To properly set the owner of <code>/var/log/audit/*</code>, run the command:
+<pre>$ sudo chown root /var/log/audit/* </pre>
+</td>
+<td xml:lang="en-US">Unauthorized disclosure of audit records can reveal system and configuration data to
+attackers, thus compromising its confidentiality.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.5.1</a></td>
+<td>System Audit Logs Must Be Owned By Root</td>
+<td xml:lang="en-US">All audit logs must be owned by root user. By default, the path for audit log is <pre>/var/log/audit/</pre>.
 
 To properly set the owner of <code>/var/log/audit/*</code>, run the command:
 <pre>$ sudo chown root /var/log/audit/* </pre>
@@ -997,17 +1047,21 @@ to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S fremovexattr -F auid=0 -F key=perm_mod</pre>
 <br><br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S fremovexattr -F auid=0 -F key=perm_mod</pre>
 <br><br>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S fremovexattr -F auid=0 -F key=perm_mod</pre>
 <br><br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S fremovexattr -F auid=0 -F key=perm_mod</pre>
 </td>
 <td xml:lang="en-US">The changing of file permissions could indicate that a user is attempting to
 gain access to information that would otherwise be disallowed. Auditing DAC modifications
@@ -1024,14 +1078,18 @@ to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S fsetxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S fsetxattr -F auid=0 -F key=perm_mod</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S fsetxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S fsetxattr -F auid=0 -F key=perm_mod</pre>
 </td>
 <td xml:lang="en-US">The changing of file permissions could indicate that a user is attempting to
 gain access to information that would otherwise be disallowed. Auditing DAC modifications
@@ -1074,17 +1132,21 @@ to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S lremovexattr -F auid=0 -F key=perm_mod</pre>
 <br><br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S lremovexattr -F auid=0 -F key=perm_mod</pre>
 <br><br>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S lremovexattr -F auid=0 -F key=perm_mod</pre>
 <br><br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S lremovexattr -F auid=0 -F key=perm_mod</pre>
 </td>
 <td xml:lang="en-US">The changing of file permissions could indicate that a user is attempting to
 gain access to information that would otherwise be disallowed. Auditing DAC modifications
@@ -1101,14 +1163,18 @@ to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S lsetxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S lsetxattr -F auid=0 -F key=perm_mod</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S lsetxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S lsetxattr -F auid=0 -F key=perm_mod</pre>
 </td>
 <td xml:lang="en-US">The changing of file permissions could indicate that a user is attempting to
 gain access to information that would otherwise be disallowed. Auditing DAC modifications
@@ -1126,17 +1192,21 @@ If the <code>auditd</code> daemon is configured to use the <code>augenrules</cod
 program to read audit rules during daemon startup (the default), add the
 following line to a file with suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S removexattr -F auid=0 -F key=perm_mod</pre>
 <br><br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S removexattr -F auid=0 -F key=perm_mod</pre>
 <br><br>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S removexattr -F auid=0 -F key=perm_mod</pre>
 <br><br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S removexattr -F auid=0 -F key=perm_mod</pre>
 </td>
 <td xml:lang="en-US">The changing of file permissions could indicate that a user is attempting to
 gain access to information that would otherwise be disallowed. Auditing DAC modifications
@@ -1153,14 +1223,18 @@ to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S setxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S setxattr -F auid=0 -F key=perm_mod</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S setxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S setxattr -F auid=0 -F key=perm_mod</pre>
 </td>
 <td xml:lang="en-US">The changing of file permissions could indicate that a user is attempting to
 gain access to information that would otherwise be disallowed. Auditing DAC modifications
@@ -3102,7 +3176,7 @@ configured to utilize the services of the <code>chronyd</code> NTP daemon (the
 default), or services of the <code>ntpd</code> NTP daemon. Refer to
 
     
-    <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html</a>
+    <a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-configuring_ntp_using_the_chrony_suite">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-configuring_ntp_using_the_chrony_suite</a>
 
 for more detailed comparison of the features of both of the choices, and for
 further guidance how to choose between the two NTP daemons.
@@ -3134,7 +3208,7 @@ configured to utilize the services of the <code>chronyd</code> NTP daemon (the
 default), or services of the <code>ntpd</code> NTP daemon. Refer to
 
     
-    <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html</a>
+    <a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-configuring_ntp_using_the_chrony_suite">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-configuring_ntp_using_the_chrony_suite</a>
 
 for more detailed comparison of the features of both of the choices, and for
 further guidance how to choose between the two NTP daemons.
@@ -3164,7 +3238,7 @@ configured to utilize the services of the <code>chronyd</code> NTP daemon (the
 default), or services of the <code>ntpd</code> NTP daemon. Refer to
 
     
-    <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html</a>
+    <a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-configuring_ntp_using_the_chrony_suite">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-configuring_ntp_using_the_chrony_suite</a>
 
 for more detailed comparison of the features of both of the choices, and for
 further guidance how to choose between the two NTP daemons.
@@ -3183,6 +3257,23 @@ This instructs the NTP software to contact that remote server to obtain time
 data.</td>
 <td xml:lang="en-US">Synchronizing with an NTP server makes it possible to collate system
 logs from multiple sources or correlate computer events with real time events.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.4.3</a></td>
+<td>A remote time server for Chrony is configured</td>
+<td xml:lang="en-US">
+<code>Chrony</code> is a daemon which implements the Network Time Protocol (NTP). It is designed to
+synchronize system clocks across a variety of systems and use a source that is highly
+accurate. More information on <code>chrony</code> can be found at
+
+    <a href="http://chrony.tuxfamily.org/">http://chrony.tuxfamily.org/</a>.
+<code>Chrony</code> can be configured to be a client and/or a server.
+Add or edit server or pool lines to <code>/etc/chrony.conf</code> as appropriate:
+<pre>server &lt;remote-server&gt;</pre>
+Multiple servers may be configured.</td>
+<td xml:lang="en-US">If <code>chrony</code> is in use on the system proper configuration is vital to ensuring time
+synchronization is working properly.</td>
 <td></td>
 </tr>
 <tr>
@@ -3573,7 +3664,7 @@ in the previous sections in certain environments the <code>ntpd</code> daemon mi
 be preferred to be used rather than the <code>chronyd</code> one. Refer to:
 
     
-    <a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/ch-Configuring_NTP_Using_the_chrony_Suite.html</a>
+    <a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-configuring_ntp_using_the_chrony_suite">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-configuring_ntp_using_the_chrony_suite</a>
 
 for guidance which NTP daemon to choose depending on the environment used.</td>
 <td xml:lang="en-US">Enabling some of <code>chronyd</code> or <code>ntpd</code> services ensures
@@ -3754,6 +3845,20 @@ allow them to take corrective action prior to any disruption.</td>
 </tr>
 <tr>
 <td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.7</a></td>
+<td>Configure auditd space_left on Low Disk Space</td>
+<td xml:lang="en-US">The <code>auditd</code> service can be configured to take an action
+when disk space is running low but prior to running out of space completely.
+Edit the file <code>/etc/audit/auditd.conf</code>. Add or modify the following line,
+substituting <i>PERCENTAGE</i> appropriately:
+<pre>space_left = <i>PERCENTAGE</i>%</pre>
+Set this value to at least 25 to cause the system to
+notify the user of an issue.</td>
+<td xml:lang="en-US">Notifying administrators of an impending disk space problem may allow them to
+take corrective action prior to any disruption.</td>
+<td></td>
+</tr>
+<tr>
+<td><a href="https://www.pcisecuritystandards.org/documents/PCI_DSS_v3-1.pdf#page=82">Req-10.7</a></td>
 <td>Ensure Logrotate Runs Periodically</td>
 <td xml:lang="en-US">The <code>logrotate</code> utility allows for the automatic rotation of
 log files.  The frequency of rotation is specified in <code>/etc/logrotate.conf</code>,
@@ -3917,9 +4022,9 @@ must be captured and it should be able to be verified against the installed file
 <td>Configure Periodic Execution of AIDE</td>
 <td xml:lang="en-US">At a minimum, AIDE should be configured to run a weekly scan.
 To implement a daily execution of AIDE at 4:05am using cron, add the following line to <code>/etc/crontab</code>:
-<pre>05 4 * * * root /usr/sbin/aide --check</pre>
+<pre>05 4 * * * root  --check</pre>
 To implement a weekly execution of AIDE at 4:05am using cron, add the following line to <code>/etc/crontab</code>:
-<pre>05 4 * * 0 root /usr/sbin/aide --check</pre>
+<pre>05 4 * * 0 root  --check</pre>
 AIDE can be executed periodically through other means; this is merely one example.
 The usage of cron's special time codes, such as  <code>@daily</code> and
 <code>@weekly</code> is acceptable.</td>

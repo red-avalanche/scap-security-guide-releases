@@ -446,14 +446,17 @@ or logical volume at installation time, or migrate it using LVM.</td>
 <table><tr>
 <td>Ensure /var/log Located On Separate Partition</td>
 <td xml:lang="en-US">System logs are stored in the <code>/var/log</code> directory.
-Ensure that it has its own partition or logical
+
+Ensure that <code>/var/log</code> has its own partition or logical
 volume at installation time, or migrate it using LVM.</td>
 </tr></table>
 <table><tr>
 <td>Ensure /var/log/audit Located On Separate Partition</td>
-<td xml:lang="en-US">Audit logs are stored in the <code>/var/log/audit</code> directory.  Ensure that it
-has its own partition or logical volume at installation time, or migrate it
-later using LVM. Make absolutely certain that it is large enough to store all
+<td xml:lang="en-US">Audit logs are stored in the <code>/var/log/audit</code> directory.
+
+Ensure that <code>/var/log/audit</code> has its own partition or logical
+volume at installation time, or migrate it using LVM.
+Make absolutely certain that it is large enough to store all
 audit logs that will be created by the auditing daemon.</td>
 </tr></table>
 <table><tr>
@@ -1097,6 +1100,13 @@ $ sudo dnf erase sendmail</pre>
 </td>
 </tr></table>
 <table><tr>
+<td>Prevent Unrestricted Mail Relaying</td>
+<td xml:lang="en-US">Modify the <pre>/etc/postfix/main.cf</pre> file to restrict client connections
+to the local network with the following command:
+<pre>$ sudo postconf -e 'smtpd_client_restrictions = permit_mynetworks,reject'</pre>
+</td>
+</tr></table>
+<table><tr>
 <td>Mount Remote Filesystems with nodev</td>
 <td xml:lang="en-US">Add the <code>nodev</code> option to the fourth column of <code>/etc/fstab</code> for the line which controls mounting of
 any NFS mounts.</td>
@@ -1233,13 +1243,13 @@ elapsed. To decrease the default limits, put line
 <table><tr>
 <td>Disable graphical user interface</td>
 <td xml:lang="en-US">By removing the following packages,  the system no longer has X Windows installed.
- 
+
 <code>xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</code>
 
 If X Windows is not installed then the system cannot boot into graphical user mode.
 This prevents the system from being accidentally or maliciously booted into a <code>graphical.target</code>
 mode. To do so, run the following command:
- 
+
 <pre>sudo dnf remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</pre>
 
 Additionally, setting the system's default target to
@@ -1366,7 +1376,9 @@ add or correct the <code>FAIL_DELAY</code> setting in <code>/etc/login.defs</cod
 <td>Ensure PAM Enforces Password Requirements - Authentication Retry Prompts Permitted Per-Session</td>
 <td xml:lang="en-US">To configure the number of retry prompts that are permitted per-session:
 Edit the <code>pam_pwquality.so</code> statement in
+
 <code>/etc/pam.d/system-auth</code>  to show
+
 <code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if site
 policy is more restrictive. The DoD requirement is a maximum of 3 prompts
 per session.</td>
@@ -1545,12 +1557,24 @@ This requirement is a permanent not a finding. No fix is required.
 <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
 
 Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
-<td><table><tr>
+<td>
+<table><tr>
+<td>Enable Auditing for Processes Which Start Prior to the Audit Daemon</td>
+<td xml:lang="en-US">To ensure all processes can be audited, even those which start
+prior to the audit daemon, add the argument <code>audit=1</code> to the default
+GRUB 2 command line for the Linux operating system in
+
+<code>/boot/grub2/grubenv</code>, in the manner below:
+<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"</pre>
+</td>
+</tr></table>
+<table><tr>
 <td>Product Meets this Requirement</td>
 <td>
 This requirement is a permanent not a finding. No fix is required.
 </td>
-</tr></table></td>
+</tr></table>
+</td>
 </tr>
 <tr>
 <td>CCI-000172</td>
@@ -1590,12 +1614,24 @@ This requirement is a permanent not a finding. No fix is required.
 <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
 
 Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
-<td><table><tr>
+<td>
+<table><tr>
+<td>Enable Auditing for Processes Which Start Prior to the Audit Daemon</td>
+<td xml:lang="en-US">To ensure all processes can be audited, even those which start
+prior to the audit daemon, add the argument <code>audit=1</code> to the default
+GRUB 2 command line for the Linux operating system in
+
+<code>/boot/grub2/grubenv</code>, in the manner below:
+<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"</pre>
+</td>
+</tr></table>
+<table><tr>
 <td>Product Meets this Requirement</td>
 <td>
 This requirement is a permanent not a finding. No fix is required.
 </td>
-</tr></table></td>
+</tr></table>
+</td>
 </tr>
 <tr>
 <td>CCI-000172</td>
@@ -1959,12 +1995,24 @@ This requirement is a permanent not a finding. No fix is required.
 <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
 
 Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
-<td><table><tr>
+<td>
+<table><tr>
+<td>Enable Auditing for Processes Which Start Prior to the Audit Daemon</td>
+<td xml:lang="en-US">To ensure all processes can be audited, even those which start
+prior to the audit daemon, add the argument <code>audit=1</code> to the default
+GRUB 2 command line for the Linux operating system in
+
+<code>/boot/grub2/grubenv</code>, in the manner below:
+<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"</pre>
+</td>
+</tr></table>
+<table><tr>
 <td>Product Meets this Requirement</td>
 <td>
 This requirement is a permanent not a finding. No fix is required.
 </td>
-</tr></table></td>
+</tr></table>
+</td>
 </tr>
 <tr>
 <td>CCI-000130</td>
@@ -1985,6 +2033,16 @@ disk.
 
 The <code>auditd</code> service can be enabled with the following command:
 <pre>$ sudo systemctl enable auditd.service</pre>
+</td>
+</tr></table>
+<table><tr>
+<td>Enable Auditing for Processes Which Start Prior to the Audit Daemon</td>
+<td xml:lang="en-US">To ensure all processes can be audited, even those which start
+prior to the audit daemon, add the argument <code>audit=1</code> to the default
+GRUB 2 command line for the Linux operating system in
+
+<code>/boot/grub2/grubenv</code>, in the manner below:
+<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"</pre>
 </td>
 </tr></table>
 <table><tr>
@@ -2124,12 +2182,24 @@ This requirement is a permanent not a finding. No fix is required.
 <td>Reconstruction of harmful events or forensic analysis is not possible if audit records do not contain enough information.
 
 At a minimum, the organization must audit the full-text recording of privileged commands. The organization must maintain audit trails in sufficient detail to reconstruct events to determine the cause and impact of compromise.</td>
-<td><table><tr>
+<td>
+<table><tr>
+<td>Enable Auditing for Processes Which Start Prior to the Audit Daemon</td>
+<td xml:lang="en-US">To ensure all processes can be audited, even those which start
+prior to the audit daemon, add the argument <code>audit=1</code> to the default
+GRUB 2 command line for the Linux operating system in
+
+<code>/boot/grub2/grubenv</code>, in the manner below:
+<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"</pre>
+</td>
+</tr></table>
+<table><tr>
 <td>Product Meets this Requirement</td>
 <td>
 This requirement is a permanent not a finding. No fix is required.
 </td>
-</tr></table></td>
+</tr></table>
+</td>
 </tr>
 <tr>
 <td>CCI-000135</td>
@@ -2619,7 +2689,9 @@ Password complexity is one factor of several that determines how long it takes t
 <td>Ensure PAM Enforces Password Requirements - Authentication Retry Prompts Permitted Per-Session</td>
 <td xml:lang="en-US">To configure the number of retry prompts that are permitted per-session:
 Edit the <code>pam_pwquality.so</code> statement in
+
 <code>/etc/pam.d/system-auth</code>  to show
+
 <code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if site
 policy is more restrictive. The DoD requirement is a maximum of 3 prompts
 per session.</td>
@@ -3390,7 +3462,7 @@ Change the superuser to a different username (The default is 'root').
 Once the superuser account has been added,
 update the
 <code>grub.cfg</code> file by running:
-<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
 </td>
 </tr></table>
 <table><tr>
@@ -3410,7 +3482,7 @@ Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
 
-<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
 </td>
 </tr></table>
 </td>
@@ -4186,7 +4258,8 @@ This requirement addresses auditing-related issues associated with maintenance t
 Nonlocal maintenance and diagnostic activities are those activities conducted by individuals communicating through a network, either an external network (e.g., the Internet) or an internal network. Local maintenance and diagnostic activities are those activities carried out by individuals physically present at the information system or information system component and not communicating across a network connection.
 
 This requirement applies to hardware/software diagnostic test equipment or tools. This requirement does not cover hardware/software components that may support information system maintenance, yet are a part of the system, for example, the software implementing "ping," "ls," "ipconfig," or the hardware and software implementing the monitoring port of an Ethernet switch.</td>
-<td><table><tr>
+<td>
+<table><tr>
 <td>Enable auditd Service</td>
 <td xml:lang="en-US">The <code>auditd</code> service is an essential userspace component of
 the Linux Auditing System, as it is responsible for writing audit records to
@@ -4195,7 +4268,18 @@ disk.
 The <code>auditd</code> service can be enabled with the following command:
 <pre>$ sudo systemctl enable auditd.service</pre>
 </td>
-</tr></table></td>
+</tr></table>
+<table><tr>
+<td>Enable Auditing for Processes Which Start Prior to the Audit Daemon</td>
+<td xml:lang="en-US">To ensure all processes can be audited, even those which start
+prior to the audit daemon, add the argument <code>audit=1</code> to the default
+GRUB 2 command line for the Linux operating system in
+
+<code>/boot/grub2/grubenv</code>, in the manner below:
+<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"</pre>
+</td>
+</tr></table>
+</td>
 </tr>
 <tr>
 <td>CCI-001991</td>
@@ -6134,9 +6218,11 @@ The task of allocating audit record storage capacity is usually performed during
 <td>
 <table><tr>
 <td>Ensure /var/log/audit Located On Separate Partition</td>
-<td xml:lang="en-US">Audit logs are stored in the <code>/var/log/audit</code> directory.  Ensure that it
-has its own partition or logical volume at installation time, or migrate it
-later using LVM. Make absolutely certain that it is large enough to store all
+<td xml:lang="en-US">Audit logs are stored in the <code>/var/log/audit</code> directory.
+
+Ensure that <code>/var/log/audit</code> has its own partition or logical
+volume at installation time, or migrate it using LVM.
+Make absolutely certain that it is large enough to store all
 audit logs that will be created by the auditing daemon.</td>
 </tr></table>
 <table><tr>

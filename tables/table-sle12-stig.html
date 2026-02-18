@@ -7,7 +7,23 @@
 <br><br><div style="text-align: center; font-size: x-large; font-weight:bold">
 			Rules In <i>DISA STIG for SUSE Linux Enterprise 12</i>
 </div>
-<br><br><style type="text/css">
+<br><br><div><table>
+<thead><tr>
+<th>Total</th>
+<th>Missing</th>
+<th>Implemented</th>
+<th>Coverage</th>
+<th>STIG ids missing rule</th>
+</tr></thead>
+<tbody><tr>
+<td>221</td>
+<td>6</td>
+<td>215</td>
+<td>97.29%</td>
+<td>SLES-12-010599SLES-12-010611SLES-12-010879SLES-12-010881SLES-12-030365SLES-12-030611</td>
+</tr></tbody>
+</table></div>
+<style type="text/css">
 		table
 		{
 			border-collapse:collapse;
@@ -45,9 +61,10 @@
 <td>Check Procedures</td>
 <td>Fixtext</td>
 <td>Version</td>
+<td>Mapped Rule</td>
 </thead>
 <tr>
-<td>SLES-12-010000</td>
+<td>V-217101</td>
 <td>1230</td>
 <td>high</td>
 <td>The SUSE operating system must be a vendor-supported release.</td>
@@ -69,9 +86,10 @@ SUSE Linux Enterprise 12
 SUSE Linux Enterprise is supported by SUSE. As the SUSE Linux Enterprise
 vendor, SUSE is responsible for providing security patches.</td>
 <td>SLES-12-010000</td>
+<td>installed_OS_is_vendor_supported</td>
 </tr>
 <tr>
-<td>SLES-12-010010</td>
+<td>V-217102</td>
 <td>1227</td>
 <td>medium</td>
 <td>Vendor-packaged SUSE operating system security patches and updates must be installed and up to date.</td>
@@ -90,9 +108,10 @@ security updates:
 NOTE: U.S. Defense systems are required to be patched within 30 days or sooner as local policy
 dictates.</td>
 <td>SLES-12-010010</td>
+<td>security_patches_up_to_date</td>
 </tr>
 <tr>
-<td>SLES-12-010020</td>
+<td>V-217103</td>
 <td>50</td>
 <td>medium</td>
 <td>The SUSE operating system must display the Standard Mandatory DoD Notice and Consent Banner until users acknowledge the usage conditions and take explicit actions to log on for further access to the local graphical user interface.</td>
@@ -162,9 +181,10 @@ exit 1;
 fi</pre>
 </td>
 <td>SLES-12-010020</td>
+<td>gui_login_dod_acknowledgement</td>
 </tr>
 <tr>
-<td>SLES-12-010030</td>
+<td>V-217104</td>
 <td>48</td>
 <td>medium</td>
 <td>The SUSE operating system must display the Standard Mandatory DoD Notice and Consent Banner before granting access via local console.</td>
@@ -213,9 +233,10 @@ OR:
 <code>I've read &amp; consent to terms in IS user agreem't.</code>
 </td>
 <td>SLES-12-010030</td>
+<td>banner_etc_issue</td>
 </tr>
 <tr>
-<td>SLES-12-010040</td>
+<td>V-217105</td>
 <td>1388</td>
 <td>medium</td>
 <td>The SUSE operating system must display a banner before granting local or remote access to the system via a graphical user logon.</td>
@@ -248,9 +269,10 @@ For example:
 After the settings have been set, run <code>dconf update</code>.
 The banner text must also be set.</td>
 <td>SLES-12-010040</td>
+<td>dconf_gnome_banner_enabled</td>
 </tr>
 <tr>
-<td>SLES-12-010050</td>
+<td>V-217106</td>
 <td>1384</td>
 <td>medium</td>
 <td>The SUSE operating system must display the approved Standard Mandatory DoD Notice before granting local or remote access to the system via a graphical user logon.</td>
@@ -281,60 +303,102 @@ After the settings have been set, run <code>dconf update</code>.
 When entering a warning banner that spans several lines, remember
 to begin and end the string with <code>'</code> and use <code>\n</code> for new lines.</td>
 <td>SLES-12-010050</td>
+<td>dconf_gnome_login_banner_text</td>
 </tr>
 <tr>
-<td>SLES-12-010070</td>
+<td>V-217107</td>
+<td>60</td>
+<td>medium</td>
+<td>The SUSE operating system must be able to lock the graphical user interface (GUI).</td>
+<td>A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity
+of the information system but does not want to logout because of the temporary nature of the absense.</td>
+<td>To check the status of the idle screen lock activation, run the following command:
+
+gsettings get org.gnome.desktop.lockdown disable-lock-screen
+If the result is "true", this is a finding.
+Configure the SUSE operating system to allow the user to lock the GUI.
+Run the following command to configure the SUSE operating system to allow the user to lock the GUI:
+gsettings set org.gnome.desktop.lockdown disable-lock-screen false
+      Is it the case that screensaver locking is not enabled and/or has not been set or configured correctly?
+      </td>
+<td>
+To activate locking of the screensaver in the GNOME3 desktop when it is activated,
+run the following command to configure the SUSE operating system to allow the user to lock the GUI:
+<pre>gsettings set org.gnome.desktop.lockdown disable-lock-screen false</pre>
+Validate that <code>disable-lock-screen</code> has been set to <code>false</code> with the command:
+<pre>gsettings get org.gnome.desktop.lockdown disable-lock-screen</pre>
+</td>
+<td>SLES-12-010060</td>
+<td>dconf_gnome_screensaver_lock_enabled</td>
+</tr>
+<tr>
+<td>V-217108</td>
 <td>58</td>
 <td>low</td>
 <td>The SUSE operating system must utilize vlock to allow for session locking.</td>
-<td>A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not want to log out because of the temporary nature of the absence.
+<td>A session lock is a temporary action taken when a user stops work and
+moves away from the immediate physical vicinity of the information
+system but does not want to log out because of the temporary nature of
+the absence.
 
-The session lock is implemented at the point where session activity can be determined.
+The session lock is implemented at the point where session activity can
+be determined.
 
-Regardless of where the session lock is determined and implemented, once invoked, the session lock must remain in place until the user reauthenticates. No other activity aside from reauthentication must unlock the system.</td>
-<td>Run the following command to determine if the kbd package is installed: $ rpm -q kbd
+Regardless of where the session lock is determined and implemented,
+once invoked, the session lock must remain in place until the user
+reauthenticates. No other activity aside from reauthentication must
+unlock the system.</td>
+<td>
+Run the following command to determine if the kbd package is installed:
+$ rpm -q kbd
       Is it the case that the package is not installed?
       </td>
-<td>The SUSE operating system must have vlock installed to allow for session locking.
+<td>The SUSE Linux Enterprise 12 operating system must have vlock installed to allow for session locking.
+
 
 The <code>kbd</code> package can be installed with the following command:
 <pre>
 $ sudo zypper install kbd</pre>
 </td>
 <td>SLES-12-010070</td>
+<td>vlock_installed</td>
 </tr>
 <tr>
-<td>SLES-12-010080</td>
+<td>V-217109</td>
 <td>57</td>
 <td>medium</td>
 <td>The SUSE operating system must initiate a session lock after a 15-minute period of inactivity for the graphical user interface.</td>
-<td>Terminating an idle session within a short time period reduces
-the window of opportunity for unauthorized personnel to take control of a
-management session enabled on the console or console port that has been
-left unattended.</td>
-<td>Run the following command to ensure the TMOUT value is configured for all users
-on the system:
-
-$ sudo grep TMOUT /etc/profile.d/autologout.sh
-
-The output should return the following:
-TMOUT=
-
-readonly TMOUT
-export TMOUT
-      Is it the case that value of TMOUT is not less than or equal to expected setting?
+<td>A session time-out lock is a temporary action taken when a user stops work and moves away from
+the immediate physical vicinity of the information system but does not logout because of the
+temporary nature of the absence. Rather than relying on the user to manually lock their operating
+system session prior to vacating the vicinity, GNOME3 can be configured to identify when
+a user's session has idled and take action to initiate a session lock.</td>
+<td>To check the current idle time-out value, run the following command:
+$ gsettings get org.gnome.desktop.session idle-delay
+If properly configured, the output should be 'uint32 '.
+To ensure that users cannot change the screensaver inactivity timeout setting, run the following:
+$ grep idle-delay /etc/dconf/db/local.d/locks/*
+If properly configured, the output should be /org/gnome/desktop/session/idle-delay
+      Is it the case that idle-delay is not equal to or less than the expected value?
       </td>
-<td>Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
-all user sessions will terminate based on inactivity. The <code>TMOUT</code>
-
-setting in <code>/etc/profile.d/autologout.sh</code> should read as follows:
-<pre>TMOUT=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></xccdf-1.1:sub></pre>
-readonly TMOUT
-export TMOUT</td>
+<td>The idle time-out value for inactivity in the GNOME3 desktop is configured via the <code>idle-delay</code>
+setting must be set under an appropriate configuration file(s) in the <code>/etc/dconf/db/local.d</code> directory
+and locked in <code>/etc/dconf/db/local.d/locks</code> directory to prevent user modification.
+<br><br>
+For example, to configure the system for a 15 minute delay, add the following to
+<code>/etc/dconf/db/local.d/00-security-settings</code>:
+<pre>[org/gnome/desktop/session]
+idle-delay=uint32 900</pre>
+Once the setting has been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/session/idle-delay</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
 <td>SLES-12-010080</td>
+<td>dconf_gnome_screensaver_idle_delay</td>
 </tr>
 <tr>
-<td>SLES-12-010090</td>
+<td>V-217110</td>
 <td>57</td>
 <td>medium</td>
 <td>The SUSE operating system must initiate a session lock after a 15-minute period of inactivity.</td>
@@ -362,9 +426,56 @@ setting in <code>/etc/profile.d/autologout.sh</code> should read as follows:
 readonly TMOUT
 export TMOUT</td>
 <td>SLES-12-010090</td>
+<td>accounts_tmout</td>
 </tr>
 <tr>
-<td>SLES-12-010110</td>
+<td>V-217111</td>
+<td>60</td>
+<td>low</td>
+<td>The SUSE operating system must conceal, via the session lock, information previously visible on the display with a publicly viewable image in the graphical user interface.</td>
+<td>Setting the screensaver mode to blank-only conceals the
+contents of the display from passersby.</td>
+<td>To ensure the screensaver is configured to be blank, run the following command:
+$ gsettings get org.gnome.desktop.screensaver picture-uri
+If properly configured, the output should be ''.
+
+To ensure that users cannot set the screensaver background, run the following:
+$ grep picture-uri /etc/dconf/db/local.d/locks/*
+If properly configured, the output should be /org/gnome/desktop/screensaver/picture-uri
+      Is it the case that it is not set or configured properly?
+      </td>
+<td>
+
+
+On SUSE users should set the screensaver to use publicly viewable images or blank screen
+by doing the following:
+Find the Settings menu and then navigate to the Background selection section
+
+<code>- Click "Applications" on the bottom left.</code>
+<code>- Hover over "System Tools" with the mouse.</code>
+<code>- Click the "Settings" icon under System Tools.</code>
+<code>- Click "Background" and then "Lock Screen".</code>
+<code>- Select image and set the Lock Screen image to the user's choice.</code>
+<code>- Click "Select".</code>
+<code>- Exit Settings Dialog.</code>
+
+
+To set the screensaver mode in the GNOME3 desktop to a blank screen,
+add or set <code>picture-uri</code> to <code>string ''</code> in
+<code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
+<pre>[org/gnome/desktop/screensaver]
+picture-uri=''
+</pre>
+Once the settings have been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/screensaver/picture-uri</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+<td>SLES-12-010100</td>
+<td>dconf_gnome_screensaver_mode_blank</td>
+</tr>
+<tr>
+<td>V-217112</td>
 <td>2038</td>
 <td>high</td>
 <td>The SUSE operating system must reauthenticate users when changing authenticators, roles, or escalating privileges.</td>
@@ -373,19 +484,99 @@ do not have authorization.
 <br><br>
 When operating systems provide the capability to escalate a functional capability, it
 is critical that the user re-authenticate.</td>
-<td>To determine if !authenticate has not been configured for sudo, run the following command:
-$ sudo grep -r \!authenticate /etc/sudoers /etc/sudoers.d/
+<td>To determine if NOPASSWD has been configured for sudo, run the following command:
+$ sudo grep -ri nopasswd /etc/sudoers /etc/sudoers.d/
 The command should return no output.
-      Is it the case that !authenticate is enabled in sudo?
+      Is it the case that nopasswd is enabled in sudo?
       </td>
-<td>The sudo <code>!authenticate</code> option, when specified, allows a user to execute commands using
-sudo without having to authenticate. This should be disabled by making sure that the
-<code>!authenticate</code> option does not exist in <code>/etc/sudoers</code> configuration file or
-any sudo configuration snippets in <code>/etc/sudoers.d/</code>.</td>
+<td>The sudo <code>NOPASSWD</code> tag, when specified, allows a user to execute
+commands using sudo without having to authenticate. This should be disabled
+by making sure that the <code>NOPASSWD</code> tag does not exist in
+<code>/etc/sudoers</code> configuration file or any sudo configuration snippets
+in <code>/etc/sudoers.d/</code>.</td>
 <td>SLES-12-010110</td>
+<td>sudo_remove_nopasswd</td>
 </tr>
 <tr>
-<td>SLES-12-010120</td>
+<td>V-237603</td>
+<td>366</td>
+<td>medium</td>
+<td>The SUSE operating system must restrict privilege elevation to authorized personnel.</td>
+<td>If the "sudoers" file is not configured correctly, any user defined
+on the system can initiate privileged actions on the target system.</td>
+<td>To determine if "sudoers" file, restricts sudo access, run the following commands:
+$ sudo grep -PR '^\s*ALL\s+ALL\=\(ALL\)\s+ALL\s*$' /etc/sudoers /etc/sudoers.d/*
+$ sudo grep -PR '^\s*ALL\s+ALL\=\(ALL\:ALL\)\s+ALL\s*$' /etc/sudoers /etc/sudoers.d/*
+Both commands should return no output.
+      Is it the case that /etc/sudoers file does not restrict sudo access to authorized personnel?
+      </td>
+<td>The sudo command allows a user to execute programs with elevated
+(administrator) privileges. It prompts the user for their password
+and confirms your request to execute a command by checking a file,
+called sudoers.
+Restrict privileged actions by removing the following entries from the sudoers file:
+<code>ALL ALL=(ALL) ALL</code>
+<code>ALL ALL=(ALL:ALL) ALL</code>
+</td>
+<td>SLES-12-010111</td>
+<td>sudo_restrict_privilege_elevation_to_authorized</td>
+</tr>
+<tr>
+<td>V-237604</td>
+<td>2227</td>
+<td>medium</td>
+<td>The SUSE operating system must use the invoking user's password for privilege escalation when using "sudo".</td>
+<td>If the rootpw, targetpw, or runaspw flags are defined and not disabled, by default the operating system will prompt
+the invoking user for the "root" user password.</td>
+<td>Run the following command to Verify that the sudoers security policy is configured to use the invoking user's password for privilege escalation:
+ sudo egrep -i '(!rootpw|!targetpw|!runaspw)' /etc/sudoers /etc/sudoers.d/* | grep -v '#'
+If no results are returned, this is a finding
+If "Defaults !targetpw" is not defined, this is a finding.
+If "Defaults !rootpw" is not defined, this is a finding.
+If "Defaults !runaspw" is not defined, this is a finding.
+      Is it the case that invoke user passwd when using sudo?
+      </td>
+<td>The sudoers security policy requires that users authenticate themselves before they can use sudo.
+When sudoers requires authentication, it validates the invoking user's credentials.
+The expected output for:
+<pre>sudo egrep -i '(!rootpw|!targetpw|!runaspw)' /etc/sudoers /etc/sudoers.d/* | grep -v '#'</pre>
+<pre> /etc/sudoers:Defaults !targetpw
+      /etc/sudoers:Defaults !rootpw
+      /etc/sudoers:Defaults !runaspw </pre>
+</td>
+<td>SLES-12-010112</td>
+<td>sudoers_validate_passwd</td>
+</tr>
+<tr>
+<td>V-237605</td>
+<td>2038</td>
+<td>medium</td>
+<td>The SUSE operating system must require re-authentication when using the "sudo" command.</td>
+<td>Without re-authentication, users may access resources or perform tasks for which they
+do not have authorization.
+<br><br>
+When operating systems provide the capability to escalate a functional capability, it
+is critical that the user re-authenticate.</td>
+<td>Verify the operating system requires re-authentication 
+when using the "sudo" command to elevate privileges, run the following command:
+sudo grep -ri '^Defaults.*timestamp_timeout' /etc/sudoers /etc/sudoers.d
+The output should be:
+/etc/sudoers:Defaults timestamp_timeout=0 or "timestamp_timeout" is set to a positive number.
+      Is it the case that timestamp_timeout is not set with the appropriate value for sudo?
+      </td>
+<td>The sudo <code>timestamp_timeout</code> tag sets the amount of time sudo password prompt waits.
+The default <code>timestamp_timeout</code> value is 5 minutes.
+The timestamp_timeout should be configured by making sure that the
+<code>timestamp_timeout</code> tag exists in
+<code>/etc/sudoers</code> configuration file or any sudo configuration snippets
+in <code>/etc/sudoers.d/</code>.
+If the value is set to an integer less than 0, the user's time stamp will not expire 
+and the user will not have to re-authenticate for privileged actions until the user's session is terminated.</td>
+<td>SLES-12-010113</td>
+<td>sudo_require_reauthentication</td>
+</tr>
+<tr>
+<td>V-217113</td>
 <td>54</td>
 <td>low</td>
 <td>The SUSE operating system must limit the number of concurrent sessions to 10 for all accounts and/or account types.</td>
@@ -407,9 +598,10 @@ a file under <code>/etc/security/limits.d/</code>:
 <pre>* hard maxlogins <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_max_concurrent_login_sessions"></xccdf-1.1:sub></pre>
 </td>
 <td>SLES-12-010120</td>
+<td>accounts_max_concurrent_login_sessions</td>
 </tr>
 <tr>
-<td>SLES-12-010130</td>
+<td>V-217114</td>
 <td>44</td>
 <td>medium</td>
 <td>The SUSE operating system must lock an account after three consecutive invalid access attempts.</td>
@@ -425,40 +617,41 @@ modify the content of both <code>/etc/pam.d/common-auth</code> and
 <ul>
 <li> add or modify the <code>pam_tally2.so</code> module line in
 <code>/etc/pam.d/common-auth</code> to ensure both <code>onerr=fail</code> and
-<code>deny=3</code> are present. For example:
-<pre>auth required pam_tally2.so onerr=fail silent audit deny=3</pre>
+<code>deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_tally2"></xccdf-1.1:sub></code> are present. For example:
+<pre>auth required pam_tally2.so onerr=fail silent audit deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_tally2"></xccdf-1.1:sub></pre>
 </li>
 <li> add or modify the following line in <code>/etc/pam.d/common-account</code>:
 <pre>account required pam_tally2.so</pre>
 </li>
 </ul>
 </td>
-<td>Check that the systems locks a user account after three consecutive failed
-login attempts with the following command:
+<td>Check that the systems locks a user account after - at most - 
+consecutive failed login attempts with the following command:
 
 # grep pam_tally2.so /etc/pam.d/common-auth
-auth required pam_tally2.so onerr=fail deny=3
+auth required pam_tally2.so onerr=fail deny=
 
 If no line is returned, the line is commented out, or the line is missing
 "onerr=fail", this is a finding.
-If the line has "deny" set to a value other than 1, 2, or 3, this is a
-finding.
+If the line has "deny" set to a value outside of the range 1-,
+this is a finding.
 
 Check that the system resets the failed login attempts counter after a
 successful login using the following command:
 
 # grep pam_tally2.so /etc/pam.d/common-account
-account required pam_tally2.so deny=3
+account required pam_tally2.so deny=
 
 If the account option is missing, or commented out, this is a finding.
       Is it the case that that is not the case?
       </td>
-<td>The SUSE operating system must lock an account after three consecutive
-invalid access attempts.</td>
+<td>The SUSE Linux Enterprise 12 operating system must lock an account after - at most - <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_tally2"></xccdf-1.1:sub>
+consecutive invalid access attempts.</td>
 <td>SLES-12-010130</td>
+<td>accounts_passwords_pam_tally2</td>
 </tr>
 <tr>
-<td>SLES-12-010140</td>
+<td>V-217116</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system must enforce a delay of at least four (4) seconds between logon prompts following a failed logon attempt.</td>
@@ -477,9 +670,10 @@ add or correct the <code>FAIL_DELAY</code> setting in <code>/etc/login.defs</cod
 <pre>FAIL_DELAY <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_fail_delay"></xccdf-1.1:sub></pre>
 </td>
 <td>SLES-12-010140</td>
+<td>accounts_logon_fail_delay</td>
 </tr>
 <tr>
-<td>SLES-12-010150</td>
+<td>V-217117</td>
 <td>192</td>
 <td>medium</td>
 <td>The SUSE operating system must enforce passwords that contain at least one upper-case character.</td>
@@ -503,9 +697,10 @@ additional length credit for each uppercase character.
 Add <code>ucredit=-1</code> after pam_cracklib.so to require use of an upper
 case character in passwords.</td>
 <td>SLES-12-010150</td>
+<td>cracklib_accounts_password_pam_ucredit</td>
 </tr>
 <tr>
-<td>SLES-12-010160</td>
+<td>V-217118</td>
 <td>193</td>
 <td>medium</td>
 <td>The SUSE operating system must enforce passwords that contain at least one lower-case character.</td>
@@ -534,9 +729,10 @@ additional length credit for each lowercase character.
 Add <code>lcredit=-1</code> after pam_cracklib.so to require use of a
 lowercase character in passwords.</td>
 <td>SLES-12-010160</td>
+<td>cracklib_accounts_password_pam_lcredit</td>
 </tr>
 <tr>
-<td>SLES-12-010170</td>
+<td>V-217119</td>
 <td>194</td>
 <td>medium</td>
 <td>The SUSE operating system must enforce passwords that contain at least one numeric character.</td>
@@ -559,9 +755,10 @@ positive number, pam_cracklib will grant +1 additional length credit for
 each digit. Add <code>dcredit=-1</code> after pam_cracklib.so to require use of
 a digit in passwords.</td>
 <td>SLES-12-010170</td>
+<td>cracklib_accounts_password_pam_dcredit</td>
 </tr>
 <tr>
-<td>SLES-12-010180</td>
+<td>V-217120</td>
 <td>1619</td>
 <td>medium</td>
 <td>The SUSE operating system must enforce passwords that contain at least one special character.</td>
@@ -585,9 +782,10 @@ additional length credit for each special character.
 Make sure the <code>ocredit</code> parameter for the pam_cracklib module is
 set to less than or equal to <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_ocredit"></xccdf-1.1:sub></code>. For example, <code>ocredit=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_ocredit"></xccdf-1.1:sub></code>.</td>
 <td>SLES-12-010180</td>
+<td>cracklib_accounts_password_pam_ocredit</td>
 </tr>
 <tr>
-<td>SLES-12-010190</td>
+<td>V-217121</td>
 <td>195</td>
 <td>medium</td>
 <td>The SUSE operating system must require the change of at least eight (8) of the total number of characters when passwords are changed.</td>
@@ -613,9 +811,10 @@ of the like characters must be different.
 Make sure the <code>difok</code> parameter for the pam_cracklib module is
 configured to greater than or equal to <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_difok"></xccdf-1.1:sub></code>.</td>
 <td>SLES-12-010190</td>
+<td>cracklib_accounts_password_pam_difok</td>
 </tr>
 <tr>
-<td>SLES-12-010210</td>
+<td>V-217122</td>
 <td>803</td>
 <td>medium</td>
 <td>The SUSE operating system must employ FIPS 140-2 approved cryptographic hashing algorithm for system authentication (login.defs).</td>
@@ -633,9 +832,10 @@ the system will use SHA-512 as the hashing algorithm:
 <pre>ENCRYPT_METHOD SHA512</pre>
 </td>
 <td>SLES-12-010210</td>
+<td>set_password_hashing_algorithm_logindefs</td>
 </tr>
 <tr>
-<td>SLES-12-010220</td>
+<td>V-217123</td>
 <td>196</td>
 <td>medium</td>
 <td>The SUSE operating system must employ FIPS 140-2-approved cryptographic hashing algorithms for all stored passwords.</td>
@@ -668,9 +868,10 @@ available for logon and are not evaluated.
 If any interactive user password hash does not begin with <code>$6</code>,
 this is a finding.</td>
 <td>SLES-12-010220</td>
+<td>accounts_password_all_shadowed_sha512</td>
 </tr>
 <tr>
-<td>SLES-12-010230</td>
+<td>V-217124</td>
 <td>803</td>
 <td>medium</td>
 <td>The SUSE operating system must configure the Linux Pluggable Authentication Modules (PAM) to only store encrypted representations of passwords.</td>
@@ -713,9 +914,10 @@ This will help ensure when local users change their passwords, hashes for
 the new passwords will be generated using the SHA-512 algorithm. This is
 the default.</td>
 <td>SLES-12-010230</td>
+<td>set_password_hashing_algorithm_systemauth</td>
 </tr>
 <tr>
-<td>SLES-12-010231</td>
+<td>V-217125</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system must not be configured to allow blank or null passwords.</td>
@@ -744,9 +946,10 @@ container. Having user with empty password within a container is not
 considered a risk, because it should not be possible to directly login into
 a container anyway.</td>
 <td>SLES-12-010231</td>
+<td>no_empty_passwords</td>
 </tr>
 <tr>
-<td>SLES-12-010240</td>
+<td>V-217126</td>
 <td>803</td>
 <td>medium</td>
 <td>The SUSE operating system must employ FIPS 140-2-approved cryptographic hashing algorithms for all stored passwords.</td>
@@ -770,9 +973,10 @@ SHA_CRYPT_MAX_ROUNDS 5000</pre>
 Notice that if neither are set, they already have the default value of 5000.
 If either is set, they must have the minimum value of 5000.</td>
 <td>SLES-12-010240</td>
+<td>set_password_hashing_min_rounds_logindefs</td>
 </tr>
 <tr>
-<td>SLES-12-010250</td>
+<td>V-217127</td>
 <td>205</td>
 <td>medium</td>
 <td>The SUSE operating system must employ passwords with a minimum of 15 characters.</td>
@@ -789,12 +993,13 @@ Your output should contain minlen=
 minimum characters required in a password. Add <code>minlen=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_minlen"></xccdf-1.1:sub></code>
  to set minimum password length requirements.</td>
 <td>SLES-12-010250</td>
+<td>cracklib_accounts_password_pam_minlen</td>
 </tr>
 <tr>
-<td>SLES-12-010260</td>
+<td>V-217128</td>
 <td>198</td>
 <td>medium</td>
-<td>The SUSE operating system must be configured to create or update passwords with a minimum lifetime of 24 hours (1 day).</td>
+<td>The SUSE operating system must be configured to create or update passwords with a minimum lifetime of 24 hours (one day).</td>
 <td>Enforcing a minimum password lifetime helps to prevent repeated password
 changes to defeat the password reuse or history enforcement requirement. If
 users are allowed to immediately and continually change their password, the
@@ -813,12 +1018,13 @@ lifetime by running the following command:
 <pre>$ sudo chage -m 1 <i>USER</i></pre>
 </td>
 <td>SLES-12-010260</td>
+<td>accounts_password_set_min_life_existing</td>
 </tr>
 <tr>
-<td>SLES-12-010270</td>
+<td>V-217129</td>
 <td>198</td>
 <td>medium</td>
-<td>The SUSE operating system must employ user passwords with a minimum lifetime of 24 hours (1 day).</td>
+<td>The SUSE operating system must employ user passwords with a minimum lifetime of 24 hours (one day).</td>
 <td>Enforcing a minimum password lifetime helps to prevent repeated password
 changes to defeat the password reuse or history enforcement requirement. If
 users are allowed to immediately and continually change their password,
@@ -839,9 +1045,10 @@ A value of 1 day is considered sufficient for many
 environments. The DoD requirement is 1.
 The profile requirement is <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_minimum_age_login_defs"></xccdf-1.1:sub></code>.</td>
 <td>SLES-12-010270</td>
+<td>accounts_minimum_age_login_defs</td>
 </tr>
 <tr>
-<td>SLES-12-010280</td>
+<td>V-217130</td>
 <td>199</td>
 <td>medium</td>
 <td>The SUSE operating system must be configured to create or update passwords with a maximum lifetime of 60 days.</td>
@@ -868,9 +1075,10 @@ A value of 180 days is sufficient for many environments.
 The DoD requirement is 60.
 The profile requirement is <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_maximum_age_login_defs"></xccdf-1.1:sub></code>.</td>
 <td>SLES-12-010280</td>
+<td>accounts_maximum_age_login_defs</td>
 </tr>
 <tr>
-<td>SLES-12-010290</td>
+<td>V-217131</td>
 <td>199</td>
 <td>medium</td>
 <td>The SUSE operating system must employ user passwords with a maximum lifetime of 60 days.</td>
@@ -891,9 +1099,10 @@ restriction by running the following command:
 <pre>$ sudo chage -M 60 <i>USER</i></pre>
 </td>
 <td>SLES-12-010290</td>
+<td>accounts_password_set_max_life_existing</td>
 </tr>
 <tr>
-<td>SLES-12-010300</td>
+<td>V-217132</td>
 <td>200</td>
 <td>medium</td>
 <td>The SUSE operating system must employ a password history file.</td>
@@ -921,9 +1130,10 @@ To properly set the group owner of <code>/etc/security/opasswd</code>, run the c
 To properly set the permissions of <code>/etc/security/opasswd</code>, run the command: <pre>$ sudo chmod 0600 /etc/security/opasswd</pre>
 </td>
 <td>SLES-12-010300</td>
+<td>file_etc_security_opasswd</td>
 </tr>
 <tr>
-<td>SLES-12-010310</td>
+<td>V-217133</td>
 <td>200</td>
 <td>medium</td>
 <td>The SUSE operating system must not allow passwords to be reused for a minimum of five (5) generations.</td>
@@ -949,9 +1159,10 @@ for the <code>remember</code> parameter is <xccdf-1.1:sub xmlns:xccdf-1.1="http:
 <pre>password requisite pam_pwhistory.so <i>...existing_options...</i> remember=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_remember"></xccdf-1.1:sub> use_authtok</pre>
 The DoD STIG requirement is 5 passwords.</td>
 <td>SLES-12-010310</td>
+<td>accounts_password_pam_pwhistory_remember</td>
 </tr>
 <tr>
-<td>SLES-12-010320</td>
+<td>V-217134</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system must prevent the use of dictionary words for passwords.</td>
@@ -973,9 +1184,10 @@ number of times to prompt the user for the password before returning
 with error. Make sure it is configured with a value that is no more than
 <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub>. For example, <code>retry=1</code>.</td>
 <td>SLES-12-010320</td>
+<td>cracklib_accounts_password_pam_retry</td>
 </tr>
 <tr>
-<td>SLES-12-010330</td>
+<td>V-217135</td>
 <td>1682</td>
 <td>medium</td>
 <td>The SUSE operating system must never automatically remove or disable emergency administrator accounts.</td>
@@ -1016,9 +1228,10 @@ Password expires:never</pre>
 
 If <code>Password expires</code> or <code>Account expires</code> is set to anything other than <code>never</code>, this is a finding.</td>
 <td>SLES-12-010330</td>
+<td>account_emergency_admin</td>
 </tr>
 <tr>
-<td>SLES-12-010340</td>
+<td>V-217136</td>
 <td>795</td>
 <td>medium</td>
 <td>The SUSE operating system must disable account identifiers (individuals, groups, roles, and devices) after 35 days of inactivity after password expiration.</td>
@@ -1045,9 +1258,10 @@ days plus <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf
 elapse until the account would be automatically disabled. See the
 <code>useradd</code> man page for more information.</td>
 <td>SLES-12-010340</td>
+<td>account_disable_post_pw_expiration</td>
 </tr>
 <tr>
-<td>SLES-12-010360</td>
+<td>V-217137</td>
 <td>16</td>
 <td>medium</td>
 <td>The SUSE operating system must provision temporary accounts with an expiration date for 72 hours.</td>
@@ -1076,16 +1290,17 @@ account. For U.S. Government systems, the operating system must be
 configured to automatically terminate these types of accounts after a
 period of 72 hours.</td>
 <td>SLES-12-010360</td>
+<td>account_temp_expire_date</td>
 </tr>
 <tr>
-<td>SLES-12-010370</td>
+<td>V-217138</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system must enforce a delay of at least four seconds between logon prompts following a failed logon attempt.</td>
 <td>Limiting the number of logon attempts over a certain time interval reduces
 the chances that an unauthorized user may gain access to an account.</td>
-<td>Verify the SUSE operating system enforces a minimum delay betweeen logon
-prompts following a failed logon attempt.
+<td>Verify that the SUSE Linux Enterprise 12 operating system enforces a minimum delay betweeen
+logon prompts following a failed logon attempt.
 
 # grep pam_faildelay /etc/pam.d/common-auth
 auth required pam_faildelay.so delay=
@@ -1103,33 +1318,36 @@ is at least <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1
 <pre>auth required pam_faildelay.so delay=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_delay"></xccdf-1.1:sub></pre>
 </td>
 <td>SLES-12-010370</td>
+<td>accounts_passwords_pam_faildelay_delay</td>
 </tr>
 <tr>
-<td>SLES-12-010380</td>
+<td>V-217139</td>
 <td>366</td>
 <td>high</td>
 <td>The SUSE operating system must not allow unattended or automatic logon via the graphical user interface.</td>
 <td>Failure to restrict system access to authenticated users negatively impacts operating
 system security.</td>
-<td>To verify that automatic logins are disabled, run the following command:
-$ grep -Pzoi "^\[daemon]\\nautomaticlogin.*" /etc/gdm/custom.conf
+<td>To verify that automatic or unattended logins are disabled, run the following command:
+grep -i ^DISPLAYMANAGER_AUTOLOGIN /etc/sysconfig/displaymanager
 The output should show the following:
-[daemon]
-AutomaticLoginEnable=false
-      Is it the case that GDM allows users to automatically login?
+DISPLAYMANAGER_AUTOLOGIN=""
+     DISPLAYMANAGER_PASSWORD_LESS_LOGIN="no"
+      Is it the case that GDM allows users to automatically login or unattended login?
       </td>
 <td>The GNOME Display Manager (GDM) can allow users to automatically login without
-user interaction or credentials. User should always be required to authenticate themselves
+user interaction or credentials or unattended login. User should always be required to authenticate themselves
 to the system that they are authorized to use. To disable user ability to automatically
-login to the system, set the <code>AutomaticLoginEnable</code> to <code>false</code> in the
-<code>[daemon]</code> section in <code>/etc/gdm/custom.conf</code>. For example:
-<pre>[daemon]
-AutomaticLoginEnable=false</pre>
+login to the system, set the <code>DISPLAYMANAGER_AUTOLOGIN=""</code>
+or <code>DISPLAYMANAGER_PASSWORD_LESS_LOGIN="no"</code> in the
+<code>/etc/sysconfig/displaymanager</code>. For example:
+<pre>DISPLAYMANAGER_AUTOLOGIN=""
+DISPLAYMANAGER_PASSWORD_LESS_LOGIN="no"</pre>
 </td>
 <td>SLES-12-010380</td>
+<td>gnome_gdm_disable_unattended_automatic_login</td>
 </tr>
 <tr>
-<td>SLES-12-010390</td>
+<td>V-217140</td>
 <td>366</td>
 <td>low</td>
 <td>The SUSE operating system must display the date and time of the last successful account logon upon logon.</td>
@@ -1152,9 +1370,10 @@ settings in
 <pre>session     required pam_lastlog.so showfailed</pre>
 And make sure that the <code>silent</code> option is not set.</td>
 <td>SLES-12-010390</td>
+<td>display_login_attempts</td>
 </tr>
 <tr>
-<td>SLES-12-010400</td>
+<td>V-217141</td>
 <td>366</td>
 <td>high</td>
 <td>There must be no .shosts files on the SUSE operating system.</td>
@@ -1176,9 +1395,10 @@ to delete them from any location:
 <pre>$ sudo find / -name '.shosts' -type f -delete</pre>
 </td>
 <td>SLES-12-010400</td>
+<td>no_user_host_based_files</td>
 </tr>
 <tr>
-<td>SLES-12-010410</td>
+<td>V-217142</td>
 <td>366</td>
 <td>high</td>
 <td>There must be no shosts.equiv files on the SUSE operating system.</td>
@@ -1200,9 +1420,32 @@ location:
 <pre>$ sudo rm /[path]/[to]/[file]/shosts.equiv</pre>
 </td>
 <td>SLES-12-010410</td>
+<td>no_host_based_files</td>
 </tr>
 <tr>
-<td>SLES-12-010430</td>
+<td>V-217143</td>
+<td>2450</td>
+<td>medium</td>
+<td>FIPS 140-2 mode must be enabled on the SUSE operating system.</td>
+<td>Use of weak or untested encryption algorithms undermines the purposes of utilizing encryption to
+protect data. The operating system must implement cryptographic modules adhering to the higher
+standards approved by the federal government since this provides assurance they have been tested
+and validated.</td>
+<td>To verify /proc/sys/crypto/fips_enabled exists, run the following command:
+cat /proc/sys/crypto/fips_enabled
+The output should be:
+1
+      Is it the case that the command 'cat /proc/sys/crypto/fips_enabled' returns nothing or '0' or the file does not exist?
+      </td>
+<td>On a system where FIPS 140-2 mode is enabled, <code>/proc/sys/crypto/fips_enabled</code> must exist.
+To verify FIPS mode, run the following command:
+<pre>cat /proc/sys/crypto/fips_enabled</pre>
+</td>
+<td>SLES-12-010420</td>
+<td>is_fips_mode_enabled</td>
+</tr>
+<tr>
+<td>V-217144</td>
 <td>213</td>
 <td>medium</td>
 <td>SUSE operating systems with a basic input/output system (BIOS) must require authentication upon booting into single-user and maintenance modes.</td>
@@ -1252,9 +1495,10 @@ update the
 <pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
 </td>
 <td>SLES-12-010430</td>
+<td>grub2_password</td>
 </tr>
 <tr>
-<td>SLES-12-010440</td>
+<td>V-217145</td>
 <td>213</td>
 <td>medium</td>
 <td>SUSE operating systems with Unified Extensible Firmware Interface (UEFI) implemented must require authentication upon booting into single-user mode and maintenance.</td>
@@ -1306,9 +1550,10 @@ update the
 <pre>grub2-mkconfig -o /boot/efi/EFI/sles/grub.cfg</pre>
 </td>
 <td>SLES-12-010440</td>
+<td>grub2_uefi_password</td>
 </tr>
 <tr>
-<td>SLES-12-010450</td>
+<td>V-217146</td>
 <td>2475</td>
 <td>medium</td>
 <td>All SUSE operating system persistent disk partitions must implement cryptographic mechanisms to prevent unauthorized disclosure or modification of all information that requires at rest protection.</td>
@@ -1345,9 +1590,10 @@ the SUSE Linux Enterprise 12 Documentation web site:<br>
     <a href="https://www.suse.com/documentation/sled-12/book_security/data/sec_security_cryptofs_y2.html">https://www.suse.com/documentation/sled-12/book_security/data/sec_security_cryptofs_y2.html</a>
 </td>
 <td>SLES-12-010450</td>
+<td>encrypt_partitions</td>
 </tr>
 <tr>
-<td>SLES-12-010460</td>
+<td>V-217147</td>
 <td>1090</td>
 <td>medium</td>
 <td>The sticky bit must be set on all SUSE operating system world-writable directories.</td>
@@ -1379,9 +1625,10 @@ following command:
 <pre>$ sudo chmod +t <i>DIR</i></pre>
 </td>
 <td>SLES-12-010460</td>
+<td>dir_perms_world_writable_sticky_bits</td>
 </tr>
 <tr>
-<td>SLES-12-010500</td>
+<td>V-217148</td>
 <td>1744</td>
 <td>medium</td>
 <td>Advanced Intrusion Detection Environment (AIDE) must verify the baseline SUSE operating system configuration at least weekly.</td>
@@ -1394,9 +1641,10 @@ following command:
 $ sudo zypper install aide</pre>
 </td>
 <td>SLES-12-010500</td>
+<td>package_aide_installed</td>
 </tr>
 <tr>
-<td>SLES-12-010510</td>
+<td>V-217149</td>
 <td>2702</td>
 <td>medium</td>
 <td>The SUSE operating system must notify the System Administrator (SA) when AIDE discovers anomalies in the operation of any security functions.</td>
@@ -1414,6 +1662,8 @@ monitoring system trap when there is an unauthorized modification of a configura
 $ grep aide /etc/crontab
 The output should return something similar to the following:
 05 4 * * * root /usr/sbin/aide --check | /bin/mail -s "$(hostname) - AIDE Integrity Check" root@localhost
+The email address that the notifications are sent to can be changed by overriding
+.
       Is it the case that AIDE has not been configured or has not been configured to notify personnel of scan details?
       </td>
 <td>AIDE should notify appropriate personnel of the details of a scan after the scan has been run.
@@ -1424,9 +1674,10 @@ Otherwise, add the following line to <code>/etc/crontab</code>:
 <pre>05 4 * * * root /usr/sbin/aide --check | /bin/mail -s "$(hostname) - AIDE Integrity Check" root@localhost</pre>
 AIDE can be executed periodically through other means; this is merely one example.</td>
 <td>SLES-12-010510</td>
+<td>aide_scan_notification</td>
 </tr>
 <tr>
-<td>SLES-12-010520</td>
+<td>V-217150</td>
 <td>366</td>
 <td>low</td>
 <td>The SUSE operating system file integrity tool must be configured to verify Access Control Lists (ACLs).</td>
@@ -1449,9 +1700,10 @@ The remediation provided with this rule adds <code>acl</code> to all rule sets a
 <code>/etc/aide.conf</code>
 </td>
 <td>SLES-12-010520</td>
+<td>aide_verify_acls</td>
 </tr>
 <tr>
-<td>SLES-12-010530</td>
+<td>V-217151</td>
 <td>366</td>
 <td>low</td>
 <td>The SUSE operating system file integrity tool must be configured to verify extended attributes.</td>
@@ -1474,9 +1726,10 @@ The remediation provided with this rule adds <code>xattrs</code> to all rule set
 <code>/etc/aide.conf</code>
 </td>
 <td>SLES-12-010530</td>
+<td>aide_verify_ext_attributes</td>
 </tr>
 <tr>
-<td>SLES-12-010540</td>
+<td>V-217152</td>
 <td>1496</td>
 <td>medium</td>
 <td>The SUSE operating system file integrity tool must be configured to protect the integrity of the audit tools.</td>
@@ -1518,11 +1771,12 @@ all lines listed above will be returned from the command.
 If one or more lines are missing, this is a finding.
       Is it the case that integrity checks of the audit tools are missing or incomplete?
       </td>
-<td>The SUSE operating system file integrity tool must be configured to protect the integrity of the audit tools.</td>
+<td>The operating system file integrity tool must be configured to protect the integrity of the audit tools.</td>
 <td>SLES-12-010540</td>
+<td>aide_check_audit_tools</td>
 </tr>
 <tr>
-<td>SLES-12-010550</td>
+<td>V-217153</td>
 <td>1749</td>
 <td>medium</td>
 <td>The SUSE operating system tool zypper must have gpgcheck enabled.</td>
@@ -1557,9 +1811,10 @@ the <code>[main]</code> section:
 <pre>gpgcheck=1</pre>
 </td>
 <td>SLES-12-010550</td>
+<td>ensure_gpgcheck_globally_activated</td>
 </tr>
 <tr>
-<td>SLES-12-010570</td>
+<td>V-217154</td>
 <td>2617</td>
 <td>medium</td>
 <td>The SUSE operating system must remove all outdated software components after updated versions have been installed.</td>
@@ -1583,9 +1838,10 @@ previous software components after updating, set the <code>solver.upgradeRemoveD
 
 to <code>1</code> in <code>/etc/zypp/zypp.conf</code>.</td>
 <td>SLES-12-010570</td>
+<td>clean_components_post_updating</td>
 </tr>
 <tr>
-<td>SLES-12-010580</td>
+<td>V-217155</td>
 <td>1958</td>
 <td>medium</td>
 <td>The SUSE operating system must disable the USB mass storage kernel module.</td>
@@ -1609,9 +1865,10 @@ This will prevent the <code>modprobe</code> program from loading the <code>usb-s
 module, but will not prevent an administrator (or another program) from using the
 <code>insmod</code> program to load the module manually.</td>
 <td>SLES-12-010580</td>
+<td>kernel_module_usb-storage_disabled</td>
 </tr>
 <tr>
-<td>SLES-12-010590</td>
+<td>V-217156</td>
 <td>1958</td>
 <td>medium</td>
 <td>The SUSE operating system must disable the file system automounter unless required.</td>
@@ -1657,54 +1914,67 @@ The <code>autofs</code> service can be disabled with the following command:
 <pre>$ sudo systemctl mask --now autofs.service</pre>
 </td>
 <td>SLES-12-010590</td>
+<td>service_autofs_disabled</td>
 </tr>
 <tr>
-<td>SLES-12-010599</td>
-<td>1233</td>
+<td>V-222385</td>
+<td></td>
 <td>medium</td>
 <td>The SUSE operating system must have a host-based intrusion detection tool installed.</td>
-<td>Without a host-based intrusion detection tool, there is no system-level defense
-when an intruder gains access to a system or network. Additionally, a host-based
-intrusion prevention tool can provide methods to immediately lock out detected
-intrusion attempts.</td>
-<td>To verify that McAfee HIPS is installed, run the following command(s):
-$ rpm -q MFEhiplsm
-      Is it the case that the HBSS HIPS module is not installed?
-      </td>
-<td>Install the McAfee Host Intrusion Prevention System (HIPS) Module if it is absolutely
-necessary. If SELinux is enabled, do not install or enable this module.</td>
+<td></td>
+<td></td>
+<td></td>
 <td>SLES-12-010599</td>
+<td>Missing Rule</td>
 </tr>
 <tr>
-<td>SLES-12-010610</td>
+<td>V-217158</td>
+<td>2235</td>
+<td>medium</td>
+<td>The SUSE operating system Apparmor tool must be configured to control whitelisted applications and user home directory access control.</td>
+<td>Using a whitelist provides a configuration management method for allowing
+the execution of only authorized software. Using only authorized software
+decreases risk by limiting the number of potential vulnerabilities.<br><br>
+
+The organization must identify authorized software programs and permit
+execution of authorized software by adding each authorized program to the
+"pam_apparmor" exception policy. The process used to identify software
+programs that are authorized to execute on organizational information
+systems is commonly referred to as whitelisting.<br><br>
+
+Verification of whitelisted software occurs prior to execution or at system
+startup.<br><br>
+
+Users' home directories/folders may contain information of a sensitive
+nature. Nonprivileged users should coordinate any sharing of information
+with a System Administrator (SA) through shared resources.<br><br>
+
+Apparmor can confine users to their home directory, not allowing them to
+make any changes outside of their own home directories. Confining users to
+their home directory will minimize the risk of sharing information.</td>
+<td>
+
+Run the following command to determine the current status of the
+apparmor service:
+$ systemctl is-active apparmor
+If the service is running, it should return the following: active
+      Is it the case that it is not?
+      </td>
+<td>Verify that the Apparmor tool is configured to
+control whitelisted applications and user home directory access
+control.<br><br>
+
+The <code>apparmor</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable apparmor.service</pre>
+</td>
+<td>SLES-12-010600</td>
+<td>apparmor_configured</td>
+</tr>
+<tr>
+<td>V-217159</td>
 <td>366</td>
 <td>high</td>
 <td>The SUSE operating system must disable the x86 Ctrl-Alt-Delete key sequence.</td>
-<td>Even though the communications channel may be encrypted, an additional layer of
-security is gained by extending the policy of not logging directly on as root.
-In addition, logging in with a user-specific account provides individual
-accountability of actions performed on the system and also helps to minimize
-direct attack attempts on root's password.</td>
-<td>To determine how the SSH daemon's PermitRootLogin option is set, run the following command:
-$ sudo grep -i PermitRootLogin /etc/ssh/sshd_config
-
-If a line indicating no is returned, then the required value is set.
-
-      Is it the case that the required value is not set?
-      </td>
-<td>The root user should never be allowed to login to a
-system directly over a network.
-To disable root login via SSH, add or correct the following line
-in <code>/etc/ssh/sshd_config</code>:
-<pre>PermitRootLogin no</pre>
-</td>
-<td>SLES-12-010610</td>
-</tr>
-<tr>
-<td>SLES-12-010611</td>
-<td>366</td>
-<td>high</td>
-<td>The SUSE operating system must disable the x86 Ctrl-Alt-Delete key sequence for Graphical User Interfaces.</td>
 <td>A locally logged-in user who presses Ctrl-Alt-Del, when at the console,
 can reboot the system. If accidentally pressed, as could happen in
 the case of mixed OS environment, this can create the risk of short-term
@@ -1732,10 +2002,22 @@ or
 <br><br>
 Do not simply delete the <code>/usr/lib/systemd/system/ctrl-alt-del.service</code> file,
 as this file may be restored during future system updates.</td>
-<td>SLES-12-010611</td>
+<td>SLES-12-010610</td>
+<td>disable_ctrlaltdel_reboot</td>
 </tr>
 <tr>
-<td>SLES-12-010620</td>
+<td>V-217160</td>
+<td></td>
+<td>high</td>
+<td>The SUSE operating system must disable the x86 Ctrl-Alt-Delete key sequence for Graphical User Interfaces.</td>
+<td></td>
+<td></td>
+<td></td>
+<td>SLES-12-010611</td>
+<td>Missing Rule</td>
+</tr>
+<tr>
+<td>V-217161</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system default permissions must be defined in such a way that all authenticated users can only read and modify their own files.</td>
@@ -1755,9 +2037,10 @@ add or correct the <code>UMASK</code> setting in <code>/etc/login.defs</code> to
 <pre>UMASK <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_user_umask"></xccdf-1.1:sub></pre>
 </td>
 <td>SLES-12-010620</td>
+<td>accounts_umask_etc_login_defs</td>
 </tr>
 <tr>
-<td>SLES-12-010630</td>
+<td>V-217162</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system must not have unnecessary accounts.</td>
@@ -1785,26 +2068,59 @@ To remove unauthorized system accounts, use the following command:
 <pre>$ sudo userdel <i>unauthorized_user</i></pre>
 </td>
 <td>SLES-12-010630</td>
+<td>accounts_authorized_local_users</td>
 </tr>
 <tr>
-<td>SLES-12-010640</td>
+<td>V-237606</td>
+<td>366</td>
+<td>medium</td>
+<td>The SUSE operating system must not have unnecessary account capabilities.</td>
+<td>Ensuring shells are not given to system accounts upon login makes it more
+difficult for attackers to make use of system accounts.</td>
+<td>To obtain a listing of all users, their UIDs, and their shells, run the
+command: $ awk -F: '{print $1 ":" $3 ":" $7}' /etc/passwd Identify
+the system accounts from this listing. These will primarily be the accounts
+with UID numbers less than UID_MIN, other than root. Value of the UID_MIN
+directive is set in /etc/login.defs configuration file. In the default
+configuration UID_MIN is set to 1000.
+      Is it the case that any system account (other than root) has a login shell?
+      </td>
+<td>Some accounts are not associated with a human user of the system, and exist to
+perform some administrative function. Should an attacker be able to log into
+these accounts, they should not be granted access to a shell.
+<br><br>
+The login shell for each local account is stored in the last field of each line
+in <code>/etc/passwd</code>. System accounts are those user accounts with a user ID
+less than UID_MIN, where value of UID_MIN directive is set in
+/etc/login.defs configuration file. In the default configuration UID_MIN is set
+to 1000, thus system accounts are those user accounts with a user ID less than
+1000. The user ID is stored in the third field. If any system account
+<i>SYSACCT</i> (other than root) has a login shell, disable it with the
+command: <pre>$ sudo usermod -s /sbin/nologin <i>SYSACCT</i></pre>
+</td>
+<td>SLES-12-010631</td>
+<td>no_shelllogin_for_systemaccounts</td>
+</tr>
+<tr>
+<td>V-217163</td>
 <td>764</td>
 <td>medium</td>
 <td>The SUSE operating system must not have duplicate User IDs (UIDs) for interactive users.</td>
 <td>To assure accountability and prevent unauthenticated access, interactive users must be identified and authenticated to prevent potential misuse and compromise of the system.</td>
 <td>Run the following command to check for duplicate account names:
-Check that the SUSE operating system contains no duplicate UIDs for interactive users by running the following command:
+Check that the operating system contains no duplicate UIDs for interactive users by running the following command:
 # awk -F ":" 'list[$3]++{print $1, $3}' /etc/passwd
 If output is produced, this is a finding.
-Configure the SUSE operating system to contain no duplicate UIDs for interactive users.
+Configure the operating system to contain no duplicate UIDs for interactive users.
 Edit the file "/etc/passwd" and provide each interactive user account that has a duplicate UID with a unique UID.
       Is it the case that a line is returned?
       </td>
 <td>Change user IDs (UIDs), or delete accounts, so each has a unique name.</td>
 <td>SLES-12-010640</td>
+<td>account_unique_id</td>
 </tr>
 <tr>
-<td>SLES-12-010650</td>
+<td>V-217164</td>
 <td>366</td>
 <td>high</td>
 <td>The SUSE operating system root account must be the only account having unrestricted access to the system.</td>
@@ -1834,9 +2150,10 @@ should be changed to one greater than "0" but less than "1000."
 Otherwise assign a UID greater than "1000" that has not already been
 assigned.</td>
 <td>SLES-12-010650</td>
+<td>accounts_no_uid_except_zero</td>
 </tr>
 <tr>
-<td>SLES-12-010670</td>
+<td>V-217166</td>
 <td>2007</td>
 <td>medium</td>
 <td>If Network Security Services (NSS) is being used by the SUSE operating system it must prohibit the use of cached authentications after one day.</td>
@@ -1859,9 +2176,10 @@ memcache_timeout = <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xc
 </pre>
 </td>
 <td>SLES-12-010670</td>
+<td>sssd_memcache_timeout</td>
 </tr>
 <tr>
-<td>SLES-12-010680</td>
+<td>V-217167</td>
 <td>2007</td>
 <td>medium</td>
 <td>The SUSE operating system must configure the Linux Pluggable Authentication Modules (PAM) to prohibit the use of cached offline authentications after one day.</td>
@@ -1882,9 +2200,10 @@ offline_credentials_expiration = 1
 </pre>
 </td>
 <td>SLES-12-010680</td>
+<td>sssd_offline_cred_expiration</td>
 </tr>
 <tr>
-<td>SLES-12-010690</td>
+<td>V-217168</td>
 <td>2165</td>
 <td>medium</td>
 <td>All SUSE operating system files and directories must have a valid owner.</td>
@@ -1916,9 +2235,10 @@ filesystems the following command can be run manually for each partition:
 <pre>$ sudo find PARTITION -xdev -nouser</pre>
 </td>
 <td>SLES-12-010690</td>
+<td>no_files_unowned_by_user</td>
 </tr>
 <tr>
-<td>SLES-12-010700</td>
+<td>V-217169</td>
 <td>2165</td>
 <td>medium</td>
 <td>All SUSE operating system files and directories must have a valid group owner.</td>
@@ -1949,9 +2269,10 @@ filesystems the following command can be run manually for each partition:
 <pre>$ sudo find PARTITION -xdev -nogroup</pre>
 </td>
 <td>SLES-12-010700</td>
+<td>file_permissions_ungroupowned</td>
 </tr>
 <tr>
-<td>SLES-12-010710</td>
+<td>V-217170</td>
 <td>366</td>
 <td>medium</td>
 <td>All SUSE operating system local interactive users must have a home directory assigned in the /etc/passwd file.</td>
@@ -1967,9 +2288,10 @@ defined.
 <td>Assign home directories to all interactive users that currently do not
 have a home directory assigned.</td>
 <td>SLES-12-010710</td>
+<td>accounts_user_interactive_home_directory_defined</td>
 </tr>
 <tr>
-<td>SLES-12-010720</td>
+<td>V-217171</td>
 <td>366</td>
 <td>medium</td>
 <td>All SUSE operating system local interactive user accounts, upon creation, must be assigned a home directory.</td>
@@ -1989,9 +2311,10 @@ parameter in <code>/etc/login.defs</code> to <code>yes</code> as follows:
 <pre>CREATE_HOME yes</pre>
 </td>
 <td>SLES-12-010720</td>
+<td>accounts_have_homedir_login_defs</td>
 </tr>
 <tr>
-<td>SLES-12-010730</td>
+<td>V-217172</td>
 <td>366</td>
 <td>medium</td>
 <td>All SUSE operating system local interactive user home directories defined in the /etc/passwd file must exist.</td>
@@ -2012,9 +2335,10 @@ home directory assigned in <code>/etc/passwd</code>:
 <pre>$ sudo mkdir /home/<i>USER</i></pre>
 </td>
 <td>SLES-12-010730</td>
+<td>accounts_user_interactive_home_directory_exists</td>
 </tr>
 <tr>
-<td>SLES-12-010740</td>
+<td>V-217173</td>
 <td>366</td>
 <td>medium</td>
 <td>All SUSE operating system local interactive user home directories must have mode 0750 or less permissive.</td>
@@ -2032,9 +2356,10 @@ following command:
 <pre>$ sudo chmod 0750 /home/<i>USER</i></pre>
 </td>
 <td>SLES-12-010740</td>
+<td>file_permissions_home_directories</td>
 </tr>
 <tr>
-<td>SLES-12-010750</td>
+<td>V-217174</td>
 <td>366</td>
 <td>medium</td>
 <td>All SUSE operating system local interactive user home directories must be group-owned by the home directory owners primary group.</td>
@@ -2053,9 +2378,10 @@ interactive users home directory, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i></pre>
 </td>
 <td>SLES-12-010750</td>
+<td>file_groupownership_home_directories</td>
 </tr>
 <tr>
-<td>SLES-12-010760</td>
+<td>V-217175</td>
 <td>366</td>
 <td>medium</td>
 <td>All SUSE operating system local initialization files must have mode 0740 or less permissive.</td>
@@ -2073,9 +2399,10 @@ following command:
 <pre>$ sudo chmod 0740 /home/<i>USER</i>/.<i>INIT_FILE</i></pre>
 </td>
 <td>SLES-12-010760</td>
+<td>file_permission_user_init_files</td>
 </tr>
 <tr>
-<td>SLES-12-010770</td>
+<td>V-217176</td>
 <td>366</td>
 <td>medium</td>
 <td>All SUSE operating system local interactive user initialization files executable search paths must contain only paths that resolve to the users home directory.</td>
@@ -2099,9 +2426,10 @@ Inspect the output for any PATH is references directories outside the home direc
 path statements do not contain statements that will reference a working
 directory other than the users home directory.</td>
 <td>SLES-12-010770</td>
+<td>accounts_user_home_paths_only</td>
 </tr>
 <tr>
-<td>SLES-12-010780</td>
+<td>V-217177</td>
 <td>366</td>
 <td>medium</td>
 <td>All SUSE operating system local initialization files must not execute world-writable programs.</td>
@@ -2121,15 +2449,17 @@ following command:
 <pre>$ sudo chmod 0755 <i>FILE</i></pre>
 </td>
 <td>SLES-12-010780</td>
+<td>accounts_user_dot_no_world_writable_programs</td>
 </tr>
 <tr>
-<td>SLES-12-010790</td>
+<td>V-217178</td>
 <td>366</td>
 <td>medium</td>
 <td>SUSE operating system file systems that contain user home directories must be mounted to prevent files with the setuid and setgid bit set from being executed.</td>
 <td>The presence of SUID and SGID executables should be tightly controlled. Users
 should not be able to execute SUID or SGID binaries from user home directory partitions.</td>
-<td>To verify the nosuid option is configured for the /home mount point, run the following command:
+<td>To verify the nosuid option is configured for the /home mount point,
+    run the following command:
     $ mount | grep '\s/home\s'
     The output should show the corresponding mount point along with the nosuid setting in parentheses.
 
@@ -2142,9 +2472,10 @@ Add the <code>nosuid</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
 <code>/home</code>.</td>
 <td>SLES-12-010790</td>
+<td>mount_option_home_nosuid</td>
 </tr>
 <tr>
-<td>SLES-12-010800</td>
+<td>V-217179</td>
 <td>366</td>
 <td>medium</td>
 <td>SUSE operating system file systems that are used with removable media must be mounted to prevent files with the setuid and setgid bit set from being executed.</td>
@@ -2162,9 +2493,10 @@ Add the <code>nosuid</code> option to the fourth column of
 
     any removable media partitions.</td>
 <td>SLES-12-010800</td>
+<td>mount_option_nosuid_removable_partitions</td>
 </tr>
 <tr>
-<td>SLES-12-010810</td>
+<td>V-217180</td>
 <td>366</td>
 <td>medium</td>
 <td>SUSE operating system file systems that are being imported via Network File System (NFS) must be mounted to prevent files with the setuid and setgid bit set from being executed.</td>
@@ -2180,9 +2512,10 @@ is not applicable if NFS is not implemented.
 <td>Add the <code>nosuid</code> option to the fourth column of <code>/etc/fstab</code> for the line which controls mounting of
 any NFS mounts.</td>
 <td>SLES-12-010810</td>
+<td>mount_option_nosuid_remote_filesystems</td>
 </tr>
 <tr>
-<td>SLES-12-010820</td>
+<td>V-217181</td>
 <td>366</td>
 <td>medium</td>
 <td>SUSE operating system file systems that are being imported via Network File System (NFS) must be mounted to prevent binary files from being executed.</td>
@@ -2199,9 +2532,10 @@ not implemented.
 <td>Add the <code>noexec</code> option to the fourth column of <code>/etc/fstab</code> for the line which controls mounting of
 any NFS mounts.</td>
 <td>SLES-12-010820</td>
+<td>mount_option_noexec_remote_filesystems</td>
 </tr>
 <tr>
-<td>SLES-12-010830</td>
+<td>V-217182</td>
 <td>366</td>
 <td>medium</td>
 <td>All SUSE operating system world-writable directories must be group-owned by root, sys, bin, or an application group.</td>
@@ -2222,9 +2556,10 @@ group owned by a system account, this should be investigated.
 Following this, the files should be deleted or assigned to an
 appropriate group.</td>
 <td>SLES-12-010830</td>
+<td>dir_perms_world_writable_system_owned_group</td>
 </tr>
 <tr>
-<td>SLES-12-010840</td>
+<td>V-217183</td>
 <td>366</td>
 <td>medium</td>
 <td>SUSE operating system kernel core dumps must be disabled unless needed.</td>
@@ -2265,9 +2600,10 @@ The <code>kdump</code> service can be disabled with the following command:
 <pre>$ sudo systemctl mask --now kdump.service</pre>
 </td>
 <td>SLES-12-010840</td>
+<td>service_kdump_disabled</td>
 </tr>
 <tr>
-<td>SLES-12-010850</td>
+<td>V-217184</td>
 <td>366</td>
 <td>low</td>
 <td>A separate file system must be used for SUSE operating system user home directories (such as /home or an equivalent).</td>
@@ -2287,9 +2623,10 @@ for <code>/home</code> at installation time (or migrate it later using LVM). If
 creating a separate partition is not necessary at installation time, and the
 mountpoint can instead be configured later.</td>
 <td>SLES-12-010850</td>
+<td>partition_for_home</td>
 </tr>
 <tr>
-<td>SLES-12-010860</td>
+<td>V-217185</td>
 <td>366</td>
 <td>low</td>
 <td>The SUSE operating system must use a separate file system for /var.</td>
@@ -2309,9 +2646,10 @@ If /var has its own partition or volume group, a line will be returned.
 services to store frequently-changing data. Ensure that <code>/var</code> has its own partition
 or logical volume at installation time, or migrate it using LVM.</td>
 <td>SLES-12-010860</td>
+<td>partition_for_var</td>
 </tr>
 <tr>
-<td>SLES-12-010870</td>
+<td>V-217186</td>
 <td>366</td>
 <td>low</td>
 <td>The SUSE operating system must use a separate file system for the system audit data path.</td>
@@ -2327,72 +2665,477 @@ If /var/log/audit has its own partition or volume group, a line will be returned
 
       Is it the case that no line is returned?
       </td>
-<td>Audit logs are stored in the <code>/var/log/audit</code> directory.  Ensure that it
-has its own partition or logical volume at installation time, or migrate it
-later using LVM. Make absolutely certain that it is large enough to store all
+<td>Audit logs are stored in the <code>/var/log/audit</code> directory.
+
+Ensure that <code>/var/log/audit</code> has its own partition or logical
+volume at installation time, or migrate it using LVM.
+Make absolutely certain that it is large enough to store all
 audit logs that will be created by the auditing daemon.</td>
 <td>SLES-12-010870</td>
+<td>partition_for_var_log_audit</td>
 </tr>
 <tr>
-<td>SLES-12-010880</td>
+<td>V-237607</td>
 <td>1499</td>
 <td>medium</td>
-<td>SUSE operating system commands and libraries must have the proper permissions to protect from unauthorized access.</td>
-<td>If the SUSE operating system were to allow any user to make changes to
-software libraries, those changes might be implemented without undergoing
-the appropriate testing and approvals that are part of a robust change
-management process.
+<td>The SUSE operating system library files must have mode 0755 or less permissive.</td>
+<td>Files from shared library directories are loaded into the address
+space of processes (including privileged ones) or of the kernel itself at
+runtime. Restrictive permissions are necessary to protect the integrity of the system.</td>
+<td>Shared libraries are stored in the following directories:
+/lib
+/lib64
+/usr/lib
+/usr/lib64
 
-This requirement applies to SUSE operating systems with software libraries
-that are accessible and configurable, as in the case of interpreted
-languages. Software libraries also include privileged programs that execute
-with escalated privileges. Only qualified and authorized individuals must
-be allowed to obtain access to information system components to initiate
-changes, including upgrades and modifications.</td>
-<td>Check that all of the audit information files and folders have the correct
-permissions with the following command:
-# sudo chkstat --warn --system
-
-If you get any warnings, set the correct permissions with the following command:
-
-# sudo chkstat --set --system
-      Is it the case that ?
+To find shared libraries that are group-writable or world-writable,
+run the following command for each directory DIR which contains shared libraries:
+$ sudo find -L DIR -perm /022 -type f
+      Is it the case that any of these files are group-writable or world-writable?
       </td>
-<td>Verify that the SUSE operating system prevents unauthorized users from
-accessing system command and library files.
-
-Check that all of the audit information files and folders have the correct
-permissions with the following command:
-<pre># sudo chkstat --warn --system</pre>
-
-Set the correct permissions with the following command:
-
-<pre># sudo chkstat --set --system</pre>
+<td>System-wide shared library files, which are linked to executables
+during process load time or run time, are stored in the following directories
+by default:
+<pre>/lib
+/lib64
+/usr/lib
+/usr/lib64
+</pre>
+Kernel modules, which can be added to the kernel during runtime, are
+stored in <code>/lib/modules</code>. All files in these directories
+should not be group-writable or world-writable. If any file in these
+directories is found to be group-writable or world-writable, correct
+its permission with the following command:
+<pre>$ sudo chmod go-w <i>FILE</i></pre>
 </td>
-<td>SLES-12-010880</td>
+<td>SLES-12-010871</td>
+<td>file_permissions_library_dirs</td>
 </tr>
 <tr>
-<td>SLES-12-010890</td>
+<td>V-237608</td>
+<td>1499</td>
+<td>medium</td>
+<td>The SUSE operating system library directories must have mode 0755 or less permissive.</td>
+<td>If the operating system were to allow any user to make changes to software libraries,
+then those changes might be implemented without undergoing the appropriate testing
+and approvals that are part of a robust change management process.
+
+This requirement applies to operating systems with software libraries that are accessible
+and configurable, as in the case of interpreted languages. Software libraries also include
+privileged programs which execute with escalated privileges. Only qualified and authorized
+individuals must be allowed to obtain access to information system components for purposes
+of initiating changes, including upgrades and modifications.</td>
+<td>Shared libraries are stored in the following directories:
+/lib
+/lib64
+/usr/lib
+/usr/lib64
+
+To find shared libraries that are group-writable or world-writable,
+run the following command for each directory DIR which contains shared libraries:
+$ sudo find -L DIR -perm /022 -type d
+      Is it the case that any of these files are group-writable or world-writable?
+      </td>
+<td>System-wide shared library directories, which contain are linked to executables
+during process load time or run time, are stored in the following directories
+by default:
+<pre>/lib
+/lib64
+/usr/lib
+/usr/lib64
+</pre>
+Kernel modules, which can be added to the kernel during runtime, are
+stored in <code>/lib/modules</code>. All sub-directories in these directories
+should not be group-writable or world-writable. If any file in these
+directories is found to be group-writable or world-writable, correct
+its permission with the following command:
+<pre>$ sudo chmod go-w <i>DIR</i></pre>
+</td>
+<td>SLES-12-010872</td>
+<td>dir_permissions_library_dirs</td>
+</tr>
+<tr>
+<td>V-237609</td>
+<td>1499</td>
+<td>medium</td>
+<td>The SUSE operating system library files must be owned by root.</td>
+<td>Files from shared library directories are loaded into the address
+space of processes (including privileged ones) or of the kernel itself at
+runtime. Proper ownership is necessary to protect the integrity of the system.</td>
+<td>Shared libraries are stored in the following directories:
+/lib
+/lib64
+/usr/lib
+/usr/lib64
+For each of these directories, run the following command to find files not
+owned by root:
+$ sudo find -L $DIR ! -user root -exec chown root {} \;
+      Is it the case that any of these files are not owned by root?
+      </td>
+<td>System-wide shared library files, which are linked to executables
+during process load time or run time, are stored in the following directories
+by default:
+<pre>/lib
+/lib64
+/usr/lib
+/usr/lib64
+</pre>
+Kernel modules, which can be added to the kernel during runtime, are also
+stored in <code>/lib/modules</code>. All files in these directories should be
+owned by the <code>root</code> user. If the directory, or any file in these
+directories, is found to be owned by a user other than root correct its
+ownership with the following command:
+<pre>$ sudo chown root <i>FILE</i></pre>
+</td>
+<td>SLES-12-010873</td>
+<td>file_ownership_library_dirs</td>
+</tr>
+<tr>
+<td>V-237610</td>
+<td>1499</td>
+<td>medium</td>
+<td>The SUSE operating system library directories must be owned by root.</td>
+<td>Files from shared library directories are loaded into the address
+space of processes (including privileged ones) or of the kernel itself at
+runtime. Proper ownership of library directories is necessary to protect
+the integrity of the system.</td>
+<td>Shared libraries are stored in the following directories:
+/lib
+/lib64
+/usr/lib
+/usr/lib64
+For each of these directories, run the following command to find files not
+owned by root:
+$ sudo find -L $DIR ! -user root -type d -exec chown root {} \;
+      Is it the case that any of these directories are not owned by root?
+      </td>
+<td>System-wide shared library files, which are linked to executables
+during process load time or run time, are stored in the following directories
+by default:
+<pre>/lib
+/lib64
+/usr/lib
+/usr/lib64
+</pre>
+Kernel modules, which can be added to the kernel during runtime, are also
+stored in <code>/lib/modules</code>. All files in these directories should be
+owned by the <code>root</code> user. If the  directories, is found to be owned
+by a user other than root correct its
+ownership with the following command:
+<pre>$ sudo chown root <i>DIR</i></pre>
+</td>
+<td>SLES-12-010874</td>
+<td>dir_ownership_library_dirs</td>
+</tr>
+<tr>
+<td>V-237611</td>
+<td>1499</td>
+<td>medium</td>
+<td>The SUSE operating system library files must be group-owned by root.</td>
+<td>If the operating system were to allow any user to make changes to software libraries,
+then those changes might be implemented without undergoing the appropriate testing and
+approvals that are part of a robust change management process.
+
+This requirement applies to operating systems with software libraries that are
+accessible and configurable, as in the case of interpreted languages. Software libraries
+also include privileged programs which execute with escalated privileges. Only qualified
+and authorized individuals must be allowed to obtain access to information system components
+for purposes of initiating changes, including upgrades and modifications.</td>
+<td>System-wide library files are stored in the following directories:
+/lib
+/lib64
+/usr/lib
+/usr/lib64
+
+To find if system-wide library files stored in these directories are not group-owned by
+root run the following command for each directory DIR:
+$ sudo find -L DIR ! -group root -type f 
+      Is it the case that system wide library files are not group owned by root?
+      </td>
+<td>System-wide library files are stored in the following directories
+by default:
+<pre>/lib
+/lib64
+/usr/lib
+/usr/lib64
+</pre>
+All system-wide shared library files should be protected from unauthorised
+access. If any of these files is not owned by root, correct its owner with
+the following command:
+<pre>$ sudo chgrp root <i>FILE</i></pre>
+</td>
+<td>SLES-12-010875</td>
+<td>root_permissions_syslibrary_files</td>
+</tr>
+<tr>
+<td>V-237612</td>
+<td>1499</td>
+<td>medium</td>
+<td>The SUSE operating system library directories must be group-owned by root.</td>
+<td>Files from shared library directories are loaded into the address
+space of processes (including privileged ones) or of the kernel itself at
+runtime. Proper ownership of library directories is necessary to protect
+the integrity of the system.</td>
+<td>Shared libraries are stored in the following directories:
+/lib
+/lib64
+/usr/lib
+/usr/lib64
+For each of these directories, run the following command to find files not
+owned by root:
+$ sudo find -L $DIR ! -user root -type d -exec chgrp root {} \;
+      Is it the case that any of these directories are not group-owned by root?
+      </td>
+<td>System-wide shared library files, which are linked to executables
+during process load time or run time, are stored in the following directories
+by default:
+<pre>/lib
+/lib64
+/usr/lib
+/usr/lib64
+</pre>
+Kernel modules, which can be added to the kernel during runtime, are also
+stored in <code>/lib/modules</code>. All files in these directories should be
+group-owned by the <code>root</code> user. If the  directories, is found to be owned
+by a user other than root correct its
+ownership with the following command:
+<pre>$ sudo chgrp root <i>DIR</i></pre>
+</td>
+<td>SLES-12-010876</td>
+<td>dir_group_ownership_library_dirs</td>
+</tr>
+<tr>
+<td>V-237613</td>
+<td>1499</td>
+<td>medium</td>
+<td>The SUSE operating system must have system commands set to a mode of 0755 or less permissive.</td>
+<td>System binaries are executed by privileged users, as well as system services,
+and restrictive permissions are necessary to ensure execution of these programs
+cannot be co-opted.</td>
+<td>System commands are stored in the following directories by default:
+/bin
+/sbin
+/usr/bin
+/usr/local/bin
+/usr/local/sbin
+/usr/sbin
+To find system commands that have mode 0755 or less permissive,
+run the following command for each directory DIR which contains system executables:
+$ sudo find -L DIR -perm /022 -type f
+      Is it the case that any system commands are found to be group or world writable?
+      </td>
+<td>System commands are stored in the following directories by default:
+<pre>/bin
+/sbin
+/usr/bin
+/usr/sbin
+/usr/local/bin
+/usr/local/sbin</pre>
+All files in these directories should not be group-writable or world-writable.
+If any file <i>FILE</i> in these directories is found
+to be group-writable or world-writable, correct its permission with the
+following command:
+<pre>$ sudo chmod 755 <i>FILE</i></pre>
+</td>
+<td>SLES-12-010877</td>
+<td>file_permissions_system_commands_dirs</td>
+</tr>
+<tr>
+<td>V-237614</td>
+<td>1499</td>
+<td>medium</td>
+<td>The SUSE operating system must have directories that contain system commands set to a mode of 0755 or less permissive.</td>
+<td>System binaries are executed by privileged users, as well as system services,
+and restrictive permissions are necessary to ensure execution of these programs
+cannot be co-opted.</td>
+<td>System executables are stored in the following directories by default:
+/bin
+/sbin
+/usr/bin
+/usr/libexec
+/usr/local/bin
+/usr/local/sbin
+/usr/sbin
+To find system executables that are group-writable or world-writable,
+run the following command for each directory DIR which contains system executables:
+$ sudo find -L DIR -perm /022 -type f
+      Is it the case that any system executables are found to be group or world writable?
+      </td>
+<td>System executables are stored in the following directories by default:
+<pre>/bin
+/sbin
+/usr/bin
+/usr/libexec
+/usr/local/bin
+/usr/local/sbin
+/usr/sbin</pre>
+All files in these directories should not be group-writable or world-writable.
+If any file <i>FILE</i> in these directories is found
+to be group-writable or world-writable, correct its permission with the
+following command:
+<pre>$ sudo chmod go-w <i>FILE</i></pre>
+</td>
+<td>SLES-12-010878</td>
+<td>file_permissions_binary_dirs</td>
+</tr>
+<tr>
+<td>V-237615</td>
+<td></td>
+<td>medium</td>
+<td>The SUSE operating system must have system commands owned by root.</td>
+<td></td>
+<td></td>
+<td></td>
+<td>SLES-12-010879</td>
+<td>Missing Rule</td>
+</tr>
+<tr>
+<td>V-237616</td>
+<td></td>
+<td>medium</td>
+<td>The SUSE operating system must have directories that contain system commands owned by root.</td>
+<td></td>
+<td></td>
+<td></td>
+<td>SLES-12-010881</td>
+<td>Missing Rule</td>
+</tr>
+<tr>
+<td>V-237617</td>
+<td>1499</td>
+<td>medium</td>
+<td>The SUSE operating system must have system commands group-owned by root.</td>
+<td>If the operating system allows any user to make changes to software
+libraries, then those changes might be implemented without undergoing the
+appropriate testing and approvals that are part of a robust change management
+process.
+This requirement applies to operating systems with software libraries
+that are accessible and configurable, as in the case of interpreted languages.
+Software libraries also include privileged programs which execute with
+escalated privileges. Only qualified and authorized individuals must be
+allowed to obtain access to information system components for purposes
+of initiating changes, including upgrades and modifications.</td>
+<td>System commands are stored in the following directories:
+/bin
+/sbin
+/usr/bin
+/usr/sbin
+/usr/local/bin
+/usr/local/sbin
+For each of these directories, run the following command to find files not
+owned by root group:
+$ sudo find -L $DIR ! -group root -type f \;
+      Is it the case that any of these files are not owned by root group?
+      </td>
+<td>System commands files are stored in the following directories by default:
+<pre>/bin
+/sbin
+/usr/bin
+/usr/sbin
+/usr/local/bin
+/usr/local/sbin
+</pre>
+All files in these directories should be owned by the <code>root</code> group.
+If the directory, or any file in these directories, is found to be owned
+by a group other than root correct its ownership with the following command:
+<pre>$ sudo chgrp root <i>FILE</i></pre>
+</td>
+<td>SLES-12-010882</td>
+<td>file_groupownership_system_commands_dirs</td>
+</tr>
+<tr>
+<td>V-237618</td>
+<td>1499</td>
+<td>medium</td>
+<td>The SUSE operating system must have directories that contain system commands group-owned by root.</td>
+<td>If the operating system were to allow any user to make changes to 
+software libraries, then those changes might be implemented without 
+undergoing the appropriate testing and approvals that are part of a 
+robust change management process.
+
+This requirement applies to operating systems with software libraries
+that are accessible and configurable, as in the case of interpreted languages. 
+Software libraries also include privileged programs which execute with escalated 
+privileges. Only qualified and authorized individuals must be allowed to obtain 
+access to information system components for purposes of initiating changes, 
+including upgrades and modifications.</td>
+<td>System commands are stored in the following directories:
+/bin 
+/sbin 
+/usr/bin 
+/usr/sbin 
+/usr/local/bin 
+/usr/local/sbin
+For each of these directories, run the following command to find directories not
+owned by root:
+$ sudo find -L $DIR ! -group root -type d -exec chgrp root {} \;
+      Is it the case that any of these directories are not group owned by root?
+      </td>
+<td>System commands are stored in the following directories:
+by default:
+<pre>/bin 
+/sbin 
+/usr/bin 
+/usr/sbin 
+/usr/local/bin 
+/usr/local/sbin
+</pre>
+All these directories should have <code>root</code> user as a group owner. 
+If any system command directory is not group owned by a user other than root 
+correct its ownership with the following command:
+<pre>$ sudo chgrp root <i>DIR</i></pre>
+</td>
+<td>SLES-12-010883</td>
+<td>dir_system_commands_group_root_owned</td>
+</tr>
+<tr>
+<td>V-217188</td>
 <td>1314</td>
 <td>medium</td>
 <td>The SUSE operating system must prevent unauthorized users from accessing system error messages.</td>
-<td>The <code>/var/log/messages</code> file contains logs of error messages in
-the system and should only be accessed by authorized personnel.</td>
+<td>The <code>/var/log/messages</code> file contains system error messages. Only
+authorized personnel should be aware of errors and the details of the
+errors. Error messages are an indicator of an organization's operational
+state or can identify the SUSE operating system or platform. Additionally,
+Personally Identifiable Information (PII) and operational information must
+not be revealed through error messages to unauthorized personnel or their
+designated representatives.</td>
 <td>To check the permissions of /var/log/messages,
 run the command:
 $ ls -l /var/log/messages
 If properly configured, the output should indicate the following permissions:
 -rw-r-----
-      Is it the case that /var/log/messages has unix mode -rw-r-----?
+
+Check that permissions.local file contains the correct permissions rules with the following command:
+
+# grep -i messages /etc/permissions.local
+
+/var/log/messages root:root 640
+
+If the command does not return any or different output, this is a finding.
+
+Run the following command to correct the permissions after adding the missing entry:
+
+# sudo chkstat --set --system
+      Is it the case that Make sure /var/log/messages is not world-readable?
       </td>
-<td>
+<td>Files containing sensitive informations should be protected by restrictive
+permissions. Most of the time, there is no need that these files need to be read by any non-root user
+
 To properly set the permissions of <code>/var/log/messages</code>, run the command:
 <pre>$ sudo chmod 0640 /var/log/messages</pre>
+
+Check that "permissions.local" file contains the correct permissions rules with the following command:
+
+<pre># grep -i messages /etc/permissions.local
+
+/var/log/messages root:root 640</pre>
 </td>
 <td>SLES-12-010890</td>
+<td>file_permissions_local_var_log_messages</td>
 </tr>
 <tr>
-<td>SLES-12-010910</td>
+<td>V-217189</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system must be configured to not overwrite Pluggable Authentication Modules (PAM) configuration on package changes.</td>
@@ -2412,9 +3155,10 @@ If any results are returned, this is a finding.
 <td>Verify the SUSE operating system is configured to not overwrite Pluggable
 Authentication Modules (PAM) configuration on package changes.</td>
 <td>SLES-12-010910</td>
+<td>pam_disable_automatic_configuration</td>
 </tr>
 <tr>
-<td>SLES-12-020000</td>
+<td>V-217190</td>
 <td>1914</td>
 <td>medium</td>
 <td>The SUSE operating system must have the auditing package installed.</td>
@@ -2424,9 +3168,10 @@ Authentication Modules (PAM) configuration on package changes.</td>
       </td>
 <td>The audit package should be installed.</td>
 <td>SLES-12-020000</td>
+<td>package_audit_installed</td>
 </tr>
 <tr>
-<td>SLES-12-020010</td>
+<td>V-217191</td>
 <td>2884</td>
 <td>medium</td>
 <td>SUSE operating system audit records must contain information to establish what type of events occurred, the source of events, where events occurred, and the outcome of events.</td>
@@ -2454,9 +3199,10 @@ The <code>auditd</code> service can be enabled with the following command:
 <pre>$ sudo systemctl enable auditd.service</pre>
 </td>
 <td>SLES-12-020010</td>
+<td>service_auditd_enabled</td>
 </tr>
 <tr>
-<td>SLES-12-020020</td>
+<td>V-217192</td>
 <td>1849</td>
 <td>medium</td>
 <td>The SUSE operating system must allocate audit record storage capacity to store at least one weeks worth of audit records when audit records are not immediately sent to a central audit record storage facility.</td>
@@ -2508,9 +3254,10 @@ following command:
 /dev/sda2 24G 10.4G 13.6G 43% /var/log/audit</pre>
 </td>
 <td>SLES-12-020020</td>
+<td>auditd_audispd_configure_sufficiently_large_partition</td>
 </tr>
 <tr>
-<td>SLES-12-020030</td>
+<td>V-217193</td>
 <td>1855</td>
 <td>medium</td>
 <td>The SUSE operating system auditd service must notify the System Administrator (SA) and Information System Security Officer (ISSO) immediately when audit storage capacity is 75 percent full.</td>
@@ -2529,9 +3276,10 @@ substituting <i>SIZE_in_MB</i> appropriately:
 Set this value to the appropriate size in Megabytes cause the system to
 notify the user of an issue.</td>
 <td>SLES-12-020030</td>
+<td>auditd_data_retention_space_left</td>
 </tr>
 <tr>
-<td>SLES-12-020040</td>
+<td>V-217194</td>
 <td>139</td>
 <td>medium</td>
 <td>The Information System Security Officer (ISSO) and System Administrator (SA), at a minimum, must be alerted of a SUSE operating system audit processing failure event.</td>
@@ -2550,9 +3298,10 @@ via email for those situations:
 <pre>action_mail_acct = <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_auditd_action_mail_acct"></xccdf-1.1:sub></pre>
 </td>
 <td>SLES-12-020040</td>
+<td>auditd_data_retention_action_mail_acct</td>
 </tr>
 <tr>
-<td>SLES-12-020050</td>
+<td>V-217195</td>
 <td>139</td>
 <td>medium</td>
 <td>The Information System Security Officer (ISSO) and System Administrator (SA), at a minimum, must have mail aliases to be notified of a SUSE operating system audit processing failure.</td>
@@ -2575,9 +3324,10 @@ configure the alias:
 $ sudo newaliases</pre>
 </td>
 <td>SLES-12-020050</td>
+<td>postfix_client_configure_mail_alias</td>
 </tr>
 <tr>
-<td>SLES-12-020060</td>
+<td>V-217196</td>
 <td>140</td>
 <td>medium</td>
 <td>The SUSE operating system audit system must take appropriate action when the audit storage volume is full.</td>
@@ -2603,9 +3353,10 @@ outweighs the need to log all actions, and a different setting should be
 determined. Details regarding all possible values for <i>ACTION</i> are described in the
 <code>auditd.conf</code> man page.</td>
 <td>SLES-12-020060</td>
+<td>auditd_data_disk_full_action</td>
 </tr>
 <tr>
-<td>SLES-12-020070</td>
+<td>V-217197</td>
 <td>1851</td>
 <td>medium</td>
 <td>The audit-audispd-plugins must be installed on the SUSE operating system.</td>
@@ -2615,9 +3366,10 @@ determined. Details regarding all possible values for <i>ACTION</i> are describe
       </td>
 <td>The audit-audispd-plugins package should be installed.</td>
 <td>SLES-12-020070</td>
+<td>package_audit-audispd-plugins_installed</td>
 </tr>
 <tr>
-<td>SLES-12-020080</td>
+<td>V-217198</td>
 <td>1851</td>
 <td>low</td>
 <td>The SUSE operating system audit event multiplexor must be configured to use Kerberos.</td>
@@ -2640,9 +3392,10 @@ and set it with the following line:
 <pre>enable_krb5 = yes</pre>
 </td>
 <td>SLES-12-020080</td>
+<td>auditd_audispd_encrypt_sent_records</td>
 </tr>
 <tr>
-<td>SLES-12-020090</td>
+<td>V-217199</td>
 <td>1851</td>
 <td>low</td>
 <td>Audispd must off-load audit records onto a different system or media from the SUSE operating system being audited.</td>
@@ -2666,9 +3419,10 @@ send audit records to. For example
 <pre>remote_server = <i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_audispd_remote_server"></xccdf-1.1:sub></i></pre>
 </td>
 <td>SLES-12-020090</td>
+<td>auditd_audispd_configure_remote_server</td>
 </tr>
 <tr>
-<td>SLES-12-020100</td>
+<td>V-217200</td>
 <td>1851</td>
 <td>medium</td>
 <td>The audit system must take appropriate action when the network cannot be used to off-load audit records.</td>
@@ -2692,9 +3446,10 @@ outweighs the need to log all actions, and a different setting should be
 determined.
 This profile configures the <i>action</i> to be <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_audispd_network_failure_action"></xccdf-1.1:sub></code>.</td>
 <td>SLES-12-020100</td>
+<td>auditd_audispd_network_failure_action</td>
 </tr>
 <tr>
-<td>SLES-12-020110</td>
+<td>V-217201</td>
 <td>1851</td>
 <td>medium</td>
 <td>Audispd must take appropriate action when the SUSE operating system audit storage is full.</td>
@@ -2720,9 +3475,10 @@ mode for corrective action. Acceptable values also include <code>syslog</code> a
 outweighs the need to log all actions, and a different setting should be
 determined.</td>
 <td>SLES-12-020110</td>
+<td>auditd_audispd_disk_full_action</td>
 </tr>
 <tr>
-<td>SLES-12-020120</td>
+<td>V-217202</td>
 <td>164</td>
 <td>medium</td>
 <td>The SUSE operating system must protect audit rules from unauthorized modification.</td>
@@ -2765,10 +3521,11 @@ Check that "permissions.local" file contains the correct permissions rules with 
 /etc/audit/rules.d/audit.rules root:root 640</pre>
 </td>
 <td>SLES-12-020120</td>
+<td>permissions_local_var_log_audit</td>
 </tr>
 <tr>
-<td>SLES-12-020130</td>
-<td>1495</td>
+<td>V-217203</td>
+<td>1493</td>
 <td>medium</td>
 <td>The SUSE operating system audit tools must have the proper permissions configured to protect against unauthorized access.</td>
 <td>Protecting audit information also includes identifying and protecting the
@@ -2824,12 +3581,13 @@ audit tools needed to successfully view and manipulate audit information
 system activity and records. Audit tools include custom queries and report
 generators.</td>
 <td>SLES-12-020130</td>
+<td>permissions_local_audit_binaries</td>
 </tr>
 <tr>
-<td>SLES-12-020199</td>
+<td>V-217204</td>
 <td>366</td>
 <td>medium</td>
-<td>The SUSE operating system must not disable syscall auditing</td>
+<td>The SUSE operating system must not disable syscall auditing.</td>
 <td>Audit rules for syscalls do not take effect unless this line is removed.</td>
 <td>To check for the offending line, run the following command:
 $ grep task,never /etc/audit/{rules.d,.}/audit.rules
@@ -2846,9 +3604,10 @@ To make sure that syscall auditing works, this line must be removed from
 <pre>-a task,never</pre>
 </td>
 <td>SLES-12-020199</td>
+<td>audit_rules_enable_syscall_auditing</td>
 </tr>
 <tr>
-<td>SLES-12-020200</td>
+<td>V-217205</td>
 <td>2132</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/passwd.</td>
@@ -2880,9 +3639,10 @@ account changes:
 <pre>-w /etc/passwd -p wa -k audit_rules_usergroup_modification</pre>
 </td>
 <td>SLES-12-020200</td>
+<td>audit_rules_usergroup_modification_passwd</td>
 </tr>
 <tr>
-<td>SLES-12-020210</td>
+<td>V-217206</td>
 <td>2130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/group.</td>
@@ -2914,9 +3674,10 @@ account changes:
 <pre>-w /etc/group -p wa -k audit_rules_usergroup_modification</pre>
 </td>
 <td>SLES-12-020210</td>
+<td>audit_rules_usergroup_modification_group</td>
 </tr>
 <tr>
-<td>SLES-12-020220</td>
+<td>V-217207</td>
 <td>2132</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/shadow.</td>
@@ -2948,9 +3709,10 @@ account changes:
 <pre>-w /etc/shadow -p wa -k audit_rules_usergroup_modification</pre>
 </td>
 <td>SLES-12-020220</td>
+<td>audit_rules_usergroup_modification_shadow</td>
 </tr>
 <tr>
-<td>SLES-12-020230</td>
+<td>V-217208</td>
 <td>2130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/opasswd.</td>
@@ -2982,9 +3744,10 @@ account changes:
 <pre>-w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
 </td>
 <td>SLES-12-020230</td>
+<td>audit_rules_usergroup_modification_opasswd</td>
 </tr>
 <tr>
-<td>SLES-12-020240</td>
+<td>V-217209</td>
 <td>1882</td>
 <td>low</td>
 <td>The SUSE operating system must generate audit records for all uses of the privileged functions.</td>
@@ -3017,9 +3780,10 @@ The audit daemon must be restarted for the changes to take effect.
 If both the "b32" and "b64" audit rules for "SUID" files are not defined, this is a finding.
 If both the "b32" and "b64" audit rules for "SGID" files are not defined, this is a finding.</td>
 <td>SLES-12-020240</td>
+<td>audit_rules_suid_privilege_function</td>
 </tr>
 <tr>
-<td>SLES-12-020250</td>
+<td>V-217210</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the su command.</td>
@@ -3044,16 +3808,17 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/su -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/su -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/su -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>SLES-12-020250</td>
+<td>audit_rules_privileged_commands_su</td>
 </tr>
 <tr>
-<td>SLES-12-020260</td>
+<td>V-217211</td>
 <td>2884</td>
 <td>low</td>
 <td>The SUSE operating system must generate audit records for all uses of the sudo command.</td>
@@ -3078,16 +3843,17 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/sudo -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/sudo -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>SLES-12-020260</td>
+<td>audit_rules_privileged_commands_sudo</td>
 </tr>
 <tr>
-<td>SLES-12-020280</td>
+<td>V-217212</td>
 <td>2884</td>
 <td>low</td>
 <td>The SUSE operating system must generate audit records for all uses of the chfn command.</td>
@@ -3116,9 +3882,10 @@ form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/chfn -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>SLES-12-020280</td>
+<td>audit_rules_privileged_commands_chfn</td>
 </tr>
 <tr>
-<td>SLES-12-020290</td>
+<td>V-217213</td>
 <td>2884</td>
 <td>low</td>
 <td>The SUSE operating system must generate audit records for all uses of the mount command.</td>
@@ -3143,16 +3910,17 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>SLES-12-020290</td>
+<td>audit_rules_privileged_commands_mount</td>
 </tr>
 <tr>
-<td>SLES-12-020300</td>
+<td>V-217214</td>
 <td>2884</td>
 <td>low</td>
 <td>The SUSE operating system must generate audit records for all uses of the umount command.</td>
@@ -3177,16 +3945,17 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/umount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/umount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>SLES-12-020300</td>
+<td>audit_rules_privileged_commands_umount</td>
 </tr>
 <tr>
-<td>SLES-12-020310</td>
+<td>V-217215</td>
 <td>2884</td>
 <td>low</td>
 <td>The SUSE operating system must generate audit records for all uses of the ssh-agent command.</td>
@@ -3215,9 +3984,10 @@ utility to read audit rules during daemon startup, add the following lines to
 <pre>-a always,exit -F path=/usr/bin/ssh-agent -F perm=x -F auid&gt;=1000 -F auid!=unset -k privileged-ssh-agent</pre>
 </td>
 <td>SLES-12-020310</td>
+<td>audit_rules_privileged_commands_ssh_agent</td>
 </tr>
 <tr>
-<td>SLES-12-020320</td>
+<td>V-217216</td>
 <td>2884</td>
 <td>low</td>
 <td>The SUSE operating system must generate audit records for all uses of the ssh-keysign command.</td>
@@ -3242,20 +4012,17 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/lib/ssh/ssh-keysign
- -F auid&gt;=1000 
--F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/lib/ssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/lib/ssh/ssh-keysign
-
--F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/lib/ssh/ssh-keysign -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>SLES-12-020320</td>
+<td>audit_rules_privileged_commands_ssh_keysign</td>
 </tr>
 <tr>
-<td>SLES-12-020360</td>
+<td>V-217217</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the kmod command.</td>
@@ -3289,9 +4056,10 @@ form to <code>/etc/audit/audit.rules</code>:
 <pre>-w /usr/bin/kmod -p x -k modules</pre>
 </td>
 <td>SLES-12-020360</td>
+<td>audit_rules_privileged_commands_kmod</td>
 </tr>
 <tr>
-<td>SLES-12-020370</td>
+<td>V-217218</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the setxattr command.</td>
@@ -3322,9 +4090,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>SLES-12-020370</td>
+<td>audit_rules_dac_modification_setxattr</td>
 </tr>
 <tr>
-<td>SLES-12-020380</td>
+<td>V-217219</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the fsetxattr command.</td>
@@ -3355,9 +4124,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>SLES-12-020380</td>
+<td>audit_rules_dac_modification_fsetxattr</td>
 </tr>
 <tr>
-<td>SLES-12-020390</td>
+<td>V-217220</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the removexattr command.</td>
@@ -3392,9 +4162,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>SLES-12-020390</td>
+<td>audit_rules_dac_modification_removexattr</td>
 </tr>
 <tr>
-<td>SLES-12-020400</td>
+<td>V-217221</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the lremovexattr command.</td>
@@ -3430,9 +4201,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>SLES-12-020400</td>
+<td>audit_rules_dac_modification_lremovexattr</td>
 </tr>
 <tr>
-<td>SLES-12-020410</td>
+<td>V-217222</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the fremovexattr command.</td>
@@ -3468,9 +4240,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>SLES-12-020410</td>
+<td>audit_rules_dac_modification_fremovexattr</td>
 </tr>
 <tr>
-<td>SLES-12-020420</td>
+<td>V-217223</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the chown command.</td>
@@ -3501,9 +4274,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S chown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>SLES-12-020420</td>
+<td>audit_rules_dac_modification_chown</td>
 </tr>
 <tr>
-<td>SLES-12-020430</td>
+<td>V-217224</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the fchown command.</td>
@@ -3537,9 +4311,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fchown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>SLES-12-020430</td>
+<td>audit_rules_dac_modification_fchown</td>
 </tr>
 <tr>
-<td>SLES-12-020440</td>
+<td>V-217225</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the lchown command.</td>
@@ -3570,9 +4345,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lchown -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>SLES-12-020440</td>
+<td>audit_rules_dac_modification_lchown</td>
 </tr>
 <tr>
-<td>SLES-12-020450</td>
+<td>V-217226</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the fchownat command.</td>
@@ -3603,9 +4379,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fchownat -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>SLES-12-020450</td>
+<td>audit_rules_dac_modification_fchownat</td>
 </tr>
 <tr>
-<td>SLES-12-020460</td>
+<td>V-217227</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the chmod command.</td>
@@ -3636,9 +4413,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S chmod -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>SLES-12-020460</td>
+<td>audit_rules_dac_modification_chmod</td>
 </tr>
 <tr>
-<td>SLES-12-020470</td>
+<td>V-217228</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the fchmod command.</td>
@@ -3669,9 +4447,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fchmod -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>SLES-12-020470</td>
+<td>audit_rules_dac_modification_fchmod</td>
 </tr>
 <tr>
-<td>SLES-12-020480</td>
+<td>V-217229</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the fchmodat command.</td>
@@ -3702,9 +4481,10 @@ If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fchmodat -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
 </td>
 <td>SLES-12-020480</td>
+<td>audit_rules_dac_modification_fchmodat</td>
 </tr>
 <tr>
-<td>SLES-12-020490</td>
+<td>V-217230</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the open command.</td>
@@ -3742,9 +4522,10 @@ If the system is 64 bit then also add the following lines:
 -a always,exit -F arch=b64 -S open -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
 </td>
 <td>SLES-12-020490</td>
+<td>audit_rules_unsuccessful_file_modification_open</td>
 </tr>
 <tr>
-<td>SLES-12-020500</td>
+<td>V-217231</td>
 <td>172</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the truncate command.</td>
@@ -3782,9 +4563,10 @@ If the system is 64 bit then also add the following lines:
 -a always,exit -F arch=b64 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
 </td>
 <td>SLES-12-020500</td>
+<td>audit_rules_unsuccessful_file_modification_truncate</td>
 </tr>
 <tr>
-<td>SLES-12-020510</td>
+<td>V-217232</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the ftruncate command.</td>
@@ -3822,9 +4604,10 @@ If the system is 64 bit then also add the following lines:
 -a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
 </td>
 <td>SLES-12-020510</td>
+<td>audit_rules_unsuccessful_file_modification_ftruncate</td>
 </tr>
 <tr>
-<td>SLES-12-020520</td>
+<td>V-217233</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the creat command.</td>
@@ -3859,9 +4642,10 @@ If the system is 64 bit then also add the following lines:
 -a always,exit -F arch=b64 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
 </td>
 <td>SLES-12-020520</td>
+<td>audit_rules_unsuccessful_file_modification_creat</td>
 </tr>
 <tr>
-<td>SLES-12-020530</td>
+<td>V-217234</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the openat command.</td>
@@ -3899,9 +4683,10 @@ If the system is 64 bit then also add the following lines:
 -a always,exit -F arch=b64 -S openat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
 </td>
 <td>SLES-12-020530</td>
+<td>audit_rules_unsuccessful_file_modification_openat</td>
 </tr>
 <tr>
-<td>SLES-12-020540</td>
+<td>V-217235</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the open_by_handle_at command.</td>
@@ -3936,9 +4721,10 @@ If the system is 64 bit then also add the following lines:
 -a always,exit -F arch=b64 -S open_by_handle_at,truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
 </td>
 <td>SLES-12-020540</td>
+<td>audit_rules_unsuccessful_file_modification_open_by_handle_at</td>
 </tr>
 <tr>
-<td>SLES-12-020550</td>
+<td>V-217236</td>
 <td>2884</td>
 <td>low</td>
 <td>The SUSE operating system must generate audit records for all uses of the passwd command.</td>
@@ -3963,16 +4749,17 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/passwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/passwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>SLES-12-020550</td>
+<td>audit_rules_privileged_commands_passwd</td>
 </tr>
 <tr>
-<td>SLES-12-020560</td>
+<td>V-217237</td>
 <td>2884</td>
 <td>low</td>
 <td>The SUSE operating system must generate audit records for all uses of the gpasswd command.</td>
@@ -3997,16 +4784,17 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/gpasswd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/gpasswd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>SLES-12-020560</td>
+<td>audit_rules_privileged_commands_gpasswd</td>
 </tr>
 <tr>
-<td>SLES-12-020570</td>
+<td>V-217238</td>
 <td>2884</td>
 <td>low</td>
 <td>The SUSE operating system must generate audit records for all uses of the newgrp command.</td>
@@ -4031,16 +4819,17 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/newgrp -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/newgrp -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>SLES-12-020570</td>
+<td>audit_rules_privileged_commands_newgrp</td>
 </tr>
 <tr>
-<td>SLES-12-020580</td>
+<td>V-217239</td>
 <td>2884</td>
 <td>low</td>
 <td>The SUSE operating system must generate audit records for a uses of the chsh command.</td>
@@ -4065,16 +4854,17 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/chsh -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/chsh -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chsh -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>SLES-12-020580</td>
+<td>audit_rules_privileged_commands_chsh</td>
 </tr>
 <tr>
-<td>SLES-12-020590</td>
+<td>V-217240</td>
 <td>2130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/gshadow.</td>
@@ -4106,9 +4896,10 @@ account changes:
 <pre>-w /etc/gshadow -p wa -k audit_rules_usergroup_modification</pre>
 </td>
 <td>SLES-12-020590</td>
+<td>audit_rules_usergroup_modification_gshadow</td>
 </tr>
 <tr>
-<td>SLES-12-020600</td>
+<td>V-217241</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the chmod command.</td>
@@ -4137,9 +4928,10 @@ utility to read audit rules during daemon startup, add the following lines to
 <pre>-a always,exit -F path=/usr/bin/chmod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>SLES-12-020600</td>
+<td>audit_rules_execution_chmod</td>
 </tr>
 <tr>
-<td>SLES-12-020610</td>
+<td>V-217242</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the setfacl command.</td>
@@ -4150,10 +4942,10 @@ those responsible for one.
 Audit records can be generated from various components within the
 information system (e.g., module or policy filter).</td>
 <td>To verify that execution of the command is being audited, run the following command:
-Configure the SUSE operating system to generate an audit record for all uses of the "setfacl" command.
+Configure the operating system to generate an audit record for all uses of the "setfacl" command.
 Add or update the following rules in the "/etc/audit/audit.rules" file:
--a always,exit -F arch=b32 path=/usr/bin/setfacl -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -F key=privileged
--a always,exit -F arch=b64 path=/usr/bin/setfacl -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -F key=privileged
+-a always,exit -F arch=b32 path=/usr/bin/setfacl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged
+-a always,exit -F arch=b64 path=/usr/bin/setfacl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged
 The audit daemon must be restarted for the changes to take effect.
 # sudo systemctl restart auditd.service
 $ sudo grep "path=/usr/bin/setfacl" /etc/audit/audit.rules /etc/audit/rules.d/*
@@ -4173,9 +4965,10 @@ utility to read audit rules during daemon startup, add the following lines to
 <pre>-a always,exit -F path=/usr/bin/setfacl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>SLES-12-020610</td>
+<td>audit_rules_execution_setfacl</td>
 </tr>
 <tr>
-<td>SLES-12-020620</td>
+<td>V-217243</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the chacl command.</td>
@@ -4186,10 +4979,10 @@ those responsible for one.
 Audit records can be generated from various components within the
 information system (e.g., module or policy filter).</td>
 <td>To verify that execution of the command is being audited, run the following command:
-Configure the SUSE operating system to generate an audit record for all uses of the "chacl" command.
+Configure the operating system to generate an audit record for all uses of the "chacl" command.
 Add or update the following rules in the "/etc/audit/audit.rules" file:
--a always,exit -F arch=b32 path=/usr/bin/chacl -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -F key=privileged
--a always,exit -F arch=b64 path=/usr/bin/chacl -F perm=x -F auid&gt;=1000 -F auid!=4294967295 -F key=privileged
+-a always,exit -F arch=b32 path=/usr/bin/chacl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged
+-a always,exit -F arch=b64 path=/usr/bin/chacl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged
 The audit daemon must be restarted for the changes to take effect.
 # sudo systemctl restart auditd.service
       Is it the case that ?
@@ -4206,9 +4999,10 @@ utility to read audit rules during daemon startup, add the following lines to
 <pre>-a always,exit -F path=/usr/bin/chacl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>SLES-12-020620</td>
+<td>audit_rules_execution_chacl</td>
 </tr>
 <tr>
-<td>SLES-12-020630</td>
+<td>V-217244</td>
 <td>2884</td>
 <td>medium</td>
 <td>Successful/unsuccessful attempts to modify categories of information (e.g., classification levels) must generate audit records.</td>
@@ -4225,7 +5019,6 @@ unusual activity.</td>
 <td>To verify that execution of the command is being audited, run the following command:
 $ sudo grep "path=/usr/bin/chcon" /etc/audit/audit.rules /etc/audit/rules.d/*
 The output should return something similar to:
-
 -a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged
       Is it the case that ?
       </td>
@@ -4234,19 +5027,17 @@ of the <code>chcon</code> command for all users and root. If the <code>auditd</c
 daemon is configured to use the <code>augenrules</code> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-
 <pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
-
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file:
-
 <pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>SLES-12-020630</td>
+<td>audit_rules_execution_chcon</td>
 </tr>
 <tr>
-<td>SLES-12-020640</td>
+<td>V-217245</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the rm command.</td>
@@ -4275,9 +5066,10 @@ utility to read audit rules during daemon startup, add the following lines to
 <pre>-a always,exit -F path=/usr/bin/rm -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>SLES-12-020640</td>
+<td>audit_rules_execution_rm</td>
 </tr>
 <tr>
-<td>SLES-12-020650</td>
+<td>V-217246</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all modifications to the tallylog file must generate an audit record.</td>
@@ -4301,9 +5093,10 @@ edits of files involved in storing logon events:
 <pre>-w /var/log/tallylog -p wa -k logins</pre>
 </td>
 <td>SLES-12-020650</td>
+<td>audit_rules_login_events_tallylog</td>
 </tr>
 <tr>
-<td>SLES-12-020660</td>
+<td>V-217247</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all modifications to the lastlog file.</td>
@@ -4327,9 +5120,10 @@ edits of files involved in storing logon events:
 <pre>-w /var/log/lastlog -p wa -k logins</pre>
 </td>
 <td>SLES-12-020660</td>
+<td>audit_rules_login_events_lastlog</td>
 </tr>
 <tr>
-<td>SLES-12-020670</td>
+<td>V-217248</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the passmass command.</td>
@@ -4361,9 +5155,10 @@ form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/passmass -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>SLES-12-020670</td>
+<td>audit_rules_privileged_commands_passmass</td>
 </tr>
 <tr>
-<td>SLES-12-020680</td>
+<td>V-217249</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the unix_chkpwd command.</td>
@@ -4388,16 +5183,17 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>SLES-12-020680</td>
+<td>audit_rules_privileged_commands_unix_chkpwd</td>
 </tr>
 <tr>
-<td>SLES-12-020690</td>
+<td>V-217250</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the chage command.</td>
@@ -4422,16 +5218,17 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/chage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/chage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/chage -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>SLES-12-020690</td>
+<td>audit_rules_privileged_commands_chage</td>
 </tr>
 <tr>
-<td>SLES-12-020700</td>
+<td>V-217251</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the usermod command.</td>
@@ -4456,19 +5253,17 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-
-<pre>-a always,exit -F path=/usr/bin/usermod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
-
+<pre>-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-
-<pre>-a always,exit -F path=/usr/bin/usermod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/usermod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>SLES-12-020700</td>
+<td>audit_rules_privileged_commands_usermod</td>
 </tr>
 <tr>
-<td>SLES-12-020710</td>
+<td>V-217252</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the crontab command.</td>
@@ -4493,16 +5288,17 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/crontab -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/crontab -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>SLES-12-020710</td>
+<td>audit_rules_privileged_commands_crontab</td>
 </tr>
 <tr>
-<td>SLES-12-020720</td>
+<td>V-217253</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the pam_timestamp_check command.</td>
@@ -4528,17 +5324,18 @@ configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F path=/sbin/pam_timestamp_check
--F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+-F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/sbin/pam_timestamp_check
--F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+-F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>SLES-12-020720</td>
+<td>audit_rules_privileged_commands_pam_timestamp_check</td>
 </tr>
 <tr>
-<td>SLES-12-020730</td>
+<td>V-217254</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the delete_module command.</td>
@@ -4563,9 +5360,10 @@ to use the <code>augenrules</code> program (the default), add the line to a file
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
 add the line to file <code>/etc/audit/audit.rules</code>.</td>
 <td>SLES-12-020730</td>
+<td>audit_rules_kernel_module_loading_delete</td>
 </tr>
 <tr>
-<td>SLES-12-020740</td>
+<td>V-217255</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the finit_module command.</td>
@@ -4591,9 +5389,10 @@ b64 as appropriate for your system:
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
 </td>
 <td>SLES-12-020740</td>
+<td>audit_rules_kernel_module_loading_finit</td>
 </tr>
 <tr>
-<td>SLES-12-020750</td>
+<td>V-217256</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the init_module command.</td>
@@ -4618,16 +5417,17 @@ to use the <code>augenrules</code> program (the default), add the line to a file
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code> utility,
 add the line to file <code>/etc/audit/audit.rules</code>.</td>
 <td>SLES-12-020750</td>
+<td>audit_rules_kernel_module_loading_init</td>
 </tr>
 <tr>
-<td>SLES-12-020760</td>
+<td>V-217257</td>
 <td>2884</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all modifications to the faillog file.</td>
 <td>Manual editing of these files may indicate nefarious activity, such
 as an attacker attempting to remove evidence of an intrusion.</td>
 <td>To verify that auditing is configured for system administrator actions, run the following command:
-Configure the SUSE operating system to generate an audit record for any all modifications to the "faillog" file occur.
+Configure the operating system to generate an audit record for any all modifications to the "faillog" file occur.
 Add or update the following rules in the "/etc/audit/audit.rules" file:
 -w /var/log/faillog -p wa -k logins
 The audit daemon must be restarted for the changes to take effect.
@@ -4648,9 +5448,10 @@ edits of files involved in storing logon events:
 <pre>-w /var/log/faillog -p wa -k logins</pre>
 </td>
 <td>SLES-12-020760</td>
+<td>audit_rules_login_events_faillog</td>
 </tr>
 <tr>
-<td>SLES-12-030000</td>
+<td>V-217258</td>
 <td>381</td>
 <td>medium</td>
 <td>The SUSE operating system must not have the telnet-server package installed.</td>
@@ -4676,37 +5477,26 @@ $ rpm -q telnet-server
 $ sudo zypper remove telnet-server</pre>
 </td>
 <td>SLES-12-030000</td>
+<td>package_telnet-server_removed</td>
 </tr>
 <tr>
-<td>SLES-12-030010</td>
-<td>48</td>
+<td>V-237619</td>
+<td>381</td>
 <td>medium</td>
-<td>The SUSE operating system must display the Standard Mandatory DoD Notice and Consent Banner before granting access via SFTP/FTP.</td>
-<td>This setting will cause the system greeting banner to be used for FTP connections as well.</td>
-<td>If FTP services are not installed, this is not applicable.
-
-To verify this configuration, run the following command:
-
-grep "banner_file" /etc/vsftpd.conf
-
-
-The output should show the value of banner_file is set to /etc/issue, an example of which is shown below:
-
-$ sudo grep "banner_file" /etc/vsftpd.conf
-
-banner_file=/etc/issue
-      Is it the case that it does not?
+<td>The SUSE operating system must not have the vsftpd package installed if not required for operational support.</td>
+<td>Removing the <code>vsftpd</code> package decreases the risk of its
+accidental activation.</td>
+<td>Run the following command to determine if the vsftpd package is installed:
+$ rpm -q vsftpd
+      Is it the case that the package is installed?
       </td>
-<td>
-Edit the vsftpd configuration file, which resides at <code>/etc/vsftpd.conf</code>
-
-by default. Add or correct the following configuration options:
-<pre>banner_file=/etc/issue</pre>
+<td>The <code>vsftpd</code> package can be removed with the following command: <pre> $ sudo zypper remove vsftpd</pre>
 </td>
-<td>SLES-12-030010</td>
+<td>SLES-12-030011</td>
+<td>package_vsftpd_removed</td>
 </tr>
 <tr>
-<td>SLES-12-030020</td>
+<td>V-217260</td>
 <td>50</td>
 <td>medium</td>
 <td>The SUSE operating system file /etc/gdm/banner must contain the Standard Mandatory DoD Notice and Consent banner text.</td>
@@ -4755,9 +5545,10 @@ OR:
 <code>I've read &amp; consent to terms in IS user agreem't.</code>
 </td>
 <td>SLES-12-030020</td>
+<td>banner_etc_gdm_banner</td>
 </tr>
 <tr>
-<td>SLES-12-030030</td>
+<td>V-217261</td>
 <td>2080</td>
 <td>medium</td>
 <td>The SUSE operating system must be configured to prohibit or restrict the use of functions, ports, protocols, and/or services as defined in the Ports, Protocols, and Services Management (PPSM) Category Assignments List (CAL) and vulnerability assessments.</td>
@@ -4822,9 +5613,10 @@ Ask the System Administrator for the site or program PPSM Component Local
 Services Assessment (Component Local Services Assessment (CLSA). Verify the
 services allowed by the firewall match the PPSM CLSA. </td>
 <td>SLES-12-030030</td>
+<td>susefirewall2_only_required_services</td>
 </tr>
 <tr>
-<td>SLES-12-030040</td>
+<td>V-217262</td>
 <td>2385</td>
 <td>high</td>
 <td>SuSEfirewall2 must protect against or limit the effects of Denial-of-Service (DoS) attacks on the SUSE operating system by implementing rate-limiting measures on impacted network interfaces.</td>
@@ -4876,9 +5668,10 @@ FW_SERVICES_ACCEPT_EXT="0/0,tcp,22,,hitcount=3,blockseconds=60,recentname=ssh"</
 If the "FW_SERVICES_ACCEPT_EXT" rule does not contain both the
 <code>hitcount</code> and <code>blockseconds</code> parameters, this is a finding.</td>
 <td>SLES-12-030040</td>
+<td>susefirewall2_ddos_protection</td>
 </tr>
 <tr>
-<td>SLES-12-030050</td>
+<td>V-217263</td>
 <td>48</td>
 <td>medium</td>
 <td>The SUSE operating system must display the Standard Mandatory DoD Notice and Consent Banner before granting access via SSH.</td>
@@ -4899,9 +5692,10 @@ across the system, add or correct the following line in <code>/etc/ssh/sshd_conf
 Another section contains information on how to create an
 appropriate system-wide warning banner.</td>
 <td>SLES-12-030050</td>
+<td>sshd_enable_warning_banner</td>
 </tr>
 <tr>
-<td>SLES-12-030100</td>
+<td>V-217264</td>
 <td>2422</td>
 <td>high</td>
 <td>All networked SUSE operating systems must have and implement SSH to protect the confidentiality and integrity of transmitted and received information, as well as information during preparation for transmission.</td>
@@ -4928,15 +5722,16 @@ The <code>sshd</code> service can be enabled with the following command:
 <pre>$ sudo systemctl enable sshd.service</pre>
 </td>
 <td>SLES-12-030100</td>
+<td>service_sshd_enabled</td>
 </tr>
 <tr>
-<td>SLES-12-030110</td>
+<td>V-217265</td>
 <td>67</td>
 <td>medium</td>
 <td>The SUSE operating system must log SSH connection attempts and failures to the server.</td>
 <td>SSH provides several logging levels with varying amounts of verbosity. <code>DEBUG</code> is specifically
 not recommended other than strictly for debugging SSH communications since it provides
-so much data that it is difficult to identify important security information. <code>INFO</code> or 
+so much data that it is difficult to identify important security information. <code>INFO</code> or
 <code>VERBOSE</code> level is the basic level that only records login activity of SSH users. In many
 situations, such as Incident Response, it is important to determine when a particular user was active
 on a system. The logout record can eliminate those users who disconnected, which helps narrow the
@@ -4953,9 +5748,10 @@ SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> 
 <pre>LogLevel VERBOSE</pre>
 </td>
 <td>SLES-12-030110</td>
+<td>sshd_set_loglevel_verbose</td>
 </tr>
 <tr>
-<td>SLES-12-030130</td>
+<td>V-217266</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system must display the date and time of the last successful account logon upon an SSH logon.</td>
@@ -4973,9 +5769,10 @@ SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> 
 <pre>PrintLastLog yes</pre>
 </td>
 <td>SLES-12-030130</td>
+<td>sshd_print_last_log</td>
 </tr>
 <tr>
-<td>SLES-12-030140</td>
+<td>V-217267</td>
 <td>770</td>
 <td>medium</td>
 <td>The SUSE operating system must deny direct logons to the root account using remote access via SSH.</td>
@@ -4998,9 +5795,10 @@ in <code>/etc/ssh/sshd_config</code>:
 <pre>PermitRootLogin no</pre>
 </td>
 <td>SLES-12-030140</td>
+<td>sshd_disable_root_login</td>
 </tr>
 <tr>
-<td>SLES-12-030150</td>
+<td>V-217268</td>
 <td>366</td>
 <td>high</td>
 <td>The SUSE operating system must not allow automatic logon via SSH.</td>
@@ -5021,12 +5819,13 @@ empty passwords, add or correct the following line in <code>/etc/ssh/sshd_config
 Any accounts with empty passwords should be disabled immediately, and PAM configuration
 should prevent users from being able to assign themselves empty passwords.</td>
 <td>SLES-12-030150</td>
+<td>sshd_disable_empty_passwords</td>
 </tr>
 <tr>
-<td>SLES-12-030151</td>
+<td>V-217269</td>
 <td>366</td>
 <td>medium</td>
-<td>The SUSE operating system must not allow unattended logon via SSH.</td>
+<td>The SUSE operating system must not allow users to override SSH environment variables.</td>
 <td>SSH environment options potentially allow users to bypass
 access restriction in some configurations.</td>
 <td>To ensure users are not able to send environment variables, run the following command:
@@ -5041,9 +5840,10 @@ in <code>/etc/ssh/sshd_config</code>:
 <pre>PermitUserEnvironment no</pre>
 </td>
 <td>SLES-12-030151</td>
+<td>sshd_do_not_permit_user_env</td>
 </tr>
 <tr>
-<td>SLES-12-030170</td>
+<td>V-217270</td>
 <td>2890</td>
 <td>medium</td>
 <td>The SUSE operating system must implement DoD-approved encryption to protect the confidentiality of SSH remote connections.</td>
@@ -5071,9 +5871,10 @@ The man page <code>sshd_config(5)</code> contains a list of supported ciphers.
 
 The rule is parametrized to use the following ciphers: <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sshd_approved_ciphers"></xccdf-1.1:sub></code>.</td>
 <td>SLES-12-030170</td>
+<td>sshd_use_approved_ciphers</td>
 </tr>
 <tr>
-<td>SLES-12-030180</td>
+<td>V-217271</td>
 <td>3123</td>
 <td>medium</td>
 <td>The SUSE operating system SSH daemon must be configured to only use Message Authentication Codes (MACs) employing FIPS 140-2 approved cryptographic hash algorithms.</td>
@@ -5097,9 +5898,10 @@ The man page <code>sshd_config(5)</code> contains a list of supported MACs.
 
 The rule is parametrized to use the following MACs: <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sshd_approved_macs"></xccdf-1.1:sub></code>.</td>
 <td>SLES-12-030180</td>
+<td>sshd_use_approved_macs</td>
 </tr>
 <tr>
-<td>SLES-12-030190</td>
+<td>V-217272</td>
 <td>2361</td>
 <td>medium</td>
 <td>The SUSE operating system SSH daemon must be configured with a timeout interval.</td>
@@ -5126,9 +5928,10 @@ If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <code>/etc/ssh/sshd_config</code>. Keep in mind that
 some processes may stop SSH  from correctly detecting that the user is idle.</td>
 <td>SLES-12-030190</td>
+<td>sshd_set_idle_timeout</td>
 </tr>
 <tr>
-<td>SLES-12-030191</td>
+<td>V-217273</td>
 <td>2361</td>
 <td>medium</td>
 <td>The SUSE operating system for all network connections associated with SSH traffic must immediately terminate at the end of the session or after 10 minutes of inactivity.</td>
@@ -5137,12 +5940,10 @@ is reached.</td>
 <td>To ensure ClientAliveInterval is set correctly, run the following command:
 $ sudo grep ClientAliveCountMax /etc/ssh/sshd_config
 If properly configured, the output should be:
-ClientAliveCountMax 
-For SSH earlier than v8.2, a ClientAliveCountMax value of 0 causes an idle timeout precisely when
-the ClientAliveInterval is set.  Starting with v8.2, a value of 0 disables the timeout
-functionality completely.
-If the option is set to a number greater than 0, then the idle session will be disconnected after
-ClientAliveInterval * ClientAliveCountMax seconds.
+ClientAliveCountMax 0
+
+In this case, the SSH idle timeout occurs precisely when
+the ClientAliveInterval is set.
       Is it the case that it is commented out or not configured properly?
       </td>
 <td>The SSH server sends at most <code>ClientAliveCountMax</code> messages
@@ -5151,16 +5952,15 @@ The option <code>ClientAliveInterval</code> configures timeout after
 each <code>ClientAliveCountMax</code> message. If the SSH server does not
 receive a response from the client, then the connection is considered idle
 and terminated.
-For SSH earlier than v8.2, a <code>ClientAliveCountMax</code> value of <code>0</code>
-causes an idle timeout precisely when the <code>ClientAliveInterval</code> is set.
-Starting with v8.2, a value of <code>0</code> disables the timeout functionality
-completely. If the option is set to a number greater than <code>0</code>, then
-the idle session will be disconnected after
-<code>ClientAliveInterval * ClientAliveCountMax</code> seconds.</td>
+
+To ensure the SSH idle timeout occurs precisely when the
+<code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
+value of <code>0</code>.</td>
 <td>SLES-12-030191</td>
+<td>sshd_set_keepalive_0</td>
 </tr>
 <tr>
-<td>SLES-12-030200</td>
+<td>V-217274</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system SSH daemon must be configured to not allow authentication using known hosts authentication.</td>
@@ -5182,9 +5982,10 @@ following line in <code>/etc/ssh/sshd_config</code>:
 <pre>IgnoreUserKnownHosts yes</pre>
 </td>
 <td>SLES-12-030200</td>
+<td>sshd_disable_user_known_hosts</td>
 </tr>
 <tr>
-<td>SLES-12-030210</td>
+<td>V-217275</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system SSH daemon public host key files must have mode 0644 or less permissive.</td>
@@ -5200,9 +6001,10 @@ If properly configured, the output should indicate the following permissions:
 <td> To properly set the permissions of <code>/etc/ssh/*.pub</code>, run the command: <pre>$ sudo chmod 0644 /etc/ssh/*.pub</pre>
 </td>
 <td>SLES-12-030210</td>
+<td>file_permissions_sshd_pub_key</td>
 </tr>
 <tr>
-<td>SLES-12-030220</td>
+<td>V-217276</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system SSH daemon private host key files must have mode 0600 or less permissive.</td>
@@ -5221,9 +6023,10 @@ To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
 <pre>$ sudo chmod 0600 /etc/ssh/*_key</pre>
 </td>
 <td>SLES-12-030220</td>
+<td>file_permissions_sshd_private_key</td>
 </tr>
 <tr>
-<td>SLES-12-030230</td>
+<td>V-217277</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system SSH daemon must perform strict mode checking of home directory configuration files.</td>
@@ -5242,9 +6045,10 @@ add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <pre>StrictModes yes</pre>
 </td>
 <td>SLES-12-030230</td>
+<td>sshd_enable_strictmodes</td>
 </tr>
 <tr>
-<td>SLES-12-030240</td>
+<td>V-217278</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system SSH daemon must use privilege separation.</td>
@@ -5263,9 +6067,10 @@ SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> 
 <pre>UsePrivilegeSeparation <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_priv_separation"></xccdf-1.1:sub></pre>
 </td>
 <td>SLES-12-030240</td>
+<td>sshd_use_priv_separation</td>
 </tr>
 <tr>
-<td>SLES-12-030250</td>
+<td>V-217279</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system SSH daemon must not allow compression or must only allow compression after successful authentication.</td>
@@ -5287,9 +6092,10 @@ a user has successfully authenticated, add or correct the following line in the
 <pre>Compression <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_disable_compression"></xccdf-1.1:sub></pre>
 </td>
 <td>SLES-12-030250</td>
+<td>sshd_disable_compression</td>
 </tr>
 <tr>
-<td>SLES-12-030260</td>
+<td>V-217280</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system SSH daemon must disable forwarded remote X connections for interactive users, unless to fulfill documented and validated mission requirements.</td>
@@ -5311,34 +6117,32 @@ following line in <code>/etc/ssh/sshd_config</code>:
 <pre>X11Forwarding yes</pre>
 </td>
 <td>SLES-12-030260</td>
+<td>sshd_enable_x11_forwarding</td>
 </tr>
 <tr>
-<td>SLES-12-030261</td>
+<td>V-233308</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system SSH daemon must prevent remote hosts from connecting to the proxy display.</td>
-<td>Even though the communications channel may be encrypted, an additional layer of
-security is gained by extending the policy of not logging directly on as root.
-In addition, logging in with a user-specific account provides individual
-accountability of actions performed on the system and also helps to minimize
-direct attack attempts on root's password.</td>
-<td>To determine how the SSH daemon's PermitRootLogin option is set, run the following command:
-$ sudo grep -i PermitRootLogin /etc/ssh/sshd_config
-
-If a line indicating no is returned, then the required value is set.
-
-      Is it the case that the required value is not set?
+<td>When X11 forwarding is enabled, there may be additional exposure to the
+server and client displays if the sshd proxy display is configured to listen
+on the wildcard address. By default, sshd binds the forwarding server to the
+loopback address and sets the hostname part of the <code>DISPLAY</code>
+environment variable to localhost. This prevents remote hosts from
+connecting to the proxy display.  </td>
+<td>To determine how the SSH daemon's X11UseLocalhost option is set, run the following command:
+$ sudo grep -i X11UseLocalhost /etc/ssh/sshd_config
+If no line, a commented line, or a line indicating the value yes is returned, then the required value is set.
+      Is it the case that the display proxy is listening on wildcard address?
       </td>
-<td>The root user should never be allowed to login to a
-system directly over a network.
-To disable root login via SSH, add or correct the following line
-in <code>/etc/ssh/sshd_config</code>:
-<pre>PermitRootLogin no</pre>
-</td>
+<td>The SSH daemon should prevent remote hosts from connecting to the proxy
+display. Make sure that the option <code>X11UseLocalhost</code> is set to
+<code>yes</code> within the SSH server configuration file.</td>
 <td>SLES-12-030261</td>
+<td>sshd_x11_use_localhost</td>
 </tr>
 <tr>
-<td>SLES-12-030300</td>
+<td>V-217281</td>
 <td>1891</td>
 <td>medium</td>
 <td>The SUSE operating system clock must, for networked systems, be synchronized to an authoritative DoD time source at least every 24 hours.</td>
@@ -5361,44 +6165,36 @@ add the following:
 <pre>maxpoll <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_time_service_set_maxpoll"></xccdf-1.1:sub></pre>
 </td>
 <td>SLES-12-030300</td>
+<td>chronyd_or_ntpd_set_maxpoll</td>
 </tr>
 <tr>
-<td>SLES-12-030310</td>
+<td>V-217282</td>
 <td>1890</td>
 <td>low</td>
 <td>The SUSE operating system must be configured to use Coordinated Universal Time (UTC) or Greenwich Mean Time (GMT).</td>
-<td>Misuse of privileged functions, either intentionally or unintentionally by
-authorized users, or by unauthorized external entities that have
-compromised information system accounts, is a serious and ongoing concern
-and can have significant adverse impacts on organizations. Auditing the use
-of privileged functions is one way to detect such misuse and identify the
-risk from insider threats and the advanced persistent threat.</td>
-<td>Add or update the following rules in "/etc/audit/rules.d/audit.rules":
+<td>If time stamps are not consistently applied and there is no common
+time reference, it is difficult to perform forensic analysis.
 
--a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k setuid
--a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k setuid
--a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k setgid
--a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k setgid
+Time stamps generated by the operating system include date and time.
+Time is commonly expressed in UTC, a modern continuation of GMT, or
+local time with an offset from UTC.</td>
+<td>To verify that the system real-time clock is set to UTC or GMT, run the following command:
 
-The audit daemon must be restarted for the changes to take effect.
+# timedatectl status | grep -i "time zone"
+# Time zone: UTC (UTC, +0000)
 
-# sudo systemctl restart auditd.service
-      Is it the case that it is not the case?
+If "Timezone" is not set to UTC, this is a finding.
+Fix Text: Configure the SUSE operating system is configured to use UTC.
+To configure the system time zone to use UTC or GMT, run the following command, replacing [ZONE] with "UTC" or "GMT".
+# sudo timedatectl set-timezone [ZONE]
+      Is it the case that the system real-time clock is not configured to use UTC as its time base?
       </td>
-<td>Verify the system generates an audit record when privileged functions are executed.
-<pre># grep -iw execve <code>/etc/audit/audit.rules</code></pre>
-
-<pre>-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k setuid</pre>
-<pre>-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k setuid</pre>
-<pre>-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k setgid</pre>
-<pre>-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k setgid</pre>
-
-If both the "b32" and "b64" audit rules for "SUID" files are not defined, this is a finding.
-If both the "b32" and "b64" audit rules for "SGID" files are not defined, this is a finding.</td>
+<td>Ensure that the system real-time clock (RTC) is set to Coordinated Universal Time (UTC).</td>
 <td>SLES-12-030310</td>
+<td>ensure_rtc_utc_configuration</td>
 </tr>
 <tr>
-<td>SLES-12-030320</td>
+<td>V-217283</td>
 <td>2824</td>
 <td>medium</td>
 <td>The SUSE operating system must implement kptr-restrict to prevent the leaking of internal kernel addresses.</td>
@@ -5433,9 +6229,10 @@ is executed.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.kptr_restrict = 1</pre>
 </td>
 <td>SLES-12-030320</td>
+<td>sysctl_kernel_kptr_restrict</td>
 </tr>
 <tr>
-<td>SLES-12-030330</td>
+<td>V-217284</td>
 <td>2824</td>
 <td>medium</td>
 <td>Address space layout randomization (ASLR) must be implemented by the SUSE operating system to protect memory from unauthorized code execution.</td>
@@ -5471,9 +6268,10 @@ is executed.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.randomize_va_space = 2</pre>
 </td>
 <td>SLES-12-030330</td>
+<td>sysctl_kernel_randomize_va_space</td>
 </tr>
 <tr>
-<td>SLES-12-030340</td>
+<td>V-217285</td>
 <td>1851</td>
 <td>medium</td>
 <td>The SUSE operating system must off-load rsyslog messages for networked systems in real time and off-load standalone systems at least weekly.</td>
@@ -5515,9 +6313,10 @@ To use RELP for log message delivery:
 <br>
 There must be a resolvable DNS CNAME or Alias record set to "<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub>" for logs to be sent correctly to the centralized logging utility.</td>
 <td>SLES-12-030340</td>
+<td>rsyslog_remote_loghost</td>
 </tr>
 <tr>
-<td>SLES-12-030350</td>
+<td>V-217286</td>
 <td>1095</td>
 <td>medium</td>
 <td>The SUSE operating system must be configured to use TCP syncookies.</td>
@@ -5553,9 +6352,10 @@ is executed.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.tcp_syncookies = 1</pre>
 </td>
 <td>SLES-12-030350</td>
+<td>sysctl_net_ipv4_tcp_syncookies</td>
 </tr>
 <tr>
-<td>SLES-12-030360</td>
+<td>V-217287</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system must not forward Internet Protocol version 4 (IPv4) source-routed packets.</td>
@@ -5593,9 +6393,10 @@ is executed.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.accept_source_route = 0</pre>
 </td>
 <td>SLES-12-030360</td>
+<td>sysctl_net_ipv4_conf_all_accept_source_route</td>
 </tr>
 <tr>
-<td>SLES-12-030361</td>
+<td>V-217288</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system must not forward Internet Protocol version 6 (IPv6) source-routed packets.</td>
@@ -5633,9 +6434,134 @@ is executed.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_source_route = 0</pre>
 </td>
 <td>SLES-12-030361</td>
+<td>sysctl_net_ipv6_conf_all_accept_source_route</td>
 </tr>
 <tr>
-<td>SLES-12-030370</td>
+<td>V-237620</td>
+<td>366</td>
+<td>medium</td>
+<td>The SUSE operating system must not forward Internet Protocol version 6 (IPv6) source-routed packets by default.</td>
+<td>Source-routed packets allow the source of the packet to suggest routers
+forward the packet along a different path than configured on the router, which can
+be used to bypass network security measures. This requirement applies only to the
+forwarding of source-routerd traffic, such as when IPv6 forwarding is enabled and
+the system is functioning as a router.
+
+Accepting source-routed packets in the IPv6 protocol has few legitimate
+uses. It should be disabled unless it is absolutely required.</td>
+<td>The runtime status of the net.ipv6.conf.default.accept_source_route kernel parameter can be queried
+by running the following command:
+$ sysctl net.ipv6.conf.default.accept_source_route
+The output of the command should indicate a value of 0.
+The preferable way how to assure the runtime compliance is to have
+correct persistent configuration, and rebooting the system.
+
+The persistent kernel parameter configuration is performed by specifying the appropriate
+assignment in any file located in the /etc/sysctl.d directory.
+Verify that there is not any existing incorrect configuration by executing the following command:
+$ grep -r '^\s*net.ipv6.conf.default.accept_source_route\s*=' /etc/sysctl.conf /etc/sysctl.d
+If any assignments other than
+net.ipv6.conf.default.accept_source_route = 0
+are found, or the correct assignment is duplicated, remove those offending lines from respective files,
+and make sure that exactly one file in 
+/etc/sysctl.d contains net.ipv6.conf.default.accept_source_route = 0, and that one assignment
+is returned when 
+$ grep -r net.ipv6.conf.default.accept_source_route /etc/sysctl.conf /etc/sysctl.d
+is executed.
+
+      Is it the case that the correct value is not returned?
+      </td>
+<td>To set the runtime status of the <code>net.ipv6.conf.default.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_source_route=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_source_route = 0</pre>
+</td>
+<td>SLES-12-030362</td>
+<td>sysctl_net_ipv6_conf_default_accept_source_route</td>
+</tr>
+<tr>
+<td>V-237621</td>
+<td>366</td>
+<td>medium</td>
+<td>The SUSE operating system must prevent Internet Protocol version 6 (IPv6) Internet Control Message Protocol (ICMP) redirect messages from being accepted.</td>
+<td>IP forwarding permits the kernel to forward packets from one network
+interface to another. The ability to forward packets between two networks is
+only appropriate for systems acting as routers.</td>
+<td>The runtime status of the net.ipv6.conf.default.forwarding kernel parameter can be queried
+by running the following command:
+$ sysctl net.ipv6.conf.default.forwarding
+The output of the command should indicate a value of 0.
+The preferable way how to assure the runtime compliance is to have
+correct persistent configuration, and rebooting the system.
+
+The persistent kernel parameter configuration is performed by specifying the appropriate
+assignment in any file located in the /etc/sysctl.d directory.
+Verify that there is not any existing incorrect configuration by executing the following command:
+$ grep -r '^\s*net.ipv6.conf.default.forwarding\s*=' /etc/sysctl.conf /etc/sysctl.d
+If any assignments other than
+net.ipv6.conf.default.forwarding = 0
+are found, or the correct assignment is duplicated, remove those offending lines from respective files,
+and make sure that exactly one file in 
+/etc/sysctl.d contains net.ipv6.conf.default.forwarding = 0, and that one assignment
+is returned when 
+$ grep -r net.ipv6.conf.default.forwarding /etc/sysctl.conf /etc/sysctl.d
+is executed.
+The ability to forward packets is only appropriate for routers.
+      Is it the case that IPv6 Forwading is not disabled?
+      </td>
+<td>To set the runtime status of the <code>net.ipv6.conf.default.forwarding</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.forwarding=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.forwarding = 0</pre>
+</td>
+<td>SLES-12-030363</td>
+<td>sysctl_net_ipv6_conf_default_forwarding</td>
+</tr>
+<tr>
+<td>V-237622</td>
+<td>366</td>
+<td>medium</td>
+<td>The SUSE operating system must not be performing Internet Protocol version 6 (IPv6) packet forwarding unless the system is a router.</td>
+<td>IP forwarding permits the kernel to forward packets from one network
+interface to another. The ability to forward packets between two networks is
+only appropriate for systems acting as routers.</td>
+<td>The runtime status of the net.ipv6.conf.all.forwarding kernel parameter can be queried
+by running the following command:
+$ sysctl net.ipv6.conf.all.forwarding
+The output of the command should indicate a value of 0.
+The preferable way how to assure the runtime compliance is to have
+correct persistent configuration, and rebooting the system.
+
+The persistent kernel parameter configuration is performed by specifying the appropriate
+assignment in any file located in the /etc/sysctl.d directory.
+Verify that there is not any existing incorrect configuration by executing the following command:
+$ grep -r '^\s*net.ipv6.conf.all.forwarding\s*=' /etc/sysctl.conf /etc/sysctl.d
+If any assignments other than
+net.ipv6.conf.all.forwarding = 0
+are found, or the correct assignment is duplicated, remove those offending lines from respective files,
+and make sure that exactly one file in 
+/etc/sysctl.d contains net.ipv6.conf.all.forwarding = 0, and that one assignment
+is returned when 
+$ grep -r net.ipv6.conf.all.forwarding /etc/sysctl.conf /etc/sysctl.d
+is executed.
+The ability to forward packets is only appropriate for routers.
+      Is it the case that ?
+      </td>
+<td>To set the runtime status of the <code>net.ipv6.conf.all.forwarding</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.forwarding=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.forwarding = 0</pre>
+</td>
+<td>SLES-12-030364</td>
+<td>sysctl_net_ipv6_conf_all_forwarding</td>
+</tr>
+<tr>
+<td>V-237623</td>
+<td></td>
+<td>medium</td>
+<td>The SUSE operating system must not be performing Internet Protocol version 6 (IPv6) packet forwarding by default unless the system is a router.</td>
+<td></td>
+<td></td>
+<td></td>
+<td>SLES-12-030365</td>
+<td>Missing Rule</td>
+</tr>
+<tr>
+<td>V-217289</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system must not forward Internet Protocol version 4 (IPv4) source-routed packets by default.</td>
@@ -5673,9 +6599,10 @@ is executed.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.accept_source_route = 0</pre>
 </td>
 <td>SLES-12-030370</td>
+<td>sysctl_net_ipv4_conf_default_accept_source_route</td>
 </tr>
 <tr>
-<td>SLES-12-030380</td>
+<td>V-217290</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system must not respond to Internet Protocol version 4 (IPv4) Internet Control Message Protocol (ICMP) echoes sent to a broadcast address.</td>
@@ -5710,9 +6637,10 @@ is executed.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.icmp_echo_ignore_broadcasts = 1</pre>
 </td>
 <td>SLES-12-030380</td>
+<td>sysctl_net_ipv4_icmp_echo_ignore_broadcasts</td>
 </tr>
 <tr>
-<td>SLES-12-030390</td>
+<td>V-217291</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system must prevent Internet Protocol version 4 (IPv4) Internet Control Message Protocol (ICMP) redirect messages from being accepted.</td>
@@ -5749,9 +6677,10 @@ is executed.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.accept_redirects = 0</pre>
 </td>
 <td>SLES-12-030390</td>
+<td>sysctl_net_ipv4_conf_all_accept_redirects</td>
 </tr>
 <tr>
-<td>SLES-12-030400</td>
+<td>V-217292</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system must not allow interfaces to accept Internet Protocol version 4 (IPv4) Internet Control Message Protocol (ICMP) redirect messages by default.</td>
@@ -5787,23 +6716,17 @@ is executed.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.accept_redirects = 0</pre>
 </td>
 <td>SLES-12-030400</td>
+<td>sysctl_net_ipv4_conf_default_accept_redirects</td>
 </tr>
 <tr>
-<td>SLES-12-030401</td>
+<td>V-217293</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system must not allow interfaces to accept Internet Protocol version 6 (IPv6) Internet Control Message Protocol (ICMP) redirect messages by default.</td>
-<td>Source-routed packets allow the source of the packet to suggest routers
-forward the packet along a different path than configured on the router, which can
-be used to bypass network security measures. This requirement applies only to the
-forwarding of source-routerd traffic, such as when IPv6 forwarding is enabled and
-the system is functioning as a router.
-
-Accepting source-routed packets in the IPv6 protocol has few legitimate
-uses. It should be disabled unless it is absolutely required.</td>
-<td>The runtime status of the net.ipv6.conf.default.accept_source_route kernel parameter can be queried
+<td>An illicit ICMP redirect message could result in a man-in-the-middle attack.</td>
+<td>The runtime status of the net.ipv6.conf.default.accept_redirects kernel parameter can be queried
 by running the following command:
-$ sysctl net.ipv6.conf.default.accept_source_route
+$ sysctl net.ipv6.conf.default.accept_redirects
 The output of the command should indicate a value of 0.
 The preferable way how to assure the runtime compliance is to have
 correct persistent configuration, and rebooting the system.
@@ -5811,25 +6734,26 @@ correct persistent configuration, and rebooting the system.
 The persistent kernel parameter configuration is performed by specifying the appropriate
 assignment in any file located in the /etc/sysctl.d directory.
 Verify that there is not any existing incorrect configuration by executing the following command:
-$ grep -r '^\s*net.ipv6.conf.default.accept_source_route\s*=' /etc/sysctl.conf /etc/sysctl.d
+$ grep -r '^\s*net.ipv6.conf.default.accept_redirects\s*=' /etc/sysctl.conf /etc/sysctl.d
 If any assignments other than
-net.ipv6.conf.default.accept_source_route = 0
+net.ipv6.conf.default.accept_redirects = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
 and make sure that exactly one file in 
-/etc/sysctl.d contains net.ipv6.conf.default.accept_source_route = 0, and that one assignment
+/etc/sysctl.d contains net.ipv6.conf.default.accept_redirects = 0, and that one assignment
 is returned when 
-$ grep -r net.ipv6.conf.default.accept_source_route /etc/sysctl.conf /etc/sysctl.d
+$ grep -r net.ipv6.conf.default.accept_redirects /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
       Is it the case that the correct value is not returned?
       </td>
-<td>To set the runtime status of the <code>net.ipv6.conf.default.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_source_route=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_source_route = 0</pre>
+<td>To set the runtime status of the <code>net.ipv6.conf.default.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_redirects=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_redirects = 0</pre>
 </td>
 <td>SLES-12-030401</td>
+<td>sysctl_net_ipv6_conf_default_accept_redirects</td>
 </tr>
 <tr>
-<td>SLES-12-030410</td>
+<td>V-217294</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system must not allow interfaces to send Internet Protocol version 4 (IPv4) Internet Control Message Protocol (ICMP) redirect messages by default.</td>
@@ -5864,9 +6788,10 @@ is executed.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.send_redirects = 0</pre>
 </td>
 <td>SLES-12-030410</td>
+<td>sysctl_net_ipv4_conf_default_send_redirects</td>
 </tr>
 <tr>
-<td>SLES-12-030420</td>
+<td>V-217295</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system must not send Internet Protocol version 4 (IPv4) Internet Control Message Protocol (ICMP) redirects.</td>
@@ -5901,12 +6826,13 @@ is executed.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.send_redirects = 0</pre>
 </td>
 <td>SLES-12-030420</td>
+<td>sysctl_net_ipv4_conf_all_send_redirects</td>
 </tr>
 <tr>
-<td>SLES-12-030430</td>
+<td>V-217296</td>
 <td>366</td>
 <td>medium</td>
-<td>The SUSE operating system must not be performing packet forwarding unless the system is a router.</td>
+<td>The SUSE operating system must not be performing Internet Protocol version 4 (IPv4) packet forwarding unless the system is a router.</td>
 <td>Routing protocol daemons are typically used on routers to exchange
 network topology information with other routers. If this capability is used when
 not required, system network information may be unnecessarily transmitted across
@@ -5937,9 +6863,10 @@ The ability to forward packets is only appropriate for routers.
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.ip_forward = 0</pre>
 </td>
 <td>SLES-12-030430</td>
+<td>sysctl_net_ipv4_ip_forward</td>
 </tr>
 <tr>
-<td>SLES-12-030440</td>
+<td>V-217297</td>
 <td>366</td>
 <td>medium</td>
 <td>The SUSE operating system must not have network interfaces in promiscuous mode unless approved and documented.</td>
@@ -5964,9 +6891,10 @@ Promiscuous mode of an interface can be disabled with the following command:
 <pre>$ sudo ip link set dev <code>device_name</code> multicast off promisc off</pre>
 </td>
 <td>SLES-12-030440</td>
+<td>network_sniffer_disabled</td>
 </tr>
 <tr>
-<td>SLES-12-030450</td>
+<td>V-217298</td>
 <td>2418</td>
 <td>medium</td>
 <td>The SUSE operating system wireless network adapters must be disabled unless approved and documented.</td>
@@ -6016,9 +6944,10 @@ Also remove the configuration files for every wifi adapter from
 <code>/etc/wicked/ifconfig/&lt;WIFI-INTERFACE&gt;.xml</code> to prevent future
 connections.</td>
 <td>SLES-12-030450</td>
+<td>wireless_disable_interfaces</td>
 </tr>
 <tr>
-<td>SLES-12-030500</td>
+<td>V-217299</td>
 <td>1954</td>
 <td>medium</td>
 <td>The SUSE operating system must have the packages required for multifactor authentication to be installed.</td>
@@ -6094,9 +7023,10 @@ The <code>coolkey</code> package can be installed with the following command:
 $ sudo zypper install coolkey</pre>
 </td>
 <td>SLES-12-030500</td>
+<td>install_smartcard_packages</td>
 </tr>
 <tr>
-<td>SLES-12-030510</td>
+<td>V-217300</td>
 <td>1953</td>
 <td>medium</td>
 <td>The SUSE operating system must implement certificate status checking for multifactor authentication.</td>
@@ -6125,9 +7055,10 @@ authentication. Modify all of the <code>cert_policy</code> lines in
 <pre>cert_policy = ca, ocsp_on, signature;</pre>
 </td>
 <td>SLES-12-030510</td>
+<td>smartcard_configure_cert_checking</td>
 </tr>
 <tr>
-<td>SLES-12-030520</td>
+<td>V-217301</td>
 <td>1954</td>
 <td>medium</td>
 <td>The SUSE operating system must implement multifactor authentication for access to privileged accounts via pluggable authentication modules (PAM).</td>
@@ -6180,12 +7111,14 @@ auth sufficient pam_pkcs11.so</pre>
 
 For general information about enabling smart card authentication, consult
 the documentation at:
+
 <ul><li><b><a href="https://www.suse.com/c/configuring-smart-card-authentication-suse-linux-enterprise/">https://www.suse.com/c/configuring-smart-card-authentication-suse-linux-enterprise/</a></b></li></ul>
 </td>
 <td>SLES-12-030520</td>
+<td>smartcard_pam_enabled</td>
 </tr>
 <tr>
-<td>SLES-12-030530</td>
+<td>V-217302</td>
 <td>1991</td>
 <td>medium</td>
 <td>The SUSE operating system, for PKI-based authentication, must validate certificates by constructing a certification path (which includes status information) to an accepted trust anchor.</td>
@@ -6214,31 +7147,18 @@ authentication. Modify all of the <code>cert_policy</code> lines in
 <pre>cert_policy = ca, ocsp_on, signature;</pre>
 </td>
 <td>SLES-12-030530</td>
+<td>smartcard_configure_ca</td>
 </tr>
 <tr>
-<td>SLES-12-030611</td>
-<td>1668</td>
+<td>V-222386</td>
+<td></td>
 <td>high</td>
 <td>The SUSE operating system must use a virus scan program.</td>
-<td>Even though the communications channel may be encrypted, an additional layer of
-security is gained by extending the policy of not logging directly on as root.
-In addition, logging in with a user-specific account provides individual
-accountability of actions performed on the system and also helps to minimize
-direct attack attempts on root's password.</td>
-<td>To determine how the SSH daemon's PermitRootLogin option is set, run the following command:
-$ sudo grep -i PermitRootLogin /etc/ssh/sshd_config
-
-If a line indicating no is returned, then the required value is set.
-
-      Is it the case that the required value is not set?
-      </td>
-<td>The root user should never be allowed to login to a
-system directly over a network.
-To disable root login via SSH, add or correct the following line
-in <code>/etc/ssh/sshd_config</code>:
-<pre>PermitRootLogin no</pre>
-</td>
+<td></td>
+<td></td>
+<td></td>
 <td>SLES-12-030611</td>
+<td>Missing Rule</td>
 </tr>
 </table>
 </body>

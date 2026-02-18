@@ -1272,7 +1272,8 @@ or logical volume at installation time, or migrate it using LVM.</td>
 
 Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
 <td xml:lang="en-US">System logs are stored in the <code>/var/log</code> directory.
-Ensure that it has its own partition or logical
+
+Ensure that <code>/var/log</code> has its own partition or logical
 volume at installation time, or migrate it using LVM.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
@@ -1285,7 +1286,8 @@ If /var/log has its own partition or volume group, a line will be returned.
       </td>
 <td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-61487r1_fix">Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</fixtext></td>
 <td>System logs are stored in the /var/log directory.
-Ensure that it has its own partition or logical
+
+Ensure that /var/log has its own partition or logical
 volume at installation time, or migrate it using LVM.</td>
 <td>medium</td>
 <td></td>
@@ -1301,9 +1303,11 @@ volume at installation time, or migrate it using LVM.</td>
 <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
 
 Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
-<td xml:lang="en-US">Audit logs are stored in the <code>/var/log/audit</code> directory.  Ensure that it
-has its own partition or logical volume at installation time, or migrate it
-later using LVM. Make absolutely certain that it is large enough to store all
+<td xml:lang="en-US">Audit logs are stored in the <code>/var/log/audit</code> directory.
+
+Ensure that <code>/var/log/audit</code> has its own partition or logical
+volume at installation time, or migrate it using LVM.
+Make absolutely certain that it is large enough to store all
 audit logs that will be created by the auditing daemon.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
@@ -1315,9 +1319,11 @@ If /var/log/audit has its own partition or volume group, a line will be returned
       Is it the case that no line is returned?
       </td>
 <td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-61487r1_fix">Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</fixtext></td>
-<td>Audit logs are stored in the /var/log/audit directory.  Ensure that it
-has its own partition or logical volume at installation time, or migrate it
-later using LVM. Make absolutely certain that it is large enough to store all
+<td>Audit logs are stored in the /var/log/audit directory.
+
+Ensure that /var/log/audit has its own partition or logical
+volume at installation time, or migrate it using LVM.
+Make absolutely certain that it is large enough to store all
 audit logs that will be created by the auditing daemon.</td>
 <td>low</td>
 <td></td>
@@ -3422,7 +3428,8 @@ Add the <code>nosuid</code> option to the fourth column of
 <code>/boot</code>.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
-<td>To verify the nosuid option is configured for the /boot mount point, run the following command:
+<td>To verify the nosuid option is configured for the /boot mount point,
+    run the following command:
     $ mount | grep '\s/boot\s'
     The output should show the corresponding mount point along with the nosuid setting in parentheses.
 
@@ -3457,7 +3464,8 @@ Add the <code>nosuid</code> option to the fourth column of
 <code>/home</code>.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
-<td>To verify the nosuid option is configured for the /home mount point, run the following command:
+<td>To verify the nosuid option is configured for the /home mount point,
+    run the following command:
     $ mount | grep '\s/home\s'
     The output should show the corresponding mount point along with the nosuid setting in parentheses.
 
@@ -4255,6 +4263,37 @@ $ sudo dnf erase sendmail</td>
 <td>SRG-OS-000480-GPOS-00227</td>
 <td><i>TBD - Assigned by DISA after STIG release</i></td>
 <td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
+<td>CCE-87232-5:Prevent Unrestricted Mail Relaying</td>
+<td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
+
+Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
+<td xml:lang="en-US">Modify the <pre>/etc/postfix/main.cf</pre> file to restrict client connections
+to the local network with the following command:
+<pre>$ sudo postconf -e 'smtpd_client_restrictions = permit_mynetworks,reject'</pre>
+</td>
+<td>Applicable - Configurable</td>
+<td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
+<td>To verify the system is configured to prevent unrestricted mail relaying,
+run the following command:
+$ sudo postconf -n smtpd_client_restrictions
+The output should return:
+smtpd_client_restrictions = permit_mynetworks,reject
+      Is it the case that it is not?
+      </td>
+<td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-61487r1_fix">Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</fixtext></td>
+<td>Modify the /etc/postfix/main.cf file to restrict client connections
+to the local network with the following command:
+$ sudo postconf -e 'smtpd_client_restrictions = permit_mynetworks,reject'</td>
+<td>medium</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCI-000366</td>
+<td>SRG-OS-000480-GPOS-00227</td>
+<td><i>TBD - Assigned by DISA after STIG release</i></td>
+<td>The operating system must be configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
 <td>CCE-90838-4:Mount Remote Filesystems with nodev</td>
 <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
 
@@ -4812,13 +4851,13 @@ RekeyLimit   to file /etc/ssh/sshd_config.</td>
 
 Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
 <td xml:lang="en-US">By removing the following packages,  the system no longer has X Windows installed.
- 
+
 <code>xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</code>
 
 If X Windows is not installed then the system cannot boot into graphical user mode.
 This prevents the system from being accidentally or maliciously booted into a <code>graphical.target</code>
 mode. To do so, run the following command:
- 
+
 <pre>sudo dnf remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</pre>
 
 Additionally, setting the system's default target to
@@ -4832,7 +4871,7 @@ Created symlink from /etc/systemd/system/default.target to /usr/lib/systemd/syst
 <td>Applicable - Configurable</td>
 <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
 <td>To ensure the X Windows package group is removed, run the following command:
- 
+
 $ rpm -qi xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland
 
 For each package mentioned above you should receive following line:
@@ -4841,13 +4880,13 @@ package &lt;package&gt; is not installed
       </td>
 <td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-61487r1_fix">Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</fixtext></td>
 <td>By removing the following packages,  the system no longer has X Windows installed.
- 
+
 xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland
 
 If X Windows is not installed then the system cannot boot into graphical user mode.
 This prevents the system from being accidentally or maliciously booted into a graphical.target
 mode. To do so, run the following command:
- 
+
 sudo dnf remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland
 
 Additionally, setting the system's default target to
@@ -5128,14 +5167,18 @@ FAIL_DELAY </td>
 <td>If the operating system allows the user to select passwords based on dictionary words, then this increases the chances of password compromise by increasing the opportunity for successful guesses and brute-force attacks.</td>
 <td xml:lang="en-US">To configure the number of retry prompts that are permitted per-session:
 Edit the <code>pam_pwquality.so</code> statement in
+
 <code>/etc/pam.d/system-auth</code>  to show
+
 <code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if site
 policy is more restrictive. The DoD requirement is a maximum of 3 prompts
 per session.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system prevents the use of dictionary words for passwords. If it does not, this is a finding.</td>
 <td>To check how many retry attempts are permitted on a per-session basis, run the following command:
+
 $ grep pam_pwquality /etc/pam.d/system-auth 
+
 The retry parameter will indicate how many attempts are permitted.
 The DoD required value is less than or equal to 3.
 This would appear as retry=3, or a lower value.
@@ -5144,7 +5187,9 @@ This would appear as retry=3, or a lower value.
 <td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-61493r1_fix">Configure the operating system to prevent the use of dictionary words for passwords.</fixtext></td>
 <td>To configure the number of retry prompts that are permitted per-session:
 Edit the pam_pwquality.so statement in
+
 /etc/pam.d/system-auth  to show
+
 retry=, or a lower value if site
 policy is more restrictive. The DoD requirement is a maximum of 3 prompts
 per session.</td>
@@ -5531,6 +5576,49 @@ This requirement is a permanent not a finding. No fix is required.
 <td>SRG-OS-000473-GPOS-00218</td>
 <td><i>TBD - Assigned by DISA after STIG release</i></td>
 <td>The operating system must generate audit records when concurrent logons to the same account occur from different sources.</td>
+<td>CCE-83651-0:Enable Auditing for Processes Which Start Prior to the Audit Daemon</td>
+<td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
+
+Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
+<td xml:lang="en-US">To ensure all processes can be audited, even those which start
+prior to the audit daemon, add the argument <code>audit=1</code> to the default
+GRUB 2 command line for the Linux operating system in
+
+<code>/boot/grub2/grubenv</code>, in the manner below:
+<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"</pre>
+</td>
+<td>Applicable - Configurable</td>
+<td>Verify the operating system generates audit records when concurrent logons to the same account occur from different sources. If it does not, this is a finding.</td>
+<td>
+Inspect the form of default GRUB 2 command line for the Linux operating system
+in /boot/grub2/grubenv. If they include audit=1, then auditing
+is enabled at boot time.
+# grep 'kernelopts.*audit=1.*' /boot/grub2/grubenv
+
+To ensure audit=1 is configured on all installed kernels, the
+following command may be used:
+
+# grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"
+
+      Is it the case that auditing is not enabled at boot time?
+      </td>
+<td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-61507r1_fix">Configure the operating system to generate audit records when concurrent logons to the same account occur from different sources.</fixtext></td>
+<td>To ensure all processes can be audited, even those which start
+prior to the audit daemon, add the argument audit=1 to the default
+GRUB 2 command line for the Linux operating system in
+
+/boot/grub2/grubenv, in the manner below:
+# grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"</td>
+<td>medium</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCI-000172</td>
+<td>SRG-OS-000473-GPOS-00218</td>
+<td><i>TBD - Assigned by DISA after STIG release</i></td>
+<td>The operating system must generate audit records when concurrent logons to the same account occur from different sources.</td>
 <td>Product Meets this Requirement</td>
 <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
 
@@ -5593,6 +5681,49 @@ This requirement is a permanent not a finding. No fix is required.
 <td>
 This requirement is a permanent not a finding. No fix is required.
 </td>
+<td>medium</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCI-000172</td>
+<td>SRG-OS-000471-GPOS-00215</td>
+<td><i>TBD - Assigned by DISA after STIG release</i></td>
+<td>The operating system must generate audit records for privileged activities or other system-level access.</td>
+<td>CCE-83651-0:Enable Auditing for Processes Which Start Prior to the Audit Daemon</td>
+<td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
+
+Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
+<td xml:lang="en-US">To ensure all processes can be audited, even those which start
+prior to the audit daemon, add the argument <code>audit=1</code> to the default
+GRUB 2 command line for the Linux operating system in
+
+<code>/boot/grub2/grubenv</code>, in the manner below:
+<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"</pre>
+</td>
+<td>Applicable - Configurable</td>
+<td>Verify the operating system generates audit records for privileged activities or other system-level access. If it does not, this is a finding.</td>
+<td>
+Inspect the form of default GRUB 2 command line for the Linux operating system
+in /boot/grub2/grubenv. If they include audit=1, then auditing
+is enabled at boot time.
+# grep 'kernelopts.*audit=1.*' /boot/grub2/grubenv
+
+To ensure audit=1 is configured on all installed kernels, the
+following command may be used:
+
+# grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"
+
+      Is it the case that auditing is not enabled at boot time?
+      </td>
+<td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-61513r1_fix">Configure the operating system to generate audit records for privileged activities or other system-level access.</fixtext></td>
+<td>To ensure all processes can be audited, even those which start
+prior to the audit daemon, add the argument audit=1 to the default
+GRUB 2 command line for the Linux operating system in
+
+/boot/grub2/grubenv, in the manner below:
+# grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"</td>
 <td>medium</td>
 <td></td>
 <td></td>
@@ -6481,6 +6612,49 @@ This requirement is a permanent not a finding. No fix is required.
 <td>SRG-OS-000462-GPOS-00206</td>
 <td><i>TBD - Assigned by DISA after STIG release</i></td>
 <td>The operating system must generate audit records when successful/unsuccessful attempts to modify privileges occur.</td>
+<td>CCE-83651-0:Enable Auditing for Processes Which Start Prior to the Audit Daemon</td>
+<td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
+
+Audit records can be generated from various components within the information system (e.g., module or policy filter).</td>
+<td xml:lang="en-US">To ensure all processes can be audited, even those which start
+prior to the audit daemon, add the argument <code>audit=1</code> to the default
+GRUB 2 command line for the Linux operating system in
+
+<code>/boot/grub2/grubenv</code>, in the manner below:
+<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"</pre>
+</td>
+<td>Applicable - Configurable</td>
+<td>Verify the operating system generates audit records when successful/unsuccessful attempts to modify privileges occur. If it does not, this is a finding.</td>
+<td>
+Inspect the form of default GRUB 2 command line for the Linux operating system
+in /boot/grub2/grubenv. If they include audit=1, then auditing
+is enabled at boot time.
+# grep 'kernelopts.*audit=1.*' /boot/grub2/grubenv
+
+To ensure audit=1 is configured on all installed kernels, the
+following command may be used:
+
+# grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"
+
+      Is it the case that auditing is not enabled at boot time?
+      </td>
+<td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-61541r1_fix">Configure the operating system to generate audit records when successful/unsuccessful attempts to modify privileges occur.</fixtext></td>
+<td>To ensure all processes can be audited, even those which start
+prior to the audit daemon, add the argument audit=1 to the default
+GRUB 2 command line for the Linux operating system in
+
+/boot/grub2/grubenv, in the manner below:
+# grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"</td>
+<td>medium</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCI-000172</td>
+<td>SRG-OS-000462-GPOS-00206</td>
+<td><i>TBD - Assigned by DISA after STIG release</i></td>
+<td>The operating system must generate audit records when successful/unsuccessful attempts to modify privileges occur.</td>
 <td>Product Meets this Requirement</td>
 <td>Without generating audit records that are specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
 
@@ -6535,6 +6709,51 @@ disk.
 
 The auditd service can be enabled with the following command:
 $ sudo systemctl enable auditd.service</td>
+<td>medium</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCI-000130</td>
+<td>SRG-OS-000037-GPOS-00015</td>
+<td><i>TBD - Assigned by DISA after STIG release</i></td>
+<td>The operating system must produce audit records containing information to establish what type of events occurred.</td>
+<td>CCE-83651-0:Enable Auditing for Processes Which Start Prior to the Audit Daemon</td>
+<td>Without establishing what type of events occurred, it would be difficult to establish, correlate, and investigate the events leading up to an outage or attack.
+
+Audit record content that may be necessary to satisfy this requirement includes, for example, time stamps, source and destination addresses, user/process identifiers, event descriptions, success/fail indications, filenames involved, and access control or flow control rules invoked.
+
+Associating event types with detected events in the operating system audit logs provides a means of investigating an attack; recognizing resource utilization or capacity thresholds; or identifying an improperly configured operating system.</td>
+<td xml:lang="en-US">To ensure all processes can be audited, even those which start
+prior to the audit daemon, add the argument <code>audit=1</code> to the default
+GRUB 2 command line for the Linux operating system in
+
+<code>/boot/grub2/grubenv</code>, in the manner below:
+<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"</pre>
+</td>
+<td>Applicable - Configurable</td>
+<td>Verify the operating system produces audit records containing information to establish what type of events occurred. If it does not, this is a finding.</td>
+<td>
+Inspect the form of default GRUB 2 command line for the Linux operating system
+in /boot/grub2/grubenv. If they include audit=1, then auditing
+is enabled at boot time.
+# grep 'kernelopts.*audit=1.*' /boot/grub2/grubenv
+
+To ensure audit=1 is configured on all installed kernels, the
+following command may be used:
+
+# grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"
+
+      Is it the case that auditing is not enabled at boot time?
+      </td>
+<td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-61543r1_fix">Configure the operating system to produce audit records containing information to establish what type of events occurred.</fixtext></td>
+<td>To ensure all processes can be audited, even those which start
+prior to the audit daemon, add the argument audit=1 to the default
+GRUB 2 command line for the Linux operating system in
+
+/boot/grub2/grubenv, in the manner below:
+# grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"</td>
 <td>medium</td>
 <td></td>
 <td></td>
@@ -6855,6 +7074,49 @@ This requirement is a permanent not a finding. No fix is required.
 <td>
 This requirement is a permanent not a finding. No fix is required.
 </td>
+<td>medium</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCI-000135</td>
+<td>SRG-OS-000042-GPOS-00020</td>
+<td><i>TBD - Assigned by DISA after STIG release</i></td>
+<td>The operating system must generate audit records containing the full-text recording of privileged commands.</td>
+<td>CCE-83651-0:Enable Auditing for Processes Which Start Prior to the Audit Daemon</td>
+<td>Reconstruction of harmful events or forensic analysis is not possible if audit records do not contain enough information.
+
+At a minimum, the organization must audit the full-text recording of privileged commands. The organization must maintain audit trails in sufficient detail to reconstruct events to determine the cause and impact of compromise.</td>
+<td xml:lang="en-US">To ensure all processes can be audited, even those which start
+prior to the audit daemon, add the argument <code>audit=1</code> to the default
+GRUB 2 command line for the Linux operating system in
+
+<code>/boot/grub2/grubenv</code>, in the manner below:
+<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"</pre>
+</td>
+<td>Applicable - Configurable</td>
+<td>Verify the operating system generates audit records containing the full-text recording of privileged commands. If it does not, this is a finding.</td>
+<td>
+Inspect the form of default GRUB 2 command line for the Linux operating system
+in /boot/grub2/grubenv. If they include audit=1, then auditing
+is enabled at boot time.
+# grep 'kernelopts.*audit=1.*' /boot/grub2/grubenv
+
+To ensure audit=1 is configured on all installed kernels, the
+following command may be used:
+
+# grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"
+
+      Is it the case that auditing is not enabled at boot time?
+      </td>
+<td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-61553r1_fix">Configure the operating system to generate audit records containing the full-text recording of privileged commands.</fixtext></td>
+<td>To ensure all processes can be audited, even those which start
+prior to the audit daemon, add the argument audit=1 to the default
+GRUB 2 command line for the Linux operating system in
+
+/boot/grub2/grubenv, in the manner below:
+# grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"</td>
 <td>medium</td>
 <td></td>
 <td></td>
@@ -8220,14 +8482,18 @@ This requirement is a permanent not a finding. No fix is required.
 Password complexity is one factor of several that determines how long it takes to crack a password. The more complex the password, the greater the number of possible combinations that need to be tested before the password is compromised.</td>
 <td xml:lang="en-US">To configure the number of retry prompts that are permitted per-session:
 Edit the <code>pam_pwquality.so</code> statement in
+
 <code>/etc/pam.d/system-auth</code>  to show
+
 <code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if site
 policy is more restrictive. The DoD requirement is a maximum of 3 prompts
 per session.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system enforces password complexity by requiring that at least one upper-case character be used. If it does not, this is a finding.</td>
 <td>To check how many retry attempts are permitted on a per-session basis, run the following command:
+
 $ grep pam_pwquality /etc/pam.d/system-auth 
+
 The retry parameter will indicate how many attempts are permitted.
 The DoD required value is less than or equal to 3.
 This would appear as retry=3, or a lower value.
@@ -8236,7 +8502,9 @@ This would appear as retry=3, or a lower value.
 <td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-61585r1_fix">Configure the operating system to enforce password complexity by requiring that at least one upper-case character be used.</fixtext></td>
 <td>To configure the number of retry prompts that are permitted per-session:
 Edit the pam_pwquality.so statement in
+
 /etc/pam.d/system-auth  to show
+
 retry=, or a lower value if site
 policy is more restrictive. The DoD requirement is a maximum of 3 prompts
 per session.</td>
@@ -8877,6 +9145,8 @@ AIDE can be executed periodically through other means; this is merely one exampl
 $ grep aide /etc/crontab
 The output should return something similar to the following:
 05 4 * * * root /usr/sbin/aide --check | /bin/mail -s "$(hostname) - AIDE Integrity Check" root@localhost
+The email address that the notifications are sent to can be changed by overriding
+.
       Is it the case that AIDE has not been configured or has not been configured to notify personnel of scan details?
       </td>
 <td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-61611r1_fix">Configure the operating system to shut down the information system, restart the information system, and/or notify the system administrator when anomalies in the operation of the security functions are discovered.</fixtext></td>
@@ -10057,7 +10327,7 @@ Change the superuser to a different username (The default is 'root').
 Once the superuser account has been added,
 update the
 <code>grub.cfg</code> file by running:
-<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
 </td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system enforces approved authorizations for logical access to information and system resources in accordance with applicable access control policies. If it does not, this is a finding.</td>
@@ -10087,7 +10357,7 @@ $ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_us
 Once the superuser account has been added,
 update the
 grub.cfg file by running:
-grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</td>
+grub2-mkconfig -o /boot/grub2/grub.cfg</td>
 <td>low</td>
 <td></td>
 <td></td>
@@ -10117,7 +10387,7 @@ Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
 
-<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
 </td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system enforces approved authorizations for logical access to information and system resources in accordance with applicable access control policies. If it does not, this is a finding.</td>
@@ -10131,7 +10401,7 @@ password_pbkdf2 superusers-account ${GRUB2_PASSWORD}
 To verify the boot loader superuser account password has been set,
 and the password encrypted, run the following command:
 
-sudo cat /boot/efi/EFI/redhat/user.cfg
+sudo cat /boot/grub2/user.cfg
 The output should be similar to:
 GRUB2_PASSWORD=grub.pbkdf2.sha512.10000.C4E08AC72FBFF7E837FD267BFAD7AEB3D42DDC
 2C99F2A94DD5E2E75C2DC331B719FE55D9411745F82D1B6CFD9E927D61925F9BBDD1CFAA0080E0
@@ -10155,7 +10425,7 @@ Once the superuser password has been added,
 update the
 grub.cfg file by running:
 
-grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</td>
+grub2-mkconfig -o /boot/grub2/grub.cfg</td>
 <td>high</td>
 <td></td>
 <td></td>
@@ -12296,6 +12566,53 @@ $ sudo systemctl enable auditd.service</td>
 <td></td>
 </tr>
 <tr>
+<td>CCI-002884</td>
+<td>SRG-OS-000392-GPOS-00172</td>
+<td><i>TBD - Assigned by DISA after STIG release</i></td>
+<td>The operating system must audit all activities performed during nonlocal maintenance and diagnostic sessions.</td>
+<td>CCE-83651-0:Enable Auditing for Processes Which Start Prior to the Audit Daemon</td>
+<td>If events associated with nonlocal administrative access or diagnostic sessions are not logged, a major tool for assessing and investigating attacks would not be available.
+
+This requirement addresses auditing-related issues associated with maintenance tools used specifically for diagnostic and repair actions on organizational information systems.
+
+Nonlocal maintenance and diagnostic activities are those activities conducted by individuals communicating through a network, either an external network (e.g., the Internet) or an internal network. Local maintenance and diagnostic activities are those activities carried out by individuals physically present at the information system or information system component and not communicating across a network connection.
+
+This requirement applies to hardware/software diagnostic test equipment or tools. This requirement does not cover hardware/software components that may support information system maintenance, yet are a part of the system, for example, the software implementing "ping," "ls," "ipconfig," or the hardware and software implementing the monitoring port of an Ethernet switch.</td>
+<td xml:lang="en-US">To ensure all processes can be audited, even those which start
+prior to the audit daemon, add the argument <code>audit=1</code> to the default
+GRUB 2 command line for the Linux operating system in
+
+<code>/boot/grub2/grubenv</code>, in the manner below:
+<pre># grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"</pre>
+</td>
+<td>Applicable - Configurable</td>
+<td>Verify the operating system audits all activities performed during nonlocal maintenance and diagnostic sessions. If it does not, this is a finding.</td>
+<td>
+Inspect the form of default GRUB 2 command line for the Linux operating system
+in /boot/grub2/grubenv. If they include audit=1, then auditing
+is enabled at boot time.
+# grep 'kernelopts.*audit=1.*' /boot/grub2/grubenv
+
+To ensure audit=1 is configured on all installed kernels, the
+following command may be used:
+
+# grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"
+
+      Is it the case that auditing is not enabled at boot time?
+      </td>
+<td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-61691r1_fix">Configure the operating system to audit all activities performed during nonlocal maintenance and diagnostic sessions.</fixtext></td>
+<td>To ensure all processes can be audited, even those which start
+prior to the audit daemon, add the argument audit=1 to the default
+GRUB 2 command line for the Linux operating system in
+
+/boot/grub2/grubenv, in the manner below:
+# grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) audit=1"</td>
+<td>medium</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>CCI-001991</td>
 <td>SRG-OS-000384-GPOS-00167</td>
 <td><i>TBD - Assigned by DISA after STIG release</i></td>
@@ -13624,7 +13941,8 @@ Add the <code>nosuid</code> option to the fourth column of
 <code>/boot</code>.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system prevents program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage. If it does not, this is a finding.</td>
-<td>To verify the nosuid option is configured for the /boot mount point, run the following command:
+<td>To verify the nosuid option is configured for the /boot mount point,
+    run the following command:
     $ mount | grep '\s/boot\s'
     The output should show the corresponding mount point along with the nosuid setting in parentheses.
 
@@ -13661,7 +13979,8 @@ Add the <code>nodev</code> option to the fourth column of
 <code>/dev/shm</code>.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system prevents program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage. If it does not, this is a finding.</td>
-<td>To verify the nodev option is configured for the /dev/shm mount point, run the following command:
+<td>To verify the nodev option is configured for the /dev/shm mount point,
+    run the following command:
     $ mount | grep '\s/dev/shm\s'
     The output should show the corresponding mount point along with the nodev setting in parentheses.
 
@@ -13699,7 +14018,8 @@ Add the <code>noexec</code> option to the fourth column of
 <code>/dev/shm</code>.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system prevents program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage. If it does not, this is a finding.</td>
-<td>To verify the noexec option is configured for the /dev/shm mount point, run the following command:
+<td>To verify the noexec option is configured for the /dev/shm mount point,
+    run the following command:
     $ mount | grep '\s/dev/shm\s'
     The output should show the corresponding mount point along with the noexec setting in parentheses.
 
@@ -13737,7 +14057,8 @@ Add the <code>nosuid</code> option to the fourth column of
 <code>/dev/shm</code>.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system prevents program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage. If it does not, this is a finding.</td>
-<td>To verify the nosuid option is configured for the /dev/shm mount point, run the following command:
+<td>To verify the nosuid option is configured for the /dev/shm mount point,
+    run the following command:
     $ mount | grep '\s/dev/shm\s'
     The output should show the corresponding mount point along with the nosuid setting in parentheses.
 
@@ -13774,7 +14095,8 @@ Add the <code>nosuid</code> option to the fourth column of
 <code>/home</code>.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system prevents program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage. If it does not, this is a finding.</td>
-<td>To verify the nosuid option is configured for the /home mount point, run the following command:
+<td>To verify the nosuid option is configured for the /home mount point,
+    run the following command:
     $ mount | grep '\s/home\s'
     The output should show the corresponding mount point along with the nosuid setting in parentheses.
 
@@ -13852,7 +14174,8 @@ Add the <code>nodev</code> option to the fourth column of
 <code>/tmp</code>.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system prevents program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage. If it does not, this is a finding.</td>
-<td>To verify the nodev option is configured for the /tmp mount point, run the following command:
+<td>To verify the nodev option is configured for the /tmp mount point,
+    run the following command:
     $ mount | grep '\s/tmp\s'
     The output should show the corresponding mount point along with the nodev setting in parentheses.
 
@@ -13888,7 +14211,8 @@ Add the <code>noexec</code> option to the fourth column of
 <code>/tmp</code>.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system prevents program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage. If it does not, this is a finding.</td>
-<td>To verify the noexec option is configured for the /tmp mount point, run the following command:
+<td>To verify the noexec option is configured for the /tmp mount point,
+    run the following command:
     $ mount | grep '\s/tmp\s'
     The output should show the corresponding mount point along with the noexec setting in parentheses.
 
@@ -13924,7 +14248,8 @@ Add the <code>nosuid</code> option to the fourth column of
 <code>/tmp</code>.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system prevents program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage. If it does not, this is a finding.</td>
-<td>To verify the nosuid option is configured for the /tmp mount point, run the following command:
+<td>To verify the nosuid option is configured for the /tmp mount point,
+    run the following command:
     $ mount | grep '\s/tmp\s'
     The output should show the corresponding mount point along with the nosuid setting in parentheses.
 
@@ -13963,7 +14288,8 @@ Add the <code>nodev</code> option to the fourth column of
 <code>/var/log/audit</code>.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system prevents program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage. If it does not, this is a finding.</td>
-<td>To verify the nodev option is configured for the /var/log/audit mount point, run the following command:
+<td>To verify the nodev option is configured for the /var/log/audit mount point,
+    run the following command:
     $ mount | grep '\s/var/log/audit\s'
     The output should show the corresponding mount point along with the nodev setting in parentheses.
 
@@ -14001,7 +14327,8 @@ Add the <code>noexec</code> option to the fourth column of
 <code>/var/log/audit</code>.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system prevents program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage. If it does not, this is a finding.</td>
-<td>To verify the noexec option is configured for the /var/log/audit mount point, run the following command:
+<td>To verify the noexec option is configured for the /var/log/audit mount point,
+    run the following command:
     $ mount | grep '\s/var/log/audit\s'
     The output should show the corresponding mount point along with the noexec setting in parentheses.
 
@@ -14037,7 +14364,8 @@ Add the <code>nosuid</code> option to the fourth column of
 <code>/var/log/audit</code>.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system prevents program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage. If it does not, this is a finding.</td>
-<td>To verify the nosuid option is configured for the /var/log/audit mount point, run the following command:
+<td>To verify the nosuid option is configured for the /var/log/audit mount point,
+    run the following command:
     $ mount | grep '\s/var/log/audit\s'
     The output should show the corresponding mount point along with the nosuid setting in parentheses.
 
@@ -14076,7 +14404,8 @@ Add the <code>nodev</code> option to the fourth column of
 <code>/var/log</code>.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system prevents program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage. If it does not, this is a finding.</td>
-<td>To verify the nodev option is configured for the /var/log mount point, run the following command:
+<td>To verify the nodev option is configured for the /var/log mount point,
+    run the following command:
     $ mount | grep '\s/var/log\s'
     The output should show the corresponding mount point along with the nodev setting in parentheses.
 
@@ -14114,7 +14443,8 @@ Add the <code>noexec</code> option to the fourth column of
 <code>/var/log</code>.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system prevents program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage. If it does not, this is a finding.</td>
-<td>To verify the noexec option is configured for the /var/log mount point, run the following command:
+<td>To verify the noexec option is configured for the /var/log mount point,
+    run the following command:
     $ mount | grep '\s/var/log\s'
     The output should show the corresponding mount point along with the noexec setting in parentheses.
 
@@ -14150,7 +14480,8 @@ Add the <code>nosuid</code> option to the fourth column of
 <code>/var/log</code>.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system prevents program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage. If it does not, this is a finding.</td>
-<td>To verify the nosuid option is configured for the /var/log mount point, run the following command:
+<td>To verify the nosuid option is configured for the /var/log mount point,
+    run the following command:
     $ mount | grep '\s/var/log\s'
     The output should show the corresponding mount point along with the nosuid setting in parentheses.
 
@@ -14187,7 +14518,8 @@ Add the <code>nodev</code> option to the fourth column of
 <code>/var/tmp</code>.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system prevents program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage. If it does not, this is a finding.</td>
-<td>To verify the nodev option is configured for the /var/tmp mount point, run the following command:
+<td>To verify the nodev option is configured for the /var/tmp mount point,
+    run the following command:
     $ mount | grep '\s/var/tmp\s'
     The output should show the corresponding mount point along with the nodev setting in parentheses.
 
@@ -14223,7 +14555,8 @@ Add the <code>noexec</code> option to the fourth column of
 <code>/var/tmp</code>.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system prevents program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage. If it does not, this is a finding.</td>
-<td>To verify the noexec option is configured for the /var/tmp mount point, run the following command:
+<td>To verify the noexec option is configured for the /var/tmp mount point,
+    run the following command:
     $ mount | grep '\s/var/tmp\s'
     The output should show the corresponding mount point along with the noexec setting in parentheses.
 
@@ -14259,7 +14592,8 @@ Add the <code>nosuid</code> option to the fourth column of
 <code>/var/tmp</code>.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system prevents program execution in accordance with local policies regarding software program usage and restrictions and/or rules authorizing the terms and conditions of software program usage. If it does not, this is a finding.</td>
-<td>To verify the nosuid option is configured for the /var/tmp mount point, run the following command:
+<td>To verify the nosuid option is configured for the /var/tmp mount point,
+    run the following command:
     $ mount | grep '\s/var/tmp\s'
     The output should show the corresponding mount point along with the nosuid setting in parentheses.
 
@@ -16067,6 +16401,8 @@ AIDE can be executed periodically through other means; this is merely one exampl
 $ grep aide /etc/crontab
 The output should return something similar to the following:
 05 4 * * * root /usr/sbin/aide --check | /bin/mail -s "$(hostname) - AIDE Integrity Check" root@localhost
+The email address that the notifications are sent to can be changed by overriding
+.
       Is it the case that AIDE has not been configured or has not been configured to notify personnel of scan details?
       </td>
 <td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-62075r1_fix">Configure the operating system to notify designated personnel if baseline configurations are changed in an unauthorized manner.</fixtext></td>
@@ -17624,9 +17960,11 @@ This requirement enables organizations to extend or limit auditing as necessary 
 <td>In order to ensure operating systems have a sufficient storage capacity in which to write the audit logs, operating systems need to be able to allocate audit record storage capacity.
 
 The task of allocating audit record storage capacity is usually performed during initial installation of the operating system.</td>
-<td xml:lang="en-US">Audit logs are stored in the <code>/var/log/audit</code> directory.  Ensure that it
-has its own partition or logical volume at installation time, or migrate it
-later using LVM. Make absolutely certain that it is large enough to store all
+<td xml:lang="en-US">Audit logs are stored in the <code>/var/log/audit</code> directory.
+
+Ensure that <code>/var/log/audit</code> has its own partition or logical
+volume at installation time, or migrate it using LVM.
+Make absolutely certain that it is large enough to store all
 audit logs that will be created by the auditing daemon.</td>
 <td>Applicable - Configurable</td>
 <td>Verify the operating system allocates audit record storage capacity to store at least one week's worth of audit records, when audit records are not immediately sent to a central audit record storage facility. If it does not, this is a finding.</td>
@@ -17638,9 +17976,11 @@ If /var/log/audit has its own partition or volume group, a line will be returned
       Is it the case that no line is returned?
       </td>
 <td><fixtext xmlns="http://checklists.nist.gov/xccdf/1.1" fixref="F-62179r1_fix">Configure the operating system to allocate audit record storage capacity to store at least one week's worth of audit records, when audit records are not immediately sent to a central audit record storage facility.</fixtext></td>
-<td>Audit logs are stored in the /var/log/audit directory.  Ensure that it
-has its own partition or logical volume at installation time, or migrate it
-later using LVM. Make absolutely certain that it is large enough to store all
+<td>Audit logs are stored in the /var/log/audit directory.
+
+Ensure that /var/log/audit has its own partition or logical
+volume at installation time, or migrate it using LVM.
+Make absolutely certain that it is large enough to store all
 audit logs that will be created by the auditing daemon.</td>
 <td>low</td>
 <td></td>

@@ -2221,13 +2221,10 @@ of the <code>chcon</code> command for all users and root. If the <code>auditd</c
 daemon is configured to use the <code>augenrules</code> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-
 <pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
-
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file:
-
 <pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
@@ -3526,13 +3523,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 
--F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign
--F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -4085,7 +4080,7 @@ Change the superuser to a different username (The default is 'root').
 Once the superuser account has been added,
 update the
 <code>grub.cfg</code> file by running:
-<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
 </td>
 <td xml:lang="en-US">Having a non-default grub superuser username makes password-guessing attacks less effective.</td>
 <td></td>
@@ -4108,7 +4103,7 @@ Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
 
-<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
 </td>
 <td xml:lang="en-US">Password protection on the boot loader configuration ensures
 users with physical access cannot trivially alter
@@ -4190,12 +4185,23 @@ accepted.</td>
 </tr>
 <tr>
 <td>3.1.20</td>
-<td>Disable IPv6 Networking Support Automatic Loading</td>
-<td xml:lang="en-US">To disable support for (<code>ipv6</code>) add the following line to
-<code>/etc/sysctl.d/ipv6.conf</code> (or another file in
-<code>/etc/sysctl.d</code>):
+<td>Disable IPv6 Addressing on All IPv6 Interfaces</td>
+<td xml:lang="en-US">To disable support for (<code>ipv6</code>) addressing on all interface add the following line to
+<code>/etc/sysctl.d/ipv6.conf</code> (or another file in <code>/etc/sysctl.d</code>):
 <pre>net.ipv6.conf.all.disable_ipv6 = 1</pre>
 This disables IPv6 on all network interfaces as other services and system
+functionality require the IPv6 stack loaded to work.</td>
+<td xml:lang="en-US">Any unnecessary network stacks - including IPv6 - should be disabled, to reduce
+the vulnerability to exploitation.</td>
+<td></td>
+</tr>
+<tr>
+<td>3.1.20</td>
+<td>Disable IPv6 Addressing on IPv6 Interfaces by Default</td>
+<td xml:lang="en-US">To disable support for (<code>ipv6</code>) addressing on interfaces by default add the following line to
+<code>/etc/sysctl.d/ipv6.conf</code> (or another file in <code>/etc/sysctl.d</code>):
+<pre>net.ipv6.conf.default.disable_ipv6 = 1</pre>
+This disables IPv6 on network interfaces by default as other services and system
 functionality require the IPv6 stack loaded to work.</td>
 <td xml:lang="en-US">Any unnecessary network stacks - including IPv6 - should be disabled, to reduce
 the vulnerability to exploitation.</td>

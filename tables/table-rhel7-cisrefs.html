@@ -661,9 +661,9 @@ must be captured and it should be able to be verified against the installed file
 <td>Configure Periodic Execution of AIDE</td>
 <td xml:lang="en-US">At a minimum, AIDE should be configured to run a weekly scan.
 To implement a daily execution of AIDE at 4:05am using cron, add the following line to <code>/etc/crontab</code>:
-<pre>05 4 * * * root /usr/sbin/aide --check</pre>
+<pre>05 4 * * * root  --check</pre>
 To implement a weekly execution of AIDE at 4:05am using cron, add the following line to <code>/etc/crontab</code>:
-<pre>05 4 * * 0 root /usr/sbin/aide --check</pre>
+<pre>05 4 * * 0 root  --check</pre>
 AIDE can be executed periodically through other means; this is merely one example.
 The usage of cron's special time codes, such as  <code>@daily</code> and
 <code>@weekly</code> is acceptable.</td>
@@ -723,7 +723,8 @@ world-writable directories installed by other software packages.</td>
 <td>1.1.15</td>
 <td>Ensure /var/log Located On Separate Partition</td>
 <td xml:lang="en-US">System logs are stored in the <code>/var/log</code> directory.
-Ensure that it has its own partition or logical
+
+Ensure that <code>/var/log</code> has its own partition or logical
 volume at installation time, or migrate it using LVM.</td>
 <td xml:lang="en-US">Placing <code>/var/log</code> in its own partition
 enables better separation between log files
@@ -733,9 +734,11 @@ and other files in <code>/var/</code>.</td>
 <tr>
 <td>1.1.16</td>
 <td>Ensure /var/log/audit Located On Separate Partition</td>
-<td xml:lang="en-US">Audit logs are stored in the <code>/var/log/audit</code> directory.  Ensure that it
-has its own partition or logical volume at installation time, or migrate it
-later using LVM. Make absolutely certain that it is large enough to store all
+<td xml:lang="en-US">Audit logs are stored in the <code>/var/log/audit</code> directory.
+
+Ensure that <code>/var/log/audit</code> has its own partition or logical
+volume at installation time, or migrate it using LVM.
+Make absolutely certain that it is large enough to store all
 audit logs that will be created by the auditing daemon.</td>
 <td xml:lang="en-US">Placing <code>/var/log/audit</code> in its own partition
 enables better separation between audit files
@@ -975,7 +978,7 @@ exist.</td>
 <td></td>
 </tr>
 <tr>
-<td>1.7.1.</td>
+<td>1.7.1</td>
 <td>Modify the System Message of the Day Banner</td>
 <td xml:lang="en-US">To configure the system message banner edit <code>/etc/motd</code>. Replace the
 default text with a message compliant with the local site policy or a legal
@@ -1364,7 +1367,9 @@ more difficult by ensuring a larger search space.</td>
 <td>Ensure PAM Enforces Password Requirements - Authentication Retry Prompts Permitted Per-Session</td>
 <td xml:lang="en-US">To configure the number of retry prompts that are permitted per-session:
 Edit the <code>pam_pwquality.so</code> statement in
+
 <code>/etc/pam.d/system-auth</code>  to show
+
 <code>retry=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_retry"></xccdf-1.1:sub></code>, or a lower value if site
 policy is more restrictive. The DoD requirement is a maximum of 3 prompts
 per session.</td>
@@ -1462,7 +1467,7 @@ by configuring the bootloader password.</td>
 <td></td>
 </tr>
 <tr>
-<td>5.4.1.4</td>
+<td>5.5.1.4</td>
 <td>Set Account Expiration Following Inactivity</td>
 <td xml:lang="en-US">To specify the number of days after a password expires (which
 signifies inactivity) until an account is permanently disabled, add or correct
@@ -1478,6 +1483,17 @@ elapse until the account would be automatically disabled. See the
 <td xml:lang="en-US">Disabling inactive accounts ensures that accounts which may not
 have been responsibly removed are not available to attackers
 who may have compromised their credentials.</td>
+<td></td>
+</tr>
+<tr>
+<td>6.2.5</td>
+<td>Ensure All Accounts on the System Have Unique Names</td>
+<td xml:lang="en-US">Ensure accounts on the system have unique names.
+
+To ensure all accounts have unique names, run the following command:
+<pre>$ sudo getent passwd | awk -F: '{ print $1}' | uniq -d</pre>
+If a username is returned, change or delete the username.</td>
+<td xml:lang="en-US">Unique usernames allow for accountability on the system.</td>
 <td></td>
 </tr>
 <tr>
@@ -3432,6 +3448,22 @@ The <code>firewalld</code> service can be enabled with the following command:
 <td xml:lang="en-US">Access control methods provide the ability to enhance system security posture
 by restricting services and known good IP addresses and address ranges. This
 prevents connections from unknown hosts and protocols.</td>
+<td></td>
+</tr>
+<tr>
+<td>3.5.1.5</td>
+<td>Set Default firewalld Zone for Incoming Packets</td>
+<td xml:lang="en-US">To set the default zone to <code>drop</code> for
+the built-in default zone which processes incoming IPv4 and IPv6 packets,
+modify the following line in
+<code>/etc/firewalld/firewalld.conf</code> to be:
+<pre>DefaultZone=drop</pre>
+</td>
+<td xml:lang="en-US">In <code>firewalld</code> the default zone is applied only after all
+the applicable rules in the table are examined for a match. Setting the
+default zone to <code>drop</code> implements proper design for a firewall, i.e.
+any packets which are not explicitly permitted should not be
+accepted.</td>
 <td></td>
 </tr>
 <tr>
@@ -6145,7 +6177,7 @@ SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> 
 </td>
 <td xml:lang="en-US">SSH provides several logging levels with varying amounts of verbosity. <code>DEBUG</code> is specifically
 not recommended other than strictly for debugging SSH communications since it provides
-so much data that it is difficult to identify important security information. <code>INFO</code> or 
+so much data that it is difficult to identify important security information. <code>INFO</code> or
 <code>VERBOSE</code> level is the basic level that only records login activity of SSH users. In many
 situations, such as Incident Response, it is important to determine when a particular user was active
 on a system. The logout record can eliminate those users who disconnected, which helps narrow the

@@ -1422,7 +1422,7 @@ Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
 
-<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
 </td>
 <td xml:lang="en-US">Password protection on the boot loader configuration ensures
 users with physical access cannot trivially alter
@@ -1568,8 +1568,9 @@ being created in <code>/boot</code>.
 Legitimate character and block devices should exist only in
 the <code>/dev</code> directory on the root partition or within chroot
 jails built for system services.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nodev</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/boot</code>.</td>
 <td xml:lang="en-US">The only legitimate location for device files is the <code>/dev</code> directory
 located on the root partition. The only exception to this is chroot jails.</td>
@@ -1583,8 +1584,9 @@ located on the root partition. The only exception to this is chroot jails.</td>
 <td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
 execution of setuid programs in <code>/boot</code>. The SUID and SGID permissions
 should not be required on the boot partition.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nosuid</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/boot</code>.</td>
 <td xml:lang="en-US">The presence of SUID and SGID executables should be tightly controlled. Users
 should not be able to execute SUID or SGID binaries from boot partitions.</td>
@@ -1598,8 +1600,9 @@ should not be able to execute SUID or SGID binaries from boot partitions.</td>
 <td xml:lang="en-US">The <code>nodev</code> mount option can be used to prevent creation of device
 files in <code>/dev/shm</code>. Legitimate character and block devices should
 not exist within temporary directories like <code>/dev/shm</code>.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nodev</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/dev/shm</code>.</td>
 <td xml:lang="en-US">The only legitimate location for device files is the <code>/dev</code> directory
 located on the root partition. The only exception to this is chroot jails.</td>
@@ -1614,8 +1617,9 @@ located on the root partition. The only exception to this is chroot jails.</td>
 from being executed out of <code>/dev/shm</code>.
 It can be dangerous to allow the execution of binaries
 from world-writable temporary storage directories such as <code>/dev/shm</code>.
-Add the <code>noexec</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>noexec</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/dev/shm</code>.</td>
 <td xml:lang="en-US">Allowing users to execute binaries from world-writable directories
 such as <code>/dev/shm</code> can expose the system to potential compromise.</td>
@@ -1629,8 +1633,9 @@ such as <code>/dev/shm</code> can expose the system to potential compromise.</td
 <td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent execution
 of setuid programs in <code>/dev/shm</code>.  The SUID and SGID permissions should not
 be required in these world-writable directories.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nosuid</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/dev/shm</code>.</td>
 <td xml:lang="en-US">The presence of SUID and SGID executables should be tightly controlled. Users
 should not be able to execute SUID or SGID binaries from temporary storage partitions.</td>
@@ -1646,8 +1651,9 @@ being created in <code>/home</code>.
 Legitimate character and block devices should exist only in
 the <code>/dev</code> directory on the root partition or within chroot
 jails built for system services.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nodev</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/home</code>.</td>
 <td xml:lang="en-US">The only legitimate location for device files is the <code>/dev</code> directory
 located on the root partition. The only exception to this is chroot jails.</td>
@@ -1660,8 +1666,9 @@ located on the root partition. The only exception to this is chroot jails.</td>
 <td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
 execution of setuid programs in <code>/home</code>. The SUID and SGID permissions
 should not be required in these user data directories.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nosuid</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/home</code>.</td>
 <td xml:lang="en-US">The presence of SUID and SGID executables should be tightly controlled. Users
 should not be able to execute SUID or SGID binaries from user home directory partitions.</td>
@@ -1676,8 +1683,9 @@ should not be able to execute SUID or SGID binaries from user home directory par
 character or block devices. Legitimate character and block devices should
 exist only in the <code>/dev</code> directory on the root partition or within
 chroot jails built for system services.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nodev</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 
     any non-root local partitions.</td>
 <td xml:lang="en-US">The <code>nodev</code> mount option prevents files from being
@@ -1695,8 +1703,9 @@ to set <code>nodev</code> on these filesystems.</td>
 <td xml:lang="en-US">The <code>nodev</code> mount option can be used to prevent device files from
 being created in <code>/tmp</code>. Legitimate character and block devices
 should not exist within temporary directories like <code>/tmp</code>.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nodev</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/tmp</code>.</td>
 <td xml:lang="en-US">The only legitimate location for device files is the <code>/dev</code> directory
 located on the root partition. The only exception to this is chroot jails.</td>
@@ -1709,8 +1718,9 @@ located on the root partition. The only exception to this is chroot jails.</td>
 <td>Add noexec Option to /tmp</td>
 <td xml:lang="en-US">The <code>noexec</code> mount option can be used to prevent binaries
 from being executed out of <code>/tmp</code>.
-Add the <code>noexec</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>noexec</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/tmp</code>.</td>
 <td xml:lang="en-US">Allowing users to execute binaries from world-writable directories
 such as <code>/tmp</code> should never be necessary in normal operation and
@@ -1725,8 +1735,9 @@ can expose the system to potential compromise.</td>
 <td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
 execution of setuid programs in <code>/tmp</code>. The SUID and SGID permissions
 should not be required in these world-writable directories.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nosuid</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/tmp</code>.</td>
 <td xml:lang="en-US">The presence of SUID and SGID executables should be tightly controlled. Users
 should not be able to execute SUID or SGID binaries from temporary storage partitions.</td>
@@ -1742,8 +1753,9 @@ being created in <code>/var/log/audit</code>.
 Legitimate character and block devices should exist only in
 the <code>/dev</code> directory on the root partition or within chroot
 jails built for system services.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nodev</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/var/log/audit</code>.</td>
 <td xml:lang="en-US">The only legitimate location for device files is the <code>/dev</code> directory
 located on the root partition. The only exception to this is chroot jails.</td>
@@ -1756,8 +1768,9 @@ located on the root partition. The only exception to this is chroot jails.</td>
 <td>Add noexec Option to /var/log/audit</td>
 <td xml:lang="en-US">The <code>noexec</code> mount option can be used to prevent binaries
 from being executed out of <code>/var/log/audit</code>.
-Add the <code>noexec</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>noexec</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/var/log/audit</code>.</td>
 <td xml:lang="en-US">Allowing users to execute binaries from directories containing audit log files
 such as <code>/var/log/audit</code> should never be necessary in normal operation and
@@ -1772,8 +1785,9 @@ can expose the system to potential compromise.</td>
 <td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
 execution of setuid programs in <code>/var/log/audit</code>. The SUID and SGID permissions
 should not be required in directories containing audit log files.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nosuid</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/var/log/audit</code>.</td>
 <td xml:lang="en-US">The presence of SUID and SGID executables should be tightly controlled. Users
 should not be able to execute SUID or SGID binaries from partitions
@@ -1790,8 +1804,9 @@ being created in <code>/var/log</code>.
 Legitimate character and block devices should exist only in
 the <code>/dev</code> directory on the root partition or within chroot
 jails built for system services.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nodev</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/var/log</code>.</td>
 <td xml:lang="en-US">The only legitimate location for device files is the <code>/dev</code> directory
 located on the root partition. The only exception to this is chroot jails.</td>
@@ -1804,8 +1819,9 @@ located on the root partition. The only exception to this is chroot jails.</td>
 <td>Add noexec Option to /var/log</td>
 <td xml:lang="en-US">The <code>noexec</code> mount option can be used to prevent binaries
 from being executed out of <code>/var/log</code>.
-Add the <code>noexec</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>noexec</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/var/log</code>.</td>
 <td xml:lang="en-US">Allowing users to execute binaries from directories containing log files
 such as <code>/var/log</code> should never be necessary in normal operation and
@@ -1820,8 +1836,9 @@ can expose the system to potential compromise.</td>
 <td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
 execution of setuid programs in <code>/var/log</code>. The SUID and SGID permissions
 should not be required in directories containing log files.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nosuid</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/var/log</code>.</td>
 <td xml:lang="en-US">The presence of SUID and SGID executables should be tightly controlled. Users
 should not be able to execute SUID or SGID binaries from partitions
@@ -1838,8 +1855,9 @@ being created in <code>/var</code>.
 Legitimate character and block devices should exist only in
 the <code>/dev</code> directory on the root partition or within chroot
 jails built for system services.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nodev</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/var</code>.</td>
 <td xml:lang="en-US">The only legitimate location for device files is the <code>/dev</code> directory
 located on the root partition. The only exception to this is chroot jails.</td>
@@ -1853,8 +1871,9 @@ located on the root partition. The only exception to this is chroot jails.</td>
 <td xml:lang="en-US">The <code>nodev</code> mount option can be used to prevent device files from
 being created in <code>/var/tmp</code>. Legitimate character and block devices
 should not exist within temporary directories like <code>/var/tmp</code>.
-Add the <code>nodev</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nodev</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/var/tmp</code>.</td>
 <td xml:lang="en-US">The only legitimate location for device files is the <code>/dev</code> directory
 located on the root partition. The only exception to this is chroot jails.</td>
@@ -1866,8 +1885,9 @@ located on the root partition. The only exception to this is chroot jails.</td>
 <td>Add noexec Option to /var/tmp</td>
 <td xml:lang="en-US">The <code>noexec</code> mount option can be used to prevent binaries
 from being executed out of <code>/var/tmp</code>.
-Add the <code>noexec</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>noexec</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/var/tmp</code>.</td>
 <td xml:lang="en-US">Allowing users to execute binaries from world-writable directories
 such as <code>/var/tmp</code> should never be necessary in normal operation and
@@ -1881,8 +1901,9 @@ can expose the system to potential compromise.</td>
 <td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
 execution of setuid programs in <code>/var/tmp</code>. The SUID and SGID permissions
 should not be required in these world-writable directories.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
+Add the <code>nosuid</code> option to the list of
+<code>Options</code> in the <code>systemd.mount</code> unit that
+controls mounting of
 <code>/var/tmp</code>.</td>
 <td xml:lang="en-US">The presence of SUID and SGID executables should be tightly controlled. Users
 should not be able to execute SUID or SGID binaries from temporary storage partitions.</td>
@@ -2056,8 +2077,30 @@ world-writable directories installed by other software packages.</td>
 <td>CCE-82737-8</td>
 <td>Ensure /var/log Located On Separate Partition</td>
 <td xml:lang="en-US">System logs are stored in the <code>/var/log</code> directory.
-Ensure that it has its own partition or logical
-volume at installation time, or migrate it using LVM.</td>
+<p>
+Partitioning Red Hat CoreOS is a Day 1 operation and cannot
+be changed afterwards. For documentation on how to add a
+MachineConfig manifest that specifies a separate <code>/var/log</code>
+partition, follow:
+
+    <a href="https://docs.openshift.com/container-platform/latest/installing/installing_platform_agnostic/installing-platform-agnostic.html#installation-user-infra-machines-advanced_disk_installing-platform-agnostic">https://docs.openshift.com/container-platform/latest/installing/installing_platform_agnostic/installing-platform-agnostic.html#installation-user-infra-machines-advanced_disk_installing-platform-agnostic</a>
+</p>
+<p>
+Note that the Red Hat OpenShift documentation often references a block
+device, such as <code>/dev/vda</code>. The name of the available block devices depends
+on the underlying infrastructure (bare metal vs cloud), and often the specific
+instance type. For example in AWS, some instance types have NVMe drives
+(<code>/dev/nvme*</code>), others use <code>/dev/xvda*</code>.
+
+You will need to look for relevant documentation for your infrastructure around this.
+In many cases, the simplest thing is to boot a single machine with an Ignition
+configuration that just gives you SSH access, and inspect the block devices via
+e.g. the <code>lsblk</code> command.
+
+For physical hardware, a good best practice is to reference devices via the
+<code>/dev/disk/by-id/</code> or <code>/dev/disk/by-path</code> links.
+</p>
+</td>
 <td xml:lang="en-US">Placing <code>/var/log</code> in its own partition
 enables better separation between log files
 and other files in <code>/var/</code>.</td>
@@ -2068,9 +2111,32 @@ and other files in <code>/var/</code>.</td>
 <tr>
 <td>CCE-82738-6</td>
 <td>Ensure /var/log/audit Located On Separate Partition</td>
-<td xml:lang="en-US">Audit logs are stored in the <code>/var/log/audit</code> directory.  Ensure that it
-has its own partition or logical volume at installation time, or migrate it
-later using LVM. Make absolutely certain that it is large enough to store all
+<td xml:lang="en-US">Audit logs are stored in the <code>/var/log/audit</code> directory.
+<p>
+Partitioning Red Hat CoreOS is a Day 1 operation and cannot
+be changed afterwards. For documentation on how to add a
+MachineConfig manifest that specifies a separate <code>/var/log/audit</code>
+partition, follow:
+
+    <a href="https://docs.openshift.com/container-platform/latest/installing/installing_platform_agnostic/installing-platform-agnostic.html#installation-user-infra-machines-advanced_disk_installing-platform-agnostic">https://docs.openshift.com/container-platform/latest/installing/installing_platform_agnostic/installing-platform-agnostic.html#installation-user-infra-machines-advanced_disk_installing-platform-agnostic</a>
+</p>
+<p>
+Note that the Red Hat OpenShift documentation often references a block
+device, such as <code>/dev/vda</code>. The name of the available block devices depends
+on the underlying infrastructure (bare metal vs cloud), and often the specific
+instance type. For example in AWS, some instance types have NVMe drives
+(<code>/dev/nvme*</code>), others use <code>/dev/xvda*</code>.
+
+You will need to look for relevant documentation for your infrastructure around this.
+In many cases, the simplest thing is to boot a single machine with an Ignition
+configuration that just gives you SSH access, and inspect the block devices via
+e.g. the <code>lsblk</code> command.
+
+For physical hardware, a good best practice is to reference devices via the
+<code>/dev/disk/by-id/</code> or <code>/dev/disk/by-path</code> links.
+</p>
+
+Make absolutely certain that it is large enough to store all
 audit logs that will be created by the auditing daemon.</td>
 <td xml:lang="en-US">Placing <code>/var/log/audit</code> in its own partition
 enables better separation between audit files
@@ -2185,7 +2251,7 @@ Additionally, a properly configured audit subsystem ensures that actions of
 individual system users can be uniquely traced to those users so they
 can be held accountable for their actions.</td>
 <td></td>
-<td>AC-2(g)<br>AU-3<br>AU-10<br>AU-2(d)<br>AU-12(c)<br>AU-14(1)<br>AC-6(9)<br>CM-6(a)<br>
+<td>AC-2(g)<br>AU-3<br>AU-10<br>AU-2(d)<br>AU-12(c)<br>AU-14(1)<br>AC-6(9)<br>CM-6(a)<br>SI-4(23)<br>
 </td>
 </tr>
 <tr>
@@ -2766,7 +2832,8 @@ To make sure that the setting is persistent, add the following line to a file in
 will randomize any kernel addresses in the BPF programs and maps,
 and will not expose the JIT addresses in <code>/proc/kallsyms</code>.</td>
 <td></td>
-<td></td>
+<td>CM-6b<br>
+</td>
 </tr>
 <tr>
 <td>CCE-82469-8</td>
