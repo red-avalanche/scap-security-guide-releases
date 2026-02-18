@@ -21,13 +21,13 @@
       <ns0:component-ref id="scap_org.open-scap_cref_ssg-rhel5-cpe-oval.xml" ns1:href="#scap_org.open-scap_comp_ssg-rhel5-cpe-oval.xml" />
     </ns0:checks>
   </ns0:data-stream>
-  <ns0:component id="scap_org.open-scap_comp_ssg-rhel5-oval.xml" timestamp="2017-03-29T15:52:40">
+  <ns0:component id="scap_org.open-scap_comp_ssg-rhel5-oval.xml" timestamp="2017-04-29T09:48:47">
     <ns3:oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
       <ns3:generator>
         <ns5:product_name>python</ns5:product_name>
         <ns5:product_version>2.7.13</ns5:product_version>
         <ns5:schema_version>5.11</ns5:schema_version>
-        <ns5:timestamp>2017-03-29T13:52:11</ns5:timestamp>
+        <ns5:timestamp>2017-04-29T09:47:38</ns5:timestamp>
       </ns3:generator>
       <ns3:definitions>
         <ns3:definition class="compliance" id="oval:ssg-rsyslog_files_groupownership:def:1" version="1">
@@ -9491,6 +9491,20 @@
             <ns3:criterion test_ref="oval:ssg-test_etc_passwd_no_duplicate_user_names:tst:1" />
           </ns3:criteria>
         </ns3:definition>
+        <ns3:definition class="compliance" id="oval:ssg-accounts_have_homedir_login_defs:def:1" version="1">
+          <ns3:metadata>
+            <ns3:title>Ensure new users receive home directories</ns3:title>
+            <ns3:affected family="unix">
+              <ns3:platform>Red Hat Enterprise Linux 7</ns3:platform>
+              <ns3:platform>Red Hat Enterprise Linux 6</ns3:platform>
+            </ns3:affected>
+            <ns3:description>CREATE_HOME should be enabled</ns3:description>
+            <ns3:reference ref_id="accounts_have_homedir_login_defs" source="ssg" />
+          </ns3:metadata>
+          <ns3:criteria operator="AND">
+            <ns3:criterion comment="Check CREATE_HOME in /etc/login.defs" test_ref="oval:ssg-test_accounts_have_homedir_login_defs:tst:1" />
+          </ns3:criteria>
+        </ns3:definition>
         <ns3:definition class="compliance" id="oval:ssg-accounts_password_minlen_login_defs:def:1" version="3">
           <ns3:metadata>
             <ns3:title>Set Password Expiration Parameters</ns3:title>
@@ -10645,6 +10659,24 @@
             <ns3:criterion comment="nosuid on /dev/shm" test_ref="oval:ssg-test_nosuid_dev_shm:tst:1" />
           </ns3:criteria>
         </ns3:definition>
+        <ns3:definition class="compliance" id="oval:ssg-mount_option_home_nosuid:def:1" version="1">
+          <ns3:metadata>
+            <ns3:title>Add nosuid Option to /home</ns3:title>
+            <ns3:affected family="unix">
+              <ns3:platform>Fedora 23</ns3:platform>
+              <ns3:platform>Fedora 24</ns3:platform>
+              <ns3:platform>Red Hat Enterprise Linux 7</ns3:platform>
+              <ns3:platform>Red Hat Enterprise Linux 6</ns3:platform>
+            </ns3:affected>
+            <ns3:description>The nosuid mount option should be set for user home directory
+      partitions such as /home. The suid/sgid permissions should not be required
+      in these directories.</ns3:description>
+            <ns3:reference ref_id="mount_option_home_nosuid" source="ssg" />
+          </ns3:metadata>
+          <ns3:criteria>
+            <ns3:criterion comment="nosuid on /home" test_ref="oval:ssg-test_nosuid_home:tst:1" />
+          </ns3:criteria>
+        </ns3:definition>
         <ns3:definition class="compliance" id="oval:ssg-mount_option_nodev_nonroot_local_partitions:def:1" version="1">
           <ns3:metadata>
             <ns3:title>Add nodev Option to Non-Root Local Partitions</ns3:title>
@@ -10704,8 +10736,13 @@
             
             <ns3:criteria operator="AND">
               <ns3:extend_definition comment="Check if removable partition value represents CD/DVD drive" definition_ref="oval:ssg-var_removable_partition_is_cd_dvd_drive:def:1" />
-              <ns3:criterion comment="Check if at least one from CD/DVD drive alternative names is using 'nodev' mount option in /etc/fstab" test_ref="oval:ssg-test_nodev_etc_fstab_cd_dvd_drive:tst:1" />
-              <ns3:criterion comment="Check if at least one from CD/DVD drive alternative names is using 'nodev' mount option in runtime configuration" test_ref="oval:ssg-test_nodev_runtime_cd_dvd_drive:tst:1" />
+              <ns3:criteria operator="OR">
+                <ns3:criteria operator="AND">
+                  <ns3:criterion comment="Check if at least one from CD/DVD drive alternative names is using 'nodev' mount option in /etc/fstab" test_ref="oval:ssg-test_nodev_etc_fstab_cd_dvd_drive:tst:1" />
+                  <ns3:criterion comment="Check if at least one from CD/DVD drive alternative names is using 'nodev' mount option in runtime configuration" test_ref="oval:ssg-test_nodev_runtime_cd_dvd_drive:tst:1" />
+                </ns3:criteria>
+                <ns3:extend_definition comment="Check if CD/DVD drive is not configured to automount in /etc/fstab" definition_ref="oval:ssg-no_cd_dvd_drive_in_etc_fstab:def:1" />
+              </ns3:criteria>
             </ns3:criteria>
             
             <ns3:criteria operator="AND">
@@ -10735,8 +10772,13 @@
             
             <ns3:criteria operator="AND">
               <ns3:extend_definition comment="Check if removable partition value represents CD/DVD drive" definition_ref="oval:ssg-var_removable_partition_is_cd_dvd_drive:def:1" />
-              <ns3:criterion comment="Check if at least one from CD/DVD drive alternative names is using 'noexec' mount option in /etc/fstab" test_ref="oval:ssg-test_noexec_etc_fstab_cd_dvd_drive:tst:1" />
-              <ns3:criterion comment="Check if at least one from CD/DVD drive alternative names is using 'noexec' mount option in runtime configuration" test_ref="oval:ssg-test_noexec_runtime_cd_dvd_drive:tst:1" />
+              <ns3:criteria operator="OR">
+                <ns3:criteria operator="AND">
+                  <ns3:criterion comment="Check if at least one from CD/DVD drive alternative names is using 'noexec' mount option in /etc/fstab" test_ref="oval:ssg-test_noexec_etc_fstab_cd_dvd_drive:tst:1" />
+                  <ns3:criterion comment="Check if at least one from CD/DVD drive alternative names is using 'noexec' mount option in runtime configuration" test_ref="oval:ssg-test_noexec_runtime_cd_dvd_drive:tst:1" />
+                </ns3:criteria>
+                <ns3:extend_definition comment="Check if CD/DVD drive is not configured to automount in /etc/fstab" definition_ref="oval:ssg-no_cd_dvd_drive_in_etc_fstab:def:1" />
+              </ns3:criteria>
             </ns3:criteria>
             
             <ns3:criteria operator="AND">
@@ -10787,8 +10829,13 @@
             
             <ns3:criteria operator="AND">
               <ns3:extend_definition comment="Check if removable partition value represents CD/DVD drive" definition_ref="oval:ssg-var_removable_partition_is_cd_dvd_drive:def:1" />
-              <ns3:criterion comment="Check if at least one from CD/DVD drive alternative names is using 'nosuid' mount option in /etc/fstab" test_ref="oval:ssg-test_nosuid_etc_fstab_cd_dvd_drive:tst:1" />
-              <ns3:criterion comment="Check if at least one from CD/DVD drive alternative names is using 'nosuid' mount option in runtime configuration" test_ref="oval:ssg-test_nosuid_runtime_cd_dvd_drive:tst:1" />
+              <ns3:criteria operator="OR">
+                <ns3:criteria operator="AND">
+                  <ns3:criterion comment="Check if at least one from CD/DVD drive alternative names is using 'nosuid' mount option in /etc/fstab" test_ref="oval:ssg-test_nosuid_etc_fstab_cd_dvd_drive:tst:1" />
+                  <ns3:criterion comment="Check if at least one from CD/DVD drive alternative names is using 'nosuid' mount option in runtime configuration" test_ref="oval:ssg-test_nosuid_runtime_cd_dvd_drive:tst:1" />
+                </ns3:criteria>
+                <ns3:extend_definition comment="Check if CD/DVD drive is not configured to automount in /etc/fstab" definition_ref="oval:ssg-no_cd_dvd_drive_in_etc_fstab:def:1" />
+              </ns3:criteria>
             </ns3:criteria>
             
             <ns3:criteria operator="AND">
@@ -10943,6 +10990,21 @@
           </ns3:metadata>
           <ns3:criteria>
             <ns3:criterion comment="promisc interfaces" negate="true" test_ref="oval:ssg-test_promisc_interfaces:tst:1" />
+          </ns3:criteria>
+        </ns3:definition>
+        <ns3:definition class="compliance" id="oval:ssg-no_cd_dvd_drive_in_etc_fstab:def:1" version="1">
+          <ns3:metadata>
+            <ns3:title>No CD/DVD drive is configured to automount in /etc/fstab</ns3:title>
+            <ns3:affected family="unix">
+              <ns3:platform>Red Hat Enterprise Linux 7</ns3:platform>
+              <ns3:platform>Red Hat Enterprise Linux 6</ns3:platform>
+            </ns3:affected>
+            <ns3:description>Check the /etc/fstab and check if a CD/DVD drive
+      is not configured for automount.</ns3:description>
+            <ns3:reference ref_id="no_cd_dvd_drive_in_etc_fstab" source="ssg" />
+          </ns3:metadata>
+          <ns3:criteria>
+            <ns3:criterion comment="Check if CD/DVD drive is not configured to automout in /etc/fstab" test_ref="oval:ssg-test_no_cd_dvd_drive_in_etc_fstab:tst:1" />
           </ns3:criteria>
         </ns3:definition>
         <ns3:definition class="compliance" id="oval:ssg-no_direct_root_logins:def:1" version="1">
@@ -11657,6 +11719,19 @@ This should be disabled.</ns3:description>
             <ns3:criterion comment="Check PermitUserEnvironment in /etc/ssh/sshd_config" negate="true" test_ref="oval:ssg-test_sshd_no_user_envset:tst:1" />
           </ns3:criteria>
         </ns3:definition>
+        <ns3:definition class="compliance" id="oval:ssg-sshd_enable_x11_forwarding:def:1" version="1">
+          <ns3:metadata>
+            <ns3:title>Enable X11 Forwarding</ns3:title>
+            <ns3:affected family="unix">
+        </ns3:affected>
+            <ns3:description>Enable X11Forwarding to encrypt X11 remote connections over SSH.</ns3:description>
+            <ns3:reference ref_id="sshd_enable_x11_forwarding" source="ssg" />
+          </ns3:metadata>
+          <ns3:criteria comment="SSH is not being used or conditions are met" operator="OR">
+            <ns3:extend_definition comment="sshd service is disabled" definition_ref="oval:ssg-service_sshd_disabled:def:1" />
+            <ns3:criterion comment="Check X11Forwarding in /etc/ssh/sshd_config" test_ref="oval:ssg-test_sshd_enable_x11_forwarding:tst:1" />
+          </ns3:criteria>
+        </ns3:definition>
         <ns3:definition class="compliance" id="oval:ssg-sshd_set_idle_timeout:def:1" version="1">
           <ns3:metadata>
             <ns3:title>Set OpenSSH Idle Timeout Interval</ns3:title>
@@ -11683,6 +11758,59 @@ This should be disabled.</ns3:description>
           <ns3:criteria comment="SSH is not being used or conditions are met" operator="OR">
             <ns3:extend_definition comment="sshd service is disabled" definition_ref="oval:ssg-service_sshd_disabled:def:1" />
             <ns3:criterion comment="Check ClientAliveCountMax in /etc/ssh/sshd_config" test_ref="oval:ssg-test_sshd_clientalivecountmax:tst:1" />
+          </ns3:criteria>
+        </ns3:definition>
+        <ns3:definition class="compliance" id="oval:ssg-sshd_set_loglevel_info:def:1" version="1">
+          <ns3:metadata>
+            <ns3:title>Set OpenSSH LogLevel to INFO</ns3:title>
+            <ns3:affected family="unix">
+        </ns3:affected>
+            <ns3:description>The SSH LogLevel should be set to INFO.</ns3:description>
+            <ns3:reference ref_id="sshd_set_loglevel_info" source="ssg" />
+          </ns3:metadata>
+          <ns3:criteria comment="SSH is not being used or conditions are met" operator="OR">
+            <ns3:extend_definition comment="sshd service is disabled" definition_ref="oval:ssg-service_sshd_disabled:def:1" />
+            <ns3:criterion comment="Check LogLevel in /etc/ssh/sshd_config" test_ref="oval:ssg-test_sshd_set_loglevel_info:tst:1" />
+          </ns3:criteria>
+        </ns3:definition>
+        <ns3:definition class="compliance" id="oval:ssg-sshd_set_max_auth_tries:def:1" version="1">
+          <ns3:metadata>
+            <ns3:title>Set OpenSSH authentication attempt limit (MaxAuthTries)</ns3:title>
+            <ns3:affected family="unix">
+        </ns3:affected>
+            <ns3:description>The SSH MaxAuthTries should be set to an
+      appropriate value.</ns3:description>
+            <ns3:reference ref_id="sshd_set_max_auth_tries" source="ssg" />
+          </ns3:metadata>
+          <ns3:criteria comment="SSH is not being used or conditions are met" operator="OR">
+            <ns3:extend_definition comment="sshd service is disabled" definition_ref="oval:ssg-service_sshd_disabled:def:1" />
+            <ns3:criterion comment="Check MaxAuthTries in /etc/ssh/sshd_config" test_ref="oval:ssg-test_sshd_max_auth_tries:tst:1" />
+          </ns3:criteria>
+        </ns3:definition>
+        <ns3:definition class="compliance" id="oval:ssg-sshd_use_strong_ciphers:def:1" version="1">
+          <ns3:metadata>
+            <ns3:title>Use Only Strong Ciphers</ns3:title>
+            <ns3:affected family="unix">
+        </ns3:affected>
+            <ns3:description>Only use strong ciphers.</ns3:description>
+            <ns3:reference ref_id="sshd_use_strong_ciphers" source="ssg" />
+          </ns3:metadata>
+          <ns3:criteria comment="SSH is not being used or conditions are met" operator="OR">
+            <ns3:extend_definition comment="sshd service is disabled" definition_ref="oval:ssg-service_sshd_disabled:def:1" />
+            <ns3:criterion comment="Check the Ciphers list in /etc/ssh/sshd_config" test_ref="oval:ssg-test_sshd_use_strong_ciphers:tst:1" />
+          </ns3:criteria>
+        </ns3:definition>
+        <ns3:definition class="compliance" id="oval:ssg-sshd_use_strong_macs:def:1" version="1">
+          <ns3:metadata>
+            <ns3:title>Use Only Strong MACs</ns3:title>
+            <ns3:affected family="unix">
+        </ns3:affected>
+            <ns3:description>Only use strong MACs.</ns3:description>
+            <ns3:reference ref_id="sshd_use_strong_macs" source="ssg" />
+          </ns3:metadata>
+          <ns3:criteria comment="SSH is not being used or conditions are met" operator="OR">
+            <ns3:extend_definition comment="sshd service is disabled" definition_ref="oval:ssg-service_sshd_disabled:def:1" />
+            <ns3:criterion comment="Check MACs in /etc/ssh/sshd_config" test_ref="oval:ssg-test_sshd_use_strong_macs:tst:1" />
           </ns3:criteria>
         </ns3:definition>
         <ns3:definition class="compliance" id="oval:ssg-sysctl_kernel_dmesg_restrict:def:1" version="3">
@@ -15578,6 +15706,9 @@ This should be disabled.</ns3:description>
           <ns7:object object_ref="oval:ssg-object_count_of_all_usernames_from_etc_passwd:obj:1" />
           <ns7:state state_ref="oval:ssg-state_etc_passwd_no_duplicate_user_names:ste:1" />
         </ns7:variable_test>
+        <ns7:textfilecontent54_test check="all" check_existence="all_exist" comment="Check value of CREATE_HOME in /etc/login.defs" id="oval:ssg-test_accounts_have_homedir_login_defs:tst:1" version="1">
+          <ns7:object object_ref="oval:ssg-obj_accounts_have_homedir_login_defs:obj:1" />
+        </ns7:textfilecontent54_test>
         <ns7:variable_test check="all" comment="The value of PASS_MIN_LEN should be set appropriately in /etc/login.defs" id="oval:ssg-test_pass_min_len:tst:1" version="1">
           <ns7:object object_ref="oval:ssg-object_last_pass_min_len_instance_value:obj:1" />
           <ns7:state state_ref="oval:ssg-state_last_pass_min_len_instance_value:ste:1" />
@@ -15967,6 +16098,10 @@ This should be disabled.</ns3:description>
           <ns8:object object_ref="oval:ssg-object_dev_shm_partition_nosuid:obj:1" />
           <ns8:state state_ref="oval:ssg-state_dev_shm_nosuid:ste:1" />
         </ns8:partition_test>
+        <ns8:partition_test check="all" check_existence="all_exist" comment="nosuid on /home" id="oval:ssg-test_nosuid_home:tst:1" version="1">
+          <ns8:object object_ref="oval:ssg-object_home_nosuid_partition:obj:1" />
+          <ns8:state state_ref="oval:ssg-state_home_nosuid:ste:1" />
+        </ns8:partition_test>
         <ns8:partition_test check="all" check_existence="all_exist" comment="nodev on local filesystems" id="oval:ssg-test_nodev_nonroot_local_partitions:tst:1" version="1">
           <ns8:object object_ref="oval:ssg-object_non_root_partitions:obj:1" />
           <ns8:state state_ref="oval:ssg-state_local_nodev:ste:1" />
@@ -15979,7 +16114,7 @@ This should be disabled.</ns3:description>
           
           <ns7:object object_ref="oval:ssg-object_no_nfs_defined_etc_fstab_nodev:obj:1" />
         </ns7:textfilecontent54_test>
-        <ns7:textfilecontent54_test check="all" comment="'nodev' mount option used for at least one CD / DVD drive alternative names in /etc/fstab" id="oval:ssg-test_nodev_etc_fstab_cd_dvd_drive:tst:1" version="1">
+        <ns7:textfilecontent54_test check="all" check_existence="any_exist" comment="'nodev' mount option used for at least one CD / DVD drive alternative names in /etc/fstab" id="oval:ssg-test_nodev_etc_fstab_cd_dvd_drive:tst:1" version="1">
           <ns7:object object_ref="oval:ssg-object_nodev_etc_fstab_cd_dvd_drive:obj:1" />
           <ns7:state state_ref="oval:ssg-state_nodev_etc_fstab_cd_dvd_drive:ste:1" />
         </ns7:textfilecontent54_test>
@@ -15993,7 +16128,7 @@ This should be disabled.</ns3:description>
         <ns8:partition_test check="all" check_existence="all_exist" comment="'nodev' mount option used for removable partition in runtime configuration" id="oval:ssg-test_nodev_runtime_not_cd_dvd_drive:tst:1" version="1">
           <ns8:object object_ref="oval:ssg-object_nodev_runtime_not_cd_dvd_drive:obj:1" />
         </ns8:partition_test>
-        <ns7:textfilecontent54_test check="all" comment="'noexec' mount option used for at least one CD / DVD drive alternative names in /etc/fstab" id="oval:ssg-test_noexec_etc_fstab_cd_dvd_drive:tst:1" version="1">
+        <ns7:textfilecontent54_test check="all" check_existence="any_exist" comment="'noexec' mount option used for at least one CD / DVD drive alternative names in /etc/fstab" id="oval:ssg-test_noexec_etc_fstab_cd_dvd_drive:tst:1" version="1">
           <ns7:object object_ref="oval:ssg-object_noexec_etc_fstab_cd_dvd_drive:obj:1" />
           <ns7:state state_ref="oval:ssg-state_noexec_etc_fstab_cd_dvd_drive:ste:1" />
         </ns7:textfilecontent54_test>
@@ -16015,7 +16150,7 @@ This should be disabled.</ns3:description>
           
           <ns7:object object_ref="oval:ssg-object_no_nfs_defined_etc_fstab_nosuid:obj:1" />
         </ns7:textfilecontent54_test>
-        <ns7:textfilecontent54_test check="all" comment="'nosuid' mount option used for at least one CD / DVD drive alternative names in /etc/fstab" id="oval:ssg-test_nosuid_etc_fstab_cd_dvd_drive:tst:1" version="1">
+        <ns7:textfilecontent54_test check="all" check_existence="any_exist" comment="'nosuid' mount option used for at least one CD / DVD drive alternative names in /etc/fstab" id="oval:ssg-test_nosuid_etc_fstab_cd_dvd_drive:tst:1" version="1">
           <ns7:object object_ref="oval:ssg-object_nosuid_etc_fstab_cd_dvd_drive:obj:1" />
           <ns7:state state_ref="oval:ssg-state_nosuid_etc_fstab_cd_dvd_drive:ste:1" />
         </ns7:textfilecontent54_test>
@@ -16078,6 +16213,9 @@ This should be disabled.</ns3:description>
           <ns6:object object_ref="oval:ssg-object_promisc_interfaces:obj:1" />
           <ns6:state state_ref="oval:ssg-state_promisc:ste:1" />
         </ns6:interface_test>
+        <ns7:textfilecontent54_test check="all" check_existence="none_exist" comment="'CD/DVD drive is not listed in /etc/fstab" id="oval:ssg-test_no_cd_dvd_drive_in_etc_fstab:tst:1" version="1">
+          <ns7:object object_ref="oval:ssg-object_no_cd_dvd_drive_in_etc_fstab:obj:1" />
+        </ns7:textfilecontent54_test>
         <ns7:textfilecontent54_test check="all" check_existence="all_exist" comment="/etc/securetty file exists" id="oval:ssg-test_etc_securetty_exists:tst:1" version="1">
           <ns7:object object_ref="oval:ssg-object_etc_securetty_exists:obj:1" />
         </ns7:textfilecontent54_test>
@@ -16270,6 +16408,9 @@ This should be disabled.</ns3:description>
         <ns7:textfilecontent54_test check="all" check_existence="none_exist" comment="Check value of PermitUserEnvironment in /etc/ssh/sshd_config" id="oval:ssg-test_sshd_no_user_envset:tst:1" version="1">
           <ns7:object object_ref="oval:ssg-obj_sshd_no_user_envset:obj:1" />
         </ns7:textfilecontent54_test>
+        <ns7:textfilecontent54_test check="all" check_existence="all_exist" comment="tests the value of X11Forwarding setting in the /etc/ssh/sshd_config file" id="oval:ssg-test_sshd_enable_x11_forwarding:tst:1" version="1">
+          <ns7:object object_ref="oval:ssg-obj_sshd_enable_x11_forwarding:obj:1" />
+        </ns7:textfilecontent54_test>
         <ns7:textfilecontent54_test check="all" check_existence="all_exist" comment="timeout is configured" id="oval:ssg-test_sshd_idle_timeout:tst:1" version="1">
           <ns7:object object_ref="oval:ssg-object_sshd_idle_timeout:obj:1" />
           <ns7:state state_ref="oval:ssg-state_timeout_value_upper_bound:ste:1" />
@@ -16278,6 +16419,20 @@ This should be disabled.</ns3:description>
         <ns7:textfilecontent54_test check="all" check_existence="all_exist" comment="Tests the value of the ClientAliveCountMax setting in the /etc/ssh/sshd_config file" id="oval:ssg-test_sshd_clientalivecountmax:tst:1" version="1">
           <ns7:object object_ref="oval:ssg-obj_sshd_clientalivecountmax:obj:1" />
           <ns7:state state_ref="oval:ssg-state_sshd_clientalivecountmax:ste:1" />
+        </ns7:textfilecontent54_test>
+        <ns7:textfilecontent54_test check="all" check_existence="all_exist" comment="loglevel is set" id="oval:ssg-test_sshd_set_loglevel_info:tst:1" version="1">
+          <ns7:object object_ref="oval:ssg-obj_sshd_set_loglevel_info:obj:1" />
+        </ns7:textfilecontent54_test>
+        <ns7:textfilecontent54_test check="all" check_existence="all_exist" comment="maxauthtries is configured" id="oval:ssg-test_sshd_max_auth_tries:tst:1" version="1">
+          <ns7:object object_ref="oval:ssg-object_sshd_max_auth_tries:obj:1" />
+          <ns7:state state_ref="oval:ssg-state_maxauthtries_value_upper_bound:ste:1" />
+          <ns7:state state_ref="oval:ssg-state_maxauthtries_value_lower_bound:ste:1" />
+        </ns7:textfilecontent54_test>
+        <ns7:textfilecontent54_test check="all" check_existence="all_exist" comment="tests the value of Ciphers setting in the /etc/ssh/sshd_config file" id="oval:ssg-test_sshd_use_strong_ciphers:tst:1" version="1">
+          <ns7:object object_ref="oval:ssg-obj_sshd_use_strong_ciphers:obj:1" />
+        </ns7:textfilecontent54_test>
+        <ns7:textfilecontent54_test check="all" check_existence="all_exist" comment="tests the value of MACs setting in the /etc/ssh/sshd_config file" id="oval:ssg-test_sshd_use_strong_macs:tst:1" version="1">
+          <ns7:object object_ref="oval:ssg-obj_sshd_use_strong_macs:obj:1" />
         </ns7:textfilecontent54_test>
         <ns6:sysctl_test check="all" check_existence="all_exist" comment="Check kernel.dmesg_restrict kernel runtime parameter" id="oval:ssg-test_runtime_kernel_dmesg_restrict:tst:1" version="1">
           <ns6:object object_ref="oval:ssg-object_runtime_kernel_dmesg_restrict:obj:1" />
@@ -21266,6 +21421,11 @@ This should be disabled.</ns3:description>
         <ns7:variable_object id="oval:ssg-object_count_of_all_usernames_from_etc_passwd:obj:1" version="1">
           <ns7:var_ref>oval:ssg-variable_count_of_all_usernames_from_etc_passwd:var:1</ns7:var_ref>
         </ns7:variable_object>
+        <ns7:textfilecontent54_object id="oval:ssg-obj_accounts_have_homedir_login_defs:obj:1" version="2">
+          <ns7:filepath>/etc/login.defs</ns7:filepath>
+          <ns7:pattern operation="pattern match">^[\s]*(?i)CREATE_HOME(?-i)[\s]+no[\s]*(?:|(?:#.*))?$</ns7:pattern>
+          <ns7:instance datatype="int">1</ns7:instance>
+        </ns7:textfilecontent54_object>
         <ns7:textfilecontent54_object id="oval:ssg-object_last_pass_min_len_from_etc_login_defs:obj:1" version="1">
           
           <ns7:behaviors singleline="true" />
@@ -21831,6 +21991,9 @@ This should be disabled.</ns3:description>
         <ns8:partition_object id="oval:ssg-object_dev_shm_partition_nosuid:obj:1" version="1">
           <ns8:mount_point>/dev/shm</ns8:mount_point>
         </ns8:partition_object>
+        <ns8:partition_object id="oval:ssg-object_home_nosuid_partition:obj:1" version="1">
+          <ns8:mount_point>/home</ns8:mount_point>
+        </ns8:partition_object>
         <ns8:partition_object id="oval:ssg-object_non_root_partitions:obj:1" version="1">
           
           <ns8:mount_point operation="pattern match">^/\w.*$</ns8:mount_point>
@@ -21975,6 +22138,11 @@ This should be disabled.</ns3:description>
           <ns6:name operation="pattern match">^.*$</ns6:name>
           <ns3:filter action="include">oval:ssg-state_promisc:ste:1</ns3:filter>
         </ns6:interface_object>
+        <ns7:textfilecontent54_object id="oval:ssg-object_no_cd_dvd_drive_in_etc_fstab:obj:1" version="1">
+          <ns7:filepath>/etc/fstab</ns7:filepath>
+          <ns7:pattern datatype="string" operation="pattern match" var_check="at least one" var_ref="oval:ssg-variable_cd_dvd_drive_alternative_names:var:1" />
+          <ns7:instance datatype="int" operation="greater than or equal">1</ns7:instance>
+        </ns7:textfilecontent54_object>
         <ns7:textfilecontent54_object comment="/etc/securetty file exists" id="oval:ssg-object_etc_securetty_exists:obj:1" version="1">
           <ns7:filepath>/etc/securetty</ns7:filepath>
           <ns7:pattern operation="pattern match">^.*$</ns7:pattern>
@@ -22227,6 +22395,11 @@ This should be disabled.</ns3:description>
           <ns7:pattern operation="pattern match">^[\s]*(?i)PermitUserEnvironment(?-i)[\s]+no[\s]*(?:|(?:#.*))?$</ns7:pattern>
           <ns7:instance datatype="int">1</ns7:instance>
         </ns7:textfilecontent54_object>
+        <ns7:textfilecontent54_object id="oval:ssg-obj_sshd_enable_x11_forwarding:obj:1" version="1">
+          <ns7:filepath>/etc/ssh/sshd_config</ns7:filepath>
+          <ns7:pattern operation="pattern match">^[\s]*(?i)X11Forwarding(?-i)[\s]+yes[\s]*(?:|(?:#.*))?$</ns7:pattern>
+          <ns7:instance datatype="int">1</ns7:instance>
+        </ns7:textfilecontent54_object>
         <ns7:textfilecontent54_object id="oval:ssg-object_sshd_idle_timeout:obj:1" version="2">
           <ns7:filepath>/etc/ssh/sshd_config</ns7:filepath>
           <ns7:pattern operation="pattern match">^[\s]*(?i)ClientAliveInterval[\s]+(\d+)[\s]*(?:|(?:#.*))?$</ns7:pattern>
@@ -22235,6 +22408,26 @@ This should be disabled.</ns3:description>
         <ns7:textfilecontent54_object id="oval:ssg-obj_sshd_clientalivecountmax:obj:1" version="2">
           <ns7:filepath>/etc/ssh/sshd_config</ns7:filepath>
           <ns7:pattern operation="pattern match">^[\s]*(?i)ClientAliveCountMax[\s]+([\d]+)[\s]*(?:|(?:#.*))?$</ns7:pattern>
+          <ns7:instance datatype="int">1</ns7:instance>
+        </ns7:textfilecontent54_object>
+        <ns7:textfilecontent54_object id="oval:ssg-obj_sshd_set_loglevel_info:obj:1" version="2">
+          <ns7:filepath>/etc/ssh/sshd_config</ns7:filepath>
+          <ns7:pattern operation="pattern match">^[\s]*(?i)LogLevel(?-i)[\s]+INFO[\s]*(?:|(?:#.*))?$</ns7:pattern>
+          <ns7:instance datatype="int">1</ns7:instance>
+        </ns7:textfilecontent54_object>
+        <ns7:textfilecontent54_object id="oval:ssg-object_sshd_max_auth_tries:obj:1" version="2">
+          <ns7:filepath>/etc/ssh/sshd_config</ns7:filepath>
+          <ns7:pattern operation="pattern match">^[\s]*(?i)MaxAuthTries[\s]+(\d+)[\s]*(?:|(?:#.*))?$</ns7:pattern>
+          <ns7:instance datatype="int">1</ns7:instance>
+        </ns7:textfilecontent54_object>
+        <ns7:textfilecontent54_object id="oval:ssg-obj_sshd_use_strong_ciphers:obj:1" version="2">
+          <ns7:filepath>/etc/ssh/sshd_config</ns7:filepath>
+          <ns7:pattern operation="pattern match">^[\s]*(?i)Ciphers(?-i)[\s]+((chacha20-poly1305@openssh\.com|aes256-gcm@openssh\.com|aes128-gcm@openssh\.com|aes256-ctr|aes128-ctr),?)+[\s]*(?:|(?:#.*))?$</ns7:pattern>
+          <ns7:instance datatype="int">1</ns7:instance>
+        </ns7:textfilecontent54_object>
+        <ns7:textfilecontent54_object id="oval:ssg-obj_sshd_use_strong_macs:obj:1" version="1">
+          <ns7:filepath>/etc/ssh/sshd_config</ns7:filepath>
+          <ns7:pattern operation="pattern match">^[\s]*(?i)MACs(?-i)[\s]+((hmac-sha2-512-etm@openssh\.com|hmac-sha2-256-etm@openssh\.com|umac-128-etm@openssh\.com|hmac-sha2-512|hmac-sha2-256|hmac-ripemd160),?)+[\s]*(?:|(?:#.*))?$</ns7:pattern>
           <ns7:instance datatype="int">1</ns7:instance>
         </ns7:textfilecontent54_object>
         <ns6:sysctl_object id="oval:ssg-object_runtime_kernel_dmesg_restrict:obj:1" version="1">
@@ -24038,6 +24231,9 @@ This should be disabled.</ns3:description>
         <ns8:partition_state id="oval:ssg-state_dev_shm_nosuid:ste:1" version="1">
           <ns8:mount_options datatype="string" entity_check="at least one" operation="equals">nosuid</ns8:mount_options>
         </ns8:partition_state>
+        <ns8:partition_state id="oval:ssg-state_home_nosuid:ste:1" version="1">
+          <ns8:mount_options datatype="string" entity_check="at least one" operation="equals">nosuid</ns8:mount_options>
+        </ns8:partition_state>
         <ns8:partition_state id="oval:ssg-state_local_nodev:ste:1" version="1">
           
           <ns8:device operation="pattern match">^/dev/.*$</ns8:device>
@@ -24163,6 +24359,12 @@ This should be disabled.</ns3:description>
         </ns7:textfilecontent54_state>
         <ns7:textfilecontent54_state id="oval:ssg-state_sshd_clientalivecountmax:ste:1" version="1">
           <ns7:subexpression datatype="int" operation="equals">0</ns7:subexpression>
+        </ns7:textfilecontent54_state>
+        <ns7:textfilecontent54_state comment="upper bound of MaxAuthTries" id="oval:ssg-state_maxauthtries_value_upper_bound:ste:1" version="1">
+          <ns7:subexpression datatype="int" operation="less than or equal" var_check="all" var_ref="oval:ssg-sshd_max_auth_tries_value:var:1" />
+        </ns7:textfilecontent54_state>
+        <ns7:textfilecontent54_state comment="lower bound of MaxAuthTries" id="oval:ssg-state_maxauthtries_value_lower_bound:ste:1" version="1">
+          <ns7:subexpression datatype="int" operation="greater than">0</ns7:subexpression>
         </ns7:textfilecontent54_state>
         <ns6:sysctl_state id="oval:ssg-state_runtime_kernel_dmesg_restrict:ste:1" version="1">
           <ns6:value datatype="int" operation="equals">1</ns6:value>
@@ -24541,7 +24743,6 @@ This should be disabled.</ns3:description>
             <ns3:variable_component var_ref="oval:ssg-var_third_digit_of_umask_from_etc_bashrc:var:1" />
           </ns3:arithmetic>
         </ns3:local_variable>
-        <ns3:external_variable comment="Required umask converted from string to octal number" datatype="int" id="oval:ssg-var_accounts_user_umask_umask_as_number:var:1" version="1" />
         <ns3:local_variable comment="First octal digit of umask from /etc/csh.cshrc" datatype="int" id="oval:ssg-var_first_digit_of_umask_from_etc_csh_cshrc:var:1" version="1">
           <ns3:substring substring_length="1" substring_start="1">
             <ns3:object_component item_field="subexpression" object_ref="oval:ssg-obj_umask_from_etc_csh_cshrc:obj:1" />
@@ -24723,6 +24924,12 @@ This should be disabled.</ns3:description>
         <ns3:local_variable comment="Source device of /var/tmp" datatype="string" id="oval:ssg-var_mount_option_var_tmp_bind_var_tmp_source_device:var:1" version="1">
           <ns3:object_component item_field="device" object_ref="oval:ssg-object_mount_option_var_tmp:obj:1" />
         </ns3:local_variable>
+        <ns3:constant_variable comment="CD/DVD drive alternative names whitelist" datatype="string" id="oval:ssg-variable_cd_dvd_drive_alternative_names:var:1" version="1">
+          <ns3:value>/dev/cdrom</ns3:value>
+          <ns3:value>/dev/dvd</ns3:value>
+          <ns3:value>/dev/scd0</ns3:value>
+          <ns3:value>/dev/sr0</ns3:value>
+        </ns3:constant_variable>
         <ns3:local_variable comment="UIDs retrieved from /etc/passwd" datatype="int" id="oval:ssg-variable_sys_uids_etc_passwd:var:1" version="1">
           <ns3:object_component item_field="subexpression" object_ref="oval:ssg-object_etc_passwd_entries:obj:1" />
         </ns3:local_variable>
@@ -24806,6 +25013,7 @@ This should be disabled.</ns3:description>
             </ns3:arithmetic>
           </ns3:arithmetic>
         </ns3:local_variable>
+        <ns3:external_variable comment="used for remediation only" datatype="string" id="oval:ssg-rsyslog_remote_loghost_address:var:1" version="1" />
         <ns3:external_variable comment="external variable for selinux state" datatype="string" id="oval:ssg-var_selinux_state:var:1" version="1" />
         <ns3:local_variable comment="The value of last ENCRYPT_METHOD directive in /etc/login.defs" datatype="string" id="oval:ssg-variable_last_encrypt_method_instance_value:var:1" version="1">
           <ns3:regex_capture pattern="ENCRYPT_METHOD\s+(\w+)">
@@ -24813,6 +25021,7 @@ This should be disabled.</ns3:description>
           </ns3:regex_capture>
         </ns3:local_variable>
         <ns3:external_variable comment="timeout value" datatype="int" id="oval:ssg-sshd_idle_timeout_value:var:1" version="1" />
+        <ns3:external_variable comment="maxauthtries value" datatype="int" id="oval:ssg-sshd_max_auth_tries_value:var:1" version="1" />
         <ns3:local_variable comment="First octal digit of umask from /etc/init.d/functions" datatype="int" id="oval:ssg-var_first_digit_of_umask_from_etc_init_d_functions:var:1" version="1">
           <ns3:substring substring_length="1" substring_start="1">
             <ns3:object_component item_field="subexpression" object_ref="oval:ssg-obj_umask_from_etc_init_d_functions:obj:1" />
@@ -24857,6 +25066,19 @@ This should be disabled.</ns3:description>
             <ns3:variable_component var_ref="oval:ssg-var_accounts_user_umask:var:1" />
           </ns3:substring>
         </ns3:local_variable>
+        <ns3:local_variable comment="var_accounts_user_umask umask converted from string to a number" datatype="int" id="oval:ssg-var_accounts_user_umask_umask_as_number:var:1" version="1">
+          <ns3:arithmetic arithmetic_operation="add">
+            <ns3:arithmetic arithmetic_operation="multiply">
+              <ns3:literal_component datatype="int">64</ns3:literal_component>
+              <ns3:variable_component var_ref="oval:ssg-var_first_digit_of_umask_from_var_accounts_user_umask:var:1" />
+            </ns3:arithmetic>
+            <ns3:arithmetic arithmetic_operation="multiply">
+              <ns3:literal_component datatype="int">8</ns3:literal_component>
+              <ns3:variable_component var_ref="oval:ssg-var_second_digit_of_umask_from_var_accounts_user_umask:var:1" />
+            </ns3:arithmetic>
+            <ns3:variable_component var_ref="oval:ssg-var_third_digit_of_umask_from_var_accounts_user_umask:var:1" />
+          </ns3:arithmetic>
+        </ns3:local_variable>
         <ns3:external_variable comment="Value of var_umask_for_daemons (the required umask) as string" datatype="string" id="oval:ssg-var_umask_for_daemons:var:1" version="1" />
         <ns3:local_variable comment="First octal digit of umask from var_umask_for_daemons" datatype="int" id="oval:ssg-var_first_digit_of_umask_from_var_umask_for_daemons:var:1" version="1">
           <ns3:substring substring_length="1" substring_start="1">
@@ -24876,11 +25098,11 @@ This should be disabled.</ns3:description>
       </ns3:variables>
     </ns3:oval_definitions>
   </ns0:component>
-  <ns0:component id="scap_org.open-scap_comp_ssg-rhel5-ocil.xml" timestamp="2017-03-29T15:52:38">
+  <ns0:component id="scap_org.open-scap_comp_ssg-rhel5-ocil.xml" timestamp="2017-04-29T09:48:32">
     <ns9:ocil>
       <ns9:generator>
         <ns9:schema_version>2.0</ns9:schema_version>
-        <ns9:timestamp>2017-03-29T15:52:33+02:00</ns9:timestamp>
+        <ns9:timestamp>2017-04-29T09:48:10Z</ns9:timestamp>
       </ns9:generator>
       <ns9:questionnaires>
         <ns9:questionnaire id="ocil:ssg-partition_for_tmp_ocil:questionnaire:1">
@@ -34961,9 +35183,9 @@ windows, but still within IAVM-dictated timeframes, this is not a finding.
       </ns9:questions>
     </ns9:ocil>
   </ns0:component>
-  <ns0:component id="scap_org.open-scap_comp_ssg-rhel5-xccdf-1.2.xml" timestamp="2017-03-29T15:52:43">
+  <ns0:component id="scap_org.open-scap_comp_ssg-rhel5-xccdf-1.2.xml" timestamp="2017-04-29T09:48:41">
     <ns10:Benchmark id="xccdf_org.ssgproject.content_benchmark_RHEL-5" resolved="1" style="SCAP_1.2" xml:lang="en-US">
-      <ns10:status date="2017-03-29">draft</ns10:status>
+      <ns10:status date="2017-04-29">draft</ns10:status>
       <ns10:title xml:lang="en-US">Guide to the Secure Configuration of Red Hat Enterprise Linux 5</ns10:title>
       <ns10:description xml:lang="en-US">This guide presents a catalog of security-relevant
 configuration settings for Red Hat Enterprise Linux 5. It is a rendering of
@@ -35046,10 +35268,88 @@ respective companies.</ns10:rear-matter>
       <ns10:platform idref="cpe:/o:scientificlinux:scientificlinux:4" />
       <ns10:platform idref="cpe:/o:redhat:enterprise_linux:5" />
       <ns10:platform idref="cpe:/o:scientificlinux:scientificlinux:5" />
-      <ns10:version update="https://github.com/OpenSCAP/scap-security-guide/releases/latest">0.1.31</ns10:version>
+      <ns10:version update="https://github.com/OpenSCAP/scap-security-guide/releases/latest">0.1.33</ns10:version>
       <ns10:metadata>
         <dc:publisher>SCAP Security Guide Project</dc:publisher>
         <dc:creator>SCAP Security Guide Project</dc:creator>
+        <dc:contributor>0x66656c6978 &lt;0x66656c6978@users.noreply.github.com&gt;</dc:contributor>
+        <dc:contributor>Gabe Alford &lt;redhatrises@gmail.com&gt;</dc:contributor>
+        <dc:contributor>Christopher Anderson &lt;cba@fedoraproject.org&gt;</dc:contributor>
+        <dc:contributor>Chuck Atkins &lt;chuck.atkins@kitware.com&gt;</dc:contributor>
+        <dc:contributor>Molly Jo Bault &lt;Molly.Jo.Bault@ballardtech.com&gt;</dc:contributor>
+        <dc:contributor>Joseph Bisch &lt;joseph.bisch@gmail.com&gt;</dc:contributor>
+        <dc:contributor>Jeffrey Blank &lt;blank@eclipse.ncsc.mil&gt;</dc:contributor>
+        <dc:contributor>Blake Burkhart &lt;blake.burkhart@us.af.mil&gt;</dc:contributor>
+        <dc:contributor>Patrick Callahan &lt;pmc@patrickcallahan.com&gt;</dc:contributor>
+        <dc:contributor>Nick Carboni &lt;ncarboni@redhat.com&gt;</dc:contributor>
+        <dc:contributor>Frank Caviggia &lt;fcaviggi@ra.iad.redhat.com&gt;</dc:contributor>
+        <dc:contributor>Eric Christensen &lt;echriste@redhat.com&gt;</dc:contributor>
+        <dc:contributor>Caleb Cooper &lt;coopercd@ornl.gov&gt;</dc:contributor>
+        <dc:contributor>Maura Dailey &lt;maura@eclipse.ncsc.mil&gt;</dc:contributor>
+        <dc:contributor>Klaas Demter &lt;demter@atix.de&gt;</dc:contributor>
+        <dc:contributor>Jean-Baptiste Donnette &lt;jean-baptiste.donnette@epita.fr&gt;</dc:contributor>
+        <dc:contributor>drax &lt;applezip@gmail.com&gt;</dc:contributor>
+        <dc:contributor>Greg Elin &lt;gregelin@gitmachines.com&gt;</dc:contributor>
+        <dc:contributor>Andrew Gilmore &lt;agilmore2@gmail.com&gt;</dc:contributor>
+        <dc:contributor>Joshua Glemza &lt;jglemza@nasa.gov&gt;</dc:contributor>
+        <dc:contributor>Steve Grubb &lt;sgrubb@redhat.com&gt;</dc:contributor>
+        <dc:contributor>Marek Haicman &lt;mhaicman@redhat.com&gt;</dc:contributor>
+        <dc:contributor>Trey Henefield &lt;thenefield@gmail.com&gt;</dc:contributor>
+        <dc:contributor>hex2a &lt;hex2a@users.noreply.github.com&gt;</dc:contributor>
+        <dc:contributor>Robin Price II &lt;robin@redhat.com&gt;</dc:contributor>
+        <dc:contributor>Jeremiah Jahn &lt;jeremiah@goodinassociates.com&gt;</dc:contributor>
+        <dc:contributor>Stephan Joerrens &lt;Stephan.Joerrens@fiduciagad.de&gt;</dc:contributor>
+        <dc:contributor>Yuli Khodorkovskiy &lt;ykhodorkovskiy@tresys.com&gt;</dc:contributor>
+        <dc:contributor>Luke Kordell &lt;luke.t.kordell@lmco.com&gt;</dc:contributor>
+        <dc:contributor>kspargur &lt;kspargur@kspargur.csb&gt;</dc:contributor>
+        <dc:contributor>Fen Labalme &lt;fen@civicactions.com&gt;</dc:contributor>
+        <dc:contributor>Ian Lee &lt;lee1001@llnl.gov&gt;</dc:contributor>
+        <dc:contributor>Jan Lieskovsky &lt;jlieskov@redhat.com&gt;</dc:contributor>
+        <dc:contributor>&#352;imon Luka&#353;&#237;k &lt;slukasik@redhat.com&gt;</dc:contributor>
+        <dc:contributor>Jamie Lorwey Martin &lt;jlmartin@redhat.com&gt;</dc:contributor>
+        <dc:contributor>Michael McConachie &lt;michael@redhat.com&gt;</dc:contributor>
+        <dc:contributor>Rodney Mercer &lt;rmercer@harris.com&gt;</dc:contributor>
+        <dc:contributor>Brian Millett &lt;bmillett@gmail.com&gt;</dc:contributor>
+        <dc:contributor>mmosel &lt;mmosel@kde.example.com&gt;</dc:contributor>
+        <dc:contributor>Zbynek Moravec &lt;zmoravec@redhat.com&gt;</dc:contributor>
+        <dc:contributor>Kazuo Moriwaka &lt;moriwaka@users.noreply.github.com&gt;</dc:contributor>
+        <dc:contributor>Michael Moseley &lt;michael@eclipse.ncsc.mil&gt;</dc:contributor>
+        <dc:contributor>Joe Nall &lt;joe@nall.com&gt;</dc:contributor>
+        <dc:contributor>Michele Newman &lt;mnewman@redhat.com&gt;</dc:contributor>
+        <dc:contributor>Kaustubh Padegaonkar &lt;theTuxRacer@gmail.com&gt;</dc:contributor>
+        <dc:contributor>Michael Palmiotto &lt;mpalmiotto@tresys.com&gt;</dc:contributor>
+        <dc:contributor>pcactr &lt;paul.c.arnold4.ctr@mail.mil&gt;</dc:contributor>
+        <dc:contributor>Kenneth Peeples &lt;kennethwpeeples@gmail.com&gt;</dc:contributor>
+        <dc:contributor>Frank Lin PIAT &lt;fpiat@klabs.be&gt;</dc:contributor>
+        <dc:contributor>Martin Preisler &lt;mpreisle@redhat.com&gt;</dc:contributor>
+        <dc:contributor>Raphael Sanchez Prudencio &lt;rsprudencio@redhat.com&gt;</dc:contributor>
+        <dc:contributor>T.O. Radzy Radzykewycz &lt;radzy@windriver.com&gt;</dc:contributor>
+        <dc:contributor>Rick Renshaw &lt;Richard_Renshaw@xtoenergy.com&gt;</dc:contributor>
+        <dc:contributor>Chris Reynolds &lt;c.reynolds82@gmail.com&gt;</dc:contributor>
+        <dc:contributor>Pat Riehecky &lt;riehecky@fnal.gov&gt;</dc:contributor>
+        <dc:contributor>Joshua Roys &lt;roysjosh@gmail.com&gt;</dc:contributor>
+        <dc:contributor>rrenshaw &lt;bofh69@yahoo.com&gt;</dc:contributor>
+        <dc:contributor>Ray Shaw (Cont ARL/CISD) rvshaw &lt;rvshaw@esme.arl.army.mil&gt;</dc:contributor>
+        <dc:contributor>Willy Santos &lt;wsantos@redhat.com&gt;</dc:contributor>
+        <dc:contributor>Gautam Satish &lt;gautams@hpe.com&gt;</dc:contributor>
+        <dc:contributor>Watson Sato &lt;wsato@redhat.com&gt;</dc:contributor>
+        <dc:contributor>Satoru SATOH &lt;satoru.satoh@gmail.com&gt;</dc:contributor>
+        <dc:contributor>Spencer Shimko &lt;sshimko@tresys.com&gt;</dc:contributor>
+        <dc:contributor>Thomas Sj&#246;gren &lt;konstruktoid@users.noreply.github.com&gt;</dc:contributor>
+        <dc:contributor>Francisco Slavin &lt;fslavin@tresys.com&gt;</dc:contributor>
+        <dc:contributor>David Smith &lt;dsmith@eclipse.ncsc.mil&gt;</dc:contributor>
+        <dc:contributor>Kevin Spargur &lt;kspargur@redhat.com&gt;</dc:contributor>
+        <dc:contributor>Kenneth Stailey &lt;kstailey.lists@gmail.com&gt;</dc:contributor>
+        <dc:contributor>Leland Steinke &lt;leland.j.steinke.ctr@mail.mil&gt;</dc:contributor>
+        <dc:contributor>Philippe Thierry &lt;phil@reseau-libre.net&gt;</dc:contributor>
+        <dc:contributor>Paul Tittle &lt;ptittle@cmf.nrl.navy.mil&gt;</dc:contributor>
+        <dc:contributor>Jeb Trayer &lt;jeb.d.trayer@uscg.mil&gt;</dc:contributor>
+        <dc:contributor>Shawn Wells &lt;shawn@redhat.com&gt;</dc:contributor>
+        <dc:contributor>Rob Wilmoth &lt;rwilmoth@redhat.com&gt;</dc:contributor>
+        <dc:contributor>Lucas Yamanishi &lt;lucas.yamanishi@onyxpoint.com&gt;</dc:contributor>
+        <dc:contributor>Kevin Zimmerman &lt;kevin.zimmerman@kitware.com&gt;</dc:contributor>
+        <dc:contributor>Jan &#268;ern&#253; &lt;jcerny@redhat.com&gt;</dc:contributor>
+        <dc:contributor>Michal &#352;ruba&#345; &lt;msrubar@redhat.com&gt;</dc:contributor>
         <dc:source>https://github.com/OpenSCAP/scap-security-guide/releases/latest</dc:source>
       </ns10:metadata>
       <ns10:model system="urn:xccdf:scoring:default" />
@@ -35663,7 +35963,7 @@ then
         # Check if particular audit rule is already defined
         IFS=$'\n' matches=($(sed -s -n -e "/${pattern}/!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
         # Reset IFS back to default
-        unset $IFS
+        unset IFS
         for match in "${matches[@]}"
         do
                 files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -35693,7 +35993,7 @@ do
         # * are current syscall group specific
         IFS=$'\n' existing_rules=($(sed -e "/${pattern}/!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
         # Reset IFS back to default
-        unset $IFS
+        unset IFS
 
         # Process rules found case-by-case
         for rule in "${existing_rules[@]}"
@@ -35732,7 +36032,7 @@ do
                                 # Convert current rule syscall's string into array splitting by '-S' delimiter
                                 IFS=$'-S' read -a rule_syscalls_as_array &lt;&lt;&lt; "$rule_syscalls"
                                 # Reset IFS back to default
-                                unset $IFS
+                                unset IFS
                                 # Declare new empty string to hold '-S syscall' arguments from other groups
                                 new_syscalls_for_rule=''
                                 # Walk through existing '-S syscall' arguments
@@ -35848,7 +36148,7 @@ then
         # Get pair -- filepath : matching_row into @matches array
         IFS=$'\n' matches=($(grep -P "[\s]*-w[\s]+$path" /etc/audit/rules.d/*.rules))
         # Reset IFS back to default
-        unset $IFS
+        unset IFS
         # For each of the matched entries
         for match in "${matches[@]}"
         do
@@ -36281,7 +36581,7 @@ then
         # Check if particular audit rule is already defined
         IFS=$'\n' matches=($(sed -s -n -e "/${pattern}/!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
         # Reset IFS back to default
-        unset $IFS
+        unset IFS
         for match in "${matches[@]}"
         do
                 files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -36311,7 +36611,7 @@ do
         # * are current syscall group specific
         IFS=$'\n' existing_rules=($(sed -e "/${pattern}/!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
         # Reset IFS back to default
-        unset $IFS
+        unset IFS
 
         # Process rules found case-by-case
         for rule in "${existing_rules[@]}"
@@ -36350,7 +36650,7 @@ do
                                 # Convert current rule syscall's string into array splitting by '-S' delimiter
                                 IFS=$'-S' read -a rule_syscalls_as_array &lt;&lt;&lt; "$rule_syscalls"
                                 # Reset IFS back to default
-                                unset $IFS
+                                unset IFS
                                 # Declare new empty string to hold '-S syscall' arguments from other groups
                                 new_syscalls_for_rule=''
                                 # Walk through existing '-S syscall' arguments
@@ -36487,7 +36787,7 @@ then
         # Check if particular audit rule is already defined
         IFS=$'\n' matches=($(sed -s -n -e "/${pattern}/!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
         # Reset IFS back to default
-        unset $IFS
+        unset IFS
         for match in "${matches[@]}"
         do
                 files_to_inspect=("${files_to_inspect[@]}" "${match}")
@@ -36517,7 +36817,7 @@ do
         # * are current syscall group specific
         IFS=$'\n' existing_rules=($(sed -e "/${pattern}/!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
         # Reset IFS back to default
-        unset $IFS
+        unset IFS
 
         # Process rules found case-by-case
         for rule in "${existing_rules[@]}"
@@ -36556,7 +36856,7 @@ do
                                 # Convert current rule syscall's string into array splitting by '-S' delimiter
                                 IFS=$'-S' read -a rule_syscalls_as_array &lt;&lt;&lt; "$rule_syscalls"
                                 # Reset IFS back to default
-                                unset $IFS
+                                unset IFS
                                 # Declare new empty string to hold '-S syscall' arguments from other groups
                                 new_syscalls_for_rule=''
                                 # Walk through existing '-S syscall' arguments
@@ -36648,7 +36948,7 @@ Expects four arguments:
   config_file:		Configuration file that will be modified
   key:			Configuration option to change
   value:		Value of the configuration option to change
-  cce:			The CCE identifier or '$CCENUM' if no CCE identifier exists
+  cce:			The CCE identifier or '@CCENUM@' if no CCE identifier exists
 
 Optional arguments:
 
@@ -36658,13 +36958,13 @@ Optional arguments:
 Example Call(s):
 
   With default format of 'key = value':
-  replace_or_append '/etc/sysctl.conf' '^kernel.randomize_va_space' '2' '$CCENUM'
+  replace_or_append '/etc/sysctl.conf' '^kernel.randomize_va_space' '2' '@CCENUM@'
 
   With custom key/value format:
-  replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' 'disabled' '$CCENUM' '%s=%s'
+  replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' 'disabled' '@CCENUM@' '%s=%s'
 
   With a variable:
-  replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' $var_selinux_state '$CCENUM' '%s=%s'
+  replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' $var_selinux_state '@CCENUM@' '%s=%s'
 </ns10:description>
           <ns10:value>
 function replace_or_append {
@@ -36693,9 +36993,9 @@ function replace_or_append {
     sed_command="sed -i"
   fi
 
-  # Test that the cce arg is not empty or does not equal $CCENUM.
-  # If $CCENUM exists, it means that there is no CCE assigned.
-  if ! [ "x$cce" = x ] &amp;&amp; [ "$cce" != '$CCENUM' ]; then
+  # Test that the cce arg is not empty or does not equal @CCENUM@.
+  # If @CCENUM@ exists, it means that there is no CCE assigned.
+  if ! [ "x$cce" = x ] &amp;&amp; [ "$cce" != '@CCENUM@' ]; then
     cce="CCE-${cce}"
   else
     cce="CCE"
@@ -36707,7 +37007,7 @@ function replace_or_append {
 
   # If there is no print format specified in the last arg, use the default format.
   if ! [ "x$format" = x ] ; then
-    printf -v formatted_output "$format" $stripped_key $value
+    printf -v formatted_output "$format" "$stripped_key" "$value"
   else
     formatted_output="$stripped_key = $value"
   fi
@@ -37158,7 +37458,7 @@ installation ensures the authenticity of the software and
 protects against malicious tampering.
 </ns10:rationale>
               <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN008800</ns10:ident>
-              <ns10:fix complexity="high" disruption="medium" id="ensure_gpgcheck_never_disabled" strategy="restrict" system="urn:xccdf:fix:script:sh">grep -R gpgcheck /etc/yum.repos.d/* /etc/yum.conf /root/rpmrc /usr/lib/rpm/redhat/rpmrc /usr/lib/rpm/rpmrc /etc/rpmrc 2&gt;/dev/null | grep -v 'gpgcheck=1' | cut -d: -f1 | sort -u | while read YUM_FILE; do
+              <ns10:fix complexity="low" disruption="low" id="ensure_gpgcheck_never_disabled" strategy="disable" system="urn:xccdf:fix:script:sh">grep -R gpgcheck /etc/yum.repos.d/* /etc/yum.conf /root/rpmrc /usr/lib/rpm/redhat/rpmrc /usr/lib/rpm/rpmrc /etc/rpmrc 2&gt;/dev/null | grep -v 'gpgcheck=1' | cut -d: -f1 | sort -u | while read YUM_FILE; do
 	sed -i 's/gpgcheck=.*/gpgcheck=1/g' ${YUM_FILE}
 done
 </ns10:fix>
@@ -37184,7 +37484,7 @@ Installing software updates is a fundamental mitigation against
 the exploitation of publicly-known vulnerabilities.
 </ns10:rationale>
               <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN000120</ns10:ident>
-              <ns10:fix complexity="high" disruption="medium" id="security_patches_up_to_date" strategy="restrict" system="urn:xccdf:fix:script:sh">yum -y update
+              <ns10:fix complexity="low" disruption="low" id="security_patches_up_to_date" strategy="disable" system="urn:xccdf:fix:script:sh">yum -y update
 </ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="http://www.redhat.com/security/data/oval/Red_Hat_Enterprise_Linux_5.xml" />
@@ -37262,7 +37562,7 @@ By default, AIDE does not install itself for periodic execution. Periodically
 running AIDE is necessary to reveal unexpected changes in installed files.
 </ns10:rationale>
                 <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN000220</ns10:ident>
-                <ns10:fix complexity="high" disruption="medium" id="aide_periodic_cron_checking" strategy="restrict" system="urn:xccdf:fix:script:sh">echo "/usr/sbin/aide --config=/etc/aide.conf --check" &gt; /etc/cron.weekly/aide
+                <ns10:fix complexity="low" disruption="low" id="aide_periodic_cron_checking" strategy="disable" system="urn:xccdf:fix:script:sh">echo "/usr/sbin/aide --config=/etc/aide.conf --check" &gt; /etc/cron.weekly/aide
 chmod 700 /etc/cron.weekly/aide
 </ns10:fix>
                 <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -37731,6 +38031,16 @@ located on the root partition.  An exception to this is chroot jails, and it is
 not advised to set <html:code>nodev</html:code> on partitions which contain their root
 filesystems.  </ns10:rationale>
               <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN002430</ns10:ident>
+              <ns10:fix complexity="low" disruption="low" id="mount_option_nodev_removable_partitions" strategy="disable" system="urn:xccdf:fix:script:sh">
+var_removable_partition="<ns10:sub idref="xccdf_org.ssgproject.content_value_var_removable_partition" use="legacy" />"
+
+NEW_OPT="nodev"
+
+if [ $(grep "$var_removable_partition" /etc/fstab | grep -c "$NEW_OPT" ) -eq 0 ]; then
+  MNT_OPTS=$(grep "$var_removable_partition" /etc/fstab | awk '{print $4}')
+  sed -i "s|\($var_removable_partition.*${MNT_OPTS}\)|\1,${NEW_OPT}|" /etc/fstab
+fi
+</ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-export export-name="oval:ssg-var_removable_partition:var:1" value-id="xccdf_org.ssgproject.content_value_var_removable_partition" />
                 <ns10:check-content-ref href="ssg-rhel5-oval.xml" name="oval:ssg-mount_option_nodev_removable_partitions:def:1" />
@@ -37755,6 +38065,16 @@ files into the system via partitions mounted from removeable media.
 users to introduce suid or sgid binaries from partitions mounted off of
 removable media would allow them to introduce their own highly-privileged programs.</ns10:rationale>
               <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN002420</ns10:ident>
+              <ns10:fix complexity="low" disruption="low" id="mount_option_nosuid_removable_partitions" strategy="disable" system="urn:xccdf:fix:script:sh">
+var_removable_partition="<ns10:sub idref="xccdf_org.ssgproject.content_value_var_removable_partition" use="legacy" />"
+
+NEW_OPT="nosuid"
+
+if [ $(grep "$var_removable_partition" /etc/fstab | grep -c "$NEW_OPT" ) -eq 0 ]; then
+  MNT_OPTS=$(grep "$var_removable_partition" /etc/fstab | awk '{print $4}')
+  sed -i "s|\($var_removable_partition.*${MNT_OPTS}\)|\1,${NEW_OPT}|" /etc/fstab
+fi
+</ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-export export-name="oval:ssg-var_removable_partition:var:1" value-id="xccdf_org.ssgproject.content_value_var_removable_partition" />
                 <ns10:check-content-ref href="ssg-rhel5-oval.xml" name="oval:ssg-mount_option_nosuid_removable_partitions:def:1" />
@@ -37794,11 +38114,10 @@ module, but will not prevent an administrator (or another program) from using th
               <ns10:rationale xml:lang="en-US">USB storage devices such as thumb drives can be used to introduce
 malicious software.</ns10:rationale>
               <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN008480</ns10:ident>
-              <ns10:fix complexity="low" disruption="medium" id="kernel_module_usb-storage_disabled" reboot="true" strategy="disable" system="urn:xccdf:fix:script:sh">if grep --silent "^install usb-storage" /etc/modprobe.d/usb-storage.conf ; then
-        sed -i 's/^install usb-storage.*/install usb-storage /bin/true/g' /etc/modprobe.d/usb-storage.conf
+              <ns10:fix complexity="low" disruption="medium" id="kernel_module_usb-storage_disabled" reboot="true" strategy="disable" system="urn:xccdf:fix:script:sh">if [ -d /etc/modprobe.d/ ]; then
+	echo "install usb-storage /bin/true" &gt;&gt; /etc/modprobe.d/disabled_modules.conf
 else
-        echo -e "\n# Disable per security requirements" &gt;&gt; /etc/modprobe.d/usb-storage.conf
-        echo "install usb-storage /bin/true" &gt;&gt; /etc/modprobe.d/usb-storage.conf
+	echo "install usb-storage /bin/true" &gt;&gt; /etc/modprobe.conf
 fi
 </ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -37856,6 +38175,16 @@ rather than relying on the automounter.
 statically control filesystem mounting through <html:code>/etc/fstab</html:code>. 
 </ns10:rationale>
               <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN008440</ns10:ident>
+              <ns10:fix complexity="low" disruption="low" id="service_autofs_disabled" strategy="configure" system="urn:xccdf:fix:script:sh">#
+# Disable autofs for all run levels
+#
+/sbin/chkconfig --level 0123456 autofs off
+
+#
+# Stop autofs if currently running
+#
+/sbin/service autofs stop 1&gt;/dev/null
+</ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel5-oval.xml" name="oval:ssg-service_autofs_disabled:def:1" />
               </ns10:check>
@@ -37998,7 +38327,7 @@ on the system. Protection of this file is important for system security.</ns10:r
                 <ns10:rationale xml:lang="en-US">The <html:code>/etc/group</html:code> file contains information regarding groups that are configured
 on the system. Protection of this file is important for system security.</ns10:rationale>
                 <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN001392</ns10:ident>
-                <ns10:fix complexity="high" disruption="medium" id="file_groupowner_etc_group" strategy="restrict" system="urn:xccdf:fix:script:sh">chgrp root /etc/group
+                <ns10:fix complexity="low" disruption="low" id="file_groupowner_etc_group" strategy="disable" system="urn:xccdf:fix:script:sh">chgrp root /etc/group
 </ns10:fix>
                 <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                   <ns10:check-content-ref href="ssg-rhel5-oval.xml" name="oval:ssg-file_groupowner_etc_group:def:1" />
@@ -38101,7 +38430,7 @@ is critical for system security.</ns10:rationale>
                 <ns10:rationale xml:lang="en-US">The <html:code>/etc/gshadow</html:code> file contains group password hashes. Protection of this file
 is critical for system security.</ns10:rationale>
                 <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN000000-LNX001433</ns10:ident>
-                <ns10:fix complexity="high" disruption="medium" id="file_permissions_etc_gshadow" strategy="restrict" system="urn:xccdf:fix:script:sh">chmod 0400 /etc/gshadow
+                <ns10:fix complexity="low" disruption="low" id="file_permissions_etc_gshadow" strategy="disable" system="urn:xccdf:fix:script:sh">chmod 0400 /etc/gshadow
 </ns10:fix>
                 <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                   <ns10:check-content-ref href="ssg-rhel5-oval.xml" name="oval:ssg-file_permissions_etc_gshadow:def:1" />
@@ -38141,7 +38470,7 @@ which could weaken the system security posture.</ns10:rationale>
                 <ns10:rationale xml:lang="en-US">The <html:code>/etc/passwd</html:code> file contains information about the users that are configured on
 the system. Protection of this file is critical for system security.</ns10:rationale>
                 <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN001378</ns10:ident>
-                <ns10:fix complexity="high" disruption="medium" id="file_owner_etc_passwd" strategy="restrict" system="urn:xccdf:fix:script:sh">chown root /etc/passwd
+                <ns10:fix complexity="low" disruption="low" id="file_owner_etc_passwd" strategy="disable" system="urn:xccdf:fix:script:sh">chown root /etc/passwd
 </ns10:fix>
                 <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                   <ns10:check-content-ref href="ssg-rhel5-oval.xml" name="oval:ssg-file_owner_etc_passwd:def:1" />
@@ -38185,7 +38514,7 @@ world the risk of its compromise is increased. The file contains the list of
 accounts on the system and associated information, and protection of this file
 is critical for system security.</ns10:rationale>
                 <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN001380</ns10:ident>
-                <ns10:fix complexity="high" disruption="medium" id="file_permissions_etc_passwd" strategy="restrict" system="urn:xccdf:fix:script:sh">chmod 0644 /etc/passwd
+                <ns10:fix complexity="low" disruption="low" id="file_permissions_etc_passwd" strategy="disable" system="urn:xccdf:fix:script:sh">chmod 0644 /etc/passwd
 </ns10:fix>
                 <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                   <ns10:check-content-ref href="ssg-rhel5-oval.xml" name="oval:ssg-file_permissions_etc_passwd:def:1" />
@@ -41984,7 +42313,7 @@ and restrictive permissions are necessary to ensure execution of these programs
 cannot be co-opted.
 </ns10:rationale>
                 <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN001200</ns10:ident>
-                <ns10:fix complexity="high" disruption="medium" id="file_permissions_binary_dirs" strategy="restrict" system="urn:xccdf:fix:script:sh">find /etc /bin /usr/bin /usr/lbin /usr/usb /sbin /usr/sbin -follow -perm -20 -o -perm -2 2&gt;/dev/null | xargs chmod go-w
+                <ns10:fix complexity="low" disruption="low" id="file_permissions_binary_dirs" strategy="disable" system="urn:xccdf:fix:script:sh">find /etc /bin /usr/bin /usr/lbin /usr/usb /sbin /usr/sbin -follow -perm -20 -o -perm -2 2&gt;/dev/null | xargs chmod go-w
 </ns10:fix>
                 <ns10:fix complexity="medium" disruption="medium" id="file_permissions_binary_dirs" strategy="restrict" system="urn:xccdf:fix:script:ansible">
 - name: "Read list of world and group writable system executables"
@@ -42748,7 +43077,7 @@ helps ensure accountability for actions taken on the system
 using the root account.
 </ns10:rationale>
                 <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN000980</ns10:ident>
-                <ns10:fix complexity="high" disruption="medium" id="securetty_root_login_console_only" strategy="restrict" system="urn:xccdf:fix:script:sh">echo tty1 &gt; /etc/securetty
+                <ns10:fix complexity="low" disruption="low" id="securetty_root_login_console_only" strategy="disable" system="urn:xccdf:fix:script:sh">echo tty1 &gt; /etc/securetty
 </ns10:fix>
                 <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                   <ns10:check-content-ref href="ssg-rhel5-oval.xml" name="oval:ssg-securetty_root_login_console_only:def:1" />
@@ -43913,7 +44242,7 @@ This is the default.
 Using a stronger hashing algorithm makes password cracking attacks more difficult.
 </ns10:rationale>
                 <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN000590</ns10:ident>
-                <ns10:fix complexity="high" disruption="medium" id="set_password_hashing_algorithm_systemauth" strategy="restrict" system="urn:xccdf:fix:script:sh">if [ $(grep "password.*pam_unix.so" /etc/pam.d/system-auth | egrep -c '(descrypt|bigcrypt|md5|sha256)') != 0 ]; then
+                <ns10:fix complexity="low" disruption="low" id="set_password_hashing_algorithm_systemauth" strategy="disable" system="urn:xccdf:fix:script:sh">if [ $(grep "password.*pam_unix.so" /etc/pam.d/system-auth | egrep -c '(descrypt|bigcrypt|md5|sha256)') != 0 ]; then
 	sed -i '/password.*pam_unix.so/s/\(descrypt\|bigcrypt\|md5\|sha256\)/sha512/' /etc/pam.d/system-auth
 else
 	sed -i '/password.*pam_unix.so/s/$/ sha512/' /etc/pam.d/system-auth
@@ -43973,7 +44302,7 @@ problems caused by excessive logins. Automated login processes operating imprope
 maliciously may result in an exceptional number of simultaneous login sessions.
 </ns10:rationale>
               <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN000450</ns10:ident>
-              <ns10:fix complexity="high" disruption="medium" id="accounts_max_concurrent_login_sessions" strategy="restrict" system="urn:xccdf:fix:script:sh">
+              <ns10:fix complexity="low" disruption="low" id="accounts_max_concurrent_login_sessions" strategy="disable" system="urn:xccdf:fix:script:sh">
 max_concurrent_login_sessions_value="<ns10:sub idref="xccdf_org.ssgproject.content_value_max_concurrent_login_sessions_value" use="legacy" />"
 
 if [ $(grep -v "#" /etc/security/limits.conf | grep -c "maxlogins") = "0" ]; then
@@ -44982,7 +45311,7 @@ only appropriate for systems acting as routers.</ns10:rationale>
 #	else, add "net.ipv4.ip_forward = 0" to /etc/sysctl.conf
 #
 <ns10:sub idref="xccdf_org.ssgproject.content_value_function_replace_or_append" use="legacy" />
-replace_or_append '/etc/sysctl.conf' '^net.ipv4.ip_forward' '0' ''
+replace_or_append '/etc/sysctl.conf' '^net.ipv4.ip_forward' "0" ''
 </ns10:fix>
                 <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                   <ns10:check-content-ref href="ssg-rhel5-oval.xml" name="oval:ssg-sysctl_net_ipv4_ip_forward:def:1" />
@@ -45258,7 +45587,7 @@ addresses makes the system slightly more difficult to enumerate on the network.
 #	else, add "net.ipv4.icmp_echo_ignore_broadcasts = 1" to /etc/sysctl.conf
 #
 <ns10:sub idref="xccdf_org.ssgproject.content_value_function_replace_or_append" use="legacy" />
-replace_or_append '/etc/sysctl.conf' '^net.ipv4.icmp_echo_ignore_broadcasts' '1' ''
+replace_or_append '/etc/sysctl.conf' '^net.ipv4.icmp_echo_ignore_broadcasts' "1" ''
 </ns10:fix>
                 <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                   <ns10:check-export export-name="oval:ssg-sysctl_net_ipv4_icmp_echo_ignore_broadcasts_value:var:1" value-id="xccdf_org.ssgproject.content_value_sysctl_net_ipv4_icmp_echo_ignore_broadcasts_value" />
@@ -45300,7 +45629,7 @@ enables the system to continue servicing valid connection requests.
 #	else, add "net.ipv4.tcp_syncookies = 1" to /etc/sysctl.conf
 #
 <ns10:sub idref="xccdf_org.ssgproject.content_value_function_replace_or_append" use="legacy" />
-replace_or_append '/etc/sysctl.conf' '^net.ipv4.tcp_syncookies' '1' ''
+replace_or_append '/etc/sysctl.conf' '^net.ipv4.tcp_syncookies' "1" ''
 </ns10:fix>
                 <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                   <ns10:check-export export-name="oval:ssg-sysctl_net_ipv4_tcp_syncookies_value:var:1" value-id="xccdf_org.ssgproject.content_value_sysctl_net_ipv4_tcp_syncookies_value" />
@@ -45339,7 +45668,7 @@ product-specific guidelines.
 #	else, add "net.ipv4.tcp_max_syn_backlog = 1280" to /etc/sysctl.conf
 #
 <ns10:sub idref="xccdf_org.ssgproject.content_value_function_replace_or_append" use="legacy" />
-replace_or_append '/etc/sysctl.conf' '^net.ipv4.tcp_max_syn_backlog' '1280' ''
+replace_or_append '/etc/sysctl.conf' '^net.ipv4.tcp_max_syn_backlog' "1280" ''
 </ns10:fix>
                 <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                   <ns10:check-export export-name="oval:ssg-sysctl_net_ipv4_tcp_max_syn_backlog_value:var:1" value-id="xccdf_org.ssgproject.content_value_sysctl_net_ipv4_tcp_max_syn_backlog_value" />
@@ -45389,11 +45718,10 @@ install bluetooth /bin/true</html:pre>
 from loading the kernel module provides an additional safeguard against its
 activation.</ns10:rationale>
                 <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN007660</ns10:ident>
-                <ns10:fix complexity="low" disruption="medium" id="kernel_module_bluetooth_disabled" reboot="true" strategy="disable" system="urn:xccdf:fix:script:sh">if grep --silent "^install bluetooth" /etc/modprobe.d/bluetooth.conf ; then
-        sed -i 's/^install bluetooth.*/install bluetooth /bin/true/g' /etc/modprobe.d/bluetooth.conf
+                <ns10:fix complexity="low" disruption="medium" id="kernel_module_bluetooth_disabled" reboot="true" strategy="disable" system="urn:xccdf:fix:script:sh">if [ -d /etc/modprobe.d/ ]; then
+	echo "install bluetooth /bin/true" &gt;&gt; /etc/modprobe.d/disabled_modules.conf
 else
-        echo -e "\n# Disable per security requirements" &gt;&gt; /etc/modprobe.d/bluetooth.conf
-        echo "install bluetooth /bin/true" &gt;&gt; /etc/modprobe.d/bluetooth.conf
+	echo "install bluetooth /bin/true" &gt;&gt; /etc/modprobe.conf
 fi
 </ns10:fix>
                 <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -45688,7 +46016,7 @@ The <html:code>iptables</html:code> service provides the system's host-based fir
 capability for IPv4 and ICMP.
 </ns10:rationale>
                 <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN008520</ns10:ident>
-                <ns10:fix complexity="low" disruption="medium" id="service_iptables_enabled" reboot="true" strategy="disable" system="urn:xccdf:fix:script:sh">#
+                <ns10:fix complexity="low" disruption="low" id="service_iptables_enabled" strategy="configure" system="urn:xccdf:fix:script:sh">#
 # Enable iptables for all run levels
 #
 /sbin/chkconfig --level 0123456 iptables on
@@ -45990,6 +46318,12 @@ Disabling SCTP protects
 the system against exploitation of any flaws in its implementation.
 </ns10:rationale>
               <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN007020</ns10:ident>
+              <ns10:fix complexity="low" disruption="low" id="kernel_module_sctp_disabled" strategy="configure" system="urn:xccdf:fix:script:sh">if [ -d /etc/modprobe.d/ ]; then
+	echo "install sctp /bin/true" &gt;&gt; /etc/modprobe.d/disabled_modules.conf
+else
+	echo "install sctp /bin/true" &gt;&gt; /etc/modprobe.conf
+fi
+</ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel5-oval.xml" name="oval:ssg-kernel_module_sctp_disabled:def:1" />
               </ns10:check>
@@ -46015,6 +46349,12 @@ Disabling RDS protects
 the system against exploitation of any flaws in its implementation.
 </ns10:rationale>
               <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN007480</ns10:ident>
+              <ns10:fix complexity="low" disruption="low" id="kernel_module_rds_disabled" strategy="configure" system="urn:xccdf:fix:script:sh">if [ -d /etc/modprobe.d/ ]; then
+	echo "install rds /bin/true" &gt;&gt; /etc/modprobe.d/disabled_modules.conf
+else
+	echo "install rds /bin/true" &gt;&gt; /etc/modprobe.conf
+fi
+</ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel5-oval.xml" name="oval:ssg-kernel_module_rds_disabled:def:1" />
               </ns10:check>
@@ -46040,6 +46380,12 @@ Disabling TIPC protects
 the system against exploitation of any flaws in its implementation.
 </ns10:rationale>
               <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN007540</ns10:ident>
+              <ns10:fix complexity="low" disruption="low" id="kernel_module_tipc_disabled" strategy="configure" system="urn:xccdf:fix:script:sh">if [ -d /etc/modprobe.d/ ]; then
+	echo "install tipc /bin/true" &gt;&gt; /etc/modprobe.d/disabled_modules.conf
+else
+	echo "install tipc /bin/true" &gt;&gt; /etc/modprobe.conf
+fi
+</ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel5-oval.xml" name="oval:ssg-kernel_module_tipc_disabled:def:1" />
               </ns10:check>
@@ -46067,6 +46413,12 @@ Disabling AppleTalk protects
 the system against exploitation of any flaws in its implementation.
 </ns10:rationale>
               <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN007260</ns10:ident>
+              <ns10:fix complexity="low" disruption="low" id="kernel_module_appletalk_disabled" strategy="configure" system="urn:xccdf:fix:script:sh">if [ -d /etc/modprobe.d/ ]; then
+	echo "install appletalk /bin/true" &gt;&gt; /etc/modprobe.d/disabled_modules.conf
+else
+	echo "install appletalk /bin/true" &gt;&gt; /etc/modprobe.conf
+fi
+</ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel5-oval.xml" name="oval:ssg-kernel_module_appletalk_disabled:def:1" />
               </ns10:check>
@@ -46093,6 +46445,12 @@ Disabling network bridging protects
 the system against exploitation of any flaws in its implementation.
 </ns10:rationale>
               <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN003619</ns10:ident>
+              <ns10:fix complexity="low" disruption="low" id="kernel_module_bridge_disabled" strategy="configure" system="urn:xccdf:fix:script:sh">if [ -d /etc/modprobe.d/ ]; then
+	echo "install bridge /bin/true" &gt;&gt; /etc/modprobe.d/disabled_modules.conf
+else
+	echo "install bridge /bin/true" &gt;&gt; /etc/modprobe.conf
+fi
+</ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel5-oval.xml" name="oval:ssg-kernel_module_bridge_disabled:def:1" />
               </ns10:check>
@@ -46118,6 +46476,12 @@ Disabling IEEE1394 (Firewire) protects
 the system against exploitation of any flaws in its implementation.
 </ns10:rationale>
               <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN008500</ns10:ident>
+              <ns10:fix complexity="low" disruption="low" id="kernel_module_ieee1394_disabled" strategy="configure" system="urn:xccdf:fix:script:sh">if [ -d /etc/modprobe.d/ ]; then
+	echo "install ieee1394 /bin/true" &gt;&gt; /etc/modprobe.d/disabled_modules.conf
+else
+	echo "install ieee1394 /bin/true" &gt;&gt; /etc/modprobe.conf
+fi
+</ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel5-oval.xml" name="oval:ssg-kernel_module_ieee1394_disabled:def:1" />
               </ns10:check>
@@ -48491,6 +48855,16 @@ it ensures that these uncommon services are not running, and also prevents
 attacks against xinetd itself.
 </ns10:rationale>
               <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN003700</ns10:ident>
+              <ns10:fix complexity="low" disruption="low" id="service_xinetd_disabled" strategy="configure" system="urn:xccdf:fix:script:sh">#
+# Disable xinetd for all run levels
+#
+/sbin/chkconfig --level 0123456 xinetd off
+
+#
+# Stop xinetd if currently running
+#
+/sbin/service xinetd stop 1&gt;/dev/null
+</ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel5-oval.xml" name="oval:ssg-service_xinetd_disabled:def:1" />
               </ns10:check>
@@ -48522,6 +48896,16 @@ stolen by eavesdroppers on the network. The telnet protocol is also
 subject to man-in-the-middle attacks.
 </ns10:rationale>
               <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN003850</ns10:ident>
+              <ns10:fix complexity="low" disruption="low" id="service_telnetd_disabled" strategy="configure" system="urn:xccdf:fix:script:sh">#
+# Disable telnetd for all run levels
+#
+/sbin/chkconfig --level 0123456 telnetd off
+
+#
+# Stop telnetd if currently running
+#
+/sbin/service telnetd stop 1&gt;/dev/null
+</ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel5-oval.xml" name="oval:ssg-service_telnetd_disabled:def:1" />
               </ns10:check>
@@ -48587,6 +48971,16 @@ all other information transmitted during the session, can be
 stolen by eavesdroppers on the network.
 </ns10:rationale>
               <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN003840</ns10:ident>
+              <ns10:fix complexity="low" disruption="low" id="service_rexec_disabled" strategy="configure" system="urn:xccdf:fix:script:sh">#
+# Disable rexec for all run levels
+#
+/sbin/chkconfig --level 0123456 rexec off
+
+#
+# Stop rexec if currently running
+#
+/sbin/service rexec stop 1&gt;/dev/null
+</ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel5-oval.xml" name="oval:ssg-service_rexec_disabled:def:1" />
               </ns10:check>
@@ -48611,6 +49005,16 @@ all other information transmitted during the session, can be
 stolen by eavesdroppers on the network.
 </ns10:rationale>
               <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN003820</ns10:ident>
+              <ns10:fix complexity="low" disruption="low" id="service_rsh_disabled" strategy="configure" system="urn:xccdf:fix:script:sh">#
+# Disable rsh for all run levels
+#
+/sbin/chkconfig --level 0123456 rsh off
+
+#
+# Stop rsh if currently running
+#
+/sbin/service rsh stop 1&gt;/dev/null
+</ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel5-oval.xml" name="oval:ssg-service_rsh_disabled:def:1" />
               </ns10:check>
@@ -48635,6 +49039,16 @@ all other information transmitted during the session, can be
 stolen by eavesdroppers on the network.
 </ns10:rationale>
               <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN003830</ns10:ident>
+              <ns10:fix complexity="low" disruption="medium" id="service_rlogin_disabled" reboot="true" strategy="disable" system="urn:xccdf:fix:script:sh">#
+# Disable rlogin for all run levels
+#
+/sbin/chkconfig --level 0123456 rlogin off
+
+#
+# Stop rlogin if currently running
+#
+/sbin/service rlogin stop 1&gt;/dev/null
+</ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel5-oval.xml" name="oval:ssg-service_rlogin_disabled:def:1" />
               </ns10:check>
@@ -48659,7 +49073,7 @@ location:
 used in conjunction with the R-services, they can allow
 unauthenticated access to a system.</ns10:rationale>
               <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN002040</ns10:ident>
-              <ns10:fix complexity="high" disruption="medium" id="no_rsh_trust_files" strategy="restrict" system="urn:xccdf:fix:script:sh">find -type f -name .rhosts -exec rm -f '{}' \;
+              <ns10:fix complexity="low" disruption="low" id="no_rsh_trust_files" strategy="disable" system="urn:xccdf:fix:script:sh">find -type f -name .rhosts -exec rm -f '{}' \;
 rm /etc/hosts.equiv
 </ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
@@ -48715,6 +49129,16 @@ Disabling the <html:code>ypbind</html:code> service ensures the system is not ac
 as a client in a NIS or NIS+ domain.
 </ns10:rationale>
               <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN006400</ns10:ident>
+              <ns10:fix complexity="low" disruption="low" id="service_ypbind_disabled" strategy="configure" system="urn:xccdf:fix:script:sh">#
+# Disable ypbind for all run levels
+#
+/sbin/chkconfig --level 0123456 ypbind off
+
+#
+# Stop ypbind if currently running
+#
+/sbin/service ypbind stop 1&gt;/dev/null
+</ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel5-oval.xml" name="oval:ssg-service_ypbind_disabled:def:1" />
               </ns10:check>
@@ -48747,6 +49171,16 @@ Disabling the <html:code>tftp</html:code> service ensures the system is not acti
 as a TFTP server, which does not provide encryption or authentication.
 </ns10:rationale>
               <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN005140</ns10:ident>
+              <ns10:fix complexity="low" disruption="low" id="service_tftp_disabled" strategy="configure" system="urn:xccdf:fix:script:sh">#
+# Disable tftp for all run levels
+#
+/sbin/chkconfig --level 0123456 tftp off
+
+#
+# Stop tftp if currently running
+#
+/sbin/service tftp stop 1&gt;/dev/null
+</ns10:fix>
               <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
                 <ns10:check-content-ref href="ssg-rhel5-oval.xml" name="oval:ssg-service_tftp_disabled:def:1" />
               </ns10:check>
@@ -48822,6 +49256,16 @@ information available to the SA for review and action. Using a
 package repository outside of the organization's control presents 
 a risk of malicious packages being introduced.</ns10:rationale>
             <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN008820</ns10:ident>
+            <ns10:fix complexity="low" disruption="low" id="service_yum-updatesd_disabled" strategy="configure" system="urn:xccdf:fix:script:sh">#
+# Disable yum-updatesd for all run levels
+#
+/sbin/chkconfig --level 0123456 yum-updatesd off
+
+#
+# Stop yum-updatesd if currently running
+#
+/sbin/service yum-updatesd stop 1&gt;/dev/null
+</ns10:fix>
             <ns10:check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
               <ns10:check-content-ref href="ssg-rhel5-oval.xml" name="oval:ssg-service_yum-updatesd_disabled:def:1" />
             </ns10:check>
@@ -49867,7 +50311,7 @@ The NTP daemon offers all of the functionality of <html:code>ntpdate</html:code>
 deprecated.  Additional information on this is available at 
 <html:a href="http://support.ntp.org/bin/view/Dev/DeprecatingNtpdate">http://support.ntp.org/bin/view/Dev/DeprecatingNtpdate</html:a></ns10:rationale>
             <ns10:ident system="http://iase.disa.mil/stigs/os/unix-linux/Pages/index.aspx">GEN000241</ns10:ident>
-            <ns10:fix complexity="low" disruption="medium" id="service_ntpd_enabled" reboot="true" strategy="disable" system="urn:xccdf:fix:script:sh">#
+            <ns10:fix complexity="low" disruption="low" id="service_ntpd_enabled" strategy="configure" system="urn:xccdf:fix:script:sh">#
 # Enable ntpd for all run levels
 #
 /sbin/chkconfig --level 0123456 ntpd on
@@ -51124,13 +51568,13 @@ for protecting the privacy of communications.
       </ns10:Group>
     </ns10:Benchmark>
   </ns0:component>
-  <ns0:component id="scap_org.open-scap_comp_ssg-rhel5-cpe-oval.xml" timestamp="2017-03-29T15:52:31">
+  <ns0:component id="scap_org.open-scap_comp_ssg-rhel5-cpe-oval.xml" timestamp="2017-04-29T09:48:43">
     <ns3:oval_definitions xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
       <ns3:generator>
         <ns5:product_name>python</ns5:product_name>
         <ns5:product_version>2.7.13</ns5:product_version>
         <ns5:schema_version>5.11</ns5:schema_version>
-        <ns5:timestamp>2017-03-29T13:52:11</ns5:timestamp>
+        <ns5:timestamp>2017-04-29T09:47:38</ns5:timestamp>
       </ns3:generator>
       <ns3:definitions>
         <ns3:definition class="inventory" id="oval:ssg-installed_OS_is_centos4:def:1" version="1">
@@ -51648,7 +52092,7 @@ for protecting the privacy of communications.
       </ns3:states>
     </ns3:oval_definitions>
   </ns0:component>
-  <ns0:component id="scap_org.open-scap_comp_ssg-rhel5-cpe-dictionary.xml" timestamp="2017-03-29T15:52:31">
+  <ns0:component id="scap_org.open-scap_comp_ssg-rhel5-cpe-dictionary.xml" timestamp="2017-04-29T09:48:43">
     <ns14:cpe-list xsi:schemaLocation="http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd">
       <ns14:cpe-item name="cpe:/o:redhat:enterprise_linux:4">
         <ns14:title xml:lang="en-us">Red Hat Enterprise Linux 4</ns14:title>
