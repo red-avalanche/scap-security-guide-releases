@@ -179,6 +179,18 @@ rebooting the system, alter that line to read as follows:
 </td>
 </tr></table>
 <table><tr>
+<td>Add nosuid Option to Removable Media Partitions</td>
+<td xml:lang="en-US">The <code>nosuid</code> mount option prevents set-user-identifier (SUID)
+and set-group-identifier (SGID) permissions from taking effect. These permissions
+allow users to execute binaries with the same permissions as the owner and group
+of the file respectively. Users should not be allowed to introduce SUID and SGID
+files into the system via partitions mounted from removeable media.
+Add the <code>nosuid</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+
+    any removable media partitions.</td>
+</tr></table>
+<table><tr>
 <td>Ensure All Files Are Owned by a Group</td>
 <td xml:lang="en-US">If any files are not owned by a group, then the
 cause of their lack of group-ownership should be investigated.
@@ -191,18 +203,6 @@ appropriate group.</td>
 cause of their lack of ownership should be investigated.
 Following this, the files should be deleted or assigned to an
 appropriate user.</td>
-</tr></table>
-<table><tr>
-<td>Add nosuid Option to Removable Media Partitions</td>
-<td xml:lang="en-US">The <code>nosuid</code> mount option prevents set-user-identifier (SUID)
-and set-group-identifier (SGID) permissions from taking effect. These permissions
-allow users to execute binaries with the same permissions as the owner and group
-of the file respectively. Users should not be allowed to introduce SUID and SGID
-files into the system via partitions mounted from removeable media.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
-
-    any removable media partitions.</td>
 </tr></table>
 </td>
 </tr>
@@ -484,7 +484,14 @@ This requirement is a permanent not a finding. No fix is required.
 <td>A session time-out lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not log out because of the temporary nature of the absence. Rather than relying on the user to manually lock their operating system session prior to vacating the vicinity, operating systems need to be able to identify when a user's session has idled and take action to initiate the session lock.
 
 The session lock is implemented at the point where session activity can be determined and/or controlled.</td>
-<td></td>
+<td><table><tr>
+<td>Set Interactive Session Timeout</td>
+<td xml:lang="en-US">Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
+all user sessions will terminate based on inactivity. The <code>TMOUT</code>
+setting in <code>/etc/profile</code> should read as follows:
+<pre>TMOUT=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></xccdf-1.1:sub></pre>
+</td>
+</tr></table></td>
 </tr>
 <tr>
 <td>CCI-000058</td>
@@ -1795,20 +1802,20 @@ Add the <code>noexec</code> option to the fourth column of
 <code>/dev/shm</code>.</td>
 </tr></table>
 <table><tr>
-<td>Add nosuid Option to /dev/shm</td>
-<td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent execution
-of setuid programs in <code>/dev/shm</code>.  The SUID and SGID permissions should not
-be required in these world-writable directories.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
-<code>/dev/shm</code>.</td>
-</tr></table>
-<table><tr>
 <td>Add nodev Option to /dev/shm</td>
 <td xml:lang="en-US">The <code>nodev</code> mount option can be used to prevent creation of device
 files in <code>/dev/shm</code>. Legitimate character and block devices should
 not exist within temporary directories like <code>/dev/shm</code>.
 Add the <code>nodev</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+<code>/dev/shm</code>.</td>
+</tr></table>
+<table><tr>
+<td>Add nosuid Option to /dev/shm</td>
+<td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent execution
+of setuid programs in <code>/dev/shm</code>.  The SUID and SGID permissions should not
+be required in these world-writable directories.
+Add the <code>nosuid</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
 <code>/dev/shm</code>.</td>
 </tr></table>

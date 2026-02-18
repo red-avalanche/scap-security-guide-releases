@@ -1741,6 +1741,26 @@ the system against exploitation of any flaws in its implementation.</td>
 </td>
 </tr>
 <tr>
+<td>CCE-83314-5</td>
+<td>Configure kernel to trust the CPU random number generator</td>
+<td xml:lang="en-US">There exist two ways how to ensure that the Linux kernel trusts the CPU
+hardware random number generator. If the option is configured during kernel
+compilation, e.g. the option <code>CONFIG_RANDOM_TRUST_CPU</code> is set to
+<code>Y</code>, make sure that it is not overridden with the boot parameter.
+There must not exist the boot parameter <code>random.trust_cpu=off</code>. If
+the option is not compiled in, make sure that <code>random.trust_cpu=on</code>
+is configured as a boot parameter by running the following command:
+<pre>sudo grub2-editenv - set "$(grub2-editenv - list | grep kernelopts) random.trust_cpu=on"</pre>
+</td>
+<td xml:lang="en-US">The Linux kernel offers an option which signifies if the kernel should trust
+data provided by CPU hardware random number generator. Hardware random
+number generators can provide random data very quickly and are used to generate random cryptographic keys. They can
+be useful during boot time when other means of getting random data can be
+slow because there is not yet enough entropy in the system.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>CCE-82941-6</td>
 <td>Add nodev Option to /boot</td>
 <td xml:lang="en-US">The <code>nodev</code> mount option can be used to prevent device files from
@@ -2261,6 +2281,20 @@ $ sudo yum install aide</pre>
 </td>
 </tr>
 <tr>
+<td>CCE-82953-1</td>
+<td>Install audispd-plugins Package</td>
+<td xml:lang="en-US">The <code>audispd-plugins</code> package can be installed with the following command:
+<pre>
+$ sudo yum install audispd-plugins</pre>
+</td>
+<td xml:lang="en-US">
+<code>audispd-plugins</code> provides plugins for the real-time interface to the
+audit subsystem, <code>audispd</code>. These plugins can do things like relay events
+to remote machines or analyze events for suspicious behavior.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>CCE-81043-2</td>
 <td>Ensure the audit Subsystem is Installed</td>
 <td xml:lang="en-US">The audit package should be installed.</td>
@@ -2268,6 +2302,22 @@ $ sudo yum install aide</pre>
 <td></td>
 <td>AC-7(a)<br>AU-7(1)<br>AU-7(2)<br>AU-14<br>AU-12(2)<br>AU-2(a)<br>CM-6(a)<br>
 </td>
+</tr>
+<tr>
+<td>CCE-82874-9</td>
+<td>The Chrony package is installed</td>
+<td xml:lang="en-US">System time should be synchronized between all systems in an environment. This is
+typically done by establishing an authoritative time server or set of servers and having all
+systems synchronize their clocks to them.
+The <code>chrony</code> package can be installed with the following command:
+<pre>
+$ sudo yum install chrony</pre>
+</td>
+<td xml:lang="en-US">Time synchronization is important to support time sensitive security mechanisms like
+Kerberos and also ensures log files have consistent time records across the enterprise,
+which aids in forensic investigations.</td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>CCE-82723-8</td>
@@ -2335,6 +2385,23 @@ $ sudo yum install firewalld</pre>
 </td>
 </tr>
 <tr>
+<td>CCE-82395-5</td>
+<td>Ensure gnutls-utils is installed</td>
+<td xml:lang="en-US">The <code>gnutls-utils</code> package can be installed with the following command:
+<pre>
+$ sudo yum install gnutls-utils</pre>
+</td>
+<td xml:lang="en-US">GnuTLS is a secure communications library implementing the SSL, TLS and DTLS
+protocols and technologies around them. It provides a simple C language
+application programming interface (API) to access the secure communications
+protocols as well as APIs to parse and write X.509, PKCS #12, OpenPGP and
+other required structures.
+This package contains command line TLS client and server and certificate
+manipulation tools.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>CCE-82943-2</td>
 <td>Uninstall gssproxy Package</td>
 <td xml:lang="en-US">The <code>gssproxy</code> package can be removed with the following command:
@@ -2358,21 +2425,6 @@ $ sudo yum erase iprutils</pre>
 supported by the ipr SCSI storage device driver.</td>
 <td></td>
 <td></td>
-</tr>
-<tr>
-<td>CCE-82982-0</td>
-<td>Install iptables Package</td>
-<td xml:lang="en-US">The <code>iptables</code> package can be installed with the following command:
-<pre>
-$ sudo yum install iptables</pre>
-</td>
-<td xml:lang="en-US">
-<code>iptables</code> controls the Linux kernel network packet filtering
-code. <code>iptables</code> allows system operators to set up firewalls and IP
-masquerading, etc.</td>
-<td></td>
-<td>CM-6(a)<br>
-</td>
 </tr>
 <tr>
 <td>CCE-82931-7</td>
@@ -2447,20 +2499,6 @@ intercepted and either read or altered.</td>
 </td>
 </tr>
 <tr>
-<td>CCE-82397-1</td>
-<td>Uninstall pigz Package</td>
-<td xml:lang="en-US">The <code>pigz</code> package can be removed with the following command:
-<pre>
-$ sudo yum erase pigz</pre>
-</td>
-<td xml:lang="en-US">Binaries shipped in <code>pigz</code> package in Red Hat Enterprise Linux 8
-have not been compiled using recommended compiler flags. The binaries
-are compiled without sufficient stack protection and its address space
-layout randomization (ASLR) is weak.</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
 <td>CCE-82724-6</td>
 <td>Install policycoreutils-python-utils package</td>
 <td xml:lang="en-US">The <code>policycoreutils-python-utils</code> package can be installed with the following command:
@@ -2496,17 +2534,28 @@ context.</td>
 <td></td>
 </tr>
 <tr>
-<td>CCE-82968-9</td>
-<td>Install rng-tools Package</td>
-<td xml:lang="en-US">The <code>rng-tools</code> package can be installed with the following command:
+<td>CCE-82859-0</td>
+<td>Ensure rsyslog-gnutls is installed</td>
+<td xml:lang="en-US">TLS protocol support for rsyslog is installed.
+The <code>rsyslog-gnutls</code> package can be installed with the following command:
 <pre>
-$ sudo yum install rng-tools</pre>
+$ sudo yum install rsyslog-gnutls</pre>
 </td>
-<td xml:lang="en-US">
-<code>rng-tools</code> provides hardware random number generator tools,
-such as those used in the formation of x509/PKI certificates.</td>
+<td xml:lang="en-US">The rsyslog-gnutls package provides Transport Layer Security (TLS) support
+for the rsyslog daemon, which enables secure remote logging.</td>
 <td></td>
 <td></td>
+</tr>
+<tr>
+<td>CCE-80847-7</td>
+<td>Ensure rsyslog is Installed</td>
+<td xml:lang="en-US">Rsyslog is installed by default. The <code>rsyslog</code> package can be installed with the following command: <pre> $ sudo yum install rsyslog</pre>
+</td>
+<td xml:lang="en-US">The rsyslog package provides the rsyslog daemon, which provides
+system logging services.</td>
+<td></td>
+<td>CM-6(a)<br>
+</td>
 </tr>
 <tr>
 <td>CCE-82949-9</td>
@@ -2596,21 +2645,6 @@ The <code>tmux</code> package allows for a session lock to be implemented and co
 <td></td>
 <td>CM-6(a)<br>
 </td>
-</tr>
-<tr>
-<td>CCE-82904-4</td>
-<td>Uninstall tuned Package</td>
-<td xml:lang="en-US">The <code>tuned</code> package can be removed with the following command:
-<pre>
-$ sudo yum erase tuned</pre>
-</td>
-<td xml:lang="en-US">
-<code>tuned</code> contains a daemon that tunes the system settings dynamically.
-It does so by monitoring the usage of several system components periodically. Based
-on that information, components will then be put into lower or higher power savings
-modes to adapt to the current usage.</td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td>CCE-82959-8</td>
@@ -2704,6 +2738,39 @@ by configuring the bootloader password.</td>
 </td>
 </tr>
 <tr>
+<td>CCE-82457-3</td>
+<td>Configure TLS for rsyslog remote logging</td>
+<td xml:lang="en-US">Configure <code>rsyslog</code> to use Transport Layer
+Security (TLS) support for logging to remote server
+for the Forwarding Output Module in <code>/etc/rsyslog.conf</code>
+using action. You can use the following command:
+<pre>echo 'action(type="omfwd" protocol="tcp" Target="&lt;remote system&gt;" port="6514"
+    StreamDriver="gtls" StreamDriverMode="1" StreamDriverAuthMode="x509/name" streamdriver.CheckExtendedKeyPurpose="on")' &gt;&gt; /etc/rsyslog.conf
+</pre>
+Replace the <code>&lt;remote system&gt;</code> in the above command with an IP address or a host name of the remote logging server.</td>
+<td xml:lang="en-US">For protection of data being logged, the connection to the
+remote logging server needs to be authenticated and encrypted.</td>
+<td></td>
+<td>AU-9(3)<br>CM-6(a)<br>
+</td>
+</tr>
+<tr>
+<td>CCE-82458-1</td>
+<td>Configure CA certificate for rsyslog remote logging</td>
+<td xml:lang="en-US">Configure CA certificate for <code>rsyslog</code> logging
+to remote server using Transport Layer Security (TLS)
+using correct path for the <code>DefaultNetstreamDriverCAFile</code>
+global option in <code>/etc/rsyslog.conf</code>, for example with the following command:
+<pre>echo 'global(DefaultNetstreamDriverCAFile="/etc/pki/tls/cert.pem")' &gt;&gt; /etc/rsyslog.conf</pre>
+Replace the <code>/etc/pki/tls/cert.pem</code> in the above command with the path to the file with CA certificate generated for the purpose of remote logging.</td>
+<td xml:lang="en-US">The CA certificate needs to be set or <code>rsyslog.service</code>
+fails to start with
+<pre>error: ca certificate is not set, cannot continue</pre>
+</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>CCE-80864-2</td>
 <td>Restrict Virtual Console Root Logins</td>
 <td xml:lang="en-US">To restrict root logins through the (deprecated) virtual console devices,
@@ -2795,9 +2862,7 @@ for SystemD related issues and should otherwise be disabled.
 By default, the <code>debug-shell</code> SystemD service is already disabled.
 
 The <code>debug-shell</code> service can be disabled with the following command:
-<pre>$ sudo systemctl disable debug-shell.service</pre>
-The <code>debug-shell</code> service can be masked with the following command:
-<pre>$ sudo systemctl mask debug-shell.service</pre>
+<pre>$ sudo systemctl mask --now debug-shell.service</pre>
 </td>
 <td xml:lang="en-US">This prevents attackers with physical access from trivially bypassing security
 on the machine through valid troubleshooting configurations and gaining root
@@ -2832,17 +2897,23 @@ prevents connections from unknown hosts and protocols.</td>
 </td>
 </tr>
 <tr>
-<td>CCE-82831-9</td>
-<td>Enable the Hardware RNG Entropy Gatherer Service</td>
-<td xml:lang="en-US">The Hardware RNG Entropy Gatherer service should be enabled.
+<td>CCE-80878-2</td>
+<td>Disable KDump Kernel Crash Analyzer (kdump)</td>
+<td xml:lang="en-US">The <code>kdump</code> service provides a kernel crash dump analyzer. It uses the <code>kexec</code>
+system call to boot a secondary kernel ("capture" kernel) following a system
+crash, which can load information from the crashed kernel for analysis.
 
-The <code>rngd</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable rngd.service</pre>
+The <code>kdump</code> service can be disabled with the following command:
+<pre>$ sudo systemctl mask --now kdump.service</pre>
 </td>
-<td xml:lang="en-US">The <code>rngd</code> service
-feeds random data from hardware device to kernel random device.</td>
+<td xml:lang="en-US">Kernel core dumps may contain the full contents of system memory at the
+time of the crash. Kernel core dumps consume a considerable amount of disk
+space and may result in denial of service by exhausting the available space
+on the target file system partition. Unless the system is used for kernel
+development or testing, there is little need to run the kdump service.</td>
 <td></td>
-<td></td>
+<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
+</td>
 </tr>
 <tr>
 <td>CCE-82881-4</td>
@@ -3026,11 +3097,17 @@ enabled on the console or console port that has been let unattended.</td>
 </tr>
 <tr>
 <td>CCE-80907-9</td>
-<td>Set SSH Client Alive Max Count</td>
-<td xml:lang="en-US">To ensure the SSH idle timeout occurs precisely when the <code>ClientAliveInterval</code> is set,
-edit <code>/etc/ssh/sshd_config</code> as follows:
-<pre>ClientAliveCountMax <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_set_keepalive"></xccdf-1.1:sub></pre>
-</td>
+<td>Set SSH Client Alive Count Max</td>
+<td xml:lang="en-US">The SSH server sends at most <code>ClientAliveCountMax</code> messages
+during a SSH session and waits for a response from the SSH client.
+The option <code>ClientAliveInterval</code> configures timeout after
+each <code>ClientAliveCountMax</code> message. If the SSH server does not
+receive a response from the client, then the connection is considered idle
+and terminated.
+
+To ensure the SSH idle timeout occurs precisely when the
+<code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
+value of <code>0</code>.</td>
 <td xml:lang="en-US">This ensures a user login will be terminated as soon as the <code>ClientAliveInterval</code>
 is reached.</td>
 <td></td>
@@ -3212,7 +3289,7 @@ forwarding is enabled and the system is functioning as a router.
 Accepting source-routed packets in the IPv4 protocol has few legitimate
 uses. It should be disabled unless it is absolutely required.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>SC-5CM-6(a)<br>SC-7(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>SC-5<br>CM-6(a)<br>SC-7(a)<br>
 </td>
 </tr>
 <tr>
@@ -3269,7 +3346,7 @@ from the system's route table possibly revealing portions of the network topolog
 <br>
 The ability to send ICMP redirects is only appropriate for systems acting as routers.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>SC-5CM-6(a)<br>SC-7(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>SC-5<br>CM-6(a)<br>SC-7(a)<br>
 </td>
 </tr>
 <tr>
@@ -3360,7 +3437,7 @@ from the system's route table possibly revealing portions of the network topolog
 <br>
 The ability to send ICMP redirects is only appropriate for systems acting as routers.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>SC-5CM-6(a)<br>SC-7(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>SC-5<br>CM-6(a)<br>SC-7(a)<br>
 </td>
 </tr>
 <tr>
@@ -3401,7 +3478,7 @@ network topology information with other routers. If this capability is used when
 not required, system network information may be unnecessarily transmitted across
 the network.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>SC-5CM-6(a)<br>SC-7(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>SC-5<br>CM-6(a)<br>SC-7(a)<br>
 </td>
 </tr>
 <tr>
@@ -3611,21 +3688,6 @@ reference to that page after being freed or before being initialized will be
 detected and prevented.
 This prevents many types of use-after-free vulnerabilities at little performance cost.
 Also prevents leak of data and detection of corrupted memory.</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>CCE-83361-6</td>
-<td>Enable Kernel Page-Table Isolation (KPTI) in zIPL</td>
-<td xml:lang="en-US">To enable Kernel page-table isolation,
-check that all boot entries in <code>/boot/loader/entries/*.conf</code> have <code>pti=on</code>
-included in its options.<br>
-To ensure that new kernels and boot entries continue to enable page-table isolation,
-add <code>pti=on</code> to <code>/etc/kernel/cmdline</code>.</td>
-<td xml:lang="en-US">Kernel page-table isolation is a kernel feature that mitigates
-the Meltdown security vulnerability and hardens the kernel
-against attempts to bypass kernel address space layout
-randomization (KASLR).</td>
 <td></td>
 <td></td>
 </tr>

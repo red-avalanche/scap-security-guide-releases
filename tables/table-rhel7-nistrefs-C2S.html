@@ -47,20 +47,15 @@
 <td>Set Account Expiration Following Inactivity</td>
 <td xml:lang="en-US">To specify the number of days after a password expires (which
 signifies inactivity) until an account is permanently disabled, add or correct
-the following lines in <code>/etc/default/useradd</code>, substituting
-<code><i>NUM_DAYS</i></code> appropriately:
+the following line in <code>/etc/default/useradd</code>:
 <pre>INACTIVE=<i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></i></pre>
-A value of 35 is recommended; however, this profile expects that the value is set to
-<code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></code>.
-If a password is currently on the
-verge of expiration, then 35 days remain until the account is automatically
-disabled. However, if the password will not expire for another 60 days, then 95
-days could elapse until the account would be automatically disabled. See the
-<code>useradd</code> man page for more information.  Determining the inactivity
-timeout must be done with careful consideration of the length of a "normal"
-period of inactivity for users in the particular environment. Setting
-the timeout too low incurs support costs and also has the potential to impact
-availability of the system to legitimate users.</td>
+If a password is currently on the verge of expiration, then
+<code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></code>
+day(s) remain(s) until the account is automatically
+disabled. However, if the password will not expire for another 60 days, then 60
+days plus <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></code> day(s) could
+elapse until the account would be automatically disabled. See the
+<code>useradd</code> man page for more information.</td>
 <td xml:lang="en-US">Disabling inactive accounts ensures that accounts which may not
 have been responsibly removed are not available to attackers
 who may have compromised their credentials.</td>
@@ -999,8 +994,8 @@ audited.</td>
 <tr>
 <td>CCE-27437-3</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands</td>
-<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. To find the relevant setuid /
+<td xml:lang="en-US">The audit system should collect information about usage of privileged
+commands for all users and root. To find the relevant setuid /
 setgid programs, run the following command for each local partition
 <i>PART</i>:
 <pre>$ sudo find <i>PART</i> -xdev -type f -perm -4000 -o -type f -perm -2000 2&gt;/dev/null</pre>
@@ -1010,13 +1005,13 @@ the following form to a file with suffix <code>.rules</code> in the directory
 <code>/etc/audit/rules.d</code> for each setuid / setgid program on the system,
 replacing the <i>SETUID_PROG_PATH</i> part with the full path of that setuid /
 setgid program in the list:
-<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code> for each setuid / setgid program on the
 system, replacing the <i>SETUID_PROG_PATH</i> part with the full path of that
 setuid / setgid program in the list:
-<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -3479,9 +3474,7 @@ rather than relying on the automounter.
 <br><br>
 
 The <code>autofs</code> service can be disabled with the following command:
-<pre>$ sudo systemctl disable autofs.service</pre>
-The <code>autofs</code> service can be masked with the following command:
-<pre>$ sudo systemctl mask autofs.service</pre>
+<pre>$ sudo systemctl mask --now autofs.service</pre>
 </td>
 <td xml:lang="en-US">Disabling the automounter permits the administrator to
 statically control filesystem mounting through <code>/etc/fstab</code>.
@@ -3495,7 +3488,7 @@ unknown devices, thereby facilitating malicious activity.</td>
 <tr>
 <td>CCE-80338-7</td>
 <td>Disable Avahi Server Software</td>
-<td xml:lang="en-US"> The <code>avahi-daemon</code> service can be disabled with the following command: <pre>$ sudo systemctl disable avahi-daemon.service</pre> The <code>avahi-daemon</code> service can be masked with the following command: <pre>$ sudo systemctl mask avahi-daemon.service</pre>
+<td xml:lang="en-US"> The <code>avahi-daemon</code> service can be disabled with the following command: <pre>$ sudo systemctl mask --now avahi-daemon.service</pre>
 </td>
 <td xml:lang="en-US">Because the Avahi daemon service keeps an open network
 port, it is subject to network attacks. Its functionality
@@ -3565,7 +3558,7 @@ enabling the cron daemon is essential.</td>
 <tr>
 <td>CCE-80282-7</td>
 <td>Disable the CUPS Service</td>
-<td xml:lang="en-US"> The <code>cups</code> service can be disabled with the following command: <pre>$ sudo systemctl disable cups.service</pre> The <code>cups</code> service can be masked with the following command: <pre>$ sudo systemctl mask cups.service</pre>
+<td xml:lang="en-US"> The <code>cups</code> service can be disabled with the following command: <pre>$ sudo systemctl mask --now cups.service</pre>
 </td>
 <td xml:lang="en-US">Turn off unneeded services to reduce attack surface.</td>
 <td></td>
@@ -3579,9 +3572,7 @@ enabling the cron daemon is essential.</td>
 any system that does not need to act as a DHCP server.
 
 The <code>dhcpd</code> service can be disabled with the following command:
-<pre>$ sudo systemctl disable dhcpd.service</pre>
-The <code>dhcpd</code> service can be masked with the following command:
-<pre>$ sudo systemctl mask dhcpd.service</pre>
+<pre>$ sudo systemctl mask --now dhcpd.service</pre>
 </td>
 <td xml:lang="en-US">Unmanaged or unintentionally activated DHCP servers may provide faulty information
 to clients, interfering with the operation of a legitimate site
@@ -3593,7 +3584,7 @@ DHCP server if there is one.</td>
 <tr>
 <td>CCE-80294-2</td>
 <td>Disable Dovecot Service</td>
-<td xml:lang="en-US"> The <code>dovecot</code> service can be disabled with the following command: <pre>$ sudo systemctl disable dovecot.service</pre> The <code>dovecot</code> service can be masked with the following command: <pre>$ sudo systemctl mask dovecot.service</pre>
+<td xml:lang="en-US"> The <code>dovecot</code> service can be disabled with the following command: <pre>$ sudo systemctl mask --now dovecot.service</pre>
 </td>
 <td xml:lang="en-US">Running an IMAP or POP3 server provides a network-based
 avenue of attack, and should be disabled if not needed.</td>
@@ -3603,7 +3594,7 @@ avenue of attack, and should be disabled if not needed.</td>
 <tr>
 <td>CCE-80300-7</td>
 <td>Disable httpd Service</td>
-<td xml:lang="en-US"> The <code>httpd</code> service can be disabled with the following command: <pre>$ sudo systemctl disable httpd.service</pre> The <code>httpd</code> service can be masked with the following command: <pre>$ sudo systemctl mask httpd.service</pre>
+<td xml:lang="en-US"> The <code>httpd</code> service can be disabled with the following command: <pre>$ sudo systemctl mask --now httpd.service</pre>
 </td>
 <td xml:lang="en-US">Running web server software provides a network-based avenue
 of attack, and should be disabled if not needed.</td>
@@ -3614,7 +3605,7 @@ of attack, and should be disabled if not needed.</td>
 <tr>
 <td>CCE-80325-4</td>
 <td>Disable named Service</td>
-<td xml:lang="en-US"> The <code>named</code> service can be disabled with the following command: <pre>$ sudo systemctl disable named.service</pre> The <code>named</code> service can be masked with the following command: <pre>$ sudo systemctl mask named.service</pre>
+<td xml:lang="en-US"> The <code>named</code> service can be disabled with the following command: <pre>$ sudo systemctl mask --now named.service</pre>
 </td>
 <td xml:lang="en-US">All network services involve some risk of compromise due to
 implementation flaws and should be disabled if possible.</td>
@@ -3630,9 +3621,7 @@ and interact with shared filesystems on the local system. If the local system
 is not designated as a NFS server then this service should be disabled.
 
 The <code>nfs</code> service can be disabled with the following command:
-<pre>$ sudo systemctl disable nfs.service</pre>
-The <code>nfs</code> service can be masked with the following command:
-<pre>$ sudo systemctl mask nfs.service</pre>
+<pre>$ sudo systemctl mask --now nfs.service</pre>
 </td>
 <td xml:lang="en-US">Unnecessary services should be disabled to decrease the attack surface of the system.</td>
 <td></td>
@@ -3647,9 +3636,7 @@ and runs as a service through xinetd or separately as a systemd socket, should b
 If using xinetd, set <code>disable</code> to <code>yes</code> in <code>/etc/xinetd.d/rexec</code>.
 
 The <code>rexec</code> socket can be disabled with the following command:
-<pre>$ sudo systemctl disable rexec.socket</pre>
-The <code>rexec</code> socket can be masked with the following command:
-<pre>$ sudo systemctl mask .socket</pre>
+<pre>$ sudo systemctl mask --now rexec.socket</pre>
 </td>
 <td xml:lang="en-US">The rexec service uses unencrypted network communications, which
 means that data from the login session, including passwords and
@@ -3668,9 +3655,7 @@ such as package updates. This only occurs if the system was registered to an
 RHN server or satellite and managed as such.
 
 The <code>rhnsd</code> service can be disabled with the following command:
-<pre>$ sudo systemctl disable rhnsd.service</pre>
-The <code>rhnsd</code> service can be masked with the following command:
-<pre>$ sudo systemctl mask rhnsd.service</pre>
+<pre>$ sudo systemctl mask --now rhnsd.service</pre>
 </td>
 <td xml:lang="en-US">Although systems management and patching is extremely important to
 system security, management by a system outside the enterprise enclave is not
@@ -3689,9 +3674,7 @@ as a systemd socket, should be disabled.
 If using xinetd, set <code>disable</code> to <code>yes</code> in <code>/etc/xinetd.d/rlogin</code>.
 
 The <code>rlogin</code> socket can be disabled with the following command:
-<pre>$ sudo systemctl disable rlogin.socket</pre>
-The <code>rlogin</code> socket can be masked with the following command:
-<pre>$ sudo systemctl mask .socket</pre>
+<pre>$ sudo systemctl mask --now rlogin.socket</pre>
 </td>
 <td xml:lang="en-US">The rlogin service uses unencrypted network communications, which
 means that data from the login session, including passwords and
@@ -3712,9 +3695,7 @@ communicate with the requested service. If the system does not require RPC
 (such as for NFS servers) then this service should be disabled.
 
 The <code>rpcbind</code> service can be disabled with the following command:
-<pre>$ sudo systemctl disable rpcbind.service</pre>
-The <code>rpcbind</code> service can be masked with the following command:
-<pre>$ sudo systemctl mask rpcbind.service</pre>
+<pre>$ sudo systemctl mask --now rpcbind.service</pre>
 </td>
 <td xml:lang="en-US">If the system does not require rpc based services, it is recommended that
 rpcbind be disabled to reduce the attack surface.</td>
@@ -3730,9 +3711,7 @@ as a systemd socket, should be disabled.
 If using xinetd, set <code>disable</code> to <code>yes</code> in <code>/etc/xinetd.d/rsh</code>.
 
 The <code>rsh</code> socket can be disabled with the following command:
-<pre>$ sudo systemctl disable rsh.socket</pre>
-The <code>rsh</code> socket can be masked with the following command:
-<pre>$ sudo systemctl mask .socket</pre>
+<pre>$ sudo systemctl mask --now rsh.socket</pre>
 </td>
 <td xml:lang="en-US">The rsh service uses unencrypted network communications, which
 means that data from the login session, including passwords and
@@ -3759,7 +3738,7 @@ logging services, which are essential to system administration.</td>
 <tr>
 <td>CCE-80277-7</td>
 <td>Disable Samba</td>
-<td xml:lang="en-US"> The <code>smb</code> service can be disabled with the following command: <pre>$ sudo systemctl disable smb.service</pre> The <code>smb</code> service can be masked with the following command: <pre>$ sudo systemctl mask smb.service</pre>
+<td xml:lang="en-US"> The <code>smb</code> service can be disabled with the following command: <pre>$ sudo systemctl mask --now smb.service</pre>
 </td>
 <td xml:lang="en-US">Running a Samba server provides a network-based avenue of attack, and
 should be disabled if not needed.</td>
@@ -3769,7 +3748,7 @@ should be disabled if not needed.</td>
 <tr>
 <td>CCE-80274-4</td>
 <td>Disable snmpd Service</td>
-<td xml:lang="en-US"> The <code>snmpd</code> service can be disabled with the following command: <pre>$ sudo systemctl disable snmpd.service</pre> The <code>snmpd</code> service can be masked with the following command: <pre>$ sudo systemctl mask snmpd.service</pre>
+<td xml:lang="en-US"> The <code>snmpd</code> service can be disabled with the following command: <pre>$ sudo systemctl mask --now snmpd.service</pre>
 </td>
 <td xml:lang="en-US">Running SNMP software provides a network-based avenue of attack, and
 should be disabled if not needed.</td>
@@ -3779,7 +3758,7 @@ should be disabled if not needed.</td>
 <tr>
 <td>CCE-80285-0</td>
 <td>Disable Squid</td>
-<td xml:lang="en-US"> The <code>squid</code> service can be disabled with the following command: <pre>$ sudo systemctl disable squid.service</pre> The <code>squid</code> service can be masked with the following command: <pre>$ sudo systemctl mask squid.service</pre>
+<td xml:lang="en-US"> The <code>squid</code> service can be disabled with the following command: <pre>$ sudo systemctl mask --now squid.service</pre>
 </td>
 <td xml:lang="en-US">Running proxy server software provides a network-based avenue
 of attack, and should be removed if not needed.</td>
@@ -3813,9 +3792,7 @@ the activation of the <code>telnet</code> service on system boot is disabled
 via the following command:
 
 The <code>rexec</code> socket can be disabled with the following command:
-<pre>$ sudo systemctl disable rexec.socket</pre>
-The <code>rexec</code> socket can be masked with the following command:
-<pre>$ sudo systemctl mask .socket</pre>
+<pre>$ sudo systemctl mask --now rexec.socket</pre>
 </td>
 <td xml:lang="en-US">The telnet protocol uses unencrypted network communication, which
 means that data from the login session, including passwords and
@@ -3832,9 +3809,7 @@ subject to man-in-the-middle attacks.</td>
 <td xml:lang="en-US">The <code>tftp</code> service should be disabled.
 
 The <code>tftp</code> service can be disabled with the following command:
-<pre>$ sudo systemctl disable tftp.service</pre>
-The <code>tftp</code> service can be masked with the following command:
-<pre>$ sudo systemctl mask tftp.service</pre>
+<pre>$ sudo systemctl mask --now tftp.service</pre>
 </td>
 <td xml:lang="en-US">Disabling the <code>tftp</code> service ensures the system is not acting
 as a TFTP server, which does not provide encryption or authentication.</td>
@@ -3845,7 +3820,7 @@ as a TFTP server, which does not provide encryption or authentication.</td>
 <tr>
 <td>CCE-80244-7</td>
 <td>Disable vsftpd Service</td>
-<td xml:lang="en-US"> The <code>vsftpd</code> service can be disabled with the following command: <pre>$ sudo systemctl disable vsftpd.service</pre> The <code>vsftpd</code> service can be masked with the following command: <pre>$ sudo systemctl mask vsftpd.service</pre>
+<td xml:lang="en-US"> The <code>vsftpd</code> service can be disabled with the following command: <pre>$ sudo systemctl mask --now vsftpd.service</pre>
 </td>
 <td xml:lang="en-US">Running FTP server software provides a network-based avenue
 of attack, and should be disabled if not needed.
@@ -3858,7 +3833,7 @@ a risk of compromising sensitive information.</td>
 <tr>
 <td>CCE-27443-1</td>
 <td>Disable xinetd Service</td>
-<td xml:lang="en-US"> The <code>xinetd</code> service can be disabled with the following command: <pre>$ sudo systemctl disable xinetd.service</pre> The <code>xinetd</code> service can be masked with the following command: <pre>$ sudo systemctl mask xinetd.service</pre>
+<td xml:lang="en-US"> The <code>xinetd</code> service can be disabled with the following command: <pre>$ sudo systemctl mask --now xinetd.service</pre>
 </td>
 <td xml:lang="en-US">The xinetd service provides a dedicated listener service for some programs,
 which is no longer necessary for commonly-used network services. Disabling
@@ -4022,11 +3997,17 @@ enabled on the console or console port that has been let unattended.</td>
 </tr>
 <tr>
 <td>CCE-27082-7</td>
-<td>Set SSH Client Alive Max Count</td>
-<td xml:lang="en-US">To ensure the SSH idle timeout occurs precisely when the <code>ClientAliveInterval</code> is set,
-edit <code>/etc/ssh/sshd_config</code> as follows:
-<pre>ClientAliveCountMax <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_set_keepalive"></xccdf-1.1:sub></pre>
-</td>
+<td>Set SSH Client Alive Count Max</td>
+<td xml:lang="en-US">The SSH server sends at most <code>ClientAliveCountMax</code> messages
+during a SSH session and waits for a response from the SSH client.
+The option <code>ClientAliveInterval</code> configures timeout after
+each <code>ClientAliveCountMax</code> message. If the SSH server does not
+receive a response from the client, then the connection is considered idle
+and terminated.
+
+To ensure the SSH idle timeout occurs precisely when the
+<code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
+value of <code>0</code>.</td>
 <td xml:lang="en-US">This ensures a user login will be terminated as soon as the <code>ClientAliveInterval</code>
 is reached.</td>
 <td></td>
@@ -4222,7 +4203,7 @@ forwarding is enabled and the system is functioning as a router.
 Accepting source-routed packets in the IPv4 protocol has few legitimate
 uses. It should be disabled unless it is absolutely required.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>SC-5CM-6(a)<br>SC-7(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>SC-5<br>CM-6(a)<br>SC-7(a)<br>
 </td>
 </tr>
 <tr>
@@ -4279,7 +4260,7 @@ from the system's route table possibly revealing portions of the network topolog
 <br>
 The ability to send ICMP redirects is only appropriate for systems acting as routers.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>SC-5CM-6(a)<br>SC-7(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>SC-5<br>CM-6(a)<br>SC-7(a)<br>
 </td>
 </tr>
 <tr>
@@ -4370,7 +4351,7 @@ from the system's route table possibly revealing portions of the network topolog
 <br>
 The ability to send ICMP redirects is only appropriate for systems acting as routers.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>SC-5CM-6(a)<br>SC-7(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>SC-5<br>CM-6(a)<br>SC-7(a)<br>
 </td>
 </tr>
 <tr>
@@ -4411,7 +4392,7 @@ network topology information with other routers. If this capability is used when
 not required, system network information may be unnecessarily transmitted across
 the network.</td>
 <td></td>
-<td>CM-7(a)<br>CM-7(b)<br>SC-5CM-6(a)<br>SC-7(a)<br>
+<td>CM-7(a)<br>CM-7(b)<br>SC-5<br>CM-6(a)<br>SC-7(a)<br>
 </td>
 </tr>
 <tr>

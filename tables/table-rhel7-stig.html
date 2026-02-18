@@ -80,7 +80,7 @@ the correct values:
 </tr>
 <tr>
 <td>RHEL-07-010020</td>
-<td>663</td>
+<td>1749</td>
 <td>high</td>
 <td>The Red Hat Enterprise Linux operating system must be configured so that the cryptographic hash of system files and commands matches vendor values.</td>
 <td>The hashes of important files like system executables should match the
@@ -392,32 +392,6 @@ For example:
 <pre>/org/gnome/desktop/session/idle-delay</pre>
 After the settings have been set, run <code>dconf update</code>.</td>
 <td>RHEL-07-010082</td>
-</tr>
-<tr>
-<td>RHEL-07-010090</td>
-<td>57</td>
-<td>medium</td>
-<td>The Red Hat Enterprise Linux operating system must have the screen package installed.</td>
-<td>A session time-out lock is a temporary action taken when a user stops work and moves away from the immediate
-physical vicinity of the information system but does not logout because of the temporary nature of the absence.
-Rather than relying on the user to manually lock their operation system session prior to vacating the vicinity,
-operating systems need to be able to identify when a user's session has idled and take action to initiate the
-session lock.
-<br><br>
-The <code>screen</code> package allows for a session lock to be implemented and configured.</td>
-<td>Run the following command to determine if the screen package is installed: $ rpm -q screen
-      Is it the case that the package is not installed?
-      </td>
-<td>To enable console screen locking, install the <code>screen</code> package.
-The <code>screen</code> package can be installed with the following command:
-<pre>
-$ sudo yum install screen</pre>
-Instruct users to begin new terminal sessions with the following command:
-<pre>$ screen</pre>
-The console can now be locked with the following key combination:
-<pre>ctrl+a x</pre>
-</td>
-<td>RHEL-07-010090</td>
 </tr>
 <tr>
 <td>RHEL-07-010100</td>
@@ -1065,20 +1039,15 @@ INACTIVE=
       </td>
 <td>To specify the number of days after a password expires (which
 signifies inactivity) until an account is permanently disabled, add or correct
-the following lines in <code>/etc/default/useradd</code>, substituting
-<code><i>NUM_DAYS</i></code> appropriately:
+the following line in <code>/etc/default/useradd</code>:
 <pre>INACTIVE=<i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></i></pre>
-A value of 35 is recommended; however, this profile expects that the value is set to
-<code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></code>.
-If a password is currently on the
-verge of expiration, then 35 days remain until the account is automatically
-disabled. However, if the password will not expire for another 60 days, then 95
-days could elapse until the account would be automatically disabled. See the
-<code>useradd</code> man page for more information.  Determining the inactivity
-timeout must be done with careful consideration of the length of a "normal"
-period of inactivity for users in the particular environment. Setting
-the timeout too low incurs support costs and also has the potential to impact
-availability of the system to legitimate users.</td>
+If a password is currently on the verge of expiration, then
+<code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></code>
+day(s) remain(s) until the account is automatically
+disabled. However, if the password will not expire for another 60 days, then 60
+days plus <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></code> day(s) could
+elapse until the account would be automatically disabled. See the
+<code>useradd</code> man page for more information.</td>
 <td>RHEL-07-010310</td>
 </tr>
 <tr>
@@ -1207,7 +1176,7 @@ running the following command:
 $ sudo grep -i "FAIL_DELAY" /etc/login.defs
 All output must show the value of FAIL_DELAY set as shown in the below:
 $ sudo grep -i "FAIL_DELAY" /etc/login.defs
-fail_delay 
+FAIL_DELAY 
       Is it the case that the above command returns no output, or FAIL_DELAY is configured less than the expected value?
       </td>
 <td>To ensure the logon failure delay controlled by <code>/etc/login.defs</code> is set properly,
@@ -1313,34 +1282,30 @@ following line in <code>/etc/ssh/sshd_config</code>:
 <td>213</td>
 <td>high</td>
 <td>Red Hat Enterprise Linux operating systems prior to version 7.2 with a Basic Input/Output System (BIOS) must require authentication upon booting into single-user and maintenance modes.</td>
-<td>Password protection on the boot loader configuration ensures
-users with physical access cannot trivially alter
-important bootloader settings. These include which kernel to use,
-and whether to enter single-user mode.</td>
-<td>To verify the boot loader superuser password has been set, run the following
+<td>Having a non-default grub superuser username makes password-guessing attacks less effective.</td>
+<td>To verify the boot loader superuser account has been set, run the following
 command:
-sudo grep "superusers" /etc/grub2.cfg
+sudo grep -A1 "superusers" /etc/grub2.cfg
 The output should show the following:
-password_pbkdf2 superusers-account ${GRUB2_PASSWORD}
-To verify the boot loader superuser account password has been set,
-and the password encrypted, run the following command:
-sudo cat /boot/grub2/user.cfg
-The output should be similar to:
-GRUB2_PASSWORD=grub.pbkdf2.sha512.10000.C4E08AC72FBFF7E837FD267BFAD7AEB3D42DDC
-2C99F2A94DD5E2E75C2DC331B719FE55D9411745F82D1B6CFD9E927D61925F9BBDD1CFAA0080E0
-916F7AB46E0D.1302284FCCC52CD73BA3671C6C12C26FF50BA873293B24EE2A96EE3B57963E6D7
-0C83964B473EC8F93B07FE749AA6710269E904A9B08A6BBACB00A2D242AD828
+set superusers="superusers-account"
+export superusers
+where superusers-account is the actual account name different from common names like root,
+admin, or administrator.
       Is it the case that it does not?
       </td>
 <td>The grub2 boot loader should have a superuser account and password
 protection enabled to protect boot-time settings.
 <br><br>
-Since plaintext passwords are a security risk, generate a hash for the password
-by running the following command:
-<pre>$ grub2-setpassword</pre>
-When prompted, enter the password that was selected.
+To maximize the protection, select a password-protected superuser account with unique name, and modify the
+<code>/etc/grub.d/01_users</code> configuration file to reflect the account name change.
 <br><br>
-Once the superuser password has been added,
+Do not to use common administrator account names like root,
+admin, or administrator for the grub2 superuser account.
+<br><br>
+Change the superuser to a different username (The default is 'root').
+<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<br><br>
+Once the superuser account has been added,
 update the
 <code>grub.cfg</code> file by running:
 <pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
@@ -1374,10 +1339,91 @@ in <code>/usr/lib/systemd/system/rescue.service</code>.</td>
 <td>RHEL-07-010481</td>
 </tr>
 <tr>
+<td>RHEL-07-010482</td>
+<td>213</td>
+<td>high</td>
+<td>Red Hat Enterprise Linux operating systems version 7.2 or newer with a Basic Input/Output System (BIOS) must require authentication upon booting into single-user and maintenance modes.</td>
+<td>Password protection on the boot loader configuration ensures
+users with physical access cannot trivially alter
+important bootloader settings. These include which kernel to use,
+and whether to enter single-user mode.</td>
+<td>To verify the boot loader superuser password has been set, run the following
+command:
+sudo grep "superusers" /etc/grub2.cfg
+The output should show the following:
+password_pbkdf2 superusers-account ${GRUB2_PASSWORD}
+To verify the boot loader superuser account password has been set,
+and the password encrypted, run the following command:
+sudo cat /boot/grub2/user.cfg
+The output should be similar to:
+GRUB2_PASSWORD=grub.pbkdf2.sha512.10000.C4E08AC72FBFF7E837FD267BFAD7AEB3D42DDC
+2C99F2A94DD5E2E75C2DC331B719FE55D9411745F82D1B6CFD9E927D61925F9BBDD1CFAA0080E0
+916F7AB46E0D.1302284FCCC52CD73BA3671C6C12C26FF50BA873293B24EE2A96EE3B57963E6D7
+0C83964B473EC8F93B07FE749AA6710269E904A9B08A6BBACB00A2D242AD828
+      Is it the case that it does not?
+      </td>
+<td>The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
+<br><br>
+Since plaintext passwords are a security risk, generate a hash for the password
+by running the following command:
+<pre>$ grub2-setpassword</pre>
+When prompted, enter the password that was selected.
+<br><br>
+Once the superuser password has been added,
+update the
+<code>grub.cfg</code> file by running:
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
+</td>
+<td>RHEL-07-010482</td>
+</tr>
+<tr>
 <td>RHEL-07-010490</td>
 <td>213</td>
 <td>high</td>
 <td>Red Hat Enterprise Linux operating systems prior to version 7.2 using Unified Extensible Firmware Interface (UEFI) must require authentication upon booting into single-user and maintenance modes.</td>
+<td>Having a non-default grub superuser username makes password-guessing attacks less effective.
+
+For more information on how to configure the grub2 superuser account and password,
+please refer to
+<ul>
+<li><a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-working_with_the_grub_2_boot_loader#sec-Protecting_GRUB_2_with_a_Password">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-working_with_the_grub_2_boot_loader#sec-Protecting_GRUB_2_with_a_Password</a></li>.
+</ul>
+</td>
+<td>To verify the boot loader superuser account has been set, run the following
+command:
+sudo grep -A1 "superusers" /etc/grub2-efi.cfg
+The output should show the following:
+set superusers="superusers-account"
+export superusers
+where superusers-account is the actual account name different from common names like root,
+admin, or administrator.
+      Is it the case that it does not?
+      </td>
+<td>The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
+<br><br>
+To maximize the protection, select a password-protected superuser account with unique name, and modify the
+<code>/etc/grub.d/01_users</code> configuration file to reflect the account name change.
+<br><br>
+It is highly suggested not to use common administrator account names like root,
+admin, or administrator for the grub2 superuser account.
+<br><br>
+Change the superuser to a different username (The default is 'root').
+<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<br><br>
+Once the superuser account has been added,
+update the
+<code>grub.cfg</code> file by running:
+<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
+</td>
+<td>RHEL-07-010490</td>
+</tr>
+<tr>
+<td>RHEL-07-010491</td>
+<td>213</td>
+<td>high</td>
+<td>Red Hat Enterprise Linux operating systems version 7.2 or newer using Unified Extensible Firmware Interface (UEFI) must require authentication upon booting into single-user and maintenance modes.</td>
 <td>Password protection on the boot loader configuration ensures
 users with physical access cannot trivially alter
 important bootloader settings. These include which kernel to use,
@@ -1410,7 +1456,7 @@ update the
 <code>grub.cfg</code> file by running:
 <pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
 </td>
-<td>RHEL-07-010490</td>
+<td>RHEL-07-010491</td>
 </tr>
 <tr>
 <td>RHEL-07-010500</td>
@@ -1716,7 +1762,7 @@ unknown devices, thereby facilitating malicious activity.</td>
 <td> To check that the autofs service is disabled in system boot configuration, run the following command: $ systemctl is-enabled autofs Output should indicate the autofs service has either not been installed, or has been disabled at all runlevels, as shown in the example below: $ systemctl is-enabled autofs disabled
 Run the following command to verify autofs is not active (i.e. not running) through current runtime configuration: $ systemctl is-active autofs
 If the service is not running the command will return the following output: inactive
-By default the service will also be masked, to check that the autofs is masked, run the following command: $ systemctl show autofs | grep "LoadState\|UnitFileState"
+The service will also be masked, to check that the autofs is masked, run the following command: $ systemctl show autofs | grep "LoadState\|UnitFileState"
 If the service is masked the command will return the following outputs:
 LoadState=masked
 UnitFileState=masked
@@ -1732,11 +1778,35 @@ rather than relying on the automounter.
 <br><br>
 
 The <code>autofs</code> service can be disabled with the following command:
-<pre>$ sudo systemctl disable autofs.service</pre>
-The <code>autofs</code> service can be masked with the following command:
-<pre>$ sudo systemctl mask autofs.service</pre>
+<pre>$ sudo systemctl mask --now autofs.service</pre>
 </td>
 <td>RHEL-07-020110</td>
+</tr>
+<tr>
+<td>RHEL-07-020111</td>
+<td>1958</td>
+<td>medium</td>
+<td>The Red Hat Enterprise Linux operating system must disable the graphical user interface automounter unless required.</td>
+<td>USB storage devices such as thumb drives can be used to introduce
+malicious software.</td>
+<td>
+If the system is configured to prevent the loading of the usb-storage kernel module,
+it will contain lines inside any file in /etc/modprobe.d or the deprecated/etc/modprobe.conf.
+These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
+Run the following command to search for such lines in all files in /etc/modprobe.d and the deprecated /etc/modprobe.conf:
+$ grep -r usb-storage /etc/modprobe.conf /etc/modprobe.d
+      Is it the case that no line is returned?
+      </td>
+<td>To prevent USB storage devices from being used, configure the kernel module loading system
+to prevent automatic loading of the USB storage driver.
+
+To configure the system to prevent the <code>usb-storage</code>
+kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+<pre>install usb-storage /bin/true</pre>
+This will prevent the <code>modprobe</code> program from loading the <code>usb-storage</code>
+module, but will not prevent an administrator (or another program) from using the
+<code>insmod</code> program to load the module manually.</td>
+<td>RHEL-07-020111</td>
 </tr>
 <tr>
 <td>RHEL-07-020200</td>
@@ -1817,11 +1887,15 @@ can reboot the system. If accidentally pressed, as could happen in
 the case of mixed OS environment, this can create the risk of short-term
 loss of availability of systems due to unintentional reboot.</td>
 <td>
-To ensure the system is configured to mask the Ctrl-Alt-Del sequence,
-enter the following command:
-$ sudo ln -sf /dev/null /etc/systemd/system/ctrl-alt-del.target
-or
-$ sudo systemctl mask ctrl-alt-del.target
+To ensure the system is configured to mask the Ctrl-Alt-Del sequence, Check
+that the ctrl-alt-del.target is masked and not active with the following
+command:
+sudo systemctl status ctrl-alt-del.target
+The output should indicate that the target is masked and not active. It
+might resemble following output:
+ctrl-alt-del.target
+Loaded: masked (/dev/null; bad)
+Active: inactive (dead)
       Is it the case that the system is configured to reboot when Ctrl-Alt-Del is pressed?
       </td>
 <td>
@@ -1842,26 +1916,35 @@ as this file may be restored during future system updates.</td>
 <td>RHEL-07-020231</td>
 <td>366</td>
 <td>high</td>
-<td>The Red Hat Enterprise Linux operating system must be configured so that the x86 Ctrl-Alt-Delete key sequence is disabled in the GUI.</td>
-<td>USB storage devices such as thumb drives can be used to introduce
-malicious software.</td>
-<td>
-If the system is configured to prevent the loading of the usb-storage kernel module,
-it will contain lines inside any file in /etc/modprobe.d or the deprecated/etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
-Run the following command to search for such lines in all files in /etc/modprobe.d and the deprecated /etc/modprobe.conf:
-$ grep -r usb-storage /etc/modprobe.conf /etc/modprobe.d
-      Is it the case that no line is returned?
+<td>The Red Hat Enterprise Linux operating system must be configured so that the x86 Ctrl-Alt-Delete key sequence is disabled in the Graphical User Interface.</td>
+<td>A locally logged-in user who presses Ctrl-Alt-Del, when at the console,
+can reboot the system. If accidentally pressed, as could happen in
+the case of mixed OS environment, this can create the risk of short-term
+loss of availability of systems due to unintentional reboot.</td>
+<td>To ensure the system is configured to ignore the Ctrl-Alt-Del sequence,
+run the following command:
+$ gsettings get org.gnome.settings-daemon.plugins.media-keys logout
+If properly configured, the output should be ''.
+To ensure that users cannot enable the Ctrl-Alt-Del sequence, run the following:
+$ grep logout /etc/dconf/db/local.d/locks/*
+If properly configured, the output should be
+/org/gnome/settings-daemon/plugins/media-keys/logout
+      Is it the case that GNOME3 is configured to reboot when Ctrl-Alt-Del is pressed?
       </td>
-<td>To prevent USB storage devices from being used, configure the kernel module loading system
-to prevent automatic loading of the USB storage driver.
-
-To configure the system to prevent the <code>usb-storage</code>
-kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
-<pre>install usb-storage /bin/true</pre>
-This will prevent the <code>modprobe</code> program from loading the <code>usb-storage</code>
-module, but will not prevent an administrator (or another program) from using the
-<code>insmod</code> program to load the module manually.</td>
+<td>By default, <code>GNOME</code> will reboot the system if the
+<code>Ctrl-Alt-Del</code> key sequence is pressed.
+<br><br>
+To configure the system to ignore the <code>Ctrl-Alt-Del</code> key sequence
+from the Graphical User Interface (GUI) instead of rebooting the system,
+add or set <code>logout</code> to <code>''</code> in
+<code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
+<pre>[org/gnome/settings-daemon/plugins/media-keys]
+logout=''</pre>
+Once the settings have been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent
+user modification. For example:
+<pre>/org/gnome/settings-daemon/plugins/media-keys/logout</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
 <td>RHEL-07-020231</td>
 </tr>
 <tr>
@@ -1938,25 +2021,24 @@ dictates.</td>
 <td>366</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must not have unnecessary accounts.</td>
-<td>USB storage devices such as thumb drives can be used to introduce
-malicious software.</td>
-<td>
-If the system is configured to prevent the loading of the usb-storage kernel module,
-it will contain lines inside any file in /etc/modprobe.d or the deprecated/etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
-Run the following command to search for such lines in all files in /etc/modprobe.d and the deprecated /etc/modprobe.conf:
-$ grep -r usb-storage /etc/modprobe.conf /etc/modprobe.d
-      Is it the case that no line is returned?
-      </td>
-<td>To prevent USB storage devices from being used, configure the kernel module loading system
-to prevent automatic loading of the USB storage driver.
+<td>Even though the communications channel may be encrypted, an additional layer of
+security is gained by extending the policy of not logging directly on as root.
+In addition, logging in with a user-specific account provides individual
+accountability of actions performed on the system and also helps to minimize
+direct attack attempts on root's password.</td>
+<td>To determine how the SSH daemon's PermitRootLogin option is set, run the following command:
+$ sudo grep -i PermitRootLogin /etc/ssh/sshd_config
 
-To configure the system to prevent the <code>usb-storage</code>
-kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
-<pre>install usb-storage /bin/true</pre>
-This will prevent the <code>modprobe</code> program from loading the <code>usb-storage</code>
-module, but will not prevent an administrator (or another program) from using the
-<code>insmod</code> program to load the module manually.</td>
+If a line indicating no is returned, then the required value is set.
+
+      Is it the case that the required value is not set?
+      </td>
+<td>The root user should never be allowed to login to a
+system directly over a network.
+To disable root login via SSH, add or correct the following line
+in <code>/etc/ssh/sshd_config</code>:
+<pre>PermitRootLogin no</pre>
+</td>
 <td>RHEL-07-020270</td>
 </tr>
 <tr>
@@ -2064,24 +2146,6 @@ appropriate group.</td>
 <td>RHEL-07-020330</td>
 </tr>
 <tr>
-<td>RHEL-07-020600</td>
-<td>366</td>
-<td>medium</td>
-<td>The Red Hat Enterprise Linux operating system must be configured so that all local interactive users have a home directory assigned in the /etc/passwd file.</td>
-<td>If local interactive users are not assigned a valid home directory, there is no
-place for the storage and control of files they should own.</td>
-<td>To verify interactive users on the system have a home directory assigned,
-run the following command:
-$ sudo awk -F":" '{print $1 ":" $6}' /etc/passwd
-Inspect the output and verify that all interactive users have a home directory
-defined.
-      Is it the case that users home directory is not defined?
-      </td>
-<td>Assign home directories to all interactive users that currently do not
-have a home directory assigned.</td>
-<td>RHEL-07-020600</td>
-</tr>
-<tr>
 <td>RHEL-07-020610</td>
 <td>366</td>
 <td>medium</td>
@@ -2107,7 +2171,7 @@ parameter in <code>/etc/login.defs</code> to <code>yes</code> as follows:
 <td>RHEL-07-020620</td>
 <td>366</td>
 <td>medium</td>
-<td>The Red Hat Enterprise Linux operating system must be configured so that all local interactive user home directories are defined in the /etc/passwd file.</td>
+<td>The Red Hat Enterprise Linux operating system must be configured so that all local interactive users have a home directory assigned and defined in the /etc/passwd file.</td>
 <td>If a local interactive user has a home directory defined that does not exist,
 the user may be given access to the / directory as the current working directory
 upon logon. This could create a Denial of Service because the user would not be
@@ -2460,6 +2524,28 @@ any NFS mounts.</td>
 <td>RHEL-07-021021</td>
 </tr>
 <tr>
+<td>RHEL-07-021024</td>
+<td>1764</td>
+<td>low</td>
+<td>The Red Hat Enterprise Linux operating system must mount /dev/shm with secure options.</td>
+<td>Allowing users to execute binaries from world-writable directories
+such as <code>/dev/shm</code> can expose the system to potential compromise.</td>
+<td>To verify the noexec option is configured for the /dev/shm mount point, run the following command:
+    $ mount | grep '\s/dev/shm\s'
+    The output should show the corresponding mount point along with the noexec setting in parentheses.
+
+      Is it the case that the  is not present in the output line, or there is no output line at all?
+      </td>
+<td>The <code>noexec</code> mount option can be used to prevent binaries
+from being executed out of <code>/dev/shm</code>.
+It can be dangerous to allow the execution of binaries
+from world-writable temporary storage directories such as <code>/dev/shm</code>.
+Add the <code>noexec</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+<code>/dev/shm</code>.</td>
+<td>RHEL-07-021024</td>
+</tr>
+<tr>
 <td>RHEL-07-021030</td>
 <td>366</td>
 <td>medium</td>
@@ -2572,7 +2658,7 @@ development or testing, there is little need to run the kdump service.</td>
 <td> To check that the kdump service is disabled in system boot configuration, run the following command: $ systemctl is-enabled kdump Output should indicate the kdump service has either not been installed, or has been disabled at all runlevels, as shown in the example below: $ systemctl is-enabled kdump disabled
 Run the following command to verify kdump is not active (i.e. not running) through current runtime configuration: $ systemctl is-active kdump
 If the service is not running the command will return the following output: inactive
-By default the service will also be masked, to check that the kdump is masked, run the following command: $ systemctl show kdump | grep "LoadState\|UnitFileState"
+The service will also be masked, to check that the kdump is masked, run the following command: $ systemctl show kdump | grep "LoadState\|UnitFileState"
 If the service is masked the command will return the following outputs:
 LoadState=masked
 UnitFileState=masked
@@ -2583,9 +2669,7 @@ system call to boot a secondary kernel ("capture" kernel) following a system
 crash, which can load information from the crashed kernel for analysis.
 
 The <code>kdump</code> service can be disabled with the following command:
-<pre>$ sudo systemctl disable kdump.service</pre>
-The <code>kdump</code> service can be masked with the following command:
-<pre>$ sudo systemctl mask kdump.service</pre>
+<pre>$ sudo systemctl mask --now kdump.service</pre>
 </td>
 <td>RHEL-07-021300</td>
 </tr>
@@ -2783,7 +2867,7 @@ configured by default.</td>
 configured to use removable media as the boot loader.</td>
 <td>To verify the system is not configured to use a boot loader on removable media,
 run the following command:
-$ sudo grep "set root='hd0" /boot/grub2/grub.cfg
+$ sudo grep "set root='hd0" /boot/efi/EFI/redhat/grub.cfg
 The output should return something similar to:
 set root='hd0,msdos1'
 usb0, cd, fd0, etc. are some examples of removeable
@@ -2885,36 +2969,10 @@ top of the <code>/etc/audit/audit.rules</code> file:
 <td>RHEL-07-030010</td>
 </tr>
 <tr>
-<td>RHEL-07-030200</td>
-<td>1851</td>
-<td>medium</td>
-<td>The Red Hat Enterprise Linux operating system must be configured to use the au-remote plugin.</td>
-<td>Information stored in one location is vulnerable to accidental or incidental
-deletion or alteration.Off-loading is a common process in information systems
-with limited audit storage capacity.</td>
-<td>To verify the audispd plugin off-loads audit records onto a different system or
-media from the system being audited, run the following command:
-
-$ sudo grep -i remote_server /etc/audisp/audisp-remote.conf
-
-The output should return something similar to
-remote_server = 
-      Is it the case that audispd is not sending logs to a remote system?
-      </td>
-<td>Configure the audispd plugin to off-load audit records onto a different
-system or media from the system being audited.
-Set the <code>remote_server</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>
-with an IP address or hostname of the system that the audispd plugin should
-send audit records to. For example
-<pre>remote_server = <i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_audispd_remote_server"></xccdf-1.1:sub></i></pre>
-</td>
-<td>RHEL-07-030200</td>
-</tr>
-<tr>
 <td>RHEL-07-030201</td>
 <td>1851</td>
 <td>medium</td>
-<td>The Red Hat Enterprise Linux operating system must configure the au-remote plugin to off-load audit logs using the audisp-remote daemon.</td>
+<td>The Red Hat Enterprise Linux operating system must be configured to off-load audit logs onto a different system or storage media from the system being audited.</td>
 <td>Information stored in one location is vulnerable to accidental or incidental
 deletion or alteration.Off-loading is a common process in information systems
 with limited audit storage capacity.</td>
@@ -3075,13 +3133,10 @@ determined.</td>
 <td>Taking appropriate action when there is an error sending audit records to a
 remote system will minimize the possibility of losing audit records.</td>
 <td>Inspect /etc/audisp/audisp-remote.conf and locate the following line to
-determine if the system is configured to either send to syslog, switch to single user mode,
-or halt when there is a network failure with audispd:
+determine if the system is configured to perform a correct action according to the policy:
 grep -i network_failure_action /etc/audisp/audisp-remote.conf
-The output should return something similar to:
-network_failure_action = single
-Acceptable values also include syslog and
-halt.
+The output should return:
+network_failure_action = 
       Is it the case that the system is not configured to switch to single user mode for corrective action?
       </td>
 <td>Configure the action the operating system takes if there is an error sending
@@ -3092,7 +3147,8 @@ Set this value to <code>single</code> to cause the system to switch to single us
 mode for corrective action. Acceptable values also include <code>syslog</code> and
 <code>halt</code>. For certain systems, the need for availability
 outweighs the need to log all actions, and a different setting should be
-determined.</td>
+determined.
+This profile configures the <i>action</i> to be <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_audispd_network_failure_action"></xccdf-1.1:sub></code>.</td>
 <td>RHEL-07-030321</td>
 </tr>
 <tr>
@@ -3198,8 +3254,8 @@ It should be the case that all relevant setuid / setgid programs have a line
 in the audit rules.
       Is it the case that it is not the case?
       </td>
-<td>At a minimum, the audit system should collect the execution of
-privileged commands for all users and root. To find the relevant setuid /
+<td>The audit system should collect information about usage of privileged
+commands for all users and root. To find the relevant setuid /
 setgid programs, run the following command for each local partition
 <i>PART</i>:
 <pre>$ sudo find <i>PART</i> -xdev -type f -perm -4000 -o -type f -perm -2000 2&gt;/dev/null</pre>
@@ -3209,13 +3265,13 @@ the following form to a file with suffix <code>.rules</code> in the directory
 <code>/etc/audit/rules.d</code> for each setuid / setgid program on the system,
 replacing the <i>SETUID_PROG_PATH</i> part with the full path of that setuid /
 setgid program in the list:
-<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code> for each setuid / setgid program on the
 system, replacing the <i>SETUID_PROG_PATH</i> part with the full path of that
 setuid / setgid program in the list:
-<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>RHEL-07-030360</td>
 </tr>
@@ -4424,26 +4480,32 @@ form to <code>/etc/audit/audit.rules</code>:
 <td>2884</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must audit all uses of the mount command and syscall.</td>
-<td>The unauthorized exportation of data to external media could result in an information leak
-where classified information, Privacy Act information, and intellectual property could be lost. An audit
-trail should be created each time a filesystem is mounted to help identify and guard against information
-loss.</td>
-<td>To verify that auditing is configured for all media exportation events, run the following command:
-$ sudo auditctl -l | grep syscall | grep mount
-      Is it the case that there is no output?
+<td>Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br><br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td>To verify that auditing of privileged command use is configured, run the
+following command:
+$ sudo grep mount /etc/audit/audit.rules /etc/audit/rules.d/*
+It should return a relevant line in the audit rules.
+      Is it the case that it is not the case?
       </td>
-<td>At a minimum, the audit system should collect media exportation
-events for all users and root. If the <code>auditd</code> daemon is configured to
-use the <code>augenrules</code> program to read audit rules during daemon startup
-(the default), add the following line to a file with suffix <code>.rules</code> in
-the directory <code>/etc/audit/rules.d</code>, setting ARCH to either b32 or b64 as
-appropriate for your system:
-<pre>-a always,exit -F arch=ARCH -S mount -F auid&gt;=1000 -F auid!=unset -F key=export</pre>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following line to
-<code>/etc/audit/audit.rules</code> file, setting ARCH to either b32 or b64 as
-appropriate for your system:
-<pre>-a always,exit -F arch=ARCH -S mount -F auid&gt;=1000 -F auid!=unset -F key=export</pre>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td>RHEL-07-030740</td>
 </tr>
@@ -4656,19 +4718,19 @@ form to <code>/etc/audit/audit.rules</code>:
 <td>172</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must audit all uses of the create_module syscall.</td>
-<td>The addition of kernel modules can be used to alter the behavior of
+<td>The removal of kernel modules can be used to alter the behavior of
 the kernel and potentially introduce malicious code into kernel space. It is important
 to have an audit trail of modules that have been introduced into the kernel.</td>
 <td>To determine if the system is configured to audit calls to the
-init_module system call, run the following command:
-preserve$ sudo grep "init_module" /etc/audit/audit.*
+delete_module system call, run the following command:
+preserve$ sudo grep "delete_module" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
       </td>
-<td>To capture kernel module loading events, use following line, setting ARCH to
+<td>To capture kernel module unloading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
-<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
 
 Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
 to use the <code>augenrules</code> program (the default), add the line to a file with suffix
@@ -4765,19 +4827,19 @@ add the line to file <code>/etc/audit/audit.rules</code>.</td>
 <td>172</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must audit all uses of the kmod command.</td>
-<td>The addition of kernel modules can be used to alter the behavior of
+<td>The removal of kernel modules can be used to alter the behavior of
 the kernel and potentially introduce malicious code into kernel space. It is important
 to have an audit trail of modules that have been introduced into the kernel.</td>
 <td>To determine if the system is configured to audit calls to the
-init_module system call, run the following command:
-preserve$ sudo grep "init_module" /etc/audit/audit.*
+delete_module system call, run the following command:
+preserve$ sudo grep "delete_module" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
       </td>
-<td>To capture kernel module loading events, use following line, setting ARCH to
+<td>To capture kernel module unloading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
-<pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F key=modules</pre>
+<pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
 
 Place to add the line depends on a way <code>auditd</code> daemon is configured. If it is configured
 to use the <code>augenrules</code> program (the default), add the line to a file with suffix
@@ -5159,7 +5221,17 @@ There must be a resolvable DNS CNAME or Alias record set to "<xccdf-1.1:sub xmln
 <td>Any process which receives messages from the network incurs some risk
 of receiving malicious messages. This risk can be eliminated for
 rsyslog by configuring it not to listen on the network.</td>
-<td></td>
+<td>Display the contents of the configuration file:
+cat /etc/rsyslog.conf
+Make sure that the following lines are not present in the output:
+$ModLoad imtcp
+$InputTCPServerRun port
+$ModLoad imudp
+$UDPServerRun port
+$ModLoad imrelp
+$InputRELPServerRun port
+      Is it the case that rsyslog accepts remote messages?
+      </td>
 <td>The <code>rsyslog</code> daemon should not accept remote messages
 unless the system acts as a log server.
 To ensure that it is not listening on the network, ensure the following lines are
@@ -5309,7 +5381,7 @@ The rule is parametrized to use the following ciphers: <code><xccdf-1.1:sub xmln
 <td>RHEL-07-040160</td>
 <td>2361</td>
 <td>medium</td>
-<td>The Red Hat Enterprise Linux operating system must be configured so that all network connections associated with a communication session are terminated at the end of the session or after 10 minutes of inactivity from the user at a command prompt, except to fulfill documented and validated mission requirements.</td>
+<td>The Red Hat Enterprise Linux operating system must be configured so that all network connections associated with a communication session are terminated at the end of the session or after 15 minutes of inactivity from the user at a command prompt, except to fulfill documented and validated mission requirements.</td>
 <td>Terminating an idle session within a short time period reduces
 the window of opportunity for unauthorized personnel to take control of a
 management session enabled on the console or console port that has been
@@ -5361,24 +5433,65 @@ altered by unauthorized users without detection. The ssl directive specifies
 whether to use TLS or not. If not specified it will default to no.
 It should be set to start_tls rather than doing LDAP over SSL.</td>
 <td>If the system is not using TLS, set the ldap_id_use_start_tls option
-in /etc/sssd/sssd.conf to True.
-      Is it the case that the 'ldap_id_use_start_tls' option is not set to 'True'?
+in /etc/sssd/sssd.conf to true.
+      Is it the case that the 'ldap_id_use_start_tls' option is not set to 'true'?
       </td>
-<td>This check verifies that Red Hat Enterprise Linux 7 implements cryptography
-to protect the integrity of remote LDAP authentication sessions.
+<td>The LDAP client should be configured to implement TLS for the integrity
+of all remote LDAP authentication sessions. If the <code>id_provider</code> is
+set to <code>ldap</code> or <code>ipa</code> in <code>/etc/sssd/sssd.conf</code> or any of the
+<code>/etc/sssd/sssd.conf.d</code> configuration files, <code>ldap_id_use_start_tls</code>
+must be set to <code>true</code>.
 <br><br>
-To determine if LDAP is being used for authentication, use the following
-command:
-<pre>$ sudo grep -i useldapauth /etc/sysconfig/authconfig</pre>
-<br><br>
-If <code>USELDAPAUTH=yes</code>, then LDAP is being used. To check if LDAP is
-configured to use TLS, use the following command:
+To check if LDAP is configured to use TLS when <code>id_provider</code> is
+set to <code>ldap</code> or <code>ipa</code>, use the following command:
 <pre>$ sudo grep -i ldap_id_use_start_tls /etc/sssd/sssd.conf</pre>
 </td>
 <td>RHEL-07-040180</td>
 </tr>
 <tr>
 <td>RHEL-07-040190</td>
+<td>1453</td>
+<td>medium</td>
+<td>The Red Hat Enterprise Linux operating system must implement cryptography to protect the integrity of Lightweight Directory Access Protocol (LDAP) communications.</td>
+<td>DoD Information Systems are required to use FIPS-approved cryptographic hash
+functions. The only SSHv2 hash algorithms meeting this requirement is SHA2.</td>
+<td>Only FIPS-approved MACs should be used. To verify that only FIPS-approved
+MACs are in use, run the following command:
+$ sudo grep -i macs /etc/ssh/sshd_config
+The output should contain only those MACs which are FIPS-approved. Any use of other
+ciphers or algorithms will result in the module entering the non-FIPS mode of
+operation.
+      Is it the case that MACs option is commented out or not using FIPS-approved hash algorithms?
+      </td>
+<td>Limit the MACs to those hash algorithms which are FIPS-approved.
+The following line in <code>/etc/ssh/sshd_config</code>
+demonstrates use of FIPS-approved MACs:
+
+<pre>MACs hmac-sha2-512,hmac-sha2-256,hmac-sha1</pre>
+
+The man page <code>sshd_config(5)</code> contains a list of supported MACs.
+
+<br><br>
+Only the following message authentication codes are FIPS 140-2 certified on Red Hat Enterprise Linux 7:
+<br>- hmac-sha1
+<br>- hmac-sha2-256
+<br>- hmac-sha2-512
+<br>- hmac-sha1-etm@openssh.com
+<br>- hmac-sha2-256-etm@openssh.com
+<br>- hmac-sha2-512-etm@openssh.com
+<br><br>
+Any combination of the above MACs will pass this check. Official FIPS 140-2 paperwork for
+Red Hat Enterprise Linux 7 can be found at
+
+
+    <a href="http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf">http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf</a>
+
+
+The rule is parametrized to use the following MACs: <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sshd_approved_macs"></xccdf-1.1:sub></code>.</td>
+<td>RHEL-07-040190</td>
+</tr>
+<tr>
+<td>RHEL-07-040200</td>
 <td>1453</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must implement cryptography to protect the integrity of Lightweight Directory Access Protocol (LDAP) communications.</td>
@@ -5402,34 +5515,6 @@ integrity of LDAP remote access sessions. By setting
 the <pre>ldap_tls_cacertdir</pre> option in <pre>/etc/sssd/sssd.conf</pre>
 to point to the path for the X.509 certificates used for peer authentication.
 <pre>ldap_tls_cacertdir /path/to/tls/cacert</pre>
-</td>
-<td>RHEL-07-040190</td>
-</tr>
-<tr>
-<td>RHEL-07-040200</td>
-<td>1453</td>
-<td>medium</td>
-<td>The Red Hat Enterprise Linux operating system must implement cryptography to protect the integrity of Lightweight Directory Access Protocol (LDAP) communications.</td>
-<td>Without cryptographic integrity protections, information can be altered by
-unauthorized users without detection.
-<br><br>
-Cryptographic mechanisms used for
-protecting the integrity of information include, for example, signed hash
-functions using asymmetric cryptography enabling distribution of the public key
-to verify the hash information while maintaining the confidentiality of the key
-used to generate the hash.</td>
-<td>To verify the operating system implements cryptography to protect the integrity of
-remote ldap access sessions, run the following command:
-$ sudo grep ldap_tls_cacert /etc/sssd/sssd.conf
-The output should return the following with a correctly configured CA cert path:
-ldap_tls_cacert /path/to/tls/ca.cert
-      Is it the case that the TLS CA cert is not configured?
-      </td>
-<td>Configure SSSD to implement cryptography to protect the
-integrity of LDAP remote access sessions. By setting
-the <pre>ldap_tls_cacert</pre> option in <pre>/etc/sssd/sssd.conf</pre>
-to point to the path for the X.509 certificates used for peer authentication.
-<pre>ldap_tls_cacert /path/to/tls/ca.cert</pre>
 </td>
 <td>RHEL-07-040200</td>
 </tr>
@@ -5577,16 +5662,25 @@ following line in <code>/etc/ssh/sshd_config</code>:
 <td>The Red Hat Enterprise Linux operating system must be configured so that all network connections associated with SSH traffic terminate after a period of inactivity.</td>
 <td>This ensures a user login will be terminated as soon as the <code>ClientAliveInterval</code>
 is reached.</td>
-<td>To ensure the SSH idle timeout will occur when the ClientAliveInterval is set, run the following command:
+<td>To ensure ClientAliveInterval is set correctly, run the following command:
 $ sudo grep ClientAliveCountMax /etc/ssh/sshd_config
-If properly configured, output should be:
-ClientAliveCountMax 
+If properly configured, the output should be:
+ClientAliveCountMax 0
+
+In this case, the SSH idle timeout occurs precisely when
+the ClientAliveInterval is set.
       Is it the case that it is commented out or not configured properly?
       </td>
-<td>To ensure the SSH idle timeout occurs precisely when the <code>ClientAliveInterval</code> is set,
-edit <code>/etc/ssh/sshd_config</code> as follows:
-<pre>ClientAliveCountMax <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_set_keepalive"></xccdf-1.1:sub></pre>
-</td>
+<td>The SSH server sends at most <code>ClientAliveCountMax</code> messages
+during a SSH session and waits for a response from the SSH client.
+The option <code>ClientAliveInterval</code> configures timeout after
+each <code>ClientAliveCountMax</code> message. If the SSH server does not
+receive a response from the client, then the connection is considered idle
+and terminated.
+
+To ensure the SSH idle timeout occurs precisely when the
+<code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
+value of <code>0</code>.</td>
 <td>RHEL-07-040340</td>
 </tr>
 <tr>
@@ -6075,25 +6169,36 @@ To make sure that the setting is persistent, add the following line to a file in
 <td>366</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must use a reverse-path filter for IPv4 network traffic when possible on all interfaces.</td>
-<td>USB storage devices such as thumb drives can be used to introduce
-malicious software.</td>
-<td>
-If the system is configured to prevent the loading of the usb-storage kernel module,
-it will contain lines inside any file in /etc/modprobe.d or the deprecated/etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
-Run the following command to search for such lines in all files in /etc/modprobe.d and the deprecated /etc/modprobe.conf:
-$ grep -r usb-storage /etc/modprobe.conf /etc/modprobe.d
-      Is it the case that no line is returned?
-      </td>
-<td>To prevent USB storage devices from being used, configure the kernel module loading system
-to prevent automatic loading of the USB storage driver.
+<td>Enabling reverse path filtering drops packets with source addresses
+that should not have been able to be received on the interface they were
+received on. It should not be used on systems which are routers for
+complicated networks, but is helpful for end hosts and routers serving small
+networks.</td>
+<td>The runtime status of the net.ipv4.conf.all.rp_filter kernel parameter can be queried
+by running the following command:
+$ sysctl net.ipv4.conf.all.rp_filter
+The output of the command should indicate a value of 1.
+The preferable way how to assure the runtime compliance is to have
+correct persistent configuration, and rebooting the system.
 
-To configure the system to prevent the <code>usb-storage</code>
-kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
-<pre>install usb-storage /bin/true</pre>
-This will prevent the <code>modprobe</code> program from loading the <code>usb-storage</code>
-module, but will not prevent an administrator (or another program) from using the
-<code>insmod</code> program to load the module manually.</td>
+The persistent kernel parameter configuration is performed by specifying the appropriate
+assignment in any file located in the /etc/sysctl.d directory.
+Verify that there is not any existing incorrect configuration by executing the following command:
+$ grep -r '^\s*net.ipv4.conf.all.rp_filter\s*=' /etc/sysctl.conf /etc/sysctl.d
+If any assignments other than
+net.ipv4.conf.all.rp_filter = 1
+are found, or the correct assignment is duplicated, remove those offending lines from respective files,
+and make sure that exactly one file in 
+/etc/sysctl.d contains net.ipv4.conf.all.rp_filter = 1, and that one assignment
+is returned when 
+$ grep -r net.ipv4.conf.all.rp_filter /etc/sysctl.conf /etc/sysctl.d
+is executed.
+
+      Is it the case that the correct value is not returned?
+      </td>
+<td>To set the runtime status of the <code>net.ipv4.conf.all.rp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.rp_filter=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.rp_filter = 1</pre>
+</td>
 <td>RHEL-07-040611</td>
 </tr>
 <tr>
@@ -6101,25 +6206,36 @@ module, but will not prevent an administrator (or another program) from using th
 <td>366</td>
 <td>medium</td>
 <td>The Red Hat Enterprise Linux operating system must use a reverse-path filter for IPv4 network traffic when possible by default.</td>
-<td>USB storage devices such as thumb drives can be used to introduce
-malicious software.</td>
-<td>
-If the system is configured to prevent the loading of the usb-storage kernel module,
-it will contain lines inside any file in /etc/modprobe.d or the deprecated/etc/modprobe.conf.
-These lines instruct the module loading system to run another program (such as /bin/true) upon a module install event.
-Run the following command to search for such lines in all files in /etc/modprobe.d and the deprecated /etc/modprobe.conf:
-$ grep -r usb-storage /etc/modprobe.conf /etc/modprobe.d
-      Is it the case that no line is returned?
-      </td>
-<td>To prevent USB storage devices from being used, configure the kernel module loading system
-to prevent automatic loading of the USB storage driver.
+<td>Enabling reverse path filtering drops packets with source addresses
+that should not have been able to be received on the interface they were
+received on. It should not be used on systems which are routers for
+complicated networks, but is helpful for end hosts and routers serving small
+networks.</td>
+<td>The runtime status of the net.ipv4.conf.default.rp_filter kernel parameter can be queried
+by running the following command:
+$ sysctl net.ipv4.conf.default.rp_filter
+The output of the command should indicate a value of 1.
+The preferable way how to assure the runtime compliance is to have
+correct persistent configuration, and rebooting the system.
 
-To configure the system to prevent the <code>usb-storage</code>
-kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
-<pre>install usb-storage /bin/true</pre>
-This will prevent the <code>modprobe</code> program from loading the <code>usb-storage</code>
-module, but will not prevent an administrator (or another program) from using the
-<code>insmod</code> program to load the module manually.</td>
+The persistent kernel parameter configuration is performed by specifying the appropriate
+assignment in any file located in the /etc/sysctl.d directory.
+Verify that there is not any existing incorrect configuration by executing the following command:
+$ grep -r '^\s*net.ipv4.conf.default.rp_filter\s*=' /etc/sysctl.conf /etc/sysctl.d
+If any assignments other than
+net.ipv4.conf.default.rp_filter = 1
+are found, or the correct assignment is duplicated, remove those offending lines from respective files,
+and make sure that exactly one file in 
+/etc/sysctl.d contains net.ipv4.conf.default.rp_filter = 1, and that one assignment
+is returned when 
+$ grep -r net.ipv4.conf.default.rp_filter /etc/sysctl.conf /etc/sysctl.d
+is executed.
+
+      Is it the case that the correct value is not returned?
+      </td>
+<td>To set the runtime status of the <code>net.ipv4.conf.default.rp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.rp_filter=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.rp_filter = 1</pre>
+</td>
 <td>RHEL-07-040612</td>
 </tr>
 <tr>
@@ -6475,14 +6591,14 @@ grep "server_args" /etc/xinetd.d/tftp
 The output should indicate the server_args variable is configured
 with the -s flag, matching the example below:
 $ grep "server_args" /etc/xinetd.d/tftp
-server_args = -s /var/lib/tftpboot
+server_args = -s 
       Is it the case that this flag is missing?
       </td>
 <td>If running the <code>tftp</code> service is necessary, it should be configured
 to change its root directory at startup. To do so, ensure
 <code>/etc/xinetd.d/tftp</code> includes <code>-s</code> as a command line argument, as shown in
-the following example (which is also the default):
-<pre>server_args = -s /var/lib/tftpboot</pre>
+the following example:
+<pre>server_args = -s <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_tftpd_secure_directory"></xccdf-1.1:sub></pre>
 </td>
 <td>RHEL-07-040720</td>
 </tr>
@@ -6580,6 +6696,7 @@ There should be no output.
       </td>
 <td>Edit <code>/etc/snmp/snmpd.conf</code>, remove or change the default community strings of
 <code>public</code> and <code>private</code>.
+This profile configures new read-only community string to <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_snmpd_ro_string"></xccdf-1.1:sub></code> and read-write community string to <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_snmpd_rw_string"></xccdf-1.1:sub></code>.
 Once the default community strings have been changed, restart the SNMP service:
 <pre>$ sudo service snmpd restart</pre>
 </td>
@@ -6682,16 +6799,14 @@ information systems gaining access include, for example, hardware tokens
 providing time-based or challenge-response authenticators and smart cards such
 as the U.S. Government Personal Identity Verification card and the DoD Common
 Access Card.</td>
-<td>To verify the operating system has the packages required for multifactor
-authentication installed, run the following command:
-$ sudo yum list installed esc pam_pkcs11
+<td>Run the following command to determine if the pam_pkcs11 package is installed: $ rpm -q pam_pkcs11
       Is it the case that smartcard software is not installed?
       </td>
 <td>Configure the operating system to implement multifactor authentication by
-installing the required packages with the following command:
-The <code>esc pam_pkcs11</code> package can be installed with the following command:
+installing the required package with the following command:
+The <code>pam_pkcs11</code> package can be installed with the following command:
 <pre>
-$ sudo yum install esc pam_pkcs11</pre>
+$ sudo yum install pam_pkcs11</pre>
 </td>
 <td>RHEL-07-041001</td>
 </tr>
