@@ -225,6 +225,7 @@ FIPS mode by automatically configuring the following:
 </li>
 <li>Loading the Dracut <code>fips</code> module</li>
 </ul>
+This rule also ensures that the system policy is set to <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_system_crypto_policy"></xccdf-1.1:sub></code>.
 Furthermore, the system running in FIPS mode should be FIPS certified by NIST.</td>
 </tr>
 <tr>
@@ -706,7 +707,12 @@ mode. To do so, run the following command:
 <td>CCE-81003-6</td>
 <td>Make sure that the dconf databases are up-to-date with regards to respective keyfiles</td>
 <td xml:lang="en-US">By default, DConf uses a binary database as a data backend.
-The system-level database is compiled from keyfiles in the /etc/dconf/db/ directory by the <pre>dconf update</pre> command.</td>
+The system-level database is compiled from keyfiles in the /etc/dconf/db/
+directory by the <pre>dconf update</pre> command. More specifically, content present
+in the following directories:
+<pre>/etc/dconf/db/gdm.d</pre>
+<pre>/etc/dconf/db/local.d</pre>
+</td>
 </tr>
 <tr>
 <td></td>
@@ -1501,14 +1507,6 @@ $ sudo yum erase abrt-addon-kerneloops</pre>
 </td>
 </tr>
 <tr>
-<td>CCE-82923-4</td>
-<td>Uninstall abrt-addon-python Package</td>
-<td xml:lang="en-US">The <code>abrt-addon-python</code> package can be removed with the following command:
-<pre>
-$ sudo yum erase abrt-addon-python</pre>
-</td>
-</tr>
-<tr>
 <td>CCE-82907-7</td>
 <td>Uninstall abrt-cli Package</td>
 <td xml:lang="en-US">The <code>abrt-cli</code> package can be removed with the following command:
@@ -1586,6 +1584,14 @@ $ sudo yum erase krb5-workstation</pre>
 <td xml:lang="en-US">The <code>pigz</code> package can be removed with the following command:
 <pre>
 $ sudo yum erase pigz</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86084-1</td>
+<td>Uninstall python3-abrt-addon Package</td>
+<td xml:lang="en-US">The <code>python3-abrt-addon</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase python3-abrt-addon</pre>
 </td>
 </tr>
 <tr>
@@ -1712,9 +1718,11 @@ The <code>dnf-automatic</code> timer can be enabled with the following command:
 <tr>
 <td>CCE-80763-6</td>
 <td>Modify the System Login Banner</td>
-<td xml:lang="en-US">To configure the system login banner edit <code>/etc/issue</code>. Replace the
+<td xml:lang="en-US">
+To configure the system login banner edit <code>/etc/issue</code>. Replace the
 default text with a message compliant with the local site policy or a legal
 disclaimer.
+
 
 The DoD required text is either:
 <br><br>
@@ -1929,75 +1937,67 @@ The DoD STIG requirement is 5 passwords.</td>
 </tr>
 <tr>
 <td>CCE-80667-9</td>
-<td>Set Deny For Failed Password Attempts</td>
-<td xml:lang="en-US">To configure the system to lock out accounts after a number of incorrect login
-attempts using <code>pam_faillock.so</code>, modify the content of both
-<code>/etc/pam.d/system-auth</code> and <code>/etc/pam.d/password-auth</code> as follows:
-<br><br>
-<ul>
-<li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth required pam_faillock.so preauth silent deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
-</li>
-<li> add the following line immediately <code>after</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth [default=die] pam_faillock.so authfail deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
-</li>
-<li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>ACCOUNT</code> section:
-<pre>account required pam_faillock.so</pre>
-</li>
-</ul>
-</td>
+<td>Lock Accounts After Failed Password Attempts</td>
+<td xml:lang="en-US">This rule configures the system to lock out accounts after a number of incorrect login attempts
+using <code>pam_faillock.so</code>.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid any errors when manually editing these files,
+it is recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
+depending on the OS version.</td>
 </tr>
 <tr>
 <td>CCE-80668-7</td>
 <td>Configure the root Account for Failed Password Attempts</td>
-<td xml:lang="en-US">To configure the system to lock out the <code>root</code> account after a
-number of incorrect login attempts using <code>pam_faillock.so</code>, modify
-the content of both <code>/etc/pam.d/system-auth</code> and
-<code>/etc/pam.d/password-auth</code> as follows:
-<br><br>
-<ul>
-<li>Modify the following line in the <code>AUTH</code> section to add
-<code>even_deny_root</code>:
-<pre>auth required pam_faillock.so preauth silent <b>even_deny_root</b> deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
-</li>
-<li>Modify the following line in the <code>AUTH</code> section to add
-<code>even_deny_root</code>:
-<pre>auth [default=die] pam_faillock.so authfail <b>even_deny_root</b> deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
-</li>
-</ul>
-</td>
+<td xml:lang="en-US">This rule configures the system to lock out the <code>root</code> account after a number of
+incorrect login attempts using <code>pam_faillock.so</code>.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid any errors when manually editing these files,
+it is recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
+depending on the OS version.</td>
 </tr>
 <tr>
 <td>CCE-83401-0</td>
 <td>Enforce pam_faillock for Local Accounts Only</td>
 <td xml:lang="en-US">The pam_faillock module's <code>local_users_only</code> parameter controls requirements for
-enforcing failed lockout attempts only for local user accounts and ignoring
-centralized user account management failed attempt configurations. Enable the <code>local_users_only</code>
-setting in <code>/etc/security/faillock.conf</code> to require failed password attempts
-for only local user accounts.</td>
+enforcing failed lockout attempts only for local user accounts and ignoring centralized user
+account management failed attempt configurations. To enable the <code>local_users_only</code>
+setting in <code>/etc/security/faillock.conf</code>, first enable pam_faillock.so using the
+following command:
+<br><br>
+<ul><li><pre>authselect enable-feature with-faillock</pre></li></ul>
+<br>
+Then edit the <code>/etc/security/faillock.conf</code> file as follows:
+<br><br>
+<ul>
+<li> add or uncomment the following line:
+<pre>local_users_only</pre>
+</li>
+<li> add or uncomment the following line:
+<pre>silent</pre>
+</li>
+</ul>
+</td>
 </tr>
 <tr>
 <td>CCE-80669-5</td>
 <td>Set Interval For Counting Failed Password Attempts</td>
-<td xml:lang="en-US">Utilizing <code>pam_faillock.so</code>, the <code>fail_interval</code> directive
-configures the system to lock out an account after a number of incorrect
-login attempts within a specified time period. Modify the content of both
-<code>/etc/pam.d/system-auth</code> and <code>/etc/pam.d/password-auth</code>
-as follows:
+<td xml:lang="en-US">Utilizing <code>pam_faillock.so</code>, the <code>fail_interval</code> directive configures the system
+to lock out an account after a number of incorrect login attempts within a specified time
+period. First make sure the feature is enabled using the following command:
+<br><br>
+
+<ul><li><pre>authselect enable-feature with-faillock</pre></li></ul>
+<br>
+Then edit the <code>/etc/security/faillock.conf</code> file as follows:
 <br><br>
 <ul>
-<li>Add the following line immediately <code>before</code> the
-    <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth required pam_faillock.so preauth silent deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
+<li> add, uncomment or edit the following line:
+<pre>fail_interval = <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
 </li>
-<li>Add the following line immediately <code>after</code> the
-    <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth [default=die] pam_faillock.so authfail deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub>
-</pre>
-</li>
-<li>Add the following line immediately <code>before</code> the
-    <code>pam_unix.so</code> statement in the <code>ACCOUNT</code> section:
-<pre>account required pam_faillock.so</pre>
+<li> add or uncomment the following line:
+<pre>silent</pre>
 </li>
 </ul>
 </td>
@@ -2005,22 +2005,13 @@ as follows:
 <tr>
 <td>CCE-80670-3</td>
 <td>Set Lockout Time for Failed Password Attempts</td>
-<td xml:lang="en-US">To configure the system to lock out accounts after a number of incorrect login
-attempts and require an administrator to unlock the account using <code>pam_faillock.so</code>,
-modify the content of both <code>/etc/pam.d/system-auth</code> and <code>/etc/pam.d/password-auth</code> as follows:
-<br><br>
-<ul>
-<li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth required pam_faillock.so preauth silent deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
-</li>
-<li> add the following line immediately <code>after</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth [default=die] pam_faillock.so authfail deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
-</li>
-<li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>ACCOUNT</code> section:
-<pre>account required pam_faillock.so</pre>
-</li>
-</ul>
-If <code>unlock_time</code> is set to <code>0</code>, manual intervention by an administrator is required to unlock a user.</td>
+<td xml:lang="en-US">This rule configures the system to lock out accounts during a specified time period after a
+number of incorrect login attempts using <code>pam_faillock.so</code>.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid any errors when manually editing these files,
+it is recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
+depending on the OS version.</td>
 </tr>
 <tr>
 <td>CCE-80653-9</td>
@@ -2273,9 +2264,9 @@ in <code>/usr/lib/systemd/system/rescue.service</code>.</td>
 <td>CCE-80644-8</td>
 <td>Install the tmux Package</td>
 <td xml:lang="en-US">To enable console screen locking, install the <code>tmux</code> package.
-The <code>tmux</code> package can be installed with the following command:
-<pre>
-$ sudo yum install tmux</pre>
+A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not want to log out because of the temporary nature of the absence.
+The session lock is implemented at the point where session activity can be determined.
+Rather than be forced to wait for a period of time to expire before the user session can be locked, Red Hat Enterprise Linux 8 needs to provide users with the ability to manually invoke a session lock so users can secure their session if it is necessary to temporarily vacate the immediate physical vicinity.
 Instruct users to begin new terminal sessions with the following command:
 <pre>$ tmux</pre>
 The console can now be locked with the following key combination:
@@ -2396,7 +2387,7 @@ and change it to:
 <td>Only Authorized Local User Accounts Exist on Operating System</td>
 <td xml:lang="en-US">Enterprise Application tends to use the server or virtual machine exclusively.
 Besides the default operating system user, there should be only authorized local
-users required by the installed softoware groups and applications that exist on
+users required by the installed software groups and applications that exist on
 the operating system. The authorized user list can be customized in the refine
 value variable <code>var_accounts_authorized_local_users_regex</code>.
 OVAL regular expression is used for the user list.
@@ -2914,7 +2905,7 @@ group-owned by an interactive user. It also ensures that interactive users
 are group-owners of one and only one home directory.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86131-0</td>
 <td>All Interactive User Home Directories Must Be Owned By The Primary User</td>
 <td xml:lang="en-US">Change the owner of interactive users home directories to that correct
 owner. To change the owner of a interactive users home directory, use
@@ -4021,11 +4012,11 @@ of the <code>restorecon</code> command for all users and root. If the <code>audi
 daemon is configured to use the <code>augenrules</code> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 </tr>
 <tr>
@@ -4081,11 +4072,11 @@ of the <code>seunshare</code> command for all users and root. If the <code>audit
 daemon is configured to use the <code>augenrules</code> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/sbin/seunshare -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/seunshare -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F path=/usr/sbin/seunshare -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/seunshare -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 </tr>
 <tr>
@@ -5860,11 +5851,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/at -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/at -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/at -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/at -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 </tr>
 <tr>
@@ -5965,11 +5956,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/newgidmap -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/newgidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/newgidmap -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/newgidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 </tr>
 <tr>
@@ -5995,11 +5986,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/newuidmap -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/newuidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/newuidmap -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/newuidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 </tr>
 <tr>
@@ -6072,11 +6063,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/libexec/pt_chown -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/pt_chown -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/libexec/pt_chown -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/pt_chown -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 </tr>
 <tr>
@@ -6147,11 +6138,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/sudoedit -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/sudoedit -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 </tr>
 <tr>
@@ -6237,11 +6228,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/sbin/usernetctl -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/usernetctl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/sbin/usernetctl -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/usernetctl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 </tr>
 <tr>
@@ -6648,8 +6639,7 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S open,openat,open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-access
 -a always,exit -F arch=b64 -S open,openat,open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-access
 -a always,exit -F arch=b32 -S open,openat,open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-access
--a always,exit -F arch=b64 -S open,openat,open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-access
-</pre>    
+-a always,exit -F arch=b64 -S open,openat,open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-access    </pre>    
 
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
@@ -6665,8 +6655,7 @@ The following rules configure audit as described above:
 <pre>## Successful file access (any other opens) This has to go last.
 ## These next two are likely to result in a whole lot of events
 -a always,exit -F arch=b32 -S open,openat,open_by_handle_at -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-access
--a always,exit -F arch=b64 -S open,openat,open_by_handle_at -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-access
-</pre>
+-a always,exit -F arch=b64 -S open,openat,open_by_handle_at -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-access    </pre>
 
 The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42-3-access-success.rules</code>.
 To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
@@ -6698,7 +6687,6 @@ The following rules configure audit as described above:
 
 ## Set failure mode to syslog
 -f 1
-
 </pre>
 
 The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/10-base-config.rules</code>.
@@ -6729,8 +6717,7 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
 -a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
 -a always,exit -F arch=b32 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
--a always,exit -F arch=b64 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
-</pre>
+-a always,exit -F arch=b64 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create    </pre>
 
 The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42-1-create-failed.rules</code>.
 To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
@@ -6755,8 +6742,7 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S open -F a1&amp;0100 -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-create
 -a always,exit -F arch=b64 -S open -F a1&amp;0100 -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-create
 -a always,exit -F arch=b32 -S creat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-create
--a always,exit -F arch=b64 -S creat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-create
-</pre>
+-a always,exit -F arch=b64 -S creat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-create    </pre>
 
 The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42-1-create-success.rules</code>.
 To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
@@ -6778,8 +6764,7 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S unlink,unlinkat,rename,renameat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
 -a always,exit -F arch=b64 -S unlink,unlinkat,rename,renameat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
 -a always,exit -F arch=b32 -S unlink,unlinkat,rename,renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b64 -S unlink,unlinkat,rename,renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
-</pre>
+-a always,exit -F arch=b64 -S unlink,unlinkat,rename,renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete    </pre>
 
 The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42-4-delete-failed.rules</code>.
 To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
@@ -6800,8 +6785,7 @@ Note: This rule utilizes a file provided by <code>Audit</code> package to comply
 The following rules configure audit as described above:
 <pre>## Successful file delete
 -a always,exit -F arch=b32 -S unlink,unlinkat,rename,renameat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-delete
--a always,exit -F arch=b64 -S unlink,unlinkat,rename,renameat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-delete
-</pre>
+-a always,exit -F arch=b64 -S unlink,unlinkat,rename,renameat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-delete    </pre>
 
 The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42-4-delete-success.rules</code>.
 To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
@@ -6823,7 +6807,6 @@ Changing login UIDs while this configuration is enforced requires special capabi
 The following rules configure audit as described above:
 <pre>## Make the loginuid immutable. This prevents tampering with the auid.
 --loginuid-immutable
-
 </pre>
 
 The <code>Audit</code> provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/11-loginuid.rules</code>.
@@ -6854,8 +6837,7 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
 -a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
 -a always,exit -F arch=b32 -S truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
--a always,exit -F arch=b64 -S truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
-</pre>
+-a always,exit -F arch=b64 -S truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification    </pre>
 
 The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42-2-modify-failed.rules</code>.
 To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
@@ -6880,8 +6862,7 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S open -F a1&amp;01003 -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-modification
 -a always,exit -F arch=b64 -S open -F a1&amp;01003 -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-modification
 -a always,exit -F arch=b32 -S truncate,ftruncate -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-modification
--a always,exit -F arch=b64 -S truncate,ftruncate -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-modification
-</pre>
+-a always,exit -F arch=b64 -S truncate,ftruncate -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-modification    </pre>
 
 The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42-2-modify-success.rules</code>.
 To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
@@ -6905,8 +6886,7 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S init_module,finit_module -F key=module-load
 -a always,exit -F arch=b64 -S init_module,finit_module -F key=module-load
 -a always,exit -F arch=b32 -S delete_module -F key=module-unload
--a always,exit -F arch=b64 -S delete_module -F key=module-unload
-</pre>
+-a always,exit -F arch=b64 -S delete_module -F key=module-unload    </pre>
 
 The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/43-module-load.rules</code>.
 To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
@@ -7006,7 +6986,6 @@ The following rules configure audit as described above:
 ## FPT_SRP_EXT.1 Software Restriction Policies. This event is intended to
 ## state results from that policy. This would be handled entirely by
 ## that daemon.
-
 </pre>
 
 The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42.rules</code>.
@@ -7030,8 +7009,7 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-owner-change
 -a always,exit -F arch=b64 -S lchown,fchown,chown,fchownat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-owner-change
 -a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-owner-change
--a always,exit -F arch=b64 -S lchown,fchown,chown,fchownat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-owner-change
-</pre>
+-a always,exit -F arch=b64 -S lchown,fchown,chown,fchownat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-owner-change    </pre>
 
 The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42-6-owner-change-failed.rules</code>.
 To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
@@ -7052,8 +7030,7 @@ Note: This rule utilizes a file provided by <code>Audit</code> package to comply
 The following rules configure audit as described above:
 <pre>## Successful ownership change
 -a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-owner-change
--a always,exit -F arch=b64 -S lchown,fchown,chown,fchownat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-owner-change
-</pre>
+-a always,exit -F arch=b64 -S lchown,fchown,chown,fchownat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-owner-change    </pre>
 
 The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42-6-owner-change-success.rules</code>.
 To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
@@ -7079,8 +7056,7 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-perm-change
 -a always,exit -F arch=b64 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-perm-change
 -a always,exit -F arch=b32 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-perm-change
--a always,exit -F arch=b64 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-perm-change
-</pre>
+-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-perm-change    </pre>
 
 The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42-5-perm-change-failed.rules</code>.
 To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
@@ -7101,8 +7077,7 @@ Note: This rule utilizes a file provided by <code>Audit</code> package to comply
 The following rules configure audit as described above:
 <pre>## Successful permission change
 -a always,exit -F arch=b32 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-perm-change
--a always,exit -F arch=b64 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-perm-change
-</pre>
+-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-perm-change    </pre>
 
 The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42-5-perm-change-success.rules</code>.
 To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
@@ -7246,16 +7221,10 @@ protection enabled to protect boot-time settings.
 Since plaintext passwords are a security risk, generate a hash for the password
 by running the following command:
 
-<pre>$ grub2-setpassword</pre>
+<pre># grub2-setpassword</pre>
 
 When prompted, enter the password that was selected.
 <br><br>
-
-<br><br>
-Once the superuser password has been added,
-update the
-<code>grub.cfg</code> file by running:
-<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
 </td>
 </tr>
 <tr>
@@ -7319,16 +7288,10 @@ protection enabled to protect boot-time settings.
 Since plaintext passwords are a security risk, generate a hash for the password
 by running the following command:
 
-<pre>$ grub2-setpassword</pre>
+<pre># grub2-setpassword</pre>
 
 When prompted, enter the password that was selected.
 <br><br>
-
-Once the superuser password has been added,
-update the
-<code>grub.cfg</code> file by running:
-
-<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
 </td>
 </tr>
 <tr>
@@ -14703,7 +14666,8 @@ for management connections made by chronyc.</td>
 <code>maxpoll</code> in <code>/etc/ntp.conf</code> or <code>/etc/chrony.conf</code>
 add the following:
 <pre>maxpoll <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_time_service_set_maxpoll"></xccdf-1.1:sub></pre>
-</td>
+to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
+should be configured too.</td>
 </tr>
 <tr>
 <td>CCE-80764-4</td>
@@ -15385,9 +15349,16 @@ of entropy to use. Make sure that the file
 more secure than <code>.rhosts</code> authentication. However, it is
 not recommended that hosts unilaterally trust one another, even
 within an organization.
-<br><br>
-To disable host-based authentication, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
+<br>
+The default SSH configuration disables host-based authentication. The appropriate
+configuration is used if no value is set for <code>HostbasedAuthentication</code>.
+<br>
+To explicitly disable host-based authentication, add or correct the
+following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>HostbasedAuthentication no</pre>
 </td>
 </tr>
@@ -15431,11 +15402,18 @@ a user has successfully authenticated, add or correct the following line in the
 <tr>
 <td>CCE-80896-4</td>
 <td>Disable SSH Access via Empty Passwords</td>
-<td xml:lang="en-US">To explicitly disallow SSH login from accounts with
-empty passwords, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+<td xml:lang="en-US">Disallow SSH login with empty passwords.
+The default SSH configuration disables logins with empty passwords. The appropriate
+configuration is used if no value is set for <code>PermitEmptyPasswords</code>.
+<br>
+To explicitly disallow SSH login from accounts with empty passwords,
+add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <br>
 <pre>PermitEmptyPasswords no</pre>
-<br>
 Any accounts with empty passwords should be disabled immediately, and PAM configuration
 should prevent users from being able to assign themselves empty passwords.</td>
 </tr>
@@ -15443,8 +15421,16 @@ should prevent users from being able to assign themselves empty passwords.</td>
 <td>CCE-80897-2</td>
 <td>Disable GSSAPI Authentication</td>
 <td xml:lang="en-US">Unless needed, SSH should not permit extraneous or unnecessary
-authentication mechanisms like GSSAPI. To disable GSSAPI authentication, add or
-correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+authentication mechanisms like GSSAPI.
+<br>
+The default SSH configuration disallows authentications based on GSSAPI. The appropriate
+configuration is used if no value is set for <code>GSSAPIAuthentication</code>.
+<br>
+To explicitly disable GSSAPI authentication, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>GSSAPIAuthentication no</pre>
 </td>
 </tr>
@@ -15452,8 +15438,16 @@ correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <td>CCE-80898-0</td>
 <td>Disable Kerberos Authentication</td>
 <td xml:lang="en-US">Unless needed, SSH should not permit extraneous or unnecessary
-authentication mechanisms like Kerberos. To disable Kerberos authentication, add
-or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+authentication mechanisms like Kerberos.
+<br>
+The default SSH configuration disallows authentication validation through Kerberos.
+The appropriate configuration is used if no value is set for <code>KerberosAuthentication</code>.
+<br>
+To explicitly disable Kerberos authentication, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>KerberosAuthentication no</pre>
 </td>
 </tr>
@@ -15462,7 +15456,11 @@ or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <td>Disable PubkeyAuthentication Authentication</td>
 <td xml:lang="en-US">Unless needed, SSH should not permit extraneous or unnecessary
 authentication mechanisms. To disable PubkeyAuthentication authentication, add or
-correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>PubkeyAuthentication no</pre>
 </td>
 </tr>
@@ -15472,9 +15470,15 @@ correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <td xml:lang="en-US">SSH can emulate the behavior of the obsolete rsh
 command in allowing users to enable insecure access to their
 accounts via <code>.rhosts</code> files.
-<br><br>
-To ensure this behavior is disabled, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
+<br>
+The default SSH configuration disables support for <code>.rhosts</code>. The appropriate
+configuration is used if no value is set for <code>IgnoreRhosts</code>.
+<br>
+To explicitly disable support for .rhosts files, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>IgnoreRhosts yes</pre>
 </td>
 </tr>
@@ -15494,16 +15498,22 @@ following line in <code>/etc/ssh/sshd_config</code>:
 <td>Disable SSH Root Login</td>
 <td xml:lang="en-US">The root user should never be allowed to login to a
 system directly over a network.
-To disable root login via SSH, add or correct the following line
-in <code>/etc/ssh/sshd_config</code>:
+To disable root login via SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>PermitRootLogin no</pre>
 </td>
 </tr>
 <tr>
 <td></td>
 <td>Disable SSH root Login with a Password (Insecure)</td>
-<td xml:lang="en-US">To disable password-based root logins over SSH, add or correct the following
-line in <code>/etc/ssh/sshd_config</code>:
+<td xml:lang="en-US">To disable password-based root logins over SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>PermitRootLogin prohibit-password</pre>
 </td>
 </tr>
@@ -15511,8 +15521,11 @@ line in <code>/etc/ssh/sshd_config</code>:
 <td>CCE-83301-2</td>
 <td>Disable SSH TCP Forwarding</td>
 <td xml:lang="en-US">The <code>AllowTcpForwarding</code> parameter specifies whether TCP forwarding is permitted.
-To disable TCP forwarding, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
+To disable TCP forwarding, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>AllowTcpForwarding no</pre>
 </td>
 </tr>
@@ -15522,8 +15535,11 @@ following line in <code>/etc/ssh/sshd_config</code>:
 <td xml:lang="en-US">SSH can allow system users to connect to systems if a cache of the remote
 systems public keys is available.  This should be disabled.
 <br><br>
-To ensure this behavior is disabled, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
+To ensure this behavior is disabled, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>IgnoreUserKnownHosts yes</pre>
 </td>
 </tr>
@@ -15534,18 +15550,31 @@ following line in <code>/etc/ssh/sshd_config</code>:
 through the connection to enable remote graphic connections.
 SSH has the capability to encrypt remote X11 connections when SSH's
 <code>X11Forwarding</code> option is enabled.
-<br><br>
-To disable X11 Forwarding, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
+<br>
+The default SSH configuration disables X11Forwarding. The appropriate
+configuration is used if no value is set for <code>X11Forwarding</code>.
+<br>
+To explicitly disable X11 Forwarding, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>X11Forwarding no</pre>
 </td>
 </tr>
 <tr>
 <td>CCE-80903-8</td>
 <td>Do Not Allow SSH Environment Options</td>
-<td xml:lang="en-US">To ensure users are not able to override environment
-variables of the SSH daemon, add or correct the following line
-in <code>/etc/ssh/sshd_config</code>:
+<td xml:lang="en-US">Ensure that users are not able to override environment variables of the SSH daemon.
+<br>
+The default SSH configuration disables environment processing. The appropriate
+configuration is used if no value is set for <code>PermitUserEnvironment</code>.
+<br>
+To explicitly disable Environment options, add or correct the following
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>PermitUserEnvironment no</pre>
 </td>
 </tr>
@@ -15554,8 +15583,11 @@ in <code>/etc/ssh/sshd_config</code>:
 <td>Enable GSSAPI Authentication</td>
 <td xml:lang="en-US">Sites setup to use Kerberos or other GSSAPI Authenticaion require setting
 sshd to accept this authentication.
-To enable GSSAPI authentication, add or correct the following line in the
-<code>/etc/ssh/sshd_config</code> file:
+To enable GSSAPI authentication, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>GSSAPIAuthentication yes</pre>
 </td>
 </tr>
@@ -15567,18 +15599,28 @@ enable PAM authentication using ChallengeResponseAuthentication and
 PasswordAuthentication in addition to PAM account and session module processing for all
 authentication types.
 
-To enable PAM authentication, add or correct the following line in the
-<code>/etc/ssh/sshd_config</code> file:
+To enable PAM authentication, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>UsePAM yes</pre>
 </td>
 </tr>
 <tr>
 <td></td>
 <td>Enable Public Key Authentication</td>
-<td xml:lang="en-US">Verify the sshd daemon allows public key authentication with the
-following:
-<pre>$ grep ^PubkeyAuthentication /etc/ssh/sshd_config
-PubkeyAuthentication yes</pre>
+<td xml:lang="en-US">Enable SSH login with public keys.
+<br>
+The default SSH configuration enables authentication based on public keys. The appropriate
+configuration is used if no value is set for <code>PubkeyAuthentication</code>.
+<br>
+To explicitly enable Public Key Authentication, add or correct the following
+
+
+<code>/etc/ssh/sshd_config</code>:
+
+<pre>PubkeyAuthentication yes</pre>
 </td>
 </tr>
 <tr>
@@ -15586,8 +15628,16 @@ PubkeyAuthentication yes</pre>
 <td>Enable Use of Strict Mode Checking</td>
 <td xml:lang="en-US">SSHs <code>StrictModes</code> option checks file and ownership permissions in
 the user's home directory <code>.ssh</code> folder before accepting login. If world-
-writable permissions are found, logon is rejected. To enable <code>StrictModes</code> in SSH,
-add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+writable permissions are found, logon is rejected.
+<br>
+The default SSH configuration has <code>StrictModes</code> enabled. The appropriate
+configuration is used if no value is set for <code>StrictModes</code>.
+<br>
+To explicitly enable <code>StrictModes</code> in SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>StrictModes yes</pre>
 </td>
 </tr>
@@ -15595,7 +15645,11 @@ add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <td>CCE-80905-3</td>
 <td>Enable SSH Warning Banner</td>
 <td xml:lang="en-US">To enable the warning banner and ensure it is consistent
-across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+across the system, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>Banner /etc/issue</pre>
 Another section contains information on how to create an
 appropriate system-wide warning banner.</td>
@@ -15604,7 +15658,10 @@ appropriate system-wide warning banner.</td>
 <td></td>
 <td>Enable SSH Warning Banner</td>
 <td xml:lang="en-US">To enable the warning banner and ensure it is consistent
-across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+across the system, add or correct the following line in
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>Banner /etc/issue.net</pre>
 Another section contains information on how to create an
 appropriate system-wide warning banner.</td>
@@ -15616,8 +15673,11 @@ appropriate system-wide warning banner.</td>
 by users. SSH has the capability to encrypt remote X11 connections when SSH's
 <code>X11Forwarding</code> option is enabled.
 <br><br>
-To enable X11 Forwarding, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
+To enable X11 Forwarding, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>X11Forwarding yes</pre>
 </td>
 </tr>
@@ -15634,9 +15694,16 @@ Where <code>USER1</code> and <code>USER2</code> are valid user names.</td>
 <tr>
 <td>CCE-82281-7</td>
 <td>Enable SSH Print Last Log</td>
-<td xml:lang="en-US">When enabled, SSH will display the date and time of the last
-successful account logon. To enable LastLog in
-SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+<td xml:lang="en-US">Ensure that SSH will display the date and time of the last successful account logon.
+<br>
+The default SSH configuration enables print of the date and time of the last login.
+The appropriate configuration is used if no value is set for <code>PrintLastLog</code>.
+<br>
+To explicitly enable LastLog in SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>PrintLastLog yes</pre>
 </td>
 </tr>
@@ -15694,7 +15761,10 @@ and terminated.
 
 To ensure the SSH idle timeout occurs precisely when the
 <code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
-value of <code>0</code>.</td>
+value of <code>0</code> in
+
+
+<code>/etc/ssh/sshd_config</code>:</td>
 </tr>
 <tr>
 <td>CCE-86551-9</td>
@@ -15708,8 +15778,15 @@ appropriate limits to ensure the service is available for needed access.</td>
 <td>CCE-82282-5</td>
 <td>Set LogLevel to INFO</td>
 <td xml:lang="en-US">The INFO parameter specifices that record login and logout activity will be logged.
-To specify the log level in
-SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+<br>
+The default SSH configuration sets the log level to INFO. The appropriate
+configuration is used if no value is set for <code>LogLevel</code>.
+<br>
+To explicitly specify the log level in SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>LogLevel INFO</pre>
 </td>
 </tr>
@@ -15718,7 +15795,11 @@ SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> 
 <td>Set SSH Daemon LogLevel to VERBOSE</td>
 <td xml:lang="en-US">The <code>VERBOSE</code> parameter configures the SSH daemon to record login and logout activity.
 To specify the log level in
-SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>LogLevel VERBOSE</pre>
 </td>
 </tr>
@@ -15799,8 +15880,19 @@ make sure that the file contains line
 <td>CCE-84058-7</td>
 <td>Prevent remote hosts from connecting to the proxy display</td>
 <td xml:lang="en-US">The SSH daemon should prevent remote hosts from connecting to the proxy
-display. Make sure that the option <code>X11UseLocalhost</code> is set to
-<code>yes</code> within the SSH server configuration file.</td>
+display.
+<br>
+The default SSH configuration for <code>X11UseLocalhost</code> is <code>yes</code>,
+which prevents remote hosts from connecting to the proxy display.
+<br>
+To explicitly prevent remote connections to the proxy display, add or correct
+the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
+<code>X11UseLocalhost yes</code>
+</td>
 </tr>
 <tr>
 <td>CCE-82994-5</td>

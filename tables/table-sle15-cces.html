@@ -196,6 +196,15 @@ To verify FIPS mode, run the following command:
 </td>
 </tr>
 <tr>
+<td>CCE-85776-3</td>
+<td>Configure System Cryptography Policy</td>
+<td xml:lang="en-US">To configure the system cryptography policy to use ciphers only from the <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_system_crypto_policy"></xccdf-1.1:sub></code>
+policy, run the following command:
+<pre>$ sudo update-crypto-policies --set <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_system_crypto_policy"></xccdf-1.1:sub></pre>
+The rule checks if settings for selected crypto policy are configured as expected. Configuration files in the <code>/etc/crypto-policies/back-ends</code> are either symlinks to correct files provided by Crypto-policies package or they are regular files in case crypto policy customizations are applied.
+Crypto policies may be customized by crypto policy modules, in which case it is delimited from the base policy using a colon.</td>
+</tr>
+<tr>
 <td>CCE-85791-2</td>
 <td>Configure Libreswan to use System Crypto Policy</td>
 <td xml:lang="en-US">Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
@@ -369,7 +378,12 @@ logical volume at installation time, or migrate it using LVM.</td>
 <td>CCE-83288-1</td>
 <td>Make sure that the dconf databases are up-to-date with regards to respective keyfiles</td>
 <td xml:lang="en-US">By default, DConf uses a binary database as a data backend.
-The system-level database is compiled from keyfiles in the /etc/dconf/db/ directory by the <pre>dconf update</pre> command.</td>
+The system-level database is compiled from keyfiles in the /etc/dconf/db/
+directory by the <pre>dconf update</pre> command. More specifically, content present
+in the following directories:
+<pre>/etc/dconf/db/gdm.d</pre>
+<pre>/etc/dconf/db/local.d</pre>
+</td>
 </tr>
 <tr>
 <td>CCE-83267-5</td>
@@ -734,9 +748,11 @@ dictates.</td>
 <tr>
 <td>CCE-83262-6</td>
 <td>Modify the System Login Banner</td>
-<td xml:lang="en-US">To configure the system login banner edit <code>/etc/issue</code>. Replace the
+<td xml:lang="en-US">
+To configure the system login banner edit <code>/etc/issue</code>. Replace the
 default text with a message compliant with the local site policy or a legal
 disclaimer.
+
 
 The DoD required text is either:
 <br><br>
@@ -1020,92 +1036,6 @@ add or correct the <code>pam_faildelay</code> settings in
 is at least <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_delay"></xccdf-1.1:sub> or greater. For example:
 <pre>auth required pam_faildelay.so delay=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_delay"></xccdf-1.1:sub></pre>
 </td>
-</tr>
-<tr>
-<td>CCE-85842-3</td>
-<td>Set Deny For Failed Password Attempts</td>
-<td xml:lang="en-US">To configure the system to lock out accounts after a number of incorrect login
-attempts using <code>pam_faillock.so</code>, modify the content of both
-<code>/etc/pam.d/system-auth</code> and <code>/etc/pam.d/password-auth</code> as follows:
-<br><br>
-<ul>
-<li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth required pam_faillock.so preauth silent deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
-</li>
-<li> add the following line immediately <code>after</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth [default=die] pam_faillock.so authfail deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
-</li>
-<li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>ACCOUNT</code> section:
-<pre>account required pam_faillock.so</pre>
-</li>
-</ul>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>Configure the root Account for Failed Password Attempts</td>
-<td xml:lang="en-US">To configure the system to lock out the <code>root</code> account after a
-number of incorrect login attempts using <code>pam_faillock.so</code>, modify
-the content of both <code>/etc/pam.d/system-auth</code> and
-<code>/etc/pam.d/password-auth</code> as follows:
-<br><br>
-<ul>
-<li>Modify the following line in the <code>AUTH</code> section to add
-<code>even_deny_root</code>:
-<pre>auth required pam_faillock.so preauth silent <b>even_deny_root</b> deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
-</li>
-<li>Modify the following line in the <code>AUTH</code> section to add
-<code>even_deny_root</code>:
-<pre>auth [default=die] pam_faillock.so authfail <b>even_deny_root</b> deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
-</li>
-</ul>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>Set Interval For Counting Failed Password Attempts</td>
-<td xml:lang="en-US">Utilizing <code>pam_faillock.so</code>, the <code>fail_interval</code> directive
-configures the system to lock out an account after a number of incorrect
-login attempts within a specified time period. Modify the content of both
-<code>/etc/pam.d/system-auth</code> and <code>/etc/pam.d/password-auth</code>
-as follows:
-<br><br>
-<ul>
-<li>Add the following line immediately <code>before</code> the
-    <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth required pam_faillock.so preauth silent deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
-</li>
-<li>Add the following line immediately <code>after</code> the
-    <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth [default=die] pam_faillock.so authfail deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub>
-</pre>
-</li>
-<li>Add the following line immediately <code>before</code> the
-    <code>pam_unix.so</code> statement in the <code>ACCOUNT</code> section:
-<pre>account required pam_faillock.so</pre>
-</li>
-</ul>
-</td>
-</tr>
-<tr>
-<td>CCE-85841-5</td>
-<td>Set Lockout Time for Failed Password Attempts</td>
-<td xml:lang="en-US">To configure the system to lock out accounts after a number of incorrect login
-attempts and require an administrator to unlock the account using <code>pam_faillock.so</code>,
-modify the content of both <code>/etc/pam.d/system-auth</code> and <code>/etc/pam.d/password-auth</code> as follows:
-<br><br>
-<ul>
-<li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth required pam_faillock.so preauth silent deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
-</li>
-<li> add the following line immediately <code>after</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth [default=die] pam_faillock.so authfail deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
-</li>
-<li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>ACCOUNT</code> section:
-<pre>account required pam_faillock.so</pre>
-</li>
-</ul>
-If <code>unlock_time</code> is set to <code>0</code>, manual intervention by an administrator is required to unlock a user.</td>
 </tr>
 <tr>
 <td>CCE-85554-4</td>
@@ -1510,7 +1440,7 @@ the documentation at:
 <td>Only Authorized Local User Accounts Exist on Operating System</td>
 <td xml:lang="en-US">Enterprise Application tends to use the server or virtual machine exclusively.
 Besides the default operating system user, there should be only authorized local
-users required by the installed softoware groups and applications that exist on
+users required by the installed software groups and applications that exist on
 the operating system. The authorized user list can be customized in the refine
 value variable <code>var_accounts_authorized_local_users_regex</code>.
 OVAL regular expression is used for the user list.
@@ -1520,6 +1450,16 @@ activities or that allow for a normal user to perform administrative-level actio
 To remove unauthorized system accounts, use the following command:
 <pre>$ sudo userdel <i>unauthorized_user</i></pre>
 </td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure All Groups on the System Have Unique Group ID</td>
+<td xml:lang="en-US">Change the group name or delete groups, so each has a unique id.</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure All Groups on the System Have Unique Group Names</td>
+<td xml:lang="en-US">Change the group name or delete groups, so each has a unique name.</td>
 </tr>
 <tr>
 <td>CCE-85558-5</td>
@@ -1884,6 +1824,17 @@ readonly TMOUT
 export TMOUT</td>
 </tr>
 <tr>
+<td></td>
+<td>User Initialization Files Must Be Group-Owned By The Primary User</td>
+<td xml:lang="en-US">Change the group owner of interactive users files to the group found
+in <pre>/etc/passwd</pre> for the user. To change the group owner of a local
+interactive user home directory, use the following command:
+<pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i>/.<i>INIT_FILE</i></pre>
+
+This rule ensures every initialization file related to an interactive user
+is group-owned by an interactive user.</td>
+</tr>
+<tr>
 <td>CCE-85632-8</td>
 <td>User Initialization Files Must Not Run World-Writable Programs</td>
 <td xml:lang="en-US">Set the mode on files being executed by the user initialization files with the
@@ -1948,6 +1899,14 @@ to an interactive user is owned by an interactive user.</td>
 directory with the following command:
 <pre>$ sudo chmod 0750 /home/<i>USER</i>/<i>FILE_DIR</i></pre>
 </td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure users own their home directories</td>
+<td xml:lang="en-US">The user home directory is space defined for the particular user to set local
+environment variables and to store personal files. Since the user is
+accountable for files stored in the user home directory, the user must be
+the owner of the directory.</td>
 </tr>
 <tr>
 <td>CCE-85711-0</td>
@@ -2838,11 +2797,11 @@ of the <code>restorecon</code> command for all users and root. If the <code>audi
 daemon is configured to use the <code>augenrules</code> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 </tr>
 <tr>
@@ -3737,11 +3696,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/sudoedit -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/sudoedit -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 </tr>
 <tr>
@@ -3767,11 +3726,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/sbin/unix2_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix2_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/sbin/unix2_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix2_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 </tr>
 <tr>
@@ -4267,7 +4226,7 @@ protection enabled to protect boot-time settings.
 Since plaintext passwords are a security risk, generate a hash for the password
 by running the following command:
 
-<pre>$ grub2-mkpasswd-pbkdf2</pre>
+<pre># grub2-mkpasswd-pbkdf2</pre>
 
 When prompted, enter the password that was selected.
 <br><br>
@@ -4279,11 +4238,10 @@ password_pbkdf2 boot grub.pbkdf2.sha512.VeryLongString
 </pre>
 NOTE: the bootloader superuser account and password MUST differ from the
 root account and password.
-
-<br><br>
 Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
+
 <pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
 </td>
 </tr>
@@ -4296,7 +4254,7 @@ protection enabled to protect boot-time settings.
 Since plaintext passwords are a security risk, generate a hash for the password
 by running the following command:
 
-<pre>$ grub2-mkpasswd-pbkdf2</pre>
+<pre># grub2-mkpasswd-pbkdf2</pre>
 
 When prompted, enter the password that was selected.
 <br><br>
@@ -4308,7 +4266,6 @@ password_pbkdf2 boot grub.pbkdf2.sha512.VeryLongString
 </pre>
 NOTE: the bootloader superuser account and password MUST differ from the
 root account and password.
-
 Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
@@ -4421,6 +4378,17 @@ command to correct this:
 <pre>$ sudo chmod 0600 <i>LOGFILE</i></pre>"</td>
 </tr>
 <tr>
+<td></td>
+<td>Ensure journald is configured to compress large log files</td>
+<td xml:lang="en-US">The journald system can compress large log files to avoid fill the system disk.</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure journald is configured to write log files to persistent disk</td>
+<td xml:lang="en-US">The journald system may store log files in volatile memory or locally on disk.
+If the logs are only stored in volatile memory they will we lost upon reboot.</td>
+</tr>
+<tr>
 <td>CCE-85850-6</td>
 <td>Ensure Logrotate Runs Periodically</td>
 <td xml:lang="en-US">The <code>logrotate</code> utility allows for the automatic rotation of
@@ -4469,6 +4437,21 @@ If the system needs to act as a central log server, add the following lines to
 <code>/etc/rsyslog.conf</code> to enable reception of messages over UDP:
 <pre>$ModLoad imudp
 $UDPServerRun 514</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure rsyslog Does Not Accept Remote Messages Unless Acting As Log Server</td>
+<td xml:lang="en-US">The <code>rsyslog</code> daemon should not accept remote messages
+unless the system acts as a log server.
+To ensure that it is not listening on the network, ensure the following lines are
+<i>not</i> found in <code>/etc/rsyslog.conf</code>:
+<pre>$ModLoad imtcp
+$InputTCPServerRun <i>port</i>
+$ModLoad imudp
+$UDPServerRun <i>port</i>
+$ModLoad imrelp
+$InputRELPServerRun <i>port</i></pre>
 </td>
 </tr>
 <tr>
@@ -4553,6 +4536,16 @@ untrusted networks. The <code>strongswan</code> package can be installed with th
 <pre>
 $ sudo zypper install strongswan</pre>
 </td>
+</tr>
+<tr>
+<td>CCE-91153-7</td>
+<td>Verify Any Configured IPSec Tunnel Connections</td>
+<td xml:lang="en-US">Libreswan provides an implementation of IPsec
+and IKE, which permits the creation of secure tunnels over
+untrusted networks. As such, IPsec can be used to circumvent certain
+network requirements such as filtering. Verify that if any IPsec connection
+(<code>conn</code>) configured in <code>/etc/ipsec.conf</code> and <code>/etc/ipsec.d</code>
+exists is an approved organizational connection.</td>
 </tr>
 <tr>
 <td></td>
@@ -6179,6 +6172,12 @@ To properly set the permissions of <code>/etc/crontab</code>, run the command:
 </tr>
 <tr>
 <td></td>
+<td>Ensure that /etc/cron.deny does not exist</td>
+<td xml:lang="en-US">The file <code>/etc/cron.deny</code> should not exist.
+Use <code>/etc/cron.allow</code> instead.</td>
+</tr>
+<tr>
+<td></td>
 <td>Verify Group Who Owns /etc/at.allow file</td>
 <td xml:lang="en-US">If <code>/etc/at.allow</code> exists, it must be group-owned by <code>root</code>.
 
@@ -6222,6 +6221,17 @@ or more restrictive.
 
 To properly set the permissions of <code>/etc/at.allow</code>, run the command:
 <pre>$ sudo chmod  /etc/at.allow</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Verify Permissions on /etc/cron.allow file</td>
+<td xml:lang="en-US">If <code>/etc/cron.allow</code> exists, it must have permissions <code>0640</code>
+or more restrictive.
+
+
+To properly set the permissions of <code>/etc/cron.allow</code>, run the command:
+<pre>$ sudo chmod  /etc/cron.allow</pre>
 </td>
 </tr>
 <tr>
@@ -6531,6 +6541,13 @@ This should be disabled by removing any instances of the
 <code>all_squash</code> option from the file <code>/etc/exports</code>.</td>
 </tr>
 <tr>
+<td>CCE-91416-8</td>
+<td>Use Kerberos Security on All Exports</td>
+<td xml:lang="en-US">Using Kerberos on all exported mounts prevents a malicious client or user from
+impersonating a system user. To cryptography authenticate users to the NFS server,
+add <code>sec=krb5:krb5i:krb5p</code> to each export in <code>/etc/exports</code>.</td>
+</tr>
+<tr>
 <td></td>
 <td>The Chrony package is installed</td>
 <td xml:lang="en-US">System time should be synchronized between all systems in an environment. This is
@@ -6602,6 +6619,14 @@ The <code>ntpd</code> service can be enabled with the following command:
 </td>
 </tr>
 <tr>
+<td></td>
+<td>Enable systemd_timesyncd Service</td>
+<td xml:lang="en-US">
+The <code>systemd_timesyncd</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable systemd_timesyncd.service</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-83287-3</td>
 <td>Configure Time Service Maxpoll Interval</td>
 <td xml:lang="en-US">The <code>maxpoll</code> should be configured to
@@ -6610,7 +6635,8 @@ The <code>ntpd</code> service can be enabled with the following command:
 <code>maxpoll</code> in <code>/etc/ntp.conf</code> or <code>/etc/chrony.conf</code>
 add the following:
 <pre>maxpoll <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_time_service_set_maxpoll"></xccdf-1.1:sub></pre>
-</td>
+to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
+should be configured too.</td>
 </tr>
 <tr>
 <td>CCE-85834-0</td>
@@ -7079,9 +7105,16 @@ remote access.</td>
 more secure than <code>.rhosts</code> authentication. However, it is
 not recommended that hosts unilaterally trust one another, even
 within an organization.
-<br><br>
-To disable host-based authentication, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
+<br>
+The default SSH configuration disables host-based authentication. The appropriate
+configuration is used if no value is set for <code>HostbasedAuthentication</code>.
+<br>
+To explicitly disable host-based authentication, add or correct the
+following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>HostbasedAuthentication no</pre>
 </td>
 </tr>
@@ -7111,11 +7144,18 @@ a user has successfully authenticated, add or correct the following line in the
 <tr>
 <td>CCE-85667-4</td>
 <td>Disable SSH Access via Empty Passwords</td>
-<td xml:lang="en-US">To explicitly disallow SSH login from accounts with
-empty passwords, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+<td xml:lang="en-US">Disallow SSH login with empty passwords.
+The default SSH configuration disables logins with empty passwords. The appropriate
+configuration is used if no value is set for <code>PermitEmptyPasswords</code>.
+<br>
+To explicitly disallow SSH login from accounts with empty passwords,
+add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <br>
 <pre>PermitEmptyPasswords no</pre>
-<br>
 Any accounts with empty passwords should be disabled immediately, and PAM configuration
 should prevent users from being able to assign themselves empty passwords.</td>
 </tr>
@@ -7123,8 +7163,16 @@ should prevent users from being able to assign themselves empty passwords.</td>
 <td>CCE-91441-6</td>
 <td>Disable GSSAPI Authentication</td>
 <td xml:lang="en-US">Unless needed, SSH should not permit extraneous or unnecessary
-authentication mechanisms like GSSAPI. To disable GSSAPI authentication, add or
-correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+authentication mechanisms like GSSAPI.
+<br>
+The default SSH configuration disallows authentications based on GSSAPI. The appropriate
+configuration is used if no value is set for <code>GSSAPIAuthentication</code>.
+<br>
+To explicitly disable GSSAPI authentication, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>GSSAPIAuthentication no</pre>
 </td>
 </tr>
@@ -7132,8 +7180,16 @@ correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <td>CCE-91442-4</td>
 <td>Disable Kerberos Authentication</td>
 <td xml:lang="en-US">Unless needed, SSH should not permit extraneous or unnecessary
-authentication mechanisms like Kerberos. To disable Kerberos authentication, add
-or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+authentication mechanisms like Kerberos.
+<br>
+The default SSH configuration disallows authentication validation through Kerberos.
+The appropriate configuration is used if no value is set for <code>KerberosAuthentication</code>.
+<br>
+To explicitly disable Kerberos authentication, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>KerberosAuthentication no</pre>
 </td>
 </tr>
@@ -7142,7 +7198,11 @@ or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <td>Disable PubkeyAuthentication Authentication</td>
 <td xml:lang="en-US">Unless needed, SSH should not permit extraneous or unnecessary
 authentication mechanisms. To disable PubkeyAuthentication authentication, add or
-correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>PubkeyAuthentication no</pre>
 </td>
 </tr>
@@ -7152,9 +7212,15 @@ correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <td xml:lang="en-US">SSH can emulate the behavior of the obsolete rsh
 command in allowing users to enable insecure access to their
 accounts via <code>.rhosts</code> files.
-<br><br>
-To ensure this behavior is disabled, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
+<br>
+The default SSH configuration disables support for <code>.rhosts</code>. The appropriate
+configuration is used if no value is set for <code>IgnoreRhosts</code>.
+<br>
+To explicitly disable support for .rhosts files, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>IgnoreRhosts yes</pre>
 </td>
 </tr>
@@ -7174,16 +7240,22 @@ following line in <code>/etc/ssh/sshd_config</code>:
 <td>Disable SSH Root Login</td>
 <td xml:lang="en-US">The root user should never be allowed to login to a
 system directly over a network.
-To disable root login via SSH, add or correct the following line
-in <code>/etc/ssh/sshd_config</code>:
+To disable root login via SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>PermitRootLogin no</pre>
 </td>
 </tr>
 <tr>
 <td></td>
 <td>Disable SSH root Login with a Password (Insecure)</td>
-<td xml:lang="en-US">To disable password-based root logins over SSH, add or correct the following
-line in <code>/etc/ssh/sshd_config</code>:
+<td xml:lang="en-US">To disable password-based root logins over SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>PermitRootLogin prohibit-password</pre>
 </td>
 </tr>
@@ -7191,8 +7263,11 @@ line in <code>/etc/ssh/sshd_config</code>:
 <td></td>
 <td>Disable SSH TCP Forwarding</td>
 <td xml:lang="en-US">The <code>AllowTcpForwarding</code> parameter specifies whether TCP forwarding is permitted.
-To disable TCP forwarding, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
+To disable TCP forwarding, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>AllowTcpForwarding no</pre>
 </td>
 </tr>
@@ -7202,8 +7277,11 @@ following line in <code>/etc/ssh/sshd_config</code>:
 <td xml:lang="en-US">SSH can allow system users to connect to systems if a cache of the remote
 systems public keys is available.  This should be disabled.
 <br><br>
-To ensure this behavior is disabled, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
+To ensure this behavior is disabled, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>IgnoreUserKnownHosts yes</pre>
 </td>
 </tr>
@@ -7214,18 +7292,31 @@ following line in <code>/etc/ssh/sshd_config</code>:
 through the connection to enable remote graphic connections.
 SSH has the capability to encrypt remote X11 connections when SSH's
 <code>X11Forwarding</code> option is enabled.
-<br><br>
-To disable X11 Forwarding, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
+<br>
+The default SSH configuration disables X11Forwarding. The appropriate
+configuration is used if no value is set for <code>X11Forwarding</code>.
+<br>
+To explicitly disable X11 Forwarding, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>X11Forwarding no</pre>
 </td>
 </tr>
 <tr>
 <td>CCE-85666-6</td>
 <td>Do Not Allow SSH Environment Options</td>
-<td xml:lang="en-US">To ensure users are not able to override environment
-variables of the SSH daemon, add or correct the following line
-in <code>/etc/ssh/sshd_config</code>:
+<td xml:lang="en-US">Ensure that users are not able to override environment variables of the SSH daemon.
+<br>
+The default SSH configuration disables environment processing. The appropriate
+configuration is used if no value is set for <code>PermitUserEnvironment</code>.
+<br>
+To explicitly disable Environment options, add or correct the following
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>PermitUserEnvironment no</pre>
 </td>
 </tr>
@@ -7234,8 +7325,11 @@ in <code>/etc/ssh/sshd_config</code>:
 <td>Enable GSSAPI Authentication</td>
 <td xml:lang="en-US">Sites setup to use Kerberos or other GSSAPI Authenticaion require setting
 sshd to accept this authentication.
-To enable GSSAPI authentication, add or correct the following line in the
-<code>/etc/ssh/sshd_config</code> file:
+To enable GSSAPI authentication, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>GSSAPIAuthentication yes</pre>
 </td>
 </tr>
@@ -7247,18 +7341,28 @@ enable PAM authentication using ChallengeResponseAuthentication and
 PasswordAuthentication in addition to PAM account and session module processing for all
 authentication types.
 
-To enable PAM authentication, add or correct the following line in the
-<code>/etc/ssh/sshd_config</code> file:
+To enable PAM authentication, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>UsePAM yes</pre>
 </td>
 </tr>
 <tr>
 <td></td>
 <td>Enable Public Key Authentication</td>
-<td xml:lang="en-US">Verify the sshd daemon allows public key authentication with the
-following:
-<pre>$ grep ^PubkeyAuthentication /etc/ssh/sshd_config
-PubkeyAuthentication yes</pre>
+<td xml:lang="en-US">Enable SSH login with public keys.
+<br>
+The default SSH configuration enables authentication based on public keys. The appropriate
+configuration is used if no value is set for <code>PubkeyAuthentication</code>.
+<br>
+To explicitly enable Public Key Authentication, add or correct the following
+
+
+<code>/etc/ssh/sshd_config</code>:
+
+<pre>PubkeyAuthentication yes</pre>
 </td>
 </tr>
 <tr>
@@ -7266,8 +7370,16 @@ PubkeyAuthentication yes</pre>
 <td>Enable Use of Strict Mode Checking</td>
 <td xml:lang="en-US">SSHs <code>StrictModes</code> option checks file and ownership permissions in
 the user's home directory <code>.ssh</code> folder before accepting login. If world-
-writable permissions are found, logon is rejected. To enable <code>StrictModes</code> in SSH,
-add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+writable permissions are found, logon is rejected.
+<br>
+The default SSH configuration has <code>StrictModes</code> enabled. The appropriate
+configuration is used if no value is set for <code>StrictModes</code>.
+<br>
+To explicitly enable <code>StrictModes</code> in SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>StrictModes yes</pre>
 </td>
 </tr>
@@ -7275,7 +7387,11 @@ add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <td>CCE-83263-4</td>
 <td>Enable SSH Warning Banner</td>
 <td xml:lang="en-US">To enable the warning banner and ensure it is consistent
-across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+across the system, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>Banner /etc/issue</pre>
 Another section contains information on how to create an
 appropriate system-wide warning banner.</td>
@@ -7284,7 +7400,10 @@ appropriate system-wide warning banner.</td>
 <td></td>
 <td>Enable SSH Warning Banner</td>
 <td xml:lang="en-US">To enable the warning banner and ensure it is consistent
-across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+across the system, add or correct the following line in
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>Banner /etc/issue.net</pre>
 Another section contains information on how to create an
 appropriate system-wide warning banner.</td>
@@ -7296,8 +7415,11 @@ appropriate system-wide warning banner.</td>
 by users. SSH has the capability to encrypt remote X11 connections when SSH's
 <code>X11Forwarding</code> option is enabled.
 <br><br>
-To enable X11 Forwarding, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
+To enable X11 Forwarding, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>X11Forwarding yes</pre>
 </td>
 </tr>
@@ -7314,9 +7436,16 @@ Where <code>USER1</code> and <code>USER2</code> are valid user names.</td>
 <tr>
 <td>CCE-85563-5</td>
 <td>Enable SSH Print Last Log</td>
-<td xml:lang="en-US">When enabled, SSH will display the date and time of the last
-successful account logon. To enable LastLog in
-SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+<td xml:lang="en-US">Ensure that SSH will display the date and time of the last successful account logon.
+<br>
+The default SSH configuration enables print of the date and time of the last login.
+The appropriate configuration is used if no value is set for <code>PrintLastLog</code>.
+<br>
+To explicitly enable LastLog in SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>PrintLastLog yes</pre>
 </td>
 </tr>
@@ -7374,7 +7503,10 @@ and terminated.
 
 To ensure the SSH idle timeout occurs precisely when the
 <code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
-value of <code>0</code>.</td>
+value of <code>0</code> in
+
+
+<code>/etc/ssh/sshd_config</code>:</td>
 </tr>
 <tr>
 <td></td>
@@ -7388,8 +7520,15 @@ appropriate limits to ensure the service is available for needed access.</td>
 <td></td>
 <td>Set LogLevel to INFO</td>
 <td xml:lang="en-US">The INFO parameter specifices that record login and logout activity will be logged.
-To specify the log level in
-SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+<br>
+The default SSH configuration sets the log level to INFO. The appropriate
+configuration is used if no value is set for <code>LogLevel</code>.
+<br>
+To explicitly specify the log level in SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>LogLevel INFO</pre>
 </td>
 </tr>
@@ -7398,7 +7537,11 @@ SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> 
 <td>Set SSH Daemon LogLevel to VERBOSE</td>
 <td xml:lang="en-US">The <code>VERBOSE</code> parameter configures the SSH daemon to record login and logout activity.
 To specify the log level in
-SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>LogLevel VERBOSE</pre>
 </td>
 </tr>
@@ -7433,6 +7576,18 @@ CIS recommends a MaxStartups value of '10:30:60', or more restrictive where
 dictated by site policy.</td>
 </tr>
 <tr>
+<td></td>
+<td>Use Only FIPS 140-2 Validated Ciphers</td>
+<td xml:lang="en-US">Limit the ciphers to those algorithms which are FIPS-approved.
+Counter (CTR) mode is also preferred over cipher-block chaining (CBC) mode.
+The following line in <code>/etc/ssh/sshd_config</code>
+demonstrates use of FIPS-approved ciphers:
+<pre>Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc</pre>
+The man page <code>sshd_config(5)</code> contains a list of supported ciphers.
+
+The rule is parametrized to use the following ciphers: <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sshd_approved_ciphers"></xccdf-1.1:sub></code>.</td>
+</tr>
+<tr>
 <td>CCE-83271-7</td>
 <td>Use Only FIPS 140-2 Validated Ciphers</td>
 <td xml:lang="en-US">Limit the ciphers to those algorithms which are FIPS-approved.
@@ -7441,6 +7596,19 @@ demonstrates use of FIPS-approved ciphers:
 <pre>Ciphers aes256-ctr,aes192-ctr,aes128-ctr</pre>
 This rule ensures that there are configured ciphers mentioned
 above (or their subset), keeping the given order of algorithms.</td>
+</tr>
+<tr>
+<td></td>
+<td>Use Only FIPS 140-2 Validated MACs</td>
+<td xml:lang="en-US">Limit the MACs to those hash algorithms which are FIPS-approved.
+The following line in <code>/etc/ssh/sshd_config</code>
+demonstrates use of FIPS-approved MACs:
+
+<pre>MACs hmac-sha2-512,hmac-sha2-256</pre>
+
+The man page <code>sshd_config(5)</code> contains a list of supported MACs.
+
+The rule is parametrized to use the following MACs: <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sshd_approved_macs"></xccdf-1.1:sub></code>.</td>
 </tr>
 <tr>
 <td>CCE-83280-8</td>

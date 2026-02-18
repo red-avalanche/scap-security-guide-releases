@@ -201,9 +201,11 @@ run the following command:
 $ cat /etc/issue
       Is it the case that it does not display the required banner?
       </td>
-<td>To configure the system login banner edit <code>/etc/issue</code>. Replace the
+<td>
+To configure the system login banner edit <code>/etc/issue</code>. Replace the
 default text with a message compliant with the local site policy or a legal
 disclaimer.
+
 
 The DoD required text is either:
 <br><br>
@@ -1475,7 +1477,7 @@ protection enabled to protect boot-time settings.
 Since plaintext passwords are a security risk, generate a hash for the password
 by running the following command:
 
-<pre>$ grub2-mkpasswd-pbkdf2</pre>
+<pre># grub2-mkpasswd-pbkdf2</pre>
 
 When prompted, enter the password that was selected.
 <br><br>
@@ -1487,12 +1489,11 @@ password_pbkdf2 boot grub.pbkdf2.sha512.VeryLongString
 </pre>
 NOTE: the bootloader superuser account and password MUST differ from the
 root account and password.
-
-<br><br>
 Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
-<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
+
+<pre>grub2-mkconfig -o /boot/efi/EFI/sles/grub.cfg</pre>
 </td>
 <td>SLES-12-010430</td>
 <td>grub2_password</td>
@@ -1530,7 +1531,7 @@ protection enabled to protect boot-time settings.
 Since plaintext passwords are a security risk, generate a hash for the password
 by running the following command:
 
-<pre>$ grub2-mkpasswd-pbkdf2</pre>
+<pre># grub2-mkpasswd-pbkdf2</pre>
 
 When prompted, enter the password that was selected.
 <br><br>
@@ -1542,7 +1543,6 @@ password_pbkdf2 boot grub.pbkdf2.sha512.VeryLongString
 </pre>
 NOTE: the bootloader superuser account and password MUST differ from the
 root account and password.
-
 Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
@@ -2057,7 +2057,7 @@ $ sudo userdel unauthorized_user
       </td>
 <td>Enterprise Application tends to use the server or virtual machine exclusively.
 Besides the default operating system user, there should be only authorized local
-users required by the installed softoware groups and applications that exist on
+users required by the installed software groups and applications that exist on
 the operating system. The authorized user list can be customized in the refine
 value variable <code>var_accounts_authorized_local_users_regex</code>.
 OVAL regular expression is used for the user list.
@@ -5690,14 +5690,20 @@ facilitates possible legal action against attackers. Alternatively, systems
 whose ownership should not be obvious should ensure usage of a banner that does
 not provide easy attribution.</td>
 <td>To determine how the SSH daemon's Banner option is set, run the following command:
+
 $ sudo grep -i Banner /etc/ssh/sshd_config
+
 
 If a line indicating /etc/issue is returned, then the required value is set.
 
       Is it the case that the required value is not set?
       </td>
 <td>To enable the warning banner and ensure it is consistent
-across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+across the system, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>Banner /etc/issue</pre>
 Another section contains information on how to create an
 appropriate system-wide warning banner.</td>
@@ -5746,15 +5752,22 @@ so much data that it is difficult to identify important security information. <c
 situations, such as Incident Response, it is important to determine when a particular user was active
 on a system. The logout record can eliminate those users who disconnected, which helps narrow the
 field.</td>
-<td>To check if LogLevel is enabled or set correctly, run the
-following command:
-$ sudo grep "^LogLevel" /etc/ssh/sshd_config
-If configured properly, output should be LogLevel VERBOSE
-      Is it the case that it is commented out or is not enabled?
+<td>To determine how the SSH daemon's LogLevel option is set, run the following command:
+
+$ sudo grep -i LogLevel /etc/ssh/sshd_config
+
+
+If a line indicating VERBOSE is returned, then the required value is set.
+
+      Is it the case that the required value is not set?
       </td>
 <td>The <code>VERBOSE</code> parameter configures the SSH daemon to record login and logout activity.
 To specify the log level in
-SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>LogLevel VERBOSE</pre>
 </td>
 <td>SLES-12-030110</td>
@@ -5767,15 +5780,24 @@ SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> 
 <td>The SUSE operating system must display the date and time of the last successful account logon upon an SSH logon.</td>
 <td>Providing users feedback on when account accesses last occurred facilitates user
 recognition and reporting of unauthorized account use.</td>
-<td>To check if PrintLastLog is enabled or set correctly, run the
-following command:
-$ sudo grep PrintLastLog /etc/ssh/sshd_config
-If configured properly, output should be yes
-      Is it the case that it is commented out or is not enabled?
+<td>To determine how the SSH daemon's PrintLastLog option is set, run the following command:
+
+$ sudo grep -i PrintLastLog /etc/ssh/sshd_config
+
+If no line, a commented line, or a line indicating the value yes is returned, then the required value is set.
+
+      Is it the case that the required value is not set?
       </td>
-<td>When enabled, SSH will display the date and time of the last
-successful account logon. To enable LastLog in
-SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+<td>Ensure that SSH will display the date and time of the last successful account logon.
+<br>
+The default SSH configuration enables print of the date and time of the last login.
+The appropriate configuration is used if no value is set for <code>PrintLastLog</code>.
+<br>
+To explicitly enable LastLog in SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>PrintLastLog yes</pre>
 </td>
 <td>SLES-12-030130</td>
@@ -5792,7 +5814,9 @@ In addition, logging in with a user-specific account provides individual
 accountability of actions performed on the system and also helps to minimize
 direct attack attempts on root's password.</td>
 <td>To determine how the SSH daemon's PermitRootLogin option is set, run the following command:
+
 $ sudo grep -i PermitRootLogin /etc/ssh/sshd_config
+
 
 If a line indicating no is returned, then the required value is set.
 
@@ -5800,8 +5824,11 @@ If a line indicating no is returned, then the required value is set.
       </td>
 <td>The root user should never be allowed to login to a
 system directly over a network.
-To disable root login via SSH, add or correct the following line
-in <code>/etc/ssh/sshd_config</code>:
+To disable root login via SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>PermitRootLogin no</pre>
 </td>
 <td>SLES-12-030140</td>
@@ -5816,16 +5843,25 @@ in <code>/etc/ssh/sshd_config</code>:
 that remote login via SSH will require a password, even in the event of
 misconfiguration elsewhere.</td>
 <td>To determine how the SSH daemon's PermitEmptyPasswords option is set, run the following command:
+
 $ sudo grep -i PermitEmptyPasswords /etc/ssh/sshd_config
+
 If no line, a commented line, or a line indicating the value no is returned, then the required value is set.
 
       Is it the case that the required value is not set?
       </td>
-<td>To explicitly disallow SSH login from accounts with
-empty passwords, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+<td>Disallow SSH login with empty passwords.
+The default SSH configuration disables logins with empty passwords. The appropriate
+configuration is used if no value is set for <code>PermitEmptyPasswords</code>.
+<br>
+To explicitly disallow SSH login from accounts with empty passwords,
+add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <br>
 <pre>PermitEmptyPasswords no</pre>
-<br>
 Any accounts with empty passwords should be disabled immediately, and PAM configuration
 should prevent users from being able to assign themselves empty passwords.</td>
 <td>SLES-12-030150</td>
@@ -5838,15 +5874,24 @@ should prevent users from being able to assign themselves empty passwords.</td>
 <td>The SUSE operating system must not allow users to override SSH environment variables.</td>
 <td>SSH environment options potentially allow users to bypass
 access restriction in some configurations.</td>
-<td>To ensure users are not able to send environment variables, run the following command:
-$ sudo grep PermitUserEnvironment /etc/ssh/sshd_config
-If properly configured, output should be:
-PermitUserEnvironment no
-      Is it the case that PermitUserEnvironment is not disabled?
+<td>To determine how the SSH daemon's PermitUserEnvironment option is set, run the following command:
+
+$ sudo grep -i PermitUserEnvironment /etc/ssh/sshd_config
+
+If no line, a commented line, or a line indicating the value no is returned, then the required value is set.
+
+      Is it the case that the required value is not set?
       </td>
-<td>To ensure users are not able to override environment
-variables of the SSH daemon, add or correct the following line
-in <code>/etc/ssh/sshd_config</code>:
+<td>Ensure that users are not able to override environment variables of the SSH daemon.
+<br>
+The default SSH configuration disables environment processing. The appropriate
+configuration is used if no value is set for <code>PermitUserEnvironment</code>.
+<br>
+To explicitly disable Environment options, add or correct the following
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>PermitUserEnvironment no</pre>
 </td>
 <td>SLES-12-030151</td>
@@ -5948,7 +5993,9 @@ some processes may stop SSH  from correctly detecting that the user is idle.</td
 <td>This ensures a user login will be terminated as soon as the <code>ClientAliveInterval</code>
 is reached.</td>
 <td>To ensure ClientAliveInterval is set correctly, run the following command:
+
 $ sudo grep ClientAliveCountMax /etc/ssh/sshd_config
+
 If properly configured, the output should be:
 ClientAliveCountMax 0
 
@@ -5965,7 +6012,10 @@ and terminated.
 
 To ensure the SSH idle timeout occurs precisely when the
 <code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
-value of <code>0</code>.</td>
+value of <code>0</code> in
+
+
+<code>/etc/ssh/sshd_config</code>:</td>
 <td>SLES-12-030191</td>
 <td>sshd_set_keepalive_0</td>
 </tr>
@@ -5978,7 +6028,9 @@ value of <code>0</code>.</td>
 assurance that remote login via SSH will require a password, even
 in the event of misconfiguration elsewhere.</td>
 <td>To determine how the SSH daemon's IgnoreUserKnownHosts option is set, run the following command:
+
 $ sudo grep -i IgnoreUserKnownHosts /etc/ssh/sshd_config
+
 
 If a line indicating yes is returned, then the required value is set.
 
@@ -5987,8 +6039,11 @@ If a line indicating yes is returned, then the required value is set.
 <td>SSH can allow system users to connect to systems if a cache of the remote
 systems public keys is available.  This should be disabled.
 <br><br>
-To ensure this behavior is disabled, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
+To ensure this behavior is disabled, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>IgnoreUserKnownHosts yes</pre>
 </td>
 <td>SLES-12-030200</td>
@@ -6041,16 +6096,26 @@ To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
 <td>The SUSE operating system SSH daemon must perform strict mode checking of home directory configuration files.</td>
 <td>If other users have access to modify user-specific SSH configuration files, they
 may be able to log into the system as another user.</td>
-<td>To check if StrictModes is enabled or set correctly, run the
-following command:
-$ sudo grep StrictModes /etc/ssh/sshd_config
-If configured properly, output should be yes
-      Is it the case that it is commented out or is not enabled?
+<td>To determine how the SSH daemon's StrictModes option is set, run the following command:
+
+$ sudo grep -i StrictModes /etc/ssh/sshd_config
+
+If no line, a commented line, or a line indicating the value yes is returned, then the required value is set.
+
+      Is it the case that the required value is not set?
       </td>
 <td>SSHs <code>StrictModes</code> option checks file and ownership permissions in
 the user's home directory <code>.ssh</code> folder before accepting login. If world-
-writable permissions are found, logon is rejected. To enable <code>StrictModes</code> in SSH,
-add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
+writable permissions are found, logon is rejected.
+<br>
+The default SSH configuration has <code>StrictModes</code> enabled. The appropriate
+configuration is used if no value is set for <code>StrictModes</code>.
+<br>
+To explicitly enable <code>StrictModes</code> in SSH, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>StrictModes yes</pre>
 </td>
 <td>SLES-12-030230</td>
@@ -6111,7 +6176,9 @@ a user has successfully authenticated, add or correct the following line in the
 <td>Non-encrypted X displays allow an attacker to capture keystrokes and to execute commands
 remotely.</td>
 <td>To determine how the SSH daemon's X11Forwarding option is set, run the following command:
+
 $ sudo grep -i X11Forwarding /etc/ssh/sshd_config
+
 
 If a line indicating yes is returned, then the required value is set.
 
@@ -6121,8 +6188,11 @@ If a line indicating yes is returned, then the required value is set.
 by users. SSH has the capability to encrypt remote X11 connections when SSH's
 <code>X11Forwarding</code> option is enabled.
 <br><br>
-To enable X11 Forwarding, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
+To enable X11 Forwarding, add or correct the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
 <pre>X11Forwarding yes</pre>
 </td>
 <td>SLES-12-030260</td>
@@ -6140,13 +6210,26 @@ loopback address and sets the hostname part of the <code>DISPLAY</code>
 environment variable to localhost. This prevents remote hosts from
 connecting to the proxy display.  </td>
 <td>To determine how the SSH daemon's X11UseLocalhost option is set, run the following command:
+
 $ sudo grep -i X11UseLocalhost /etc/ssh/sshd_config
+
 If no line, a commented line, or a line indicating the value yes is returned, then the required value is set.
       Is it the case that the display proxy is listening on wildcard address?
       </td>
 <td>The SSH daemon should prevent remote hosts from connecting to the proxy
-display. Make sure that the option <code>X11UseLocalhost</code> is set to
-<code>yes</code> within the SSH server configuration file.</td>
+display.
+<br>
+The default SSH configuration for <code>X11UseLocalhost</code> is <code>yes</code>,
+which prevents remote hosts from connecting to the proxy display.
+<br>
+To explicitly prevent remote connections to the proxy display, add or correct
+the following line in
+
+
+<code>/etc/ssh/sshd_config</code>:
+
+<code>X11UseLocalhost yes</code>
+</td>
 <td>SLES-12-030261</td>
 <td>sshd_x11_use_localhost</td>
 </tr>
@@ -6172,7 +6255,8 @@ maxpoll .
 <code>maxpoll</code> in <code>/etc/ntp.conf</code> or <code>/etc/chrony.conf</code>
 add the following:
 <pre>maxpoll <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_time_service_set_maxpoll"></xccdf-1.1:sub></pre>
-</td>
+to <pre>server</pre> directives. If using chrony any <pre>pool</pre> directives
+should be configured too.</td>
 <td>SLES-12-030300</td>
 <td>chronyd_or_ntpd_set_maxpoll</td>
 </tr>

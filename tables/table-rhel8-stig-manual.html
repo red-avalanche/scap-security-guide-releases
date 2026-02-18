@@ -16,9 +16,9 @@
 <th>STIG ids missing rule</th>
 </tr></thead>
 <tbody><tr>
-<td>379</td>
+<td>381</td>
 <td>0</td>
-<td>379</td>
+<td>381</td>
 <td>100.00%</td>
 <td></td>
 </tr></tbody>
@@ -149,15 +149,13 @@ Satisfies: SRG-OS-000033-GPOS-00014, SRG-OS-000125-GPOS-00065, SRG-OS-000396-GPO
 
 Check to see if FIPS mode is enabled with the following command:
 
-$ sudo fipscheck
+$ fips-mode-setup --check
 
-usage: fipscheck [-s &lt;hmac-suffix&gt;] &lt;paths-to-files&gt;
+FIPS mode is enabled
 
-fips mode is on
+If FIPS mode is "enabled", check to see if the kernel boot parameter is configured for FIPS mode with the following command:
 
-If FIPS mode is "on", check to see if the kernel boot parameter is configured for FIPS mode with the following command:
-
-$ sudo grub2-editenv - list | grep fips
+$ sudo grub2-editenv list | grep fips
 
 kernelopts=root=/dev/mapper/rhel-root ro crashkernel=auto resume=/dev/mapper/rhel-swap rd.lvm.lv=rhel/root rd.lvm.lv=rhel/swap rhgb quiet fips=1 boot=UUID=8d171156-cd61-421c-ba41-1c021ac29e82
 
@@ -178,7 +176,7 @@ $ sudo fips-mode-setup --enable
 
 Reboot the system for the changes to take effect.</td>
 <td>RHEL-08-010020</td>
-<td>SV-230223r627750_rule</td>
+<td>SV-230223r792855_rule</td>
 </tr>
 <tr>
 <td>V-230224</td>
@@ -777,31 +775,6 @@ $ sudo yum install policycoreutils</td>
 <td>SV-230241r627750_rule</td>
 </tr>
 <tr>
-<td>V-230242</td>
-<td>CCI-001090</td>
-<td>medium</td>
-<td>All RHEL 8 public directories must be owned by root or a system account to prevent unauthorized and unintended information transferred via shared system resources.</td>
-<td>Preventing unauthorized information transfers mitigates the risk of information, including encrypted representations of information, produced by the actions of prior users/roles (or the actions of processes acting on behalf of prior users/roles) from being available to any current users/roles (or current processes) that obtain access to shared system resources (e.g., registers, main memory, hard disks) after those resources have been released back to information systems. The control of information in shared resources is also commonly referred to as object reuse and residual information protection.
-
-This requirement generally applies to the design of an information technology product, but it can also apply to the configuration of particular information system components that are, or use, such products. This can be verified by acceptance/validation processes in DoD or other government agencies.
-
-There may be shared resources with configurable protections (e.g., files in storage) that may be assessed on specific information system components.</td>
-<td>Check to see that all public directories are owned by root or a system account with the following command:
-
-$ sudo find / -type d -perm -0002 -exec ls -lLd {} \;
-
-drwxrwxrwxt 7 root root 4096 Jul 26 11:19 /tmp
-
-If any of the returned directories are not owned by root or a system account, this is a finding.</td>
-<td>Configure all public directories to be owned by root or a system account to prevent unauthorized and unintended information transferred via shared system resources.
-
-Set the owner of all public directories as root or a system account using the command, replace "[Public Directory]" with any directory path not owned by root or a system account:
-
-$ sudo chown root [Public Directory]</td>
-<td>RHEL-08-010180</td>
-<td>SV-230242r627750_rule</td>
-</tr>
-<tr>
 <td>V-230243</td>
 <td>CCI-001090</td>
 <td>medium</td>
@@ -817,7 +790,7 @@ Check to see that all world-writable directories have the sticky bit set by runn
 
 $ sudo find / -type d \( -perm -0002 -a ! -perm -1000 \) -print 2&gt;/dev/null
 
-drwxrwxrwxt 7 root root 4096 Jul 26 11:19 /tmp
+drwxrwxrwt 7 root root 4096 Jul 26 11:19 /tmp
 
 If any of the returned directories are world-writable and do not have the sticky bit set, this is a finding.</td>
 <td>Configure all world-writable directories to have the sticky bit set to prevent unauthorized and unintended information transferred via shared system resources.
@@ -826,7 +799,7 @@ Set the sticky bit on all world-writable directories using the command, replace 
 
 $ sudo chmod 1777 [World-Writable Directory]</td>
 <td>RHEL-08-010190</td>
-<td>SV-230243r627750_rule</td>
+<td>SV-230243r792857_rule</td>
 </tr>
 <tr>
 <td>V-230244</td>
@@ -1165,35 +1138,35 @@ $ sudo grep -io +vers.*  /etc/crypto-policies/back-ends/gnutls.config
 
 +VERS-ALL:-VERS-DTLS0.9:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-VERS-DTLS1.0:+COMP-NULL:%PROFILE_MEDIUM
 
-If the "gnutls.config" does not list "-VERS-DTLS0.9:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:VERS-DTLS1.0" to disable unapproved SSL/TLS versions, this is a finding.</td>
+If the "gnutls.config" does not list "-VERS-DTLS0.9:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-VERS-DTLS1.0" to disable unapproved SSL/TLS versions, this is a finding.</td>
 <td>Configure the RHEL 8 GnuTLS library to use only DoD-approved encryption by adding the following line to "/etc/crypto-policies/back-ends/gnutls.config":
 
 +VERS-ALL:-VERS-DTLS0.9:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-VERS-DTLS1.0
 
 A reboot is required for the changes to take effect.</td>
 <td>RHEL-08-010295</td>
-<td>SV-230256r627750_rule</td>
+<td>SV-230256r792859_rule</td>
 </tr>
 <tr>
 <td>V-230257</td>
 <td>CCI-001499</td>
 <td>medium</td>
-<td>RHEL 8 system commands must have mode 0755 or less permissive.</td>
+<td>RHEL 8 system commands must have mode 755 or less permissive.</td>
 <td>If RHEL 8 were to allow any user to make changes to software libraries, then those changes might be implemented without undergoing the appropriate testing and approvals that are part of a robust change management process.
 
 This requirement applies to RHEL 8 with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs that execute with escalated privileges. Only qualified and authorized individuals will be allowed to obtain access to information system components for purposes of initiating changes, including upgrades and modifications.</td>
-<td>Verify the system commands contained in the following directories have mode "0755" or less permissive with the following command:
+<td>Verify the system commands contained in the following directories have mode "755" or less permissive with the following command:
 
-$ sudo find -L /bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin -perm /0022 -exec ls -l {} \;
+$ sudo find -L /bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin -perm /022 -exec ls -l {} \;
 
 If any system commands are found to be group-writable or world-writable, this is a finding.</td>
 <td>Configure the system commands to be protected from unauthorized access.
 
-Run the following command, replacing "[FILE]" with any system command with a mode more permissive than "0755".
+Run the following command, replacing "[FILE]" with any system command with a mode more permissive than "755".
 
-$ sudo chmod 0755 [FILE]</td>
+$ sudo chmod 755 [FILE]</td>
 <td>RHEL-08-010300</td>
-<td>SV-230257r627750_rule</td>
+<td>SV-230257r792862_rule</td>
 </tr>
 <tr>
 <td>V-230258</td>
@@ -1224,37 +1197,37 @@ $ sudo chown root [FILE]</td>
 <td>If RHEL 8 were to allow any user to make changes to software libraries, then those changes might be implemented without undergoing the appropriate testing and approvals that are part of a robust change management process.
 
 This requirement applies to RHEL 8 with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs that execute with escalated privileges. Only qualified and authorized individuals will be allowed to obtain access to information system components for purposes of initiating changes, including upgrades and modifications.</td>
-<td>Verify the system commands contained in the following directories are group-owned by "root" with the following command:
+<td>Verify the system commands contained in the following directories are group-owned by "root", or a required system account, with the following command:
 
 $ sudo find -L /bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin ! -group root -exec ls -l {} \;
 
-If any system commands are returned and is not owned by a required system account, this is a finding.</td>
+If any system commands are returned and is not group-owned by a required system account, this is a finding.</td>
 <td>Configure the system commands to be protected from unauthorized access.
 
 Run the following command, replacing "[FILE]" with any system command file not group-owned by "root" or a required system account.
 
 $ sudo chgrp root [FILE]</td>
 <td>RHEL-08-010320</td>
-<td>SV-230259r627750_rule</td>
+<td>SV-230259r792864_rule</td>
 </tr>
 <tr>
 <td>V-230260</td>
 <td>CCI-001499</td>
 <td>medium</td>
-<td>RHEL 8 library files must have mode 0755 or less permissive.</td>
+<td>RHEL 8 library files must have mode 755 or less permissive.</td>
 <td>If RHEL 8 were to allow any user to make changes to software libraries, then those changes might be implemented without undergoing the appropriate testing and approvals that are part of a robust change management process.
 
 This requirement applies to RHEL 8 with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs that execute with escalated privileges. Only qualified and authorized individuals will be allowed to obtain access to information system components for purposes of initiating changes, including upgrades and modifications.</td>
-<td>Verify the system-wide shared library files contained in the following directories have mode "0755" or less permissive with the following command:
+<td>Verify the system-wide shared library files contained in the following directories have mode "755" or less permissive with the following command:
 
-$ sudo find -L /lib /lib64 /usr/lib /usr/lib64 -perm /0022 -type f -exec ls -l {} \;
+$ sudo find -L /lib /lib64 /usr/lib /usr/lib64 -perm /022 -type f -exec ls -l {} \;
 
 If any system-wide shared library file is found to be group-writable or world-writable, this is a finding.</td>
-<td>Configure the library files to be protected from unauthorized access. Run the following command, replacing "[FILE]" with any library file with a mode more permissive than 0755.
+<td>Configure the library files to be protected from unauthorized access. Run the following command, replacing "[FILE]" with any library file with a mode more permissive than 755.
 
-$ sudo chmod 0755 [FILE]</td>
+$ sudo chmod 755 [FILE]</td>
 <td>RHEL-08-010330</td>
-<td>SV-230260r627750_rule</td>
+<td>SV-230260r792867_rule</td>
 </tr>
 <tr>
 <td>V-230261</td>
@@ -1417,10 +1390,19 @@ localpkg_gpgcheck=True</td>
 <td>RHEL 8 must prevent the loading of a new kernel for later execution.</td>
 <td>Changes to any software components can have significant effects on the overall security of the operating system. This requirement ensures the software has not been tampered with and that it has been provided by a trusted vendor.
 
-Disabling kexec_load prevents an unsigned kernel image (that could be a windows kernel or modified vulnerable kernel) from being loaded. Kexec can be used subvert the entire secureboot process and should be avoided at all costs especially since it can load unsigned kernel images.</td>
+Disabling kexec_load prevents an unsigned kernel image (that could be a windows kernel or modified vulnerable kernel) from being loaded. Kexec can be used subvert the entire secureboot process and should be avoided at all costs especially since it can load unsigned kernel images.
+
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify the operating system is configured to disable kernel image loading with the following commands:
 
-Check the status of the kernel.kexec_load_disabled kernel parameter
+Check the status of the kernel.kexec_load_disabled kernel parameter.
 
 $ sudo sysctl kernel.kexec_load_disabled
 
@@ -1428,16 +1410,18 @@ kernel.kexec_load_disabled = 1
 
 If "kernel.kexec_load_disabled" is not set to "1" or is missing, this is a finding.
 
-Check that the configuration files are present to enable this kernel parameter
+Check that the configuration files are present to enable this kernel parameter.
 
-$ sudo grep -r kernel.kexec_load_disabled /etc/sysctl.conf /etc/sysctl.d/*.conf
+$ sudo grep -r kernel.kexec_load_disabled /etc/sysctl.d/*.conf
 
 /etc/sysctl.d/99-sysctl.conf:kernel.kexec_load_disabled = 1
 
-If "kernel.kexec_load_disabled" is not set to "1", is missing or commented out, this is a finding.</td>
+If "kernel.kexec_load_disabled" is not set to "1", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
 <td>Configure the operating system to disable kernel image loading.
 
-Add or edit the following line in a system configuration file in the "/etc/sysctl.d/" directory:
+Add or edit the following line in a system configuration file, which begins with "99-", in the "/etc/sysctl.d/" directory:
 
 kernel.kexec_load_disabled = 1
 
@@ -1445,7 +1429,7 @@ Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</td>
 <td>RHEL-08-010372</td>
-<td>SV-230266r627750_rule</td>
+<td>SV-230266r792870_rule</td>
 </tr>
 <tr>
 <td>V-230267</td>
@@ -1458,10 +1442,20 @@ When discretionary access control policies are implemented, subjects are not con
 
 By enabling the fs.protected_symlinks kernel parameter, symbolic links are permitted to be followed only when outside a sticky world-writable directory, or when the UID of the link and follower match, or when the directory owner matches the symlink's owner. Disallowing such symlinks helps mitigate vulnerabilities based on insecure file system accessed by privileged programs, avoiding an exploitation vector exploiting unsafe use of open() or creat().
 
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.
+
 Satisfies: SRG-OS-000312-GPOS-00122, SRG-OS-000312-GPOS-00123, SRG-OS-000312-GPOS-00124, SRG-OS-000324-GPOS-00125</td>
 <td>Verify the operating system is configured to enable DAC on symlinks with the following commands:
 
-Check the status of the fs.protected_symlinks kernel parameter
+Check the status of the fs.protected_symlinks kernel parameter.
 
 $ sudo sysctl fs.protected_symlinks
 
@@ -1469,16 +1463,18 @@ fs.protected_symlinks = 1
 
 If "fs.protected_symlinks" is not set to "1" or is missing, this is a finding.
 
-Check that the configuration files are present to enable this kernel parameter
+Check that the configuration files are present to enable this kernel parameter.
 
-$ sudo grep -r fs.protected_symlinks /etc/sysctl.conf /etc/sysctl.d/*.conf
+$ sudo grep -r fs.protected_symlinks /etc/sysctl.d/*.conf
 
 /etc/sysctl.d/99-sysctl.conf:fs.protected_symlinks = 1
 
-If "fs.protected_symlinks" is not set to "1", is missing or commented out, this is a finding.</td>
+If "fs.protected_symlinks" is not set to "1", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
 <td>Configure the operating system to enable DAC on symlinks.
 
-Add or edit the following line in a system configuration file in the "/etc/sysctl.d/" directory:
+Add or edit the following line in a system configuration file, which begins with "99-", in the "/etc/sysctl.d/" directory:
 
 fs.protected_symlinks = 1
 
@@ -1486,7 +1482,7 @@ Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</td>
 <td>RHEL-08-010373</td>
-<td>SV-230267r627750_rule</td>
+<td>SV-230267r792873_rule</td>
 </tr>
 <tr>
 <td>V-230268</td>
@@ -1498,6 +1494,16 @@ $ sudo sysctl --system</td>
 When discretionary access control policies are implemented, subjects are not constrained with regard to what actions they can take with information for which they have already been granted access. Thus, subjects that have been granted access to information are not prevented from passing (i.e., the subjects have the discretion to pass) the information to other subjects or objects. A subject that is constrained in its operation by Mandatory Access Control policies is still able to operate under the less rigorous constraints of this requirement. Thus, while Mandatory Access Control imposes constraints preventing a subject from passing information to another subject operating at a different sensitivity level, this requirement permits the subject to pass the information to any subject at the same sensitivity level. The policy is bounded by the information system boundary. Once the information is passed outside the control of the information system, additional means may be required to ensure the constraints remain in effect. While the older, more traditional definitions of discretionary access control require identity-based access control, that limitation is not required for this use of discretionary access control.
 
 By enabling the fs.protected_hardlinks kernel parameter, users can no longer create soft or hard links to files they do not own. Disallowing such hardlinks mitigate vulnerabilities based on insecure file system accessed by privileged programs, avoiding an exploitation vector exploiting unsafe use of open() or creat().
+
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.
 
 Satisfies: SRG-OS-000312-GPOS-00122, SRG-OS-000312-GPOS-00123, SRG-OS-000312-GPOS-00124, SRG-OS-000324-GPOS-00125</td>
 <td>Verify the operating system is configured to enable DAC on hardlinks with the following commands:
@@ -1512,14 +1518,16 @@ If "fs.protected_hardlinks" is not set to "1" or is missing, this is a finding.
 
 Check that the configuration files are present to enable this kernel parameter.
 
-$ sudo grep -r fs.protected_hardlinks /etc/sysctl.conf /etc/sysctl.d/*.conf
+$ sudo grep -r fs.protected_hardlinks /etc/sysctl.d/*.conf
 
 /etc/sysctl.d/99-sysctl.conf:fs.protected_hardlinks = 1
 
-If "fs.protected_hardlinks" is not set to "1", is missing or commented out, this is a finding.</td>
+If "fs.protected_hardlinks" is not set to "1", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
 <td>Configure the operating system to enable DAC on hardlinks.
 
-Add or edit the following line in a system configuration file in the "/etc/sysctl.d/" directory:
+Add or edit the following line in a system configuration file, which begins with "99-", in the "/etc/sysctl.d/" directory:
 
 fs.protected_hardlinks = 1
 
@@ -1527,7 +1535,7 @@ Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</td>
 <td>RHEL-08-010374</td>
-<td>SV-230268r627750_rule</td>
+<td>SV-230268r792876_rule</td>
 </tr>
 <tr>
 <td>V-230269</td>
@@ -1540,7 +1548,17 @@ This requirement generally applies to the design of an information technology pr
 
 There may be shared resources with configurable protections (e.g., files in storage) that may be assessed on specific information system components.
 
-Restricting access to the kernel message buffer limits access to only root.  This prevents attackers from gaining additional system information as a non-privileged user.</td>
+Restricting access to the kernel message buffer limits access to only root. This prevents attackers from gaining additional system information as a non-privileged user.
+
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify the operating system is configured to restrict access to the kernel message buffer with the following commands:
 
 Check the status of the kernel.dmesg_restrict kernel parameter.
@@ -1553,14 +1571,16 @@ If "kernel.dmesg_restrict" is not set to "1" or is missing, this is a finding.
 
 Check that the configuration files are present to enable this kernel parameter.
 
-$ sudo grep -r kernel.dmesg_restrict /etc/sysctl.conf /etc/sysctl.d/*.conf
+$ sudo grep -r kernel.dmesg_restrict /etc/sysctl.d/*.conf
 
 /etc/sysctl.d/99-sysctl.conf:kernel.dmesg_restrict = 1
 
-If "kernel.dmesg_restrict" is not set to "1", is missing or commented out, this is a finding.</td>
+If "kernel.dmesg_restrict" is not set to "1", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
 <td>Configure the operating system to restrict access to the kernel message buffer.
 
-Add or edit the following line in a system configuration file in the "/etc/sysctl.d/" directory:
+Add or edit the following line in a system configuration file, which begins with "99-", in the "/etc/sysctl.d/" directory:
 
 kernel.dmesg_restrict = 1
 
@@ -1568,7 +1588,7 @@ Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</td>
 <td>RHEL-08-010375</td>
-<td>SV-230269r627750_rule</td>
+<td>SV-230269r792879_rule</td>
 </tr>
 <tr>
 <td>V-230270</td>
@@ -1581,7 +1601,17 @@ This requirement generally applies to the design of an information technology pr
 
 There may be shared resources with configurable protections (e.g., files in storage) that may be assessed on specific information system components.
 
-Setting the kernel.perf_event_paranoid kernel parameter to "2" prevents attackers from gaining additional system information as a non-privileged user.</td>
+Setting the kernel.perf_event_paranoid kernel parameter to "2" prevents attackers from gaining additional system information as a non-privileged user.
+
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify the operating system is configured to prevent kernel profiling by unprivileged users with the following commands:
 
 Check the status of the kernel.perf_event_paranoid kernel parameter.
@@ -1594,14 +1624,16 @@ If "kernel.perf_event_paranoid" is not set to "2" or is missing, this is a findi
 
 Check that the configuration files are present to enable this kernel parameter.
 
-$ sudo grep -r kernel.perf_event_paranoid /etc/sysctl.conf /etc/sysctl.d/*.conf
+$ sudo grep -r kernel.perf_event_paranoid /etc/sysctl.d/*.conf
 
 /etc/sysctl.d/99-sysctl.conf:kernel.perf_event_paranoid = 2
 
-If "kernel.perf_event_paranoid" is not set to "2", is missing or commented out, this is a finding.</td>
+If "kernel.perf_event_paranoid" is not set to "2", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
 <td>Configure the operating system to prevent kernel profiling by unprivileged users.
 
-Add or edit the following line in a system configuration file in the "/etc/sysctl.d/" directory:
+Add or edit the following line in a system configuration file, which begins with "99-", in the "/etc/sysctl.d/" directory:
 
 kernel.perf_event_paranoid = 2
 
@@ -1609,7 +1641,7 @@ Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</td>
 <td>RHEL-08-010376</td>
-<td>SV-230270r627750_rule</td>
+<td>SV-230270r792882_rule</td>
 </tr>
 <tr>
 <td>V-230271</td>
@@ -1788,7 +1820,7 @@ Satisfies: SRG-OS-000134-GPOS-00068, SRG-OS-000433-GPOS-00192</td>
 
 Check that the current GRUB 2 configuration has page poisoning enabled:
 
-$ sudo grub2-editenv - list | grep page_poison
+$ sudo grub2-editenv list | grep page_poison
 
 kernelopts=root=/dev/mapper/rhel-root ro crashkernel=auto resume=/dev/mapper/rhel-swap rd.lvm.lv=rhel/root rd.lvm.lv=rhel/swap rhgb quiet fips=1 page_poison=1 vsyscall=none audit=1 audit_backlog_limit=8192 boot=UUID=8d171156-cd61-421c-ba41-1c021ac29e82
 
@@ -1809,7 +1841,7 @@ Add or modify the following line in "/etc/default/grub" to ensure the configurat
 
 GRUB_CMDLINE_LINUX="page_poison=1"</td>
 <td>RHEL-08-010421</td>
-<td>SV-230277r627750_rule</td>
+<td>SV-230277r792884_rule</td>
 </tr>
 <tr>
 <td>V-230278</td>
@@ -1825,7 +1857,7 @@ Satisfies: SRG-OS-000134-GPOS-00068, SRG-OS-000433-GPOS-00192</td>
 
 Check that the current GRUB 2 configuration disables vsyscalls:
 
-$ sudo grub2-editenv - list | grep vsyscall
+$ sudo grub2-editenv list | grep vsyscall
 
 kernelopts=root=/dev/mapper/rhel-root ro crashkernel=auto resume=/dev/mapper/rhel-swap rd.lvm.lv=rhel/root rd.lvm.lv=rhel/swap rhgb quiet fips=1 page_poison=1 vsyscall=none audit=1 audit_backlog_limit=8192 boot=UUID=8d171156-cd61-421c-ba41-1c021ac29e82
 
@@ -1846,7 +1878,7 @@ Add or modify the following line in "/etc/default/grub" to ensure the configurat
 
 GRUB_CMDLINE_LINUX="vsyscall=none"</td>
 <td>RHEL-08-010422</td>
-<td>SV-230278r743948_rule</td>
+<td>SV-230278r792886_rule</td>
 </tr>
 <tr>
 <td>V-230279</td>
@@ -1864,7 +1896,7 @@ Satisfies: SRG-OS-000134-GPOS-00068, SRG-OS-000433-GPOS-00192</td>
 
 Check that the current GRUB 2 configuration has poisoning of SLUB/SLAB objects enabled:
 
-$ sudo grub2-editenv - list | grep slub_debug
+$ sudo grub2-editenv list | grep slub_debug
 
 kernelopts=root=/dev/mapper/rhel-root ro crashkernel=auto resume=/dev/mapper/rhel-swap rd.lvm.lv=rhel/root rd.lvm.lv=rhel/swap rhgb quiet fips=1 slub_debug=P page_poison=1 vsyscall=none audit=1 audit_backlog_limit=8192 boot=UUID=8d171156-cd61-421c-ba41-1c021ac29e82
 
@@ -1885,7 +1917,7 @@ Add or modify the following line in "/etc/default/grub" to ensure the configurat
 
 GRUB_CMDLINE_LINUX="slub_debug=P"</td>
 <td>RHEL-08-010423</td>
-<td>SV-230279r627750_rule</td>
+<td>SV-230279r792888_rule</td>
 </tr>
 <tr>
 <td>V-230280</td>
@@ -1894,23 +1926,37 @@ GRUB_CMDLINE_LINUX="slub_debug=P"</td>
 <td>RHEL 8 must implement address space layout randomization (ASLR) to protect its memory from unauthorized code execution.</td>
 <td>Some adversaries launch attacks with the intent of executing code in non-executable regions of memory or in memory locations that are prohibited. Security safeguards employed to protect memory include, for example, data execution prevention and address space layout randomization. Data execution prevention safeguards can be either hardware-enforced or software-enforced with hardware providing the greater strength of mechanism.
 
-Examples of attacks are buffer overflow attacks.</td>
+Examples of attacks are buffer overflow attacks.
+
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify RHEL 8 implements ASLR with the following command:
 
 $ sudo sysctl kernel.randomize_va_space
 
 kernel.randomize_va_space = 2
 
-If nothing is returned, verify the kernel parameter "randomize_va_space" is set to "2" with the following command:
+If "kernel.randomize_va_space" is not set to "2", this is a finding.
 
-$ sudo cat /proc/sys/kernel/randomize_va_space
+Check that the configuration files are present to enable this kernel parameter.
 
-2
+$ sudo grep -r kernel.randomize_va_space /etc/sysctl.d/*.conf
 
-If "kernel.randomize_va_space" is not set to "2", this is a finding.</td>
+/etc/sysctl.d/99-sysctl.conf:kernel.randomize_va_space = 2
+
+If "kernel.randomize_va_space" is not set to "2", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
 <td>Configure the operating system to implement virtual address space randomization.
 
-Set the system to the required kernel parameter by adding the following line to "/etc/sysctl.d/*.conf"(or modify the line to have the required value):
+Add or edit the following line in a system configuration file, which begins with "99-", in the "/etc/sysctl.d/" directory:
 
 kernel.randomize_va_space=2
 
@@ -1918,7 +1964,7 @@ Issue the following command to make the changes take effect:
 
 $ sudo sysctl --system</td>
 <td>RHEL-08-010430</td>
-<td>SV-230280r627750_rule</td>
+<td>SV-230280r792891_rule</td>
 </tr>
 <tr>
 <td>V-230281</td>
@@ -2605,15 +2651,37 @@ If kernel core dumps are required, document the need with the ISSO.</td>
 <td>CCI-000366</td>
 <td>medium</td>
 <td>RHEL 8 must disable the kernel.core_pattern.</td>
-<td>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore may remain unsecured. They increase the risk to the platform by providing additional attack vectors.</td>
+<td>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore may remain unsecured. They increase the risk to the platform by providing additional attack vectors.
+
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify RHEL 8 disables storing core dumps with the following commands:
 
 $ sudo sysctl kernel.core_pattern
 
 kernel.core_pattern = |/bin/false
 
-If the returned line does not have a value of "|/bin/false", or a line is not returned and the need for core dumps is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</td>
-<td>Configure RHEL 8 to disable storing core dumps by adding the following line to a file in the "/etc/sysctl.d" directory:
+If the returned line does not have a value of "|/bin/false", or a line is not returned and the need for core dumps is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.
+
+Check that the configuration files are present to enable this kernel parameter.
+
+$ sudo grep -r kernel.core_pattern /etc/sysctl.d/*.conf
+
+/etc/sysctl.d/99-sysctl.conf:kernel.core_pattern = |/bin/false
+
+If "kernel.core_pattern" is not set to "|/bin/false", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
+<td>Configure RHEL 8 to disable storing core dumps.
+
+Add or edit the following line in a system configuration file, which begins with "99-", in the "/etc/sysctl.d/" directory:
 
 kernel.core_pattern = |/bin/false
 
@@ -2621,7 +2689,7 @@ The system configuration files need to be reloaded for the changes to take effec
 
 $ sudo sysctl --system</td>
 <td>RHEL-08-010671</td>
-<td>SV-230311r627750_rule</td>
+<td>SV-230311r792894_rule</td>
 </tr>
 <tr>
 <td>V-230312</td>
@@ -2775,17 +2843,16 @@ $ sudo echo -n &gt; /etc/resolv.conf</td>
 <td>The executable search path (typically the PATH environment variable) contains a list of directories for the shell to search to find executables. If this path includes the current working directory (other than the user's home directory), executables in these directories may be executed instead of system commands. This variable is formatted as a colon-separated list of directories. If there is an empty entry, such as a leading or trailing colon or two consecutive colons, this is interpreted as the current working directory. If deviations from the default system search path for the local interactive user are required, they must be documented with the Information System Security Officer (ISSO).</td>
 <td>Verify that all local interactive user initialization file executable search path statements do not contain statements that will reference a working directory other than user home directories with the following commands:
 
-$ sudo grep -i path /home/*/.*
+$ sudo grep -i path= /home/*/.*
 
 /home/[localinteractiveuser]/.bash_profile:PATH=$PATH:$HOME/.local/bin:$HOME/bin
-/home/[localinteractiveuser]/.bash_profile:export PATH
 
 If any local interactive user initialization files have executable search path statements that include directories outside of their home directory and is not documented with the ISSO as an operational requirement, this is a finding.</td>
 <td>Edit the local interactive user initialization files to change any PATH variable statements that reference directories other than their home directory.
 
 If a local interactive user requires path variables to reference a directory owned by the application, it must be documented with the ISSO.</td>
 <td>RHEL-08-010690</td>
-<td>SV-230317r627750_rule</td>
+<td>SV-230317r792896_rule</td>
 </tr>
 <tr>
 <td>V-230318</td>
@@ -3813,10 +3880,10 @@ If any output is produced, this is a finding.</td>
 
 The session lock is implemented at the point where session activity can be determined. Rather than be forced to wait for a period of time to expire before the user session can be locked, RHEL 8 needs to provide users with the ability to manually invoke a session lock so users can secure their session if it is necessary to temporarily vacate the immediate physical vicinity.
 
-Tmux is a terminal multiplexer that enables a number of terminals to be created, accessed, and controlled from a single screen.  Red Hat endorses tmux as the recommended session controlling package.
-
 Satisfies: SRG-OS-000028-GPOS-00009, SRG-OS-000030-GPOS-00011</td>
 <td>Verify the operating system enables a user's session lock until that user re-establishes access using established identification and authentication procedures with the following command:
+
+This requirement assumes the use of the RHEL 8 default graphical user interface, Gnome Shell. If the system does not have any graphical user interface installed, this requirement is Not Applicable.
 
 $ sudo grep -R removal-action /etc/dconf/db/*
 
@@ -3839,7 +3906,7 @@ Update the system databases:
 
 $ sudo dconf update</td>
 <td>RHEL-08-020050</td>
-<td>SV-230351r627750_rule</td>
+<td>SV-230351r792899_rule</td>
 </tr>
 <tr>
 <td>V-230352</td>
@@ -4752,25 +4819,27 @@ If the account is for an application, the requirement for a umask less restricti
 <td>The umask controls the default access mode assigned to newly created files. A umask of 077 limits new files to mode 600 or less permissive. Although umask can be represented as a four-digit number, the first digit representing special access modes is typically ignored or required to be "0". This requirement applies to the globally configured system defaults and the local interactive user defaults for each account on the system.</td>
 <td>Verify that the umask default for installed shells is "077".
 
-Check for the value of the "UMASK" parameter in the "/etc/bashrc" and "/etc/csh.cshrc" files with the following command:
+Check for the value of the "UMASK" parameter in the "/etc/bashrc", "/etc/csh.cshrc" and "/etc/profile" files with the following command:
 
-Note: If the value of the "UMASK" parameter is set to "000" in either the "/etc/bashrc" or the "/etc/csh.cshrc" files, the Severity is raised to a CAT I.
+Note: If the value of the "UMASK" parameter is set to "000" in the "/etc/bashrc" the "/etc/csh.cshrc" or the "/etc/profile" files, the Severity is raised to a CAT I.
 
-# grep -i umask /etc/bashrc /etc/csh.cshrc
+# grep -i umask /etc/bashrc /etc/csh.cshrc /etc/profile
 
 /etc/bashrc:          umask 077
 /etc/bashrc:          umask 077
 /etc/csh.cshrc:      umask 077   
 /etc/csh.cshrc:      umask 077
+/etc/profile:      umask 077   
+/etc/profile:      umask 077
 
 If the value for the "UMASK" parameter is not "077", or the "UMASK" parameter is missing or is commented out, this is a finding.</td>
 <td>Configure the operating system to define default permissions for all authenticated users in such a way that the user can only read and modify their own files.
 
-Add or edit the lines for the "UMASK" parameter in the "/etc/bashrc" and "etc/csh.cshrc" files to "077":
+Add or edit the lines for the "UMASK" parameter in the "/etc/bashrc", "/etc/csh.cshrc" and "/etc/profile"files to "077":
 
 UMASK 077</td>
 <td>RHEL-08-020353</td>
-<td>SV-230385r627750_rule</td>
+<td>SV-230385r792902_rule</td>
 </tr>
 <tr>
 <td>V-230386</td>
@@ -7235,7 +7304,7 @@ DoD has defined the list of events for which RHEL 8 will provide an audit record
 Satisfies: SRG-OS-000062-GPOS-00031, SRG-OS-000037-GPOS-00015, SRG-OS-000042-GPOS-00020, SRG-OS-000062-GPOS-00031, SRG-OS-000392-GPOS-00172, SRG-OS-000462-GPOS-00206, SRG-OS-000471-GPOS-00215, SRG-OS-000473-GPOS-00218</td>
 <td>Verify RHEL 8 enables auditing of processes that start prior to the audit daemon with the following commands:
 
-$ sudo grub2-editenv - list | grep audit
+$ sudo grub2-editenv list | grep audit
 
 kernelopts=root=/dev/mapper/rhel-root ro crashkernel=auto resume=/dev/mapper/rhel-swap rd.lvm.lv=rhel/root rd.lvm.lv=rhel/swap rhgb quiet fips=1 audit=1 audit_backlog_limit=8192 boot=UUID=8d171156-cd61-421c-ba41-1c021ac29e82
 
@@ -7256,7 +7325,7 @@ Add or modify the following line in "/etc/default/grub" to ensure the configurat
 
 GRUB_CMDLINE_LINUX="audit=1"</td>
 <td>RHEL-08-030601</td>
-<td>SV-230468r627750_rule</td>
+<td>SV-230468r792904_rule</td>
 </tr>
 <tr>
 <td>V-230469</td>
@@ -7272,7 +7341,7 @@ Audit records can be generated from various components within the information sy
 Allocating an audit_backlog_limit of sufficient size is critical in maintaining a stable boot process.  With an insufficient limit allocated, the system is susceptible to boot failures and crashes.</td>
 <td>Verify RHEL 8 allocates a sufficient audit_backlog_limit to capture processes that start prior to the audit daemon with the following commands:
 
-$ sudo grub2-editenv - list | grep audit
+$ sudo grub2-editenv list | grep audit
 
 kernelopts=root=/dev/mapper/rhel-root ro crashkernel=auto resume=/dev/mapper/rhel-swap rd.lvm.lv=rhel/root rd.lvm.lv=rhel/swap rhgb quiet fips=1 audit=1 audit_backlog_limit=8192 boot=UUID=8d171156-cd61-421c-ba41-1c021ac29e82
 
@@ -7293,7 +7362,7 @@ Add or modify the following line in "/etc/default/grub" to ensure the configurat
 
 GRUB_CMDLINE_LINUX="audit_backlog_limit=8192"</td>
 <td>RHEL-08-030602</td>
-<td>SV-230469r744004_rule</td>
+<td>SV-230469r792906_rule</td>
 </tr>
 <tr>
 <td>V-230470</td>
@@ -7934,7 +8003,7 @@ Verify the operating system is configured to disable non-essential capabilities.
 Kernel page-table isolation is a kernel feature that mitigates the Meltdown security vulnerability and hardens the kernel against attempts to bypass kernel address space layout randomization (KASLR).</td>
 <td>Verify RHEL 8 enables kernel page-table isolation with the following commands:
 
-$ sudo grub2-editenv - list | grep pti
+$ sudo grub2-editenv list | grep pti
 
 kernelopts=root=/dev/mapper/rhel-root ro crashkernel=auto resume=/dev/mapper/rhel-swap rd.lvm.lv=rhel/root rd.lvm.lv=rhel/swap rhgb quiet fips=1 audit=1 audit_backlog_limit=8192 pti=on boot=UUID=8d171156-cd61-421c-ba41-1c021ac29e82
 
@@ -7955,7 +8024,7 @@ Add or modify the following line in "/etc/default/grub" to ensure the configurat
 
 GRUB_CMDLINE_LINUX="pti=on"</td>
 <td>RHEL-08-040004</td>
-<td>SV-230491r627750_rule</td>
+<td>SV-230491r792908_rule</td>
 </tr>
 <tr>
 <td>V-230492</td>
@@ -8056,9 +8125,9 @@ Failing to disconnect unused protocols can result in a system compromise.
 The Asynchronous Transfer Mode (ATM) is a protocol operating on network, data link, and physical layers, based on virtual circuits and virtual paths. Disabling ATM protects the system against exploitation of any laws in its implementation.</td>
 <td>Verify the operating system disables the ability to load the ATM protocol kernel module.
 
-$ sudo grep -ri ATM /etc/modprobe.d/* | grep -i "/bin/true"
+$ sudo grep -r atm /etc/modprobe.d/* | grep "/bin/true"
 
-install ATM /bin/true
+install atm /bin/true
 
 If the command does not return any output, or the line is commented out, and use of the ATM protocol is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.
 
@@ -8066,21 +8135,21 @@ Verify the operating system disables the ability to use the ATM protocol.
 
 Check to see if the ATM protocol is disabled with the following command:
 
-$ sudo grep -ri ATM /etc/modprobe.d/* | grep -i "blacklist"
+$ sudo grep -r atm /etc/modprobe.d/* | grep "blacklist"
 
-blacklist ATM
+blacklist atm
 
 If the command does not return any output or the output is not "blacklist atm", and use of the ATM protocol is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</td>
 <td>Configure the operating system to disable the ability to use the ATM protocol kernel module.
 
 Add or update the following lines in the file "/etc/modprobe.d/blacklist.conf":
 
-install ATM /bin/true
-blacklist ATM
+install atm /bin/true
+blacklist atm
 
 Reboot the system for the settings to take effect.</td>
 <td>RHEL-08-040021</td>
-<td>SV-230494r627750_rule</td>
+<td>SV-230494r792911_rule</td>
 </tr>
 <tr>
 <td>V-230495</td>
@@ -8094,9 +8163,9 @@ Failing to disconnect unused protocols can result in a system compromise.
 The Controller Area Network (CAN) is a serial communications protocol, which was initially developed for automotive and is now also used in marine, industrial, and medical applications. Disabling CAN protects the system against exploitation of any flaws in its implementation.</td>
 <td>Verify the operating system disables the ability to load the CAN protocol kernel module.
 
-$ sudo grep -ri CAN /etc/modprobe.d/* | grep -i "/bin/true"
+$ sudo grep -r can /etc/modprobe.d/* | grep "/bin/true"
 
-install CAN /bin/true
+install can /bin/true
 
 If the command does not return any output, or the line is commented out, and use of the CAN protocol is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.
 
@@ -8104,21 +8173,21 @@ Verify the operating system disables the ability to use the CAN protocol.
 
 Check to see if the CAN protocol is disabled with the following command:
 
-$ sudo grep -ri CAN /etc/modprobe.d/* | grep -i "blacklist"
+$ sudo grep -r can /etc/modprobe.d/* | grep "blacklist"
 
-blacklist CAN
+blacklist can
 
-If the command does not return any output or the output is not "blacklist CAN", and use of the CAN protocol is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</td>
+If the command does not return any output or the output is not "blacklist can", and use of the CAN protocol is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</td>
 <td>Configure the operating system to disable the ability to use the CAN protocol kernel module.
 
 Add or update the following lines in the file "/etc/modprobe.d/blacklist.conf":
 
-install CAN /bin/true
-blacklist CAN
+install can /bin/true
+blacklist can
 
 Reboot the system for the settings to take effect.</td>
 <td>RHEL-08-040022</td>
-<td>SV-230495r627750_rule</td>
+<td>SV-230495r792914_rule</td>
 </tr>
 <tr>
 <td>V-230496</td>
@@ -8132,9 +8201,9 @@ Failing to disconnect unused protocols can result in a system compromise.
 The Stream Control Transmission Protocol (SCTP) is a transport layer protocol, designed to support the idea of message-oriented communication, with several streams of messages within one connection. Disabling SCTP protects the system against exploitation of any flaws in its implementation.</td>
 <td>Verify the operating system disables the ability to load the SCTP kernel module.
 
-$ sudo grep -ri SCTP /etc/modprobe.d/* | grep -i "/bin/true"
+$ sudo grep -r sctp /etc/modprobe.d/* | grep "/bin/true"
 
-install SCTP /bin/true
+install sctp /bin/true
 
 If the command does not return any output, or the line is commented out, and use of the SCTP is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.
 
@@ -8142,21 +8211,21 @@ Verify the operating system disables the ability to use the SCTP.
 
 Check to see if the SCTP is disabled with the following command:
 
-$ sudo grep -ri SCTP /etc/modprobe.d/* | grep -i "blacklist"
+$ sudo grep -r sctp /etc/modprobe.d/* | grep "blacklist"
 
-blacklist SCTP
+blacklist sctp
 
-If the command does not return any output or the output is not "blacklist SCTP", and use of the SCTP is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</td>
+If the command does not return any output or the output is not "blacklist sctp", and use of the SCTP is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</td>
 <td>Configure the operating system to disable the ability to use the SCTP kernel module.
 
 Add or update the following lines in the file "/etc/modprobe.d/blacklist.conf":
 
-install SCTP /bin/true
-blacklist SCTP
+install sctp /bin/true
+blacklist sctp
 
 Reboot the system for the settings to take effect.</td>
 <td>RHEL-08-040023</td>
-<td>SV-230496r744017_rule</td>
+<td>SV-230496r792917_rule</td>
 </tr>
 <tr>
 <td>V-230497</td>
@@ -8170,9 +8239,9 @@ Failing to disconnect unused protocols can result in a system compromise.
 The Transparent Inter-Process Communication (TIPC) protocol is designed to provide communications between nodes in a cluster. Disabling TIPC protects the system against exploitation of any flaws in its implementation.</td>
 <td>Verify the operating system disables the ability to load the TIPC protocol kernel module.
 
-$ sudo grep -ri TIPC /etc/modprobe.d/* | grep -i "/bin/true"
+$ sudo grep -r tipc /etc/modprobe.d/* | grep "/bin/true"
 
-install TIPC /bin/true
+install tipc /bin/true
 
 If the command does not return any output, or the line is commented out, and use of the TIPC protocol is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.
 
@@ -8180,21 +8249,21 @@ Verify the operating system disables the ability to use the TIPC protocol.
 
 Check to see if the TIPC protocol is disabled with the following command:
 
-$ sudo grep -ri TIPC /etc/modprobe.d/* | grep -i "blacklist"
+$ sudo grep -r tipc /etc/modprobe.d/* | grep "blacklist"
 
-blacklist TIPC
+blacklist tipc
 
-If the command does not return any output or the output is not "blacklist TIPC", and use of the TIPC protocol is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</td>
+If the command does not return any output or the output is not "blacklist tipc", and use of the TIPC protocol is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</td>
 <td>Configure the operating system to disable the ability to use the TIPC protocol kernel module.
 
 Add or update the following lines in the file "/etc/modprobe.d/blacklist.conf":
 
-install TIPC /bin/true
-blacklist TIPC
+install tipc /bin/true
+blacklist tipc
 
 Reboot the system for the settings to take effect.</td>
 <td>RHEL-08-040024</td>
-<td>SV-230497r627750_rule</td>
+<td>SV-230497r792920_rule</td>
 </tr>
 <tr>
 <td>V-230498</td>
@@ -8208,7 +8277,7 @@ Removing support for unneeded filesystem types reduces the local attack surface 
 Compressed ROM/RAM file system (or cramfs) is a read-only file system designed for simplicity and space-efficiency.  It is mainly used in embedded and small-footprint systems.</td>
 <td>Verify the operating system disables the ability to load the cramfs kernel module.
 
-$ sudo grep -ri cramfs /etc/modprobe.d/* | grep -i "/bin/true"
+$ sudo grep -r cramfs /etc/modprobe.d/* | grep "/bin/true"
 
 install cramfs /bin/true
 
@@ -8218,7 +8287,7 @@ Verify the operating system disables the ability to use the cramfs kernel module
 
 Check to see if the cramfs kernel module is disabled with the following command:
 
-$ sudo grep -ri cramfs /etc/modprobe.d/* | grep -i "blacklist"
+$ sudo grep -r cramfs /etc/modprobe.d/* | grep "blacklist"
 
 blacklist cramfs
 
@@ -8232,7 +8301,7 @@ blacklist cramfs
 
 Reboot the system for the settings to take effect.</td>
 <td>RHEL-08-040025</td>
-<td>SV-230498r627750_rule</td>
+<td>SV-230498r792922_rule</td>
 </tr>
 <tr>
 <td>V-230499</td>
@@ -8244,7 +8313,7 @@ Reboot the system for the settings to take effect.</td>
 The IEEE 1394 (FireWire) is a serial bus standard for high-speed real-time communication. Disabling FireWire protects the system against exploitation of any flaws in its implementation.</td>
 <td>Verify the operating system disables the ability to load the firewire-core kernel module.
 
-$ sudo grep -ri firewire-core /etc/modprobe.d/* | grep -i "/bin/true"
+$ sudo grep -r firewire-core /etc/modprobe.d/* | grep "/bin/true"
 
 install firewire-core /bin/true
 
@@ -8254,7 +8323,7 @@ Verify the operating system disables the ability to use the firewire-core kernel
 
 Check to see if the firewire-core kernel module is disabled with the following command:
 
-$ sudo grep -ri firewire-core /etc/modprobe.d/* | grep -i "blacklist"
+$ sudo grep -r firewire-core /etc/modprobe.d/* | grep "blacklist"
 
 blacklist firewire-core
 
@@ -8268,7 +8337,7 @@ blacklist firewire-core
 
 Reboot the system for the settings to take effect.</td>
 <td>RHEL-08-040026</td>
-<td>SV-230499r627750_rule</td>
+<td>SV-230499r792924_rule</td>
 </tr>
 <tr>
 <td>V-230500</td>
@@ -8891,20 +8960,20 @@ The "nosuid" mount option causes the system to not execute "setuid" and "setgid"
 
 $ sudo mount | grep /var/tmp
 
-/dev/mapper/rhel-var-log-audit on /var/tmp type xfs (rw,nodev,nosuid,noexec,seclabel)
+/dev/mapper/rhel-var-tmp on /var/tmp type xfs (rw,nodev,nosuid,noexec,seclabel)
 
 Verify that the "nodev" option is configured for /var/tmp:
 
 $ sudo cat /etc/fstab | grep /var/tmp
 
-/dev/mapper/rhel-var-log-audit /var/tmp xfs defaults,nodev,nosuid,noexec 0 0
+/dev/mapper/rhel-var-tmp /var/tmp xfs defaults,nodev,nosuid,noexec 0 0
 
 If results are returned and the "nodev" option is missing, or if /var/tmp is mounted without the "nodev" option, this is a finding.</td>
 <td>Configure the system so that /var/tmp is mounted with the "nodev" option by adding /modifying the /etc/fstab with the following line:
 
-/dev/mapper/rhel-var-log-audit /var/tmp xfs defaults,nodev,nosuid,noexec 0 0</td>
+/dev/mapper/rhel-var-tmp /var/tmp xfs defaults,nodev,nosuid,noexec 0 0</td>
 <td>RHEL-08-040132</td>
-<td>SV-230520r627750_rule</td>
+<td>SV-230520r792927_rule</td>
 </tr>
 <tr>
 <td>V-230521</td>
@@ -8922,20 +8991,20 @@ The "nosuid" mount option causes the system to not execute "setuid" and "setgid"
 
 $ sudo mount | grep /var/tmp
 
-/dev/mapper/rhel-var-log-audit on /var/tmp type xfs (rw,nodev,nosuid,noexec,seclabel)
+/dev/mapper/rhel-var-tmp on /var/tmp type xfs (rw,nodev,nosuid,noexec,seclabel)
 
 Verify that the "nosuid" option is configured for /var/tmp:
 
 $ sudo cat /etc/fstab | grep /var/tmp
 
-/dev/mapper/rhel-var-log-audit /var/tmp xfs defaults,nodev,nosuid,noexec 0 0
+/dev/mapper/rhel-var-tmp /var/tmp xfs defaults,nodev,nosuid,noexec 0 0
 
 If results are returned and the "nosuid" option is missing, or if /var/tmp is mounted without the "nosuid" option, this is a finding.</td>
 <td>Configure the system so that /var/tmp is mounted with the "nosuid" option by adding /modifying the /etc/fstab with the following line:
 
-/dev/mapper/rhel-var-log-audit /var/tmp xfs defaults,nodev,nosuid,noexec 0 0</td>
+/dev/mapper/rhel-var-tmp /var/tmp xfs defaults,nodev,nosuid,noexec 0 0</td>
 <td>RHEL-08-040133</td>
-<td>SV-230521r627750_rule</td>
+<td>SV-230521r792930_rule</td>
 </tr>
 <tr>
 <td>V-230522</td>
@@ -8953,20 +9022,20 @@ The "nosuid" mount option causes the system to not execute "setuid" and "setgid"
 
 $ sudo mount | grep /var/tmp
 
-/dev/mapper/rhel-var-log-audit on /var/tmp type xfs (rw,nodev,nosuid,noexec,seclabel)
+/dev/mapper/rhel-var-tmp on /var/tmp type xfs (rw,nodev,nosuid,noexec,seclabel)
 
 Verify that the "noexec" option is configured for /var/tmp:
 
 $ sudo cat /etc/fstab | grep /var/tmp
 
-/dev/mapper/rhel-var-log-audit /var/tmp xfs defaults,nodev,nosuid,noexec 0 0
+/dev/mapper/rhel-var-tmp /var/tmp xfs defaults,nodev,nosuid,noexec 0 0
 
 If results are returned and the "noexec" option is missing, or if /var/tmp is mounted without the "noexec" option, this is a finding.</td>
 <td>Configure the system so that /var/tmp is mounted with the "noexec" option by adding /modifying the /etc/fstab with the following line:
 
-/dev/mapper/rhel-var-log-audit /var/tmp xfs defaults,nodev,nosuid,noexec 0 0</td>
+/dev/mapper/rhel-var-tmp /var/tmp xfs defaults,nodev,nosuid,noexec 0 0</td>
 <td>RHEL-08-040134</td>
-<td>SV-230522r627750_rule</td>
+<td>SV-230522r792933_rule</td>
 </tr>
 <tr>
 <td>V-230523</td>
@@ -9265,7 +9334,17 @@ If the account is associated with system commands or applications, the UID shoul
 <td>CCI-000366</td>
 <td>medium</td>
 <td>RHEL 8 must prevent IPv6 Internet Control Message Protocol (ICMP) redirect messages from being accepted.</td>
-<td>ICMP redirect messages are used by routers to inform hosts that a more direct route exists for a particular destination. These messages modify the host's route table and are unauthenticated. An illicit ICMP redirect message could result in a man-in-the-middle attack.</td>
+<td>ICMP redirect messages are used by routers to inform hosts that a more direct route exists for a particular destination. These messages modify the host's route table and are unauthenticated. An illicit ICMP redirect message could result in a man-in-the-middle attack.
+
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify RHEL 8 will not accept IPv6 ICMP redirect messages.
 
 Note: If IPv6 is disabled on the system, this requirement is Not Applicable.
@@ -9276,16 +9355,28 @@ $ sudo sysctl net.ipv6.conf.default.accept_redirects
 
 net.ipv6.conf.default.accept_redirects = 0
 
-If the returned line does not have a value of "0", a line is not returned, or the line is commented out, this is a finding.</td>
-<td>Configure RHEL 8 to prevent IPv6 ICMP redirect messages from being accepted with the following command:
+If the returned line does not have a value of "0", a line is not returned, or the line is commented out, this is a finding.
 
-$ sudo sysctl -w net.ipv6.conf.default.accept_redirects=0
+Check that the configuration files are present to enable this network parameter.
 
-If "0" is not the system's default value then add or update the following line in the appropriate file under "/etc/sysctl.d":
+$ sudo grep -r net.ipv6.conf.default.accept_redirects /etc/sysctl.d/*.conf
 
-net.ipv6.conf.default.accept_redirects=0</td>
+/etc/sysctl.d/99-sysctl.conf: net.ipv6.conf.default.accept_redirects = 0
+
+If "net.ipv6.conf.default.accept_redirects" is not set to "0", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
+<td>Configure RHEL 8 to prevent IPv6 ICMP redirect messages from being accepted.
+
+Add or edit the following line in a system configuration file, which begins with "99-", in the "/etc/sysctl.d/" directory:
+
+net.ipv6.conf.default.accept_redirects = 0
+
+Load settings from all system configuration files with the following command:
+
+$ sudo sysctl --system</td>
 <td>RHEL-08-040210</td>
-<td>SV-230535r744035_rule</td>
+<td>SV-230535r792936_rule</td>
 </tr>
 <tr>
 <td>V-230536</td>
@@ -9294,7 +9385,17 @@ net.ipv6.conf.default.accept_redirects=0</td>
 <td>RHEL 8 must not send Internet Control Message Protocol (ICMP) redirects.</td>
 <td>ICMP redirect messages are used by routers to inform hosts that a more direct route exists for a particular destination. These messages contain information from the system's route table, possibly revealing portions of the network topology.
 
-There are notable differences between Internet Protocol version 4 (IPv4) and Internet Protocol version 6 (IPv6). There is only a directive to disable sending of IPv4 redirected packets. Refer to RFC4294 for an explanation of "IPv6 Node Requirements", which resulted in this difference between IPv4 and IPv6.</td>
+There are notable differences between Internet Protocol version 4 (IPv4) and Internet Protocol version 6 (IPv6). There is only a directive to disable sending of IPv4 redirected packets. Refer to RFC4294 for an explanation of "IPv6 Node Requirements", which resulted in this difference between IPv4 and IPv6.
+
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify RHEL 8 does not IPv4 ICMP redirect messages.
 
 Note: If IPv4 is disabled on the system, this requirement is Not Applicable.
@@ -9305,16 +9406,28 @@ $ sudo sysctl net.ipv4.conf.all.send_redirects
 
 net.ipv4.conf.all.send_redirects = 0
 
-If the returned line does not have a value of "0", or a line is not returned, this is a finding.</td>
-<td>Configure RHEL 8 to not allow interfaces to perform IPv4 ICMP redirects with the following command:
+If the returned line does not have a value of "0", or a line is not returned, this is a finding.
 
-$ sudo sysctl -w net.ipv4.conf.all.send_redirects=0
+Check that the configuration files are present to enable this network parameter.
 
-If "0" is not the system's default value then add or update the following line in the appropriate file under "/etc/sysctl.d":
+$ sudo grep -r net.ipv4.conf.all.send_redirects /etc/sysctl.d/*.conf
 
-net.ipv4.conf.all.send_redirects=0</td>
+/etc/sysctl.d/99-sysctl.conf: net.ipv4.conf.all.send_redirects = 0
+
+If "net.ipv4.conf.all.send_redirects" is not set to "0", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
+<td>Configure RHEL 8 to not allow interfaces to perform IPv4 ICMP redirects.
+
+Add or edit the following line in a system configuration file, which begins with "99-", in the "/etc/sysctl.d/" directory:
+
+net.ipv4.conf.all.send_redirects=0
+
+Load settings from all system configuration files with the following command:
+
+$ sudo sysctl --system</td>
 <td>RHEL-08-040220</td>
-<td>SV-230536r744037_rule</td>
+<td>SV-230536r792939_rule</td>
 </tr>
 <tr>
 <td>V-230537</td>
@@ -9323,33 +9436,65 @@ net.ipv4.conf.all.send_redirects=0</td>
 <td>RHEL 8 must not respond to Internet Control Message Protocol (ICMP) echoes sent to a broadcast address.</td>
 <td>Responding to broadcast ICMP echoes facilitates network mapping and provides a vector for amplification attacks.
 
-There are notable differences between Internet Protocol version 4 (IPv4) and Internet Protocol version 6 (IPv6). IPv6 does not implement the same method of broadcast as IPv4. Instead, IPv6 uses multicast addressing to the all-hosts multicast group. Refer to RFC4294 for an explanation of "IPv6 Node Requirements", which resulted in this difference between IPv4 and IPv6.</td>
+There are notable differences between Internet Protocol version 4 (IPv4) and Internet Protocol version 6 (IPv6). IPv6 does not implement the same method of broadcast as IPv4. Instead, IPv6 uses multicast addressing to the all-hosts multicast group. Refer to RFC4294 for an explanation of "IPv6 Node Requirements", which resulted in this difference between IPv4 and IPv6.
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify RHEL 8 does not respond to ICMP echoes sent to a broadcast address.
 
 Note: If IPv4 is disabled on the system, this requirement is Not Applicable.
+
 Check the value of the "icmp_echo_ignore_broadcasts" variable with the following command:
 
 $ sudo sysctl net.ipv4.icmp_echo_ignore_broadcasts
 
 net.ipv4.icmp_echo_ignore_broadcasts = 1
 
-If the returned line does not have a value of "1", a line is not returned, or the retuned line is commented out, this is a finding.</td>
-<td>Configure RHEL 8 to not respond to IPv4 ICMP echoes sent to a broadcast address with the following command:
+If the returned line does not have a value of "1", a line is not returned, or the retuned line is commented out, this is a finding.
 
-$ sudo sysctl -w net.ipv4.icmp_echo_ignore_broadcasts=1
+Check that the configuration files are present to enable this network parameter.
 
-If "1" is not the system's default value then add or update the following line in the appropriate file under "/etc/sysctl.d":
+$ sudo grep -r net.ipv4.icmp_echo_ignore_broadcasts /etc/sysctl.d/*.conf
 
-net.ipv4.icmp_echo_ignore_broadcasts=1</td>
+/etc/sysctl.d/99-sysctl.conf: net.ipv4.icmp_echo_ignore_broadcasts = 1
+
+If "net.ipv4.icmp_echo_ignore_broadcasts" is not set to "1", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
+<td>Configure RHEL 8 to not respond to IPv4 ICMP echoes sent to a broadcast address.
+
+Add or edit the following line in a system configuration file, which begins with "99-", in the "/etc/sysctl.d/" directory:
+
+net.ipv4.icmp_echo_ignore_broadcasts=1
+
+Load settings from all system configuration files with the following command:
+
+$ sudo sysctl --system</td>
 <td>RHEL-08-040230</td>
-<td>SV-230537r744039_rule</td>
+<td>SV-230537r792942_rule</td>
 </tr>
 <tr>
 <td>V-230538</td>
 <td>CCI-000366</td>
 <td>medium</td>
 <td>RHEL 8 must not forward IPv6 source-routed packets.</td>
-<td>Source-routed packets allow the source of the packet to suggest that routers forward the packet along a different path than configured on the router, which can be used to bypass network security measures. This requirement applies only to the forwarding of source-routed traffic, such as when forwarding is enabled and the system is functioning as a router.</td>
+<td>Source-routed packets allow the source of the packet to suggest that routers forward the packet along a different path than configured on the router, which can be used to bypass network security measures. This requirement applies only to the forwarding of source-routed traffic, such as when forwarding is enabled and the system is functioning as a router.
+
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify RHEL 8 does not accept IPv6 source-routed packets.
 
 Note: If IPv6 is disabled on the system, this requirement is Not Applicable.
@@ -9360,23 +9505,45 @@ $ sudo sysctl net.ipv6.conf.all.accept_source_route
 
 net.ipv6.conf.all.accept_source_route = 0
 
-If the returned line does not have a value of "0", a line is not returned, or the line is commented out, this is a finding.</td>
-<td>Configure RHEL 8 to not forward IPv6 source-routed packets with the following command:
+If the returned line does not have a value of "0", a line is not returned, or the line is commented out, this is a finding.
 
-$ sudo sysctl -w net.ipv6.conf.all.accept_source_route=0
+Check that the configuration files are present to enable this network parameter.
 
-If "0" is not the system's all value then add or update the following line in the appropriate file under "/etc/sysctl.d":
+$ sudo grep -r net.ipv6.conf.all.accept_source_route /etc/sysctl.d/*.conf
 
-net.ipv6.conf.all.accept_source_route=0</td>
+/etc/sysctl.d/99-sysctl.conf: net.ipv6.conf.all.accept_source_route = 0
+
+If "net.ipv6.conf.all.accept_source_route" is not set to "0", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
+<td>Configure RHEL 8 to not forward IPv6 source-routed packets.
+
+Add or edit the following line in a system configuration file, which begins with "99-", in the "/etc/sysctl.d/" directory:
+
+net.ipv6.conf.all.accept_source_route=0
+
+Load settings from all system configuration files with the following command:
+
+$ sudo sysctl --system</td>
 <td>RHEL-08-040240</td>
-<td>SV-230538r744042_rule</td>
+<td>SV-230538r792945_rule</td>
 </tr>
 <tr>
 <td>V-230539</td>
 <td>CCI-000366</td>
 <td>medium</td>
 <td>RHEL 8 must not forward IPv6 source-routed packets by default.</td>
-<td>Source-routed packets allow the source of the packet to suggest that routers forward the packet along a different path than configured on the router, which can be used to bypass network security measures. This requirement applies only to the forwarding of source-routed traffic, such as when forwarding is enabled and the system is functioning as a router.</td>
+<td>Source-routed packets allow the source of the packet to suggest that routers forward the packet along a different path than configured on the router, which can be used to bypass network security measures. This requirement applies only to the forwarding of source-routed traffic, such as when forwarding is enabled and the system is functioning as a router.
+
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify RHEL 8 does not accept IPv6 source-routed packets by default.
 
 Note: If IPv6 is disabled on the system, this requirement is Not Applicable.
@@ -9387,51 +9554,77 @@ $ sudo sysctl net.ipv6.conf.default.accept_source_route
 
 net.ipv6.conf.default.accept_source_route = 0
 
-If the returned line does not have a value of "0", a line is not returned, or the line is commented out, this is a finding.</td>
-<td>Configure RHEL 8 to not forward IPv6 source-routed packets by default with the following command:
+If the returned line does not have a value of "0", a line is not returned, or the line is commented out, this is a finding.
 
-$ sudo sysctl -w net.ipv6.conf.default.accept_source_route=0
+Check that the configuration files are present to enable this network parameter.
 
-If "0" is not the system's default value then add or update the following line in the appropriate file under "/etc/sysctl.d":
+$ sudo grep -r net.ipv6.conf.default.accept_source_route /etc/sysctl.d/*.conf
 
-net.ipv6.conf.default.accept_source_route=0</td>
+/etc/sysctl.d/99-sysctl.conf: net.ipv6.conf.default.accept_source_route = 0
+
+If "net.ipv6.conf.default.accept_source_route" is not set to "0", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
+<td>Configure RHEL 8 to not forward IPv6 source-routed packets by default.
+
+Add or edit the following line in a system configuration file, which begins with "99-", in the "/etc/sysctl.d/" directory:
+
+net.ipv6.conf.default.accept_source_route=0
+
+Load settings from all system configuration files with the following command:
+
+$ sudo sysctl --system</td>
 <td>RHEL-08-040250</td>
-<td>SV-230539r744045_rule</td>
+<td>SV-230539r792948_rule</td>
 </tr>
 <tr>
 <td>V-230540</td>
 <td>CCI-000366</td>
 <td>medium</td>
-<td>RHEL 8 must not be performing packet forwarding unless the system is a router.</td>
-<td>Routing protocol daemons are typically used on routers to exchange network topology information with other routers. If this software is used when not required, system network information may be unnecessarily transmitted across the network.</td>
-<td>Verify RHEL 8 is not performing packet forwarding, unless the system is a router.
+<td>RHEL 8 must not enable IPv6 packet forwarding unless the system is a router.</td>
+<td>Routing protocol daemons are typically used on routers to exchange network topology information with other routers. If this software is used when not required, system network information may be unnecessarily transmitted across the network.
 
-Note: If either IPv4 or IPv6 is disabled on the system, this requirement only applies to the active internet protocol version.
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
 
-Check to see if IP forwarding is enabled using the following commands:
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
+<td>Verify RHEL 8 is not performing IPv6 packet forwarding, unless the system is a router.
 
-$ sudo sysctl  net.ipv4.ip_forward
+Note: If IPv6 is disabled on the system, this requirement is Not Applicable.
 
-net.ipv4.ip_forward = 0
+Check that IPv6 forwarding is disabled using the following commands:
 
 $ sudo sysctl net.ipv6.conf.all.forwarding
 
 net.ipv6.conf.all.forwarding = 0
 
-If IP forwarding value is not "0" and is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</td>
-<td>Configure RHEL 8 to not allow packet forwarding, unless the system is a router with the following commands:
+If the IPv6 forwarding value is not "0" and is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.
 
-$ sudo sysctl -w net.ipv4.ip_forward=0
+Check that the configuration files are present to enable this network parameter.
 
-$ sudo sysctl -w net.ipv6.conf.all.forwarding=0
+$ sudo grep -r net.ipv6.conf.all.forwarding /etc/sysctl.d/*.conf
 
-If "0" is not the system's default value then add or update the following lines in the appropriate file under "/etc/sysctl.d":
+/etc/sysctl.d/99-sysctl.conf: net.ipv6.conf.all.forwarding = 0
 
-net.ipv4.ip_forward=0
+If "net.ipv6.conf.all.forwarding" is not set to "0", is missing or commented out, this is a finding.
 
-net.ipv6.conf.all.forwarding=0</td>
+If the configuration file does not begin with "99-", this is a finding.</td>
+<td>Configure RHEL 8 to not allow IPv6 packet forwarding, unless the system is a router.
+
+Add or edit the following line in a system configuration file, which begins with "99-", in the "/etc/sysctl.d/" directory:
+
+net.ipv6.conf.all.forwarding=0
+
+Load settings from all system configuration files with the following command:
+
+$ sudo sysctl --system</td>
 <td>RHEL-08-040260</td>
-<td>SV-230540r627750_rule</td>
+<td>SV-230540r792951_rule</td>
 </tr>
 <tr>
 <td>V-230541</td>
@@ -9440,7 +9633,17 @@ net.ipv6.conf.all.forwarding=0</td>
 <td>RHEL 8 must not accept router advertisements on all IPv6 interfaces.</td>
 <td>Routing protocol daemons are typically used on routers to exchange network topology information with other routers. If this software is used when not required, system network information may be unnecessarily transmitted across the network.
 
-An illicit router advertisement message could result in a man-in-the-middle attack.</td>
+An illicit router advertisement message could result in a man-in-the-middle attack.
+
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify RHEL 8 does not accept router advertisements on all IPv6 interfaces, unless the system is a router.
 
 Note: If IPv6 is disabled on the system, this requirement is not applicable.
@@ -9451,16 +9654,28 @@ $ sudo sysctl  net.ipv6.conf.all.accept_ra
 
 net.ipv6.conf.all.accept_ra = 0
 
-If the "accept_ra" value is not "0" and is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</td>
-<td>Configure RHEL 8 to not accept router advertisements on all IPv6 interfaces unless the system is a router with the following commands:
+If the "accept_ra" value is not "0" and is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.
 
-$ sudo sysctl -w net.ipv6.conf.all.accept_ra=0
+Check that the configuration files are present to enable this network parameter.
 
-If "0" is not the system's default value then add or update the following lines in the appropriate file under "/etc/sysctl.d":
+$ sudo grep -r net.ipv6.conf.all.accept_ra /etc/sysctl.d/*.conf
 
-net.ipv6.conf.all.accept_ra=0</td>
+/etc/sysctl.d/99-sysctl.conf: net.ipv6.conf.all.accept_ra = 0
+
+If "net.ipv6.conf.all.accept_ra" is not set to "0", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
+<td>Configure RHEL 8 to not accept router advertisements on all IPv6 interfaces unless the system is a router.
+
+Add or edit the following line in a system configuration file, which begins with "99-", in the "/etc/sysctl.d/" directory:
+
+net.ipv6.conf.all.accept_ra=0
+
+Load settings from all system configuration files with the following command:
+
+$ sudo sysctl --system</td>
 <td>RHEL-08-040261</td>
-<td>SV-230541r627750_rule</td>
+<td>SV-230541r792954_rule</td>
 </tr>
 <tr>
 <td>V-230542</td>
@@ -9469,7 +9684,17 @@ net.ipv6.conf.all.accept_ra=0</td>
 <td>RHEL 8 must not accept router advertisements on all IPv6 interfaces by default.</td>
 <td>Routing protocol daemons are typically used on routers to exchange network topology information with other routers. If this software is used when not required, system network information may be unnecessarily transmitted across the network.
 
-An illicit router advertisement message could result in a man-in-the-middle attack.</td>
+An illicit router advertisement message could result in a man-in-the-middle attack.
+
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify RHEL 8 does not accept router advertisements on all IPv6 interfaces by default, unless the system is a router.
 
 Note: If IPv6 is disabled on the system, this requirement is not applicable.
@@ -9480,16 +9705,28 @@ $ sudo sysctl  net.ipv6.conf.default.accept_ra
 
 net.ipv6.conf.default.accept_ra = 0
 
-If the "accept_ra" value is not "0" and is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</td>
-<td>Configure RHEL 8 to not accept router advertisements on all IPv6 interfaces by default unless the system is a router with the following commands:
+If the "accept_ra" value is not "0" and is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.
 
-$ sudo sysctl -w net.ipv6.conf.default.accept_ra=0
+Check that the configuration files are present to enable this network parameter.
 
-If "0" is not the system's default value then add or update the following lines in the appropriate file under "/etc/sysctl.d":
+$ sudo grep -r net.ipv6.conf.default.accept_ra /etc/sysctl.d/*.conf
 
-net.ipv6.conf.default.accept_ra=0</td>
+/etc/sysctl.d/99-sysctl.conf: net.ipv6.conf.default.accept_ra = 0
+
+If "net.ipv6.conf.default.accept_ra" is not set to "0", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
+<td>Configure RHEL 8 to not accept router advertisements on all IPv6 interfaces by default unless the system is a router.
+
+Add or edit the following line in a system configuration file, which begins with "99-", in the "/etc/sysctl.d/" directory:
+
+net.ipv6.conf.default.accept_ra=0
+
+Load settings from all system configuration files with the following command:
+
+$ sudo sysctl --system</td>
 <td>RHEL-08-040262</td>
-<td>SV-230542r627750_rule</td>
+<td>SV-230542r792957_rule</td>
 </tr>
 <tr>
 <td>V-230543</td>
@@ -9498,7 +9735,17 @@ net.ipv6.conf.default.accept_ra=0</td>
 <td>RHEL 8 must not allow interfaces to perform Internet Control Message Protocol (ICMP) redirects by default.</td>
 <td>ICMP redirect messages are used by routers to inform hosts that a more direct route exists for a particular destination. These messages contain information from the system's route table, possibly revealing portions of the network topology.
 
-There are notable differences between Internet Protocol version 4 (IPv4) and Internet Protocol version 6 (IPv6). There is only a directive to disable sending of IPv4 redirected packets. Refer to RFC4294 for an explanation of "IPv6 Node Requirements", which resulted in this difference between IPv4 and IPv6.</td>
+There are notable differences between Internet Protocol version 4 (IPv4) and Internet Protocol version 6 (IPv6). There is only a directive to disable sending of IPv4 redirected packets. Refer to RFC4294 for an explanation of "IPv6 Node Requirements", which resulted in this difference between IPv4 and IPv6.
+
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify RHEL 8 does not allow interfaces to perform Internet Protocol version 4 (IPv4) ICMP redirects by default.
 
 Note: If IPv4 is disabled on the system, this requirement is Not Applicable.
@@ -9509,23 +9756,45 @@ $ sudo sysctl net.ipv4.conf.default.send_redirects
 
 net.ipv4.conf.default.send_redirects=0
 
-If the returned line does not have a value of "0", or a line is not returned, this is a finding.</td>
-<td>Configure RHEL 8 to not allow interfaces to perform Internet Protocol version 4 (IPv4) ICMP redirects by default with the following command:
+If the returned line does not have a value of "0", or a line is not returned, this is a finding.
 
-$ sudo sysctl -w net.ipv4.conf.default.send_redirects=0
+Check that the configuration files are present to enable this network parameter.
 
-If "0" is not the system's default value then add or update the following line in the appropriate file under "/etc/sysctl.d":
+$ sudo grep -r net.ipv4.conf.default.send_redirects /etc/sysctl.d/*.conf
 
-net.ipv4.conf.default.send_redirects=0</td>
+/etc/sysctl.d/99-sysctl.conf: net.ipv4.conf.default.send_redirects = 0
+
+If "net.ipv4.conf.default.send_redirects" is not set to "0", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
+<td>Configure RHEL 8 to not allow interfaces to perform Internet Protocol version 4 (IPv4) ICMP redirects by default.
+
+Add or edit the following line in a system configuration file, which begins with "99-", in the "/etc/sysctl.d/" directory:
+
+net.ipv4.conf.default.send_redirects = 0
+
+Load settings from all system configuration files with the following command:
+
+$ sudo sysctl --system</td>
 <td>RHEL-08-040270</td>
-<td>SV-230543r744047_rule</td>
+<td>SV-230543r792960_rule</td>
 </tr>
 <tr>
 <td>V-230544</td>
 <td>CCI-000366</td>
 <td>medium</td>
 <td>RHEL 8 must ignore IPv6 Internet Control Message Protocol (ICMP) redirect messages.</td>
-<td>ICMP redirect messages are used by routers to inform hosts that a more direct route exists for a particular destination. These messages modify the host's route table and are unauthenticated. An illicit ICMP redirect message could result in a man-in-the-middle attack.</td>
+<td>ICMP redirect messages are used by routers to inform hosts that a more direct route exists for a particular destination. These messages modify the host's route table and are unauthenticated. An illicit ICMP redirect message could result in a man-in-the-middle attack.
+
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify RHEL 8 ignores IPv6 ICMP redirect messages.
 
 Note: If IPv6 is disabled on the system, this requirement is Not Applicable.
@@ -9536,31 +9805,63 @@ $ sudo sysctl net.ipv6.conf.all.accept_redirects
 
 net.ipv6.conf.all.accept_redirects = 0
 
-If the returned line does not have a value of "0", a line is not returned, or the line is commented out, this is a finding.</td>
-<td>Configure RHEL 8 to ignore IPv6 ICMP redirect messages with the following command:
+If the returned line does not have a value of "0", a line is not returned, or the line is commented out, this is a finding.
 
-$ sudo sysctl -w net.ipv6.conf.all.accept_redirects=0
+Check that the configuration files are present to enable this network parameter.
 
-If "0" is not the system's default value then add or update the following line in the appropriate file under "/etc/sysctl.d":
+$ sudo grep -r net.ipv6.conf.all.accept_redirects /etc/sysctl.d/*.conf
 
-net.ipv6.conf.all.accept_redirects = 0</td>
+/etc/sysctl.d/99-sysctl.conf: net.ipv6.conf.all.accept_redirects = 0
+
+If "net.ipv6.conf.all.accept_redirects" is not set to "0", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
+<td>Configure RHEL 8 to ignore IPv6 ICMP redirect messages.
+
+Add or edit the following line in a system configuration file, which begins with "99-", in the "/etc/sysctl.d/" directory:
+
+net.ipv6.conf.all.accept_redirects = 0
+
+Load settings from all system configuration files with the following command:
+
+$ sudo sysctl --system</td>
 <td>RHEL-08-040280</td>
-<td>SV-230544r744050_rule</td>
+<td>SV-230544r792963_rule</td>
 </tr>
 <tr>
 <td>V-230545</td>
 <td>CCI-000366</td>
 <td>medium</td>
 <td>RHEL 8 must disable access to network bpf syscall from unprivileged processes.</td>
-<td>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore may remain unsecured. They increase the risk to the platform by providing additional attack vectors.</td>
+<td>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore may remain unsecured. They increase the risk to the platform by providing additional attack vectors.
+
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify RHEL 8 prevents privilege escalation thru the kernel by disabling access to the bpf syscall with the following commands:
 
 $ sudo sysctl kernel.unprivileged_bpf_disabled
 
 kernel.unprivileged_bpf_disabled = 1
 
-If the returned line does not have a value of "1", or a line is not returned, this is a finding.</td>
-<td>Configure RHEL 8 to prevent privilege escalation thru the kernel by disabling access to the bpf syscall by adding the following line to a file in the "/etc/sysctl.d" directory:
+If the returned line does not have a value of "1", or a line is not returned, this is a finding.
+
+Check that the configuration files are present to enable this network parameter.
+
+$ sudo grep -r kernel.unprivileged_bpf_disabled /etc/sysctl.d/*.conf
+
+/etc/sysctl.d/99-sysctl.conf: kernel.unprivileged_bpf_disabled = 1
+
+If "kernel.unprivileged_bpf_disabled" is not set to "1", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
+<td>Configure RHEL 8 to prevent privilege escalation thru the kernel by disabling access to the bpf syscall by adding the following line to a file, which begins with "99-", in the "/etc/sysctl.d" directory:
 
 kernel.unprivileged_bpf_disabled = 1
 
@@ -9568,22 +9869,42 @@ The system configuration files need to be reloaded for the changes to take effec
 
 $ sudo sysctl --system</td>
 <td>RHEL-08-040281</td>
-<td>SV-230545r627750_rule</td>
+<td>SV-230545r792966_rule</td>
 </tr>
 <tr>
 <td>V-230546</td>
 <td>CCI-000366</td>
 <td>medium</td>
 <td>RHEL 8 must restrict usage of ptrace to descendant  processes.</td>
-<td>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore may remain unsecured. They increase the risk to the platform by providing additional attack vectors.</td>
+<td>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore may remain unsecured. They increase the risk to the platform by providing additional attack vectors.
+
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify RHEL 8 restricts usage of ptrace to descendant processes with the following commands:
 
 $ sudo sysctl kernel.yama.ptrace_scope
 
 kernel.yama.ptrace_scope = 1
 
-If the returned line does not have a value of "1", or a line is not returned, this is a finding.</td>
-<td>Configure RHEL 8 to restrict usage of ptrace to descendant processes by adding the following line to a file in the "/etc/sysctl.d" directory:
+If the returned line does not have a value of "1", or a line is not returned, this is a finding.
+
+Check that the configuration files are present to enable this network parameter.
+
+$ sudo grep -r kernel.yama.ptrace_scope /etc/sysctl.d/*.conf
+
+/etc/sysctl.d/99-sysctl.conf: kernel.yama.ptrace_scope = 1
+
+If "kernel.yama.ptrace_scope" is not set to "1", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
+<td>Configure RHEL 8 to restrict usage of ptrace to descendant processes by adding the following line to a file, which begins with "99-", in the "/etc/sysctl.d" directory:
 
 kernel.yama.ptrace_scope = 1
 
@@ -9591,22 +9912,42 @@ The system configuration files need to be reloaded for the changes to take effec
 
 $ sudo sysctl --system</td>
 <td>RHEL-08-040282</td>
-<td>SV-230546r627750_rule</td>
+<td>SV-230546r792969_rule</td>
 </tr>
 <tr>
 <td>V-230547</td>
 <td>CCI-000366</td>
 <td>medium</td>
 <td>RHEL 8 must restrict exposed kernel pointer addresses access.</td>
-<td>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore may remain unsecured. They increase the risk to the platform by providing additional attack vectors.</td>
+<td>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore may remain unsecured. They increase the risk to the platform by providing additional attack vectors.
+
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify RHEL 8 restricts exposed kernel pointer addresses access with the following commands:
 
 $ sudo sysctl kernel.kptr_restrict
 
 kernel.kptr_restrict = 1
 
-If the returned line does not have a value of "1", or a line is not returned, this is a finding.</td>
-<td>Configure RHEL 8 to restrict exposed kernel pointer addresses access by adding the following line to a file in the "/etc/sysctl.d" directory:
+If the returned line does not have a value of "1", or a line is not returned, this is a finding.
+
+Check that the configuration files are present to enable this network parameter.
+
+$ sudo grep -r kernel.kptr_restrict /etc/sysctl.d/*.conf
+
+/etc/sysctl.d/99-sysctl.conf: kernel.kptr_restrict = 1
+
+If "kernel.kptr_restrict" is not set to "1", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
+<td>Configure RHEL 8 to restrict exposed kernel pointer addresses access by adding the following line to a file, which begins with "99-", in the "/etc/sysctl.d" directory:
 
 kernel.kptr_restrict = 1
 
@@ -9614,7 +9955,7 @@ The system configuration files need to be reloaded for the changes to take effec
 
 $ sudo sysctl --system</td>
 <td>RHEL-08-040283</td>
-<td>SV-230547r627750_rule</td>
+<td>SV-230547r792972_rule</td>
 </tr>
 <tr>
 <td>V-230548</td>
@@ -9623,19 +9964,37 @@ $ sudo sysctl --system</td>
 <td>RHEL 8 must disable the use of user namespaces.</td>
 <td>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore may remain unsecured. They increase the risk to the platform by providing additional attack vectors.
 
-User namespaces are used primarily for Linux container.  The value 0 disallows the use of user namespaces.  When containers are not in use, namespaces should be disallowed.  When containers are deployed on a system, the value should be set to a large non-zero value.  The default value is 7182.</td>
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify RHEL 8 disables the use of user namespaces with the following commands:
 
-Note: User namespaces are used primarily for Linux containers.  If containers are in use, this requirement is not applicable.
+Note: User namespaces are used primarily for Linux containers. If containers are in use, this requirement is not applicable.
 
 $ sudo sysctl user.max_user_namespaces
 
 user.max_user_namespaces = 0
 
-If the returned line does not have a value of "0", or a line is not returned, this is a finding.</td>
-<td>Configure RHEL 8 to disable the use of user namespaces by adding the following line to a file in the "/etc/sysctl.d" directory:
+If the returned line does not have a value of "0", or a line is not returned, this is a finding.
 
-Note: User namespaces are used primarily for Linux containers.  If containers are in use, this requirement is not applicable. 
+Check that the configuration files are present to enable this network parameter.
+
+$ sudo grep -r user.max_user_namespaces /etc/sysctl.d/*.conf
+
+/etc/sysctl.d/99-sysctl.conf: user.max_user_namespaces = 0
+
+If "user.max_user_namespaces" is not set to "0", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
+<td>Configure RHEL 8 to disable the use of user namespaces by adding the following line to a file, which begins with "99-", in the "/etc/sysctl.d" directory:
+
+Note: User namespaces are used primarily for Linux containers. If containers are in use, this requirement is not applicable. 
 
 user.max_user_namespaces = 0
 
@@ -9643,7 +10002,7 @@ The system configuration files need to be reloaded for the changes to take effec
 
 $ sudo sysctl --system</td>
 <td>RHEL-08-040284</td>
-<td>SV-230548r627750_rule</td>
+<td>SV-230548r792975_rule</td>
 </tr>
 <tr>
 <td>V-230549</td>
@@ -9652,15 +10011,33 @@ $ sudo sysctl --system</td>
 <td>RHEL 8 must use reverse path filtering on all IPv4 interfaces.</td>
 <td>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore may remain unsecured. They increase the risk to the platform by providing additional attack vectors.
 
-Enabling reverse path filtering drops packets with source addresses that are not routable.  There is not an equivalent filter for IPv6 traffic.</td>
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify RHEL 8 uses reverse path filtering on all IPv4 interfaces with the following commands:
 
 $ sudo sysctl net.ipv4.conf.all.rp_filter
 
 net.ipv4.conf.all.rp_filter = 1
 
-If the returned line does not have a value of "1", or a line is not returned, this is a finding.</td>
-<td>Configure RHEL 8 to use reverse path filtering on all IPv4 interfaces by adding the following line to a file in the "/etc/sysctl.d" directory:
+If the returned line does not have a value of "1", or a line is not returned, this is a finding.
+
+Check that the configuration files are present to enable this network parameter.
+
+$ sudo grep -r net.ipv4.conf.all.rp_filter /etc/sysctl.d/*.conf
+
+/etc/sysctl.d/99-sysctl.conf: net.ipv4.conf.all.rp_filter = 1
+
+If "net.ipv4.conf.all.rp_filter" is not set to "1", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
+<td>Configure RHEL 8 to use reverse path filtering on all IPv4 interfaces by adding the following line to a file, which begins with "99-", in the "/etc/sysctl.d" directory:
 
 net.ipv4.conf.all.rp_filter = 1
 
@@ -9668,7 +10045,7 @@ The system configuration files need to be reloaded for the changes to take effec
 
 $ sudo sysctl --system</td>
 <td>RHEL-08-040285</td>
-<td>SV-230549r627750_rule</td>
+<td>SV-230549r792978_rule</td>
 </tr>
 <tr>
 <td>V-230550</td>
@@ -10066,7 +10443,7 @@ If the value is set to an integer less than 0, the user's time stamp will not ex
 <td>Verify the operating system requires re-authentication when using the "sudo" command to elevate privileges.
 
 $ sudo grep -i 'timestamp_timeout' /etc/sudoers /etc/sudoers.d/*
-/etc/sudoers:Defaults timestamp_timout=0
+/etc/sudoers:Defaults timestamp_timeout=0
 
 If "timestamp_timeout" is set to a negative number, is commented out, or no results are returned, this is a finding.</td>
 <td>Configure the "sudo" command to require re-authentication.
@@ -10077,7 +10454,7 @@ Add or modify the following line:
 Defaults timestamp_timeout=[value]
 Note: The "[value]" must be a number that is greater than or equal to "0".</td>
 <td>RHEL-08-010384</td>
-<td>SV-237643r646899_rule</td>
+<td>SV-237643r792980_rule</td>
 </tr>
 <tr>
 <td>V-244519</td>
@@ -10148,7 +10525,9 @@ password sufficient pam_unix.so sha512 rounds=5000</td>
 <td>CCI-000213</td>
 <td>medium</td>
 <td>RHEL 8 operating systems booted with United Extensible Firmware Interface (UEFI) must require a unique superusers name upon booting into single-user mode and maintenance.</td>
-<td>If the system does not require valid authentication before it boots into single-user or maintenance mode, anyone who invokes single-user or maintenance mode is granted privileged access to all files on the system. GRUB 2 is the default boot loader for RHEL 8 and is designed to require a password to boot into single-user mode or make modifications to the boot menu.</td>
+<td>If the system does not require valid authentication before it boots into single-user or maintenance mode, anyone who invokes single-user or maintenance mode is granted privileged access to all files on the system. GRUB 2 is the default boot loader for RHEL 8 and is designed to require a password to boot into single-user mode or make modifications to the boot menu.
+
+The GRUB 2 superuser account is an account of last resort. Establishing a unique username for this account hardens the boot loader against brute force attacks. Due to the nature of the superuser account database being distinct from the OS account database, this allows the use of a username that is not among those within the OS account database. Examples of non-unique superusers names are root, superuser, unlock, etc.</td>
 <td>For systems that use BIOS, this is Not Applicable.
 
 Verify that a unique name is set as the "superusers" account:
@@ -10157,7 +10536,7 @@ $ sudo grep -iw "superusers" /boot/efi/EFI/redhat/grub.cfg
 set superusers="[someuniquestringhere]"
 export superusers
 
-If "superusers" is not set to a unique name or is missing a name, this is a finding.</td>
+If "superusers" is identical to any OS account name or is missing a name, this is a finding.</td>
 <td>Configure the system to have a unique name for the grub superusers account.
 
 Edit the /etc/grub.d/01_users file and add or modify the following lines:
@@ -10170,14 +10549,16 @@ Generate a new grub.cfg file with the following command:
 
 $ sudo grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</td>
 <td>RHEL-08-010141</td>
-<td>SV-244521r743812_rule</td>
+<td>SV-244521r792982_rule</td>
 </tr>
 <tr>
 <td>V-244522</td>
 <td>CCI-000213</td>
 <td>medium</td>
 <td>RHEL 8 operating systems booted with a BIOS must require  a unique superusers name upon booting into single-user and maintenance modes.</td>
-<td>If the system does not require valid authentication before it boots into single-user or maintenance mode, anyone who invokes single-user or maintenance mode is granted privileged access to all files on the system. GRUB 2 is the default boot loader for RHEL 8 and is designed to require a password to boot into single-user mode or make modifications to the boot menu.</td>
+<td>If the system does not require valid authentication before it boots into single-user or maintenance mode, anyone who invokes single-user or maintenance mode is granted privileged access to all files on the system. GRUB 2 is the default boot loader for RHEL 8 and is designed to require a password to boot into single-user mode or make modifications to the boot menu.
+
+The GRUB 2 superuser account is an account of last resort. Establishing a unique username for this account hardens the boot loader against brute force attacks. Due to the nature of the superuser account database being distinct from the OS account database, this allows the use of a username that is not among those within the OS account database. Examples of non-unique superusers names are root, superuser, unlock, etc.</td>
 <td>For systems that use UEFI, this is Not Applicable.
 
 Verify that a unique name is set as the "superusers" account:
@@ -10186,7 +10567,7 @@ $ sudo grep -iw "superusers" /boot/grub2/grub.cfg
 set superusers="[someuniquestringhere]"
 export superusers
 
-If "superusers" is not set to a unique name or is missing a name, this is a finding.</td>
+If "superusers" is identical to any OS account name or is missing a name, this is a finding.</td>
 <td>Configure the system to have a unique name for the grub superusers account.
 
 Edit the /etc/grub.d/01_users file and add or modify the following lines:
@@ -10199,7 +10580,7 @@ Generate a new grub.cfg file with the following command:
 
 $ sudo grub2-mkconfig -o /boot/grub2/grub.cfg</td>
 <td>RHEL-08-010149</td>
-<td>SV-244522r743815_rule</td>
+<td>SV-244522r792984_rule</td>
 </tr>
 <tr>
 <td>V-244523</td>
@@ -10995,7 +11376,17 @@ $ sudo yum install openssh-server.x86_64</td>
 <td>CCI-000366</td>
 <td>medium</td>
 <td>RHEL 8 must prevent IPv4 Internet Control Message Protocol (ICMP) redirect messages from being accepted.</td>
-<td>ICMP redirect messages are used by routers to inform hosts that a more direct route exists for a particular destination. These messages modify the host's route table and are unauthenticated. An illicit ICMP redirect message could result in a man-in-the-middle attack.</td>
+<td>ICMP redirect messages are used by routers to inform hosts that a more direct route exists for a particular destination. These messages modify the host's route table and are unauthenticated. An illicit ICMP redirect message could result in a man-in-the-middle attack.
+
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify RHEL 8 will not accept IPv4 ICMP redirect messages.
 
 Note: If IPv4 is disabled on the system, this requirement is Not Applicable.
@@ -11006,23 +11397,45 @@ $ sudo sysctl net.ipv4.conf.default.accept_redirects
 
 net.ipv4.conf.default.accept_redirects = 0
 
-If the returned line does not have a value of "0", a line is not returned, or the line is commented out, this is a finding.</td>
-<td>Configure RHEL 8 to prevent IPv4 ICMP redirect messages from being accepted with the following command:
+If the returned line does not have a value of "0", a line is not returned, or the line is commented out, this is a finding.
 
-$ sudo sysctl -w net.ipv4.conf.default.accept_redirects=0
+Check that the configuration files are present to enable this network parameter.
 
-If "0" is not the system's default value then add or update the following line in the appropriate file under "/etc/sysctl.d":
+$ sudo grep -r net.ipv4.conf.default.accept_redirects /etc/sysctl.d/*.conf
 
-net.ipv4.conf.default.accept_redirects=0</td>
+/etc/sysctl.d/99-sysctl.conf: net.ipv4.conf.default.accept_redirects = 0
+
+If "net.ipv4.conf.default.accept_redirects" is not set to "0", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
+<td>Configure RHEL 8 to prevent IPv4 ICMP redirect messages from being accepted.
+
+Add or edit the following line in a system configuration file, which begins with "99-", in the "/etc/sysctl.d/" directory:
+
+net.ipv4.conf.default.accept_redirects = 0
+
+Load settings from all system configuration files with the following command:
+
+$ sudo sysctl --system</td>
 <td>RHEL-08-040209</td>
-<td>SV-244550r743899_rule</td>
+<td>SV-244550r792987_rule</td>
 </tr>
 <tr>
 <td>V-244551</td>
 <td>CCI-000366</td>
 <td>medium</td>
 <td>RHEL 8 must not forward IPv4 source-routed packets.</td>
-<td>Source-routed packets allow the source of the packet to suggest that routers forward the packet along a different path than configured on the router, which can be used to bypass network security measures. This requirement applies only to the forwarding of source-routed traffic, such as when forwarding is enabled and the system is functioning as a router.</td>
+<td>Source-routed packets allow the source of the packet to suggest that routers forward the packet along a different path than configured on the router, which can be used to bypass network security measures. This requirement applies only to the forwarding of source-routed traffic, such as when forwarding is enabled and the system is functioning as a router.
+
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify RHEL 8 does not accept IPv4 source-routed packets.
 
 Note: If IPv4 is disabled on the system, this requirement is Not Applicable.
@@ -11033,23 +11446,45 @@ $ sudo sysctl net.ipv4.conf.all.accept_source_route
 
 net.ipv4.conf.all.accept_source_route = 0
 
-If the returned line does not have a value of "0", a line is not returned, or the line is commented out, this is a finding.</td>
-<td>Configure RHEL 8 to not forward IPv4 source-routed packets with the following command:
+If the returned line does not have a value of "0", a line is not returned, or the line is commented out, this is a finding.
 
-$ sudo sysctl -w net.ipv4.conf.all.accept_source_route=0
+Check that the configuration files are present to enable this network parameter.
 
-If "0" is not the system's all value then add or update the following line in the appropriate file under "/etc/sysctl.d":
+$ sudo grep -r net.ipv4.conf.all.accept_source_route /etc/sysctl.d/*.conf
 
-net.ipv4.conf.all.accept_source_route=0</td>
+/etc/sysctl.d/99-sysctl.conf: net.ipv4.conf.all.accept_source_route = 0
+
+If "net.ipv4.conf.all.accept_source_route" is not set to "0", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
+<td>Configure RHEL 8 to not forward IPv4 source-routed packets.
+
+Add or edit the following line in a system configuration file, which begins with "99-", in the "/etc/sysctl.d/" directory:
+
+net.ipv4.conf.all.accept_source_route=0
+
+Load settings from all system configuration files with the following command:
+
+$ sudo sysctl --system</td>
 <td>RHEL-08-040239</td>
-<td>SV-244551r743902_rule</td>
+<td>SV-244551r792990_rule</td>
 </tr>
 <tr>
 <td>V-244552</td>
 <td>CCI-000366</td>
 <td>medium</td>
 <td>RHEL 8 must not forward IPv4 source-routed packets by default.</td>
-<td>Source-routed packets allow the source of the packet to suggest that routers forward the packet along a different path than configured on the router, which can be used to bypass network security measures. This requirement applies only to the forwarding of source-routed traffic, such as when forwarding is enabled and the system is functioning as a router.</td>
+<td>Source-routed packets allow the source of the packet to suggest that routers forward the packet along a different path than configured on the router, which can be used to bypass network security measures. This requirement applies only to the forwarding of source-routed traffic, such as when forwarding is enabled and the system is functioning as a router.
+
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify RHEL 8 does not accept IPv4 source-routed packets by default.
 
 Note: If IPv4 is disabled on the system, this requirement is Not Applicable.
@@ -11060,23 +11495,45 @@ $ sudo sysctl net.ipv4.conf.default.accept_source_route
 
 net.ipv4.conf.default.accept_source_route = 0
 
-If the returned line does not have a value of "0", a line is not returned, or the line is commented out, this is a finding.</td>
-<td>Configure RHEL 8 to not forward IPv4 source-routed packets by default with the following command:
+If the returned line does not have a value of "0", a line is not returned, or the line is commented out, this is a finding.
 
-$ sudo sysctl -w net.ipv4.conf.default.accept_source_route=0
+Check that the configuration files are present to enable this network parameter.
 
-If "0" is not the system's default value then add or update the following line in the appropriate file under "/etc/sysctl.d":
+$ sudo grep -r net.ipv4.conf.default.accept_source_route /etc/sysctl.d/*.conf
 
-net.ipv4.conf.default.accept_source_route=0</td>
+/etc/sysctl.d/99-sysctl.conf: net.ipv4.conf.default.accept_source_route = 0
+
+If "net.ipv4.conf.default.accept_source_route" is not set to "0", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
+<td>Configure RHEL 8 to not forward IPv4 source-routed packets by default.
+
+Add or edit the following line in a system configuration file, which begins with "99-", in the "/etc/sysctl.d/" directory:
+
+net.ipv4.conf.default.accept_source_route=0
+
+Load settings from all system configuration files with the following command:
+
+$ sudo sysctl --system</td>
 <td>RHEL-08-040249</td>
-<td>SV-244552r743905_rule</td>
+<td>SV-244552r792993_rule</td>
 </tr>
 <tr>
 <td>V-244553</td>
 <td>CCI-000366</td>
 <td>medium</td>
 <td>RHEL 8 must ignore IPv4 Internet Control Message Protocol (ICMP) redirect messages.</td>
-<td>ICMP redirect messages are used by routers to inform hosts that a more direct route exists for a particular destination. These messages modify the host's route table and are unauthenticated. An illicit ICMP redirect message could result in a man-in-the-middle attack.</td>
+<td>ICMP redirect messages are used by routers to inform hosts that a more direct route exists for a particular destination. These messages modify the host's route table and are unauthenticated. An illicit ICMP redirect message could result in a man-in-the-middle attack.
+
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify RHEL 8 ignores IPv4 ICMP redirect messages.
 
 Note: If IPv4 is disabled on the system, this requirement is Not Applicable.
@@ -11087,16 +11544,28 @@ $ sudo sysctl net.ipv4.conf.all.accept_redirects
 
 net.ipv4.conf.all.accept_redirects = 0
 
-If the returned line does not have a value of "0", a line is not returned, or the line is commented out, this is a finding.</td>
-<td>Configure RHEL 8 to ignore IPv4 ICMP redirect messages with the following command:
+If the returned line does not have a value of "0", a line is not returned, or the line is commented out, this is a finding.
 
-$ sudo sysctl -w net.ipv4.conf.all.accept_redirects=0
+Check that the configuration files are present to enable this network parameter.
 
-If "0" is not the system's default value then add or update the following line in the appropriate file under "/etc/sysctl.d":
+$ sudo grep -r net.ipv4.conf.all.accept_redirects /etc/sysctl.d/*.conf
 
-net.ipv4.conf.all.accept_redirects = 0</td>
+/etc/sysctl.d/99-sysctl.conf: net.ipv4.conf.all.accept_redirects = 0
+
+If "net.ipv4.conf.all.accept_redirects" is not set to "0", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
+<td>Configure RHEL 8 to ignore IPv4 ICMP redirect messages.
+
+Add or edit the following line in a system configuration file, which begins with "99-", in the "/etc/sysctl.d/" directory:
+
+net.ipv4.conf.all.accept_redirects = 0
+
+Load settings from all system configuration files with the following command:
+
+$ sudo sysctl --system</td>
 <td>RHEL-08-040279</td>
-<td>SV-244553r743908_rule</td>
+<td>SV-244553r792996_rule</td>
 </tr>
 <tr>
 <td>V-244554</td>
@@ -11104,15 +11573,36 @@ net.ipv4.conf.all.accept_redirects = 0</td>
 <td>medium</td>
 <td>RHEL 8 must enable hardening for the Berkeley Packet Filter Just-in-time compiler.</td>
 <td>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore may remain unsecured. They increase the risk to the platform by providing additional attack vectors.
-Enabling hardening for the Berkeley Packet Filter (BPF) Just-in-time (JIT) compiler aids in mitigating JIT spraying attacks.  Setting the value to "2" enables JIT hardening for all users.</td>
+
+Enabling hardening for the Berkeley Packet Filter (BPF) Just-in-time (JIT) compiler aids in mitigating JIT spraying attacks. Setting the value to "2" enables JIT hardening for all users.
+
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
 <td>Verify RHEL 8 enables hardening for the BPF JIT with the following commands:
 
 $ sudo sysctl net.core.bpf_jit_harden
 
 net.core.bpf_jit_harden = 2
 
-If the returned line does not have a value of "2", or a line is not returned, this is a finding.</td>
-<td>Configure RHEL 8 to enable hardening for the BPF JIT compiler by adding the following line to a file in the "/etc/sysctl.d" directory:
+If the returned line does not have a value of "2", or a line is not returned, this is a finding.
+
+Check that the configuration files are present to enable this network parameter.
+
+$ sudo grep -r net.core.bpf_jit_harden /etc/sysctl.d/*.conf
+
+/etc/sysctl.d/99-sysctl.conf: net.core.bpf_jit_harden = 2
+
+If "net.core.bpf_jit_harden" is not set to "2", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
+<td>Configure RHEL 8 to enable hardening for the BPF JIT compiler by adding the following line to a file, which begins with "99-", in the "/etc/sysctl.d" directory:
 
 net.core.bpf_jit_harden = 2
 
@@ -11120,7 +11610,7 @@ The system configuration files need to be reloaded for the changes to take effec
 
 $ sudo sysctl --system</td>
 <td>RHEL-08-040286</td>
-<td>SV-244554r743911_rule</td>
+<td>SV-244554r792999_rule</td>
 </tr>
 <tr>
 <td>V-245540</td>
@@ -11145,6 +11635,137 @@ If the daemon is not running, this is a finding.</td>
 <td>Install and enable the latest McAfee ENSLTP package.</td>
 <td>RHEL-08-010001</td>
 <td>SV-245540r754730_rule</td>
+</tr>
+<tr>
+<td>V-250315</td>
+<td>CCI-000044</td>
+<td>medium</td>
+<td>RHEL 8 systems, versions 8.2 and above, must configure SELinux context type to allow the use of a non-default faillock tally directory.</td>
+<td>By limiting the number of failed logon attempts, the risk of unauthorized system access via user password guessing, otherwise known as brute-force attacks, is reduced. Limits are imposed by locking the account.
+
+From "faillock.conf" man pages: Note that the default directory that "pam_faillock" uses is usually cleared on system boot so the access will be re-enabled after system reboot. If that is undesirable, a different tally directory must be set with the "dir" option.
+
+SELinux, enforcing a targeted policy, will require any non-default tally directory's security context type to match the default directory's security context type. Without updating the security context type, the pam_faillock module will not write failed login attempts to the non-default tally directory.</td>
+<td>If the system does not have SELinux enabled and enforcing a targeted policy, or if the pam_faillock module is not configured for use, this requirement is not applicable.
+
+Note: This check applies to RHEL versions 8.2 or newer. If the system is RHEL version 8.0 or 8.1, this check is not applicable.
+
+Verify the location of the non-default tally directory for the pam_faillock module with the following command:
+
+$ sudo grep -w dir /etc/security/faillock.conf
+
+dir = /var/log/faillock
+
+Check the security context type of the non-default tally directory with the following command:
+
+$ sudo ls -Zd /var/log/faillock
+
+unconfined_u:object_r:faillog_t:s0 /var/log/faillock
+
+If the security context type of the non-default tally directory is not "faillog_t", this is a finding.</td>
+<td>Configure RHEL 8 to allow the use of a non-default faillock tally directory while SELinux enforces a targeted policy.
+
+Create a non-default faillock tally directory (if it does not already exist) with the following example:
+
+$ sudo mkdir /var/log/faillock
+
+Update the /etc/selinux/targeted/contexts/files/file_contexts.local with "faillog_t" context type for the non-default faillock tally directory with the following command:
+
+$ sudo semanage fcontext -a -t faillog_t "/var/log/faillock(/.*)?" 
+
+Next, update the context type of the non-default faillock directory/subdirectories and files with the following command:	
+
+$ sudo restorecon -R -v /var/log/faillock</td>
+<td>RHEL-08-020027</td>
+<td>SV-250315r793009_rule</td>
+</tr>
+<tr>
+<td>V-250316</td>
+<td>CCI-000044</td>
+<td>medium</td>
+<td>RHEL 8 systems below version 8.2 must configure SELinux context type to allow the use of a non-default faillock tally directory.</td>
+<td>By limiting the number of failed logon attempts, the risk of unauthorized system access via user password guessing, otherwise known as brute-force attacks, is reduced. Limits are imposed by locking the account.
+
+From "Pam_Faillock" man pages: Note that the default directory that "pam_faillock" uses is usually cleared on system boot so the access will be reenabled after system reboot. If that is undesirable, a different tally directory must be set with the "dir" option.
+
+SELinux, enforcing a targeted policy, will require any non-default tally directory's security context type to match the default directory's security context type. Without updating the security context type, the pam_faillock module will not write failed login attempts to the non-default tally directory.</td>
+<td>If the system does not have SELinux enabled and enforcing a targeted policy, or if the pam_faillock module is not configured for use, this requirement is not applicable.
+
+Note: This check applies to RHEL versions 8.0 and 8.1. If the system is RHEL version 8.2 or newer, this check is not applicable.
+
+Verify the location of the non-default tally directory for the pam_faillock module with the following command:
+
+$ sudo grep -w dir /etc/pam.d/password-auth
+
+auth   required   pam_faillock.so preauth dir=/var/log/faillock
+auth   required   pam_faillock.so authfail dir=/var/log/faillock
+
+Check the security context type of the non-default tally directory with the following command:
+
+$ sudo ls -Zd /var/log/faillock
+
+unconfined_u:object_r:faillog_t:s0 /var/log/faillock
+
+If the security context type of the non-default tally directory is not "faillog_t", this is a finding.</td>
+<td>Configure RHEL 8 to allow the use of a non-default faillock tally directory while SELinux enforces a targeted policy.
+
+Update the /etc/selinux/targeted/contexts/files/file_contexts.local with "faillog_t" context type for the non-default faillock tally directory with the following command:
+
+$ sudo semanage fcontext -a -t faillog_t "/var/log/faillock(/.*)?" 
+
+Next, update the context type of the non-default faillock directory/subdirectories and files with the following command:	
+
+$ sudo restorecon -R -v /var/log/faillock</td>
+<td>RHEL-08-020028</td>
+<td>SV-250316r793010_rule</td>
+</tr>
+<tr>
+<td>V-250317</td>
+<td>CCI-000366</td>
+<td>medium</td>
+<td>RHEL 8 must not enable IPv4 packet forwarding unless the system is a router.</td>
+<td>Routing protocol daemons are typically used on routers to exchange network topology information with other routers. If this software is used when not required, system network information may be unnecessarily transmitted across the network.
+
+The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
+/etc/sysctl.d/*.conf
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+
+Based on the information above, if a configuration file that begins with "99-" is created in the "/etc/sysctl.d/" directory, it will take precedence over any other configuration file on the system.</td>
+<td>Verify RHEL 8 is not performing IPv4 packet forwarding, unless the system is a router.
+
+Note: If IPv4 is disabled on the system, this requirement is Not Applicable.
+
+Check that IPv4 forwarding is disabled using the following command:
+
+$ sudo sysctl  net.ipv4.ip_forward
+
+net.ipv4.ip_forward = 0
+If the IPv4 forwarding value is not "0" and is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.
+
+Check that the configuration files are present to enable this network parameter.
+
+$ sudo grep -r net.ipv4.conf.all.forwarding /etc/sysctl.d/*.conf
+
+/etc/sysctl.d/99-sysctl.conf: net.ipv4.conf.all.forwarding = 0
+
+If "net.ipv4.conf.all.forwarding" is not set to "0", is missing or commented out, this is a finding.
+
+If the configuration file does not begin with "99-", this is a finding.</td>
+<td>Configure RHEL 8 to not allow IPv4 packet forwarding, unless the system is a router.
+
+Add or edit the following line in a system configuration file, which begins with "99-", in the "/etc/sysctl.d/" directory:
+
+net.ipv4.conf.all.forwarding=0
+
+Load settings from all system configuration files with the following command:
+
+$ sudo sysctl --system</td>
+<td>RHEL-08-040259</td>
+<td>SV-250317r793008_rule</td>
 </tr>
 </table>
 </body>
