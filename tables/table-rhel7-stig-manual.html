@@ -1196,20 +1196,21 @@ The SSH service must be restarted for changes to take effect.  Any accounts with
 Operating systems need to track periods of inactivity and disable application identifiers after 35 days of inactivity.</pre></td>
 	<td><pre>If passwords are not being used for authentication, this is Not Applicable.
 
-Verify the operating system disables account identifiers (individuals, groups, roles, and devices) after the password expires with the following command:
+Verify the operating system disables account identifiers (individuals, groups, roles, and devices) after the password has expired with the following command:
 
-# grep -i inactive /etc/default/useradd
-INACTIVE=35
+     # grep -i inactive /etc/default/useradd
+     INACTIVE=35
 
 If "INACTIVE" is set to "-1", a value greater than "35", is commented out, or is not defined, this is a finding.</pre></td>
-	<td><pre>Configure the operating system to disable account identifiers (individuals, groups, roles, and devices) 35 days after the password expires.
+	<td><pre>Configure the operating system to disable account identifiers (individuals, groups, roles, and devices) 35 days after the password has expired.
 
 Add the following line to "/etc/default/useradd" (or modify the line to have the required value):
 
-INACTIVE=35
-DoD recommendation is 35 days, but a lower value is acceptable. The value "-1" will disable this feature, and "0" will disable the account immediately after the password expires.</pre></td>
+     INACTIVE=35
+
+DOD recommendation is 35 days, but a lower value is acceptable. The value "-1" will disable this feature, and "0" will disable the account immediately after the password expires.</pre></td>
 	<td>RHEL-07-010310</td>
-	<td>SV-204426r809190_rule</td>
+	<td>SV-204426r928568_rule</td>
 </tr>
 
 <tr>
@@ -1693,26 +1694,25 @@ If the "ypserv" package is installed, this is a finding.</pre></td>
 	<td>V-204444</td>
 	<td>SV-86595</td>
 	<td>medium</td>
-	<td>The Red Hat Enterprise Linux operating system must prevent non-privileged users from executing privileged functions to include disabling, circumventing, or altering implemented security safeguards/countermeasures.</td>
+	<td>The Red Hat Enterprise Linux operating system must prevent nonprivileged users from executing privileged functions to include disabling, circumventing, or altering implemented security safeguards/countermeasures.</td>
 	<td>SRG-OS-000324-GPOS-00125</td>
-	<td><pre>Preventing non-privileged users from executing privileged functions mitigates the risk that unauthorized individuals or processes may gain unnecessary access to information or privileges.
+	<td><pre>Preventing nonprivileged users from executing privileged functions mitigates the risk that unauthorized individuals or processes may gain unnecessary access to information or privileges.
 
-Privileged functions include, for example, establishing accounts, performing system integrity checks, or administering cryptographic key management activities. Non-privileged users are individuals who do not possess appropriate authorizations. Circumventing intrusion detection and prevention mechanisms or malicious code protection mechanisms are examples of privileged functions that require protection from non-privileged users.</pre></td>
-	<td><pre>Note: Per OPORD 16-0080, the preferred endpoint security tool is Endpoint Security for Linux (ENSL) in conjunction with SELinux.
-
-Verify the operating system prevents non-privileged users from executing privileged functions to include disabling, circumventing, or altering implemented security safeguards/countermeasures.
+Privileged functions include, for example, establishing accounts, performing system integrity checks, or administering cryptographic key management activities. Nonprivileged users are individuals who do not possess appropriate authorizations. Circumventing intrusion detection and prevention mechanisms or malicious code protection mechanisms are examples of privileged functions that require protection from nonprivileged users.</pre></td>
+	<td><pre>Verify the operating system prevents non-privileged users from executing privileged functions to include disabling, circumventing, or altering implemented security safeguards/countermeasures.
 
 Get a list of authorized users for the system.
 
 Check the list against the system by using the following command:
 
-$ sudo semanage login -l | more
+     $ sudo semanage login -l | more
 
-Login Name SELinux User MLS/MCS Range Service
-__default__ user_u s0-s0:c0.c1023 *
-root unconfined_u s0-s0:c0.c1023 *
-system_u system_u s0-s0:c0.c1023 *
-joe staff_u s0-s0:c0.c1023 *
+     Login Name    SELinux User    MLS/MCS Range    Service
+
+     __default__   user_u                 s0-s0:c0.c1023        *
+     root                   unconfined_u  s0-s0:c0.c1023        *
+     system_u        system_u           s0-s0:c0.c1023        *
+     joe                     staff_u                s0-s0:c0.c1023        *
 
 All administrators must be mapped to the , "staff_u", or an appropriately tailored confined SELinux user as defined by the organization.
 
@@ -1725,21 +1725,21 @@ If administrator accounts are mapped to the "sysadm_u" SELinux user and are docu
 
 Use the following command to map a new user to the "staff_u" SELinux user:
 
-$ sudo semanage login -a -s staff_u <username>
+     $ sudo semanage login -a -s staff_u <username>
 
 Use the following command to map an existing user to the "staff_u" SELinux user:
 
-$ sudo semanage login -m -s staff_u <username>
+     $ sudo semanage login -m -s staff_u <username>
 
 Use the following command to map a new user to the "user_u" SELinux user:
 
-$ sudo semanage login -a -s user_u <username>
+     $ sudo semanage login -a -s user_u <username>
 
 Use the following command to map an existing user to the "user_u" SELinux user:
 
-$ sudo semanage login -m -s user_u <username></pre></td>
+     $ sudo semanage login -m -s user_u <username></pre></td>
 	<td>RHEL-07-020020</td>
-	<td>SV-204444r877392_rule</td>
+	<td>SV-204444r928571_rule</td>
 </tr>
 
 <tr>
@@ -2124,22 +2124,22 @@ A reboot is required for the changes to take effect.</pre></td>
 
 Check that the ctrl-alt-del.target is masked and not active with the following command:
 
-$ sudo systemctl status ctrl-alt-del.target
+     # systemctl status ctrl-alt-del.target
 
-ctrl-alt-del.target
-Loaded: masked (/dev/null; bad)
-Active: inactive (dead)
+     ctrl-alt-del.target
+     Loaded: masked (/dev/null; bad)
+     Active: inactive (dead)
 
 If the ctrl-alt-del.target is not masked, this is a finding.
 
 If the ctrl-alt-del.target is active, this is a finding.</pre></td>
 	<td><pre>Configure the system to disable the Ctrl-Alt-Delete sequence for the command line with the following commands:
 
-$ sudo systemctl disable ctrl-alt-del.target
+     # systemctl disable ctrl-alt-del.target
 
-$ sudo systemctl mask ctrl-alt-del.target</pre></td>
+     # systemctl mask ctrl-alt-del.target</pre></td>
 	<td>RHEL-07-020230</td>
-	<td>SV-204455r833106_rule</td>
+	<td>SV-204455r928574_rule</td>
 </tr>
 
 <tr>
@@ -3387,29 +3387,35 @@ If AIDE is installed, ensure the "sha512" rule is present on all uncommented fil
 	<td>medium</td>
 	<td>The Red Hat Enterprise Linux operating system must not allow removable media to be used as the boot loader unless approved.</td>
 	<td>SRG-OS-000364-GPOS-00151</td>
-	<td><pre>Malicious users with removable boot media can gain access to a system configured to use removable media as the boot loader. If removable media is designed to be used as the boot loader, the requirement must be documented with the Information System Security Officer (ISSO).</pre></td>
+	<td><pre>Malicious users with removable boot media can gain access to a system configured to use removable media as the boot loader. If removable media is designed to be used as the boot loader, the requirement must be documented with the information system security officer (ISSO).</pre></td>
 	<td><pre>Verify the system is not configured to use a boot loader on removable media.
 
 Note: GRUB 2 reads its configuration from the "/boot/grub2/grub.cfg" file on traditional BIOS-based machines and from the "/boot/efi/EFI/redhat/grub.cfg" file on UEFI machines.
 
 Check for the existence of alternate boot loader configuration files with the following command:
 
-# find / -name grub.cfg
-/boot/grub2/grub.cfg
+     # find / -name grub.cfg
+     /boot/efi/EFI/redhat/grub.cfg
 
-If a "grub.cfg" is found in any subdirectories other than "/boot/grub2" and "/boot/efi/EFI/redhat", ask the System Administrator if there is documentation signed by the ISSO to approve the use of removable media as a boot loader. 
+If a "grub.cfg" is found in any subdirectories other than "/boot/grub2/" and "/boot/efi/EFI/redhat/", ask the system administrator (SA) if there is documentation signed by the ISSO to approve the use of removable media as a boot loader. 
 
-Check that the grub configuration file has the set root command in each menu entry with the following commands:
+List the number of menu entries defined in the grub configuration file with the following command (the number will vary between systems):
 
-# grep -cw menuentry /boot/grub2/grub.cfg
-1
-# grep 'set root' /boot/grub2/grub.cfg
-set root=(hd0,1)
+     # grep -cw menuentry /boot/efi/EFI/redhat/grub.cfg
+     4
+
+Check that the grub configuration file has the "set root" command for each menu entry with the following command ("set root" defines the disk and partition or directory where the kernel and GRUB 2 modules are stored):
+
+     # grep 'set root' /boot/efi/EFI/redhat/grub.cfg
+     set root='hd0,gpt2'
+     set root='hd0,gpt2'
+     set root='hd0,gpt2'
+     set root='hd0,gpt2'
 
 If the system is using an alternate boot loader on removable media, and documentation does not exist approving the alternate configuration, this is a finding.</pre></td>
 	<td><pre>Remove alternate methods of booting the system from removable media or document the configuration to boot from removable media with the ISSO.</pre></td>
 	<td>RHEL-07-021700</td>
-	<td>SV-204501r861008_rule</td>
+	<td>SV-204501r928576_rule</td>
 </tr>
 
 <tr>
@@ -7544,38 +7550,39 @@ $ sudo grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre></td>
 	<td>medium</td>
 	<td>The Red Hat Enterprise Linux operating system must confine SELinux users to roles that conform to least privilege.</td>
 	<td>SRG-OS-000324-GPOS-00125</td>
-	<td><pre>Preventing non-privileged users from executing privileged functions mitigates the risk that unauthorized individuals or processes may gain unnecessary access to information or privileges.
+	<td><pre>Preventing nonprivileged users from executing privileged functions mitigates the risk that unauthorized individuals or processes may gain unnecessary access to information or privileges.
 
-Privileged functions include, for example, establishing accounts, performing system integrity checks, or administering cryptographic key management activities. Non-privileged users are individuals who do not possess appropriate authorizations. Circumventing intrusion detection and prevention mechanisms or malicious code protection mechanisms are examples of privileged functions that require protection from non-privileged users.</pre></td>
-	<td><pre>Note: Per OPORD 16-0080, the preferred endpoint security tool is Endpoint Security for Linux (ENSL) in conjunction with SELinux.
-
-Verify the operating system confines SELinux users to roles that conform to least privilege.
+Privileged functions include, for example, establishing accounts, performing system integrity checks, or administering cryptographic key management activities. Nonprivileged users are individuals who do not possess appropriate authorizations. Circumventing intrusion detection and prevention mechanisms or malicious code protection mechanisms are examples of privileged functions that require protection from nonprivileged users.</pre></td>
+	<td><pre>Verify the operating system confines SELinux users to roles that conform to least privilege.
 
 Check the SELinux User list to SELinux Roles mapping by using the following command:
 
-$ sudo semanage user -l
-SELinuxUser LabelingPrefix MLS/MCSLevel MLS/MCSRange SELinuxRoles
-guest_u            user  s0  s0  guest_r
-root                   user  s0  s0-s0:c0.c1023  staff_r sysadm_r system_r unconfined_r
-staff_u              user  s0  s0-s0:c0.c1023  staff_r sysadm_r
-sysadm_u         user  s0  s0-s0:c0.c1023  sysadm_r 
-system_u          user  s0  s0-s0:c0.c1023  system_r unconfined_r
-unconfined_u  user  s0  s0-s0:c0.c1023  system_r unconfined_r
-user_u               user  s0  s0  user_r
-xguest_u           user  s0  s0  xguest_r
+     $ sudo semanage user -l
 
-If the output differs from the above example, ask the SA to demonstrate how the SELinux User mappings are exercising least privilege. If deviations from the example are not documented with the ISSO and do not demonstrate least privilege, this is a finding.</pre></td>
+                                     Labeling  MLS/               MLS/
+     SELinux User      Prefix       MCS Level    MCS Range          SELinux Roles
+
+     guest_u                user          s0                     s0                             guest_r
+     root                        user          s0                     s0-s0:c0.c1023    staff_r sysadm_r system_r unconfined_r
+     staff_u                  user          s0                     s0-s0:c0.c1023    staff_r sysadm_r system_r unconfined_r
+     sysadm_u            user          s0                     s0-s0:c0.c1023    sysadm_r
+     system_u             user          s0                     s0-s0:c0.c1023    system_r unconfined_r
+     unconfined_u    user          s0                     s0-s0:c0.c1023    system_r unconfined_r
+     user_u                   user          s0                     s0                            user_r
+     xguest_u              user          s0                     s0                            xguest_r
+
+If the output differs from the above example, ask the system administrator (SA) to demonstrate how the SELinux User mappings are exercising least privilege. If deviations from the example are not documented with the information system security officer (ISSO) and do not demonstrate least privilege, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to confine SELinux users to roles that conform to least privilege.
 
 Use the following command to map the "staff_u" SELinux user to the "staff_r" and "sysadm_r" roles:
 
-$ sudo semanage user -m staff_u -R staff_r -R sysadm_r
+     $ sudo semanage user -m staff_u -R staff_r -R sysadm_r
 
 Use the following command to map the "user_u" SELinux user to the "user_r" role:
 
-$ sudo semanage -m user_u -R user_r</pre></td>
+     $ sudo semanage -m user_u -R user_r</pre></td>
 	<td>RHEL-07-020021</td>
-	<td>SV-250312r877392_rule</td>
+	<td>SV-250312r928579_rule</td>
 </tr>
 
 <tr>
@@ -7616,30 +7623,34 @@ This must be documented with the ISSO as an operational requirement.</pre></td>
 	<td>medium</td>
 	<td>The Red Hat Enterprise Linux operating system must elevate the SELinux context when an administrator calls the sudo command.</td>
 	<td>SRG-OS-000324-GPOS-00125</td>
-	<td><pre>Preventing non-privileged users from executing privileged functions mitigates the risk that unauthorized individuals or processes may gain unnecessary access to information or privileges.
+	<td><pre>Preventing nonprivileged users from executing privileged functions mitigates the risk that unauthorized individuals or processes may gain unnecessary access to information or privileges.
 
-Privileged functions include, for example, establishing accounts, performing system integrity checks, or administering cryptographic key management activities. Non-privileged users are individuals who do not possess appropriate authorizations. Circumventing intrusion detection and prevention mechanisms or malicious code protection mechanisms are examples of privileged functions that require protection from non-privileged users.</pre></td>
+Privileged functions include, for example, establishing accounts, performing system integrity checks, or administering cryptographic key management activities. Nonprivileged users are individuals who do not possess appropriate authorizations. Circumventing intrusion detection and prevention mechanisms or malicious code protection mechanisms are examples of privileged functions that require protection from nonprivileged users.</pre></td>
 	<td><pre>Verify the operating system elevates the SELinux context when an administrator calls the sudo command with the following command:
 
 This command must be ran as root:
-# grep -r sysadm_r /etc/sudoers /etc/sudoers.d
-%wheel ALL=(ALL) TYPE=sysadm_t ROLE=sysadm_r ALL
+
+     # grep -r sysadm_r /etc/sudoers /etc/sudoers.d
+     %{designated_group_or_user_name} ALL=(ALL) TYPE=sysadm_t ROLE=sysadm_r ALL
 
 If conflicting results are returned, this is a finding.
 
 If a designated sudoers administrator group or account(s) is not configured to elevate the SELinux type and role to "sysadm_t" and "sysadm_r" with the use of the sudo command, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to elevate the SELinux context when an administrator calls the sudo command.
-Edit a file in the /etc/sudoers.d directory with the following command:
-$ sudo visudo -f /etc/sudoers.d/<customfile>
+Edit a file in the "/etc/sudoers.d" directory with the following command:
+
+     $ sudo visudo -f /etc/sudoers.d/<customfile>
 
 Use the following example to build the <customfile> in the /etc/sudoers.d directory to allow any administrator belonging to a designated sudoers admin group to elevate their SELinux context with the use of the sudo command:
-%wheel ALL=(ALL) TYPE=sysadm_t ROLE=sysadm_r ALL
 
-Remove any configurations that conflict with the above from the following locations: 
-/etc/sudoers
-/etc/sudoers.d/</pre></td>
+     %{designated_group_or_user_name} ALL=(ALL) TYPE=sysadm_t ROLE=sysadm_r ALL
+
+Remove any configurations that conflict with the above from the following locations:
+ 
+     /etc/sudoers
+     /etc/sudoers.d/</pre></td>
 	<td>RHEL-07-020023</td>
-	<td>SV-250314r877392_rule</td>
+	<td>SV-250314r928582_rule</td>
 </tr>
 
 <tr>

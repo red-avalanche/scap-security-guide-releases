@@ -2618,11 +2618,12 @@ assigned.</td>
 </tr>
 <tr>
 <td>CCE-86072-6</td>
-<td>Ensure the Group Used by pam_wheel Module Exists on System and is Empty</td>
-<td>Ensure that the group <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_pam_wheel_group_for_su" use="legacy"></xccdf-1.2:sub>
-referenced by the pam_wheel  <code>group</code> parameter exists and has no
-members. This ensures that no user can run commands with altered
-privileges through the <code>su</code> command.</td>
+<td>Ensure the Group Used by pam_wheel.so Module Exists on System and is Empty</td>
+<td>Ensure that the group <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_pam_wheel_group_for_su" use="legacy"></xccdf-1.2:sub></code> referenced by
+<code>var_pam_wheel_group_for_su</code> variable and used as value for the <code>pam_wheel.so</code>
+<code>group</code> option exists and has no members. This empty group used by
+<code>pam_wheel.so</code> in <code>/etc/pam.d/su</code> ensures that no user can run commands with
+altered privileges through the <code>su</code> command.</td>
 </tr>
 <tr>
 <td>CCE-87101-2</td>
@@ -2707,10 +2708,9 @@ sure that the following line exists in the file <code>/etc/pam.d/su</code>:
 <tr>
 <td>CCE-86065-0</td>
 <td>Enforce Usage of pam_wheel with Group Parameter for su Authentication</td>
-<td>To ensure that only users who are members of the group set in the
-<code>group</code> pam_wheel parameter can run commands with altered
-privileges through the <code>su</code> command, make sure that the
-following line exists in the file <code>/etc/pam.d/su</code>:
+<td>To ensure that only users who are members of the group set in the <code>group</code> option of
+<code>pam_wheel.so</code> module can run commands with altered privileges through the <code>su</code>
+command, make sure that the following line exists in the file <code>/etc/pam.d/su</code>:
 <pre>auth required pam_wheel.so use_uid group=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_pam_wheel_group_for_su" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
@@ -3518,7 +3518,7 @@ maintenance and diagnostic sessions. Run the following command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86574-1</td>
 <td>Record Access Events to Audit Log Directory</td>
 <td>The audit system should collect access events to read audit log directory.
 The following audit rule will assure that access to audit log directory are
@@ -9106,8 +9106,7 @@ The configuration that was used to build kernel is available at <code>/boot/conf
     To check the configuration value for <code>CONFIG_SECURITY_DMESG_RESTRICT</code>, run the following command:
     <code>grep CONFIG_SECURITY_DMESG_RESTRICT /boot/config-*</code>
     
-    Configs with value 'n' are not explicitly set in the file, so either commented lines or no
-    lines should be returned.
+    For each kernel installed, a line with value "y" should be returned.
     </td>
 </tr>
 <tr>
@@ -9119,7 +9118,8 @@ The configuration that was used to build kernel is available at <code>/boot/conf
     To check the configuration value for <code>CONFIG_SECURITY_WRITABLE_HOOKS</code>, run the following command:
     <code>grep CONFIG_SECURITY_WRITABLE_HOOKS /boot/config-*</code>
     
-    For each kernel installed, a line with value "y" should be returned.
+    Configs with value 'n' are not explicitly set in the file, so either commented lines or no
+    lines should be returned.
     </td>
 </tr>
 <tr>
@@ -9473,22 +9473,15 @@ When using <code>rsyslogd</code> to off-load logs off an encryption system must 
 <td>CCE-83834-2</td>
 <td>Ensure Log Files Are Owned By Appropriate Group</td>
 <td>The group-owner of all log files written by
-<code>rsyslog</code> should be
-
-<code>root</code>.
-
+<code>rsyslog</code> should be <code>root</code>.
 These log files are determined by the second part of each Rule line in
 <code>/etc/rsyslog.conf</code> and typically all appear in <code>/var/log</code>.
 For each log file <i>LOGFILE</i> referenced in <code>/etc/rsyslog.conf</code>,
 run the following command to inspect the file's group owner:
 <pre>$ ls -l <i>LOGFILE</i></pre>
-If the owner is not
-
-<code>root</code>,
-
+If the owner is not <code>root</code>,
 run the following command to
 correct this:
-
 <pre>$ sudo chgrp root <i>LOGFILE</i></pre>
 </td>
 </tr>
@@ -10498,6 +10491,11 @@ capability.
 Configure the system to disable all wireless network interfaces with the following command:
 <pre>$ sudo nmcli radio all off</pre>
 </td>
+</tr>
+<tr>
+<td>CCE-86805-9</td>
+<td>NetworkManager DNS Mode Must Be Must Configured</td>
+<td>The DNS processing mode in NetworkManager describes how DNS is processed on the system. Depending the mode some changes the system's DNS may not be respected.</td>
 </tr>
 <tr>
 <td>CCE-83903-5</td>
@@ -15196,6 +15194,14 @@ To properly set the group owner of <code>/etc/cron.daily</code>, run the command
 </td>
 </tr>
 <tr>
+<td>CCE-86537-8</td>
+<td>Verify Group Who Owns cron.deny</td>
+<td>
+To properly set the group owner of <code>/etc/cron.deny</code>, run the command:
+<pre>$ sudo chgrp root /etc/cron.deny</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-84186-6</td>
 <td>Verify Group Who Owns cron.hourly</td>
 <td>
@@ -15241,6 +15247,14 @@ To properly set the owner of <code>/etc/cron.d</code>, run the command:
 <td>
 To properly set the owner of <code>/etc/cron.daily</code>, run the command:
 <pre>$ sudo chown root /etc/cron.daily </pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86887-7</td>
+<td>Verify Owner on cron.deny</td>
+<td>
+To properly set the owner of <code>/etc/cron.deny</code>, run the command:
+<pre>$ sudo chown root /etc/cron.deny </pre>
 </td>
 </tr>
 <tr>
@@ -16559,11 +16573,8 @@ remote access through SSH. In more restrictive firewalld settings, the SSH port 
 added to the proper firewalld zone in order to allow SSH remote access.
 <br><br>
 
-
-
 To configure <code>firewalld</code> to allow <code>ssh</code> access, run the following command(s):
 <pre>firewall-cmd --permanent --add-service=ssh</pre>
-
 Then run the following command to load the newly created rule(s):
 <pre>firewall-cmd --reload</pre>
 </td>

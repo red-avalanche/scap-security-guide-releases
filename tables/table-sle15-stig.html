@@ -49,14 +49,16 @@
 		<tbody>
 		<tr>
 			<td>218</td>
-			<td>4</td>
-			<td>214</td>
-			<td>98.17%</td>
+			<td>5</td>
+			<td>213</td>
+			<td>97.71%</td>
 			<td>
 				
 					SLES-15-010001
 				
 					SLES-15-010370
+				
+					SLES-15-010420
 				
 					SLES-15-020061
 				
@@ -1930,43 +1932,15 @@ If this check produces any unexpected output, investigate.</pre></td>
 
 <tr>
 	<td>V-234851</td>
-	<td>2699</td>
+	<td></td>
 	<td>medium</td>
 	<td>Advanced Intrusion Detection Environment (AIDE) must verify the baseline SUSE operating system configuration at least weekly.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>By default, AIDE does not install itself for periodic execution. Periodically
-running AIDE is necessary to reveal unexpected changes in installed files.
-
-Unauthorized changes to the baseline configuration could make the system vulnerable
-to various attacks or allow unauthorized access to the operating system. Changes to
-operating system configurations can have unintended side effects, some of which may
-be relevant to security.
-
-Detecting such changes and providing an automated response can help avoid unintended,
-negative consequences that could ultimately affect the security state of the operating
-system. The operating system's Information Management Officer (IMO)/Information System
-Security Officer (ISSO) and System Administrators (SAs) must be notified via email and/or
-monitoring system trap when there is an unauthorized modification of a configuration item.</pre></td>
-	<td><pre>Verify the operating system routinely checks the baseline configuration for unauthorized changes.
-
-To determine that periodic AIDE execution has been scheduled, run the following command:
-$ grep aide /etc/crontab
-The output should return something similar to the following:
-05 4 * * * root /usr/bin/aide --check
-
-NOTE: The usage of special cron times, such as @daily or @weekly, is acceptable.
-      Is it the case that AIDE is not configured to scan periodically?
-      </pre></td>
-	<td><pre>At a minimum, AIDE should be configured to run a weekly scan.
-To implement a daily execution of AIDE at 4:05am using cron, add the following line to /etc/crontab:
-05 4 * * * root /usr/bin/aide --check
-To implement a weekly execution of AIDE at 4:05am using cron, add the following line to /etc/crontab:
-05 4 * * 0 root /usr/bin/aide --check
-AIDE can be executed periodically through other means; this is merely one example.
-The usage of cron's special time codes, such as  @daily and
-@weekly is acceptable.</pre></td>
+	<td><pre></pre></td>
+	<td><pre></pre></td>
+	<td><pre></pre></td>
 	<td>SLES-15-010420</td>
-	<td>aide_periodic_cron_checking</td>
+	<td>Missing Rule</td>
 </tr>
 
 <tr>
@@ -2394,11 +2368,12 @@ system. The operating system's Information Management Officer (IMO)/Information 
 Security Officer (ISSO) and System Administrators (SAs) must be notified via email and/or
 monitoring system trap when there is an unauthorized modification of a configuration item.</pre></td>
 	<td><pre>To determine that periodic AIDE execution has been scheduled, run the following command:
-$ grep aide /etc/crontab
-The output should return something similar to the following:
-05 4 * * * root /usr/sbin/aide --check | /bin/mail -s "$(hostname) - AIDE Integrity Check" root@localhost
-The email address that the notifications are sent to can be changed by overriding
-.
+
+$ sudo systemctl status  aidecheck-notify|grep loaded
+The output should return that the service is loaded.
+Also we should make sure that notification service is started by the check:
+$ sudo systemctl list-dependencies --reverse aidecheck-notify,
+which should display the aidecheck.service in the dependency tree
       Is it the case that AIDE has not been configured or has not been configured to notify personnel of scan details?
       </pre></td>
 	<td><pre>AIDE should notify appropriate personnel of the details of a scan after the scan has been run.

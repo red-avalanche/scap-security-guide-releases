@@ -197,7 +197,7 @@ sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release</pre></td>
 	<td>V-230223</td>
 	<td>68</td>
 	<td>high</td>
-	<td>RHEL 8 must implement NIST FIPS-validated cryptography for the following: to provision digital signatures, to generate cryptographic hashes, and to protect data requiring data-at-rest protections in accordance with applicable federal laws, Executive Orders, directives, policies, regulations, and standards.</td>
+	<td>RHEL 8 must implement NIST FIPS-validated cryptography for the following: To provision digital signatures, to generate cryptographic hashes, and to protect data requiring data-at-rest protections in accordance with applicable federal laws, Executive Orders, directives, policies, regulations, and standards.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Overriding the system crypto policy makes the behavior of the OpenSSH
 client violate expectations, and makes system configuration more
@@ -1903,6 +1903,7 @@ system. The operating system's Information Management Officer (IMO)/Information 
 Security Officer (ISSO) and System Administrators (SAs) must be notified via email and/or
 monitoring system trap when there is an unauthorized modification of a configuration item.</pre></td>
 	<td><pre>To determine that periodic AIDE execution has been scheduled, run the following command:
+
 $ grep aide /etc/crontab
 The output should return something similar to the following:
 05 4 * * * root /usr/sbin/aide --check | /bin/mail -s "$(hostname) - AIDE Integrity Check" root@localhost
@@ -5670,34 +5671,32 @@ useradd man page for more information.</pre></td>
 	<td>medium</td>
 	<td>RHEL 8 must automatically expire temporary accounts within 72 hours.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>If emergency user accounts remain active when no longer needed or for
+	<td><pre>If temporary user accounts remain active when no longer needed or for
 an excessive period, these accounts may be used to gain unauthorized access.
-To mitigate this risk, automated termination of all emergency accounts
+To mitigate this risk, automated termination of all temporary accounts
 must be set upon account creation.
 </pre></td>
-	<td><pre>Verify emergency accounts have been provisioned with an expiration date of 72 hours.
-
-For every emergency account, run the following command to obtain its account aging and expiration information:
-
-$ sudo chage -l emergency_account_name
-
-Verify each of these accounts has an expiration date set within 72 hours or as documented.
-      Is it the case that any emergency accounts have no expiration date set or do not expire within 72 hours?
+	<td><pre>Verify that temporary accounts have been provisioned with an expiration date
+of 72 hours. For every temporary account, run the following command to
+obtain its account aging and expiration information:
+$ sudo chage -l temporary_account_name
+Verify each of these accounts has an expiration date set within 72 hours or
+as documented.
+      Is it the case that any temporary accounts have no expiration date set or do not expire within 72 hours?
       </pre></td>
-	<td><pre>Emergency accounts are privileged accounts established in response to
-crisis situations where the need for rapid account activation is required.
-In the event emergency accounts are required, configure the system to
-terminate them after a documented time period. For every emergency account,
-run the following command to set an expiration date on it, substituting
-ACCOUNT_NAME and YYYY-MM-DD
+	<td><pre>Temporary accounts are established as part of normal account activation
+procedures when there is a need for short-term accounts. In the event
+temporary accounts are required, configure the system to
+terminate them after a documented time period. For every temporary account, run the following command to set an expiration date on
+it, substituting USER and YYYY-MM-DD
 appropriately:
-$ sudo chage -E YYYY-MM-DD ACCOUNT_NAME
+$ sudo chage -E YYYY-MM-DD USER
 YYYY-MM-DD indicates the documented expiration date for the
 account. For U.S. Government systems, the operating system must be
 configured to automatically terminate these types of accounts after a
 period of 72 hours.</pre></td>
 	<td>RHEL-08-020270</td>
-	<td>account_emergency_expire_date</td>
+	<td>account_temp_expire_date</td>
 </tr>
 
 <tr>
@@ -6604,25 +6603,35 @@ With this setting, a reboot will be required to change any audit rules.</pre></t
 	<td>SRG-OS-ID</td>
 	<td><pre>If modification of login UIDs is not prevented, they can be changed by unprivileged users and
 make auditing complicated or impossible.</pre></td>
-	<td><pre>To verify that the Audit is correctly configured according to recommended rules, check the content of the file with the following command:
-$ sudo cat /etc/audit/rules.d/11-loginuid.rules
-The output has to be exactly as follows:
-## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    
-      Is it the case that the file does not exist or the content differs?
+	<td><pre>To determine if the system is configured to make login UIDs immutable, run
+one of the following commands.
+If the auditd daemon is configured to use the
+augenrules program to read audit rules during daemon startup (the
+default), run the following:
+sudo grep immutable /etc/audit/rules.d/*.rules
+If the auditd daemon is configured to use the auditctl
+utility to read audit rules during daemon startup, run the following command:
+sudo grep immutable /etc/audit/audit.rules
+The following line should be returned:
+--loginuid-immutable
+      Is it the case that the system is not configured to make login UIDs immutable?
       </pre></td>
 	<td><pre>Configure kernel to prevent modification of login UIDs once they are set.
 Changing login UIDs while this configuration is enforced requires special capabilities which
 are not available to unprivileged users.
-
-The following rules configure audit as described above:
-## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    
-
-Load new Audit rules into kernel by running:
-augenrules --load</pre></td>
+If the auditd daemon is configured to use the
+augenrules program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix .rules in the
+directory /etc/audit/rules.d in order to make login UIDs
+immutable:
+--loginuid-immutable
+If the auditd daemon is configured to use the auditctl
+utility to read audit rules during daemon startup, add the following line to
+/etc/audit/audit.rules file in order to make login UIDs
+immutable:
+--loginuid-immutable</pre></td>
 	<td>RHEL-08-030122</td>
-	<td>audit_immutable_login_uids</td>
+	<td>audit_rules_immutable_login_uids</td>
 </tr>
 
 <tr>
@@ -9321,29 +9330,23 @@ insmod program to load the module manually.</pre></td>
 	<td>medium</td>
 	<td>A RHEL 8 firewall must employ a deny-all, allow-by-exception policy for allowing connections to other systems.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Failure to restrict network connectivity only to authorized systems permits inbound connections from malicious systems.
-It also permits outbound connections that may facilitate exfiltration of data.</pre></td>
-	<td><pre>Verify "firewalld" is configured to employ a deny-all, allow-by-exception policy for allowing connections to other systems with the following commands:
-
-$ sudo firewall-cmd --state
-
-running
-
-$ sudo firewall-cmd --get-active-zones
-
-[custom]
-interfaces: ens33
-
-$ sudo firewall-cmd --info-zone=[custom] | grep target
-
-target: DROP
-      Is it the case that no zones are active on the interfaces or if the target is set to a different option other than "DROP"?
+	<td><pre>In firewalld the default zone is applied only after all
+the applicable rules in the table are examined for a match. Setting the
+default zone to drop implements proper design for a firewall, i.e.
+any packets which are not explicitly permitted should not be
+accepted.</pre></td>
+	<td><pre>Inspect the file /etc/firewalld/firewalld.conf to determine
+the default zone for the firewalld. It should be set to DefaultZone=drop:
+$ sudo grep DefaultZone /etc/firewalld/firewalld.conf
+      Is it the case that the default zone is not set to DROP?
       </pre></td>
-	<td><pre>Red Hat Enterprise Linux 8 incorporates the "firewalld" daemon, which allows for many different configurations. One of these configurations is zones.
-Zones can be utilized to a deny-all, allow-by-exception approach.
-The default "drop" zone will drop all incoming network packets unless it is explicitly allowed by the configuration file or is related to an outgoing network connection.</pre></td>
+	<td><pre>To set the default zone to drop for
+the built-in default zone which processes incoming IPv4 and IPv6 packets,
+modify the following line in
+/etc/firewalld/firewalld.conf to be:
+DefaultZone=drop</pre></td>
 	<td>RHEL-08-040090</td>
-	<td>configured_firewalld_default_deny</td>
+	<td>set_firewalld_default_zone</td>
 </tr>
 
 <tr>
@@ -11211,7 +11214,7 @@ $ sudo yum erase tuned</pre></td>
 	<td>V-254520</td>
 	<td>2265</td>
 	<td>medium</td>
-	<td>RHEL 8 must prevent non-privileged users from executing privileged functions, including disabling, circumventing, or altering implemented security safeguards/countermeasures.</td>
+	<td>RHEL 8 must prevent nonprivileged users from executing privileged functions, including disabling, circumventing, or altering implemented security safeguards/countermeasures.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Preventing non-privileged users from executing privileged functions mitigates
 the risk that unauthorized individuals or processes may gain unnecessary access

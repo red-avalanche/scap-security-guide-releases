@@ -161,18 +161,6 @@ For example, if a systemd timer is expected to be started every day at 5AM
 a Unit section starting the AIDE check service unit should be referred.</td>
 </tr>
 <tr>
-<td>CCE-85671-6</td>
-<td>Configure Periodic Execution of AIDE</td>
-<td>At a minimum, AIDE should be configured to run a weekly scan.
-To implement a daily execution of AIDE at 4:05am using cron, add the following line to <code>/etc/crontab</code>:
-<pre>05 4 * * * root /usr/bin/aide --check</pre>
-To implement a weekly execution of AIDE at 4:05am using cron, add the following line to <code>/etc/crontab</code>:
-<pre>05 4 * * 0 root /usr/bin/aide --check</pre>
-AIDE can be executed periodically through other means; this is merely one example.
-The usage of cron's special time codes, such as  <code>@daily</code> and
-<code>@weekly</code> is acceptable.</td>
-</tr>
-<tr>
 <td>CCE-91214-7</td>
 <td>Configure Notification of Post-AIDE Scan Details</td>
 <td>AIDE should notify appropriate personnel of the details of a scan after the scan has been run.
@@ -2039,11 +2027,12 @@ assigned.</td>
 </tr>
 <tr>
 <td>CCE-92528-9</td>
-<td>Ensure the Group Used by pam_wheel Module Exists on System and is Empty</td>
-<td>Ensure that the group <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_pam_wheel_group_for_su" use="legacy"></xccdf-1.2:sub>
-referenced by the pam_wheel  <code>group</code> parameter exists and has no
-members. This ensures that no user can run commands with altered
-privileges through the <code>su</code> command.</td>
+<td>Ensure the Group Used by pam_wheel.so Module Exists on System and is Empty</td>
+<td>Ensure that the group <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_pam_wheel_group_for_su" use="legacy"></xccdf-1.2:sub></code> referenced by
+<code>var_pam_wheel_group_for_su</code> variable and used as value for the <code>pam_wheel.so</code>
+<code>group</code> option exists and has no members. This empty group used by
+<code>pam_wheel.so</code> in <code>/etc/pam.d/su</code> ensures that no user can run commands with
+altered privileges through the <code>su</code> command.</td>
 </tr>
 <tr>
 <td>CCE-91427-5</td>
@@ -2062,18 +2051,6 @@ file by typing the following command:
 <pre>
 $ sudo echo &gt; /etc/securetty
 </pre>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>Ensure that System Accounts Are Locked</td>
-<td>Some accounts are not associated with a human user of the system, and exist to perform some
-administrative functions. An attacker should not be able to log into these accounts.
-<br><br>
-System accounts are those user accounts with a user ID less than <code>1000</code>.
-If any system account other than <code>root</code>, <code>halt</code>, <code>sync</code>, <code>shutdown</code>
-and <code>nfsnobody</code> has an unlocked password, disable it with the command:
-<pre>$ sudo usermod -L <i>account</i></pre>
 </td>
 </tr>
 <tr>
@@ -2122,10 +2099,9 @@ sure that the following line exists in the file <code>/etc/pam.d/su</code>:
 <tr>
 <td>CCE-92522-2</td>
 <td>Enforce Usage of pam_wheel with Group Parameter for su Authentication</td>
-<td>To ensure that only users who are members of the group set in the
-<code>group</code> pam_wheel parameter can run commands with altered
-privileges through the <code>su</code> command, make sure that the
-following line exists in the file <code>/etc/pam.d/su</code>:
+<td>To ensure that only users who are members of the group set in the <code>group</code> option of
+<code>pam_wheel.so</code> module can run commands with altered privileges through the <code>su</code>
+command, make sure that the following line exists in the file <code>/etc/pam.d/su</code>:
 <pre>auth required pam_wheel.so use_uid group=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_pam_wheel_group_for_su" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
@@ -2812,21 +2788,6 @@ maintenance and diagnostic sessions. Run the following command:
 <pre>$ sudo auditctl -l | grep sudo.log
 -w /var/log/sudo.log -p wa -k maintenance</pre>
 </td>
-</tr>
-<tr>
-<td></td>
-<td>Record Access Events to Audit Log Directory</td>
-<td>The audit system should collect access events to read audit log directory.
-The following audit rule will assure that access to audit log directory are
-collected.
-<pre>-a always,exit -F dir=/var/log/audit/ -F perm=r -F auid&gt;=1000 -F auid!=unset -F key=access-audit-trail</pre>
-If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
-program to read audit rules during daemon startup (the default), add the
-rule to a file with suffix <code>.rules</code> in the directory
-<code>/etc/audit/rules.d</code>.
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the rule to
-<code>/etc/audit/audit.rules</code> file.</td>
 </tr>
 <tr>
 <td></td>
@@ -4736,14 +4697,6 @@ in <code>/etc/audit/auditd.conf</code>.</td>
 </tr>
 <tr>
 <td></td>
-<td>Set type of computer node name logging in audit logs</td>
-<td>To configure Audit daemon to use a unique identifier
-as computer node name in the audit events,
-set <code>name_format</code> to <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_auditd_name_format" use="legacy"></xccdf-1.2:sub></code>
-in <code>/etc/audit/auditd.conf</code>.</td>
-</tr>
-<tr>
-<td></td>
 <td>Appropriate Action Must be Setup When the Internal Audit Event Queue is Full</td>
 <td>The audit system should have an action setup in the event the internal event queue becomes full.
 To setup an overflow action edit <code>/etc/audit/auditd.conf</code>. Set <code>overflow_action</code>
@@ -5585,8 +5538,7 @@ The configuration that was used to build kernel is available at <code>/boot/conf
     To check the configuration value for <code>CONFIG_SECURITY_DMESG_RESTRICT</code>, run the following command:
     <code>grep CONFIG_SECURITY_DMESG_RESTRICT /boot/config-*</code>
     
-    Configs with value 'n' are not explicitly set in the file, so either commented lines or no
-    lines should be returned.
+    For each kernel installed, a line with value "y" should be returned.
     </td>
 </tr>
 <tr>
@@ -5598,7 +5550,8 @@ The configuration that was used to build kernel is available at <code>/boot/conf
     To check the configuration value for <code>CONFIG_SECURITY_WRITABLE_HOOKS</code>, run the following command:
     <code>grep CONFIG_SECURITY_WRITABLE_HOOKS /boot/config-*</code>
     
-    For each kernel installed, a line with value "y" should be returned.
+    Configs with value 'n' are not explicitly set in the file, so either commented lines or no
+    lines should be returned.
     </td>
 </tr>
 <tr>
@@ -5744,22 +5697,15 @@ When using <code>rsyslogd</code> to off-load logs off an encryption system must 
 <td>CCE-85838-1</td>
 <td>Ensure Log Files Are Owned By Appropriate Group</td>
 <td>The group-owner of all log files written by
-<code>rsyslog</code> should be
-
-<code>root</code>.
-
+<code>rsyslog</code> should be <code>root</code>.
 These log files are determined by the second part of each Rule line in
 <code>/etc/rsyslog.conf</code> and typically all appear in <code>/var/log</code>.
 For each log file <i>LOGFILE</i> referenced in <code>/etc/rsyslog.conf</code>,
 run the following command to inspect the file's group owner:
 <pre>$ ls -l <i>LOGFILE</i></pre>
-If the owner is not
-
-<code>root</code>,
-
+If the owner is not <code>root</code>,
 run the following command to
 correct this:
-
 <pre>$ sudo chgrp root <i>LOGFILE</i></pre>
 </td>
 </tr>
@@ -7875,7 +7821,7 @@ bootloader to load the new kernel at boot. Verify this after reboot
 and modify <code>/etc/default/grub</code> if necessary.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92490-2</td>
 <td>Install libselinux Package</td>
 <td>The <code>libselinux</code> package can be installed with the following command:
 <pre>
@@ -9178,15 +9124,6 @@ The <code>squid</code> service can be disabled with the following command:
 <td>
 The <code>zebra</code> service can be disabled with the following command:
 <pre>$ sudo systemctl mask --now zebra.service</pre>
-</td>
-</tr>
-<tr>
-<td></td>
-<td>Install the Samba Common Package</td>
-<td>The <code>samba-common</code> package should be installed.
-The <code>samba-common</code> package can be installed with the following command:
-<pre>
-$ sudo zypper install samba-common</pre>
 </td>
 </tr>
 <tr>

@@ -7651,8 +7651,7 @@ The configuration that was used to build kernel is available at <code>/boot/conf
     To check the configuration value for <code>CONFIG_SECURITY_DMESG_RESTRICT</code>, run the following command:
     <code>grep CONFIG_SECURITY_DMESG_RESTRICT /boot/config-*</code>
     
-    Configs with value 'n' are not explicitly set in the file, so either commented lines or no
-    lines should be returned.
+    For each kernel installed, a line with value "y" should be returned.
     </td>
 </tr>
 <tr>
@@ -7664,7 +7663,8 @@ The configuration that was used to build kernel is available at <code>/boot/conf
     To check the configuration value for <code>CONFIG_SECURITY_WRITABLE_HOOKS</code>, run the following command:
     <code>grep CONFIG_SECURITY_WRITABLE_HOOKS /boot/config-*</code>
     
-    For each kernel installed, a line with value "y" should be returned.
+    Configs with value 'n' are not explicitly set in the file, so either commented lines or no
+    lines should be returned.
     </td>
 </tr>
 <tr>
@@ -7853,22 +7853,15 @@ When using <code>rsyslogd</code> to off-load logs off an encryption system must 
 <td>CCE-80190-2</td>
 <td>Ensure Log Files Are Owned By Appropriate Group</td>
 <td>The group-owner of all log files written by
-<code>rsyslog</code> should be
-
-<code>root</code>.
-
+<code>rsyslog</code> should be <code>root</code>.
 These log files are determined by the second part of each Rule line in
 <code>/etc/rsyslog.conf</code> and typically all appear in <code>/var/log</code>.
 For each log file <i>LOGFILE</i> referenced in <code>/etc/rsyslog.conf</code>,
 run the following command to inspect the file's group owner:
 <pre>$ ls -l <i>LOGFILE</i></pre>
-If the owner is not
-
-<code>root</code>,
-
+If the owner is not <code>root</code>,
 run the following command to
 correct this:
-
 <pre>$ sudo chgrp root <i>LOGFILE</i></pre>
 </td>
 </tr>
@@ -14269,11 +14262,8 @@ By default, <code>firewalld</code>
 blocks access to the ports used by the web server.
 
 
-
-
 To configure <code>firewalld</code> to allow <code>ftp</code> access, run the following command(s):
 <pre>firewall-cmd --permanent --add-service=ftp</pre>
-
 Then run the following command to load the newly created rule(s):
 <pre>firewall-cmd --reload</pre>
 </td>
@@ -14479,19 +14469,13 @@ files that are introduced to the web server.</td>
 By default, <code>firewalld</code>
 blocks access to the ports used by the web server.
 
-
-
 To configure <code>firewalld</code> to allow <code>http</code> access, run the following command(s):
 <pre>firewall-cmd --permanent --add-service=http</pre>
-
 Then run the following command to load the newly created rule(s):
 <pre>firewall-cmd --reload</pre>
 
-
-
 To configure <code>firewalld</code> to allow <code>https</code> access, run the following command(s):
 <pre>firewall-cmd --permanent --add-service=https</pre>
-
 Then run the following command to load the newly created rule(s):
 <pre>firewall-cmd --reload</pre>
 </td>
@@ -15567,7 +15551,7 @@ To ensure that ntpd is running as ntp user, Add or edit the
 This recommendation only applies if ntp is in use on the system.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86487-6</td>
 <td>Specify Additional Remote NTP Servers</td>
 <td>Additional NTP servers can be specified for time synchronization
 in the file <code>/etc/ntp.conf</code>.  To do so, add additional lines of the
@@ -16158,8 +16142,6 @@ firewall configuration.
 <br><br>
 
 To configure <code>firewalld</code> to prevent access, run the following command(s):
-
-
 <code>firewall-cmd --permanent --remove-service=ssh</code>
 </td>
 </tr>
@@ -16256,11 +16238,8 @@ remote access through SSH. In more restrictive firewalld settings, the SSH port 
 added to the proper firewalld zone in order to allow SSH remote access.
 <br><br>
 
-
-
 To configure <code>firewalld</code> to allow <code>ssh</code> access, run the following command(s):
 <pre>firewall-cmd --permanent --add-service=ssh</pre>
-
 Then run the following command to load the newly created rule(s):
 <pre>firewall-cmd --reload</pre>
 </td>

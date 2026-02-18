@@ -229,41 +229,38 @@ If the operating system is not in compliance with the Information Assurance Vuln
  
 OL 8 uses GRUB 2 as the default bootloader. Note that GRUB 2 command-line parameters are defined in the "kernelopts" variable of the "/boot/grub2/grubenv" file for all kernel boot entries. The command "fips-mode-setup" modifies the "kernelopts" variable, which in turn updates all kernel boot entries.
 
-The fips=1 kernel option needs to be added to the kernel command line during system installation so that key generation is done with FIPS-approved algorithms and continuous monitoring tests in place. Users must also ensure the system has plenty of entropy during the installation process by moving the mouse around, or if no mouse is available, ensuring that many keystrokes are typed. The recommended amount of keystrokes is 256 and more. Less than 256 keystrokes may generate a non-unique key.
+The fips=1 kernel option needs to be added to the kernel command line during system installation so that key generation is done with FIPS-approved algorithms and continuous monitoring tests in place. Users must also ensure the system has plenty of entropy during the installation process by moving the mouse around, or if no mouse is available, ensuring that many keystrokes are typed. The recommended amount of keystrokes is 256 and more. Less than 256 keystrokes may generate a nonunique key.
 
 Satisfies: SRG-OS-000033-GPOS-00014, SRG-OS-000125-GPOS-00065, SRG-OS-000250-GPOS-00093, SRG-OS-000393-GPOS-00173, SRG-OS-000394-GPOS-00174, SRG-OS-000423-GPOS-00187</pre></td>
-	<td><pre>Verify the operating system implements DoD-approved encryption to protect the confidentiality of remote access sessions.
+	<td><pre>Verify the operating system implements DOD-approved encryption to protect the confidentiality of remote access sessions.
 
 Check to see if FIPS mode is enabled with the following command:
 
-$ fips-mode-setup --check
-
-FIPS mode is enabled
+     $ fips-mode-setup --check
+     FIPS mode is enabled
 
 If FIPS mode is "enabled", check to see if the kernel boot parameter is configured for FIPS mode with the following command:
 
-$ sudo grub2-editenv list | grep fips
-
-kernelopts=root=/dev/mapper/ol-root ro resume=/dev/mapper/ol-swap rd.lvm.lv=ol/root rd.lvm.lv=ol/swap rhgb quiet fips=1 boot=UUID=25856928-386b-4205-9a0e-a2953ae2712d audit=1 audit_backlog_limit=8192 pti=on random.trust_cpu=on slub_debug=P page_poison=1
+     $ sudo grub2-editenv list | grep fips
+     kernelopts=root=/dev/mapper/ol-root ro resume=/dev/mapper/ol-swap rd.lvm.lv=ol/root rd.lvm.lv=ol/swap rhgb quiet fips=1 boot=UUID=25856928-386b-4205-9a0e-a2953ae2712d audit=1 audit_backlog_limit=8192 pti=on random.trust_cpu=on slub_debug=P page_poison=1
 
 If the kernel boot parameter is configured to use FIPS mode, check to see if the system is in FIPS mode with the following command:
 
-$ sudo cat /proc/sys/crypto/fips_enabled
-
-1
+     $ sudo cat /proc/sys/crypto/fips_enabled
+     1
 
 If FIPS mode is not "enabled", the kernel boot parameter is not configured for FIPS mode, or the system does not have a value of "1" for "fips_enabled" in "/proc/sys/crypto", this is a finding.</pre></td>
-	<td><pre>Configure the operating system to implement DoD-approved encryption by following the steps below:
+	<td><pre>Configure the operating system to implement DOD-approved encryption by following the steps below:
 
-To enable strict FIPS compliance, the fips=1 kernel option needs to be added to the kernel boot parameters during system installation so key generation is done with FIPS-approved algorithms and continuous monitoring tests in place.
+To enable strict FIPS compliance, the fips=1 kernel option must be added to the kernel boot parameters during system installation so key generation is done with FIPS-approved algorithms and continuous monitoring tests in place.
 
-Enable FIPS mode after installation (not strict FIPS compliant) with the following command:
+Enable FIPS mode after installation (not strict FIPS-compliant) with the following command:
 
-$ sudo fips-mode-setup --enable
+     $ sudo fips-mode-setup --enable
 
 Reboot the system for the changes to take effect.</pre></td>
 	<td>OL08-00-010020</td>
-	<td>SV-248524r877398_rule</td>
+	<td>SV-248524r928551_rule</td>
 </tr>
 
 <tr>
@@ -2701,20 +2698,18 @@ $ sudo rm /[path]/[to]/[file]/.shosts</pre></td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>The most important characteristic of a random number generator is its randomness, namely its ability to deliver random numbers that are impossible to predict. Entropy in computer security is associated with the unpredictability of a source of randomness. The random source with high entropy tends to achieve a uniform distribution of random values. Random number generators are one of the most important building blocks of cryptosystems.  
  
-The rngd service feeds random data from hardware device to kernel random device. Quality (non-predictable) random number generation is important for several security functions (i.e., ciphers).</pre></td>
-	<td><pre>Note: For OL versions 8.4 and above running with kernel FIPS mode enabled as specified by OL08-00-010020, this requirement is not applicable.
+The rngd service feeds random data from hardware device to kernel random device. Quality (nonpredictable) random number generation is important for several security functions (i.e., ciphers).</pre></td>
+	<td><pre>Note: For OL versions 8.4 and above running with kernel FIPS mode enabled as specified by OL08-00-010020, this requirement is Not Applicable.
 
 Check that OL 8 has enabled the hardware random number generator entropy gatherer service.
 
 Verify the rngd service is enabled and active with the following commands: 
  
-$ sudo systemctl is-enabled rngd 
+     $ sudo systemctl is-enabled rngd 
+      enabled 
  
-enabled 
- 
-$ sudo systemctl is-active rngd 
- 
-active 
+     $ sudo systemctl is-active rngd 
+     active 
  
 If the service is not "enabled" and "active", this is a finding.</pre></td>
 	<td><pre>Start the rngd service and enable it with the following commands: 
@@ -2723,7 +2718,7 @@ If the service is not "enabled" and "active", this is a finding.</pre></td>
  
      $ sudo systemctl enable rngd.service</pre></td>
 	<td>OL08-00-010471</td>
-	<td>SV-248599r917910_rule</td>
+	<td>SV-248599r928553_rule</td>
 </tr>
 
 <tr>
@@ -9061,19 +9056,20 @@ server [ntp.server.name] iburst maxpoll 16</pre></td>
  
 Minimizing the exposure of the server functionality of the chrony daemon diminishes the attack surface. 
  
-Note that USNO offers authenticated NTP service to DoD and U.S. Government agencies operating on the NIPR and SIPR networks. Visit https://www.usno.navy.mil/USNO/time/ntp/dod-customers for more information.</pre></td>
-	<td><pre>Verify OL 8 disables the chrony daemon from acting as a server with the following command: 
+Note that USNO offers authenticated NTP service to DOD and U.S. Government agencies operating on the NIPR and SIPR networks. Visit https://www.usno.navy.mil/USNO/time/ntp/DOD-customers for more information.</pre></td>
+	<td><pre>Note: If the system is approved and documented by the information system security officer (ISSO) to function as an NTP time server, this requirement is Not Applicable.
+
+Verify OL 8 disables the chrony daemon from acting as a server with the following command: 
  
-$ sudo grep -w 'port' /etc/chrony.conf 
- 
-port 0 
+     $ sudo grep -w 'port' /etc/chrony.conf 
+     port 0 
  
 If the "port" option is not set to "0" or is commented out or missing, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to disable the chrony daemon from acting as a server by adding/modifying the following line in the "/etc/chrony.conf" file. 
+	<td><pre>Configure OL 8 to disable the chrony daemon from acting as a server by adding or modifying the following line in the "/etc/chrony.conf" file. 
  
-port 0</pre></td>
+     port 0</pre></td>
 	<td>OL08-00-030741</td>
-	<td>SV-248821r780029_rule</td>
+	<td>SV-248821r928556_rule</td>
 </tr>
 
 <tr>
@@ -9086,19 +9082,20 @@ port 0</pre></td>
  
 Minimizing the exposure of the server functionality of the chrony daemon diminishes the attack surface. 
  
-Note that USNO offers authenticated NTP service to DoD and U.S. Government agencies operating on the NIPR and SIPR networks. Visit https://www.usno.navy.mil/USNO/time/ntp/dod-customers for more information.</pre></td>
-	<td><pre>Verify OL 8 disables network management of the chrony daemon with the following command: 
+Note that USNO offers authenticated NTP service to DOD and U.S. Government agencies operating on the NIPR and SIPR networks. Visit https://www.usno.navy.mil/USNO/time/ntp/DOD-customers for more information.</pre></td>
+	<td><pre>Note: If the system is approved and documented by the information system security officer (ISSO) to function as an NTP time server, this requirement is Not Applicable.
+
+Verify OL 8 disables network management of the chrony daemon with the following command: 
  
-$ sudo grep -w 'cmdport' /etc/chrony.conf 
- 
-cmdport 0 
+     $ sudo grep -w 'cmdport' /etc/chrony.conf 
+     cmdport 0 
  
 If the "cmdport" option is not set to "0" or is commented out or missing, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to disable network management of the chrony daemon by adding/modifying the following line in the "/etc/chrony.conf" file. 
+	<td><pre>Configure OL 8 to disable network management of the chrony daemon by adding or modifying the following line in the "/etc/chrony.conf" file. 
  
-cmdport 0</pre></td>
+     cmdport 0</pre></td>
 	<td>OL08-00-030742</td>
-	<td>SV-248822r780032_rule</td>
+	<td>SV-248822r928559_rule</td>
 </tr>
 
 <tr>
@@ -11759,8 +11756,8 @@ $ sudo sysctl --system</pre></td>
 	<td>OL 8 must disable the use of user namespaces.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or mission objectives. These unnecessary capabilities or services are often overlooked and therefore may remain unsecured. They increase the risk to the platform by providing additional attack vectors. 
- 
-User namespaces are used primarily for Linux container. The value 0 disallows the use of user namespaces. When containers are not in use, namespaces should be disallowed. When containers are deployed on a system, the value should be set to a large non-zero value. The default value is 39078.
+
+User namespaces are used primarily for Linux containers. "Rootful" containers run with root privileges on the host system and may pose a security risk if compromised. "Rootless" containers run without root privileges and allow for better isolation from the host system. The value "0" disallows the use of user namespaces. When containers are not in use, namespaces should be disallowed. When privileged user namespaces or "rootful" containers are in use, user namespaces should be disallowed. When unprivileged user namespaces or "rootless" containers are deployed on a system, the value should be set to a large non-zero value. The default value depends on the amount of memory in the system, approximately the total memory in kilobytes divided by 256.
 
 The sysctl --system command will load settings from all system configuration files. All configuration files are sorted by their filename in lexicographic order, regardless of which of the directories they reside in. If multiple files specify the same option, the entry in the file with the lexicographically latest name will take precedence. Files are read from directories in the following list from top to bottom. Once a file of a given filename is loaded, any file of the same name in subsequent directories is ignored.
 /etc/sysctl.d/*.conf
@@ -11771,40 +11768,39 @@ The sysctl --system command will load settings from all system configuration fil
 /etc/sysctl.conf</pre></td>
 	<td><pre>Verify OL 8 disables the use of user namespaces with the following commands. 
  
-Note: User namespaces are used primarily for Linux containers. If containers are in use, this requirement is not applicable. 
+Note: If unprivileged user namespaces or "rootless" containers are in use, this requirement is not applicable.
  
-$ sudo sysctl user.max_user_namespaces 
- 
-user.max_user_namespaces = 0 
+     $ sudo sysctl user.max_user_namespaces 
+     user.max_user_namespaces = 0 
  
 If the returned line does not have a value of "0" or a line is not returned, this is a finding.
 
 Check that the configuration files are present to enable this network parameter.
 
-$ sudo grep -r user.max_user_namespaces /run/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf /etc/sysctl.d/*.conf
-
-/etc/sysctl.d/99-sysctl.conf: user.max_user_namespaces = 0
+     $ sudo grep -r user.max_user_namespaces /run/sysctl.d/*.conf /usr/local/lib/sysctl.d/*.conf /usr/lib/sysctl.d/*.conf /lib/sysctl.d/*.conf /etc/sysctl.conf /etc/sysctl.d/*.conf
+     /etc/sysctl.d/99-sysctl.conf: user.max_user_namespaces = 0
 
 If "user.max_user_namespaces" is not set to "0", is missing or commented out, this is a finding.
 
 If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure the system to disable the use of user namespaces by adding the following line to a file in the "/etc/sysctl.d" directory:
 
-user.max_user_namespaces = 0
+     user.max_user_namespaces = 0
 
 Remove any configurations that conflict with the above from the following locations: 
-/run/sysctl.d/*.conf
-/usr/local/lib/sysctl.d/*.conf
-/usr/lib/sysctl.d/*.conf
-/lib/sysctl.d/*.conf
-/etc/sysctl.conf
-/etc/sysctl.d/*.conf
+
+     /run/sysctl.d/*.conf
+     /usr/local/lib/sysctl.d/*.conf
+     /usr/lib/sysctl.d/*.conf
+     /lib/sysctl.d/*.conf
+     /etc/sysctl.conf
+     /etc/sysctl.d/*.conf
 
 The system configuration files must be reloaded for the changes to take effect. To reload the contents of the files, run the following command:
 
-$ sudo sysctl --system</pre></td>
+     $ sudo sysctl --system</pre></td>
 	<td>OL08-00-040284</td>
-	<td>SV-248892r858687_rule</td>
+	<td>SV-248892r928562_rule</td>
 </tr>
 
 <tr>
@@ -12223,56 +12219,64 @@ $ sudo yum remove tuned</pre></td>
 	<td>V-248907</td>
 	<td>CCI-002235</td>
 	<td>medium</td>
-	<td>OL 8 must prevent non-privileged users from executing privileged functions, including disabling, circumventing, or altering implemented security safeguards/countermeasures.</td>
+	<td>OL 8 must prevent nonprivileged users from executing privileged functions, including disabling, circumventing, or altering implemented security safeguards/countermeasures.</td>
 	<td>SRG-OS-000324-GPOS-00125</td>
-	<td><pre>Preventing non-privileged users from executing privileged functions mitigates the risk that unauthorized individuals or processes may gain unnecessary access to information or privileges. 
+	<td><pre>Preventing nonprivileged users from executing privileged functions mitigates the risk that unauthorized individuals or processes may gain unnecessary access to information or privileges. 
  
-Privileged functions include, for example, establishing accounts, performing system integrity checks, or administering cryptographic key management activities. Non-privileged users are individuals who do not possess appropriate authorizations. Circumventing intrusion detection and prevention mechanisms or malicious code protection mechanisms are examples of privileged functions that require protection from non-privileged users.</pre></td>
-	<td><pre>Verify the operating system prevents non-privileged users from executing privileged functions, including disabling, circumventing, or altering implemented security safeguards/countermeasures. 
+Privileged functions include, for example, establishing accounts, performing system integrity checks, or administering cryptographic key management activities. Nonprivileged users are individuals who do not possess appropriate authorizations. Circumventing intrusion detection and prevention mechanisms or malicious code protection mechanisms are examples of privileged functions that require protection from nonprivileged users.</pre></td>
+	<td><pre>Verify the operating system prevents nonprivileged users from executing privileged functions, including disabling, circumventing, or altering implemented security safeguards/countermeasures. 
  
-Obtain a list of authorized users (other than System Administrator and guest accounts) for the system. 
+Obtain a list of authorized users (other than system administrator and guest accounts) for the system. 
  
 Check the list against the system by using the following command: 
  
-$ sudo semanage login -l | more 
-Login Name SELinux User MLS/MCS Range Service 
-__default__ user_u s0-s0:c0.c1023 * 
-root unconfined_u s0-s0:c0.c1023 * 
-system_u system_u s0-s0:c0.c1023 * 
-joe staff_u s0-s0:c0.c1023 * 
+     $ sudo semanage login -l | more 
+
+     Login Name    SELinux User    MLS/MCS Range    Service
+
+     __default__   user_u                 s0-s0:c0.c1023        *
+     root                   unconfined_u  s0-s0:c0.c1023        *
+     system_u        system_u           s0-s0:c0.c1023        *
+     joe                     staff_u                s0-s0:c0.c1023        *
  
 All administrators must be mapped to the "sysadm_u", "staff_u", or an appropriately tailored confined role as defined by the organization. 
  
-All authorized non-administrative users must be mapped to the "user_u" role. 
+All authorized nonadministrative users must be mapped to the "user_u" role. 
  
 If they are not mapped in this way, this is a finding.</pre></td>
-	<td><pre>Configure OL 8 to prevent non-privileged users from executing privileged functions, including disabling, circumventing, or altering implemented security safeguards/countermeasures. 
+	<td><pre>Configure OL 8 to prevent nonprivileged users from executing privileged functions, including disabling, circumventing, or altering implemented security safeguards/countermeasures. 
  
 Use the following command to map a new user to the "sysadm_u" role: 
  
-$ sudo semanage login -a -s sysadm_u <username> 
+     $ sudo semanage login -a -s sysadm_u <username> 
  
 Use the following command to map an existing user to the "sysadm_u" role: 
  
-$ sudo semanage login -m -s sysadm_u <username> 
+     $ sudo semanage login -m -s sysadm_u <username> 
  
 Use the following command to map a new user to the "staff_u" role: 
  
-$ sudo semanage login -a -s staff_u <username> 
+     $ sudo semanage login -a -s staff_u <username> 
  
 Use the following command to map an existing user to the "staff_u" role: 
  
-$ sudo semanage login -m -s staff_u <username> 
+     $ sudo semanage login -m -s staff_u <username> 
  
 Use the following command to map a new user to the "user_u" role: 
  
-$ sudo  semanage login -a -s user_u <username> 
+     $ sudo  semanage login -a -s user_u <username> 
  
 Use the following command to map an existing user to the "user_u" role: 
  
-$ sudo semanage login -m -s user_u <username></pre></td>
+     $ sudo semanage login -m -s user_u <username>
+
+Note: SELinux confined users mapped to sysadm_u are not allowed to log in to the system over SSH, by default. If this is a required function, it can be configured by setting the ssh_sysadm_login SELinux boolean to "on" with the following command:
+
+     $ sudo setsebool -P ssh_sysadm_login on
+
+This must be documented with the information system security officer (ISSO) as an operational requirement.</pre></td>
 	<td>OL08-00-040400</td>
-	<td>SV-248907r877392_rule</td>
+	<td>SV-248907r928804_rule</td>
 </tr>
 
 <tr>
