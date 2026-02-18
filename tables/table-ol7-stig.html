@@ -1057,7 +1057,9 @@ after pam_pwquality to set minimum password length requirements.</td>
 run commands with the privileges of that account. Accounts with
 empty passwords should never be used in operational environments.</td>
 <td>To verify that null passwords cannot be used, run the following command:
+
 $ grep nullok /etc/pam.d/system-auth
+
 If this produces any output, it may be possible to log into accounts
 with empty passwords. Remove any instances of the nullok option to
 prevent logins with empty passwords.
@@ -1065,9 +1067,12 @@ prevent logins with empty passwords.
       </td>
 <td>If an account is configured for password authentication
 but does not have an assigned password, it may be possible to log
-into the account without authentication. Remove any instances of the <code>nullok</code>
-option in <code>/etc/pam.d/system-auth</code> to
-prevent logins with empty passwords.</td>
+into the account without authentication. Remove any instances of the
+<code>nullok</code> in
+
+<code>/etc/pam.d/system-auth</code>
+
+to prevent logins with empty passwords.</td>
 <td>OL07-00-010290</td>
 </tr>
 <tr>
@@ -1329,11 +1334,14 @@ important bootloader settings. These include which kernel to use,
 and whether to enter single-user mode.</td>
 <td>To verify the boot loader superuser password has been set, run the following
 command:
+ 
 sudo grep "superusers" /etc/grub2.cfg
+
 The output should show the following:
 password_pbkdf2 superusers-account ${GRUB2_PASSWORD}
 To verify the boot loader superuser account password has been set,
 and the password encrypted, run the following command:
+
 sudo cat /boot/grub2/user.cfg
 The output should be similar to:
 GRUB2_PASSWORD=grub.pbkdf2.sha512.10000.C4E08AC72FBFF7E837FD267BFAD7AEB3D42DDC
@@ -1347,8 +1355,12 @@ protection enabled to protect boot-time settings.
 <br><br>
 Since plaintext passwords are a security risk, generate a hash for the password
 by running the following command:
+
 <pre>$ grub2-setpassword</pre>
+
 When prompted, enter the password that was selected.
+<br><br>
+
 <br><br>
 Once the superuser password has been added,
 update the
@@ -1366,7 +1378,6 @@ update the
 on the machine and gaining root access. Such accesses are further prevented
 by configuring the bootloader password.</td>
 <td>To check if authentication is required for single-user mode, run the following command:
-
 $ grep sulogin /usr/lib/systemd/system/rescue.service
 The output should be similar to the following, and the line must begin with
 ExecStart and /sbin/sulogin.
@@ -1378,7 +1389,6 @@ method, providing a single user root access to the system by
 providing a boot option at startup. By default, no authentication
 is performed if single-user mode is selected.
 <br><br>
-
 By default, single-user mode is protected by requiring a password and is set
 in <code>/usr/lib/systemd/system/rescue.service</code>.</td>
 <td>OL07-00-010481</td>
@@ -1394,11 +1404,14 @@ important bootloader settings. These include which kernel to use,
 and whether to enter single-user mode.</td>
 <td>To verify the boot loader superuser password has been set, run the following
 command:
+
 sudo grep "password" /etc/grub2-efi.cfg
+
 The output should show the following:
 password_pbkdf2 superusers-account ${GRUB2_PASSWORD}
 To verify the boot loader superuser account password has been set,
 and the password encrypted, run the following command:
+
 sudo cat /boot/efi/EFI/redhat/user.cfg
 The output should be similar to:
 GRUB2_PASSWORD=grub.pbkdf2.sha512.10000.C4E08AC72FBFF7E837FD267BFAD7AEB3D42DDC
@@ -1412,12 +1425,16 @@ protection enabled to protect boot-time settings.
 <br><br>
 Since plaintext passwords are a security risk, generate a hash for the password
 by running the following command:
+
 <pre>$ grub2-setpassword</pre>
+
 When prompted, enter the password that was selected.
 <br><br>
+
 Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
+
 <pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
 </td>
 <td>OL07-00-010490</td>
@@ -1792,8 +1809,7 @@ following line to configure the system to boot into enforcing mode:
 can reboot the system. If accidentally pressed, as could happen in
 the case of mixed OS environment, this can create the risk of short-term
 loss of availability of systems due to unintentional reboot.</td>
-<td>
-To ensure the system is configured to mask the Ctrl-Alt-Del sequence, Check
+<td>To ensure the system is configured to mask the Ctrl-Alt-Del sequence, Check
 that the ctrl-alt-del.target is masked and not active with the following
 command:
 sudo systemctl status ctrl-alt-del.target
@@ -1804,8 +1820,7 @@ Loaded: masked (/dev/null; bad)
 Active: inactive (dead)
       Is it the case that the system is configured to reboot when Ctrl-Alt-Del is pressed?
       </td>
-<td>
-By default, <code>SystemD</code> will reboot the system if the <code>Ctrl-Alt-Del</code>
+<td>By default, <code>SystemD</code> will reboot the system if the <code>Ctrl-Alt-Del</code>
 key sequence is pressed.
 <br><br>
 To configure the system to ignore the <code>Ctrl-Alt-Del</code> key sequence from the
@@ -2491,10 +2506,10 @@ $ sudo find PART -xdev -type d -perm -0002 -uid +499 -print
       </td>
 <td>All directories in local partitions which are
 world-writable should be owned by root or another
-system account.  If any world-writable directories are not
+system account. If any world-writable directories are not
 owned by a system account, this should be investigated.
 Following this, the files should be deleted or assigned to an
-appropriate group.</td>
+appropriate owner.</td>
 <td>OL07-00-021030</td>
 </tr>
 <tr>

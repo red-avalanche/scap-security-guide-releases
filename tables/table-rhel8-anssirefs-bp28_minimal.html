@@ -42,6 +42,58 @@
 <td>Variable Setting</td>
 </thead>
 <tr>
+<td>BP28(R32)<br>
+</td>
+<td>Set number of Password Hashing Rounds - password-auth</td>
+<td xml:lang="en-US">Configure the number or rounds for the password hashing algorithm. This can be
+accomplished by using the <code>rounds</code> option for the <code>pam_unix</code> PAM module.
+<br><br>
+In file <code>/etc/pam.d/password-auth</code> append <code>rounds=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_rounds"></xccdf-1.1:sub></code>
+to the <code>pam_unix.so</code> file, as shown below:
+<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_rounds"></xccdf-1.1:sub></pre>
+The system's default number of rounds is 5000.</td>
+<td xml:lang="en-US">Using a higher number of rounds makes password cracking attacks more difficult.</td>
+<td></td>
+</tr>
+<tr>
+<td>BP28(R32)<br>
+</td>
+<td>Set number of Password Hashing Rounds - system-auth</td>
+<td xml:lang="en-US">Configure the number or rounds for the password hashing algorithm. This can be
+accomplished by using the <code>rounds</code> option for the <code>pam_unix</code> PAM module.
+<br><br>
+In file <code>/etc/pam.d/system-auth</code> append <code>rounds=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_rounds"></xccdf-1.1:sub></code>
+to the <code>pam_unix.so</code> file, as shown below:
+<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_rounds"></xccdf-1.1:sub></pre>
+The system's default number of rounds is 5000.</td>
+<td xml:lang="en-US">Using a higher number of rounds makes password cracking attacks more difficult.</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Configure dnf-automatic to Install Available Updates Automatically</td>
+<td xml:lang="en-US">To ensure that the packages comprising the available updates will be automatically installed by <code>dnf-automatic</code>, set <code>apply_updates</code> to <code>yes</code> under <code>[commands]</code> section in <code>/etc/dnf/automatic.conf</code>.</td>
+<td xml:lang="en-US">Installing software updates is a fundamental mitigation against
+the exploitation of publicly-known vulnerabilities. If the most
+recent security patches and updates are not installed, unauthorized
+users may take advantage of weaknesses in the unpatched software. The
+lack of prompt attention to patching could result in a system compromise.
+The automated installation of updates ensures that recent security patches
+are applied in a timely manner.</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Configure dnf-automatic to Install Only Security Updates</td>
+<td xml:lang="en-US">To configure <code>dnf-automatic</code> to install only security updates
+automatically, set <code>upgrade_type</code> to <code>security</code> under
+<code>[commands]</code> section in <code>/etc/dnf/automatic.conf</code>.</td>
+<td xml:lang="en-US">By default, <code>dnf-automatic</code> installs all available updates.
+Reducing the amount of updated packages only to updates that were
+issued as a part of a security advisory increases the system stability.</td>
+<td></td>
+</tr>
+<tr>
 <td>BP28(R15)<br>
 </td>
 <td>Ensure gpgcheck Enabled In Main yum Configuration</td>
@@ -143,6 +195,18 @@ accidentally reactivated and disrupt network operation.</td>
 <td></td>
 </tr>
 <tr>
+<td></td>
+<td>Install dnf-automatic Package</td>
+<td xml:lang="en-US">The <code>dnf-automatic</code> package can be installed with the following command:
+<pre>
+$ sudo yum install dnf-automatic</pre>
+</td>
+<td xml:lang="en-US">
+<code>dnf-automatic</code> is an alternative command line interface (CLI)
+to <code>dnf upgrade</code> suitable for automatic, regular execution.</td>
+<td></td>
+</tr>
+<tr>
 <td>BP28(R5)<br>NT28(R46)<br>
 </td>
 <td>Ensure rsyslog is Installed</td>
@@ -213,18 +277,31 @@ logging services, which are essential to system administration.</td>
 <td></td>
 </tr>
 <tr>
-<td>BP28(R32)<br>
-</td>
-<td>Set Password Hashing Algorithm in /etc/login.defs</td>
-<td xml:lang="en-US">In <code>/etc/login.defs</code>, add or correct the following line to ensure
-the system will use SHA-512 as the hashing algorithm:
-<pre>ENCRYPT_METHOD SHA512</pre>
-</td>
-<td xml:lang="en-US">Passwords need to be protected at all times, and encryption is the standard method for protecting passwords.
-If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised. Passwords
-that are encrypted with a weak algorithm are no more protected than if they are kept in plain text.
+<td></td>
+<td>Set PAM's Password Hashing Algorithm</td>
+<td xml:lang="en-US">The PAM system service can be configured to only store encrypted
+representations of passwords. In <code>/etc/pam.d/system-auth</code>, the
+<code>password</code> section of the file controls which PAM modules execute
+during a password change. Set the <code>pam_unix.so</code> module in the
+<code>password</code> section to include the argument <code>sha512</code>, as shown
+below:
+<br>
+<pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i></pre>
+<br>
+This will help ensure when local users change their passwords, hashes for
+the new passwords will be generated using the SHA-512 algorithm. This is
+the default.</td>
+<td xml:lang="en-US">Passwords need to be protected at all times, and encryption is the standard
+method for protecting passwords. If passwords are not encrypted, they can
+be plainly read (i.e., clear text) and easily compromised. Passwords that
+are encrypted with a weak algorithm are no more protected than if they are
+kepy in plain text.
 <br><br>
-Using a stronger hashing algorithm makes password cracking attacks more difficult.</td>
+This setting ensures user and group account administration utilities are
+configured to store only encrypted representations of passwords.
+Additionally, the <code>crypt_style</code> configuration option ensures the use
+of a strong hashing algorithm that makes password cracking attacks more
+difficult.</td>
 <td></td>
 </tr>
 <tr>
@@ -256,6 +333,17 @@ do not have authorization.
 <br><br>
 When operating systems provide the capability to escalate a functional capability, it
 is critical that the user re-authenticate.</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td>Enable dnf-automatic Timer</td>
+<td xml:lang="en-US">
+The <code>dnf-automatic</code> timer can be enabled with the following command:
+<pre>$ sudo systemctl enable dnf-automatic.timer</pre>
+</td>
+<td xml:lang="en-US">The <code>dnf-automatic</code> is an alternative command line interface (CLI) to <code>dnf upgrade</code> with specific facilities to make it suitable to be executed automatically and regularly from systemd timers, cron jobs and similar.
+The tool is controlled by <code>dnf-automatic.timer</code> SystemD timer.</td>
 <td></td>
 </tr>
 </table>
