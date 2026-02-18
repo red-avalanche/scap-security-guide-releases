@@ -6,7 +6,7 @@
 <body>
 <br><br><div style="text-align: center; font-size: x-large; font-weight:bold">DISA STIG with GUI for Red Hat Enterprise Linux 8</div>
 <div style="text-align: center; font-size: normal ">This profile contains configuration checks that align to the
-DISA STIG with GUI for Red Hat Enterprise Linux 8 V1R8.
+DISA STIG with GUI for Red Hat Enterprise Linux 8 V1R9.
 
 In addition to being applicable to Red Hat Enterprise Linux 8, DISA recognizes this
 configuration baseline as applicable to the operating system tier of
@@ -132,6 +132,38 @@ Verify each of these accounts has an expiration date set within 72 hours or as d
 <td>CCI-000016<br>CCI-001682<br>
 </td>
 <td>AC-2 (2)<br>AC-2 (2)<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_account_password_selinux_faillock_dir</td>
+<td>medium</td>
+<td>An SELinux Context must be configured for the pam_faillock.so records directory</td>
+<td>Not having the correct SELinux context on the pam_faillock.so records directory may lead to
+unauthorized access to the directory.</td>
+<td>The <code>dir</code> configuration option in PAM pam_faillock.so module defines where the lockout
+records is stored. The configured directory must have the correct SELinux context.</td>
+<td><pre>If the system does not have SELinux enabled and enforcing a targeted policy, or if the
+pam_faillock.so module is not configured for use, this requirement is not applicable.
+
+Verify the location of the non-default tally directory for the pam_faillock.so module with
+the following command:
+
+$ sudo grep -w dir /etc/security/faillock.conf
+
+dir = /var/log/faillock
+
+Check the security context type of the non-default tally directory with the following command:
+
+$ sudo ls -Zd /var/log/faillock
+
+unconfined_u:object_r:faillog_t:s0 /var/log/faillock
+      Is it the case that the security context type of the non-default tally directory is not "faillog_t"?
+      </pre></td>
+<td>SRG-OS-000021-GPOS-00005<br>
+</td>
+<td>CCI-000044<br>
+</td>
+<td>AC-7 a<br>
 </td>
 </tr>
 <tr>
@@ -752,24 +784,44 @@ ocredit =
 <td>xccdf_org.ssgproject.content_rule_accounts_password_pam_pwhistory_remember_password_auth</td>
 <td>medium</td>
 <td>Limit Password Reuse: password-auth</td>
-<td>Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.</td>
+<td>Preventing re-use of previous passwords helps ensure that a compromised password is not
+re-used by a user.</td>
 <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <code>remember</code> option for the <code>pam_pwhistory</code> PAM module.
 <br><br>
-In the file <code>/etc/pam.d/password-auth</code>, make sure the parameter
-<code>remember</code> is present and it has a value equal to or greater than
-<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>. For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember_control_flag" use="legacy"></xccdf-1.2:sub></code><br>
-</td>
-<td><pre>Verify Red Hat Enterprise Linux 8 is configured in the password-auth file to prohibit password reuse
-for a minimum of  generations with the following command:
 
-$ grep -i remember /etc/pam.d/password-auth
-password  pam_pwhistory.so use_authtok remember= retry=3
-      Is it the case that the line containing "pam_pwhistory.so" does not have the "remember" module argument set,
-is commented out, or the value of the "remember" module argument is set to less than
-"&lt;sub idref="var_password_pam_remember" /&gt;"?
+On systems with newer versions of <code>authselect</code>, the <code>pam_pwhistory</code> PAM module
+can be enabled via authselect feature:
+<pre>authselect enable-feature with-pwhistory</pre>
+
+Otherwise, it should be enabled using an authselect custom profile.
+<br><br>
+Newer systems also have the <code>/etc/security/pwhistory.conf</code> file for setting
+<code>pam_pwhistory</code> module options. This file should be used whenever available.
+Otherwise, the <code>pam_pwhistory</code> module options can be set in PAM files.
+<br><br>
+The value for <code>remember</code> option must be equal or greater than
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>
+</td>
+<td><pre>Verify Red Hat Enterprise Linux 8 use the "pam_pwhistory.so" module in the /etc/pam.d/password-auth file
+and is configured to prohibit password reuse for a minimum of 
+generations.
+
+Verify the "/etc/pam.d/password-auth" file with the following command:
+
+$ grep pam_pwhistory.so /etc/pam.d/password-auth
+password  pam_pwhistory.so use_authtok remember=
+
+
+Verify the "/etc/security/pwhistory.conf" file using the following command:
+
+$ grep remember /etc/security/pwhistory.conf
+remember = 
+
+The pam_pwhistory.so "remember" option must be configured only in one file.
+      Is it the case that the pam_pwhistory.so module is not used, the "remember" module option is not set in
+/etc/pam.d/password-auth or in /etc/security/pwhistory.conf, or is set in both files, or is set
+with a value less than "&lt;sub idref="var_password_pam_remember" /&gt;"?
       </pre></td>
 <td>SRG-OS-000077-GPOS-00045<br>
 </td>
@@ -782,25 +834,44 @@ is commented out, or the value of the "remember" module argument is set to less 
 <td>xccdf_org.ssgproject.content_rule_accounts_password_pam_pwhistory_remember_system_auth</td>
 <td>medium</td>
 <td>Limit Password Reuse: system-auth</td>
-<td>Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.</td>
+<td>Preventing re-use of previous passwords helps ensure that a compromised password is not
+re-used by a user.</td>
 <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <code>remember</code> option for the <code>pam_pwhistory</code> PAM module.
 <br><br>
-In the file <code>/etc/pam.d/system-auth</code>, make sure the parameter
-<code>remember</code> is present and it has a value equal to or greater than
-<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>
-For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember_control_flag" use="legacy"></xccdf-1.2:sub></code><br>
-</td>
-<td><pre>Verify Red Hat Enterprise Linux 8 is configured in the system-auth file to prohibit password reuse
-for a minimum of  generations with the following command:
 
-$ grep -i remember /etc/pam.d/system-auth
-password  pam_pwhistory.so use_authtok remember= retry=3
-      Is it the case that the line containing "pam_pwhistory.so" does not have the "remember" module argument set,
-is commented out, or the value of the "remember" module argument is set to less than
-"&lt;sub idref="var_password_pam_remember" /&gt;"?
+On systems with newer versions of <code>authselect</code>, the <code>pam_pwhistory</code> PAM module
+can be enabled via authselect feature:
+<pre>authselect enable-feature with-pwhistory</pre>
+
+Otherwise, it should be enabled using an authselect custom profile.
+<br><br>
+Newer systems also have the <code>/etc/security/pwhistory.conf</code> file for setting
+<code>pam_pwhistory</code> module options. This file should be used whenever available.
+Otherwise, the <code>pam_pwhistory</code> module options can be set in PAM files.
+<br><br>
+The value for <code>remember</code> option must be equal or greater than
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>
+</td>
+<td><pre>Verify Red Hat Enterprise Linux 8 use the "pam_pwhistory.so" module in the /etc/pam.d/system-auth file
+and is configured to prohibit password reuse for a minimum of 
+generations.
+
+Verify the "/etc/pam.d/system-auth" file with the following command:
+
+$ grep pam_pwhistory.so /etc/pam.d/system-auth
+password  pam_pwhistory.so use_authtok remember=
+
+
+Verify the "/etc/security/pwhistory.conf" file using the following command:
+
+$ grep remember /etc/security/pwhistory.conf
+remember = 
+
+The pam_pwhistory.so "remember" option must be configured only in one file.
+      Is it the case that the pam_pwhistory.so module is not used, the "remember" module option is not set in
+/etc/pam.d/system-auth or in /etc/security/pwhistory.conf, or is set in both files, or is set
+with a value less than "&lt;sub idref="var_password_pam_remember" /&gt;"?
       </pre></td>
 <td>SRG-OS-000077-GPOS-00045<br>
 </td>
@@ -999,7 +1070,9 @@ the account.</td>
 using <code>pam_faillock.so</code>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
 depending on the OS version.</td>
 <td><pre>Verify Red Hat Enterprise Linux 8 is configured to lock an account after 
@@ -1048,6 +1121,35 @@ even_deny_root
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_accounts_passwords_pam_faillock_dir</td>
+<td>medium</td>
+<td>Lock Accounts Must Persist</td>
+<td>Locking out user accounts after a number of incorrect attempts prevents direct password
+guessing attacks. In combination with the <code>silent</code> option, user enumeration attacks
+are also mitigated.</td>
+<td>This rule ensures that the system lock out accounts using <code>pam_faillock.so</code> persist
+after system reboot. From "pam_faillock" man pages:
+<pre>Note that the default directory that "pam_faillock" uses is usually cleared on system
+boot so the access will be reenabled after system reboot. If that is undesirable, a different
+tally directory must be set with the "dir" option.</pre>
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
+depending on the OS version.</td>
+<td><pre>To ensure the tally directory is configured correctly, run the following command:
+$ sudo grep 'dir =' /etc/security/faillock.conf
+The output should show that dir is set to something other than "/var/run/faillock"
+      Is it the case that the "dir" option is not set to a non-default documented tally log directory, is missing or commented out?
+      </pre></td>
+<td>SRG-OS-000021-GPOS-00005<br>SRG-OS-000329-GPOS-00128<br>
+</td>
+<td>CCI-000044<br>CCI-002238<br>
+</td>
+<td>AC-7 a<br>
+</td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_accounts_passwords_pam_faillock_interval</td>
 <td>medium</td>
 <td>Set Interval For Counting Failed Password Attempts</td>
@@ -1067,6 +1169,35 @@ or less (but not "0"), the line is commented out, or the line is missing?
 <td>SRG-OS-000021-GPOS-00005<br>SRG-OS-000329-GPOS-00128<br>
 </td>
 <td>CCI-000044<br>CCI-002236<br>CCI-002237<br>CCI-002238<br>
+</td>
+<td>AC-7 a<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_accounts_passwords_pam_faillock_silent</td>
+<td>medium</td>
+<td>Do Not Show System Messages When Unsuccessful Logon Attempts Occur</td>
+<td>The pam_faillock module without the silent option will leak information about the existence or
+non-existence of a user account in the system because the failures are not recorded for unknown
+users. The message about the user account being locked is never displayed for non-existing user
+accounts allowing the adversary to infer that a particular account exists or not on the system.</td>
+<td>This rule ensures the system prevents informative messages from being presented to the user
+pertaining to logon information after a number of incorrect login attempts using
+<code>pam_faillock.so</code>.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
+depending on the OS version.</td>
+<td><pre>To ensure that the system prevents messages from being shown when three unsuccessful logon
+attempts occur, run the following command:
+$ grep silent /etc/security/faillock.conf
+The output should show silent.
+      Is it the case that the system shows messages when three unsuccessful logon attempts occur?
+      </pre></td>
+<td>SRG-OS-000329-GPOS-00128<br>SRG-OS-000021-GPOS-00005<br>
+</td>
+<td>CCI-002238<br>CCI-000044<br>
 </td>
 <td>AC-7 a<br>
 </td>
@@ -1424,6 +1555,38 @@ $ sudo ps -ef | grep -i mfetpd
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_aide_build_database</td>
+<td>medium</td>
+<td>Build and Test AIDE Database</td>
+<td>For AIDE to be effective, an initial database of "known-good" information about files
+must be captured and it should be able to be verified against the installed files.</td>
+<td>Run the following command to generate a new database:
+
+<pre>$ sudo /usr/sbin/aide --init</pre>
+
+By default, the database will be written to the file
+
+<code>/var/lib/aide/aide.db.new.gz</code>.
+
+Storing the database, the configuration file <code>/etc/aide.conf</code>, and the binary
+<code>/usr/sbin/aide</code>
+(or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
+The newly-generated database can be installed as follows:
+
+<pre>$ sudo cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz</pre>
+
+To initiate a manual check, run the following command:
+<pre>$ sudo /usr/sbin/aide --check</pre>
+If this check produces any unexpected output, investigate.</td>
+<td><pre>To find the location of the AIDE database file, run the following command:
+$ sudo ls -l DBDIR/database_file_name
+      Is it the case that there is no database file?
+      </pre></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_aide_check_audit_tools</td>
 <td>medium</td>
 <td>Configure AIDE to Verify the Audit Tools</td>
@@ -1573,37 +1736,6 @@ Verify that the xattrs option is added to the correct ruleset.
 <td>CCI-000366<br>
 </td>
 <td>CM-6 b<br>
-</td>
-</tr>
-<tr>
-<td>xccdf_org.ssgproject.content_rule_audit_immutable_login_uids</td>
-<td>medium</td>
-<td>Configure immutable Audit login UIDs</td>
-<td>If modification of login UIDs is not prevented, they can be changed by unprivileged users and
-make auditing complicated or impossible.</td>
-<td>Configure kernel to prevent modification of login UIDs once they are set.
-Changing login UIDs while this configuration is enforced requires special capabilities which
-are not available to unprivileged users.
-
-The following rules configure audit as described above:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre>
-
-Load new Audit rules into kernel by running:
-<pre>augenrules --load</pre>
-</td>
-<td><pre>To verify that the Audit is correctly configured according to recommended rules, check the content of the file with the following command:
-$ sudo cat /etc/audit/rules.d/11-loginuid.rules
-The output has to be exactly as follows:
-## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    
-      Is it the case that the file does not exist or the content differs?
-      </pre></td>
-<td>SRG-OS-000057-GPOS-00027<br>SRG-OS-000058-GPOS-00028<br>SRG-OS-000059-GPOS-00029<br>
-</td>
-<td>CCI-000162<br>CCI-000163<br>CCI-000164<br>
-</td>
-<td>AU-9<br>AU-9<br>AU-9<br>
 </td>
 </tr>
 <tr>
@@ -2550,6 +2682,47 @@ $ sudo grep "^\s*[^#]" /etc/audit/audit.rules | tail -1
 -e 2
 
       Is it the case that the audit system is not set to be immutable by adding the "-e 2" option to the end of "/etc/audit/audit.rules"?
+      </pre></td>
+<td>SRG-OS-000057-GPOS-00027<br>SRG-OS-000058-GPOS-00028<br>SRG-OS-000059-GPOS-00029<br>
+</td>
+<td>CCI-000162<br>CCI-000163<br>CCI-000164<br>
+</td>
+<td>AU-9<br>AU-9<br>AU-9<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_immutable_login_uids</td>
+<td>medium</td>
+<td>Configure immutable Audit login UIDs</td>
+<td>If modification of login UIDs is not prevented, they can be changed by unprivileged users and
+make auditing complicated or impossible.</td>
+<td>Configure kernel to prevent modification of login UIDs once they are set.
+Changing login UIDs while this configuration is enforced requires special capabilities which
+are not available to unprivileged users.
+If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code> in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following line to
+<code>/etc/audit/audit.rules</code> file in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre>
+</td>
+<td><pre>To determine if the system is configured to make login UIDs immutable, run
+one of the following commands.
+If the auditd daemon is configured to use the
+augenrules program to read audit rules during daemon startup (the
+default), run the following:
+sudo grep immutable /etc/audit/rules.d/*.rules
+If the auditd daemon is configured to use the auditctl
+utility to read audit rules during daemon startup, run the following command:
+sudo grep immutable /etc/audit/audit.rules
+The following line should be returned:
+--loginuid-immutable
+      Is it the case that the system is not configured to make login UIDs immutable?
       </pre></td>
 <td>SRG-OS-000057-GPOS-00027<br>SRG-OS-000058-GPOS-00028<br>SRG-OS-000059-GPOS-00029<br>
 </td>
@@ -3556,7 +3729,7 @@ utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-w /etc/sudoers.d/ -p wa -k actions</pre>
 </td>
-<td><pre>Verify RHEL 9 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
+<td><pre>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
 
 $ sudo auditctl -l | grep/etc/sudoers.d
 
@@ -4657,9 +4830,9 @@ clean_requirements_on_remove=1
 <td></td>
 </tr>
 <tr>
-<td>xccdf_org.ssgproject.content_rule_configure_bashrc_exec_tmux</td>
+<td>xccdf_org.ssgproject.content_rule_configure_bashrc_tmux</td>
 <td>medium</td>
-<td>Support session locking with tmux</td>
+<td>Support session locking with tmux (not enforcing)</td>
 <td>Unlike <code>bash</code> itself, the <code>tmux</code> terminal multiplexer
 provides a mechanism to lock sessions after period of inactivity.
 A session lock is a temporary action taken when a user stops work and moves away from the
@@ -4674,7 +4847,7 @@ Determine the location of the tmux script with the following command:
 
 $ sudo grep tmux /etc/bashrc /etc/profile.d/*
 
-/etc/profile.d/tmux.sh:  case "$name" in (sshd|login) exec tmux ;; esac
+/etc/profile.d/tmux.sh:  case "$name" in (sshd|login) tmux ;; esac
 
 Review the tmux script by using the following example:
 
@@ -4683,7 +4856,7 @@ $ cat /etc/profile.d/tmux.sh
 if [ "$PS1" ]; then
 parent=$(ps -o ppid= -p $$)
 name=$(ps -o comm= -p $parent)
-case "$name" in (sshd|login) exec tmux ;; esac
+case "$name" in (sshd|login) tmux ;; esac
 fi
 
 If the shell file is not configured as the example above, is commented out, or is missing, this is a finding.
@@ -5057,8 +5230,40 @@ $ sudo ls -al /etc/tmux.conf
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_configure_tmux_lock_keybinding</td>
+<td>low</td>
+<td>Configure the tmux lock session key binding</td>
+<td>The <code>tmux</code> package allows for a session lock to be implemented and configured.
+However, the session lock is implemented by an external command. The <code>tmux</code>
+default configuration does not contain an effective session lock.</td>
+<td>To set a key binding for the screen locking in <code>tmux</code> terminal multiplexer,
+the <code>session-lock</code> command must be bound to a key.
+Add the following line to <code>/etc/tmux.conf</code>:
+<pre>bind X lock-session</pre>.
+The console can now be locked with the following key combination:
+<pre>Ctrl+b Shift+x</pre>
+</td>
+<td><pre>Verify Red Hat Enterprise Linux 8 enables the user to initiate a session lock trhough key bindings with the following commands:
+
+$ grep "bind X lock-session" /etc/tmux.conf
+
+bind X lock-session
+
+Then, verify that the /etc/tmux.conf file can be read by other users than root:
+
+$ sudo ls -al /etc/tmux.conf
+      Is it the case that the "lock-session" is not bound to the X key?
+      </pre></td>
+<td>SRG-OS-000028-GPOS-00009<br>
+</td>
+<td>CCI-000056<br>
+</td>
+<td>AC-11 b<br>
+</td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_configure_usbguard_auditbackend</td>
-<td>medium</td>
+<td>low</td>
 <td>Log USBGuard daemon audit events using Linux Audit</td>
 <td>Using the Linux Audit logging allows for centralized trace
 of events.</td>
@@ -6186,6 +6391,44 @@ gpg(Red Hat, Inc. (release key 2)  &lt;security@redhat.com&gt;
 <td>SRG-OS-000366-GPOS-00153<br>
 </td>
 <td>CCI-001749<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_fapolicy_default_deny</td>
+<td>medium</td>
+<td>Configure Fapolicy Module to Employ a Deny-all, Permit-by-exception Policy to Allow the Execution of Authorized Software Programs.</td>
+<td>Utilizing a whitelist provides a configuration management method for allowing the execution of only authorized software.
+Using only authorized software decreases risk by limiting the number of potential vulnerabilities. Verification of whitelisted software occurs prior to execution or at system startup.
+
+Proceed with caution with enforcing the use of this daemon.
+Improper configuration may render the system non-functional.
+The "fapolicyd" API is not namespace aware and can cause issues when launching or running containers.</td>
+<td>The Fapolicy module must be configured to employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs and to prevent unauthorized software from running.</td>
+<td><pre>Verify the Red Hat Enterprise Linux 8 "fapolicyd" employs a deny-all, permit-by-exception policy.
+
+Check that "fapolicyd" is in enforcement mode with the following command:
+
+$ sudo grep permissive /etc/fapolicyd/fapolicyd.conf
+
+permissive = 0
+
+Check that fapolicyd employs a deny-all policy on system mounts with the following commands:
+
+For RHEL 8.5 systems and older:
+$ sudo tail /etc/fapolicyd/fapolicyd.rules
+
+For RHEL 8.6 systems and newer:
+$ sudo tail /etc/fapolicyd/compiled.rules
+
+allow exe=/usr/bin/python3.7 : ftype=text/x-python
+deny_audit perm=any pattern=ld_so : all
+deny perm=any all : all
+      Is it the case that fapolicyd is not running in enforcement mode with a deny-all, permit-by-exception policy?
+      </pre></td>
+<td>SRG-OS-000368-GPOS-00154<br>
+</td>
+<td>CCI-001764<br>
 </td>
 <td></td>
 </tr>
@@ -10005,6 +10248,52 @@ $ sudo getenforce
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_selinux_user_login_roles</td>
+<td>medium</td>
+<td>Map System Users To The Appropriate SELinux Role</td>
+<td>Preventing non-privileged users from executing privileged functions mitigates
+the risk that unauthorized individuals or processes may gain unnecessary access
+to information or privileges.
+<br><br>
+Privileged functions include, for example,
+establishing accounts, performing system integrity checks, or administering
+cryptographic key management activities. Non-privileged users are individuals
+who do not possess appropriate authorizations. Circumventing intrusion detection
+and prevention mechanisms or malicious code protection mechanisms are examples
+of privileged functions that require protection from non-privileged users.</td>
+<td>Configure the operating system to prevent non-privileged users from executing
+privileged functions to include disabling, circumventing, or altering
+implemented security safeguards/countermeasures. All administrators must be
+mapped to the <code>sysadm_u</code> or <code>staff_u</code> users with the
+appropriate domains (<code>sysadm_t</code> and <code>staff_t</code>).
+<pre>$ sudo semanage login -m -s sysadm_u <i>USER</i></pre> or
+<pre>$ sudo semanage login -m -s staff_u <i>USER</i></pre>
+<br><br>
+All authorized non-administrative
+users must be mapped to the <code>user_u</code> role or the appropriate domain
+(user_t).
+<pre>$ sudo semanage login -m -s user_u <i>USER</i></pre>
+</td>
+<td><pre>To verify the operating system prevents non-privileged users from executing
+privileged functions to include disabling, circumventing, or altering
+implemented security safeguards/countermeasures, run the following
+command:
+$ sudo semanage login -l
+All administrators must be mapped to the sysadm_u or staff_u
+users with the appropriate domains (sysadm_t and staff_t).
+
+All authorized non-administrative
+users must be mapped to the user_u role or the appropriate domain
+(user_t).
+      Is it the case that non-admin users are not confined correctly?
+      </pre></td>
+<td>SRG-OS-000312-GPOS-00122<br>SRG-OS-000312-GPOS-00123<br>SRG-OS-000312-GPOS-00124<br>SRG-OS-000324-GPOS-00125<br>
+</td>
+<td>CCI-002165<br>CCI-002235<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_service_auditd_enabled</td>
 <td>medium</td>
 <td>Enable auditd Service</td>
@@ -10233,32 +10522,6 @@ UnitFileState=masked
 <td>CCI-000366<br>CCI-001665<br>
 </td>
 <td>CM-6 b<br>SC-24<br>
-</td>
-</tr>
-<tr>
-<td>xccdf_org.ssgproject.content_rule_service_rngd_enabled</td>
-<td>low</td>
-<td>Enable the Hardware RNG Entropy Gatherer Service</td>
-<td>The <code>rngd</code> service
-feeds random data from hardware device to kernel random device.</td>
-<td>The Hardware RNG Entropy Gatherer service should be enabled.
-
-The <code>rngd</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable rngd.service</pre>
-</td>
-<td><pre>
-
-Run the following command to determine the current status of the
-rngd service:
-$ sudo systemctl is-active rngd
-If the service is running, it should return the following: active
-      Is it the case that the "rngd" service is disabled, masked, or not started.?
-      </pre></td>
-<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
-</td>
-<td>CCI-000366<br>
-</td>
-<td>CM-6 b<br>
 </td>
 </tr>
 <tr>
@@ -10517,34 +10780,6 @@ are set, they must have the minimum value of 5000.
 <td>CCI-000196<br>CCI-000803<br>
 </td>
 <td>IA-5 (1) (c)<br>IA-7<br>
-</td>
-</tr>
-<tr>
-<td>xccdf_org.ssgproject.content_rule_sshd_disable_compression</td>
-<td>medium</td>
-<td>Disable Compression Or Set Compression to delayed</td>
-<td>If compression is allowed in an SSH connection prior to authentication,
-vulnerabilities in the compression software could result in compromise of the
-system from an unauthenticated connection, potentially with root privileges.</td>
-<td>Compression is useful for slow network connections over long
-distances but can cause performance issues on local LANs. If use of compression
-is required, it should be enabled only after a user has authenticated; otherwise,
-it should be disabled. To disable compression or delay compression until after
-a user has successfully authenticated, add or correct the following line in the
-<code>/etc/ssh/sshd_config</code> file:
-<pre>Compression <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_sshd_disable_compression" use="legacy"></xccdf-1.2:sub></pre>
-</td>
-<td><pre>To check if compression is enabled or set correctly, run the
-following command:
-$ sudo grep Compression /etc/ssh/sshd_config
-If configured properly, output should be no or delayed.
-      Is it the case that it is commented out, or is not set to no or delayed?
-      </pre></td>
-<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
-</td>
-<td>CCI-000366<br>
-</td>
-<td>CM-6 b<br>
 </td>
 </tr>
 <tr>
@@ -10984,7 +11219,7 @@ For SSH earlier than v8.2, a ClientAliveCountMax value of 0 causes a timeout pre
 the ClientAliveInterval is set.  Starting with v8.2, a value of 0 disables the timeout
 functionality completely.
 If the option is set to a number greater than 0, then the session will be disconnected after
-ClientAliveInterval * ClientAliveCountMax seconds witout receiving a keep alive message.
+ClientAliveInterval * ClientAliveCountMax seconds without receiving a keep alive message.
       Is it the case that it is commented out or not configured properly?
       </pre></td>
 <td>SRG-OS-000126-GPOS-00066<br>SRG-OS-000163-GPOS-00072<br>SRG-OS-000279-GPOS-00109<br>

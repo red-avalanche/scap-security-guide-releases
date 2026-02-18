@@ -275,6 +275,14 @@ account changes:
 
       <table>
         <tr>
+          <td>An SELinux Context must be configured for the pam_faillock.so records directory</td>
+          <td>The <tt>dir</tt> configuration option in PAM pam_faillock.so module defines where the lockout
+records is stored. The configured directory must have the correct SELinux context.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Account Lockouts Must Be Logged</td>
           <td>PAM faillock locks an account due to excessive password failures, this event must be logged.</td>
         </tr>
@@ -287,7 +295,9 @@ account changes:
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.</td>
         </tr>
@@ -308,10 +318,40 @@ depending on the OS version.</td>
 
       <table>
         <tr>
+          <td>Lock Accounts Must Persist</td>
+          <td>This rule ensures that the system lock out accounts using <tt>pam_faillock.so</tt> persist
+after system reboot. From "pam_faillock" man pages:
+<pre>Note that the default directory that "pam_faillock" uses is usually cleared on system
+boot so the access will be reenabled after system reboot. If that is undesirable, a different
+tally directory must be set with the "dir" option.</pre>
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Set Interval For Counting Failed Password Attempts</td>
           <td>Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
 period.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Do Not Show System Messages When Unsuccessful Logon Attempts Occur</td>
+          <td>This rule ensures the system prevents informative messages from being presented to the user
+pertaining to logon information after a number of incorrect login attempts using
+<tt>pam_faillock.so</tt>.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
         </tr>
       </table>
 
@@ -522,7 +562,7 @@ Regardless of where the session lock is determined and implemented, once invoked
 
       <table>
         <tr>
-          <td>Support session locking with tmux</td>
+          <td>Support session locking with tmux (not enforcing)</td>
           <td>The <tt>tmux</tt> terminal multiplexer is used to implement
 automatic session locking. It should be started from
 <tt>/etc/bashrc</tt> or drop-in files within <tt>/etc/profile.d/</tt>.</td>
@@ -539,6 +579,18 @@ Add the following line to <tt>/etc/tmux.conf</tt>:
 <pre>set -g lock-command vlock</pre>.
 The console can now be locked with the following key combination:
 <pre>ctrl+b :lock-session</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Configure the tmux lock session key binding</td>
+          <td>To set a key binding for the screen locking in <tt>tmux</tt> terminal multiplexer,
+the <tt>session-lock</tt> command must be bound to a key.
+Add the following line to <tt>/etc/tmux.conf</tt>:
+<pre>bind X lock-session</pre>.
+The console can now be locked with the following key combination:
+<pre>Ctrl+b Shift+x</pre></td>
         </tr>
       </table>
 
@@ -695,7 +747,7 @@ The session lock is implemented at the point where session activity can be deter
 
       <table>
         <tr>
-          <td>Support session locking with tmux</td>
+          <td>Support session locking with tmux (not enforcing)</td>
           <td>The <tt>tmux</tt> terminal multiplexer is used to implement
 automatic session locking. It should be started from
 <tt>/etc/bashrc</tt> or drop-in files within <tt>/etc/profile.d/</tt>.</td>
@@ -712,6 +764,18 @@ Add the following line to <tt>/etc/tmux.conf</tt>:
 <pre>set -g lock-command vlock</pre>.
 The console can now be locked with the following key combination:
 <pre>ctrl+b :lock-session</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Configure the tmux lock session key binding</td>
+          <td>To set a key binding for the screen locking in <tt>tmux</tt> terminal multiplexer,
+the <tt>session-lock</tt> command must be bound to a key.
+Add the following line to <tt>/etc/tmux.conf</tt>:
+<pre>bind X lock-session</pre>.
+The console can now be locked with the following key combination:
+<pre>Ctrl+b Shift+x</pre></td>
         </tr>
       </table>
 
@@ -794,7 +858,7 @@ Publicly viewable images can include static or dynamic images, for example, patt
 
       <table>
         <tr>
-          <td>Support session locking with tmux</td>
+          <td>Support session locking with tmux (not enforcing)</td>
           <td>The <tt>tmux</tt> terminal multiplexer is used to implement
 automatic session locking. It should be started from
 <tt>/etc/bashrc</tt> or drop-in files within <tt>/etc/profile.d/</tt>.</td>
@@ -3886,22 +3950,6 @@ Audit information includes all information (e.g., audit records, audit settings,
 
       <table>
         <tr>
-          <td>Configure immutable Audit login UIDs</td>
-          <td>Configure kernel to prevent modification of login UIDs once they are set.
-Changing login UIDs while this configuration is enforced requires special capabilities which
-are not available to unprivileged users.
-
-The following rules configure audit as described above:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre>
-
-Load new Audit rules into kernel by running:
-<pre>augenrules --load</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Make the auditd Configuration Immutable</td>
           <td>If the <tt>auditd</tt> daemon is configured to use the
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
@@ -3915,6 +3963,26 @@ utility to read audit rules during daemon startup, add the following line to
 immutable:
 <pre>-e 2</pre>
 With this setting, a reboot will be required to change any audit rules.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Configure immutable Audit login UIDs</td>
+          <td>Configure kernel to prevent modification of login UIDs once they are set.
+Changing login UIDs while this configuration is enforced requires special capabilities which
+are not available to unprivileged users.
+If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following line to
+<tt>/etc/audit/audit.rules</tt> file in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre></td>
         </tr>
       </table>
 
@@ -4018,22 +4086,6 @@ Audit information includes all information (e.g., audit records, audit settings,
 
       <table>
         <tr>
-          <td>Configure immutable Audit login UIDs</td>
-          <td>Configure kernel to prevent modification of login UIDs once they are set.
-Changing login UIDs while this configuration is enforced requires special capabilities which
-are not available to unprivileged users.
-
-The following rules configure audit as described above:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre>
-
-Load new Audit rules into kernel by running:
-<pre>augenrules --load</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Make the auditd Configuration Immutable</td>
           <td>If the <tt>auditd</tt> daemon is configured to use the
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
@@ -4047,6 +4099,26 @@ utility to read audit rules during daemon startup, add the following line to
 immutable:
 <pre>-e 2</pre>
 With this setting, a reboot will be required to change any audit rules.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Configure immutable Audit login UIDs</td>
+          <td>Configure kernel to prevent modification of login UIDs once they are set.
+Changing login UIDs while this configuration is enforced requires special capabilities which
+are not available to unprivileged users.
+If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following line to
+<tt>/etc/audit/audit.rules</tt> file in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre></td>
         </tr>
       </table>
 
@@ -4150,22 +4222,6 @@ Audit information includes all information (e.g., audit records, audit settings,
 
       <table>
         <tr>
-          <td>Configure immutable Audit login UIDs</td>
-          <td>Configure kernel to prevent modification of login UIDs once they are set.
-Changing login UIDs while this configuration is enforced requires special capabilities which
-are not available to unprivileged users.
-
-The following rules configure audit as described above:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre>
-
-Load new Audit rules into kernel by running:
-<pre>augenrules --load</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Make the auditd Configuration Immutable</td>
           <td>If the <tt>auditd</tt> daemon is configured to use the
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
@@ -4179,6 +4235,26 @@ utility to read audit rules during daemon startup, add the following line to
 immutable:
 <pre>-e 2</pre>
 With this setting, a reboot will be required to change any audit rules.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Configure immutable Audit login UIDs</td>
+          <td>Configure kernel to prevent modification of login UIDs once they are set.
+Changing login UIDs while this configuration is enforced requires special capabilities which
+are not available to unprivileged users.
+If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following line to
+<tt>/etc/audit/audit.rules</tt> file in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre></td>
         </tr>
       </table>
 
@@ -6545,12 +6621,20 @@ restriction by running the following command:
           <td>Limit Password Reuse: password-auth</td>
           <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
-<br /><br />
-In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter
-<tt>remember</tt> is present and it has a value equal to or greater than
-<sub idref="var_password_pam_remember" />. For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<sub idref="var_password_pam_remember" /> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <tt><sub idref="var_password_pam_remember_control_flag" /></tt><br /></td>
+<br/><br/>
+
+On systems with newer versions of <tt>authselect</tt>, the <tt>pam_pwhistory</tt> PAM module
+can be enabled via authselect feature:
+<pre>authselect enable-feature with-pwhistory</pre>
+
+Otherwise, it should be enabled using an authselect custom profile.
+<br/><br/>
+Newer systems also have the <tt>/etc/security/pwhistory.conf</tt> file for setting
+<tt>pam_pwhistory</tt> module options. This file should be used whenever available.
+Otherwise, the <tt>pam_pwhistory</tt> module options can be set in PAM files.
+<br/><br/>
+The value for <tt>remember</tt> option must be equal or greater than
+<sub idref="var_password_pam_remember" /></td>
         </tr>
       </table>
 
@@ -6559,13 +6643,20 @@ In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter
           <td>Limit Password Reuse: system-auth</td>
           <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
-<br /><br />
-In the file <tt>/etc/pam.d/system-auth</tt>, make sure the parameter
-<tt>remember</tt> is present and it has a value equal to or greater than
-<sub idref="var_password_pam_remember" />
-For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<sub idref="var_password_pam_remember" /> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <tt><sub idref="var_password_pam_remember_control_flag" /></tt><br /></td>
+<br/><br/>
+
+On systems with newer versions of <tt>authselect</tt>, the <tt>pam_pwhistory</tt> PAM module
+can be enabled via authselect feature:
+<pre>authselect enable-feature with-pwhistory</pre>
+
+Otherwise, it should be enabled using an authselect custom profile.
+<br/><br/>
+Newer systems also have the <tt>/etc/security/pwhistory.conf</tt> file for setting
+<tt>pam_pwhistory</tt> module options. This file should be used whenever available.
+Otherwise, the <tt>pam_pwhistory</tt> module options can be set in PAM files.
+<br/><br/>
+The value for <tt>remember</tt> option must be equal or greater than
+<sub idref="var_password_pam_remember" /></td>
         </tr>
       </table>
 
@@ -10488,6 +10579,24 @@ automatic session locking. It should not be listed in
 
       <table>
         <tr>
+          <td>Map System Users To The Appropriate SELinux Role</td>
+          <td>Configure the operating system to prevent non-privileged users from executing
+privileged functions to include disabling, circumventing, or altering
+implemented security safeguards/countermeasures. All administrators must be
+mapped to the <tt>sysadm_u</tt> or <tt>staff_u</tt> users with the
+appropriate domains (<tt>sysadm_t</tt> and <tt>staff_t</tt>).
+<pre>$ sudo semanage login -m -s sysadm_u <i>USER</i></pre> or
+<pre>$ sudo semanage login -m -s staff_u <i>USER</i></pre>
+<br /><br />
+All authorized non-administrative
+users must be mapped to the <tt>user_u</tt> role or the appropriate domain
+(user_t).
+<pre>$ sudo semanage login -m -s user_u <i>USER</i></pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Disable debug-shell SystemD Service</td>
           <td>SystemD's <tt>debug-shell</tt> service is intended to
 diagnose SystemD related boot issues with various <tt>systemctl</tt>
@@ -10617,7 +10726,9 @@ If both the "b32" and "b64" audit rules for "SGID" files are not defined, this i
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.</td>
         </tr>
@@ -10638,10 +10749,40 @@ depending on the OS version.</td>
 
       <table>
         <tr>
+          <td>Lock Accounts Must Persist</td>
+          <td>This rule ensures that the system lock out accounts using <tt>pam_faillock.so</tt> persist
+after system reboot. From "pam_faillock" man pages:
+<pre>Note that the default directory that "pam_faillock" uses is usually cleared on system
+boot so the access will be reenabled after system reboot. If that is undesirable, a different
+tally directory must be set with the "dir" option.</pre>
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Set Interval For Counting Failed Password Attempts</td>
           <td>Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
 period.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Do Not Show System Messages When Unsuccessful Logon Attempts Occur</td>
+          <td>This rule ensures the system prevents informative messages from being presented to the user
+pertaining to logon information after a number of incorrect login attempts using
+<tt>pam_faillock.so</tt>.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
         </tr>
       </table>
 
@@ -11418,15 +11559,6 @@ AIDE can be executed periodically through other means; this is merely one exampl
         </tr>
       </table>
 
-      <table>
-        <tr>
-          <td>Install AIDE</td>
-          <td>The <code>aide</code> package can be installed with the following command:
-<pre>
-$ sudo yum install aide</pre></td>
-        </tr>
-      </table>
-
     </td>
 </tr>
 
@@ -11609,6 +11741,13 @@ Methods for complying with this requirement include restricting execution of pro
 
 
     <td>
+
+      <table>
+        <tr>
+          <td>Configure Fapolicy Module to Employ a Deny-all, Permit-by-exception Policy to Allow the Execution of Authorized Software Programs.</td>
+          <td>The Fapolicy module must be configured to employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs and to prevent unauthorized software from running.</td>
+        </tr>
+      </table>
 
       <table>
         <tr>
@@ -11866,6 +12005,13 @@ This requirement applies to operating system programs, functions, and services d
 
 
     <td>
+
+      <table>
+        <tr>
+          <td>Configure Fapolicy Module to Employ a Deny-all, Permit-by-exception Policy to Allow the Execution of Authorized Software Programs.</td>
+          <td>The Fapolicy module must be configured to employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs and to prevent unauthorized software from running.</td>
+        </tr>
+      </table>
 
       <table>
         <tr>
@@ -14374,6 +14520,30 @@ This requirement applies to operating systems performing security function verif
 
       <table>
         <tr>
+          <td>Build and Test AIDE Database</td>
+          <td>Run the following command to generate a new database:
+
+<pre>$ sudo /usr/sbin/aide --init</pre>
+
+By default, the database will be written to the file
+
+<tt>/var/lib/aide/aide.db.new.gz</tt>.
+
+Storing the database, the configuration file <tt>/etc/aide.conf</tt>, and the binary
+<tt>/usr/sbin/aide</tt>
+(or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
+The newly-generated database can be installed as follows:
+
+<pre>$ sudo cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz</pre>
+
+To initiate a manual check, run the following command:
+<pre>$ sudo /usr/sbin/aide --check</pre>
+If this check produces any unexpected output, investigate.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Install AIDE</td>
           <td>The <code>aide</code> package can be installed with the following command:
 <pre>
@@ -15151,22 +15321,6 @@ Audit records can be generated from various components within the information sy
 
       <table>
         <tr>
-          <td>Configure immutable Audit login UIDs</td>
-          <td>Configure kernel to prevent modification of login UIDs once they are set.
-Changing login UIDs while this configuration is enforced requires special capabilities which
-are not available to unprivileged users.
-
-The following rules configure audit as described above:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre>
-
-Load new Audit rules into kernel by running:
-<pre>augenrules --load</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Record Events that Modify the System's Discretionary Access Controls - chmod</td>
           <td>At a minimum, the audit system should collect file permission
 changes for all users and root. If the <tt>auditd</tt> daemon is configured to
@@ -15649,6 +15803,26 @@ utility to read audit rules during daemon startup, add the following line to
 <tt>/etc/audit/audit.rules</tt> file, setting ARCH to either b32 or b64 as
 appropriate for your system:
 <pre>-a always,exit -F arch=ARCH -S unlinkat -F auid&gt;=1000 -F auid!=unset -F key=delete</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Configure immutable Audit login UIDs</td>
+          <td>Configure kernel to prevent modification of login UIDs once they are set.
+Changing login UIDs while this configuration is enforced requires special capabilities which
+are not available to unprivileged users.
+If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following line to
+<tt>/etc/audit/audit.rules</tt> file in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre></td>
         </tr>
       </table>
 
@@ -19482,13 +19656,17 @@ Audit records can be generated from various components within the information sy
           <td>Configure kernel to prevent modification of login UIDs once they are set.
 Changing login UIDs while this configuration is enforced requires special capabilities which
 are not available to unprivileged users.
-
-The following rules configure audit as described above:
-<pre>## Make the loginuid immutable. This prevents tampering with the auid.
---loginuid-immutable    </pre>
-
-Load new Audit rules into kernel by running:
-<pre>augenrules --load</pre></td>
+If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following line to
+<tt>/etc/audit/audit.rules</tt> file in order to make login UIDs
+immutable:
+<pre>--loginuid-immutable</pre></td>
         </tr>
       </table>
 
@@ -21008,16 +21186,6 @@ The <code>kdump</code> service can be disabled with the following command:
 
       <table>
         <tr>
-          <td>Enable the Hardware RNG Entropy Gatherer Service</td>
-          <td>The Hardware RNG Entropy Gatherer service should be enabled.
-
-The <code>rngd</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable rngd.service</pre></td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Enable rsyslog Service</td>
           <td>The <tt>rsyslog</tt> service provides syslog-style logging by default on Red Hat Enterprise Linux 8.
 
@@ -21032,19 +21200,6 @@ The <code>rsyslog</code> service can be enabled with the following command:
           <td>The <tt>systemd-coredump.socket</tt> unit is a socket activation of
 the <tt>systemd-coredump@.service</tt> which processes core dumps.
 By masking the unit, core dump processing is disabled.</td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
-          <td>Disable Compression Or Set Compression to delayed</td>
-          <td>Compression is useful for slow network connections over long
-distances but can cause performance issues on local LANs. If use of compression
-is required, it should be enabled only after a user has authenticated; otherwise,
-it should be disabled. To disable compression or delay compression until after
-a user has successfully authenticated, add or correct the following line in the
-<tt>/etc/ssh/sshd_config</tt> file:
-<pre>Compression <sub idref="var_sshd_disable_compression" /></pre></td>
         </tr>
       </table>
 
@@ -21684,6 +21839,13 @@ The <code>fapolicyd</code> service can be enabled with the following command:
 
 
     <td>
+
+      <table>
+        <tr>
+          <td>Configure Fapolicy Module to Employ a Deny-all, Permit-by-exception Policy to Allow the Execution of Authorized Software Programs.</td>
+          <td>The Fapolicy module must be configured to employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs and to prevent unauthorized software from running.</td>
+        </tr>
+      </table>
 
       <table>
         <tr>

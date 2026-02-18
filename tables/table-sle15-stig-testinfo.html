@@ -380,13 +380,22 @@ available for logon and are not evaluated.
 <td>xccdf_org.ssgproject.content_rule_accounts_password_pam_unix_remember</td>
 <td>medium</td>
 <td>Limit Password Reuse</td>
-<td>Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.</td>
+<td>Preventing re-use of previous passwords helps ensure that a compromised password is not
+re-used by a user.</td>
 <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <code>remember</code> option for the <code>pam_unix</code> or <code>pam_pwhistory</code> PAM modules.</td>
 <td><pre>To verify the password reuse setting is compliant, run the following command:
 $ grep remember /etc/pam.d/system-auth
 The output should show the following at the end of the line:
 remember=
+
+
+In newer systems, the pam_pwhistory PAM module options can also be set in
+"/etc/security/pwhistory.conf" file. Use the following command to verify:
+$ grep remember /etc/security/pwhistory.conf
+remember = 
+
+The pam_pwhistory remember option must be configured only in one file.
       Is it the case that the value of remember is not equal to or greater than the expected value?
       </pre></td>
 <td>SRG-OS-000077-GPOS-00045<br>

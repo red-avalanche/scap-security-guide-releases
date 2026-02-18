@@ -476,7 +476,9 @@ account changes:
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.</td>
     <td>Applicable - Configurable</td>
@@ -493,7 +495,9 @@ or less (but not "0"), is missing or commented out?</td>
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.</td>
     <td>medium</td>
@@ -1268,7 +1272,7 @@ The session lock is implemented at the point where session activity can be deter
 Regardless of where the session lock is determined and implemented, once invoked, the session lock shall remain in place until the user re-authenticates. No other activity aside from re-authentication shall unlock the system.</td>
     <td>If not already configured, ensure that users cannot change GNOME3 screensaver lock settings
 by adding <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
-to <tt>/etc/dconf/db/local.d/00-security-settings</tt>.
+to <tt>/etc/dconf/db/local.d/locks/00-security-settings</tt>.
 For example:
 <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
 After the settings have been set, run <tt>dconf update</tt>.</td>
@@ -1280,7 +1284,7 @@ If properly configured, the output for <tt>lock-enabled</tt> should be <tt>/org/
     <td>Configure the operating system to retain a user's session lock until that user reestablishes access using established identification and authentication procedures.</td>
     <td>If not already configured, ensure that users cannot change GNOME3 screensaver lock settings
 by adding <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
-to <tt>/etc/dconf/db/local.d/00-security-settings</tt>.
+to <tt>/etc/dconf/db/local.d/locks/00-security-settings</tt>.
 For example:
 <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
 After the settings have been set, run <tt>dconf update</tt>.</td>
@@ -1311,7 +1315,7 @@ all user sessions will terminate based on inactivity.
 The value of TMOUT should be exported and read only.
 The <tt>TMOUT</tt>
 
-setting in a file loaded by <tt>/etc/profile</tt>, e.g.
+setting in a file loaded by <tt>/etc/profile</tt>or <tt>/etc/bashrc</tt>, e.g.
 <tt>/etc/profile.d/tmout.sh</tt> should read as follows:
 <pre>declare -xr TMOUT=<sub idref="var_accounts_tmout" /></pre></td>
     <td>Applicable - Configurable</td>
@@ -1329,7 +1333,7 @@ all user sessions will terminate based on inactivity.
 The value of TMOUT should be exported and read only.
 The <tt>TMOUT</tt>
 
-setting in a file loaded by <tt>/etc/profile</tt>, e.g.
+setting in a file loaded by <tt>/etc/profile</tt>or <tt>/etc/bashrc</tt>, e.g.
 <tt>/etc/profile.d/tmout.sh</tt> should read as follows:
 <pre>declare -xr TMOUT=<sub idref="var_accounts_tmout" /></pre></td>
     <td>medium</td>
@@ -1570,6 +1574,43 @@ After the settings have been set, run <tt>dconf update</tt>.</td>
     <td></td>
   </tr>
 
+  <tr>
+    <td>CCI-000057</td>
+    <td>SRG-OS-000029-GPOS-00010</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must initiate a session lock after a 15-minute period of inactivity for all connection types.</td>
+
+    <td>CCE-27351-6: Install the screen Package</td>
+
+    <td>A session time-out lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not log out because of the temporary nature of the absence. Rather than relying on the user to manually lock their operating system session prior to vacating the vicinity, operating systems need to be able to identify when a user's session has idled and take action to initiate the session lock.
+
+The session lock is implemented at the point where session activity can be determined and/or controlled.</td>
+    <td>To enable console screen locking, install the <tt>screen</tt> package.
+The <code>screen</code> package can be installed with the following command:
+<pre>
+$ sudo yum install screen</pre>
+Instruct users to begin new terminal sessions with the following command:
+<pre>$ screen</pre>
+The console can now be locked with the following key combination:
+<pre>ctrl+a x</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system initiates a session lock after a 15-minute period of inactivity for all connection types. If it does not, this is a finding.</td>
+    <td>Run the following command to determine if the <code>screen</code> package is installed: <pre>$ rpm -q screen</pre> Is it the case that the package is not installed?</td>
+    <td>Configure the operating system to initiate a session lock after a 15-minute period of inactivity for all connection types.</td>
+    <td>To enable console screen locking, install the <tt>screen</tt> package.
+The <code>screen</code> package can be installed with the following command:
+<pre>
+$ sudo yum install screen</pre>
+Instruct users to begin new terminal sessions with the following command:
+<pre>$ screen</pre>
+The console can now be locked with the following key combination:
+<pre>ctrl+a x</pre></td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
 
 
 
@@ -1639,7 +1680,7 @@ After the settings have been set, run <tt>dconf update</tt>.</td>
 The session lock is implemented at the point where session activity can be determined. Rather than be forced to wait for a period of time to expire before the user session can be locked, operating systems need to provide users with the ability to manually invoke a session lock so users may secure their session should the need arise for them to temporarily vacate the immediate physical vicinity.</td>
     <td>If not already configured, ensure that users cannot change GNOME3 screensaver lock settings
 by adding <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
-to <tt>/etc/dconf/db/local.d/00-security-settings</tt>.
+to <tt>/etc/dconf/db/local.d/locks/00-security-settings</tt>.
 For example:
 <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
 After the settings have been set, run <tt>dconf update</tt>.</td>
@@ -1651,7 +1692,7 @@ If properly configured, the output for <tt>lock-enabled</tt> should be <tt>/org/
     <td>Configure the operating system to provide the capability for users to directly initiate a session lock for all connection types.</td>
     <td>If not already configured, ensure that users cannot change GNOME3 screensaver lock settings
 by adding <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
-to <tt>/etc/dconf/db/local.d/00-security-settings</tt>.
+to <tt>/etc/dconf/db/local.d/locks/00-security-settings</tt>.
 For example:
 <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
 After the settings have been set, run <tt>dconf update</tt>.</td>
@@ -8302,28 +8343,28 @@ This requirement applies to each audit data storage repository (i.e., distinct i
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
 default), add the following line to to the bottom of a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-f 2</pre>
+<pre>-f <sub idref="var_audit_failure_mode" /></pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to the
 bottom of the <tt>/etc/audit/audit.rules</tt> file:
-<pre>-f 2</pre></td>
+<pre>-f <sub idref="var_audit_failure_mode" /></pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system alerts the ISSO and SA (at a minimum) in the event of an audit processing failure. If it does not, this is a finding.</td>
     <td>To verify that the system will shutdown when <tt>auditd</tt> fails,
 run the following command:
-<pre>$ sudo grep "\-f 2" /etc/audit/audit.rules</pre>
+<pre>$ sudo grep "\-f <sub idref="var_audit_failure_mode" />" /etc/audit/audit.rules</pre>
 The output should contain:
-<pre>-f 2</pre> Is it the case that the system is not configured to shutdown on auditd failures?</td>
+<pre>-f <sub idref="var_audit_failure_mode" /></pre> Is it the case that the system is not configured to shutdown on auditd failures?</td>
     <td>Configure the operating system to alert the ISSO and SA (at a minimum) in the event of an audit processing failure.</td>
     <td>If the <tt>auditd</tt> daemon is configured to use the
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
 default), add the following line to to the bottom of a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-f 2</pre>
+<pre>-f <sub idref="var_audit_failure_mode" /></pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to the
 bottom of the <tt>/etc/audit/audit.rules</tt> file:
-<pre>-f 2</pre></td>
+<pre>-f <sub idref="var_audit_failure_mode" /></pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -8391,28 +8432,28 @@ When availability is an overriding concern, other approved actions in response t
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
 default), add the following line to to the bottom of a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-f 2</pre>
+<pre>-f <sub idref="var_audit_failure_mode" /></pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to the
 bottom of the <tt>/etc/audit/audit.rules</tt> file:
-<pre>-f 2</pre></td>
+<pre>-f <sub idref="var_audit_failure_mode" /></pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system shuts down by default upon audit failure (unless availability is an overriding concern). If it does not, this is a finding.</td>
     <td>To verify that the system will shutdown when <tt>auditd</tt> fails,
 run the following command:
-<pre>$ sudo grep "\-f 2" /etc/audit/audit.rules</pre>
+<pre>$ sudo grep "\-f <sub idref="var_audit_failure_mode" />" /etc/audit/audit.rules</pre>
 The output should contain:
-<pre>-f 2</pre> Is it the case that the system is not configured to shutdown on auditd failures?</td>
+<pre>-f <sub idref="var_audit_failure_mode" /></pre> Is it the case that the system is not configured to shutdown on auditd failures?</td>
     <td>Configure the operating system to shut down by default upon audit failure (unless availability is an overriding concern).</td>
     <td>If the <tt>auditd</tt> daemon is configured to use the
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
 default), add the following line to to the bottom of a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-f 2</pre>
+<pre>-f <sub idref="var_audit_failure_mode" /></pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to the
 bottom of the <tt>/etc/audit/audit.rules</tt> file:
-<pre>-f 2</pre></td>
+<pre>-f <sub idref="var_audit_failure_mode" /></pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -15832,30 +15873,37 @@ restriction by running the following command:
     <td>Password complexity, or strength, is a measure of the effectiveness of a password in resisting attempts at guessing and brute-force attacks. If the information system or application allows the user to consecutively reuse their password when that password has exceeded its defined lifetime, the end result is a password that is not changed as per policy requirements.</td>
     <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
-<br /><br />
-In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter
-<tt>remember</tt> is present and it has a value equal to or greater than
-<sub idref="var_password_pam_remember" />. For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<sub idref="var_password_pam_remember" /> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <tt><sub idref="var_password_pam_remember_control_flag" /></tt><br /></td>
+<br/><br/>
+
+In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter <tt>remember</tt> is
+present and it has a value equal to or greater than
+<sub idref="var_password_pam_remember" />
+<br/><br/>
+For example:
+<pre>password <sub idref="var_password_pam_remember_control_flag" /> pam_pwhistory.so use_authtok remember=<sub idref="var_password_pam_remember" /></pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system prohibits password reuse for a minimum of five generations. If it does not, this is a finding.</td>
-    <td>Verify Red Hat Enterprise Linux 7 is configured in the password-auth file to prohibit password reuse
-for a minimum of <sub idref="var_password_pam_remember" /> generations with the following command:
+    <td>Verify Red Hat Enterprise Linux 7 use the "pam_pwhistory.so" module in the /etc/pam.d/password-auth file
+and is configured to prohibit password reuse for a minimum of <sub idref="var_password_pam_remember" />
+generations.
 
-<pre>$ grep -i remember /etc/pam.d/password-auth
-password <sub idref="var_password_pam_remember_control_flag" /> pam_pwhistory.so use_authtok remember=<sub idref="var_password_pam_remember" /> retry=3</pre> Is it the case that the line containing "pam_pwhistory.so" does not have the "remember" module argument set,
-is commented out, or the value of the "remember" module argument is set to less than
-"<sub idref="var_password_pam_remember" />"?</td>
+Verify the "/etc/pam.d/password-auth" file with the following command:
+
+<pre>$ grep pam_pwhistory.so /etc/pam.d/password-auth
+password <sub idref="var_password_pam_remember_control_flag" /> pam_pwhistory.so use_authtok remember=<sub idref="var_password_pam_remember" /></pre> Is it the case that the pam_pwhistory.so module is not used, the "remember" module option is not set in
+/etc/pam.d/password-auth or in /etc/security/pwhistory.conf, or is set in both files, or is set
+with a value less than "<sub idref="var_password_pam_remember" />"?</td>
     <td>Configure the operating system to prohibit password reuse for a minimum of five generations.</td>
     <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
-<br /><br />
-In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter
-<tt>remember</tt> is present and it has a value equal to or greater than
-<sub idref="var_password_pam_remember" />. For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<sub idref="var_password_pam_remember" /> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <tt><sub idref="var_password_pam_remember_control_flag" /></tt><br /></td>
+<br/><br/>
+
+In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter <tt>remember</tt> is
+present and it has a value equal to or greater than
+<sub idref="var_password_pam_remember" />
+<br/><br/>
+For example:
+<pre>password <sub idref="var_password_pam_remember_control_flag" /> pam_pwhistory.so use_authtok remember=<sub idref="var_password_pam_remember" /></pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -15873,32 +15921,37 @@ In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter
     <td>Password complexity, or strength, is a measure of the effectiveness of a password in resisting attempts at guessing and brute-force attacks. If the information system or application allows the user to consecutively reuse their password when that password has exceeded its defined lifetime, the end result is a password that is not changed as per policy requirements.</td>
     <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
-<br /><br />
-In the file <tt>/etc/pam.d/system-auth</tt>, make sure the parameter
-<tt>remember</tt> is present and it has a value equal to or greater than
+<br/><br/>
+
+In the file <tt>/etc/pam.d/system-auth</tt>, make sure the parameter <tt>remember</tt> is
+present and it has a value equal to or greater than
 <sub idref="var_password_pam_remember" />
+<br/><br/>
 For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<sub idref="var_password_pam_remember" /> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <tt><sub idref="var_password_pam_remember_control_flag" /></tt><br /></td>
+<pre>password <sub idref="var_password_pam_remember_control_flag" /> pam_pwhistory.so use_authtok remember=<sub idref="var_password_pam_remember" /></pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system prohibits password reuse for a minimum of five generations. If it does not, this is a finding.</td>
-    <td>Verify Red Hat Enterprise Linux 7 is configured in the system-auth file to prohibit password reuse
-for a minimum of <sub idref="var_password_pam_remember" /> generations with the following command:
+    <td>Verify Red Hat Enterprise Linux 7 use the "pam_pwhistory.so" module in the /etc/pam.d/system-auth file
+and is configured to prohibit password reuse for a minimum of <sub idref="var_password_pam_remember" />
+generations.
 
-<pre>$ grep -i remember /etc/pam.d/system-auth
-password <sub idref="var_password_pam_remember_control_flag" /> pam_pwhistory.so use_authtok remember=<sub idref="var_password_pam_remember" /> retry=3</pre> Is it the case that the line containing "pam_pwhistory.so" does not have the "remember" module argument set,
-is commented out, or the value of the "remember" module argument is set to less than
-"<sub idref="var_password_pam_remember" />"?</td>
+Verify the "/etc/pam.d/system-auth" file with the following command:
+
+<pre>$ grep pam_pwhistory.so /etc/pam.d/system-auth
+password <sub idref="var_password_pam_remember_control_flag" /> pam_pwhistory.so use_authtok remember=<sub idref="var_password_pam_remember" /></pre> Is it the case that the pam_pwhistory.so module is not used, the "remember" module option is not set in
+/etc/pam.d/system-auth or in /etc/security/pwhistory.conf, or is set in both files, or is set
+with a value less than "<sub idref="var_password_pam_remember" />"?</td>
     <td>Configure the operating system to prohibit password reuse for a minimum of five generations.</td>
     <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
-<br /><br />
-In the file <tt>/etc/pam.d/system-auth</tt>, make sure the parameter
-<tt>remember</tt> is present and it has a value equal to or greater than
+<br/><br/>
+
+In the file <tt>/etc/pam.d/system-auth</tt>, make sure the parameter <tt>remember</tt> is
+present and it has a value equal to or greater than
 <sub idref="var_password_pam_remember" />
+<br/><br/>
 For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<sub idref="var_password_pam_remember" /> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <tt><sub idref="var_password_pam_remember_control_flag" /></tt><br /></td>
+<pre>password <sub idref="var_password_pam_remember_control_flag" /> pam_pwhistory.so use_authtok remember=<sub idref="var_password_pam_remember" /></pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -17945,12 +17998,15 @@ value of <tt>0</tt> in
 
 
 
+
   <tr>
-    <td>V-56835</td>
+    <td>CCI-001082</td>
     <td>SRG-OS-000132-GPOS-00067</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>The operating system must separate user functionality (including user interface services) from operating system management functionality.</td>
-    <td></td>
+
+    <td>CCE-27050-4: Restrict Access to Kernel Message Buffer</td>
+
     <td>Operating system management functionality includes functions necessary for administration and requires privileged user access. Allowing non-privileged users to access operating system management functionality capabilities increases the risk that non-privileged users may obtain elevated privileges.
 
 Operating system management functionality includes functions necessary to administer console, network components, workstations, or servers and typically requires privileged user access.
@@ -17958,17 +18014,24 @@ Operating system management functionality includes functions necessary to admini
 The separation of user functionality from information system management functionality is either physical or logical and is accomplished by using different computers, different central processing units, different instances of the operating system, different network addresses, different TCP/UDP ports, virtualization techniques, combinations of these methods, or other methods, as appropriate.
 
 An example of this type of separation is observed in web administrative interfaces that use separate authentication methods for users of any other information system resources. This may include isolating the administrative interface on a different security domain and with additional access controls.</td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
+    <td>To set the runtime status of the <code>kernel.dmesg_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.dmesg_restrict=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>kernel.dmesg_restrict = 1</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system separates user functionality (including user interface services) from operating system management functionality. If it does not, this is a finding.</td>
+    <td>The runtime status of the <code>kernel.dmesg_restrict</code> kernel parameter can be queried
+by running the following command:
+<pre>$ sysctl kernel.dmesg_restrict</pre>
+<code>1</code>.
+ Is it the case that the correct value is not returned?</td>
+    <td>Configure the operating system to separate user functionality (including user interface services) from operating system management functionality.</td>
+    <td>To set the runtime status of the <code>kernel.dmesg_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.dmesg_restrict=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>kernel.dmesg_restrict = 1</pre></td>
+    <td>low</td>
     <td></td>
     <td></td>
     <td></td>
   </tr>
+
 
 
 
@@ -18014,28 +18077,38 @@ following line to configure the system to boot into enforcing mode:
 
 
 
+
   <tr>
-    <td>V-56853</td>
+    <td>CCI-001090</td>
     <td>SRG-OS-000138-GPOS-00069</td>
     <td><i>TBD - Assigned by DISA after STIG release</i></td>
     <td>Operating systems must prevent unauthorized and unintended information transfer via shared system resources.</td>
-    <td></td>
+
+    <td>CCE-27050-4: Restrict Access to Kernel Message Buffer</td>
+
     <td>Preventing unauthorized information transfers mitigates the risk of information, including encrypted representations of information, produced by the actions of prior users/roles (or the actions of processes acting on behalf of prior users/roles) from being available to any current users/roles (or current processes) that obtain access to shared system resources (e.g., registers, main memory, hard disks) after those resources have been released back to information systems. The control of information in shared resources is also commonly referred to as object reuse and residual information protection.
 
 This requirement generally applies to the design of an information technology product, but it can also apply to the configuration of particular information system components that are, or use, such products. This can be verified by acceptance/validation processes in DoD or other government agencies.
 
 There may be shared resources with configurable protections (e.g., files in storage) that may be assessed on specific information system components.</td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
-    <td></td>
+    <td>To set the runtime status of the <code>kernel.dmesg_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.dmesg_restrict=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>kernel.dmesg_restrict = 1</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify operating systems prevents unauthorized and unintended information transfer via shared system resources. If it does not, this is a finding.</td>
+    <td>The runtime status of the <code>kernel.dmesg_restrict</code> kernel parameter can be queried
+by running the following command:
+<pre>$ sysctl kernel.dmesg_restrict</pre>
+<code>1</code>.
+ Is it the case that the correct value is not returned?</td>
+    <td>Configure operating systems to prevent unauthorized and unintended information transfer via shared system resources.</td>
+    <td>To set the runtime status of the <code>kernel.dmesg_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.dmesg_restrict=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>kernel.dmesg_restrict = 1</pre></td>
+    <td>low</td>
     <td></td>
     <td></td>
     <td></td>
   </tr>
+
 
 
 
@@ -18081,7 +18154,7 @@ all user sessions will terminate based on inactivity.
 The value of TMOUT should be exported and read only.
 The <tt>TMOUT</tt>
 
-setting in a file loaded by <tt>/etc/profile</tt>, e.g.
+setting in a file loaded by <tt>/etc/profile</tt>or <tt>/etc/bashrc</tt>, e.g.
 <tt>/etc/profile.d/tmout.sh</tt> should read as follows:
 <pre>declare -xr TMOUT=<sub idref="var_accounts_tmout" /></pre></td>
     <td>Applicable - Configurable</td>
@@ -18101,7 +18174,7 @@ all user sessions will terminate based on inactivity.
 The value of TMOUT should be exported and read only.
 The <tt>TMOUT</tt>
 
-setting in a file loaded by <tt>/etc/profile</tt>, e.g.
+setting in a file loaded by <tt>/etc/profile</tt>or <tt>/etc/bashrc</tt>, e.g.
 <tt>/etc/profile.d/tmout.sh</tt> should read as follows:
 <pre>declare -xr TMOUT=<sub idref="var_accounts_tmout" /></pre></td>
     <td>medium</td>
@@ -22514,7 +22587,9 @@ If both the "b32" and "b64" audit rules for "SGID" files are not defined, this i
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.</td>
     <td>Applicable - Configurable</td>
@@ -22531,7 +22606,9 @@ or less (but not "0"), is missing or commented out?</td>
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.</td>
     <td>medium</td>
@@ -22903,6 +22980,146 @@ mode for corrective action. Acceptable values also include <tt>syslog</tt> and
 outweighs the need to log all actions, and a different setting should be
 determined.
 This profile configures the <i>action</i> to be <tt><sub idref="var_audispd_network_failure_action" /></tt>.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-001851</td>
+    <td>SRG-OS-000342-GPOS-00133</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must off-load audit records onto a different system or media from the system being audited.</td>
+
+    <td>CCE-86159-1: Configure auditd to use audispd's remote logging daemon</td>
+
+    <td>Information stored in one location is vulnerable to accidental or incidental deletion or alteration.
+
+Off-loading is a common process in information systems with limited audit storage capacity.</td>
+    <td>To configure the <tt>auditd</tt> service to use the
+<tt>audisp-remote</tt> plug-in of the <tt>audispd</tt> audit event multiplexor, set
+the <tt>active</tt> directive in <tt>/etc/audisp/plugins.d/au-remote.conf</tt>
+to <tt>yes</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system off-loads audit records onto a different system or media from the system being audited. If it does not, this is a finding.</td>
+    <td>To verify if audispd's au-remote plugin is active, run the following command:
+<pre>$ sudo grep active /etc/audisp/plugins.d/au-remote.conf</pre>
+If the plugin is active, the output will show <tt>yes</tt>. Is it the case that it is not activated?</td>
+    <td>Configure the operating system to off-load audit records onto a different system or media from the system being audited.</td>
+    <td>To configure the <tt>auditd</tt> service to use the
+<tt>audisp-remote</tt> plug-in of the <tt>audispd</tt> audit event multiplexor, set
+the <tt>active</tt> directive in <tt>/etc/audisp/plugins.d/au-remote.conf</tt>
+to <tt>yes</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-001851</td>
+    <td>SRG-OS-000342-GPOS-00133</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must off-load audit records onto a different system or media from the system being audited.</td>
+
+    <td>CCE-87159-0: Ensure the audispd's remote logging daemon direction is correct</td>
+
+    <td>Information stored in one location is vulnerable to accidental or incidental deletion or alteration.
+
+Off-loading is a common process in information systems with limited audit storage capacity.</td>
+    <td>Ensure the direction of logs in <tt>audisp-remote</tt>
+plug-in of the <tt>audispd</tt> audit event multiplexor is correct.
+Check that the <tt>direction</tt> directive in
+<tt>/etc/audisp/plugins.d/au-remote.conf</tt> is <tt>out</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system off-loads audit records onto a different system or media from the system being audited. If it does not, this is a finding.</td>
+    <td>To verify if audispd's au-remote plugin is configured, run the following command:
+<pre>$ sudo grep direction /etc/audisp/plugins.d/au-remote.conf</pre>
+If the plugin is configured correctly, the output will show <tt>out</tt>. Is it the case that it is not configured?</td>
+    <td>Configure the operating system to off-load audit records onto a different system or media from the system being audited.</td>
+    <td>Ensure the direction of logs in <tt>audisp-remote</tt>
+plug-in of the <tt>audispd</tt> audit event multiplexor is correct.
+Check that the <tt>direction</tt> directive in
+<tt>/etc/audisp/plugins.d/au-remote.conf</tt> is <tt>out</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-001851</td>
+    <td>SRG-OS-000342-GPOS-00133</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must off-load audit records onto a different system or media from the system being audited.</td>
+
+    <td>CCE-89159-8: Ensure the audispd's remote logging daemon executable is correct</td>
+
+    <td>Information stored in one location is vulnerable to accidental or incidental deletion or alteration.
+
+Off-loading is a common process in information systems with limited audit storage capacity.</td>
+    <td>Ensure the executable used by <tt>audisp-remote</tt>
+plug-in of the <tt>audispd</tt> audit event multiplexor is correct.
+Check that the <tt>path</tt> directive in
+<tt>/etc/audisp/plugins.d/au-remote.conf</tt> is <tt>/sbin/audisp-remote</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system off-loads audit records onto a different system or media from the system being audited. If it does not, this is a finding.</td>
+    <td>To verify if audispd's au-remote plugin is configured, run the following command:
+<pre>$ sudo grep path /etc/audisp/plugins.d/au-remote.conf</pre>
+If the plugin is configured correctly, the output will show <tt>/sbin/audisp-remote</tt>. Is it the case that it is not configured?</td>
+    <td>Configure the operating system to off-load audit records onto a different system or media from the system being audited.</td>
+    <td>Ensure the executable used by <tt>audisp-remote</tt>
+plug-in of the <tt>audispd</tt> audit event multiplexor is correct.
+Check that the <tt>path</tt> directive in
+<tt>/etc/audisp/plugins.d/au-remote.conf</tt> is <tt>/sbin/audisp-remote</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-001851</td>
+    <td>SRG-OS-000342-GPOS-00133</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must off-load audit records onto a different system or media from the system being audited.</td>
+
+    <td>CCE-90159-5: Ensure the audispd's remote logging daemon type is correct</td>
+
+    <td>Information stored in one location is vulnerable to accidental or incidental deletion or alteration.
+
+Off-loading is a common process in information systems with limited audit storage capacity.</td>
+    <td>Ensure the type used by <tt>audisp-remote</tt>
+plug-in of the <tt>audispd</tt> audit event multiplexor is correct.
+Check that the <tt>type</tt> directive in
+<tt>/etc/audisp/plugins.d/au-remote.conf</tt> is <tt>always</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system off-loads audit records onto a different system or media from the system being audited. If it does not, this is a finding.</td>
+    <td>To verify if audispd's au-remote plugin is configured, run the following command:
+<pre>$ sudo grep type /etc/audisp/plugins.d/au-remote.conf</pre>
+If the plugin is configured correctly, the output will show <tt>always</tt>. Is it the case that it is not configured?</td>
+    <td>Configure the operating system to off-load audit records onto a different system or media from the system being audited.</td>
+    <td>Ensure the type used by <tt>audisp-remote</tt>
+plug-in of the <tt>audispd</tt> audit event multiplexor is correct.
+Check that the <tt>type</tt> directive in
+<tt>/etc/audisp/plugins.d/au-remote.conf</tt> is <tt>always</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -23845,33 +24062,6 @@ AIDE can be executed periodically through other means; this is merely one exampl
     <td></td>
   </tr>
 
-  <tr>
-    <td>CCI-001744</td>
-    <td>SRG-OS-000363-GPOS-00150</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must notify designated personnel if baseline configurations are changed in an unauthorized manner.</td>
-
-    <td>CCE-27096-7: Install AIDE</td>
-
-    <td>Unauthorized changes to the baseline configuration could make the system vulnerable to various attacks or allow unauthorized access to the operating system. Changes to operating system configurations can have unintended side effects, some of which may be relevant to security.
-
-Detecting such changes and providing an automated response can help avoid unintended, negative consequences that could ultimately affect the security state of the operating system. The operating system's IMO/ISSO and SAs must be notified via email and/or monitoring system trap when there is an unauthorized modification of a configuration item.</td>
-    <td>The <code>aide</code> package can be installed with the following command:
-<pre>
-$ sudo yum install aide</pre></td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system notifies designated personnel if baseline configurations are changed in an unauthorized manner. If it does not, this is a finding.</td>
-    <td>Run the following command to determine if the <code>aide</code> package is installed: <pre>$ rpm -q aide</pre> Is it the case that the package is not installed?</td>
-    <td>Configure the operating system to notify designated personnel if baseline configurations are changed in an unauthorized manner.</td>
-    <td>The <code>aide</code> package can be installed with the following command:
-<pre>
-$ sudo yum install aide</pre></td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
 
 
 
@@ -23895,23 +24085,28 @@ Logical access restrictions include, for example, controls that restrict access 
     <td>The system must not allow removable media to be used as the boot loader.
 Remove alternate methods of booting the system from removable media.
 <tt>usb0</tt>, <tt>cd</tt>, <tt>fd0</tt>, etc. are some examples of removeable
-media which should not exist in the line:
+media which should not exist in the lines:
 <pre>set root='hd0,msdos1'</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system enforces access restrictions. If it does not, this is a finding.</td>
     <td>To verify the system is not configured to use a boot loader on removable media,
-run the following command:
+check that the grub configuration file has the set root command in each menu
+entry with the following commands:
+<pre>$ sudo grep -cw menuentry /boot/grub2/grub.cfg</pre>
+Note that the <pre>-c</pre> option for the <pre>grep</pre> command will print
+only the count of <pre>menuentry</pre> occurrences. This number should match
+the number of occurrences reported by the following command:
 <pre>$ sudo grep "set root='hd0" /boot/grub2/grub.cfg</pre>
 The output should return something similar to:
 <pre>set root='hd0,msdos1'</pre>
 <tt>usb0</tt>, <tt>cd</tt>, <tt>fd0</tt>, etc. are some examples of removeable
-media which should not exist in the line:
+media which should not exist in the lines:
 <pre>set root='hd0,msdos1'</pre> Is it the case that it is not?</td>
     <td>Configure the operating system to enforce access restrictions.</td>
     <td>The system must not allow removable media to be used as the boot loader.
 Remove alternate methods of booting the system from removable media.
 <tt>usb0</tt>, <tt>cd</tt>, <tt>fd0</tt>, etc. are some examples of removeable
-media which should not exist in the line:
+media which should not exist in the lines:
 <pre>set root='hd0,msdos1'</pre></td>
     <td>medium</td>
     <td></td>
@@ -24045,23 +24240,28 @@ Logical access restrictions include, for example, controls that restrict access 
     <td>The system must not allow removable media to be used as the boot loader.
 Remove alternate methods of booting the system from removable media.
 <tt>usb0</tt>, <tt>cd</tt>, <tt>fd0</tt>, etc. are some examples of removeable
-media which should not exist in the line:
+media which should not exist in the lines:
 <pre>set root='hd0,msdos1'</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system enforces access restrictions. If it does not, this is a finding.</td>
     <td>To verify the system is not configured to use a boot loader on removable media,
-run the following command:
+check that the grub configuration file has the set root command in each menu
+entry with the following commands:
+<pre>$ sudo grep -cw menuentry /boot/efi/EFI/redhat/grub.cfg</pre>
+Note that the <pre>-c</pre> option for the <pre>grep</pre> command will print
+only the count of <pre>menuentry</pre> occurrences. This number should match
+the number of occurrences reported by the following command:
 <pre>$ sudo grep "set root='hd0" /boot/efi/EFI/redhat/grub.cfg</pre>
 The output should return something similar to:
 <pre>set root='hd0,msdos1'</pre>
 <tt>usb0</tt>, <tt>cd</tt>, <tt>fd0</tt>, etc. are some examples of removeable
-media which should not exist in the line:
+media which should not exist in the lines:
 <pre>set root='hd0,msdos1'</pre> Is it the case that it is not?</td>
     <td>Configure the operating system to enforce access restrictions.</td>
     <td>The system must not allow removable media to be used as the boot loader.
 Remove alternate methods of booting the system from removable media.
 <tt>usb0</tt>, <tt>cd</tt>, <tt>fd0</tt>, etc. are some examples of removeable
-media which should not exist in the line:
+media which should not exist in the lines:
 <pre>set root='hd0,msdos1'</pre></td>
     <td>medium</td>
     <td></td>
@@ -29923,6 +30123,64 @@ to <tt>1</tt> in <tt>/etc/yum.conf</tt>.</td>
 
 
 
+
+  <tr>
+    <td>CCI-002696</td>
+    <td>SRG-OS-000445-GPOS-00199</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must verify correct operation of all security functions.</td>
+
+    <td>CCE-27220-3: Build and Test AIDE Database</td>
+
+    <td>Without verification of the security functions, security functions may not operate correctly and the failure may go unnoticed. Security function is defined as the hardware, software, and/or firmware of the information system responsible for enforcing the system security policy and supporting the isolation of code and data on which the protection is based. Security functionality includes, but is not limited to, establishing system accounts, configuring access authorizations (i.e., permissions, privileges), setting events to be audited, and setting intrusion detection parameters.
+
+This requirement applies to operating systems performing security function verification/testing and/or systems and environments that require this functionality.</td>
+    <td>Run the following command to generate a new database:
+
+<pre>$ sudo /usr/sbin/aide --init</pre>
+
+By default, the database will be written to the file
+
+<tt>/var/lib/aide/aide.db.new.gz</tt>.
+
+Storing the database, the configuration file <tt>/etc/aide.conf</tt>, and the binary
+<tt>/usr/sbin/aide</tt>
+(or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
+The newly-generated database can be installed as follows:
+
+<pre>$ sudo cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz</pre>
+
+To initiate a manual check, run the following command:
+<pre>$ sudo /usr/sbin/aide --check</pre>
+If this check produces any unexpected output, investigate.</td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system verifies correct operation of all security functions. If it does not, this is a finding.</td>
+    <td>To find the location of the AIDE database file, run the following command:
+<pre>$ sudo ls -l <i>DBDIR</i>/<i>database_file_name</i></pre> Is it the case that there is no database file?</td>
+    <td>Configure the operating system to verify correct operation of all security functions.</td>
+    <td>Run the following command to generate a new database:
+
+<pre>$ sudo /usr/sbin/aide --init</pre>
+
+By default, the database will be written to the file
+
+<tt>/var/lib/aide/aide.db.new.gz</tt>.
+
+Storing the database, the configuration file <tt>/etc/aide.conf</tt>, and the binary
+<tt>/usr/sbin/aide</tt>
+(or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
+The newly-generated database can be installed as follows:
+
+<pre>$ sudo cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz</pre>
+
+To initiate a manual check, run the following command:
+<pre>$ sudo /usr/sbin/aide --check</pre>
+If this check produces any unexpected output, investigate.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
 
   <tr>
     <td>CCI-002696</td>
@@ -42879,6 +43137,146 @@ mode for corrective action. Acceptable values also include <tt>syslog</tt> and
 outweighs the need to log all actions, and a different setting should be
 determined.
 This profile configures the <i>action</i> to be <tt><sub idref="var_audispd_network_failure_action" /></tt>.</td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-001851</td>
+    <td>SRG-OS-000479-GPOS-00224</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must, at a minimum, off-load audit data from interconnected systems in real time and off-load audit data from standalone systems weekly.</td>
+
+    <td>CCE-86159-1: Configure auditd to use audispd's remote logging daemon</td>
+
+    <td>Information stored in one location is vulnerable to accidental or incidental deletion or alteration.
+
+Off-loading is a common process in information systems with limited audit storage capacity.</td>
+    <td>To configure the <tt>auditd</tt> service to use the
+<tt>audisp-remote</tt> plug-in of the <tt>audispd</tt> audit event multiplexor, set
+the <tt>active</tt> directive in <tt>/etc/audisp/plugins.d/au-remote.conf</tt>
+to <tt>yes</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system, at a minimum, off-loads interconnected systems in real time and off-loads standalone systems weekly. If it does not, this is a finding.</td>
+    <td>To verify if audispd's au-remote plugin is active, run the following command:
+<pre>$ sudo grep active /etc/audisp/plugins.d/au-remote.conf</pre>
+If the plugin is active, the output will show <tt>yes</tt>. Is it the case that it is not activated?</td>
+    <td>Configure the operating system to, at a minimum, off-load interconnected systems in real time and off-load standalone systems weekly.</td>
+    <td>To configure the <tt>auditd</tt> service to use the
+<tt>audisp-remote</tt> plug-in of the <tt>audispd</tt> audit event multiplexor, set
+the <tt>active</tt> directive in <tt>/etc/audisp/plugins.d/au-remote.conf</tt>
+to <tt>yes</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-001851</td>
+    <td>SRG-OS-000479-GPOS-00224</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must, at a minimum, off-load audit data from interconnected systems in real time and off-load audit data from standalone systems weekly.</td>
+
+    <td>CCE-87159-0: Ensure the audispd's remote logging daemon direction is correct</td>
+
+    <td>Information stored in one location is vulnerable to accidental or incidental deletion or alteration.
+
+Off-loading is a common process in information systems with limited audit storage capacity.</td>
+    <td>Ensure the direction of logs in <tt>audisp-remote</tt>
+plug-in of the <tt>audispd</tt> audit event multiplexor is correct.
+Check that the <tt>direction</tt> directive in
+<tt>/etc/audisp/plugins.d/au-remote.conf</tt> is <tt>out</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system, at a minimum, off-loads interconnected systems in real time and off-loads standalone systems weekly. If it does not, this is a finding.</td>
+    <td>To verify if audispd's au-remote plugin is configured, run the following command:
+<pre>$ sudo grep direction /etc/audisp/plugins.d/au-remote.conf</pre>
+If the plugin is configured correctly, the output will show <tt>out</tt>. Is it the case that it is not configured?</td>
+    <td>Configure the operating system to, at a minimum, off-load interconnected systems in real time and off-load standalone systems weekly.</td>
+    <td>Ensure the direction of logs in <tt>audisp-remote</tt>
+plug-in of the <tt>audispd</tt> audit event multiplexor is correct.
+Check that the <tt>direction</tt> directive in
+<tt>/etc/audisp/plugins.d/au-remote.conf</tt> is <tt>out</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-001851</td>
+    <td>SRG-OS-000479-GPOS-00224</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must, at a minimum, off-load audit data from interconnected systems in real time and off-load audit data from standalone systems weekly.</td>
+
+    <td>CCE-89159-8: Ensure the audispd's remote logging daemon executable is correct</td>
+
+    <td>Information stored in one location is vulnerable to accidental or incidental deletion or alteration.
+
+Off-loading is a common process in information systems with limited audit storage capacity.</td>
+    <td>Ensure the executable used by <tt>audisp-remote</tt>
+plug-in of the <tt>audispd</tt> audit event multiplexor is correct.
+Check that the <tt>path</tt> directive in
+<tt>/etc/audisp/plugins.d/au-remote.conf</tt> is <tt>/sbin/audisp-remote</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system, at a minimum, off-loads interconnected systems in real time and off-loads standalone systems weekly. If it does not, this is a finding.</td>
+    <td>To verify if audispd's au-remote plugin is configured, run the following command:
+<pre>$ sudo grep path /etc/audisp/plugins.d/au-remote.conf</pre>
+If the plugin is configured correctly, the output will show <tt>/sbin/audisp-remote</tt>. Is it the case that it is not configured?</td>
+    <td>Configure the operating system to, at a minimum, off-load interconnected systems in real time and off-load standalone systems weekly.</td>
+    <td>Ensure the executable used by <tt>audisp-remote</tt>
+plug-in of the <tt>audispd</tt> audit event multiplexor is correct.
+Check that the <tt>path</tt> directive in
+<tt>/etc/audisp/plugins.d/au-remote.conf</tt> is <tt>/sbin/audisp-remote</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
+    <td>medium</td>
+    <td></td>
+    <td></td>
+    <td></td>
+  </tr>
+
+  <tr>
+    <td>CCI-001851</td>
+    <td>SRG-OS-000479-GPOS-00224</td>
+    <td><i>TBD - Assigned by DISA after STIG release</i></td>
+    <td>The operating system must, at a minimum, off-load audit data from interconnected systems in real time and off-load audit data from standalone systems weekly.</td>
+
+    <td>CCE-90159-5: Ensure the audispd's remote logging daemon type is correct</td>
+
+    <td>Information stored in one location is vulnerable to accidental or incidental deletion or alteration.
+
+Off-loading is a common process in information systems with limited audit storage capacity.</td>
+    <td>Ensure the type used by <tt>audisp-remote</tt>
+plug-in of the <tt>audispd</tt> audit event multiplexor is correct.
+Check that the <tt>type</tt> directive in
+<tt>/etc/audisp/plugins.d/au-remote.conf</tt> is <tt>always</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
+    <td>Applicable - Configurable</td>
+    <td>Verify the operating system, at a minimum, off-loads interconnected systems in real time and off-loads standalone systems weekly. If it does not, this is a finding.</td>
+    <td>To verify if audispd's au-remote plugin is configured, run the following command:
+<pre>$ sudo grep type /etc/audisp/plugins.d/au-remote.conf</pre>
+If the plugin is configured correctly, the output will show <tt>always</tt>. Is it the case that it is not configured?</td>
+    <td>Configure the operating system to, at a minimum, off-load interconnected systems in real time and off-load standalone systems weekly.</td>
+    <td>Ensure the type used by <tt>audisp-remote</tt>
+plug-in of the <tt>audispd</tt> audit event multiplexor is correct.
+Check that the <tt>type</tt> directive in
+<tt>/etc/audisp/plugins.d/au-remote.conf</tt> is <tt>always</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
     <td>medium</td>
     <td></td>
     <td></td>

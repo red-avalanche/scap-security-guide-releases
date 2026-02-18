@@ -6,7 +6,7 @@
 <body>
 <br><br><div style="text-align: center; font-size: x-large; font-weight:bold">DISA STIG for Oracle Linux 8</div>
 <div style="text-align: center; font-size: normal ">This profile contains configuration checks that align to the
-DISA STIG for Oracle Linux 8 V1R3.</div>
+DISA STIG for Oracle Linux 8 V1R4.</div>
 <br><br><style type="text/css">
 		table
 		{
@@ -869,24 +869,44 @@ ocredit =
 <td>xccdf_org.ssgproject.content_rule_accounts_password_pam_pwhistory_remember_password_auth</td>
 <td>medium</td>
 <td>Limit Password Reuse: password-auth</td>
-<td>Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.</td>
+<td>Preventing re-use of previous passwords helps ensure that a compromised password is not
+re-used by a user.</td>
 <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <code>remember</code> option for the <code>pam_pwhistory</code> PAM module.
 <br><br>
-In the file <code>/etc/pam.d/password-auth</code>, make sure the parameter
-<code>remember</code> is present and it has a value equal to or greater than
-<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>. For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember_control_flag" use="legacy"></xccdf-1.2:sub></code><br>
-</td>
-<td><pre>Verify Oracle Linux 8 is configured in the password-auth file to prohibit password reuse
-for a minimum of  generations with the following command:
 
-$ grep -i remember /etc/pam.d/password-auth
-password  pam_pwhistory.so use_authtok remember= retry=3
-      Is it the case that the line containing "pam_pwhistory.so" does not have the "remember" module argument set,
-is commented out, or the value of the "remember" module argument is set to less than
-"&lt;sub idref="var_password_pam_remember" /&gt;"?
+On systems with newer versions of <code>authselect</code>, the <code>pam_pwhistory</code> PAM module
+can be enabled via authselect feature:
+<pre>authselect enable-feature with-pwhistory</pre>
+
+Otherwise, it should be enabled using an authselect custom profile.
+<br><br>
+Newer systems also have the <code>/etc/security/pwhistory.conf</code> file for setting
+<code>pam_pwhistory</code> module options. This file should be used whenever available.
+Otherwise, the <code>pam_pwhistory</code> module options can be set in PAM files.
+<br><br>
+The value for <code>remember</code> option must be equal or greater than
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>
+</td>
+<td><pre>Verify Oracle Linux 8 use the "pam_pwhistory.so" module in the /etc/pam.d/password-auth file
+and is configured to prohibit password reuse for a minimum of 
+generations.
+
+Verify the "/etc/pam.d/password-auth" file with the following command:
+
+$ grep pam_pwhistory.so /etc/pam.d/password-auth
+password  pam_pwhistory.so use_authtok remember=
+
+
+Verify the "/etc/security/pwhistory.conf" file using the following command:
+
+$ grep remember /etc/security/pwhistory.conf
+remember = 
+
+The pam_pwhistory.so "remember" option must be configured only in one file.
+      Is it the case that the pam_pwhistory.so module is not used, the "remember" module option is not set in
+/etc/pam.d/password-auth or in /etc/security/pwhistory.conf, or is set in both files, or is set
+with a value less than "&lt;sub idref="var_password_pam_remember" /&gt;"?
       </pre></td>
 <td>SRG-OS-000077-GPOS-00045<br>
 </td>
@@ -899,25 +919,44 @@ is commented out, or the value of the "remember" module argument is set to less 
 <td>xccdf_org.ssgproject.content_rule_accounts_password_pam_pwhistory_remember_system_auth</td>
 <td>medium</td>
 <td>Limit Password Reuse: system-auth</td>
-<td>Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.</td>
+<td>Preventing re-use of previous passwords helps ensure that a compromised password is not
+re-used by a user.</td>
 <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <code>remember</code> option for the <code>pam_pwhistory</code> PAM module.
 <br><br>
-In the file <code>/etc/pam.d/system-auth</code>, make sure the parameter
-<code>remember</code> is present and it has a value equal to or greater than
-<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>
-For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember_control_flag" use="legacy"></xccdf-1.2:sub></code><br>
-</td>
-<td><pre>Verify Oracle Linux 8 is configured in the system-auth file to prohibit password reuse
-for a minimum of  generations with the following command:
 
-$ grep -i remember /etc/pam.d/system-auth
-password  pam_pwhistory.so use_authtok remember= retry=3
-      Is it the case that the line containing "pam_pwhistory.so" does not have the "remember" module argument set,
-is commented out, or the value of the "remember" module argument is set to less than
-"&lt;sub idref="var_password_pam_remember" /&gt;"?
+On systems with newer versions of <code>authselect</code>, the <code>pam_pwhistory</code> PAM module
+can be enabled via authselect feature:
+<pre>authselect enable-feature with-pwhistory</pre>
+
+Otherwise, it should be enabled using an authselect custom profile.
+<br><br>
+Newer systems also have the <code>/etc/security/pwhistory.conf</code> file for setting
+<code>pam_pwhistory</code> module options. This file should be used whenever available.
+Otherwise, the <code>pam_pwhistory</code> module options can be set in PAM files.
+<br><br>
+The value for <code>remember</code> option must be equal or greater than
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>
+</td>
+<td><pre>Verify Oracle Linux 8 use the "pam_pwhistory.so" module in the /etc/pam.d/system-auth file
+and is configured to prohibit password reuse for a minimum of 
+generations.
+
+Verify the "/etc/pam.d/system-auth" file with the following command:
+
+$ grep pam_pwhistory.so /etc/pam.d/system-auth
+password  pam_pwhistory.so use_authtok remember=
+
+
+Verify the "/etc/security/pwhistory.conf" file using the following command:
+
+$ grep remember /etc/security/pwhistory.conf
+remember = 
+
+The pam_pwhistory.so "remember" option must be configured only in one file.
+      Is it the case that the pam_pwhistory.so module is not used, the "remember" module option is not set in
+/etc/pam.d/system-auth or in /etc/security/pwhistory.conf, or is set in both files, or is set
+with a value less than "&lt;sub idref="var_password_pam_remember" /&gt;"?
       </pre></td>
 <td>SRG-OS-000077-GPOS-00045<br>
 </td>
@@ -1148,7 +1187,9 @@ the account.</td>
 using <code>pam_faillock.so</code>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
 depending on the OS version.</td>
 <td><pre>Verify Oracle Linux 8 is configured to lock an account after 
@@ -1629,6 +1670,38 @@ $ sudo ps -ef | grep -i mfetpd
 </td>
 <td>SI-4 (5)<br>CM-6 b<br>
 </td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_aide_build_database</td>
+<td>medium</td>
+<td>Build and Test AIDE Database</td>
+<td>For AIDE to be effective, an initial database of "known-good" information about files
+must be captured and it should be able to be verified against the installed files.</td>
+<td>Run the following command to generate a new database:
+
+<pre>$ sudo /usr/sbin/aide --init</pre>
+
+By default, the database will be written to the file
+
+<code>/var/lib/aide/aide.db.new.gz</code>.
+
+Storing the database, the configuration file <code>/etc/aide.conf</code>, and the binary
+<code>/usr/sbin/aide</code>
+(or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
+The newly-generated database can be installed as follows:
+
+<pre>$ sudo cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz</pre>
+
+To initiate a manual check, run the following command:
+<pre>$ sudo /usr/sbin/aide --check</pre>
+If this check produces any unexpected output, investigate.</td>
+<td><pre>To find the location of the AIDE database file, run the following command:
+$ sudo ls -l DBDIR/database_file_name
+      Is it the case that there is no database file?
+      </pre></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 <tr>
 <td>xccdf_org.ssgproject.content_rule_aide_check_audit_tools</td>
@@ -3797,7 +3870,7 @@ utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-w /etc/sudoers.d/ -p wa -k actions</pre>
 </td>
-<td><pre>Verify RHEL 9 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
+<td><pre>Verify Oracle Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/sudoers.d/" with the following command:
 
 $ sudo auditctl -l | grep/etc/sudoers.d
 
@@ -5299,7 +5372,7 @@ $ sudo ls -al /etc/tmux.conf
 </tr>
 <tr>
 <td>xccdf_org.ssgproject.content_rule_configure_usbguard_auditbackend</td>
-<td>medium</td>
+<td>low</td>
 <td>Log USBGuard daemon audit events using Linux Audit</td>
 <td>Using the Linux Audit logging allows for centralized trace
 of events.</td>
@@ -6416,6 +6489,11 @@ $ sudo grep permissive /etc/fapolicyd/fapolicyd.conf
 permissive = 0
 
 Check that fapolicyd employs a deny-all policy on system mounts with the following commands:
+
+For OL 8.5 systems and older:
+$ sudo tail /etc/fapolicyd/fapolicyd.rules
+
+For OL 8.6 systems and newer:
 $ sudo tail /etc/fapolicyd/compiled.rules
 
 allow exe=/usr/bin/python3.7 : ftype=text/x-python

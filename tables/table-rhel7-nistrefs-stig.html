@@ -2450,17 +2450,20 @@ more difficult by ensuring a larger search space.
   <td xml:lang="en-US">
 Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
-<br /><br />
-In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter
-<tt>remember</tt> is present and it has a value equal to or greater than
-<tt>5</tt>. For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<tt>5</tt> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <tt><tt>requisite</tt></tt><br />
+<br/><br/>
+
+In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter <tt>remember</tt> is
+present and it has a value equal to or greater than
+<tt>5</tt>
+<br/><br/>
+For example:
+<pre>password <tt>requisite</tt> pam_pwhistory.so use_authtok remember=<tt>5</tt></pre>
   </td>
   <td xml:lang="en-US">
-Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
+Preventing re-use of previous passwords helps ensure that a compromised password is not
+re-used by a user.
   </td>
-  <td>var_password_pam_remember=5<br/>var_password_pam_remember_control_flag=requisite</td>
+  <td>var_password_pam_remember_control_flag=requisite<br/>var_password_pam_remember=5</td>
 </tr>
 <tr>
   <td>IA-5(f)<br/>IA-5(1)(e)</td>
@@ -2469,18 +2472,20 @@ Preventing re-use of previous passwords helps ensure that a compromised password
   <td xml:lang="en-US">
 Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
-<br /><br />
-In the file <tt>/etc/pam.d/system-auth</tt>, make sure the parameter
-<tt>remember</tt> is present and it has a value equal to or greater than
+<br/><br/>
+
+In the file <tt>/etc/pam.d/system-auth</tt>, make sure the parameter <tt>remember</tt> is
+present and it has a value equal to or greater than
 <tt>5</tt>
+<br/><br/>
 For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<tt>5</tt> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <tt><tt>requisite</tt></tt><br />
+<pre>password <tt>requisite</tt> pam_pwhistory.so use_authtok remember=<tt>5</tt></pre>
   </td>
   <td xml:lang="en-US">
-Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
+Preventing re-use of previous passwords helps ensure that a compromised password is not
+re-used by a user.
   </td>
-  <td>var_password_pam_remember=5<br/>var_password_pam_remember_control_flag=requisite</td>
+  <td>var_password_pam_remember_control_flag=requisite<br/>var_password_pam_remember=5</td>
 </tr>
 <tr>
   <td>IA-5(c)<br/>IA-5(1)(a)<br/>CM-6(a)<br/>IA-5(4)</td>
@@ -2549,11 +2554,11 @@ If the <tt>auditd</tt> daemon is configured to use the
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
 default), add the following line to to the bottom of a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-f 2</pre>
+<pre>-f <tt>panic</tt></pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to the
 bottom of the <tt>/etc/audit/audit.rules</tt> file:
-<pre>-f 2</pre>
+<pre>-f <tt>panic</tt></pre>
   </td>
   <td xml:lang="en-US">
 It is critical for the appropriate personnel to be aware if a system
@@ -2565,7 +2570,7 @@ Audit processing failures include software/hardware errors, failures in the
 audit capturing mechanisms, and audit storage capacity being reached or
 exceeded.
   </td>
-  <td></td>
+  <td>var_audit_failure_mode=panic</td>
 </tr>
 <tr>
   <td>AU-5(b)<br/>AU-5(2)<br/>AU-5(1)<br/>AU-5(4)<br/>CM-6(a)</td>
@@ -2790,7 +2795,7 @@ default authenticators, then anyone can gather data about the system and the net
 and use the information to potentially compromise the integrity of the system and
 network(s).
   </td>
-  <td>var_snmpd_rw_string=changemerw<br/>var_snmpd_ro_string=changemero</td>
+  <td>var_snmpd_ro_string=changemero<br/>var_snmpd_rw_string=changemerw</td>
 </tr>
 <tr>
   <td>CM-5(1)<br/>AU-7(a)<br/>AU-7(b)<br/>AU-8(b)<br/>AU-12(3)<br/>AC-6(9)</td>
@@ -2929,7 +2934,9 @@ This rule configures the system to lock out accounts after a number of incorrect
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.
   </td>
@@ -2996,6 +3003,36 @@ to unlock a user. This should be done using the <tt>faillock</tt> tool.
 By limiting the number of failed logon attempts the risk of unauthorized system
 access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>CM-6(a)</td>
+  <td>CCE-27220-3</td>
+  <td>Build and Test AIDE Database</td>
+  <td xml:lang="en-US">
+Run the following command to generate a new database:
+
+<pre>$ sudo /usr/sbin/aide --init</pre>
+
+By default, the database will be written to the file
+
+<tt>/var/lib/aide/aide.db.new.gz</tt>.
+
+Storing the database, the configuration file <tt>/etc/aide.conf</tt>, and the binary
+<tt>/usr/sbin/aide</tt>
+(or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
+The newly-generated database can be installed as follows:
+
+<pre>$ sudo cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz</pre>
+
+To initiate a manual check, run the following command:
+<pre>$ sudo /usr/sbin/aide --check</pre>
+If this check produces any unexpected output, investigate.
+  </td>
+  <td xml:lang="en-US">
+For AIDE to be effective, an initial database of "known-good" information about files
+must be captured and it should be able to be verified against the installed files.
   </td>
   <td></td>
 </tr>
@@ -3174,7 +3211,7 @@ of the information system but does not want to logout because of the temporary n
   <td xml:lang="en-US">
 If not already configured, ensure that users cannot change GNOME3 screensaver lock settings
 by adding <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
-to <tt>/etc/dconf/db/local.d/00-security-settings</tt>.
+to <tt>/etc/dconf/db/local.d/locks/00-security-settings</tt>.
 For example:
 <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
 After the settings have been set, run <tt>dconf update</tt>.
@@ -3667,6 +3704,31 @@ $ sudo yum install openssh-server</pre>
 Without protection of the transmitted information, confidentiality, and
 integrity may be compromised because unprotected communications can be
 intercepted and either read or altered.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>CM-6(a)</td>
+  <td>CCE-27351-6</td>
+  <td>Install the screen Package</td>
+  <td xml:lang="en-US">
+To enable console screen locking, install the <tt>screen</tt> package.
+The <code>screen</code> package can be installed with the following command:
+<pre>
+$ sudo yum install screen</pre>
+Instruct users to begin new terminal sessions with the following command:
+<pre>$ screen</pre>
+The console can now be locked with the following key combination:
+<pre>ctrl+a x</pre>
+  </td>
+  <td xml:lang="en-US">
+A session time-out lock is a temporary action taken when a user stops work and moves away from the immediate
+physical vicinity of the information system but does not logout because of the temporary nature of the absence.
+Rather than relying on the user to manually lock their operation system session prior to vacating the vicinity,
+operating systems need to be able to identify when a user's session has idled and take action to initiate the
+session lock.
+<br /><br />
+The <tt>screen</tt> package allows for a session lock to be implemented and configured.
   </td>
   <td></td>
 </tr>
@@ -5339,6 +5401,20 @@ is critical that the user re-authenticate.
   <td></td>
 </tr>
 <tr>
+  <td>SI-11(a)<br/>SI-11(b)</td>
+  <td>CCE-27050-4</td>
+  <td>Restrict Access to Kernel Message Buffer</td>
+  <td xml:lang="en-US">
+To set the runtime status of the <code>kernel.dmesg_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.dmesg_restrict=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>kernel.dmesg_restrict = 1</pre>
+  </td>
+  <td xml:lang="en-US">
+Unprivileged access to the kernel syslog can expose sensitive kernel
+address information.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>AC-12<br/>SC-10<br/>AC-2(5)<br/>CM-6(a)</td>
   <td>CCE-27557-8</td>
   <td>Set Interactive Session Timeout</td>
@@ -5348,7 +5424,7 @@ all user sessions will terminate based on inactivity.
 The value of TMOUT should be exported and read only.
 The <tt>TMOUT</tt>
 
-setting in a file loaded by <tt>/etc/profile</tt>, e.g.
+setting in a file loaded by <tt>/etc/profile</tt>or <tt>/etc/bashrc</tt>, e.g.
 <tt>/etc/profile.d/tmout.sh</tt> should read as follows:
 <pre>declare -xr TMOUT=<tt>15_min</tt></pre>
   </td>
@@ -5996,6 +6072,89 @@ with limited audit storage capacity.
 </tr>
 <tr>
   <td></td>
+  <td>CCE-86159-1</td>
+  <td>Configure auditd to use audispd's remote logging daemon</td>
+  <td xml:lang="en-US">
+To configure the <tt>auditd</tt> service to use the
+<tt>audisp-remote</tt> plug-in of the <tt>audispd</tt> audit event multiplexor, set
+the <tt>active</tt> directive in <tt>/etc/audisp/plugins.d/au-remote.conf</tt>
+to <tt>yes</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre>
+  </td>
+  <td xml:lang="en-US">
+The auditd service does not include the ability to send audit
+records to a centralized server for management directly. It does, however,
+include a plug-in for audit event multiplexor (audispd) to pass audit records
+to a remote server.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td>CCE-87159-0</td>
+  <td>Ensure the audispd's remote logging daemon direction is correct</td>
+  <td xml:lang="en-US">
+Ensure the direction of logs in <tt>audisp-remote</tt>
+plug-in of the <tt>audispd</tt> audit event multiplexor is correct.
+Check that the <tt>direction</tt> directive in
+<tt>/etc/audisp/plugins.d/au-remote.conf</tt> is <tt>out</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre>
+  </td>
+  <td xml:lang="en-US">
+The auditd service does not include the ability to send audit
+records to a centralized server for management directly. It does, however,
+include a plug-in for audit event multiplexor (audispd) to pass audit records
+to a remote server.
+
+The direction is dictated by the plugin, and this parameter is used by the multiplexor
+to understand the direction of events.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td>CCE-89159-8</td>
+  <td>Ensure the audispd's remote logging daemon executable is correct</td>
+  <td xml:lang="en-US">
+Ensure the executable used by <tt>audisp-remote</tt>
+plug-in of the <tt>audispd</tt> audit event multiplexor is correct.
+Check that the <tt>path</tt> directive in
+<tt>/etc/audisp/plugins.d/au-remote.conf</tt> is <tt>/sbin/audisp-remote</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre>
+  </td>
+  <td xml:lang="en-US">
+The auditd service does not include the ability to send audit
+records to a centralized server for management directly. It does, however,
+include a plug-in for audit event multiplexor (audispd) to pass audit records
+to a remote server.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td>CCE-90159-5</td>
+  <td>Ensure the audispd's remote logging daemon type is correct</td>
+  <td xml:lang="en-US">
+Ensure the type used by <tt>audisp-remote</tt>
+plug-in of the <tt>audispd</tt> audit event multiplexor is correct.
+Check that the <tt>type</tt> directive in
+<tt>/etc/audisp/plugins.d/au-remote.conf</tt> is <tt>always</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre>
+  </td>
+  <td xml:lang="en-US">
+The auditd service does not include the ability to send audit
+records to a centralized server for management directly. It does, however,
+include a plug-in for audit event multiplexor (audispd) to pass audit records
+to a remote server.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
   <td>CCE-81004-4</td>
   <td>Make sure that the dconf databases are up-to-date with regards to respective keyfiles</td>
   <td xml:lang="en-US">
@@ -6097,7 +6256,7 @@ unauthorized access to user files by other users.
 The system must not allow removable media to be used as the boot loader.
 Remove alternate methods of booting the system from removable media.
 <tt>usb0</tt>, <tt>cd</tt>, <tt>fd0</tt>, etc. are some examples of removeable
-media which should not exist in the line:
+media which should not exist in the lines:
 <pre>set root='hd0,msdos1'</pre>
   </td>
   <td xml:lang="en-US">
@@ -6317,7 +6476,7 @@ compromise other accounts.
 The system must not allow removable media to be used as the boot loader.
 Remove alternate methods of booting the system from removable media.
 <tt>usb0</tt>, <tt>cd</tt>, <tt>fd0</tt>, etc. are some examples of removeable
-media which should not exist in the line:
+media which should not exist in the lines:
 <pre>set root='hd0,msdos1'</pre>
   </td>
   <td xml:lang="en-US">

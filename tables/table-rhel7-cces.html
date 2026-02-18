@@ -46,6 +46,14 @@
 <td>Prefer installation of 64-bit operating systems when the CPU supports it.</td>
 </tr>
 <tr>
+<td>CCE-86562-6</td>
+<td>Package "prelink" Must not be Installed</td>
+<td>The <code>prelink</code> package can be removed with the following command:
+ <pre>
+ $ sudo yum erase prelink</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-27078-5</td>
 <td>Disable Prelinking</td>
 <td>The prelinking feature changes binaries in an attempt to decrease their startup
@@ -854,7 +862,7 @@ After the settings have been set, run <code>dconf update</code>.</td>
 <td>Ensure Users Cannot Change GNOME3 Screensaver Lock After Idle Period</td>
 <td>If not already configured, ensure that users cannot change GNOME3 screensaver lock settings
 by adding <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
-to <code>/etc/dconf/db/local.d/00-security-settings</code>.
+to <code>/etc/dconf/db/local.d/locks/00-security-settings</code>.
 For example:
 <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
 After the settings have been set, run <code>dconf update</code>.</td>
@@ -1769,11 +1777,13 @@ And make sure that the <code>silent</code> option is not set for
 <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <code>remember</code> option for the <code>pam_pwhistory</code> PAM module.
 <br><br>
-In the file <code>/etc/pam.d/password-auth</code>, make sure the parameter
-<code>remember</code> is present and it has a value equal to or greater than
-<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>. For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember_control_flag" use="legacy"></xccdf-1.2:sub></code><br>
+
+In the file <code>/etc/pam.d/password-auth</code>, make sure the parameter <code>remember</code> is
+present and it has a value equal to or greater than
+<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>
+<br><br>
+For example:
+<pre>password <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember_control_flag" use="legacy"></xccdf-1.2:sub> pam_pwhistory.so use_authtok remember=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -1782,12 +1792,13 @@ In the file <code>/etc/pam.d/password-auth</code>, make sure the parameter
 <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <code>remember</code> option for the <code>pam_pwhistory</code> PAM module.
 <br><br>
-In the file <code>/etc/pam.d/system-auth</code>, make sure the parameter
-<code>remember</code> is present and it has a value equal to or greater than
+
+In the file <code>/etc/pam.d/system-auth</code>, make sure the parameter <code>remember</code> is
+present and it has a value equal to or greater than
 <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub>
+<br><br>
 For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember_control_flag" use="legacy"></xccdf-1.2:sub></code><br>
+<pre>password <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember_control_flag" use="legacy"></xccdf-1.2:sub> pam_pwhistory.so use_authtok remember=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -1808,7 +1819,9 @@ For example:
 using <code>pam_faillock.so</code>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
 depending on the OS version.</td>
 </tr>
@@ -2584,7 +2597,7 @@ vc/4</pre>
 <td>To ensure that only users who are members of the <code>wheel</code> group can
 run commands with altered privileges through the <code>su</code> command, make
 sure that the following line exists in the file <code>/etc/pam.d/su</code>:
-<pre>auth             required        pam_wheel.so use_uid</pre>
+<pre>auth required pam_wheel.so use_uid</pre>
 </td>
 </tr>
 <tr>
@@ -2645,7 +2658,7 @@ all user sessions will terminate based on inactivity.
 The value of TMOUT should be exported and read only.
 The <code>TMOUT</code>
 
-setting in a file loaded by <code>/etc/profile</code>, e.g.
+setting in a file loaded by <code>/etc/profile</code>or <code>/etc/bashrc</code>, e.g.
 <code>/etc/profile.d/tmout.sh</code> should read as follows:
 <pre>declare -xr TMOUT=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_tmout" use="legacy"></xccdf-1.2:sub></pre>
 </td>
@@ -3249,11 +3262,11 @@ utility to read audit rules during daemon startup, add the following line to
 <code>augenrules</code> program to read audit rules during daemon startup (the
 default), add the following line to to the bottom of a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-f 2</pre>
+<pre>-f <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_audit_failure_mode" use="legacy"></xccdf-1.2:sub></pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to the
 bottom of the <code>/etc/audit/audit.rules</code> file:
-<pre>-f 2</pre>
+<pre>-f <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_audit_failure_mode" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>
@@ -6225,6 +6238,50 @@ determined.
 This profile configures the <i>action</i> to be <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_audispd_network_failure_action" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
+<td>CCE-86159-1</td>
+<td>Configure auditd to use audispd's remote logging daemon</td>
+<td>To configure the <code>auditd</code> service to use the
+<code>audisp-remote</code> plug-in of the <code>audispd</code> audit event multiplexor, set
+the <code>active</code> directive in <code>/etc/audisp/plugins.d/au-remote.conf</code>
+to <code>yes</code>.
+Restart the <code>auditd</code> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-87159-0</td>
+<td>Ensure the audispd's remote logging daemon direction is correct</td>
+<td>Ensure the direction of logs in <code>audisp-remote</code>
+plug-in of the <code>audispd</code> audit event multiplexor is correct.
+Check that the <code>direction</code> directive in
+<code>/etc/audisp/plugins.d/au-remote.conf</code> is <code>out</code>.
+Restart the <code>auditd</code> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-89159-8</td>
+<td>Ensure the audispd's remote logging daemon executable is correct</td>
+<td>Ensure the executable used by <code>audisp-remote</code>
+plug-in of the <code>audispd</code> audit event multiplexor is correct.
+Check that the <code>path</code> directive in
+<code>/etc/audisp/plugins.d/au-remote.conf</code> is <code>/sbin/audisp-remote</code>.
+Restart the <code>auditd</code> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-90159-5</td>
+<td>Ensure the audispd's remote logging daemon type is correct</td>
+<td>Ensure the type used by <code>audisp-remote</code>
+plug-in of the <code>audispd</code> audit event multiplexor is correct.
+Check that the <code>type</code> directive in
+<code>/etc/audisp/plugins.d/au-remote.conf</code> is <code>always</code>.
+Restart the <code>auditd</code> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-27341-7</td>
 <td>Configure auditd to use audispd's syslog plugin</td>
 <td>To configure the <code>auditd</code> service to use the
@@ -6824,7 +6881,7 @@ update the
 <td>The system must not allow removable media to be used as the boot loader.
 Remove alternate methods of booting the system from removable media.
 <code>usb0</code>, <code>cd</code>, <code>fd0</code>, etc. are some examples of removeable
-media which should not exist in the line:
+media which should not exist in the lines:
 <pre>set root='hd0,msdos1'</pre>
 </td>
 </tr>
@@ -6945,7 +7002,7 @@ When prompted, enter the password that was selected.
 <td>The system must not allow removable media to be used as the boot loader.
 Remove alternate methods of booting the system from removable media.
 <code>usb0</code>, <code>cd</code>, <code>fd0</code>, etc. are some examples of removeable
-media which should not exist in the line:
+media which should not exist in the lines:
 <pre>set root='hd0,msdos1'</pre>
 </td>
 </tr>
@@ -8350,6 +8407,13 @@ To make sure that the setting is persistent, add the following line to a file in
 <td>Configure Response Mode of ARP Requests for All IPv4 Interfaces</td>
 <td>To set the runtime status of the <code>net.ipv4.conf.all.arp_ignore</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.arp_ignore=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sysctl_net_ipv4_conf_all_arp_ignore_value" use="legacy"></xccdf-1.2:sub></pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.arp_ignore = <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sysctl_net_ipv4_conf_all_arp_ignore_value" use="legacy"></xccdf-1.2:sub></pre>
+</td>
+</tr>
+<tr>
+<td>CCE-87180-6</td>
+<td>Disable Kernel Parameter for IPv4 Forwarding on all IPv4 Interfaces</td>
+<td>To set the runtime status of the <code>net.ipv4.conf.all.forwarding</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.forwarding=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.forwarding = 0</pre>
 </td>
 </tr>
 <tr>
@@ -14817,6 +14881,20 @@ The <code>netfs</code> service can be disabled with the following command:
 </td>
 </tr>
 <tr>
+<td>CCE-86644-2</td>
+<td>Uninstall rpcbind Package</td>
+<td>The rpcbind utility maps RPC services to the ports on which they listen.
+RPC processes notify rpcbind when they start, registering the ports they
+are listening on and the RPC program numbers they expect to serve. The
+rpcbind service redirects the client to the proper port number so it can
+communicate with the requested service. If the system does not require RPC
+(such as for NFS servers) then this service should be disabled.
+The <code>rpcbind</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase rpcbind</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-80228-0</td>
 <td>Disable Network File System Lock Service (nfslock)</td>
 <td>The Network File System Lock (nfslock) service starts the required
@@ -15233,6 +15311,15 @@ This instructs the NTP software to contact that remote server to obtain time
 data.</td>
 </tr>
 <tr>
+<td>CCE-86334-0</td>
+<td>Uninstall rsync Package</td>
+<td>The rsyncd service can be used to synchronize files between systems over network links.
+The <code>rsync</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase rsync</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-83334-3</td>
 <td>Ensure rsyncd service is disabled</td>
 <td>
@@ -15470,31 +15557,10 @@ the telnet protocol.</td>
 <tr>
 <td>CCE-27401-9</td>
 <td>Disable telnet Service</td>
-<td>The <code>telnet</code> service configuration file <code>/etc/xinetd.d/telnet</code>
-is not created automatically. If it was created manually, check the
-<code>/etc/xinetd.d/telnet</code> file and ensure that <code>disable = no</code>
-is changed to read <code>disable = yes</code> as follows below:
-<pre>
-# description: The telnet server serves telnet sessions; it uses \\
-#       unencrypted username/password pairs for authentication.
-service telnet
-{
-        flags           = REUSE
-        socket_type     = stream
+<td>Make sure that the activation of the <code>telnet</code> service on system boot is disabled.
 
-        wait            = no
-        user            = root
-        server          = /usr/sbin/in.telnetd
-        log_on_failure  += USERID
-        disable         = yes
-}
-</pre>
-If the <code>/etc/xinetd.d/telnet</code> file does not exist, make sure that
-the activation of the <code>telnet</code> service on system boot is disabled
-via the following command:
-
-The <code>rexec</code> socket can be disabled with the following command:
-<pre>$ sudo systemctl mask --now rexec.socket</pre>
+The <code>telnet</code> socket can be disabled with the following command:
+<pre>$ sudo systemctl mask --now telnet.socket</pre>
 </td>
 </tr>
 <tr>
@@ -15528,6 +15594,14 @@ it should be configured to change its root directory at startup. To do so,
 ensure <code>/etc/xinetd.d/tftp</code> includes <code>-s</code> as a command line argument,
 as shown in the following example:
 <pre>server_args = -s <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_tftpd_secure_directory" use="legacy"></xccdf-1.2:sub></pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86295-3</td>
+<td>Uninstall CUPS Package</td>
+<td>The <code>cups</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase cups</pre>
 </td>
 </tr>
 <tr>

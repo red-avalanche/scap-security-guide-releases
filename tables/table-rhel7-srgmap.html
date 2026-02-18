@@ -249,7 +249,9 @@ account changes:
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.</td>
         </tr>
@@ -505,7 +507,7 @@ After the settings have been set, run <tt>dconf update</tt>.</td>
           <td>Ensure Users Cannot Change GNOME3 Screensaver Lock After Idle Period</td>
           <td>If not already configured, ensure that users cannot change GNOME3 screensaver lock settings
 by adding <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
-to <tt>/etc/dconf/db/local.d/00-security-settings</tt>.
+to <tt>/etc/dconf/db/local.d/locks/00-security-settings</tt>.
 For example:
 <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
 After the settings have been set, run <tt>dconf update</tt>.</td>
@@ -535,7 +537,7 @@ all user sessions will terminate based on inactivity.
 The value of TMOUT should be exported and read only.
 The <tt>TMOUT</tt>
 
-setting in a file loaded by <tt>/etc/profile</tt>, e.g.
+setting in a file loaded by <tt>/etc/profile</tt>or <tt>/etc/bashrc</tt>, e.g.
 <tt>/etc/profile.d/tmout.sh</tt> should read as follows:
 <pre>declare -xr TMOUT=<sub idref="var_accounts_tmout" /></pre></td>
         </tr>
@@ -620,6 +622,20 @@ After the settings have been set, run <tt>dconf update</tt>.</td>
         </tr>
       </table>
 
+      <table>
+        <tr>
+          <td>Install the screen Package</td>
+          <td>To enable console screen locking, install the <tt>screen</tt> package.
+The <code>screen</code> package can be installed with the following command:
+<pre>
+$ sudo yum install screen</pre>
+Instruct users to begin new terminal sessions with the following command:
+<pre>$ screen</pre>
+The console can now be locked with the following key combination:
+<pre>ctrl+a x</pre></td>
+        </tr>
+      </table>
+
     </td>
 </tr>
 
@@ -658,7 +674,7 @@ After the settings have been set, run <tt>dconf update</tt>.</td>
           <td>Ensure Users Cannot Change GNOME3 Screensaver Lock After Idle Period</td>
           <td>If not already configured, ensure that users cannot change GNOME3 screensaver lock settings
 by adding <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
-to <tt>/etc/dconf/db/local.d/00-security-settings</tt>.
+to <tt>/etc/dconf/db/local.d/locks/00-security-settings</tt>.
 For example:
 <pre>/org/gnome/desktop/screensaver/lock-enabled</pre>
 After the settings have been set, run <tt>dconf update</tt>.</td>
@@ -3180,11 +3196,11 @@ This requirement applies to each audit data storage repository (i.e., distinct i
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
 default), add the following line to to the bottom of a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-f 2</pre>
+<pre>-f <sub idref="var_audit_failure_mode" /></pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to the
 bottom of the <tt>/etc/audit/audit.rules</tt> file:
-<pre>-f 2</pre></td>
+<pre>-f <sub idref="var_audit_failure_mode" /></pre></td>
         </tr>
       </table>
 
@@ -3225,11 +3241,11 @@ When availability is an overriding concern, other approved actions in response t
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
 default), add the following line to to the bottom of a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-f 2</pre>
+<pre>-f <sub idref="var_audit_failure_mode" /></pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to the
 bottom of the <tt>/etc/audit/audit.rules</tt> file:
-<pre>-f 2</pre></td>
+<pre>-f <sub idref="var_audit_failure_mode" /></pre></td>
         </tr>
       </table>
 
@@ -5440,12 +5456,14 @@ restriction by running the following command:
           <td>Limit Password Reuse: password-auth</td>
           <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
-<br /><br />
-In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter
-<tt>remember</tt> is present and it has a value equal to or greater than
-<sub idref="var_password_pam_remember" />. For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<sub idref="var_password_pam_remember" /> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <tt><sub idref="var_password_pam_remember_control_flag" /></tt><br /></td>
+<br/><br/>
+
+In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter <tt>remember</tt> is
+present and it has a value equal to or greater than
+<sub idref="var_password_pam_remember" />
+<br/><br/>
+For example:
+<pre>password <sub idref="var_password_pam_remember_control_flag" /> pam_pwhistory.so use_authtok remember=<sub idref="var_password_pam_remember" /></pre></td>
         </tr>
       </table>
 
@@ -5454,13 +5472,14 @@ In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter
           <td>Limit Password Reuse: system-auth</td>
           <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
-<br /><br />
-In the file <tt>/etc/pam.d/system-auth</tt>, make sure the parameter
-<tt>remember</tt> is present and it has a value equal to or greater than
+<br/><br/>
+
+In the file <tt>/etc/pam.d/system-auth</tt>, make sure the parameter <tt>remember</tt> is
+present and it has a value equal to or greater than
 <sub idref="var_password_pam_remember" />
+<br/><br/>
 For example:
-<pre>password <i>control_flag</i> pam_pwhistory.so <i>...existing_options...</i> remember=<sub idref="var_password_pam_remember" /> use_authtok</pre>
-<i>control_flag</i> should be one of the next values: <tt><sub idref="var_password_pam_remember_control_flag" /></tt><br /></td>
+<pre>password <sub idref="var_password_pam_remember_control_flag" /> pam_pwhistory.so use_authtok remember=<sub idref="var_password_pam_remember" /></pre></td>
         </tr>
       </table>
 
@@ -6440,7 +6459,17 @@ The separation of user functionality from information system management function
 An example of this type of separation is observed in web administrative interfaces that use separate authentication methods for users of any other information system resources. This may include isolating the administrative interface on a different security domain and with additional access controls.</td>
 
 
-    <td></td>
+    <td>
+
+      <table>
+        <tr>
+          <td>Restrict Access to Kernel Message Buffer</td>
+          <td>To set the runtime status of the <code>kernel.dmesg_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.dmesg_restrict=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>kernel.dmesg_restrict = 1</pre></td>
+        </tr>
+      </table>
+
+    </td>
 </tr>
 
   <tr>
@@ -6482,7 +6511,17 @@ This requirement generally applies to the design of an information technology pr
 There may be shared resources with configurable protections (e.g., files in storage) that may be assessed on specific information system components.</td>
 
 
-    <td></td>
+    <td>
+
+      <table>
+        <tr>
+          <td>Restrict Access to Kernel Message Buffer</td>
+          <td>To set the runtime status of the <code>kernel.dmesg_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.dmesg_restrict=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>kernel.dmesg_restrict = 1</pre></td>
+        </tr>
+      </table>
+
+    </td>
 </tr>
 
   <tr>
@@ -6518,7 +6557,7 @@ all user sessions will terminate based on inactivity.
 The value of TMOUT should be exported and read only.
 The <tt>TMOUT</tt>
 
-setting in a file loaded by <tt>/etc/profile</tt>, e.g.
+setting in a file loaded by <tt>/etc/profile</tt>or <tt>/etc/bashrc</tt>, e.g.
 <tt>/etc/profile.d/tmout.sh</tt> should read as follows:
 <pre>declare -xr TMOUT=<sub idref="var_accounts_tmout" /></pre></td>
         </tr>
@@ -8485,7 +8524,9 @@ If both the "b32" and "b64" audit rules for "SGID" files are not defined, this i
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid errors when manually editing these files, it is
+defined to work as expected.
+
+In order to avoid errors when manually editing these files, it is
 recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.</td>
         </tr>
@@ -8651,6 +8692,54 @@ mode for corrective action. Acceptable values also include <tt>syslog</tt> and
 outweighs the need to log all actions, and a different setting should be
 determined.
 This profile configures the <i>action</i> to be <tt><sub idref="var_audispd_network_failure_action" /></tt>.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Configure auditd to use audispd's remote logging daemon</td>
+          <td>To configure the <tt>auditd</tt> service to use the
+<tt>audisp-remote</tt> plug-in of the <tt>audispd</tt> audit event multiplexor, set
+the <tt>active</tt> directive in <tt>/etc/audisp/plugins.d/au-remote.conf</tt>
+to <tt>yes</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure the audispd's remote logging daemon direction is correct</td>
+          <td>Ensure the direction of logs in <tt>audisp-remote</tt>
+plug-in of the <tt>audispd</tt> audit event multiplexor is correct.
+Check that the <tt>direction</tt> directive in
+<tt>/etc/audisp/plugins.d/au-remote.conf</tt> is <tt>out</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure the audispd's remote logging daemon executable is correct</td>
+          <td>Ensure the executable used by <tt>audisp-remote</tt>
+plug-in of the <tt>audispd</tt> audit event multiplexor is correct.
+Check that the <tt>path</tt> directive in
+<tt>/etc/audisp/plugins.d/au-remote.conf</tt> is <tt>/sbin/audisp-remote</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure the audispd's remote logging daemon type is correct</td>
+          <td>Ensure the type used by <tt>audisp-remote</tt>
+plug-in of the <tt>audispd</tt> audit event multiplexor is correct.
+Check that the <tt>type</tt> directive in
+<tt>/etc/audisp/plugins.d/au-remote.conf</tt> is <tt>always</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
         </tr>
       </table>
 
@@ -9164,15 +9253,6 @@ AIDE can be executed periodically through other means; this is merely one exampl
         </tr>
       </table>
 
-      <table>
-        <tr>
-          <td>Install AIDE</td>
-          <td>The <code>aide</code> package can be installed with the following command:
-<pre>
-$ sudo yum install aide</pre></td>
-        </tr>
-      </table>
-
     </td>
 </tr>
 
@@ -9198,7 +9278,7 @@ Logical access restrictions include, for example, controls that restrict access 
           <td>The system must not allow removable media to be used as the boot loader.
 Remove alternate methods of booting the system from removable media.
 <tt>usb0</tt>, <tt>cd</tt>, <tt>fd0</tt>, etc. are some examples of removeable
-media which should not exist in the line:
+media which should not exist in the lines:
 <pre>set root='hd0,msdos1'</pre></td>
         </tr>
       </table>
@@ -9245,7 +9325,7 @@ To explicitly disable Kerberos authentication, add or correct the following line
           <td>The system must not allow removable media to be used as the boot loader.
 Remove alternate methods of booting the system from removable media.
 <tt>usb0</tt>, <tt>cd</tt>, <tt>fd0</tt>, etc. are some examples of removeable
-media which should not exist in the line:
+media which should not exist in the lines:
 <pre>set root='hd0,msdos1'</pre></td>
         </tr>
       </table>
@@ -11585,6 +11665,30 @@ This requirement applies to operating systems performing security function verif
 
 
     <td>
+
+      <table>
+        <tr>
+          <td>Build and Test AIDE Database</td>
+          <td>Run the following command to generate a new database:
+
+<pre>$ sudo /usr/sbin/aide --init</pre>
+
+By default, the database will be written to the file
+
+<tt>/var/lib/aide/aide.db.new.gz</tt>.
+
+Storing the database, the configuration file <tt>/etc/aide.conf</tt>, and the binary
+<tt>/usr/sbin/aide</tt>
+(or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
+The newly-generated database can be installed as follows:
+
+<pre>$ sudo cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz</pre>
+
+To initiate a manual check, run the following command:
+<pre>$ sudo /usr/sbin/aide --check</pre>
+If this check produces any unexpected output, investigate.</td>
+        </tr>
+      </table>
 
       <table>
         <tr>
@@ -16614,6 +16718,54 @@ mode for corrective action. Acceptable values also include <tt>syslog</tt> and
 outweighs the need to log all actions, and a different setting should be
 determined.
 This profile configures the <i>action</i> to be <tt><sub idref="var_audispd_network_failure_action" /></tt>.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Configure auditd to use audispd's remote logging daemon</td>
+          <td>To configure the <tt>auditd</tt> service to use the
+<tt>audisp-remote</tt> plug-in of the <tt>audispd</tt> audit event multiplexor, set
+the <tt>active</tt> directive in <tt>/etc/audisp/plugins.d/au-remote.conf</tt>
+to <tt>yes</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure the audispd's remote logging daemon direction is correct</td>
+          <td>Ensure the direction of logs in <tt>audisp-remote</tt>
+plug-in of the <tt>audispd</tt> audit event multiplexor is correct.
+Check that the <tt>direction</tt> directive in
+<tt>/etc/audisp/plugins.d/au-remote.conf</tt> is <tt>out</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure the audispd's remote logging daemon executable is correct</td>
+          <td>Ensure the executable used by <tt>audisp-remote</tt>
+plug-in of the <tt>audispd</tt> audit event multiplexor is correct.
+Check that the <tt>path</tt> directive in
+<tt>/etc/audisp/plugins.d/au-remote.conf</tt> is <tt>/sbin/audisp-remote</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Ensure the audispd's remote logging daemon type is correct</td>
+          <td>Ensure the type used by <tt>audisp-remote</tt>
+plug-in of the <tt>audispd</tt> audit event multiplexor is correct.
+Check that the <tt>type</tt> directive in
+<tt>/etc/audisp/plugins.d/au-remote.conf</tt> is <tt>always</tt>.
+Restart the <tt>auditd</tt> service to apply configuration changes:
+<pre>$ sudo service auditd restart</pre></td>
         </tr>
       </table>
 
