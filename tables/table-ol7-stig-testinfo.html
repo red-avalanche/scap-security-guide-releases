@@ -4646,16 +4646,18 @@ dictates.</td>
 <td>selinux_all_devicefiles_labeled</td>
 <td>medium</td>
 <td>Ensure No Device Files are Unlabeled by SELinux</td>
-<td xml:lang="en-US">If a device file carries the SELinux type <code>device_t</code>, then SELinux
-cannot properly restrict access to the device file.</td>
+<td xml:lang="en-US">If a device file carries the SELinux type <code>device_t</code> or
+<code>unlabeled_t</code>, then SELinux cannot properly restrict access to the
+device file.</td>
 <td xml:lang="en-US">Device files, which are used for communication with important system
-resources, should be labeled with proper SELinux types. If any device
-files do not carry the SELinux type <code>device_t</code>, report the bug so
-that policy can be corrected. Supply information about what the device is
-and what programs use it.
+resources, should be labeled with proper SELinux types. If any device files
+carry the SELinux type <code>device_t</code> or <code>unlabeled_t</code>, report the
+bug so that policy can be corrected. Supply information about what the
+device is and what programs use it.
 <br><br>
-To check for unlabeled device files, run the following command:
+To check for incorrectly labeled device files, run following commands:
 <pre>$ sudo find /dev -context *:device_t:* \( -type c -o -type b \) -printf "%p %Z\n"</pre>
+<pre>$ sudo find /dev -context *:unlabeled_t:* \( -type c -o -type b \) -printf "%p %Z\n"</pre>
 It should produce no output in a well-configured system.</td>
 <td></td>
 <td></td>

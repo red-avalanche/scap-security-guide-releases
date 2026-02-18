@@ -3280,14 +3280,7 @@ update the
 <td xml:lang="en-US">Password protection on the boot loader configuration ensures
 users with physical access cannot trivially alter
 important bootloader settings. These include which kernel to use,
-and whether to enter single-user mode.
-
-For more information on how to configure the grub2 superuser account and password,
-please refer to
-<ul>
-<li><a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/sec-Protecting_GRUB_2_with_a_Password.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/sec-Protecting_GRUB_2_with_a_Password.html</a></li>.
-</ul>
-</td>
+and whether to enter single-user mode.</td>
 <td></td>
 <td>CM-6(a)<br>
 </td>
@@ -3311,14 +3304,7 @@ update the
 <td xml:lang="en-US">Password protection on the boot loader configuration ensures
 users with physical access cannot trivially alter
 important bootloader settings. These include which kernel to use,
-and whether to enter single-user mode.
-
-For more information on how to configure the grub2 superuser account and password,
-please refer to
-<ul>
-<li><a href="https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/sec-Protecting_GRUB_2_with_a_Password.html">https://access.redhat.com/documentation/en-US/Red_Hat_Enterprise_Linux/7/html/System_Administrators_Guide/sec-Protecting_GRUB_2_with_a_Password.html</a></li>.
-</ul>
-</td>
+and whether to enter single-user mode.</td>
 <td></td>
 <td>CM-6(a)<br>
 </td>
@@ -3427,6 +3413,52 @@ exists is an approved organizational connection.</td>
 <td xml:lang="en-US">IP tunneling mechanisms can be used to bypass network filtering.</td>
 <td></td>
 <td>AC-17(a)<br>MA-4(6)<br>CM-6(a)<br>AC-4<br>SC-8<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80152-2</td>
+<td>Add nodev Option to /dev/shm</td>
+<td xml:lang="en-US">The <code>nodev</code> mount option can be used to prevent creation of device
+files in <code>/dev/shm</code>. Legitimate character and block devices should
+not exist within temporary directories like <code>/dev/shm</code>.
+Add the <code>nodev</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+<code>/dev/shm</code>.</td>
+<td xml:lang="en-US">The only legitimate location for device files is the <code>/dev</code> directory
+located on the root partition. The only exception to this is chroot jails.</td>
+<td></td>
+<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>AC-6<br>AC-6(1)<br>MP-7<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80153-0</td>
+<td>Add noexec Option to /dev/shm</td>
+<td xml:lang="en-US">The <code>noexec</code> mount option can be used to prevent binaries
+from being executed out of <code>/dev/shm</code>.
+It can be dangerous to allow the execution of binaries
+from world-writable temporary storage directories such as <code>/dev/shm</code>.
+Add the <code>noexec</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+<code>/dev/shm</code>.</td>
+<td xml:lang="en-US">Allowing users to execute binaries from world-writable directories
+such as <code>/dev/shm</code> can expose the system to potential compromise.</td>
+<td></td>
+<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>AC-6<br>AC-6(1)<br>MP-7<br>
+</td>
+</tr>
+<tr>
+<td>CCE-80154-8</td>
+<td>Add nosuid Option to /dev/shm</td>
+<td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent execution
+of setuid programs in <code>/dev/shm</code>.  The SUID and SGID permissions should not
+be required in these world-writable directories.
+Add the <code>nosuid</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+<code>/dev/shm</code>.</td>
+<td xml:lang="en-US">The presence of SUID and SGID executables should be tightly controlled. Users
+should not be able to execute SUID or SGID binaries from temporary storage partitions.</td>
+<td></td>
+<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>AC-6<br>AC-6(1)<br>MP-7<br>
 </td>
 </tr>
 <tr>
@@ -4027,16 +4059,18 @@ lack of prompt attention to patching could result in a system compromise.</td>
 <td>CCE-27326-8</td>
 <td>Ensure No Device Files are Unlabeled by SELinux</td>
 <td xml:lang="en-US">Device files, which are used for communication with important system
-resources, should be labeled with proper SELinux types. If any device
-files do not carry the SELinux type <code>device_t</code>, report the bug so
-that policy can be corrected. Supply information about what the device is
-and what programs use it.
+resources, should be labeled with proper SELinux types. If any device files
+carry the SELinux type <code>device_t</code> or <code>unlabeled_t</code>, report the
+bug so that policy can be corrected. Supply information about what the
+device is and what programs use it.
 <br><br>
-To check for unlabeled device files, run the following command:
+To check for incorrectly labeled device files, run following commands:
 <pre>$ sudo find /dev -context *:device_t:* \( -type c -o -type b \) -printf "%p %Z\n"</pre>
+<pre>$ sudo find /dev -context *:unlabeled_t:* \( -type c -o -type b \) -printf "%p %Z\n"</pre>
 It should produce no output in a well-configured system.</td>
-<td xml:lang="en-US">If a device file carries the SELinux type <code>device_t</code>, then SELinux
-cannot properly restrict access to the device file.</td>
+<td xml:lang="en-US">If a device file carries the SELinux type <code>device_t</code> or
+<code>unlabeled_t</code>, then SELinux cannot properly restrict access to the
+device file.</td>
 <td></td>
 <td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>AC-3(3)(a)<br>AC-6<br>
 </td>
