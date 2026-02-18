@@ -72,23 +72,19 @@ access to root privileges in an accountable manner.
   <td>Configure immutable Audit login UIDs</td>
   <td xml:lang="en-US">
 Configure kernel to prevent modification of login UIDs once they are set.
-Changing login UIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.
+Changing login UIDs while this configuration is enforced requires special capabilities which
+are not available to unprivileged users.
 
 The following rules configure audit as described above:
 <pre>## Make the loginuid immutable. This prevents tampering with the auid.
 --loginuid-immutable    </pre>
 
-The <tt>Audit</tt> provides pre-configured  rules in <tt>/usr/share/audit/sample-rules</tt>. The above content can be found in <tt>/usr/share/audit/sample-rules/11-loginuid.rules</tt>.
-To deploy this configuration, it is recommended to copy it over to the <tt>/etc/audit/rules.d/</tt> directory:
-<pre>
-cp /usr/share/audit/sample-rules/11-loginuid.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
   </td>
   <td xml:lang="en-US">
-If modification of login UIDs is not prevented, they can be changed by unprivileged users and make auditing complicated or impossible. 
+If modification of login UIDs is not prevented, they can be changed by unprivileged users and
+make auditing complicated or impossible.
   </td>
   <td></td>
 </tr>
@@ -276,17 +272,21 @@ to use the <tt>augenrules</tt> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F arch=b32 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S fremovexattr -F auid=0 -F key=perm_mod</pre>
 <br /><br />
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S fremovexattr -F auid=0 -F key=perm_mod</pre>
 <br /><br />
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to
 <tt>/etc/audit/audit.rules</tt> file:
 <pre>-a always,exit -F arch=b32 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S fremovexattr -F auid=0 -F key=perm_mod</pre>
 <br /><br />
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S fremovexattr -F auid=0 -F key=perm_mod</pre>
   </td>
   <td xml:lang="en-US">
 The changing of file permissions could indicate that a user is attempting to
@@ -307,14 +307,18 @@ to use the <tt>augenrules</tt> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F arch=b32 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S fsetxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S fsetxattr -F auid=0 -F key=perm_mod</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to
 <tt>/etc/audit/audit.rules</tt> file:
 <pre>-a always,exit -F arch=b32 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S fsetxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S fsetxattr -F auid=0 -F key=perm_mod</pre>
   </td>
   <td xml:lang="en-US">
 The changing of file permissions could indicate that a user is attempting to
@@ -365,17 +369,21 @@ to use the <tt>augenrules</tt> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F arch=b32 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S lremovexattr -F auid=0 -F key=perm_mod</pre>
 <br /><br />
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S lremovexattr -F auid=0 -F key=perm_mod</pre>
 <br /><br />
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to
 <tt>/etc/audit/audit.rules</tt> file:
 <pre>-a always,exit -F arch=b32 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S lremovexattr -F auid=0 -F key=perm_mod</pre>
 <br /><br />
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S lremovexattr -F auid=0 -F key=perm_mod</pre>
   </td>
   <td xml:lang="en-US">
 The changing of file permissions could indicate that a user is attempting to
@@ -396,14 +404,18 @@ to use the <tt>augenrules</tt> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F arch=b32 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S lsetxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S lsetxattr -F auid=0 -F key=perm_mod</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to
 <tt>/etc/audit/audit.rules</tt> file:
 <pre>-a always,exit -F arch=b32 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S lsetxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S lsetxattr -F auid=0 -F key=perm_mod</pre>
   </td>
   <td xml:lang="en-US">
 The changing of file permissions could indicate that a user is attempting to
@@ -425,17 +437,21 @@ If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt>
 program to read audit rules during daemon startup (the default), add the
 following line to a file with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F arch=b32 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S removexattr -F auid=0 -F key=perm_mod</pre>
 <br /><br />
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S removexattr -F auid=0 -F key=perm_mod</pre>
 <br /><br />
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to
 <tt>/etc/audit/audit.rules</tt> file:
 <pre>-a always,exit -F arch=b32 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S removexattr -F auid=0 -F key=perm_mod</pre>
 <br /><br />
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S removexattr -F auid=0 -F key=perm_mod</pre>
   </td>
   <td xml:lang="en-US">
 The changing of file permissions could indicate that a user is attempting to
@@ -456,14 +472,18 @@ to use the <tt>augenrules</tt> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-a always,exit -F arch=b32 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S setxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S setxattr -F auid=0 -F key=perm_mod</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to
 <tt>/etc/audit/audit.rules</tt> file:
 <pre>-a always,exit -F arch=b32 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b32 -S setxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+<pre>-a always,exit -F arch=b64 -S setxattr -F auid=0 -F key=perm_mod</pre>
   </td>
   <td xml:lang="en-US">
 The changing of file permissions could indicate that a user is attempting to
@@ -760,6 +780,30 @@ add the line to file <tt>/etc/audit/audit.rules</tt>.
 The addition of kernel modules can be used to alter the behavior of
 the kernel and potentially introduce malicious code into kernel space. It is important
 to have an audit trail of modules that have been introduced into the kernel.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>AU-2(d)<br/>AU-12(c)<br/>AC-6(9)<br/>CM-6(a)</td>
+  <td>N/A</td>
+  <td>Record Attempts to Alter Logon and Logout Events - faillock</td>
+  <td xml:lang="en-US">
+The audit system already collects login information for all users
+and root. If the <tt>auditd</tt> daemon is configured to use the
+<tt>augenrules</tt> program to read audit rules during daemon startup (the
+default), add the following lines to a file with suffix <tt>.rules</tt> in the
+directory <tt>/etc/audit/rules.d</tt> in order to watch for attempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt> file in order to watch for unattempted manual
+edits of files involved in storing logon events:
+<pre>-w /var/log/faillock -p wa -k logins</pre>
+  </td>
+  <td xml:lang="en-US">
+Manual editing of these files may indicate nefarious activity, such
+as an attacker attempting to remove evidence of an intrusion.
   </td>
   <td></td>
 </tr>
@@ -1162,7 +1206,7 @@ startup (the default), add the following lines to a file with suffix
 
 If the system is 64 bit then also add the following lines:
 <pre>
--a always,exit -F arch=b64 -S ftruncate -F exiu=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
 -a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
 
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
@@ -2151,7 +2195,7 @@ and remote logging.  Couple this utility with <tt>gnutls</tt> (which is a secure
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <tt>rsyslogd</tt> to off-load logs off a encrpytion system must be used.
+When using <tt>rsyslogd</tt> to off-load logs off an encryption system must be used.
   </td>
   <td xml:lang="en-US">
 The audit records generated by Rsyslog contain valuable information regarding system
@@ -2438,7 +2482,7 @@ password in resisting attempts at guessing and brute-force attacks.
 Password length is one factor of several that helps to determine strength
 and how long it takes to crack a password. Use of more characters in a password
 helps to exponentially increase the time and/or resources required to
-compromose the password.
+compromise the password.
   </td>
   <td>var_password_pam_minlen=15</td>
 </tr>
@@ -2605,36 +2649,6 @@ the possibility of losing audit records.
 <tr>
   <td>AU-5(b)<br/>AU-5(2)<br/>AU-5(1)<br/>AU-5(4)<br/>CM-6(a)</td>
   <td>N/A</td>
-  <td>Configure auditd max_log_file_action Upon Reaching Maximum Log Size</td>
-  <td xml:lang="en-US">
-The default action to take when the logs reach their maximum size
-is to rotate the log files, discarding the oldest one. To configure the action taken
-by <tt>auditd</tt>, add or correct the line in <tt>/etc/audit/auditd.conf</tt>:
-<pre>max_log_file_action = <i>ACTION</i></pre>
-Possible values for <i>ACTION</i> are described in the <tt>auditd.conf</tt> man
-page. These include:
-<ul>
-<li><tt>ignore</tt></li>
-<li><tt>syslog</tt></li>
-<li><tt>suspend</tt></li>
-<li><tt>rotate</tt></li>
-<li><tt>keep_logs</tt></li>
-</ul>
-Set the <tt><i>ACTION</i></tt> to <tt>rotate</tt> to ensure log rotation
-occurs. This is the default. The setting is case-insensitive.
-  </td>
-  <td xml:lang="en-US">
-Automatically rotating logs (by setting this to <tt>rotate</tt>)
-minimizes the chances of the system unexpectedly running out of disk space by
-being overwhelmed with log data. However, for systems that must never discard
-log data, or which use external processes to transfer it and reclaim space,
-<tt>keep_logs</tt> can be employed.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>AU-5(b)<br/>AU-5(2)<br/>AU-5(1)<br/>AU-5(4)<br/>CM-6(a)</td>
-  <td>N/A</td>
   <td>Configure auditd space_left Action on Low Disk Space</td>
   <td xml:lang="en-US">
 The <tt>auditd</tt> service can be configured to take an action
@@ -2682,6 +2696,74 @@ take corrective action prior to any disruption.
   <td></td>
 </tr>
 <tr>
+  <td>CM-5<br/>CM-5(6)<br/>CM-5(6).1</td>
+  <td>N/A</td>
+  <td>Verify that Shared Library Directories Have Restrictive Permissions</td>
+  <td xml:lang="en-US">
+System-wide shared library directories, which contain are linked to executables
+during process load time or run time, are stored in the following directories
+by default:
+<pre>/lib
+/lib64
+/usr/lib
+/usr/lib64
+</pre>
+Kernel modules, which can be added to the kernel during runtime, are
+stored in <tt>/lib/modules</tt>. All sub-directories in these directories
+should not be group-writable or world-writable. If any file in these
+directories is found to be group-writable or world-writable, correct
+its permission with the following command:
+<pre>$ sudo chmod go-w <i>DIR</i></pre>
+  </td>
+  <td xml:lang="en-US">
+If the operating system were to allow any user to make changes to software libraries,
+then those changes might be implemented without undergoing the appropriate testing
+and approvals that are part of a robust change management process.
+
+This requirement applies to operating systems with software libraries that are accessible
+and configurable, as in the case of interpreted languages. Software libraries also include
+privileged programs which execute with escalated privileges. Only qualified and authorized
+individuals must be allowed to obtain access to information system components for purposes
+of initiating changes, including upgrades and modifications.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>SC-5</td>
+  <td>N/A</td>
+  <td>Configure Firewalld to Use the Nftables Backend</td>
+  <td xml:lang="en-US">
+Firewalld can be configured with many backends, such as nftables.
+  </td>
+  <td xml:lang="en-US">
+Nftables is modern kernel module for controling network connections coming into a system.
+Utilizing the limit statement in "nftables" can help to mitigate DoS attacks.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>AU-5(a)<br/>AU-5.1(ii)</td>
+  <td>N/A</td>
+  <td>Configure System to Forward All Mail From Postmaster to The Root Account</td>
+  <td xml:lang="en-US">
+Verify the administrators are notified in the event of an audit processing failure.
+Check that the "/etc/aliases" file has a defined value for "root".
+<pre>$ sudo grep "postmaster:\s*root$" /etc/aliases
+
+postmaster: root</pre>
+  </td>
+  <td xml:lang="en-US">
+It is critical for the appropriate personnel to be aware if a system is at risk of failing to
+process audit logs as required. Without this notification, the security personnel may be
+unaware of an impending failure of the audit capability, and system operation may be adversely
+affected.
+
+Audit processing failures include software/hardware errors, failures in the audit capturing
+mechanisms, and audit storage capacity being reached or exceeded.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>IA-5(c)<br/>IA-5(1)(c)<br/>CM-6(a)</td>
   <td>N/A</td>
   <td>Set Password Hashing Algorithm in /etc/login.defs</td>
@@ -2702,10 +2784,45 @@ Using a stronger hashing algorithm makes password cracking attacks more difficul
 <tr>
   <td>IA-5(c)<br/>IA-5(1)(c)<br/>CM-6(a)</td>
   <td>N/A</td>
-  <td>Set PAM's Password Hashing Algorithm</td>
+  <td>Set PAM''s Password Hashing Algorithm - password-auth</td>
   <td xml:lang="en-US">
 The PAM system service can be configured to only store encrypted
-representations of passwords. In "/etc/pam.d/password-auth", the
+representations of passwords. In
+<tt>/etc/pam.d/password-auth</tt>,
+the
+<tt>password</tt> section of the file controls which PAM modules execute
+during a password change. Set the <tt>pam_unix.so</tt> module in the
+<tt>password</tt> section to include the argument <tt>sha512</tt>, as shown
+below:
+<br />
+<pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i></pre>
+<br />
+This will help ensure when local users change their passwords, hashes for
+the new passwords will be generated using the SHA-512 algorithm. This is
+the default.
+  </td>
+  <td xml:lang="en-US">
+Passwords need to be protected at all times, and encryption is the standard
+method for protecting passwords. If passwords are not encrypted, they can
+be plainly read (i.e., clear text) and easily compromised. Passwords that
+are encrypted with a weak algorithm are no more protected than if they are
+kepy in plain text.
+<br /><br />
+This setting ensures user and group account administration utilities are
+configured to store only encrypted representations of passwords.
+Additionally, the <tt>crypt_style</tt> configuration option ensures the use
+of a strong hashing algorithm that makes password cracking attacks more
+difficult.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>IA-5(c)<br/>IA-5(1)(c)<br/>CM-6(a)</td>
+  <td>N/A</td>
+  <td>Set PAM''s Password Hashing Algorithm</td>
+  <td xml:lang="en-US">
+The PAM system service can be configured to only store encrypted
+representations of passwords. In "/etc/pam.d/system-auth", the
 <tt>password</tt> section of the file controls which PAM modules execute
 during a password change. Set the <tt>pam_unix.so</tt> module in the
 <tt>password</tt> section to include the argument <tt>sha512</tt>, as shown
@@ -2757,6 +2874,34 @@ analysis.
   <td></td>
 </tr>
 <tr>
+  <td>IA-5 (2) (a)</td>
+  <td>N/A</td>
+  <td>SSSD Has a Correct Trust Anchor</td>
+  <td xml:lang="en-US">
+SSSD must have acceptable trust anchor present.
+  </td>
+  <td xml:lang="en-US">
+Without path validation, an informed trust decision by the relying party cannot be made when
+presented with any certificate not already explicitly trusted.
+
+A trust anchor is an authoritative entity represented via a public key and associated data. It
+is used in the context of public key infrastructures, X.509 digital certificates, and DNSSEC.
+
+When there is a chain of trust, usually the top entity to be trusted becomes the trust anchor;
+it can be, for example, a Certification Authority (CA). A certification path starts with the
+subject certificate and proceeds through a number of intermediate certificates up to a trusted
+root certificate, typically issued by a trusted CA.
+
+This requirement verifies that a certification path to an accepted trust anchor is used for
+certificate validation and that the path includes status information. Path validation is
+necessary for a relying party to make an informed trust decision when presented with any
+certificate not already explicitly trusted. Status information for certification paths includes
+certificate revocation lists or online certificate status protocol responses.
+Validation of the certificate status information is out of scope for this requirement.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>IA-5(1)(c)<br/>IA-5(1).1(v)<br/>IA-7<br/>IA-7.1</td>
   <td>N/A</td>
   <td>Verify All Account Password Hashes are Shadowed with SHA512</td>
@@ -2786,7 +2931,14 @@ level of entropy.
   <td>Record Events When Privileged Executables Are Run</td>
   <td xml:lang="en-US">
 Verify the system generates an audit record when privileged functions are executed.
-<pre># grep -iw execve <tt>/etc/audit/audit.rules</tt></pre>
+
+If audit is using the "auditctl" tool to load the rules, run the following command:
+
+<pre>$ sudo grep execve /etc/audit/audit.rules</pre>
+
+If audit is using the "augenrules" tool to load the rules, run the following command:
+
+<pre>$ sudo grep -r execve /etc/audit/rules.d</pre>
 
 
 <pre>-a always,exit -F arch=b32 -S execve -C uid!=euid -k setuid</pre>
@@ -2847,6 +2999,24 @@ empty passwords should never be used in operational environments.
   <td></td>
 </tr>
 <tr>
+  <td>IA-5(2)<br/>IA-5(2).1</td>
+  <td>N/A</td>
+  <td>OpenSSH Service Must Use Passcode for Their Private Keys</td>
+  <td xml:lang="en-US">
+Verify the SSH private key files have a passcode.
+For each private key stored on the system, use the following command:
+
+<pre>$ sudo ssh-keygen -y -f /path/to/file</pre>
+
+If the contents of the key are displayed, without asking a passphrase this is a finding.
+  </td>
+  <td xml:lang="en-US">
+If an unauthorized user obtains access to a private key without a passcode, that user would
+have unauthorized access to any system where the associated public key has been installed.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>CM-5(3)<br/>SI-7<br/>SC-12<br/>SC-12(3)<br/>CM-6(a)<br/>SA-12<br/>SA-12(10)<br/>CM-11(a)<br/>CM-11(b)</td>
   <td>N/A</td>
   <td>Ensure gpgcheck Enabled In Main yum Configuration</td>
@@ -2873,6 +3043,25 @@ This ensures the software has not been tampered with and that it has been
 provided by a trusted vendor. Self-signed certificates are disallowed by
 this requirement. Certificates used to verify the software must be from an
 approved Certificate Authority (CA).
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>CM-5(3)<br/>SI-7<br/>SC-12<br/>SC-12(3)<br/>CM-6(a)<br/>SA-12<br/>SA-12(10)<br/>CM-11(a)<br/>CM-11(b)</td>
+  <td>N/A</td>
+  <td>Ensure gpgcheck Enabled for All yum Package Repositories</td>
+  <td xml:lang="en-US">
+To ensure signature checking is not disabled for
+any repos, remove any lines from files in <tt>/etc/yum.repos.d</tt> of the form:
+<pre>gpgcheck=0</pre>
+  </td>
+  <td xml:lang="en-US">
+Verifying the authenticity of the software prior to installation validates
+the integrity of the patch or upgrade received from a vendor. This ensures
+the software has not been tampered with and that it has been provided by a
+trusted vendor. Self-signed certificates are disallowed by this
+requirement. Certificates used to verify the software must be from an
+approved Certificate Authority (CA)."
   </td>
   <td></td>
 </tr>
@@ -2907,7 +3096,35 @@ the integrity of the system.
 <tr>
   <td>CM-5(6)<br/>CM-5(6).1</td>
   <td>N/A</td>
-  <td>Verify that system commands files are group owned by root</td>
+  <td>Verify that Shared Library Directories Have Root Ownership</td>
+  <td xml:lang="en-US">
+System-wide shared library files, which are linked to executables
+during process load time or run time, are stored in the following directories
+by default:
+<pre>/lib
+/lib64
+/usr/lib
+/usr/lib64
+</pre>
+Kernel modules, which can be added to the kernel during runtime, are also
+stored in <tt>/lib/modules</tt>. All files in these directories should be
+owned by the <tt>root</tt> user. If the  directories, is found to be owned
+by a user other than root correct its
+ownership with the following command:
+<pre>$ sudo chown root <i>DIR</i></pre>
+  </td>
+  <td xml:lang="en-US">
+Files from shared library directories are loaded into the address
+space of processes (including privileged ones) or of the kernel itself at
+runtime. Proper ownership of library directories is necessary to protect
+the integrity of the system.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>CM-5(6)<br/>CM-5(6).1</td>
+  <td>N/A</td>
+  <td>Verify that system commands files are group owned by root or a system account</td>
   <td xml:lang="en-US">
 System commands files are stored in the following directories by default:
 <pre>/bin
@@ -2917,9 +3134,11 @@ System commands files are stored in the following directories by default:
 /usr/local/bin
 /usr/local/sbin
 </pre>
-All files in these directories should be owned by the <tt>root</tt> group.
+All files in these directories should be owned by the <tt>root</tt> group,
+or a system account.
 If the directory, or any file in these directories, is found to be owned
-by a group other than root correct its ownership with the following command:
+by a group other than root or a a system account correct its ownership
+with the following command:
 <pre>$ sudo chgrp root <i>FILE</i></pre>
   </td>
   <td xml:lang="en-US">
@@ -3341,6 +3560,33 @@ loss of availability of systems due to unintentional reboot.
   <td></td>
 </tr>
 <tr>
+  <td>CM-6(a)<br/>AC-23</td>
+  <td>N/A</td>
+  <td>Disable the GNOME3 Login User List</td>
+  <td xml:lang="en-US">
+In the default graphical environment, users logging directly into the
+system are greeted with a login screen that displays all known users.
+This functionality should be disabled by setting <tt>disable-user-list</tt>
+to <tt>true</tt>.
+<br /><br />
+To disable, add or edit <tt>disable-user-list</tt> to
+<tt>/etc/dconf/db/local.d/00-security-settings</tt>. For example:
+<pre>[org/gnome/login-screen]
+disable-user-list=true</pre>
+Once the setting has been added, add a lock to
+<tt>/etc/dconf/db/local.d/locks/00-security-settings-lock</tt> to prevent
+user modification. For example:
+<pre>/org/gnome/login-screen/disable-user-list</pre>
+After the settings have been set, run <tt>dconf update</tt>.
+  </td>
+  <td xml:lang="en-US">
+Leaving the user list enabled is a security risk since it allows anyone
+with physical access to the system to quickly enumerate known user accounts
+without logging in.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>CM-6(a)</td>
   <td>N/A</td>
   <td>Enable GNOME3 Screensaver Lock After Idle Period</td>
@@ -3487,8 +3733,6 @@ All audit directories must be group owned by root user. By default, the path for
 
 To properly set the group owner of <code>/var/log/audit</code>, run the command:
 <pre>$ sudo chgrp root /var/log/audit</pre>
-If <tt>log_group</tt> in <tt>/etc/audit/auditd.conf</tt> is set to a group other than the <tt>root</tt>
-group account, change the group ownership of the audit directories to this specific group.
   </td>
   <td xml:lang="en-US">
 Unauthorized disclosure of audit records can reveal system and configuration data to
@@ -3517,12 +3761,16 @@ attackers, thus compromising its confidentiality.
   <td>N/A</td>
   <td>System Audit Logs Must Have Mode 0750 or Less Permissive</td>
   <td xml:lang="en-US">
-If <tt>log_group</tt> in <tt>/etc/audit/auditd.conf</tt> is set to a group other than the <tt>root</tt>
-group account, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0750 /var/log/audit</pre>
-<br />
-Otherwise, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0700 /var/log/audit</pre>
+
+Verify the audit log directories have a mode of "0700" or less permissive by first determining
+where the audit logs are stored with the following command:
+<pre>$ sudo grep -iw log_file /etc/audit/auditd.conf
+
+log_file = /var/log/audit/audit.log</pre>
+Configure the audit log directory to be protected from unauthorized read access by setting the
+correct permissive mode with the following command:
+<pre>$ sudo chmod 0700 <i>audit_log_directory</i></pre>
+By default, <tt><i>audit_log_directory</i></tt> is "/var/log/audit".
   </td>
   <td xml:lang="en-US">
 If users can write to audit logs, audit trails can be modified or destroyed.
@@ -3647,9 +3895,6 @@ or, by default, the path for audit log is <pre>/var/log/audit/</pre>.
 
 To properly set the group owner of <code>/var/log/audit/*</code>, run the command:
 <pre>$ sudo chgrp root /var/log/audit/*</pre>
-If <tt>log_group</tt> in <tt>/etc/audit/auditd.conf</tt> is set to a group other
-than the <tt>root</tt> group account, change the group ownership of the audit logs
-to this specific group.
   </td>
   <td xml:lang="en-US">
 Unauthorized disclosure of audit records can reveal system and configuration data to
@@ -3733,12 +3978,14 @@ and the cause should be discovered and addressed.
   <td>N/A</td>
   <td>System Audit Logs Must Have Mode 0640 or Less Permissive</td>
   <td xml:lang="en-US">
-If <tt>log_group</tt> in <tt>/etc/audit/auditd.conf</tt> is set to a group other than the <tt>root</tt>
-group account, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0640 <i>audit_file</i></pre>
-<br />
-Otherwise, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0600 <i>audit_file</i></pre>
+
+Determine where the audit logs are stored with the following command:
+<pre>$ sudo grep -iw log_file /etc/audit/auditd.conf
+log_file = /var/log/audit/audit.log</pre>
+Configure the audit log to be protected from unauthorized read access by setting the correct
+permissive mode with the following command:
+<pre>$ sudo chmod 0600 <i>audit_log_file</i></pre>
+By default, <i>audit_log_file</i> is "/var/log/audit/audit.log".
   </td>
   <td xml:lang="en-US">
 If users can write to audit logs, audit trails can be modified or destroyed.
@@ -3784,7 +4031,7 @@ Change the superuser to a different username (The default is 'root').
 Once the superuser account has been added,
 update the
 <tt>grub.cfg</tt> file by running:
-<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
+<pre>grubby --update-kernel=ALL --env=/boot/grub2/grubenv</pre>
   </td>
   <td xml:lang="en-US">
 Having a non-default grub superuser username makes password-guessing attacks less effective.
@@ -3811,6 +4058,30 @@ audit_backlog_limit sets the queue length for audit events awaiting transfer
 to the audit daemon. Until the audit daemon is up and running, all log messages
 are stored in this queue.  If the queue is overrun during boot process, the action
 defined by audit failure flag is taken.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>CM-6(b)<br/>CM-6.1(iv)</td>
+  <td>N/A</td>
+  <td>System Must Avoid Meltdown and Spectre Exploit Vulnerabilities in Modern Processors</td>
+  <td xml:lang="en-US">
+Determine the default kernel:
+<pre>$ sudo grubby --default-kernel
+
+/boot/vmlinuz-5.4.17-2011.1.2.el8uek.x86_64</pre>
+
+Using the default kernel, verify that Meltdown mitigations are not disabled:
+<pre>$ sudo grubby --info=<i>path-to-default-kernel</i> | grep mitigation</pre>
+
+The mitigation must be set to "on".
+  </td>
+  <td xml:lang="en-US">
+Hardware vulnerabilities allow programs to steal data that is currently processed on the
+computer. While programs are typically not permitted to read data from other programs, a
+malicious program can exploit Meltdown and Spectre to obtain secrets stored in the memory of
+other running programs. This might include passwords stored in a password manager or browser;
+personal photos, emails, and instant messages; and business-critical documents.
   </td>
   <td></td>
 </tr>
@@ -3901,12 +4172,12 @@ It is highly suggested not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 <br /><br />
 Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<pre>$ sed -i 's/\(set superusers=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
 <br /><br />
 Once the superuser account has been added,
 update the
 <tt>grub.cfg</tt> file by running:
-<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
+<pre>grubby --update-kernel=ALL --env=/boot/grub2/grubenv</pre>
   </td>
   <td xml:lang="en-US">
 Having a non-default grub superuser username makes password-guessing attacks less effective.
@@ -3982,6 +4253,24 @@ software.
   <td></td>
 </tr>
 <tr>
+  <td>CM-6(b)<br/>CM-6.1(iv)</td>
+  <td>N/A</td>
+  <td>Add nosuid Option to /boot/efi</td>
+  <td xml:lang="en-US">
+The <tt>nosuid</tt> mount option can be used to prevent
+execution of setuid programs in <tt>/boot/efi</tt>. The SUID and SGID permissions
+should not be required on the boot partition.
+Add the <code>nosuid</code> option to the fourth column of
+<tt>/etc/fstab</tt> for the line which controls mounting of
+<code>/boot/efi</code>.
+  </td>
+  <td xml:lang="en-US">
+The presence of SUID and SGID executables should be tightly controlled. Users
+should not be able to execute SUID or SGID binaries from boot partitions.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>CM-6(b)</td>
   <td>N/A</td>
   <td>Add noexec Option to /home</td>
@@ -4040,6 +4329,29 @@ any NFS mounts.
   <td xml:lang="en-US">
 NFS mounts should not present suid binaries to users. Only vendor-supplied suid executables
 should be installed to their default location on the local filesystem.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>CM-6(b)<br/>CM-6.1(iv)</td>
+  <td>N/A</td>
+  <td>Ensure There Are No Accounts With Blank or Null Passwords</td>
+  <td xml:lang="en-US">
+Check the "/etc/shadow" file for blank passwords with the
+following command:
+<pre>$ sudo awk -F: '!$2 {print $1}' /etc/shadow</pre>
+If the command returns any results, this is a finding.
+Configure all accounts on the system to have a password or lock
+the account with the following commands:
+Perform a password reset:
+<pre>$ sudo passwd [username]</pre>
+Lock an account:
+<pre>$ sudo passwd -l [username]</pre>
+  </td>
+  <td xml:lang="en-US">
+If an account has an empty password, anyone could log in and
+run commands with the privileges of that account. Accounts with
+empty passwords should never be used in operational environments.
   </td>
   <td></td>
 </tr>
@@ -4307,26 +4619,6 @@ of space.
 <tr>
   <td>CM-6(a)</td>
   <td>N/A</td>
-  <td>Configure System to Forward All Mail For The Root Account</td>
-  <td xml:lang="en-US">
-Make sure that mails delivered to root user are forwarded to a monitored
-email address. Make sure that the address
-<tt>system.administrator@mail.mil</tt> is a valid email address
-reachable from the system in question. Use the following command to
-configure the alias:
-<pre>$ sudo echo "root: <tt>system.administrator@mail.mil</tt>" &gt;&gt; /etc/aliases
-$ sudo newaliases</pre>
-  </td>
-  <td xml:lang="en-US">
-A number of system services utilize email messages sent to the root user to
-notify system administrators of active or impending issues.  These messages must
-be forwarded to at least one monitored email address.
-  </td>
-  <td>var_postfix_root_mail_alias=system.administrator@mail.mil</td>
-</tr>
-<tr>
-  <td>CM-6(a)</td>
-  <td>N/A</td>
   <td>Ensure cron Is Logging To Rsyslog</td>
   <td xml:lang="en-US">
 Cron logging must be implemented to spot intrusions or trace
@@ -4573,6 +4865,14 @@ connecting to the proxy display.
   <td>Configure SSSD to Expire Offline Credentials</td>
   <td xml:lang="en-US">
 SSSD should be configured to expire offline credentials after 1 day.
+
+Check if SSSD allows cached authentications with the following command:
+<pre>
+$ sudo grep cache_credentials /etc/sssd/sssd.conf
+cache_credentials = true
+</pre>
+If "cache_credentials" is set to "false" or is missing no further checks are required.<br/>
+
 To configure SSSD to expire offline credentials, set
 <tt>offline_credentials_expiration</tt> to <tt>1</tt> under the <tt>[pam]</tt>
 section in <tt>/etc/sssd/sssd.conf</tt>. For example:
@@ -4804,6 +5104,22 @@ written to by unauthorized users.
   <td>var_accounts_user_umask=077</td>
 </tr>
 <tr>
+  <td>AC-6(1)<br/>CM-6(a)</td>
+  <td>N/A</td>
+  <td>Ensure the Default Umask is Set Correctly in /etc/profile</td>
+  <td xml:lang="en-US">
+To ensure the default umask controlled by <tt>/etc/profile</tt> is set properly,
+add or correct the <tt>umask</tt> setting in <tt>/etc/profile</tt> to read as follows:
+<pre>umask <tt>077</tt></pre>
+  </td>
+  <td xml:lang="en-US">
+The umask value influences the permissions assigned to files when they are created.
+A misconfigured umask value could result in files with excessive permissions that can be read or
+written to by unauthorized users.
+  </td>
+  <td>var_accounts_user_umask=077</td>
+</tr>
+<tr>
   <td>AC-6(2)<br/>AC-17(a)<br/>IA-2<br/>IA-2(5)<br/>CM-7(a)<br/>CM-7(b)<br/>CM-6(a)</td>
   <td>N/A</td>
   <td>Disable SSH Root Login</td>
@@ -4941,6 +5257,11 @@ of the return instruction pointer.
 To configure the system to prevent the <code>cramfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cramfs.conf</code>:
 <pre>install cramfs /bin/true</pre>
+
+To configure the system to prevent the <code>cramfs</code> from being used,
+add the following line to file <code>/etc/modprobe.d/cramfs.conf</code>:
+<pre>blacklist cramfs</pre>
+
 This effectively prevents usage of this uncommon filesystem.
 
 The <tt>cramfs</tt> filesystem type is a compressed read-only
@@ -4967,6 +5288,10 @@ within one connection.
 To configure the system to prevent the <code>sctp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
 <pre>install sctp /bin/true</pre>
+
+To configure the system to prevent the <code>sctp</code> from being used,
+add the following line to file <code>/etc/modprobe.d/sctp.conf</code>:
+<pre>blacklist sctp</pre>
   </td>
   <td xml:lang="en-US">
 Disabling SCTP protects
@@ -4986,6 +5311,10 @@ cluster.
 To configure the system to prevent the <code>tipc</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/tipc.conf</code>:
 <pre>install tipc /bin/true</pre>
+
+To configure the system to prevent the <code>tipc</code> from being used,
+add the following line to file <code>/etc/modprobe.d/tipc.conf</code>:
+<pre>blacklist tipc</pre>
   </td>
   <td xml:lang="en-US">
 Disabling TIPC protects
@@ -5004,6 +5333,11 @@ to prevent automatic loading of the USB storage driver.
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
 <pre>install usb-storage /bin/true</pre>
+
+To configure the system to prevent the <code>usb-storage</code> from being used,
+add the following line to file <code>/etc/modprobe.d/usb-storage.conf</code>:
+<pre>blacklist usb-storage</pre>
+
 This will prevent the <tt>modprobe</tt> program from loading the <tt>usb-storage</tt>
 module, but will not prevent an administrator (or another program) from using the
 <tt>insmod</tt> program to load the module manually.
@@ -5011,6 +5345,19 @@ module, but will not prevent an administrator (or another program) from using th
   <td xml:lang="en-US">
 USB storage devices such as thumb drives can be used to introduce
 malicious software.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>CM-7 (a)<br/>CM-7 (5) (b)</td>
+  <td>N/A</td>
+  <td>Disable the uvcvideo module</td>
+  <td xml:lang="en-US">
+If the device contains a camera it should be covered or disabled when not in use.
+  </td>
+  <td xml:lang="en-US">
+Failing to disconnect from collaborative computing devices (i.e., cameras) can result in subsequent compromises of organizational information.
+Providing easy methods to physically disconnect from such devices after a collaborative computing session helps to ensure participants actually carry out the disconnect activity without having to go through complex and tedious procedures.
   </td>
   <td></td>
 </tr>
@@ -5854,6 +6201,28 @@ uses. It should be disabled unless it is absolutely required.
   <td></td>
 </tr>
 <tr>
+  <td>CM-7(a)<br/>CM-7(b)<br/>CM-6(a)</td>
+  <td>N/A</td>
+  <td>Disable X Windows Startup By Setting Default Target</td>
+  <td xml:lang="en-US">
+Systems that do not require a graphical user interface should only boot by
+default into <tt>multi-user.target</tt> mode. This prevents accidental booting of the system
+into a <tt>graphical.target</tt> mode. Setting the system's default target to
+<tt>multi-user.target</tt> will prevent automatic startup of the X server. To do so, run:
+<pre>$ systemctl set-default multi-user.target</pre>
+You should see the following output:
+<pre>Removed symlink /etc/systemd/system/default.target.
+Created symlink from /etc/systemd/system/default.target to /usr/lib/systemd/system/multi-user.target.</pre>
+  </td>
+  <td xml:lang="en-US">
+Services that are not required for system and application processes
+must not be active to decrease the attack surface of the system. X windows has a
+long history of security vulnerabilities and should not be used unless approved
+and documented.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>CM-7(1)</td>
   <td>N/A</td>
   <td>Disable network management of chrony daemon</td>
@@ -6114,6 +6483,57 @@ properly, avoiding the system to become inaccessible.
   <td></td>
 </tr>
 <tr>
+  <td>AU-9</td>
+  <td>N/A</td>
+  <td>Audit Tools Must Be Group-owned by Root</td>
+  <td xml:lang="en-US">
+Oracle Linux 8 systems providing tools to interface with audit information will leverage user permissions and roles identifying the user accessing the tools, and the corresponding rights the user enjoys, to make access decisions regarding the access to audit tools.
+
+Audit tools include, but are not limited to, vendor-provided and open source audit tools needed to successfully view and manipulate audit information system activity and records. Audit tools include custom queries and report generators.
+
+Audit tools must have the correct group owner.
+  </td>
+  <td xml:lang="en-US">
+Protecting audit information also includes identifying and protecting the tools used to view and manipulate log data.
+Therefore, protecting audit tools is necessary to prevent unauthorized operations on audit information.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>AU-9</td>
+  <td>N/A</td>
+  <td>Audit Tools Must Be Owned by Root</td>
+  <td xml:lang="en-US">
+Oracle Linux 8 systems providing tools to interface with audit information will leverage user permissions and roles identifying the user accessing the tools, and the corresponding rights the user enjoys, to make access decisions regarding the access to audit tools.
+
+Audit tools include, but are not limited to, vendor-provided and open source audit tools needed to successfully view and manipulate audit information system activity and records. Audit tools include custom queries and report generators.
+
+Audit tools must have the correct owner.
+  </td>
+  <td xml:lang="en-US">
+Protecting audit information also includes identifying and protecting the tools used to view and manipulate log data.
+Therefore, protecting audit tools is necessary to prevent unauthorized operations on audit information.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>AU-9</td>
+  <td>N/A</td>
+  <td>Audit Tools Must Have a Mode of 0755 or Less Permissive</td>
+  <td xml:lang="en-US">
+Oracle Linux 8 systems providing tools to interface with audit information will leverage user permissions and roles identifying the user accessing the tools, and the corresponding rights the user enjoys, to make access decisions regarding the access to audit tools.
+
+Audit tools include, but are not limited to, vendor-provided and open source audit tools needed to successfully view and manipulate audit information system activity and records. Audit tools include custom queries and report generators.
+
+Audit tools must have a mode of 0755 or less permissive.
+  </td>
+  <td xml:lang="en-US">
+Protecting audit information also includes identifying and protecting the tools used to view and manipulate log data.
+Therefore, protecting audit tools is necessary to prevent unauthorized operations on audit information.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>AC-9<br/>AC-17(a)<br/>CM-6(a)</td>
   <td>N/A</td>
   <td>Enable SSH Print Last Log</td>
@@ -6146,7 +6566,8 @@ using <tt>pam_lastlog</tt>, add or correct the <tt>pam_lastlog</tt>
 settings in
 <tt>/etc/pam.d/postlogin</tt> to read as follows:
 <pre>session     required pam_lastlog.so showfailed</pre>
-And make sure that the <tt>silent</tt> option is not set.
+And make sure that the <tt>silent</tt> option is not set for
+<tt>pam_lastlog</tt> module.
   </td>
   <td xml:lang="en-US">
 Users need to be aware of activity that occurs regarding
@@ -6269,6 +6690,23 @@ of the information system but does not want to logout because of the temporary n
   <td>var_screensaver_lock_delay=5_seconds</td>
 </tr>
 <tr>
+  <td>IA-11</td>
+  <td>N/A</td>
+  <td>Disallow Configuration to Bypass Password Requirements for Privilege Escalation</td>
+  <td xml:lang="en-US">
+Verify the operating system is not configured to bypass password requirements for privilege
+escalation. Check the configuration of the "/etc/pam.d/sudo" file with the following command:
+<pre>$ sudo grep pam_succeed_if /etc/pam.d/sudo</pre>
+If any occurrences of "pam_succeed_if" is returned from the command, this is a finding.
+  </td>
+  <td xml:lang="en-US">
+Without re-authentication, users may access resources or perform tasks for which they do not
+have authorization. When operating systems provide the capability to escalate a functional
+capability, it is critical the user re-authenticate.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>CM-11(a)<br/>CM-11(b)<br/>CM-6(a)<br/>CM-5(3)<br/>SA-12<br/>SA-12(10)</td>
   <td>N/A</td>
   <td>Ensure gpgcheck Enabled for Local Packages</td>
@@ -6284,6 +6722,51 @@ has been provided by a trusted vendor.
 <br /><br />
 Accordingly, patches, service packs, device drivers, or operating system components must
 be signed with a certificate recognized and approved by the organization.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>SI-11(b)<br/>SI-11(c)<br/>SI-11.1(iv)</td>
+  <td>N/A</td>
+  <td>Verify Group Who Owns lastlog Command</td>
+  <td xml:lang="en-US">
+
+To properly set the group owner of <code>/var/log/lastlog</code>, run the command:
+<pre>$ sudo chgrp root /var/log/lastlog</pre>
+  </td>
+  <td xml:lang="en-US">
+Unauthorized disclosure of the contents of the /var/log/lastlog file can reveal system data to
+attackers, thus compromising its confidentiality.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>SI-11(b)<br/>SI-11(c)<br/>SI-11.1(iv)</td>
+  <td>N/A</td>
+  <td>Verify Owner on lastlog Command</td>
+  <td xml:lang="en-US">
+
+To properly set the owner of <code>/usr/bin/lastlog</code>, run the command:
+<pre>$ sudo chown root /usr/bin/lastlog </pre>
+  </td>
+  <td xml:lang="en-US">
+Unauthorized disclosure of the contents of the /var/log/lastlog file can reveal system data to
+attackers, thus compromising its confidentiality.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>SI-11(b)<br/>SI-11(c)<br/>SI-11.1(iv)</td>
+  <td>N/A</td>
+  <td>Verify Permissions on lastlog Command</td>
+  <td xml:lang="en-US">
+
+To properly set the permissions of <code>/usr/bin/lastlog</code>, run the command:
+<pre>$ sudo chmod 0750 /usr/bin/lastlog</pre>
+  </td>
+  <td xml:lang="en-US">
+Unauthorized disclosure of the contents of the /var/log/lastlog file can reveal system data to
+attackers, thus compromising its confidentiality.
   </td>
   <td></td>
 </tr>
@@ -6559,9 +7042,8 @@ and makes system configuration more fragmented.
   <td>N/A</td>
   <td>Verify Permissions on SSH Server Private *_key Key Files</td>
   <td xml:lang="en-US">
-
-To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
-<pre>$ sudo chmod 0600 /etc/ssh/*_key</pre>
+SSH server private keys - files that match the <code>/etc/ssh/*_key</code> glob, have to have restricted permissions.
+If those files are owned by the <code>root</code> user and the <code>root</code> group, they have to have the <code>0600</code> permission or stricter.
   </td>
   <td xml:lang="en-US">
 If an unauthorized user obtains the private SSH host key file, the host could be
@@ -6650,8 +7132,8 @@ To explicitly disable Kerberos authentication, add or correct the following line
   <td xml:lang="en-US">
 Kerberos authentication for SSH is often implemented using GSSAPI. If Kerberos
 is enabled through SSH, the SSH daemon provides a means of access to the
-system's Kerberos implementation. Vulnerabilities in the system's Kerberos
-implementations may be subject to exploitation.
+system's Kerberos implementation. 
+Configuring these settings for the SSH daemon provides additional assurance that remote logon via SSH will not use unused methods of authentication, even in the event of misconfiguration elsewhere. 
   </td>
   <td></td>
 </tr>
@@ -6903,6 +7385,10 @@ and virtual paths.
 To configure the system to prevent the <code>atm</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/atm.conf</code>:
 <pre>install atm /bin/true</pre>
+
+To configure the system to prevent the <code>atm</code> from being used,
+add the following line to file <code>/etc/modprobe.d/atm.conf</code>:
+<pre>blacklist atm</pre>
   </td>
   <td xml:lang="en-US">
 Disabling ATM protects the system against exploitation of any
@@ -6940,6 +7426,10 @@ is now also used in marine, industrial, and medical applications.
 To configure the system to prevent the <code>can</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/can.conf</code>:
 <pre>install can /bin/true</pre>
+
+To configure the system to prevent the <code>can</code> from being used,
+add the following line to file <code>/etc/modprobe.d/can.conf</code>:
+<pre>blacklist can</pre>
   </td>
   <td xml:lang="en-US">
 Disabling CAN protects the system against exploitation of any
@@ -6958,6 +7448,10 @@ high-speed real-time communication.
 To configure the system to prevent the <code>firewire-core</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/firewire-core.conf</code>:
 <pre>install firewire-core /bin/true</pre>
+
+To configure the system to prevent the <code>firewire-core</code> from being used,
+add the following line to file <code>/etc/modprobe.d/firewire-core.conf</code>:
+<pre>blacklist firewire-core</pre>
   </td>
   <td xml:lang="en-US">
 Disabling FireWire protects the system against exploitation of any
@@ -7092,6 +7586,9 @@ When containers are deployed on the machine, the value should be set
 to large non-zero value.
   </td>
   <td xml:lang="en-US">
+It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or system objectives.
+These unnecessary capabilities or services are often overlooked and therefore may remain unsecured.
+They increase the risk to the platform by providing additional attack vectors.
 User namespaces are used primarily for Linux containers. The value 0
 disallows the use of user namespaces.
   </td>
@@ -7155,20 +7652,34 @@ for the storage and control of files they should own.
 <tr>
   <td></td>
   <td>N/A</td>
-  <td>Set number of Password Hashing Rounds - password-auth</td>
+  <td>Ensure PAM password complexity module is enabled in password-auth</td>
   <td xml:lang="en-US">
-Configure the number or rounds for the password hashing algorithm. This can be
-accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
-<br /><br />
-In file <tt>/etc/pam.d/password-auth</tt> append <tt>rounds=<tt>5000</tt></tt>
-to the <tt>pam_unix.so</tt> entry, as shown below:
-<pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<tt>5000</tt></pre>
-The system's default number of rounds is 5000.
+To enable PAM password complexity in password-auth file:
+Edit the <tt>password</tt> section in
+<tt>/etc/pam.d/password-auth</tt> to show
+<tt>password    requisite                                    pam_pwquality.so</tt>.
   </td>
   <td xml:lang="en-US">
-Using a higher number of rounds makes password cracking attacks more difficult.
+Enabling PAM password complexity permits to enforce strong passwords and consequently
+makes the system less prone to dictionary attacks.
   </td>
-  <td>var_password_pam_unix_rounds=5000</td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td>N/A</td>
+  <td>Ensure PAM password complexity module is enabled in system-auth</td>
+  <td xml:lang="en-US">
+To enable PAM password complexity in system-auth file:
+Edit the <tt>password</tt> section in
+<tt>/etc/pam.d/system-auth</tt> to show
+<tt>password    requisite                                    pam_pwquality.so</tt>.
+  </td>
+  <td xml:lang="en-US">
+Enabling PAM password complexity permits to enforce strong passwords and consequently
+makes the system less prone to dictionary attacks.
+  </td>
+  <td></td>
 </tr>
 <tr>
   <td></td>
@@ -7212,7 +7723,7 @@ user defaults for each account on the system.
   <td xml:lang="en-US">
 Set the mode on files being executed by the user initialization files with the
 following command:
-<pre>$ sudo chmod 0755 <i>FILE</i></pre>
+<pre>$ sudo chmod o-w <i>FILE</i></pre>
   </td>
   <td xml:lang="en-US">
 If user start-up files execute world-writable programs, especially in
@@ -7280,6 +7791,41 @@ the user may be given access to the / directory as the current working directory
 upon logon. This could create a Denial of Service because the user would not be
 able to access their logon configuration files, and it may give them visibility
 to system files they normally would not be able to access.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td>N/A</td>
+  <td>All User Files and Directories In The Home Directory Must Be Group-Owned By The Primary User</td>
+  <td xml:lang="en-US">
+Change the group of a local interactive users files and directories to a
+group that the interactive user is a member of. To change the group owner of a
+local interactive users files and directories, use the following command:
+<pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i>/<i>FILE_DIR</i></pre>
+
+This rule ensures every file or directory under the home directory related
+to an interactive user is group-owned by an interactive user.
+  </td>
+  <td xml:lang="en-US">
+If a local interactive users files are group-owned by a group of which the
+user is not a member, unintended users may be able to access them.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td>N/A</td>
+  <td>All User Files and Directories In The Home Directory Must Have Mode 0750 Or Less Permissive</td>
+  <td xml:lang="en-US">
+Set the mode on files and directories in the local interactive user home
+directory with the following command:
+<pre>$ sudo chmod 0750 /home/<i>USER</i>/<i>FILE_DIR</i></pre>
+Files that begin with a "." are excluded from this requirement.
+  </td>
+  <td xml:lang="en-US">
+If a local interactive user files have excessive permissions, unintended users
+may be able to access or modify them.
   </td>
   <td></td>
 </tr>
@@ -7490,18 +8036,18 @@ records will be sufficient.
 Determine which partition the audit records are being written to with the
 following command:
 
-<pre># grep log_file /etc/audit/auditd.conf
+<pre>$ sudo grep log_file /etc/audit/auditd.conf
 log_file = /var/log/audit/audit.log</pre>
 
 Check the size of the partition that audit records are written to with the
 following command:
 
-<pre># df -h /var/log/audit/
+<pre>$ sudo df -h /var/log/audit/
 /dev/sda2 24G 10.4G 13.6G 43% /var/log/audit</pre>
   </td>
   <td xml:lang="en-US">
 Information stored in one location is vulnerable to accidental or incidental
-deletion or alteration.Off-loading is a common process in information
+deletion or alteration. Off-loading is a common process in information
 systems with limited audit storage capacity.
   </td>
   <td></td>
@@ -7543,8 +8089,8 @@ log out because of the temporary nature of the absence.
   <td xml:lang="en-US">
 To enable console screen locking in <tt>tmux</tt> terminal multiplexer
 after a period of inactivity,
-the <tt>lock-after-time</tt> option has to be set to nonzero value in
-<tt>/etc/tmux.conf</tt>.
+the <tt>lock-after-time</tt> option has to be set to a value greater than 0 and less than
+or equal to 900 in <tt>/etc/tmux.conf</tt>.
   </td>
   <td xml:lang="en-US">
 Locking the session after a period of inactivity limits the
@@ -7915,9 +8461,6 @@ $ sudo yum erase krb5-workstation</pre>
   <td xml:lang="en-US">
 Kerberos is a network authentication system. The <tt>krb5-workstation</tt> package contains the basic
 Kerberos programs (<tt>kinit</tt>, <tt>klist</tt>, <tt>kdestroy</tt>, <tt>kpasswd</tt>).
-
-Currently, Kerberos does not utilize FIPS 140-2 cryptography and is not permitted on Government networks,
-nor is it permitted in many regulatory environments such as HIPAA.
   </td>
   <td></td>
 </tr>
@@ -8029,6 +8572,38 @@ activity.
 <tr>
   <td></td>
   <td>N/A</td>
+  <td>Map System Users To The Appropriate SELinux Role</td>
+  <td xml:lang="en-US">
+Configure the operating system to prevent non-privileged users from executing
+privileged functions to include disabling, circumventing, or altering
+implemented security safeguards/countermeasures. All administrators must be
+mapped to the <tt>sysadm_u</tt> or <tt>staff_u</tt> users with the
+appropriate domains (<tt>sysadm_t</tt> and <tt>staff_t</tt>).
+<pre>$ sudo semanage login -m -s sysadm_u <i>USER</i></pre> or
+<pre>$ sudo semanage login -m -s staff_u <i>USER</i></pre>
+<br /><br />
+All authorized non-administrative
+users must be mapped to the <tt>user_u</tt> role or the appropriate domain
+(user_t).
+<pre>$ sudo semanage login -m -s user_u <i>USER</i></pre>
+  </td>
+  <td xml:lang="en-US">
+Preventing non-privileged users from executing privileged functions mitigates
+the risk that unauthorized individuals or processes may gain unnecessary access
+to information or privileges.
+<br /><br />
+Privileged functions include, for example,
+establishing accounts, performing system integrity checks, or administering
+cryptographic key management activities. Non-privileged users are individuals
+who do not possess appropriate authorizations. Circumventing intrusion detection
+and prevention mechanisms or malicious code protection mechanisms are examples
+of privileged functions that require protection from non-privileged users.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td>N/A</td>
   <td>Enable the Hardware RNG Entropy Gatherer Service</td>
   <td xml:lang="en-US">
 The Hardware RNG Entropy Gatherer service should be enabled.
@@ -8039,6 +8614,30 @@ The <code>rngd</code> service can be enabled with the following command:
   <td xml:lang="en-US">
 The <tt>rngd</tt> service
 feeds random data from hardware device to kernel random device.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td>N/A</td>
+  <td>Set Password Hashing Rounds in /etc/login.defs</td>
+  <td xml:lang="en-US">
+In <tt>/etc/login.defs</tt>, ensure <tt>SHA_CRYPT_MIN_ROUNDS</tt> and
+<tt>SHA_CRYPT_MAX_ROUNDS</tt> has the minimum value of <tt>5000</tt>.
+For example:
+<pre>SHA_CRYPT_MIN_ROUNDS 5000
+SHA_CRYPT_MAX_ROUNDS 5000</pre>
+Notice that if neither are set, they already have the default value of 5000.
+If either is set, they must have the minimum value of 5000.
+  </td>
+  <td xml:lang="en-US">
+Passwords need to be protected at all times, and encryption is the standard
+method for protecting passwords. If passwords are not encrypted, they can
+be plainly read (i.e., clear text) and easily compromised. Passwords
+that are encrypted with a weak algorithm are no more protected than if
+they are kept in plain text.
+<br /><br />
+Using more hashing rounds makes password cracking attacks more difficult.
   </td>
   <td></td>
 </tr>
@@ -8063,7 +8662,7 @@ By decreasing the limit based on the amount of data and enabling
 time-based limit, effects of potential attacks against
 encryption keys are limited.
   </td>
-  <td>var_rekey_limit_size=1G<br/>var_rekey_limit_time=1hour</td>
+  <td>var_rekey_limit_time=1hour<br/>var_rekey_limit_size=1G</td>
 </tr>
 <tr>
   <td></td>
@@ -8076,10 +8675,11 @@ make sure that the file contains line
 <pre>SSH_USE_STRONG_RNG=32</pre>
   </td>
   <td xml:lang="en-US">
-SSH implementation in RHEL8 uses the openssl library, which doesn't use high-entropy sources by default.
-Randomness is needed to generate data-encryption keys, and as plaintext padding and initialization vectors
-in encryption algorithms, and high-quality entropy elliminates the possibility that the output of
-the random number generator used by SSH would be known to potential attackers.
+SSH implementation in Oracle Linux 8 uses the openssl library, which doesn't use
+high-entropy sources by default. Randomness is needed to generate data-encryption keys, and as
+plaintext padding and initialization vectors in encryption algorithms, and high-quality
+entropy elliminates the possibility that the output of the random number generator used by SSH
+would be known to potential attackers.
   </td>
   <td></td>
 </tr>
@@ -8088,13 +8688,21 @@ the random number generator used by SSH would be known to potential attackers.
   <td>N/A</td>
   <td>Enable Smartcards in SSSD</td>
   <td xml:lang="en-US">
-SSSD should be configured to authenticate access to the system
-using smart cards. To enable smart cards in SSSD, set <tt>pam_cert_auth</tt>
-to <tt>true</tt> under the <tt>[pam]</tt>
-section in <tt>/etc/sssd/sssd.conf</tt>. For example:
+SSSD should be configured to authenticate access to the system using smart cards.
+To enable smart cards in SSSD, set <tt>pam_cert_auth</tt> to <tt>True</tt> under the
+<tt>[pam]</tt> section in <tt>/etc/sssd/sssd.conf</tt>. For example:
 <pre>[pam]
-pam_cert_auth = true
+pam_cert_auth = True
 </pre>
+
+Add or update "pam_sss.so" line in auth section of "/etc/pam.d/system-auth" file to include
+"try_cert_auth" or "require_cert_auth" option, like in the following example:
+<pre>
+/etc/pam.d/system-auth:auth [success=done authinfo_unavail=ignore ignore=ignore default=die] pam_sss.so try_cert_auth
+</pre>
+Also add or update "pam_sss.so" line in auth section of "/etc/pam.d/smartcard-auth" file to
+include the "allow_missing_name" option, like in the following example:
+<pre>/etc/pam.d/smartcard-auth:auth sufficient pam_sss.so allow_missing_name</pre>
   </td>
   <td xml:lang="en-US">
 Using an authentication device, such as a CAC or token that is separate from
@@ -8102,11 +8710,31 @@ the information system, ensures that even if the information system is
 compromised, that compromise will not affect credentials stored on the
 authentication device.
 <br /><br />
-Multifactor solutions that require devices separate from
+Multi-Factor Authentication (MFA) solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
 providing time-based or challenge-response authenticators and smart cards such
 as the U.S. Government Personal Identity Verification card and the DoD Common
 Access Card.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td></td>
+  <td>N/A</td>
+  <td>Ensure sudo only includes the default configuration directory</td>
+  <td xml:lang="en-US">
+Administrators can configure authorized <tt>sudo</tt> users via drop-in files, and it is possible to include
+other directories and configuration files from the file currently being parsed.
+
+Make sure that <tt>/etc/sudoers</tt> only includes drop-in configuration files from <tt>/etc/sudoers.d</tt>.
+The <tt>/etc/sudoers</tt> should contain only one <tt>#includedir</tt> directive pointing to
+<tt>/etc/sudoers.d</tt>, and no file in <tt>/etc/sudoers.d/</tt> should include other files or directories.
+Note that the '#' character doesn't denote a comment in the configuration file.
+  </td>
+  <td xml:lang="en-US">
+Some <tt>sudo</tt> configurtion options allow users to run programs without re-authenticating.
+Use of these configuration options makes it easier for one compromised accound to be used to
+compromise other accounts.
   </td>
   <td></td>
 </tr>

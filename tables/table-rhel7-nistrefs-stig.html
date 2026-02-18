@@ -1160,7 +1160,7 @@ startup (the default), add the following lines to a file with suffix
 
 If the system is 64 bit then also add the following lines:
 <pre>
--a always,exit -F arch=b64 -S ftruncate -F exiu=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
 -a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
 
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
@@ -2330,7 +2330,7 @@ password in resisting attempts at guessing and brute-force attacks.
 Password length is one factor of several that helps to determine strength
 and how long it takes to crack a password. Use of more characters in a password
 helps to exponentially increase the time and/or resources required to
-compromose the password.
+compromise the password.
   </td>
   <td>var_password_pam_minlen=15</td>
 </tr>
@@ -2362,6 +2362,32 @@ more difficult by ensuring a larger search space.
   <td>var_password_pam_ocredit=1</td>
 </tr>
 <tr>
+  <td>IA-5(f)<br/>IA-5(1)(e)</td>
+  <td>CCE-83476-2</td>
+  <td>Limit Password Reuse: password-auth</td>
+  <td xml:lang="en-US">
+Do not allow users to reuse recent passwords. This can be accomplished by using the
+<tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
+  </td>
+  <td xml:lang="en-US">
+Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>IA-5(f)<br/>IA-5(1)(e)</td>
+  <td>CCE-83479-6</td>
+  <td>Limit Password Reuse: system-auth</td>
+  <td xml:lang="en-US">
+Do not allow users to reuse recent passwords. This can be accomplished by using the
+<tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
+  </td>
+  <td xml:lang="en-US">
+Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>IA-5(c)<br/>IA-5(1)(a)<br/>CM-6(a)<br/>IA-5(4)</td>
   <td>CCE-27200-5</td>
   <td>Ensure PAM Enforces Password Requirements - Minimum Uppercase Characters</td>
@@ -2380,19 +2406,6 @@ at guessing and brute-force attacks.
 Password complexity is one factor of several that determines how long it takes to crack a password. The more
 complex the password, the greater the number of possible combinations that need to be tested before
 the password is compromised.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>IA-5(f)<br/>IA-5(1)(e)</td>
-  <td>CCE-82030-8</td>
-  <td>Limit Password Reuse</td>
-  <td xml:lang="en-US">
-Do not allow users to reuse recent passwords. This can be accomplished by using the
-<tt>remember</tt> option for the <tt>pam_unix</tt> or <tt>pam_pwhistory</tt> PAM modules.
-  </td>
-  <td xml:lang="en-US">
-Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
   </td>
   <td></td>
 </tr>
@@ -2596,11 +2609,46 @@ Using a stronger hashing algorithm makes password cracking attacks more difficul
 </tr>
 <tr>
   <td>IA-5(c)<br/>IA-5(1)(c)<br/>CM-6(a)</td>
-  <td>CCE-82043-1</td>
-  <td>Set PAM's Password Hashing Algorithm</td>
+  <td>CCE-85943-9</td>
+  <td>Set PAM''s Password Hashing Algorithm - password-auth</td>
   <td xml:lang="en-US">
 The PAM system service can be configured to only store encrypted
-representations of passwords. In "/etc/pam.d/password-auth", the
+representations of passwords. In
+<tt>/etc/pam.d/password-auth</tt>,
+the
+<tt>password</tt> section of the file controls which PAM modules execute
+during a password change. Set the <tt>pam_unix.so</tt> module in the
+<tt>password</tt> section to include the argument <tt>sha512</tt>, as shown
+below:
+<br />
+<pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i></pre>
+<br />
+This will help ensure when local users change their passwords, hashes for
+the new passwords will be generated using the SHA-512 algorithm. This is
+the default.
+  </td>
+  <td xml:lang="en-US">
+Passwords need to be protected at all times, and encryption is the standard
+method for protecting passwords. If passwords are not encrypted, they can
+be plainly read (i.e., clear text) and easily compromised. Passwords that
+are encrypted with a weak algorithm are no more protected than if they are
+kepy in plain text.
+<br /><br />
+This setting ensures user and group account administration utilities are
+configured to store only encrypted representations of passwords.
+Additionally, the <tt>crypt_style</tt> configuration option ensures the use
+of a strong hashing algorithm that makes password cracking attacks more
+difficult.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>IA-5(c)<br/>IA-5(1)(c)<br/>CM-6(a)</td>
+  <td>CCE-82043-1</td>
+  <td>Set PAM''s Password Hashing Algorithm</td>
+  <td xml:lang="en-US">
+The PAM system service can be configured to only store encrypted
+representations of passwords. In "/etc/pam.d/system-auth", the
 <tt>password</tt> section of the file controls which PAM modules execute
 during a password change. Set the <tt>pam_unix.so</tt> module in the
 <tt>password</tt> section to include the argument <tt>sha512</tt>, as shown
@@ -2647,7 +2695,7 @@ default authenticators, then anyone can gather data about the system and the net
 and use the information to potentially compromise the integrity of the system and
 network(s).
   </td>
-  <td>var_snmpd_ro_string=changemero<br/>var_snmpd_rw_string=changemerw</td>
+  <td>var_snmpd_rw_string=changemerw<br/>var_snmpd_ro_string=changemero</td>
 </tr>
 <tr>
   <td>CM-5(1)<br/>AU-7(a)<br/>AU-7(b)<br/>AU-8(b)<br/>AU-12(3)<br/>AC-6(9)</td>
@@ -2655,7 +2703,14 @@ network(s).
   <td>Record Events When Privileged Executables Are Run</td>
   <td xml:lang="en-US">
 Verify the system generates an audit record when privileged functions are executed.
-<pre># grep -iw execve <tt>/etc/audit/audit.rules</tt></pre>
+
+If audit is using the "auditctl" tool to load the rules, run the following command:
+
+<pre>$ sudo grep execve /etc/audit/audit.rules</pre>
+
+If audit is using the "augenrules" tool to load the rules, run the following command:
+
+<pre>$ sudo grep -r execve /etc/audit/rules.d</pre>
 
 
 <pre>-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k setuid</pre>
@@ -3223,12 +3278,14 @@ and the cause should be discovered and addressed.
   <td>CCE-27205-4</td>
   <td>System Audit Logs Must Have Mode 0640 or Less Permissive</td>
   <td xml:lang="en-US">
-If <tt>log_group</tt> in <tt>/etc/audit/auditd.conf</tt> is set to a group other than the <tt>root</tt>
-group account, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0640 <i>audit_file</i></pre>
-<br />
-Otherwise, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0600 <i>audit_file</i></pre>
+
+Determine where the audit logs are stored with the following command:
+<pre>$ sudo grep -iw log_file /etc/audit/auditd.conf
+log_file = /var/log/audit/audit.log</pre>
+Configure the audit log to be protected from unauthorized read access by setting the correct
+permissive mode with the following command:
+<pre>$ sudo chmod 0600 <i>audit_log_file</i></pre>
+By default, <i>audit_log_file</i> is "/var/log/audit/audit.log".
   </td>
   <td xml:lang="en-US">
 If users can write to audit logs, audit trails can be modified or destroyed.
@@ -3274,7 +3331,7 @@ Change the superuser to a different username (The default is 'root').
 Once the superuser account has been added,
 update the
 <tt>grub.cfg</tt> file by running:
-<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
+<pre>grubby --update-kernel=ALL</pre>
   </td>
   <td xml:lang="en-US">
 Having a non-default grub superuser username makes password-guessing attacks less effective.
@@ -3320,12 +3377,12 @@ It is highly suggested not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 <br /><br />
 Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<pre>$ sed -i 's/\(set superusers=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
 <br /><br />
 Once the superuser account has been added,
 update the
 <tt>grub.cfg</tt> file by running:
-<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
+<pre>grubby --update-kernel=ALL</pre>
   </td>
   <td xml:lang="en-US">
 Having a non-default grub superuser username makes password-guessing attacks less effective.
@@ -4036,9 +4093,9 @@ enter credentials helps to slow a single-threaded brute force attack.
   <td xml:lang="en-US">
 At a minimum, AIDE should be configured to run a weekly scan.
 To implement a daily execution of AIDE at 4:05am using cron, add the following line to <tt>/etc/crontab</tt>:
-<pre>05 4 * * * root  --check</pre>
+<pre>05 4 * * * root /usr/sbin/aide --check</pre>
 To implement a weekly execution of AIDE at 4:05am using cron, add the following line to <tt>/etc/crontab</tt>:
-<pre>05 4 * * 0 root  --check</pre>
+<pre>05 4 * * 0 root /usr/sbin/aide --check</pre>
 AIDE can be executed periodically through other means; this is merely one example.
 The usage of cron's special time codes, such as  <tt>@daily</tt> and
 <tt>@weekly</tt> is acceptable.
@@ -4234,6 +4291,10 @@ streaming media and telephony.
 To configure the system to prevent the <code>dccp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/dccp.conf</code>:
 <pre>install dccp /bin/true</pre>
+
+To configure the system to prevent the <code>dccp</code> from being used,
+add the following line to file <code>/etc/modprobe.d/dccp.conf</code>:
+<pre>blacklist dccp</pre>
   </td>
   <td xml:lang="en-US">
 Disabling DCCP protects
@@ -4252,6 +4313,11 @@ to prevent automatic loading of the USB storage driver.
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
 <pre>install usb-storage /bin/true</pre>
+
+To configure the system to prevent the <code>usb-storage</code> from being used,
+add the following line to file <code>/etc/modprobe.d/usb-storage.conf</code>:
+<pre>blacklist usb-storage</pre>
+
 This will prevent the <tt>modprobe</tt> program from loading the <tt>usb-storage</tt>
 module, but will not prevent an administrator (or another program) from using the
 <tt>insmod</tt> program to load the module manually.
@@ -4997,7 +5063,8 @@ using <tt>pam_lastlog</tt>, add or correct the <tt>pam_lastlog</tt>
 settings in
 <tt>/etc/pam.d/postlogin</tt> to read as follows:
 <pre>session     required pam_lastlog.so showfailed</pre>
-And make sure that the <tt>silent</tt> option is not set.
+And make sure that the <tt>silent</tt> option is not set for
+<tt>pam_lastlog</tt> module.
   </td>
   <td xml:lang="en-US">
 Users need to be aware of activity that occurs regarding
@@ -5175,11 +5242,13 @@ is critical that the user re-authenticate.
   <td>Set Interactive Session Timeout</td>
   <td xml:lang="en-US">
 Setting the <tt>TMOUT</tt> option in <tt>/etc/profile</tt> ensures that
-all user sessions will terminate based on inactivity. The <tt>TMOUT</tt>
+all user sessions will terminate based on inactivity.
+The value of TMOUT should be exported and read only.
+The <tt>TMOUT</tt>
 
 setting in a file loaded by <tt>/etc/profile</tt>, e.g.
 <tt>/etc/profile.d/tmout.sh</tt> should read as follows:
-<pre>TMOUT=<tt>15_min</tt></pre>
+<pre>declare -xr TMOUT=<tt>15_min</tt></pre>
   </td>
   <td xml:lang="en-US">
 Terminating an idle session within a short time period reduces
@@ -5286,9 +5355,9 @@ server can be forged compromising LDAP remote access sessions.
   <td>CCE-27485-2</td>
   <td>Verify Permissions on SSH Server Private *_key Key Files</td>
   <td xml:lang="en-US">
-
-To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
-<pre>$ sudo chmod 0600 /etc/ssh/*_key</pre>
+SSH server private keys - files that match the <code>/etc/ssh/*_key</code> glob, have to have restricted permissions.
+If those files are owned by the <code>root</code> user and the <code>root</code> group, they have to have the <code>0600</code> permission or stricter.
+If they are owned by the <code>root</code> user, but by a dedicated group <code>ssh_keys</code>, they can have the <code>0640</code> permission or stricter.
   </td>
   <td xml:lang="en-US">
 If an unauthorized user obtains the private SSH host key file, the host could be
@@ -5394,8 +5463,8 @@ To explicitly disable Kerberos authentication, add or correct the following line
   <td xml:lang="en-US">
 Kerberos authentication for SSH is often implemented using GSSAPI. If Kerberos
 is enabled through SSH, the SSH daemon provides a means of access to the
-system's Kerberos implementation. Vulnerabilities in the system's Kerberos
-implementations may be subject to exploitation.
+system's Kerberos implementation. 
+Configuring these settings for the SSH daemon provides additional assurance that remote logon via SSH will not use unused methods of authentication, even in the event of misconfiguration elsewhere. 
   </td>
   <td></td>
 </tr>
@@ -5653,7 +5722,7 @@ compromise accounts upon logon.
   <td xml:lang="en-US">
 Set the mode on files being executed by the user initialization files with the
 following command:
-<pre>$ sudo chmod 0755 <i>FILE</i></pre>
+<pre>$ sudo chmod o-w <i>FILE</i></pre>
   </td>
   <td xml:lang="en-US">
 If user start-up files execute world-writable programs, especially in
@@ -5772,6 +5841,7 @@ owned by the user, this could be an indication of system compromise.
 Set the mode on files and directories in the local interactive user home
 directory with the following command:
 <pre>$ sudo chmod 0750 /home/<i>USER</i>/<i>FILE_DIR</i></pre>
+Files that begin with a "." are excluded from this requirement.
   </td>
   <td xml:lang="en-US">
 If a local interactive user files have excessive permissions, unintended users

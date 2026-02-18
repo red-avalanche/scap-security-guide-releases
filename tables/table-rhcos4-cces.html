@@ -110,18 +110,14 @@ By default, the database will be written to the file
 <code>/var/lib/aide/aide.db.new.gz</code>.
 
 Storing the database, the configuration file <code>/etc/aide.conf</code>, and the binary
-
 <code>/usr/sbin/aide</code>
-
 (or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
 The newly-generated database can be installed as follows:
 
 <pre>$ sudo cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz</pre>
 
 To initiate a manual check, run the following command:
-
 <pre>$ sudo /usr/sbin/aide --check</pre>
-
 If this check produces any unexpected output, investigate.</td>
 </tr>
 <tr>
@@ -760,7 +756,18 @@ using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code>
 settings in
 <code>/etc/pam.d/postlogin</code> to read as follows:
 <pre>session     required pam_lastlog.so showfailed</pre>
-And make sure that the <code>silent</code> option is not set.</td>
+And make sure that the <code>silent</code> option is not set for
+<code>pam_lastlog</code> module.</td>
+</tr>
+<tr>
+<td></td>
+<td>Account lockouts must be logged</td>
+<td>PAM faillock locks an account due to excessive password failures, this event must be logged.</td>
+</tr>
+<tr>
+<td></td>
+<td>Account Lockouts Must Persist</td>
+<td>By setting a `dir` in the faillock configuration account lockouts will persist across reboots.</td>
 </tr>
 <tr>
 <td>CCE-82496-1</td>
@@ -954,8 +961,8 @@ automatic session locking. It should be started from
 <td>Configure tmux to lock session after inactivity</td>
 <td>To enable console screen locking in <code>tmux</code> terminal multiplexer
 after a period of inactivity,
-the <code>lock-after-time</code> option has to be set to nonzero value in
-<code>/etc/tmux.conf</code>.</td>
+the <code>lock-after-time</code> option has to be set to a value greater than 0 and less than
+or equal to 900 in <code>/etc/tmux.conf</code>.</td>
 </tr>
 <tr>
 <td></td>
@@ -1257,11 +1264,13 @@ Then, add the following entry to <code>/etc/security/namespace.conf</code>:
 <td></td>
 <td>Set Interactive Session Timeout</td>
 <td>Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
-all user sessions will terminate based on inactivity. The <code>TMOUT</code>
+all user sessions will terminate based on inactivity.
+The value of TMOUT should be exported and read only.
+The <code>TMOUT</code>
 
 setting in a file loaded by <code>/etc/profile</code>, e.g.
 <code>/etc/profile.d/tmout.sh</code> should read as follows:
-<pre>TMOUT=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></xccdf-1.1:sub></pre>
+<pre>declare -xr TMOUT=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></xccdf-1.1:sub></pre>
 </td>
 </tr>
 <tr>
@@ -1853,7 +1862,8 @@ utility to read audit rules during daemon startup, add the rule to
 <tr>
 <td>CCE-82692-5</td>
 <td>System Audit Logs Must Have Mode 0750 or Less Permissive</td>
-<td>If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other than the <code>root</code>
+<td>
+If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other than the <code>root</code>
 group account, change the mode of the audit log files with the following command:
 <pre>$ sudo chmod 0750 /var/log/audit</pre>
 <br>
@@ -1895,7 +1905,9 @@ To properly set the owner of <code>/var/log/audit/*</code>, run the command:
 <tr>
 <td>CCE-82690-9</td>
 <td>System Audit Logs Must Have Mode 0640 or Less Permissive</td>
-<td>If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other than the <code>root</code>
+<td>
+If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other than the
+<code>root</code>
 group account, change the mode of the audit log files with the following command:
 <pre>$ sudo chmod 0640 <i>audit_file</i></pre>
 <br>
@@ -2420,7 +2432,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-82619-8</td>
-<td>Record Unsuccessul Permission Changes to Files - chmod</td>
+<td>Record Unsuccessful Permission Changes to Files - chmod</td>
 <td>The audit system should collect unsuccessful file permission change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -2439,7 +2451,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-82620-6</td>
-<td>Record Unsuccessul Ownership Changes to Files - chown</td>
+<td>Record Unsuccessful Ownership Changes to Files - chown</td>
 <td>The audit system should collect unsuccessful file ownership change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -2483,7 +2495,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-82622-2</td>
-<td>Record Unsuccessul Permission Changes to Files - fchmod</td>
+<td>Record Unsuccessful Permission Changes to Files - fchmod</td>
 <td>The audit system should collect unsuccessful file permission change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -2502,7 +2514,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-82624-8</td>
-<td>Record Unsuccessul Permission Changes to Files - fchmodat</td>
+<td>Record Unsuccessful Permission Changes to Files - fchmodat</td>
 <td>The audit system should collect unsuccessful file permission change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -2521,7 +2533,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-82625-5</td>
-<td>Record Unsuccessul Ownership Changes to Files - fchown</td>
+<td>Record Unsuccessful Ownership Changes to Files - fchown</td>
 <td>The audit system should collect unsuccessful file ownership change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -2540,7 +2552,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-82626-3</td>
-<td>Record Unsuccessul Ownership Changes to Files - fchownat</td>
+<td>Record Unsuccessful Ownership Changes to Files - fchownat</td>
 <td>The audit system should collect unsuccessful file ownership change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -2559,7 +2571,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-82627-1</td>
-<td>Record Unsuccessul Permission Changes to Files - fremovexattr</td>
+<td>Record Unsuccessful Permission Changes to Files - fremovexattr</td>
 <td>The audit system should collect unsuccessful file permission change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -2578,7 +2590,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-82628-9</td>
-<td>Record Unsuccessul Permission Changes to Files - fsetxattr</td>
+<td>Record Unsuccessful Permission Changes to Files - fsetxattr</td>
 <td>The audit system should collect unsuccessful file permission change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -2608,7 +2620,7 @@ startup (the default), add the following lines to a file with suffix
 
 If the system is 64 bit then also add the following lines:
 <pre>
--a always,exit -F arch=b64 -S ftruncate -F exiu=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
 -a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
 
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
@@ -2625,7 +2637,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-82630-5</td>
-<td>Record Unsuccessul Ownership Changes to Files - lchown</td>
+<td>Record Unsuccessful Ownership Changes to Files - lchown</td>
 <td>The audit system should collect unsuccessful file ownership change
 attempts for all users and root.
 
@@ -2648,7 +2660,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-82631-3</td>
-<td>Record Unsuccessul Permission Changes to Files - lremovexattr</td>
+<td>Record Unsuccessful Permission Changes to Files - lremovexattr</td>
 <td>The audit system should collect unsuccessful file permission change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -2667,7 +2679,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-82632-1</td>
-<td>Record Unsuccessul Permission Changes to Files - lsetxattr</td>
+<td>Record Unsuccessful Permission Changes to Files - lsetxattr</td>
 <td>The audit system should collect unsuccessful file permission change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -3054,7 +3066,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-82647-9</td>
-<td>Record Unsuccessul Permission Changes to Files - removexattr</td>
+<td>Record Unsuccessful Permission Changes to Files - removexattr</td>
 <td>The audit system should collect unsuccessful file permission change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -3073,7 +3085,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-82648-7</td>
-<td>Record Unsuccessul Delete Attempts to Files - rename</td>
+<td>Record Unsuccessful Delete Attempts to Files - rename</td>
 <td>The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
@@ -3092,7 +3104,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-82649-5</td>
-<td>Record Unsuccessul Delete Attempts to Files - renameat</td>
+<td>Record Unsuccessful Delete Attempts to Files - renameat</td>
 <td>
 The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
@@ -3112,7 +3124,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-82650-3</td>
-<td>Record Unsuccessul Permission Changes to Files - setxattr</td>
+<td>Record Unsuccessful Permission Changes to Files - setxattr</td>
 <td>The audit system should collect unsuccessful file permission change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -3159,7 +3171,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-82652-9</td>
-<td>Record Unsuccessul Delete Attempts to Files - unlink</td>
+<td>Record Unsuccessful Delete Attempts to Files - unlink</td>
 <td>
 The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
@@ -3181,7 +3193,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-82653-7</td>
-<td>Record Unsuccessul Delete Attempts to Files - unlinkat</td>
+<td>Record Unsuccessful Delete Attempts to Files - unlinkat</td>
 <td>
 The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
@@ -3336,6 +3348,66 @@ utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file in order to watch for unattempted manual
 edits of files involved in storing logon events:
 <pre>-w /var/log/tallylog -p wa -k logins</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - init</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/init -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/sbin/init -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - poweroff</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/poweroff -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/sbin/poweroff -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - reboot</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/reboot -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/sbin/reboot -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - shutdown</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/shutdown -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/sbin/shutdown -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 </tr>
 <tr>
@@ -3811,7 +3883,7 @@ should always be used.</td>
 <td>Configure the audispd plugin to off-load audit records onto a different
 system or media from the system being audited.
 
-Set the <code>remote_server</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>
+Set the <code>remote_server</code> option in <pre>/etc/audit/audisp-remote.conf</pre>
 with an IP address or hostname of the system that the audispd plugin should
 send audit records to. For example
 <pre>remote_server = <i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_audispd_remote_server"></xccdf-1.1:sub></i></pre>
@@ -3821,7 +3893,7 @@ send audit records to. For example
 <td></td>
 <td>Configure audispd's Plugin disk_full_action When Disk Is Full</td>
 <td>Configure the action the operating system takes if the disk the audit records
-are written to becomes full. Edit the file <code>/etc/audisp/audisp-remote.conf</code>.
+are written to becomes full. Edit the file <code>/etc/audit/audisp-remote.conf</code>.
 Add or modify the following line, substituting <i>ACTION</i> appropriately:
 <pre>disk_full_action = <i>ACTION</i></pre>
 Set this value to <code>single</code> to cause the system to switch to single user
@@ -3836,7 +3908,7 @@ determined.</td>
 <td>Configure the operating system to encrypt the transfer of off-loaded audit
 records onto a different system or media from the system being audited.
 
-Uncomment the <code>enable_krb5</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>,
+Uncomment the <code>enable_krb5</code> option in <pre>/etc/audit/audisp-remote.conf</pre>,
 and set it with the following line:
 <pre>enable_krb5 = yes</pre>
 </td>
@@ -3845,7 +3917,7 @@ and set it with the following line:
 <td></td>
 <td>Configure audispd's Plugin network_failure_action On Network Failure</td>
 <td>Configure the action the operating system takes if there is an error sending
-audit records to a remote system. Edit the file <code>/etc/audisp/audisp-remote.conf</code>.
+audit records to a remote system. Edit the file <code>/etc/audit/audisp-remote.conf</code>.
 Add or modify the following line, substituting <i>ACTION</i> appropriately:
 <pre>network_failure_action = <i>ACTION</i></pre>
 Set this value to <code>single</code> to cause the system to switch to single user
@@ -3860,13 +3932,28 @@ This profile configures the <i>action</i> to be <code><xccdf-1.1:sub xmlns:xccdf
 <td>Configure auditd to use audispd's syslog plugin</td>
 <td>To configure the <code>auditd</code> service to use the
 <code>syslog</code> plug-in of the <code>audispd</code> audit event multiplexor, set
-the <code>active</code> line in <code>/etc/audisp/plugins.d/syslog.conf</code> to <code>yes</code>.
+the <code>active</code> line in <code>/etc/audit/plugins.d/syslog.conf</code> to <code>yes</code>.
 Restart the <code>auditd</code> service:
 <pre>$ sudo service auditd restart</pre>
 </td>
 </tr>
 <tr>
 <td>CCE-82679-2</td>
+<td>Configure auditd Disk Error Action on Disk Error</td>
+<td>The <code>auditd</code> service can be configured to take an action
+when there is a disk error.
+Edit the file <code>/etc/audit/auditd.conf</code>. Add or modify the following line,
+substituting <i>ACTION</i> appropriately:
+<pre>disk_error_action = <i>ACTION</i></pre>
+Set this value to <code>single</code> to cause the system to switch to single-user
+mode for corrective action. Acceptable values also include <code>syslog</code>,
+<code>exec</code>, <code>single</code>, and <code>halt</code>. For certain systems, the need for availability
+outweighs the need to log all actions, and a different setting should be
+determined. Details regarding all possible values for <i>ACTION</i> are described in the
+<code>auditd.conf</code> man page.</td>
+</tr>
+<tr>
+<td></td>
 <td>Configure auditd Disk Error Action on Disk Error</td>
 <td>The <code>auditd</code> service can be configured to take an action
 when there is a disk error.
@@ -3893,6 +3980,21 @@ mode for corrective action. Acceptable values also include <code>syslog</code>,
 
 <code>exec</code>,
 
+<code>single</code>, and <code>halt</code>. For certain systems, the need for availability
+outweighs the need to log all actions, and a different setting should be
+determined. Details regarding all possible values for <i>ACTION</i> are described in the
+<code>auditd.conf</code> man page.</td>
+</tr>
+<tr>
+<td></td>
+<td>Configure auditd Disk Full Action when Disk Space Is Full</td>
+<td>The <code>auditd</code> service can be configured to take an action
+when disk space is running low but prior to running out of space completely.
+Edit the file <code>/etc/audit/auditd.conf</code>. Add or modify the following line,
+substituting <i>ACTION</i> appropriately:
+<pre>disk_full_action = <i>ACTION</i></pre>
+Set this value to <code>single</code> to cause the system to switch to single-user
+mode for corrective action. Acceptable values also include <code>syslog</code>,
 <code>single</code>, and <code>halt</code>. For certain systems, the need for availability
 outweighs the need to log all actions, and a different setting should be
 determined. Details regarding all possible values for <i>ACTION</i> are described in the
@@ -3947,6 +4049,25 @@ support retention of even more audit data.</td>
 </tr>
 <tr>
 <td>CCE-82680-0</td>
+<td>Configure auditd max_log_file_action Upon Reaching Maximum Log Size</td>
+<td>The default action to take when the logs reach their maximum size
+is to rotate the log files, discarding the oldest one. To configure the action taken
+by <code>auditd</code>, add or correct the line in <code>/etc/audit/auditd.conf</code>:
+<pre>max_log_file_action = <i>ACTION</i></pre>
+Possible values for <i>ACTION</i> are described in the <code>auditd.conf</code> man
+page. These include:
+<ul>
+<li><code>ignore</code></li>
+<li><code>syslog</code></li>
+<li><code>suspend</code></li>
+<li><code>rotate</code></li>
+<li><code>keep_logs</code></li>
+</ul>
+Set the <code><i>ACTION</i></code> to <code>rotate</code> to ensure log rotation
+occurs. This is the default. The setting is case-insensitive.</td>
+</tr>
+<tr>
+<td></td>
 <td>Configure auditd max_log_file_action Upon Reaching Maximum Log Size</td>
 <td>The default action to take when the logs reach their maximum size
 is to rotate the log files, discarding the oldest one. To configure the action taken
@@ -4062,12 +4183,12 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S open,openat,openat2,open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-access
 -a always,exit -F arch=b64 -S open,openat,openat2,open_by_handle_at -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-access
 -a always,exit -F arch=b32 -S open,openat,openat2,open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-access
--a always,exit -F arch=b64 -S open,openat,openat2,open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-access    </pre>    
+-a always,exit -F arch=b64 -S open,openat,openat2,open_by_handle_at -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-access    </pre>
 
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <code>Audit</code> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -4080,16 +4201,10 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S open,openat,openat2,open_by_handle_at -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-access
 -a always,exit -F arch=b64 -S open,openat,openat2,open_by_handle_at -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-access    </pre>
 
-The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42-3-access-success.rules</code>.
-To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42-3-access-success.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <code>Audit</code> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -4110,12 +4225,6 @@ The following rules configure audit as described above:
 
 ## Set failure mode to syslog
 -f 1    </pre>
-
-The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/10-base-config.rules</code>.
-To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
-<pre>
-cp /usr/share/audit/sample-rules/10-base-config.rules /etc/audit/rules.d/
-</pre>
 
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
@@ -4141,16 +4250,10 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
 -a always,exit -F arch=b64 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create    </pre>
 
-The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42-1-create-failed.rules</code>.
-To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42-1-create-failed.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <code>Audit</code> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -4166,15 +4269,10 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S creat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-create
 -a always,exit -F arch=b64 -S creat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-create    </pre>
 
-The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42-1-create-success.rules</code>.
-To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42-1-create-success.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
-</td>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -4188,16 +4286,10 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S unlink,unlinkat,rename,renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
 -a always,exit -F arch=b64 -S unlink,unlinkat,rename,renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete    </pre>
 
-The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42-4-delete-failed.rules</code>.
-To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42-4-delete-failed.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <code>Audit</code> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -4209,32 +4301,21 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S unlink,unlinkat,rename,renameat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-delete
 -a always,exit -F arch=b64 -S unlink,unlinkat,rename,renameat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-delete    </pre>
 
-The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42-4-delete-success.rules</code>.
-To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42-4-delete-success.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <code>Audit</code> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
 <td>Configure immutable Audit login UIDs</td>
 <td>Configure kernel to prevent modification of login UIDs once they are set.
-Changing login UIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.
+Changing login UIDs while this configuration is enforced requires special capabilities which
+are not available to unprivileged users.
 
 The following rules configure audit as described above:
 <pre>## Make the loginuid immutable. This prevents tampering with the auid.
 --loginuid-immutable    </pre>
-
-The <code>Audit</code> provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/11-loginuid.rules</code>.
-To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
-<pre>
-cp /usr/share/audit/sample-rules/11-loginuid.rules /etc/audit/rules.d/
-</pre>
 
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
@@ -4260,16 +4341,10 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
 -a always,exit -F arch=b64 -S truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification    </pre>
 
-The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42-2-modify-failed.rules</code>.
-To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42-2-modify-failed.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <code>Audit</code> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -4285,16 +4360,10 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S truncate,ftruncate -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-modification
 -a always,exit -F arch=b64 -S truncate,ftruncate -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-modification    </pre>
 
-The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42-2-modify-success.rules</code>.
-To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42-2-modify-success.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <code>Audit</code> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -4309,12 +4378,6 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S delete_module -F key=module-unload
 -a always,exit -F arch=b64 -S delete_module -F key=module-unload    </pre>
 
-The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/43-module-load.rules</code>.
-To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
-<pre>
-cp /usr/share/audit/sample-rules/43-module-load.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 </td>
@@ -4322,10 +4385,9 @@ Load new Audit rules into kernel by running:
 <tr>
 <td></td>
 <td>Perform general configuration of Audit for OSPP</td>
-<td>Configure some basic <code>Audit</code> parameters specific for OSPP profile. 
+<td>Configure some basic <code>Audit</code> parameters specific for OSPP profile.
 In particular, configure <code>Audit</code> to watch for direct modification of files storing system user and group information, and usage of applications with special rights which can change system configuration.
 Further audited events include access to audit log it self, attempts to Alter Process and Session Initiation Information, and attempts to modify MAC controls.
-
 
 The following rules configure audit as described above:
 <pre>## The purpose of these rules is to meet the requirements for Operating
@@ -4412,16 +4474,10 @@ The following rules configure audit as described above:
 ## state results from that policy. This would be handled entirely by
 ## that daemon.    </pre>
 
-The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42.rules</code>.
-To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <code>Audit</code> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -4435,16 +4491,10 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-owner-change
 -a always,exit -F arch=b64 -S lchown,fchown,chown,fchownat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-owner-change    </pre>
 
-The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42-6-owner-change-failed.rules</code>.
-To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42-6-owner-change-failed.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <code>Audit</code> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -4456,19 +4506,10 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-owner-change
 -a always,exit -F arch=b64 -S lchown,fchown,chown,fchownat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-owner-change    </pre>
 
-The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42-6-owner-change-success.rules</code>.
-To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42-6-owner-change-success.rules /etc/audit/rules.d/
-</pre>
-
-The file has the following SHA-256 checksum:
-<pre>7eb41a6aaf6737c2571b6424fae7fa53af4b41a9115b6c5732a5778ccd9900ad</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <code>Audit</code> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -4482,16 +4523,10 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-perm-change
 -a always,exit -F arch=b64 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-perm-change    </pre>
 
-The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42-5-perm-change-failed.rules</code>.
-To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42-5-perm-change-failed.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <code>Audit</code> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -4503,16 +4538,10 @@ The following rules configure audit as described above:
 -a always,exit -F arch=b32 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-perm-change
 -a always,exit -F arch=b64 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-perm-change    </pre>
 
-The <code>Audit</code> package provides pre-configured  rules in <code>/usr/share/audit/sample-rules</code>. The above content can be found in <code>/usr/share/audit/sample-rules/30-ospp-v42-5-perm-change-success.rules</code>.
-To deploy this configuration, it is recommended to copy it over to the <code>/etc/audit/rules.d/</code> directory:
-<pre>
-cp /usr/share/audit/sample-rules/30-ospp-v42-5-perm-change-success.rules /etc/audit/rules.d/
-</pre>
-
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
 
-Note: This rule utilizes a file provided by <code>Audit</code> package to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
 </tr>
 <tr>
 <td></td>
@@ -4548,6 +4577,17 @@ operating system in <code>/boot/loader/entries/*.conf</code>.</td>
 <td>To disable use of virtual syscalls, add the argument <code>vsyscall=none</code> to all
 BLS (Boot Loader Specification) entries ('options' line) for the Linux
 operating system in <code>/boot/loader/entries/*.conf</code>.</td>
+</tr>
+<tr>
+<td></td>
+<td>Disable Recovery Booting</td>
+<td>Red Hat Enterprise Linux CoreOS 4 systems support an "recovery boot" option that can be used
+to prevent services from being started. The <code>GRUB_DISABLE_RECOVERY</code>
+configuration option in <code>/etc/default/grub</code> should be set to
+<code>true</code> to disable the generation of recovery mode menu entries. It is
+also required to change the runtime configuration, run:
+<pre>$ sudo grubby --update-kernel=ALL</pre>
+</td>
 </tr>
 <tr>
 <td></td>
@@ -4700,6 +4740,27 @@ Configure the default Grub2 kernel command line to contain spectre_v2=on) as fol
 </td>
 </tr>
 <tr>
+<td></td>
+<td>Ensure debug-shell service is not enabled during boot</td>
+<td>systemd's <code>debug-shell</code> service is intended to
+diagnose systemd related boot issues with various <code>systemctl</code>
+commands. Once enabled and following a system reboot, the root shell
+will be available on <code>tty9</code> which is access by pressing
+<code>CTRL-ALT-F9</code>. The <code>debug-shell</code> service should only be used
+for systemd related issues and should otherwise be disabled.
+<br><br>
+By default, the <code>debug-shell</code> systemd service is already disabled.
+
+Ensure the debug-shell is not enabled by the <code>systemd.debug-shel=1</code>
+boot paramenter option.
+
+Check that the line <pre>GRUB_CMDLINE_LINUX="..."</pre> within <code>/etc/default/grub</code>
+doesn't contain the argument <code>systemd.debug-shell=1</code>.
+Run the following command to update command line for already installed kernels:
+<pre># grubby --update-kernel=ALL --remove-args="systemd.debug-shell"</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-83540-5</td>
 <td>Set the UEFI Boot Loader Admin Username to a Non-Default Value</td>
 <td>The grub2 boot loader should have a superuser account and password
@@ -4712,12 +4773,12 @@ It is highly suggested not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 <br><br>
 Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<pre>$ sed -i 's/\(set superusers=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
 <br><br>
 Once the superuser account has been added,
 update the
 <code>grub.cfg</code> file by running:
-<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
+<pre>grubby --update-kernel=ALL</pre>
 </td>
 </tr>
 <tr>
@@ -4793,6 +4854,26 @@ check that all boot entries in <code>/boot/loader/entries/*.conf</code> have <co
 included in its options.<br>
 To ensure that new kernels and boot entries continue to enable poisoning of SLUB/SLAB objects,
 add <code>slub_debug=P</code> to <code>/etc/kernel/cmdline</code>.</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure debug-shell service is not enabled in zIPL</td>
+<td>systemd's <code>debug-shell</code> service is intended to
+diagnose systemd related boot issues with various <code>systemctl</code>
+commands. Once enabled and following a system reboot, the root shell
+will be available on <code>tty9</code> which is access by pressing
+<code>CTRL-ALT-F9</code>. The <code>debug-shell</code> service should only be used
+for systemd related issues and should otherwise be disabled.
+<br><br>
+By default, the <code>debug-shell</code> systemd service is already disabled.
+
+Ensure the debug-shell is not enabled by the <code>systemd.debug-shel=1</code>
+boot paramenter option.
+
+Check that not boot entries in <code>/boot/loader/entries/*.conf</code> have
+<code>systemd.debug-shell=1</code> included in its options.<br>
+To ensure that new kernels and boot entries don't enable the debug-shell, check
+that <code>systemd.debug-shell=1</code> is not present in <code>/etc/kernel/cmdline</code>.</td>
 </tr>
 <tr>
 <td></td>
@@ -5483,7 +5564,7 @@ and remote logging.  Couple this utility with <code>gnutls</code> (which is a se
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <code>rsyslogd</code> to off-load logs off a encrpytion system must be used.</td>
+When using <code>rsyslogd</code> to off-load logs off an encryption system must be used.</td>
 </tr>
 <tr>
 <td></td>
@@ -5528,6 +5609,44 @@ inspect the file's permissions:
 If the permissions are not 600 or more restrictive, run the following
 command to correct this:
 <pre>$ sudo chmod 0600 <i>LOGFILE</i></pre>"</td>
+</tr>
+<tr>
+<td></td>
+<td>Enable systemd-journald Service</td>
+<td>The <code>systemd-journald</code> service is an essential component of
+systemd.
+
+The <code>systemd-journald</code> service can be enabled with the following manifest:
+<pre>
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: 75-master-systemd-journald-enable
+spec:
+  config:
+    ignition:
+      version: 3.1.0
+    systemd:
+      units:
+      - name: systemd-journald.service
+        enabled: true
+</pre>
+<p>
+This will enable the <code>systemd-journald</code> service in all the
+nodes labeled with the "master" role.
+</p>
+<p>
+Note that this needs to be done for each <code>MachineConfigPool</code>
+</p>
+<p>
+For more information on how to configure nodes with the Machine Config
+Operator see
+<a href="https://docs.openshift.com/container-platform/4.6/post_installation_configuration/machine-configuration-tasks.html">the relevant documentation</a>.
+</p>
+</td>
 </tr>
 <tr>
 <td>CCE-82689-1</td>
@@ -6067,6 +6186,42 @@ To make sure that the setting is persistent, add the following line to a file in
 <td>Disable Kernel Parameter for IP Forwarding on IPv4 Interfaces</td>
 <td>To set the runtime status of the <code>net.ipv4.ip_forward</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.ip_forward=0</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.ip_forward = 0</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Verify ufw Enabled</td>
+<td>
+The <code>ufw</code> service can be enabled with the following manifest:
+<pre>
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: 75-master-ufw-enable
+spec:
+  config:
+    ignition:
+      version: 3.1.0
+    systemd:
+      units:
+      - name: ufw.service
+        enabled: true
+</pre>
+<p>
+This will enable the <code>ufw</code> service in all the
+nodes labeled with the "master" role.
+</p>
+<p>
+Note that this needs to be done for each <code>MachineConfigPool</code>
+</p>
+<p>
+For more information on how to configure nodes with the Machine Config
+Operator see
+<a href="https://docs.openshift.com/container-platform/4.6/post_installation_configuration/machine-configuration-tasks.html">the relevant documentation</a>.
+</p>
 </td>
 </tr>
 <tr>
@@ -6738,6 +6893,7 @@ append "nousb" to the kernel line in <code>/etc/default/grub</code> as shown:
 To configure the system to prevent the <code>cramfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cramfs.conf</code>:
 <pre>install cramfs /bin/true</pre>
+
 This effectively prevents usage of this uncommon filesystem.
 
 The <code>cramfs</code> filesystem type is a compressed read-only
@@ -6752,6 +6908,7 @@ decompress the image.</td>
 To configure the system to prevent the <code>freevxfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/freevxfs.conf</code>:
 <pre>install freevxfs /bin/true</pre>
+
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
 <tr>
@@ -6761,6 +6918,7 @@ This effectively prevents usage of this uncommon filesystem.</td>
 To configure the system to prevent the <code>hfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/hfs.conf</code>:
 <pre>install hfs /bin/true</pre>
+
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
 <tr>
@@ -6770,6 +6928,7 @@ This effectively prevents usage of this uncommon filesystem.</td>
 To configure the system to prevent the <code>hfsplus</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/hfsplus.conf</code>:
 <pre>install hfsplus /bin/true</pre>
+
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
 <tr>
@@ -6779,6 +6938,7 @@ This effectively prevents usage of this uncommon filesystem.</td>
 To configure the system to prevent the <code>jffs2</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/jffs2.conf</code>:
 <pre>install jffs2 /bin/true</pre>
+
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
 <tr>
@@ -6788,6 +6948,7 @@ This effectively prevents usage of this uncommon filesystem.</td>
 To configure the system to prevent the <code>squashfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/squashfs.conf</code>:
 <pre>install squashfs /bin/true</pre>
+
 This effectively prevents usage of this uncommon filesystem.
 
 The <code>squashfs</code> filesystem type is a compressed read-only Linux
@@ -6802,6 +6963,7 @@ to first decompress the image.</td>
 To configure the system to prevent the <code>udf</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/udf.conf</code>:
 <pre>install udf /bin/true</pre>
+
 This effectively prevents usage of this uncommon filesystem.
 
 The <code>udf</code> filesystem type is the universal disk format
@@ -6819,6 +6981,7 @@ to prevent automatic loading of the USB storage driver.
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
 <pre>install usb-storage /bin/true</pre>
+
 This will prevent the <code>modprobe</code> program from loading the <code>usb-storage</code>
 module, but will not prevent an administrator (or another program) from using the
 <code>insmod</code> program to load the module manually.</td>
@@ -6830,6 +6993,7 @@ module, but will not prevent an administrator (or another program) from using th
 To configure the system to prevent the <code>vfat</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/vfat.conf</code>:
 <pre>install vfat /bin/true</pre>
+
 This effectively prevents usage of this uncommon filesystem.
 
 The <code>vFAT</code> filesystem format is primarily used on older
@@ -7128,6 +7292,11 @@ Add the <code>nosuid</code> option to the list of
 <code>Options</code> in the <code>systemd.mount</code> unit that
 controls mounting of
 <code>/var/tmp</code>.</td>
+</tr>
+<tr>
+<td></td>
+<td>Disable the uvcvideo module</td>
+<td>If the device contains a camera it should be covered or disabled when not in use.</td>
 </tr>
 <tr>
 <td>CCE-82527-3</td>
@@ -7511,6 +7680,11 @@ Operator see
 </tr>
 <tr>
 <td></td>
+<td>fapolicyd Must be Configured to Limit Access to Users Home Folders</td>
+<td>fapolicyd needs be configured so that users cannot give access to their home folders to other users.</td>
+</tr>
+<tr>
+<td></td>
 <td>Configure Firewalls to Protect the FTP Server</td>
 <td>
 By default, <code>iptables</code>
@@ -7559,6 +7733,14 @@ The <code>openldap-clients</code> package can be removed with the following comm
 </tr>
 <tr>
 <td></td>
+<td>The Postfix package is installed</td>
+<td>A mail server is required for sending emails.
+The <code>postfix</code> package can be installed with the following command:
+<pre></pre>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>Uninstall Sendmail Package</td>
 <td>Sendmail is not the default mail transfer agent and is
 not installed by default.
@@ -7576,6 +7758,16 @@ reachable from the system in question. Use the following command to
 configure the alias:
 <pre>$ sudo echo "root: <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_postfix_root_mail_alias"></xccdf-1.1:sub>" &gt;&gt; /etc/aliases
 $ sudo newaliases</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Configure System to Forward All Mail From Postmaster to The Root Account</td>
+<td>Verify the administrators are notified in the event of an audit processing failure.
+Check that the "/etc/aliases" file has a defined value for "root".
+<pre>$ sudo grep "postmaster:\s*root$" /etc/aliases
+
+postmaster: root</pre>
 </td>
 </tr>
 <tr>
@@ -7817,7 +8009,7 @@ The aforementioned remediation does include the directory <code>/etc/chrony.d</c
 which would allow the creation of configuration files to set these servers.
 </p>
 
-If we'd like to set a configuration like the following:linux_os/guide/services/ntp/chronyd_or_ntpd_set_maxpoll/rule.yml
+If we'd like to set a configuration like the following:
 <pre>
 pool 2.rhel.pool.ntp.org iburst
 
@@ -8191,10 +8383,9 @@ To properly set the permissions of <code>/etc/ssh/sshd_config</code>, run the co
 <tr>
 <td></td>
 <td>Verify Permissions on SSH Server Private *_key Key Files</td>
-<td>
-To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/ssh/*_key</pre>
-</td>
+<td>SSH server private keys - files that match the <code>/etc/ssh/*_key</code> glob, have to have restricted permissions.
+If those files are owned by the <code>root</code> user and the <code>root</code> group, they have to have the <code>0640</code> permission or stricter.
+If they are owned by the <code>root</code> user, but by a dedicated group <code>ssh_keys</code>, they can have the <code>0640</code> permission or stricter.</td>
 </tr>
 <tr>
 <td></td>
@@ -8727,12 +8918,11 @@ SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> 
 <tr>
 <td></td>
 <td>Enable Smartcards in SSSD</td>
-<td>SSSD should be configured to authenticate access to the system
-using smart cards. To enable smart cards in SSSD, set <code>pam_cert_auth</code>
-to <code>true</code> under the <code>[pam]</code>
-section in <code>/etc/sssd/sssd.conf</code>. For example:
+<td>SSSD should be configured to authenticate access to the system using smart cards.
+To enable smart cards in SSSD, set <code>pam_cert_auth</code> to <code>True</code> under the
+<code>[pam]</code> section in <code>/etc/sssd/sssd.conf</code>. For example:
 <pre>[pam]
-pam_cert_auth = true
+pam_cert_auth = True
 </pre>
 </td>
 </tr>
@@ -8740,6 +8930,7 @@ pam_cert_auth = true
 <td></td>
 <td>Configure SSSD to Expire Offline Credentials</td>
 <td>SSSD should be configured to expire offline credentials after 1 day.
+
 To configure SSSD to expire offline credentials, set
 <code>offline_credentials_expiration</code> to <code>1</code> under the <code>[pam]</code>
 section in <code>/etc/sssd/sssd.conf</code>. For example:

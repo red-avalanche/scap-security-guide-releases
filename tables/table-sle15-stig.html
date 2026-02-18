@@ -20,7 +20,7 @@
 <td>25</td>
 <td>207</td>
 <td>89.22%</td>
-<td>SLES-15-010001SLES-15-010370SLES-15-020190SLES-15-030160SLES-15-030170SLES-15-030180SLES-15-030200SLES-15-030210SLES-15-030220SLES-15-030230SLES-15-030240SLES-15-030260SLES-15-030270SLES-15-030280SLES-15-030300SLES-15-030310SLES-15-030320SLES-15-030540SLES-15-030610SLES-15-030710SLES-15-030720SLES-15-030730SLES-15-030750SLES-15-040010SLES-15-040061</td>
+<td>SLES-15-010001SLES-15-010250SLES-15-010370SLES-15-030160SLES-15-030170SLES-15-030180SLES-15-030200SLES-15-030210SLES-15-030220SLES-15-030230SLES-15-030240SLES-15-030260SLES-15-030270SLES-15-030280SLES-15-030300SLES-15-030310SLES-15-030320SLES-15-030540SLES-15-030610SLES-15-030710SLES-15-030720SLES-15-030730SLES-15-030750SLES-15-040010SLES-15-040061</td>
 </tr></tbody>
 </table></div>
 <style type="text/css">
@@ -444,7 +444,9 @@ management session enabled on the console or console port that has been
 left unattended.</pre></td>
 <td><pre></pre></td>
 <td><pre>Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
-all user sessions will terminate based on inactivity. The <code>TMOUT</code>
+all user sessions will terminate based on inactivity.
+The value of TMOUT should be exported and read only.
+The <code>TMOUT</code>
 
 setting in <code>/etc/profile.d/autologout.sh</code> should read as follows:
 <pre>TMOUT=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></xccdf-1.1:sub></pre>
@@ -481,7 +483,7 @@ To set the screensaver mode in the GNOME3 desktop to a blank screen,
 add or set <code>picture-uri</code> to <code>string ''</code> in
 <code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
 <pre>[org/gnome/desktop/screensaver]
-picture-uri=''
+picture-uri=string ''
 </pre>
 Once the settings have been added, add a lock to
 <code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
@@ -623,8 +625,7 @@ root account and password.
 Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
-
-<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre></pre></td>
+<pre>grub2-mkconfig -o /boot/grub2/grub2.cfg</pre></pre></td>
 <td>SLES-15-010190</td>
 <td>grub2_password</td>
 </tr>
@@ -660,8 +661,7 @@ root account and password.
 Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
-
-<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre></pre></td>
+<pre>grub2-mkconfig -o /boot/grub2/grub2.cfg</pre></pre></td>
 <td>SLES-15-010200</td>
 <td>grub2_uefi_password</td>
 </tr>
@@ -721,35 +721,15 @@ The <code>autofs</code> service can be disabled with the following command:
 </tr>
 <tr>
 <td>V-234824</td>
-<td>803</td>
+<td></td>
 <td>medium</td>
 <td>The SUSE operating system must employ FIPS 140-2 approved cryptographic hashing algorithm for system authentication (system-auth).</td>
 <td>SRG-OS-ID</td>
-<td><pre>Unapproved mechanisms used for authentication to the cryptographic module
-are not verified and therefore cannot be relied on to provide
-confidentiality or integrity, and data may be compromised.
-This setting ensures user and group account administration utilities are
-configured to store only encrypted representations of passwords.
-Additionally, the <code>crypt_style</code> configuration option ensures the use
-of a strong hashing algorithm that makes password cracking attacks more
-difficult.</pre></td>
 <td><pre></pre></td>
-<td><pre>The PAM system service can be configured to only store encrypted
-representations of passwords. In
-<code>/etc/pam.d/common-auth</code>,
-the
-<code>auth</code> section of the file controls which PAM modules execute
-during a password change. Set the <code>pam_unix.so</code> module in the
-<code>auth</code> section to include the argument <code>sha512</code>, as shown
-below:
-<br>
-<pre>auth   required    pam_unix.so sha512 <i>other arguments...</i></pre>
-<br>
-This will help ensure when local users change their authentication method,
-hashes for the new authentications will be generated using the SHA-512
-algorithm. This is the default.</pre></td>
+<td><pre></pre></td>
+<td><pre></pre></td>
 <td>SLES-15-010250</td>
-<td>set_password_hashing_algorithm_commonauth</td>
+<td>Missing Rule</td>
 </tr>
 <tr>
 <td>V-234825</td>
@@ -1280,9 +1260,11 @@ of initiating changes, including upgrades and modifications.</pre></td>
 /usr/local/bin
 /usr/local/sbin
 </pre>
-All files in these directories should be owned by the <code>root</code> group.
+All files in these directories should be owned by the <code>root</code> group,
+or a system account.
 If the directory, or any file in these directories, is found to be owned
-by a group other than root correct its ownership with the following command:
+by a group other than root or a a system account correct its ownership
+with the following command:
 <pre>$ sudo chgrp root <i>FILE</i></pre></pre></td>
 <td>SLES-15-010361</td>
 <td>file_groupownership_system_commands_dirs</td>
@@ -1592,6 +1574,7 @@ to prevent automatic loading of the USB storage driver.
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
 <pre>install usb-storage /bin/true</pre>
+
 This will prevent the <code>modprobe</code> program from loading the <code>usb-storage</code>
 module, but will not prevent an administrator (or another program) from using the
 <code>insmod</code> program to load the module manually.</pre></td>
@@ -1630,6 +1613,7 @@ memcache_timeout = <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xc
 authentication information may be questionable.</pre></td>
 <td><pre></pre></td>
 <td><pre>SSSD should be configured to expire offline credentials after 1 day.
+
 To configure SSSD to expire offline credentials, set
 <code>offline_credentials_expiration</code> to <code>1</code> under the <code>[pam]</code>
 section in <code>/etc/sssd/sssd.conf</code>. For example:
@@ -1755,9 +1739,9 @@ monitoring system trap when there is an unauthorized modification of a configura
 <td><pre></pre></td>
 <td><pre>At a minimum, AIDE should be configured to run a weekly scan.
 To implement a daily execution of AIDE at 4:05am using cron, add the following line to <code>/etc/crontab</code>:
-<pre>05 4 * * * root  --check</pre>
+<pre>05 4 * * * root /usr/bin/aide --check</pre>
 To implement a weekly execution of AIDE at 4:05am using cron, add the following line to <code>/etc/crontab</code>:
-<pre>05 4 * * 0 root  --check</pre>
+<pre>05 4 * * 0 root /usr/bin/aide --check</pre>
 AIDE can be executed periodically through other means; this is merely one example.
 The usage of cron's special time codes, such as  <code>@daily</code> and
 <code>@weekly</code> is acceptable.</pre></td>
@@ -2019,7 +2003,8 @@ using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code>
 settings in
 <code>/etc/pam.d/login</code> to read as follows:
 <pre>session     required pam_lastlog.so showfailed</pre>
-And make sure that the <code>silent</code> option is not set.</pre></td>
+And make sure that the <code>silent</code> option is not set for
+<code>pam_lastlog</code> module.</pre></td>
 <td>SLES-15-020080</td>
 <td>display_login_attempts</td>
 </tr>
@@ -2336,15 +2321,27 @@ this is a finding.</pre></td>
 </tr>
 <tr>
 <td>V-234888</td>
-<td></td>
+<td>803</td>
 <td>medium</td>
 <td>The SUSE operating system must employ FIPS 140-2-approved cryptographic hashing algorithms for all stored passwords.</td>
 <td>SRG-OS-ID</td>
+<td><pre>Passwords need to be protected at all times, and encryption is the standard
+method for protecting passwords. If passwords are not encrypted, they can
+be plainly read (i.e., clear text) and easily compromised. Passwords
+that are encrypted with a weak algorithm are no more protected than if
+they are kept in plain text.
+<br><br>
+Using more hashing rounds makes password cracking attacks more difficult.</pre></td>
 <td><pre></pre></td>
-<td><pre></pre></td>
-<td><pre></pre></td>
+<td><pre>In <code>/etc/login.defs</code>, ensure <code>SHA_CRYPT_MIN_ROUNDS</code> and
+<code>SHA_CRYPT_MAX_ROUNDS</code> has the minimum value of <code>5000</code>.
+For example:
+<pre>SHA_CRYPT_MIN_ROUNDS 5000
+SHA_CRYPT_MAX_ROUNDS 5000</pre>
+Notice that if neither are set, they already have the default value of 5000.
+If either is set, they must have the minimum value of 5000.</pre></td>
 <td>SLES-15-020190</td>
-<td>Missing Rule</td>
+<td>set_password_hashing_min_rounds_logindefs</td>
 </tr>
 <tr>
 <td>V-234889</td>
@@ -4072,7 +4069,14 @@ of privileged functions is one way to detect such misuse and identify the
 risk from insider threats and the advanced persistent threat.</pre></td>
 <td><pre></pre></td>
 <td><pre>Verify the system generates an audit record when privileged functions are executed.
-<pre># grep -iw execve <code>/etc/audit/audit.rules</code></pre>
+
+If audit is using the "auditctl" tool to load the rules, run the following command:
+
+<pre>$ sudo grep execve /etc/audit/audit.rules</pre>
+
+If audit is using the "augenrules" tool to load the rules, run the following command:
+
+<pre>$ sudo grep -r execve /etc/audit/rules.d</pre>
 
 
 <pre>-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k setuid</pre>
@@ -4105,7 +4109,7 @@ If both the "b32" and "b64" audit rules for "SGID" files are not defined, this i
 <td>The SUSE operating system must allocate audit record storage capacity to store at least one week of audit records when audit records are not immediately sent to a central audit record storage facility.</td>
 <td>SRG-OS-ID</td>
 <td><pre>Information stored in one location is vulnerable to accidental or incidental
-deletion or alteration.Off-loading is a common process in information
+deletion or alteration. Off-loading is a common process in information
 systems with limited audit storage capacity.</pre></td>
 <td><pre></pre></td>
 <td><pre>The SUSE Linux Enterprise 15 operating system must allocate audit record storage
@@ -4121,13 +4125,13 @@ records will be sufficient.
 Determine which partition the audit records are being written to with the
 following command:
 
-<pre># grep log_file /etc/audit/auditd.conf
+<pre>$ sudo grep log_file /etc/audit/auditd.conf
 log_file = /var/log/audit/audit.log</pre>
 
 Check the size of the partition that audit records are written to with the
 following command:
 
-<pre># df -h /var/log/audit/
+<pre>$ sudo df -h /var/log/audit/
 /dev/sda2 24G 10.4G 13.6G 43% /var/log/audit</pre></pre></td>
 <td>SLES-15-030660</td>
 <td>auditd_audispd_configure_sufficiently_large_partition</td>
@@ -4157,7 +4161,7 @@ audit storage capacity.</pre></td>
 <td><pre>Configure the operating system to encrypt the transfer of off-loaded audit
 records onto a different system or media from the system being audited.
 
-Uncomment the <code>enable_krb5</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>,
+Uncomment the <code>enable_krb5</code> option in <pre>/etc/audit/audisp-remote.conf</pre>,
 and set it with the following line:
 <pre>enable_krb5 = yes</pre></pre></td>
 <td>SLES-15-030680</td>
@@ -4176,7 +4180,7 @@ with limited audit storage capacity.</pre></td>
 <td><pre>Configure the audispd plugin to off-load audit records onto a different
 system or media from the system being audited.
 
-Set the <code>remote_server</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>
+Set the <code>remote_server</code> option in <pre>/etc/audit/audisp-remote.conf</pre>
 with an IP address or hostname of the system that the audispd plugin should
 send audit records to. For example
 <pre>remote_server = <i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_audispd_remote_server"></xccdf-1.1:sub></i></pre></pre></td>
@@ -4354,7 +4358,7 @@ edits of files involved in storing such process information:
 remote system will minimize the possibility of losing audit records.</pre></td>
 <td><pre></pre></td>
 <td><pre>Configure the action the operating system takes if there is an error sending
-audit records to a remote system. Edit the file <code>/etc/audisp/audisp-remote.conf</code>.
+audit records to a remote system. Edit the file <code>/etc/audit/audisp-remote.conf</code>.
 Add or modify the following line, substituting <i>ACTION</i> appropriately:
 <pre>network_failure_action = <i>ACTION</i></pre>
 Set this value to <code>single</code> to cause the system to switch to single user
@@ -4376,7 +4380,7 @@ This profile configures the <i>action</i> to be <code><xccdf-1.1:sub xmlns:xccdf
 minimize the possibility of losing audit records.</pre></td>
 <td><pre></pre></td>
 <td><pre>Configure the action the operating system takes if the disk the audit records
-are written to becomes full. Edit the file <code>/etc/audisp/audisp-remote.conf</code>.
+are written to becomes full. Edit the file <code>/etc/audit/audisp-remote.conf</code>.
 Add or modify the following line, substituting <i>ACTION</i> appropriately:
 <pre>disk_full_action = <i>ACTION</i></pre>
 Set this value to <code>single</code> to cause the system to switch to single user
@@ -4726,7 +4730,7 @@ compromise the system at the root and network level.</pre></td>
 <td><pre></pre></td>
 <td><pre>Set the mode on files being executed by the user initialization files with the
 following command:
-<pre>$ sudo chmod 0755 <i>FILE</i></pre></pre></td>
+<pre>$ sudo chmod o-w <i>FILE</i></pre></pre></td>
 <td>SLES-15-040130</td>
 <td>accounts_user_dot_no_world_writable_programs</td>
 </tr>
@@ -4938,9 +4942,8 @@ may be compromised.</pre></td>
 <td><pre>If an unauthorized user obtains the private SSH host key file, the host could be
 impersonated.</pre></td>
 <td><pre></pre></td>
-<td><pre>
-To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
-<pre>$ sudo chmod 0600 /etc/ssh/*_key</pre></pre></td>
+<td><pre>SSH server private keys - files that match the <code>/etc/ssh/*_key</code> glob, have to have restricted permissions.
+If those files are owned by the <code>root</code> user and the <code>root</code> group, they have to have the <code>0600</code> permission or stricter.</pre></td>
 <td>SLES-15-040250</td>
 <td>file_permissions_sshd_private_key</td>
 </tr>

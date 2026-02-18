@@ -136,18 +136,14 @@ By default, the database will be written to the file
 <code>/var/lib/aide/aide.db.new.gz</code>.
 
 Storing the database, the configuration file <code>/etc/aide.conf</code>, and the binary
-
 <code>/usr/sbin/aide</code>
-
 (or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
 The newly-generated database can be installed as follows:
 
 <pre>$ sudo cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz</pre>
 
 To initiate a manual check, run the following command:
-
 <pre>$ sudo /usr/sbin/aide --check</pre>
-
 If this check produces any unexpected output, investigate.</td>
 </tr>
 <tr>
@@ -155,9 +151,9 @@ If this check produces any unexpected output, investigate.</td>
 <td>Configure Periodic Execution of AIDE</td>
 <td>At a minimum, AIDE should be configured to run a weekly scan.
 To implement a daily execution of AIDE at 4:05am using cron, add the following line to <code>/etc/crontab</code>:
-<pre>05 4 * * * root  --check</pre>
+<pre>05 4 * * * root /usr/sbin/aide --check</pre>
 To implement a weekly execution of AIDE at 4:05am using cron, add the following line to <code>/etc/crontab</code>:
-<pre>05 4 * * 0 root  --check</pre>
+<pre>05 4 * * 0 root /usr/sbin/aide --check</pre>
 AIDE can be executed periodically through other means; this is merely one example.
 The usage of cron's special time codes, such as  <code>@daily</code> and
 <code>@weekly</code> is acceptable.</td>
@@ -873,7 +869,7 @@ To set the screensaver mode in the GNOME3 desktop to a blank screen,
 add or set <code>picture-uri</code> to <code>string ''</code> in
 <code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
 <pre>[org/gnome/desktop/screensaver]
-picture-uri=''
+picture-uri=string ''
 </pre>
 Once the settings have been added, add a lock to
 <code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
@@ -1680,7 +1676,8 @@ using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code>
 settings in
 <code>/etc/pam.d/postlogin</code> to read as follows:
 <pre>session     required pam_lastlog.so showfailed</pre>
-And make sure that the <code>silent</code> option is not set.</td>
+And make sure that the <code>silent</code> option is not set for
+<code>pam_lastlog</code> module.</td>
 </tr>
 <tr>
 <td>CCE-83743-5</td>
@@ -1688,6 +1685,16 @@ And make sure that the <code>silent</code> option is not set.</td>
 <td>To setup a private namespace add the following line to <code>/etc/pam.d/login</code>:
 <pre>session    required     pam_namespace.so</pre>
 </td>
+</tr>
+<tr>
+<td></td>
+<td>Account lockouts must be logged</td>
+<td>PAM faillock locks an account due to excessive password failures, this event must be logged.</td>
+</tr>
+<tr>
+<td></td>
+<td>Account Lockouts Must Persist</td>
+<td>By setting a `dir` in the faillock configuration account lockouts will persist across reboots.</td>
 </tr>
 <tr>
 <td>CCE-83476-2</td>
@@ -1746,6 +1753,14 @@ pam_faillock.so module requires multiple entries in pam files. These entries mus
 defined to work as expected. In order to avoid any errors when manually editing these files,
 it is recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
 depending on the OS version.</td>
+</tr>
+<tr>
+<td></td>
+<td>Configure PAMs passwd Module To Implement system-auth Substack When Changing Passwords</td>
+<td>Verify that pam is configured to use <code>/etc/pam.d/system-auth</code>
+when changing passwords. Look for the following line in <code>/etc/pam.d/passwd</code>:
+<pre>password substack system-auth</pre>
+</td>
 </tr>
 <tr>
 <td>CCE-27214-6</td>
@@ -1889,7 +1904,7 @@ the system will use SHA-512 as the hashing algorithm:
 </tr>
 <tr>
 <td>CCE-85943-9</td>
-<td>Set PAM's Password Hashing Algorithm - password-auth</td>
+<td>Set PAM''s Password Hashing Algorithm - password-auth</td>
 <td>The PAM system service can be configured to only store encrypted
 representations of passwords. In
 <code>/etc/pam.d/password-auth</code>,
@@ -1907,9 +1922,9 @@ the default.</td>
 </tr>
 <tr>
 <td>CCE-82043-1</td>
-<td>Set PAM's Password Hashing Algorithm</td>
+<td>Set PAM''s Password Hashing Algorithm</td>
 <td>The PAM system service can be configured to only store encrypted
-representations of passwords. In "/etc/pam.d/password-auth", the
+representations of passwords. In "/etc/pam.d/system-auth", the
 <code>password</code> section of the file controls which PAM modules execute
 during a password change. Set the <code>pam_unix.so</code> module in the
 <code>password</code> section to include the argument <code>sha512</code>, as shown
@@ -2521,11 +2536,13 @@ Then, add the following entry to <code>/etc/security/namespace.conf</code>:
 <td>CCE-27557-8</td>
 <td>Set Interactive Session Timeout</td>
 <td>Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
-all user sessions will terminate based on inactivity. The <code>TMOUT</code>
+all user sessions will terminate based on inactivity.
+The value of TMOUT should be exported and read only.
+The <code>TMOUT</code>
 
 setting in a file loaded by <code>/etc/profile</code>, e.g.
 <code>/etc/profile.d/tmout.sh</code> should read as follows:
-<pre>TMOUT=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></xccdf-1.1:sub></pre>
+<pre>declare -xr TMOUT=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></xccdf-1.1:sub></pre>
 </td>
 </tr>
 <tr>
@@ -2544,7 +2561,7 @@ is group-owned by an interactive user.</td>
 <td>User Initialization Files Must Not Run World-Writable Programs</td>
 <td>Set the mode on files being executed by the user initialization files with the
 following command:
-<pre>$ sudo chmod 0755 <i>FILE</i></pre>
+<pre>$ sudo chmod o-w <i>FILE</i></pre>
 </td>
 </tr>
 <tr>
@@ -2613,7 +2630,7 @@ to an interactive user is owned by an interactive user.</td>
 <td>Set the mode on files and directories in the local interactive user home
 directory with the following command:
 <pre>$ sudo chmod 0750 /home/<i>USER</i>/<i>FILE_DIR</i></pre>
-</td>
+Files that begin with a "." are excluded from this requirement.</td>
 </tr>
 <tr>
 <td>CCE-80532-5</td>
@@ -3084,7 +3101,14 @@ edits of files involved in storing such process information:
 <td>CCE-83555-3</td>
 <td>Record Events When Privileged Executables Are Run</td>
 <td>Verify the system generates an audit record when privileged functions are executed.
-<pre># grep -iw execve <code>/etc/audit/audit.rules</code></pre>
+
+If audit is using the "auditctl" tool to load the rules, run the following command:
+
+<pre>$ sudo grep execve /etc/audit/audit.rules</pre>
+
+If audit is using the "augenrules" tool to load the rules, run the following command:
+
+<pre>$ sudo grep -r execve /etc/audit/rules.d</pre>
 
 
 <pre>-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k setuid</pre>
@@ -3265,7 +3289,8 @@ utility to read audit rules during daemon startup, add the rule to
 <tr>
 <td></td>
 <td>System Audit Logs Must Have Mode 0750 or Less Permissive</td>
-<td>If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other than the <code>root</code>
+<td>
+If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other than the <code>root</code>
 group account, change the mode of the audit log files with the following command:
 <pre>$ sudo chmod 0750 /var/log/audit</pre>
 <br>
@@ -3307,13 +3332,14 @@ To properly set the owner of <code>/var/log/audit/*</code>, run the command:
 <tr>
 <td>CCE-27205-4</td>
 <td>System Audit Logs Must Have Mode 0640 or Less Permissive</td>
-<td>If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other than the <code>root</code>
-group account, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0640 <i>audit_file</i></pre>
-<br>
-Otherwise, change the mode of the audit log files with the following command:
-<pre>$ sudo chmod 0600 <i>audit_file</i></pre>
-</td>
+<td>
+Determine where the audit logs are stored with the following command:
+<pre>$ sudo grep -iw log_file /etc/audit/auditd.conf
+log_file = /var/log/audit/audit.log</pre>
+Configure the audit log to be protected from unauthorized read access by setting the correct
+permissive mode with the following command:
+<pre>$ sudo chmod 0600 <i>audit_log_file</i></pre>
+By default, <i>audit_log_file</i> is "/var/log/audit/audit.log".</td>
 </tr>
 <tr>
 <td>CCE-27339-1</td>
@@ -4532,7 +4558,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-81086-1</td>
-<td>Record Unsuccessul Permission Changes to Files - chmod</td>
+<td>Record Unsuccessful Permission Changes to Files - chmod</td>
 <td>The audit system should collect unsuccessful file permission change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -4551,7 +4577,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-81082-0</td>
-<td>Record Unsuccessul Ownership Changes to Files - chown</td>
+<td>Record Unsuccessful Ownership Changes to Files - chown</td>
 <td>The audit system should collect unsuccessful file ownership change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -4595,7 +4621,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-81088-7</td>
-<td>Record Unsuccessul Permission Changes to Files - fchmod</td>
+<td>Record Unsuccessful Permission Changes to Files - fchmod</td>
 <td>The audit system should collect unsuccessful file permission change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -4614,7 +4640,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-81090-3</td>
-<td>Record Unsuccessul Permission Changes to Files - fchmodat</td>
+<td>Record Unsuccessful Permission Changes to Files - fchmodat</td>
 <td>The audit system should collect unsuccessful file permission change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -4633,7 +4659,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-81080-4</td>
-<td>Record Unsuccessul Ownership Changes to Files - fchown</td>
+<td>Record Unsuccessful Ownership Changes to Files - fchown</td>
 <td>The audit system should collect unsuccessful file ownership change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -4652,7 +4678,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-81084-6</td>
-<td>Record Unsuccessul Ownership Changes to Files - fchownat</td>
+<td>Record Unsuccessful Ownership Changes to Files - fchownat</td>
 <td>The audit system should collect unsuccessful file ownership change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -4671,7 +4697,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-81102-6</td>
-<td>Record Unsuccessul Permission Changes to Files - fremovexattr</td>
+<td>Record Unsuccessful Permission Changes to Files - fremovexattr</td>
 <td>The audit system should collect unsuccessful file permission change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -4690,7 +4716,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-81096-0</td>
-<td>Record Unsuccessul Permission Changes to Files - fsetxattr</td>
+<td>Record Unsuccessful Permission Changes to Files - fsetxattr</td>
 <td>The audit system should collect unsuccessful file permission change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -4720,7 +4746,7 @@ startup (the default), add the following lines to a file with suffix
 
 If the system is 64 bit then also add the following lines:
 <pre>
--a always,exit -F arch=b64 -S ftruncate -F exiu=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
+-a always,exit -F arch=b64 -S ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
 -a always,exit -F arch=b64 -S ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
 
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
@@ -4737,7 +4763,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-81078-8</td>
-<td>Record Unsuccessul Ownership Changes to Files - lchown</td>
+<td>Record Unsuccessful Ownership Changes to Files - lchown</td>
 <td>The audit system should collect unsuccessful file ownership change
 attempts for all users and root.
 
@@ -4760,7 +4786,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-81100-0</td>
-<td>Record Unsuccessul Permission Changes to Files - lremovexattr</td>
+<td>Record Unsuccessful Permission Changes to Files - lremovexattr</td>
 <td>The audit system should collect unsuccessful file permission change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -4779,7 +4805,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-81094-5</td>
-<td>Record Unsuccessul Permission Changes to Files - lsetxattr</td>
+<td>Record Unsuccessful Permission Changes to Files - lsetxattr</td>
 <td>The audit system should collect unsuccessful file permission change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -5166,7 +5192,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-81098-6</td>
-<td>Record Unsuccessul Permission Changes to Files - removexattr</td>
+<td>Record Unsuccessful Permission Changes to Files - removexattr</td>
 <td>The audit system should collect unsuccessful file permission change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -5185,7 +5211,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-81108-3</td>
-<td>Record Unsuccessul Delete Attempts to Files - rename</td>
+<td>Record Unsuccessful Delete Attempts to Files - rename</td>
 <td>The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
@@ -5204,7 +5230,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-82082-9</td>
-<td>Record Unsuccessul Delete Attempts to Files - renameat</td>
+<td>Record Unsuccessful Delete Attempts to Files - renameat</td>
 <td>
 The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
@@ -5224,7 +5250,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-81092-9</td>
-<td>Record Unsuccessul Permission Changes to Files - setxattr</td>
+<td>Record Unsuccessful Permission Changes to Files - setxattr</td>
 <td>The audit system should collect unsuccessful file permission change
 attempts for all users and root.
 If the <code>auditd</code> daemon is configured
@@ -5271,7 +5297,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-81106-7</td>
-<td>Record Unsuccessul Delete Attempts to Files - unlink</td>
+<td>Record Unsuccessful Delete Attempts to Files - unlink</td>
 <td>
 The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
@@ -5293,7 +5319,7 @@ If the system is 64 bit then also add the following lines:
 </tr>
 <tr>
 <td>CCE-81104-2</td>
-<td>Record Unsuccessul Delete Attempts to Files - unlinkat</td>
+<td>Record Unsuccessful Delete Attempts to Files - unlinkat</td>
 <td>
 The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
@@ -5448,6 +5474,66 @@ utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file in order to watch for unattempted manual
 edits of files involved in storing logon events:
 <pre>-w /var/log/tallylog -p wa -k logins</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - init</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/init -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/sbin/init -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - poweroff</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/poweroff -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/sbin/poweroff -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - reboot</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/reboot -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/sbin/reboot -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - shutdown</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/shutdown -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/sbin/shutdown -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 </tr>
 <tr>
@@ -6031,6 +6117,21 @@ determined. Details regarding all possible values for <i>ACTION</i> are describe
 </tr>
 <tr>
 <td></td>
+<td>Configure auditd Disk Error Action on Disk Error</td>
+<td>The <code>auditd</code> service can be configured to take an action
+when there is a disk error.
+Edit the file <code>/etc/audit/auditd.conf</code>. Add or modify the following line,
+substituting <i>ACTION</i> appropriately:
+<pre>disk_error_action = <i>ACTION</i></pre>
+Set this value to <code>single</code> to cause the system to switch to single-user
+mode for corrective action. Acceptable values also include <code>syslog</code>,
+<code>exec</code>, <code>single</code>, and <code>halt</code>. For certain systems, the need for availability
+outweighs the need to log all actions, and a different setting should be
+determined. Details regarding all possible values for <i>ACTION</i> are described in the
+<code>auditd.conf</code> man page.</td>
+</tr>
+<tr>
+<td></td>
 <td>Configure auditd Disk Full Action when Disk Space Is Full</td>
 <td>The <code>auditd</code> service can be configured to take an action
 when disk space is running low but prior to running out of space completely.
@@ -6042,6 +6143,21 @@ mode for corrective action. Acceptable values also include <code>syslog</code>,
 
 <code>exec</code>,
 
+<code>single</code>, and <code>halt</code>. For certain systems, the need for availability
+outweighs the need to log all actions, and a different setting should be
+determined. Details regarding all possible values for <i>ACTION</i> are described in the
+<code>auditd.conf</code> man page.</td>
+</tr>
+<tr>
+<td></td>
+<td>Configure auditd Disk Full Action when Disk Space Is Full</td>
+<td>The <code>auditd</code> service can be configured to take an action
+when disk space is running low but prior to running out of space completely.
+Edit the file <code>/etc/audit/auditd.conf</code>. Add or modify the following line,
+substituting <i>ACTION</i> appropriately:
+<pre>disk_full_action = <i>ACTION</i></pre>
+Set this value to <code>single</code> to cause the system to switch to single-user
+mode for corrective action. Acceptable values also include <code>syslog</code>,
 <code>single</code>, and <code>halt</code>. For certain systems, the need for availability
 outweighs the need to log all actions, and a different setting should be
 determined. Details regarding all possible values for <i>ACTION</i> are described in the
@@ -6096,6 +6212,25 @@ support retention of even more audit data.</td>
 </tr>
 <tr>
 <td>CCE-27231-0</td>
+<td>Configure auditd max_log_file_action Upon Reaching Maximum Log Size</td>
+<td>The default action to take when the logs reach their maximum size
+is to rotate the log files, discarding the oldest one. To configure the action taken
+by <code>auditd</code>, add or correct the line in <code>/etc/audit/auditd.conf</code>:
+<pre>max_log_file_action = <i>ACTION</i></pre>
+Possible values for <i>ACTION</i> are described in the <code>auditd.conf</code> man
+page. These include:
+<ul>
+<li><code>ignore</code></li>
+<li><code>syslog</code></li>
+<li><code>suspend</code></li>
+<li><code>rotate</code></li>
+<li><code>keep_logs</code></li>
+</ul>
+Set the <code><i>ACTION</i></code> to <code>rotate</code> to ensure log rotation
+occurs. This is the default. The setting is case-insensitive.</td>
+</tr>
+<tr>
+<td></td>
 <td>Configure auditd max_log_file_action Upon Reaching Maximum Log Size</td>
 <td>The default action to take when the logs reach their maximum size
 is to rotate the log files, discarding the oldest one. To configure the action taken
@@ -6231,6 +6366,17 @@ Copy the files from <code>/usr/share/doc/audit/rules</code> to <code>/etc/audit/
 <pre>
 cp /usr/share/doc/audit*/rules/{10-base-config,11-loginuid,30-ospp-v42,43-module-load}.rules /etc/audit/rules.d/
 </pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Disable Recovery Booting</td>
+<td>Red Hat Enterprise Linux 7 systems support an "recovery boot" option that can be used
+to prevent services from being started. The <code>GRUB_DISABLE_RECOVERY</code>
+configuration option in <code>/etc/default/grub</code> should be set to
+<code>true</code> to disable the generation of recovery mode menu entries. It is
+also required to change the runtime configuration, run:
+<pre>$ sudo grubby --update-kernel=ALL</pre>
 </td>
 </tr>
 <tr>
@@ -6412,6 +6558,27 @@ Run the following command to update command line for already installed kernels:<
 </td>
 </tr>
 <tr>
+<td></td>
+<td>Ensure debug-shell service is not enabled during boot</td>
+<td>systemd's <code>debug-shell</code> service is intended to
+diagnose systemd related boot issues with various <code>systemctl</code>
+commands. Once enabled and following a system reboot, the root shell
+will be available on <code>tty9</code> which is access by pressing
+<code>CTRL-ALT-F9</code>. The <code>debug-shell</code> service should only be used
+for systemd related issues and should otherwise be disabled.
+<br><br>
+By default, the <code>debug-shell</code> systemd service is already disabled.
+
+Ensure the debug-shell is not enabled by the <code>systemd.debug-shel=1</code>
+boot paramenter option.
+
+Check that the line <pre>GRUB_CMDLINE_LINUX="..."</pre> within <code>/etc/default/grub</code>
+doesn't contain the argument <code>systemd.debug-shell=1</code>.
+Run the following command to update command line for already installed kernels:
+<pre># grubby --update-kernel=ALL --remove-args="systemd.debug-shell"</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-82159-5</td>
 <td>Disable vsyscalls</td>
 <td>To disable use of virtual syscalls,
@@ -6474,7 +6641,7 @@ Change the superuser to a different username (The default is 'root').
 Once the superuser account has been added,
 update the
 <code>grub.cfg</code> file by running:
-<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
+<pre>grubby --update-kernel=ALL</pre>
 </td>
 </tr>
 <tr>
@@ -6546,12 +6713,12 @@ It is highly suggested not to use common administrator account names like root,
 admin, or administrator for the grub2 superuser account.
 <br><br>
 Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<pre>$ sed -i 's/\(set superusers=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
 <br><br>
 Once the superuser account has been added,
 update the
 <code>grub.cfg</code> file by running:
-<pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
+<pre>grubby --update-kernel=ALL</pre>
 </td>
 </tr>
 <tr>
@@ -7313,7 +7480,7 @@ and remote logging.  Couple this utility with <code>gnutls</code> (which is a se
 library implementing the SSL, TLS and DTLS protocols), and you have a method to securely
 encrypt and off-load auditing.
 
-When using <code>rsyslogd</code> to off-load logs off a encrpytion system must be used.</td>
+When using <code>rsyslogd</code> to off-load logs off an encryption system must be used.</td>
 </tr>
 <tr>
 <td>CCE-80190-2</td>
@@ -7358,6 +7525,16 @@ inspect the file's permissions:
 If the permissions are not 600 or more restrictive, run the following
 command to correct this:
 <pre>$ sudo chmod 0600 <i>LOGFILE</i></pre>"</td>
+</tr>
+<tr>
+<td></td>
+<td>Enable systemd-journald Service</td>
+<td>The <code>systemd-journald</code> service is an essential component of
+systemd.
+
+The <code>systemd-journald</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable systemd-journald.service</pre>
+</td>
 </tr>
 <tr>
 <td>CCE-85929-8</td>
@@ -8110,6 +8287,14 @@ To make sure that the setting is persistent, add the following line to a file in
 </td>
 </tr>
 <tr>
+<td></td>
+<td>Verify ufw Enabled</td>
+<td>
+The <code>ufw</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable ufw.service</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-82162-9</td>
 <td>Disable ATM Support</td>
 <td>The Asynchronous Transfer Mode (ATM) is a protocol operating on
@@ -8119,6 +8304,10 @@ and virtual paths.
 To configure the system to prevent the <code>atm</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/atm.conf</code>:
 <pre>install atm /bin/true</pre>
+
+To configure the system to prevent the <code>atm</code> from being used,
+add the following line to file <code>/etc/modprobe.d/atm.conf</code>:
+<pre>blacklist atm</pre>
 </td>
 </tr>
 <tr>
@@ -8131,6 +8320,10 @@ is now also used in marine, industrial, and medical applications.
 To configure the system to prevent the <code>can</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/can.conf</code>:
 <pre>install can /bin/true</pre>
+
+To configure the system to prevent the <code>can</code> from being used,
+add the following line to file <code>/etc/modprobe.d/can.conf</code>:
+<pre>blacklist can</pre>
 </td>
 </tr>
 <tr>
@@ -8143,6 +8336,10 @@ streaming media and telephony.
 To configure the system to prevent the <code>dccp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/dccp.conf</code>:
 <pre>install dccp /bin/true</pre>
+
+To configure the system to prevent the <code>dccp</code> from being used,
+add the following line to file <code>/etc/modprobe.d/dccp.conf</code>:
+<pre>blacklist dccp</pre>
 </td>
 </tr>
 <tr>
@@ -8154,6 +8351,10 @@ high-speed real-time communication.
 To configure the system to prevent the <code>firewire-core</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/firewire-core.conf</code>:
 <pre>install firewire-core /bin/true</pre>
+
+To configure the system to prevent the <code>firewire-core</code> from being used,
+add the following line to file <code>/etc/modprobe.d/firewire-core.conf</code>:
+<pre>blacklist firewire-core</pre>
 </td>
 </tr>
 <tr>
@@ -8166,6 +8367,10 @@ low-latency communications between nodes in a cluster.
 To configure the system to prevent the <code>rds</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/rds.conf</code>:
 <pre>install rds /bin/true</pre>
+
+To configure the system to prevent the <code>rds</code> from being used,
+add the following line to file <code>/etc/modprobe.d/rds.conf</code>:
+<pre>blacklist rds</pre>
 </td>
 </tr>
 <tr>
@@ -8179,6 +8384,10 @@ within one connection.
 To configure the system to prevent the <code>sctp</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/sctp.conf</code>:
 <pre>install sctp /bin/true</pre>
+
+To configure the system to prevent the <code>sctp</code> from being used,
+add the following line to file <code>/etc/modprobe.d/sctp.conf</code>:
+<pre>blacklist sctp</pre>
 </td>
 </tr>
 <tr>
@@ -8191,6 +8400,10 @@ cluster.
 To configure the system to prevent the <code>tipc</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/tipc.conf</code>:
 <pre>install tipc /bin/true</pre>
+
+To configure the system to prevent the <code>tipc</code> from being used,
+add the following line to file <code>/etc/modprobe.d/tipc.conf</code>:
+<pre>blacklist tipc</pre>
 </td>
 </tr>
 <tr>
@@ -8779,6 +8992,11 @@ append "nousb" to the kernel line in <code>/etc/default/grub</code> as shown:
 To configure the system to prevent the <code>cramfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cramfs.conf</code>:
 <pre>install cramfs /bin/true</pre>
+
+To configure the system to prevent the <code>cramfs</code> from being used,
+add the following line to file <code>/etc/modprobe.d/cramfs.conf</code>:
+<pre>blacklist cramfs</pre>
+
 This effectively prevents usage of this uncommon filesystem.
 
 The <code>cramfs</code> filesystem type is a compressed read-only
@@ -8793,6 +9011,11 @@ decompress the image.</td>
 To configure the system to prevent the <code>freevxfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/freevxfs.conf</code>:
 <pre>install freevxfs /bin/true</pre>
+
+To configure the system to prevent the <code>freevxfs</code> from being used,
+add the following line to file <code>/etc/modprobe.d/freevxfs.conf</code>:
+<pre>blacklist freevxfs</pre>
+
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
 <tr>
@@ -8802,6 +9025,11 @@ This effectively prevents usage of this uncommon filesystem.</td>
 To configure the system to prevent the <code>hfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/hfs.conf</code>:
 <pre>install hfs /bin/true</pre>
+
+To configure the system to prevent the <code>hfs</code> from being used,
+add the following line to file <code>/etc/modprobe.d/hfs.conf</code>:
+<pre>blacklist hfs</pre>
+
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
 <tr>
@@ -8811,6 +9039,11 @@ This effectively prevents usage of this uncommon filesystem.</td>
 To configure the system to prevent the <code>hfsplus</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/hfsplus.conf</code>:
 <pre>install hfsplus /bin/true</pre>
+
+To configure the system to prevent the <code>hfsplus</code> from being used,
+add the following line to file <code>/etc/modprobe.d/hfsplus.conf</code>:
+<pre>blacklist hfsplus</pre>
+
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
 <tr>
@@ -8820,6 +9053,11 @@ This effectively prevents usage of this uncommon filesystem.</td>
 To configure the system to prevent the <code>jffs2</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/jffs2.conf</code>:
 <pre>install jffs2 /bin/true</pre>
+
+To configure the system to prevent the <code>jffs2</code> from being used,
+add the following line to file <code>/etc/modprobe.d/jffs2.conf</code>:
+<pre>blacklist jffs2</pre>
+
 This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
 <tr>
@@ -8829,6 +9067,11 @@ This effectively prevents usage of this uncommon filesystem.</td>
 To configure the system to prevent the <code>squashfs</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/squashfs.conf</code>:
 <pre>install squashfs /bin/true</pre>
+
+To configure the system to prevent the <code>squashfs</code> from being used,
+add the following line to file <code>/etc/modprobe.d/squashfs.conf</code>:
+<pre>blacklist squashfs</pre>
+
 This effectively prevents usage of this uncommon filesystem.
 
 The <code>squashfs</code> filesystem type is a compressed read-only Linux
@@ -8843,6 +9086,11 @@ to first decompress the image.</td>
 To configure the system to prevent the <code>udf</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/udf.conf</code>:
 <pre>install udf /bin/true</pre>
+
+To configure the system to prevent the <code>udf</code> from being used,
+add the following line to file <code>/etc/modprobe.d/udf.conf</code>:
+<pre>blacklist udf</pre>
+
 This effectively prevents usage of this uncommon filesystem.
 
 The <code>udf</code> filesystem type is the universal disk format
@@ -8860,6 +9108,11 @@ to prevent automatic loading of the USB storage driver.
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
 <pre>install usb-storage /bin/true</pre>
+
+To configure the system to prevent the <code>usb-storage</code> from being used,
+add the following line to file <code>/etc/modprobe.d/usb-storage.conf</code>:
+<pre>blacklist usb-storage</pre>
+
 This will prevent the <code>modprobe</code> program from loading the <code>usb-storage</code>
 module, but will not prevent an administrator (or another program) from using the
 <code>insmod</code> program to load the module manually.</td>
@@ -8871,6 +9124,11 @@ module, but will not prevent an administrator (or another program) from using th
 To configure the system to prevent the <code>vfat</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/vfat.conf</code>:
 <pre>install vfat /bin/true</pre>
+
+To configure the system to prevent the <code>vfat</code> from being used,
+add the following line to file <code>/etc/modprobe.d/vfat.conf</code>:
+<pre>blacklist vfat</pre>
+
 This effectively prevents usage of this uncommon filesystem.
 
 The <code>vFAT</code> filesystem format is primarily used on older
@@ -9228,6 +9486,11 @@ should not be required in these world-writable directories.
 Add the <code>nosuid</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
 <code>/var/tmp</code>.</td>
+</tr>
+<tr>
+<td></td>
+<td>Disable the uvcvideo module</td>
+<td>If the device contains a camera it should be covered or disabled when not in use.</td>
 </tr>
 <tr>
 <td>CCE-27050-4</td>
@@ -13409,6 +13672,11 @@ a storage. For setting up the LVM and configuring Docker, see the
 <a href="https://docs.docker.com/engine/userguide/storagedriver/device-mapper-driver/">Docker Device Mapper Storage Documentation</a>.</td>
 </tr>
 <tr>
+<td></td>
+<td>fapolicyd Must be Configured to Limit Access to Users Home Folders</td>
+<td>fapolicyd needs be configured so that users cannot give access to their home folders to other users.</td>
+</tr>
+<tr>
 <td>CCE-80245-4</td>
 <td>Uninstall vsftpd Package</td>
 <td>The <code>vsftpd</code> package can be removed with the following command: <pre> $ sudo yum erase vsftpd</pre>
@@ -14195,6 +14463,15 @@ clients which use LDAP for authentication. If the system is not
 intended for use as an LDAP Server it should be removed.</td>
 </tr>
 <tr>
+<td></td>
+<td>The Postfix package is installed</td>
+<td>A mail server is required for sending emails.
+The <code>postfix</code> package can be installed with the following command:
+<pre>
+$ sudo yum install postfix</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-80288-4</td>
 <td>Uninstall Sendmail Package</td>
 <td>Sendmail is not the default mail transfer agent and is
@@ -14226,6 +14503,16 @@ reachable from the system in question. Use the following command to
 configure the alias:
 <pre>$ sudo echo "root: <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_postfix_root_mail_alias"></xccdf-1.1:sub>" &gt;&gt; /etc/aliases
 $ sudo newaliases</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Configure System to Forward All Mail From Postmaster to The Root Account</td>
+<td>Verify the administrators are notified in the event of an audit processing failure.
+Check that the "/etc/aliases" file has a defined value for "root".
+<pre>$ sudo grep "postmaster:\s*root$" /etc/aliases
+
+postmaster: root</pre>
 </td>
 </tr>
 <tr>
@@ -14627,9 +14914,9 @@ accurate. More information on chrony can be found at
 
     <a href="http://chrony.tuxfamily.org/">http://chrony.tuxfamily.org/</a>.
 Chrony can be configured to be a client and/or a server.
-To ensure that chronyd is running under chrony user account, Add or edit the
-<code>OPTIONS</code> variable in <code>/etc/sysconfig/chronyd</code> to include <code>-u chrony</code>:
-<pre>OPTIONS="-u chrony"</pre>
+To ensure that chronyd is running under chrony user account,
+remove any <code>-u ...</code> option from <code>OPTIONS</code> other than <code>-u chrony</code>,
+as chrony is run under its own user by default.
 This recommendation only applies if chrony is in use on the system.</td>
 </tr>
 <tr>
@@ -15238,10 +15525,9 @@ To properly set the permissions of <code>/etc/ssh/sshd_config</code>, run the co
 <tr>
 <td>CCE-27485-2</td>
 <td>Verify Permissions on SSH Server Private *_key Key Files</td>
-<td>
-To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
-<pre>$ sudo chmod 0600 /etc/ssh/*_key</pre>
-</td>
+<td>SSH server private keys - files that match the <code>/etc/ssh/*_key</code> glob, have to have restricted permissions.
+If those files are owned by the <code>root</code> user and the <code>root</code> group, they have to have the <code>0600</code> permission or stricter.
+If they are owned by the <code>root</code> user, but by a dedicated group <code>ssh_keys</code>, they can have the <code>0640</code> permission or stricter.</td>
 </tr>
 <tr>
 <td>CCE-27311-0</td>
@@ -15943,12 +16229,11 @@ services = sudo, autofs, pam
 <tr>
 <td>CCE-80570-5</td>
 <td>Enable Smartcards in SSSD</td>
-<td>SSSD should be configured to authenticate access to the system
-using smart cards. To enable smart cards in SSSD, set <code>pam_cert_auth</code>
-to <code>true</code> under the <code>[pam]</code>
-section in <code>/etc/sssd/sssd.conf</code>. For example:
+<td>SSSD should be configured to authenticate access to the system using smart cards.
+To enable smart cards in SSSD, set <code>pam_cert_auth</code> to <code>True</code> under the
+<code>[pam]</code> section in <code>/etc/sssd/sssd.conf</code>. For example:
 <pre>[pam]
-pam_cert_auth = true
+pam_cert_auth = True
 </pre>
 </td>
 </tr>
@@ -15971,6 +16256,7 @@ memcache_timeout = <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xc
 <td>CCE-80365-0</td>
 <td>Configure SSSD to Expire Offline Credentials</td>
 <td>SSSD should be configured to expire offline credentials after 1 day.
+
 To configure SSSD to expire offline credentials, set
 <code>offline_credentials_expiration</code> to <code>1</code> under the <code>[pam]</code>
 section in <code>/etc/sssd/sssd.conf</code>. For example:

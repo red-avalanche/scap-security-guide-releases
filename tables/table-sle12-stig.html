@@ -348,7 +348,9 @@ management session enabled on the console or console port that has been
 left unattended.</pre></td>
 <td><pre></pre></td>
 <td><pre>Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
-all user sessions will terminate based on inactivity. The <code>TMOUT</code>
+all user sessions will terminate based on inactivity.
+The value of TMOUT should be exported and read only.
+The <code>TMOUT</code>
 
 setting in <code>/etc/profile.d/autologout.sh</code> should read as follows:
 <pre>TMOUT=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></xccdf-1.1:sub></pre>
@@ -386,7 +388,7 @@ To set the screensaver mode in the GNOME3 desktop to a blank screen,
 add or set <code>picture-uri</code> to <code>string ''</code> in
 <code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
 <pre>[org/gnome/desktop/screensaver]
-picture-uri=''
+picture-uri=string ''
 </pre>
 Once the settings have been added, add a lock to
 <code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
@@ -1057,7 +1059,8 @@ using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code>
 settings in
 <code>/etc/pam.d/login</code> to read as follows:
 <pre>session     required pam_lastlog.so showfailed</pre>
-And make sure that the <code>silent</code> option is not set.</pre></td>
+And make sure that the <code>silent</code> option is not set for
+<code>pam_lastlog</code> module.</pre></td>
 <td>SLES-12-010390</td>
 <td>display_login_attempts</td>
 </tr>
@@ -1150,8 +1153,7 @@ root account and password.
 Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
-
-<pre>grub2-mkconfig -o /boot/efi/EFI/sles/grub.cfg</pre></pre></td>
+<pre>grub2-mkconfig -o /boot/grub2/grub2.cfg</pre></pre></td>
 <td>SLES-12-010430</td>
 <td>grub2_password</td>
 </tr>
@@ -1187,8 +1189,7 @@ root account and password.
 Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
-
-<pre>grub2-mkconfig -o /boot/efi/EFI/sles/grub.cfg</pre></pre></td>
+<pre>grub2-mkconfig -o /boot/grub2/grub2.cfg</pre></pre></td>
 <td>SLES-12-010440</td>
 <td>grub2_uefi_password</td>
 </tr>
@@ -1433,6 +1434,7 @@ to prevent automatic loading of the USB storage driver.
 To configure the system to prevent the <code>usb-storage</code>
 kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
 <pre>install usb-storage /bin/true</pre>
+
 This will prevent the <code>modprobe</code> program from loading the <code>usb-storage</code>
 module, but will not prevent an administrator (or another program) from using the
 <code>insmod</code> program to load the module manually.</pre></td>
@@ -1683,6 +1685,7 @@ memcache_timeout = <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xc
 authentication information may be questionable.</pre></td>
 <td><pre></pre></td>
 <td><pre>SSSD should be configured to expire offline credentials after 1 day.
+
 To configure SSSD to expire offline credentials, set
 <code>offline_credentials_expiration</code> to <code>1</code> under the <code>[pam]</code>
 section in <code>/etc/sssd/sssd.conf</code>. For example:
@@ -1890,7 +1893,7 @@ compromise the system at the root and network level.</pre></td>
 <td><pre></pre></td>
 <td><pre>Set the mode on files being executed by the user initialization files with the
 following command:
-<pre>$ sudo chmod 0755 <i>FILE</i></pre></pre></td>
+<pre>$ sudo chmod o-w <i>FILE</i></pre></pre></td>
 <td>SLES-12-010780</td>
 <td>accounts_user_dot_no_world_writable_programs</td>
 </tr>
@@ -2335,9 +2338,11 @@ of initiating changes, including upgrades and modifications.</pre></td>
 /usr/local/bin
 /usr/local/sbin
 </pre>
-All files in these directories should be owned by the <code>root</code> group.
+All files in these directories should be owned by the <code>root</code> group,
+or a system account.
 If the directory, or any file in these directories, is found to be owned
-by a group other than root correct its ownership with the following command:
+by a group other than root or a a system account correct its ownership
+with the following command:
 <pre>$ sudo chgrp root <i>FILE</i></pre></pre></td>
 <td>SLES-12-010882</td>
 <td>file_groupownership_system_commands_dirs</td>
@@ -2464,7 +2469,7 @@ The <code>auditd</code> service can be enabled with the following command:
 <td>The SUSE operating system must allocate audit record storage capacity to store at least one weeks worth of audit records when audit records are not immediately sent to a central audit record storage facility.</td>
 <td>SRG-OS-ID</td>
 <td><pre>Information stored in one location is vulnerable to accidental or incidental
-deletion or alteration.Off-loading is a common process in information
+deletion or alteration. Off-loading is a common process in information
 systems with limited audit storage capacity.</pre></td>
 <td><pre></pre></td>
 <td><pre>The SUSE Linux Enterprise 12 operating system must allocate audit record storage
@@ -2480,13 +2485,13 @@ records will be sufficient.
 Determine which partition the audit records are being written to with the
 following command:
 
-<pre># grep log_file /etc/audit/auditd.conf
+<pre>$ sudo grep log_file /etc/audit/auditd.conf
 log_file = /var/log/audit/audit.log</pre>
 
 Check the size of the partition that audit records are written to with the
 following command:
 
-<pre># df -h /var/log/audit/
+<pre>$ sudo df -h /var/log/audit/
 /dev/sda2 24G 10.4G 13.6G 43% /var/log/audit</pre></pre></td>
 <td>SLES-12-020020</td>
 <td>auditd_audispd_configure_sufficiently_large_partition</td>
@@ -2596,7 +2601,7 @@ audit storage capacity.</pre></td>
 <td><pre>Configure the operating system to encrypt the transfer of off-loaded audit
 records onto a different system or media from the system being audited.
 
-Uncomment the <code>enable_krb5</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>,
+Uncomment the <code>enable_krb5</code> option in <pre>/etc/audit/audisp-remote.conf</pre>,
 and set it with the following line:
 <pre>enable_krb5 = yes</pre></pre></td>
 <td>SLES-12-020080</td>
@@ -2615,7 +2620,7 @@ with limited audit storage capacity.</pre></td>
 <td><pre>Configure the audispd plugin to off-load audit records onto a different
 system or media from the system being audited.
 
-Set the <code>remote_server</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>
+Set the <code>remote_server</code> option in <pre>/etc/audit/audisp-remote.conf</pre>
 with an IP address or hostname of the system that the audispd plugin should
 send audit records to. For example
 <pre>remote_server = <i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_audispd_remote_server"></xccdf-1.1:sub></i></pre></pre></td>
@@ -2632,7 +2637,7 @@ send audit records to. For example
 remote system will minimize the possibility of losing audit records.</pre></td>
 <td><pre></pre></td>
 <td><pre>Configure the action the operating system takes if there is an error sending
-audit records to a remote system. Edit the file <code>/etc/audisp/audisp-remote.conf</code>.
+audit records to a remote system. Edit the file <code>/etc/audit/audisp-remote.conf</code>.
 Add or modify the following line, substituting <i>ACTION</i> appropriately:
 <pre>network_failure_action = <i>ACTION</i></pre>
 Set this value to <code>single</code> to cause the system to switch to single user
@@ -2654,7 +2659,7 @@ This profile configures the <i>action</i> to be <code><xccdf-1.1:sub xmlns:xccdf
 minimize the possibility of losing audit records.</pre></td>
 <td><pre></pre></td>
 <td><pre>Configure the action the operating system takes if the disk the audit records
-are written to becomes full. Edit the file <code>/etc/audisp/audisp-remote.conf</code>.
+are written to becomes full. Edit the file <code>/etc/audit/audisp-remote.conf</code>.
 Add or modify the following line, substituting <i>ACTION</i> appropriately:
 <pre>disk_full_action = <i>ACTION</i></pre>
 Set this value to <code>single</code> to cause the system to switch to single user
@@ -2872,7 +2877,14 @@ of privileged functions is one way to detect such misuse and identify the
 risk from insider threats and the advanced persistent threat.</pre></td>
 <td><pre></pre></td>
 <td><pre>Verify the system generates an audit record when privileged functions are executed.
-<pre># grep -iw execve <code>/etc/audit/audit.rules</code></pre>
+
+If audit is using the "auditctl" tool to load the rules, run the following command:
+
+<pre>$ sudo grep execve /etc/audit/audit.rules</pre>
+
+If audit is using the "augenrules" tool to load the rules, run the following command:
+
+<pre>$ sudo grep -r execve /etc/audit/rules.d</pre>
 
 
 <pre>-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k setuid</pre>
@@ -4482,9 +4494,8 @@ may be compromised.</pre></td>
 <td><pre>If an unauthorized user obtains the private SSH host key file, the host could be
 impersonated.</pre></td>
 <td><pre></pre></td>
-<td><pre>
-To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
-<pre>$ sudo chmod 0600 /etc/ssh/*_key</pre></pre></td>
+<td><pre>SSH server private keys - files that match the <code>/etc/ssh/*_key</code> glob, have to have restricted permissions.
+If those files are owned by the <code>root</code> user and the <code>root</code> group, they have to have the <code>0600</code> permission or stricter.</pre></td>
 <td>SLES-12-030220</td>
 <td>file_permissions_sshd_private_key</td>
 </tr>
