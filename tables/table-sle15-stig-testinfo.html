@@ -6,7 +6,7 @@
 <body>
 <br><br><div style="text-align: center; font-size: x-large; font-weight:bold">DISA STIG for SUSE Linux Enterprise 15</div>
 <div style="text-align: center; font-size: normal ">This profile contains configuration checks that align to the
-DISA STIG for SUSE Linux Enterprise 15 V2R4.</div>
+DISA STIG for SUSE Linux Enterprise 15 V2R5.</div>
 <br><br><style type="text/css">
 		table
 		{
@@ -292,8 +292,6 @@ edit the file <code>/etc/login.defs</code>
 and add or correct the following line:
 <pre>PASS_MAX_DAYS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></xccdf-1.2:sub>
               </pre>
-A value of 180 days is sufficient for many environments.
-The DoD requirement is 60.
 The profile requirement is <code>
                 <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></xccdf-1.2:sub>
               </code>.</td>
@@ -508,8 +506,9 @@ the window of opportunity for unauthorized personnel to take control of a
 management session enabled on the console or console port that has been
 left unattended.</td>
 <td>Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of <code>0</code> (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The <code>TMOUT</code>
 
 setting in <code>/etc/profile.d/autologout.sh</code> should read as follows:
@@ -527,7 +526,7 @@ TMOUT=
 
 readonly TMOUT
 export TMOUT
-      Is it the case that value of TMOUT is not less than or equal to expected setting?
+      Is it the case that the TMOUT value is not configured, is set to 0, or is not less than or equal to the expected setting?
       </pre></td>
 <td></td>
 <td></td>
@@ -667,7 +666,7 @@ The output should not return any interactive users.
 <td>Virus scanning software can be used to detect if a system has been compromised by
 computer viruses, as well as to limit their spread to other systems.</td>
 <td>Install McAfee Endpoint Security for Linux antivirus software
-which is provided for DoD systems and uses signatures to search for the
+which is provided for systems and uses signatures to search for the
 presence of viruses on the filesystem.</td>
 <td><pre>To verify that McAfee Endpoint Security for Linux is
 running, run the following command:
@@ -1516,6 +1515,46 @@ $ grep task,never /etc/audit/{rules.d,.}/audit.rules
 There must not be any output, or else these lines must be removed from
 the matching files.
       Is it the case that syscall auditing is still disabled?
+      </pre></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_etc_cron_d</td>
+<td>medium</td>
+<td>Ensure auditd Collects Changes to Cron Jobs - /etc/cron.d/</td>
+<td>The actions taken by system administrators should be audited to keep a record
+of what was executed on the system, as well as, for accountability purposes.
+Editing the sudoers file may be sign of an attacker trying to
+establish persistent methods to a system, auditing the editing of the sudoers
+files mitigates this risk.</td>
+<td>At a minimum, the audit system should collect administrator actions
+for all users and root.
+
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /etc/cron.d/ -p wa -k cronjobs</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code>:
+
+<pre>-w /etc/cron.d/ -p wa -k cronjobs</pre>
+        </td>
+<td><pre>
+Verify SUSE Linux Enterprise 15 generates audit records for all events that affect "/etc/cron.d/" with the following command:
+
+$ sudo auditctl -l | grep /etc/cron.d/
+
+-w /etc/cron.d/ -p wa -k cronjobs
+      Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
 <td></td>
 <td></td>
@@ -3670,6 +3709,42 @@ $ sudo auditctl -l | grep /etc/shadow
 <td></td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_audit_rules_var_spool_cron</td>
+<td>medium</td>
+<td>Ensure auditd Collects Changes to Cron Jobs - /var/spool/cron</td>
+<td>In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</td>
+<td>
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre>
+        </td>
+<td><pre>
+Verify SUSE Linux Enterprise 15 generates audit records for all events that affect "/var/spool/cron" with the following command:
+
+$ sudo auditctl -l | grep /var/spool/cron
+
+-w /var/spool/cron -p wa -k cronjobs
+      Is it the case that command does not return a line, or the line is commented out?
+      </pre></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_auditd_audispd_configure_sufficiently_large_partition</td>
 <td>medium</td>
 <td>Configure a Sufficiently Large Partition for Audit Logs</td>
@@ -4079,8 +4154,8 @@ command:
 password requisite pam_cracklib.so dcredit=
 The dcredit parameter (as a negative number) will indicate how
 many digits are required.
-The DoD requires at least one digit in a password.
-This would appear as dcredit=-1.
+The profile requires at least  digit in a password.
+This would appear as dcredit=-.
       Is it the case that dcredit is not found or not set to the required value?
       </pre></td>
 <td></td>
@@ -4110,8 +4185,8 @@ following command:
 # grep pam_cracklib.so /etc/pam.d/common-password
 password requisite pam_cracklib.so difok=
 The difok parameter will indicate how many characters must differ.
-The DoD requires at least eight characters differ during a password change.
-This would appear as difok=8.
+The profile requires at least  characters differ during a password change.
+This would appear as difok=.
       Is it the case that difok is not found or not set to the required value?
       </pre></td>
 <td></td>
@@ -4142,8 +4217,8 @@ If the command does not return anything, the returned line is commented
 out, or has a second column value different from "requisite", or does not
 contain lcredit=, this is a finding.
 
-The DoD and FISMA require at least one lowercase character in a password.
-This would appear as lcredit=-1.
+The profile requires at least  lowercase character in a password.
+This would appear as lcredit=-.
       Is it the case that lcredit is not found or not set to the required value?
       </pre></td>
 <td></td>
@@ -4193,8 +4268,8 @@ following command:
 password requisite pam_cracklib.so ocredit=
 The ocredit parameter (as a negative number) will indicate how
 many special characters are required.
-The DoD and FISMA require at least one special character in a password.
-This would appear as ocredit=-1.
+The profile requires at least  special character in a password.
+This would appear as ocredit=-.
       Is it the case that ocredit is not found or not set to the required value?
       </pre></td>
 <td></td>
@@ -4245,8 +4320,8 @@ grep pam_cracklib.so /etc/pam.d/common-password
 password requisite pam_cracklib.so ucredit=
 The ucredit parameter (as a negative number) will indicate how
 many uppercase characters are required.
-The DoD and FISMA require at least one uppercase character in a password.
-This would appear as ucredit=-1.
+The profile require at least  uppercase character in a password.
+This would appear as ucredit=-.
       Is it the case that ucredit is not found or not set to the required value?
       </pre></td>
 <td></td>
@@ -5443,7 +5518,7 @@ root account and password.
 Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
-<pre>grub2-mkconfig -o /boot/grub2/grub2.cfg</pre>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
           </td>
 <td><pre>First, check whether the password is defined in either /boot/grub2/user.cfg or
 /boot/grub2/grub.cfg.
@@ -5491,7 +5566,7 @@ root account and password.
 Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
-<pre>grub2-mkconfig -o /boot/grub2/grub2.cfg</pre>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
           </td>
 <td><pre>To verify the boot loader superuser password has been set, run the following command:
 $ sudo grep "^[\s]*GRUB2_PASSWORD=grub\.pbkdf2\.sha512.*$" /boot/grub2/user.cfg
@@ -5595,9 +5670,8 @@ authentication device.
                 <br>
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</td>
 <td>Configure the operating system to implement multifactor authentication by
 installing the required package with the following command:
 
@@ -6061,7 +6135,7 @@ $ sudo zypper install aide</pre>
 
 Remote access services, such as those providing remote access to network devices and information systems, which lack automated control capabilities, increase risk and make remote user access management difficult at best.
 
-Remote access is access to DoD nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
+Remote access is access to nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
 
 SUSE Linux Enterprise 15 functionality (e.g., SSH) must be capable of taking enforcement action if the audit reveals unauthorized activity.
 Automated control of remote access sessions allows organizations to ensure ongoing compliance with remote access policies by enforcing connection rules of remote access applications on a variety of information system components (e.g., servers, workstations, notebook computers, smartphones, and tablets)."</td>
@@ -6435,15 +6509,15 @@ by default:
 /usr/lib64
 </pre>
 All system-wide shared library files should be protected from unauthorised
-access. If any of these files is not group-owned by root, correct its group-owner with
-the following command:
+access. If any of these files is not group-owned by root,
+correct its group-owner with the following command:
 <pre>$ sudo chgrp root <i>FILE</i>
               </pre>
             </td>
-<td><pre>Verify the system-wide shared library files are group-owned by "root" with the following command:
+<td><pre>Verify the system-wide shared library files are group-owned by root with the following command:
 
 $ sudo find -L /lib /lib64 /usr/lib /usr/lib64 ! -group root -exec ls -l {} \;
-      Is it the case that any system wide shared library file is returned and is not group-owned by a required system account?
+      Is it the case that any system wide shared library file is returned and is not group-owned by root?
       </pre></td>
 <td></td>
 <td></td>
@@ -6750,7 +6824,7 @@ Verify that the shadow password suite configuration is set to encrypt password w
 
 Check the hashing algorithm that is being used to hash passwords with the following command:
 
-$ sudo grep -i ENCRYPT_METHOD /etc/login.defs
+$ sudo grep -i ENCRYPT_METHOD  /etc/login.defs
 
 ENCRYPT_METHOD 
       Is it the case that ENCRYPT_METHOD is not set to &lt;sub idref="var_password_hashing_algorithm" /&gt;?
@@ -6845,9 +6919,8 @@ authentication device.
                 <br>
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</td>
 <td>Configure the operating system to do certificate status checking for PKI
 authentication. Modify all of the <code>cert_policy</code> lines in
 <code>/etc/pam_pkcs11/pam_pkcs11.conf</code> to include <code>ca</code> like so:
@@ -6878,9 +6951,8 @@ authentication device.
                 <br>
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</td>
 <td>Configure the operating system to do certificate status checking for PKI
 authentication. Modify all of the <code>cert_policy</code> lines in
 <code>/etc/pam_pkcs11/pam_pkcs11.conf</code> to include <code>ocsp_on</code> like so:
@@ -6914,9 +6986,8 @@ authentication device.
 
 Multifactor solutions that require devices separate from information
 systems gaining access include, for example, hardware tokens providing
-time-based or challenge-response authenticators and smart cards such as the
-U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</td>
+time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</td>
 <td>This requirement only applies to components where this is specific to the
 function of the device or has the concept of an organizational user (e.g.,
 VPN, proxy capability). This does not apply to authentication for the
@@ -6942,7 +7013,7 @@ the documentation at:
                   </li>
                 </ul>
               </td>
-<td><pre>Remote access is access to DoD nonpublic information systems by an
+<td><pre>Remote access is access to nonpublic information systems by an
 authorized user (or an information system) communicating through an
 external, non-organization-controlled network. Remote access methods
 include, for example, dial-up, broadband, and wireless.
@@ -7355,7 +7426,7 @@ aes256-ctr,aes192-ctr,aes128-ctr
 <td>xccdf_org.ssgproject.content_rule_sshd_use_approved_kex_ordered_stig</td>
 <td>medium</td>
 <td>Use Only FIPS 140-2 Validated Key Exchange Algorithms</td>
-<td>DoD information systems are required to use FIPS-approved key exchange algorithms.
+<td>FIPS-approved key exchange algorithms are required to be used.
 The system will attempt to use the first algorithm presented by the client that matches
 the server list. Listing the values "strongest to weakest" is a method to ensure the use
 of the strongest algorithm available to secure the SSH connection.</td>
@@ -7380,8 +7451,8 @@ KexAlgorithms ecdh-sha2-nistp256,ecdh-sha2-nistp384,ecdh-sha2-nistp521,diffie-he
 <td>xccdf_org.ssgproject.content_rule_sshd_use_approved_macs_ordered_stig</td>
 <td>medium</td>
 <td>Use Only FIPS 140-2 Validated MACs</td>
-<td>DoD Information Systems are required to use FIPS-approved cryptographic hash
-functions. The only SSHv2 hash algorithms meeting this requirement is SHA2.</td>
+<td>FIPS-approved cryptographic hash functions are required to be used.
+The only SSHv2 hash algorithms meeting this requirement is SHA2.</td>
 <td>Limit the MACs to those hash algorithms which are FIPS-approved.
 The following line in <code>/etc/ssh/sshd_config</code>
 demonstrates use of FIPS-approved MACs:

@@ -48,9 +48,9 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>211</td>
+			<td>210</td>
 			<td>0</td>
-			<td>211</td>
+			<td>210</td>
 			<td>100.00%</td>
 			<td>
 				
@@ -708,6 +708,7 @@ Every persistent disk partition present must be of type "crypto_LUKS". If any pa
      cr_swap UUID=f2d86128-f975-478d-a5b0-25806c900eac
 
 Every persistent disk partition present on the system must have an entry in the /etc/crypttab file. 
+
 If any partitions other than pseudo file systems (such as /proc or /sys) are not listed or "/etc/crypttab" does not exist, this is a finding.
 
 Verify the system works in FIPS mode with the following command:
@@ -732,7 +733,7 @@ GRUB_CMDLINE_LINUX_DEFAULT="splash=silent swapaccount=1 apparmor=0 mitigations=a
 
      >sudo reboot:</pre></td>
 	<td>SLEM-05-231040</td>
-	<td>SV-261284r996333_rule</td>
+	<td>SV-261284r996864_rule</td>
 </tr>
 
 <tr>
@@ -878,19 +879,21 @@ If any of the aforementioned directories are found to be group-writable or world
 	<td><pre>If SLEM 5 were to allow any user to make changes to software libraries, then those changes might be implemented without undergoing the appropriate testing and approvals that are part of a robust change management process.
 
 This requirement applies to SLEM 5 with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs which execute with escalated privileges. Only qualified and authorized individuals must be allowed to obtain access to information system components for purposes of initiating changes, including upgrades and modifications.</pre></td>
-	<td><pre>Verify the system-wide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" have mode "755" or less permissive with the following command:
+	<td><pre>Verify the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" have mode 0755 or less permissive.
 
-     > sudo find /lib /lib64 /usr/lib /usr/lib64 -perm /022 -type f -exec stat -c "%n %a" '{}' \;
+Check that the systemwide shared library files have mode 0755 or less permissive with the following command:
 
-If any files are found to be group-writable or world-writable, this is a finding.</pre></td>
-	<td><pre>Configure the library files to be protected from unauthorized access. Run the following command:
+     > sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' -perm /022 -exec stat -c "%n %a" {} +
+
+If any output is returned, this is a finding.</pre></td>
+	<td><pre>Configure the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" have mode 0755 or less permissive with the following command.
 
      > sudo transactional-update shell
-     > sudo find /lib /lib64 /usr/lib /usr/lib64 -perm /022 -type f -exec chmod 755 '{}' \;
+     > sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' -perm /022 -exec chmod go-w {} +
      > exit
      > sudo reboot</pre></td>
 	<td>SLEM-05-232025</td>
-	<td>SV-261290r996350_rule</td>
+	<td>SV-261290r1102096_rule</td>
 </tr>
 
 <tr>
@@ -1011,19 +1014,18 @@ If any file has a mode more permissive than "640", this is a finding.</pre></td>
 	<td><pre>If SLEM 5 were to allow any user to make changes to software libraries, then those changes might be implemented without undergoing the appropriate testing and approvals that are part of a robust change management process.
 
 This requirement applies to SLEM 5 with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs which execute with escalated privileges. Only qualified and authorized individuals must be allowed to obtain access to information system components for purposes of initiating changes, including upgrades and modifications.</pre></td>
-	<td><pre>Verify the system-wide shared library files contained in the directories "/lib", "/lib64", "/usr/lib" and "/usr/lib64" are owned by root with the following command:
+	<td><pre>Verify the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" are owned by root with the following command:
 
-     > sudo find /lib /lib64 /usr/lib /usr/lib64 ! -user root -type f -exec stat -c "%n %U" '{}' \;
+     > sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -user root -exec stat -c "%n %U" {} +
 
-If any system wide library file is returned, this is a finding.</pre></td>
-	<td><pre>Configure the library files to be protected from unauthorized access. Run the following command:
-
+If any output is returned, this is a finding.</pre></td>
+	<td><pre>Configure the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" are owned by root with the following command:
      > sudo transactional-update shell
-     > sudo find /lib /lib64 /usr/lib /usr/lib64 ! -user root -type f -exec chown root '{}' \;
+     > sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -user root -exec chown root {} +
      > exit
      > sudo reboot</pre></td>
 	<td>SLEM-05-232050</td>
-	<td>SV-261295r996362_rule</td>
+	<td>SV-261295r1102099_rule</td>
 </tr>
 
 <tr>
@@ -1035,19 +1037,19 @@ If any system wide library file is returned, this is a finding.</pre></td>
 	<td><pre>If SLEM 5 were to allow any user to make changes to software libraries, then those changes might be implemented without undergoing the appropriate testing and approvals that are part of a robust change management process.
 
 This requirement applies to SLEM 5 with software libraries that are accessible and configurable, as in the case of interpreted languages. Software libraries also include privileged programs which execute with escalated privileges. Only qualified and authorized individuals must be allowed to obtain access to information system components for purposes of initiating changes, including upgrades and modifications.</pre></td>
-	<td><pre>Verify the system-wide shared library files contained in the directories "/lib", "/lib64", "/usr/lib" and "/usr/lib64" are group-owned by root with the following command:
+	<td><pre>Verify the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" are group owned by root with the following command:
 
-     > sudo find /lib /lib64 /usr/lib /usr/lib64 ! -group root -type f -exec stat -c "%n %G" '{}' \;
+     > sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -group root -exec stat -c "%n %G" {} +
 
-If any system wide library file is returned, this is a finding.</pre></td>
-	<td><pre>Configure the library files to be protected from unauthorized access. Run the following command:
+If any output is returned, this is a finding.</pre></td>
+	<td><pre>Configure the systemwide shared library files contained in the directories "/lib", "/lib64", "/usr/lib", and "/usr/lib64" are group owned by root with the following command:
 
      > sudo transactional-update shell
-     > sudo find /lib /lib64 /usr/lib /usr/lib64 ! -group root -type f -exec chgrp root '{}' \;
+     > sudo find /lib /lib64 /usr/lib /usr/lib64 -type f -name '*.so*' ! -group root -exec chown :root {} +
      > exit
      > sudo reboot</pre></td>
 	<td>SLEM-05-232055</td>
-	<td>SV-261296r996365_rule</td>
+	<td>SV-261296r1102102_rule</td>
 </tr>
 
 <tr>
@@ -1448,7 +1450,7 @@ To configure the system clock to synchronize to an authoritative DOD time source
 
 server <time_source> maxpoll 16</pre></td>
 	<td>SLEM-05-252010</td>
-	<td>SV-261311r996404_rule</td>
+	<td>SV-261311r1038944_rule</td>
 </tr>
 
 <tr>
@@ -2892,47 +2894,6 @@ auth required pam_faildelay.so delay=5000000</pre></td>
 </tr>
 
 <tr>
-	<td>V-261366</td>
-	<td>CCI-000044</td>
-	<td>medium</td>
-	<td>SLEM 5 must use the default pam_tally2 tally directory.</td>
-	<td>SRG-OS-000021-GPOS-00005</td>
-	<td><pre>By limiting the number of failed logon attempts, the risk of unauthorized system access via user password guessing, otherwise known as brute-force attacks, is reduced. Limits are imposed by locking the account.
-
-SELinux, enforcing a targeted policy, will be required to match the default directory's security context type.</pre></td>
-	<td><pre>Verify the location of the default tallylog file for the pam_tally2 module with the following command:
-
-Note: If the system does not have SELinux enabled and enforcing a targeted policy, or if the pam_tally2 module is not configured for use, this requirement is not applicable.
-
-     > sudo  grep -R pam_tally2 /etc/pam.d/login | grep "file=" | grep -v "^#"
-
-If the command returns any information, this is a finding.
-
-Check the security context type of the default tally2 directory with the following command:
-
-     > sudo ls -Z /var/log/tallylog
- 
-system_u:object_r:tallylog_t:s0 /var/log/tallylog
-
-If the security context type of the tally directory is not "tallylog_t", this is a finding.</pre></td>
-	<td><pre>Configure SLEM 5 to use the default pam_tally2 tally directory while SELinux enforces a targeted policy.
-
-Remove the pam_tallly nondefault tally directory if any, by removing "file=[directory-name]" configuration part from /etc/pam.d/login:
-
-     > sudo sed -ri 's/\s+file=\S+\s+/ /g' /etc/pam.d/login 
-
-Update the /etc/selinux/targeted/contexts/files/file_contexts.local with "tallylog_t" context type for the default pam_tally2 tally directory with the following command:
-
-     > sudo semanage fcontext -a -t tallylog_t "/var/log/tallylog" 
-
-Next, update the context type of the default tallylog directory/subdirectories and files with the following command: 
-
-     > sudo restorecon -R -v /var/log/tallylog</pre></td>
-	<td>SLEM-05-412030</td>
-	<td>SV-261366r996837_rule</td>
-</tr>
-
-<tr>
 	<td>V-261367</td>
 	<td>CCI-000054</td>
 	<td>low</td>
@@ -3139,7 +3100,7 @@ When SLEM 5 provides the capability to change user authenticators, change securi
 If any uncommented lines containing "!authenticate", or "NOPASSWD" are returned and active accounts on the system have valid passwords, this is a finding.</pre></td>
 	<td><pre>Configure SLEM 5 to remove any occurrence of "NOPASSWD" or "!authenticate" found in the "/etc/sudoers" file. If the system does not use passwords for authentication, the "NOPASSWD" tag may exist in the file.</pre></td>
 	<td>SLEM-05-432015</td>
-	<td>SV-261373r996558_rule</td>
+	<td>SV-261373r1050789_rule</td>
 </tr>
 
 <tr>
@@ -3167,7 +3128,7 @@ Defaults timestamp_timeout=<value>
 
 Note: The "<value>" must be a number that is greater than or equal to "0".</pre></td>
 	<td>SLEM-05-432020</td>
-	<td>SV-261374r996560_rule</td>
+	<td>SV-261374r1050789_rule</td>
 </tr>
 
 <tr>
@@ -3495,7 +3456,7 @@ If any results are returned that are not associated with a system account, this 
 
      > sudo passwd -x 60 <username></pre></td>
 	<td>SLEM-05-611070</td>
-	<td>SV-261389r996593_rule</td>
+	<td>SV-261389r1038967_rule</td>
 </tr>
 
 <tr>
@@ -3650,7 +3611,7 @@ PASS_MAX_DAYS <days>
 
 The DOD requirement is 60 days or less (but greater than zero, as zero days will lock the account immediately).</pre></td>
 	<td>SLEM-05-611100</td>
-	<td>SV-261395r996607_rule</td>
+	<td>SV-261395r1038967_rule</td>
 </tr>
 
 <tr>
@@ -4308,7 +4269,7 @@ disk_full_action = HALT
 
 Note: If system availability has been determined to be more important, and this decision is documented with the information system security officer (ISSO), configure SLEM 5 to notify system administration staff and ISSO staff in the event of an audit processing failure by setting the "disk_full_action" to "SYSLOG" or "SINGLE".</pre></td>
 	<td>SLEM-05-653035</td>
-	<td>SV-261415r996657_rule</td>
+	<td>SV-261415r1038966_rule</td>
 </tr>
 
 <tr>
@@ -6148,7 +6109,7 @@ or issue the following command:
 	<td>SRG-OS-000062-GPOS-00031</td>
 	<td><pre>Reconstruction of harmful events or forensic analysis is not possible if audit records do not contain enough information.
 
-At a minimum, the organization must audit the full-text recording of privileged commands. The organization must maintain audit trails in sufficient detail to reconstruct events to determine the cause and impact of compromise. The "setsebool" command sets the current state of a particular SELinux boolean or a list of booleans to a given value.
+At a minimum, the organization must audit the full-text recording of privileged commands. The organization must maintain audit trails in sufficient detail to reconstruct events to determine the cause and impact of compromise. The "setsebool" command sets the current state of a particular SELinux Boolean or a list of Booleans to a given value.
 
 When a user logs on, the AUID is set to the UID of the account that is being authenticated. Daemons are not user sessions and have the loginuid set to "-1". The AUID representation is an unsigned 32-bit integer, which equals "4294967295". The audit system interprets "-1", "4294967295", and "unset" in the same way.</pre></td>
 	<td><pre>Verify SLEM 5 generates an audit record for all uses of the "setsebool" command with the following command:
@@ -6173,7 +6134,7 @@ or issue the following command:
 
      > sudo augenrules --load</pre></td>
 	<td>SLEM-05-654225</td>
-	<td>SV-261468r996811_rule</td>
+	<td>SV-261468r997405_rule</td>
 </tr>
 
 <tr>
@@ -6291,7 +6252,7 @@ or issue the following command:
 
 If any results are returned, this is a finding.
 
-Verify the default rule "-a task,never" is not statically defined :
+Verify the default rule "-a task,never" is not statically defined:
 
      > grep -rv "^#" /etc/audit/rules.d/ | grep -i "a task,never"
 
@@ -6302,7 +6263,7 @@ The audit daemon must be restarted for the changes to take effect.
 
      > sudo systemctl restart auditd.service</pre></td>
 	<td>SLEM-05-654245</td>
-	<td>SV-261472r996822_rule</td>
+	<td>SV-261472r996865_rule</td>
 </tr>
 
 <tr>

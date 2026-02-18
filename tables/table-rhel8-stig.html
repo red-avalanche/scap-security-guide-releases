@@ -48,10 +48,10 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>368</td>
-			<td>4</td>
+			<td>369</td>
+			<td>5</td>
 			<td>364</td>
-			<td>98.91%</td>
+			<td>98.64%</td>
 			<td>
 				
 					RHEL-08-010297
@@ -61,6 +61,8 @@
 					RHEL-08-020020
 				
 					RHEL-08-020022
+				
+					RHEL-08-040010
 				
 			</td>
 		</tr>
@@ -559,7 +561,7 @@ Verify that the shadow password suite configuration is set to encrypt password w
 
 Check the hashing algorithm that is being used to hash passwords with the following command:
 
-$ sudo grep -i ENCRYPT_METHOD /etc/login.defs
+$ sudo grep -i ENCRYPT_METHOD  /etc/login.defs
 
 ENCRYPT_METHOD 
       Is it the case that ENCRYPT_METHOD is not set to <sub idref="var_password_hashing_algorithm" />?
@@ -746,7 +748,7 @@ so that the superusers is honored.
 Once the superuser account has been added,
 update the
 grub.cfg file by running:
-grub-mkconfig -o /boot/grub2/grub.cfg
+grub2-mkconfig -o /boot/grub2/grub.cfg
           </pre></td>
 	<td>RHEL-08-010141</td>
 	<td>grub2_uefi_admin_username</td>
@@ -791,7 +793,7 @@ so that the superusers is honored.
 Once the superuser account has been added,
 update the
 grub.cfg file by running:
-grub-mkconfig -o /boot/grub2/grub.cfg
+grub2-mkconfig -o /boot/grub2/grub.cfg
           </pre></td>
 	<td>RHEL-08-010149</td>
 	<td>grub2_admin_username</td>
@@ -1090,7 +1092,9 @@ system boot time.  In the file /etc/selinux/config, add or correct the
 following line to configure the system to boot into enforcing mode:
 SELINUX=
           
-        </pre></td>
+Ensure that all files have correct SELinux labels by running:
+fixfiles onboot
+Then reboot the system.</pre></td>
 	<td>RHEL-08-010170</td>
 	<td>selinux_state</td>
 </tr>
@@ -1580,7 +1584,7 @@ library violate expectations, and makes system configuration more
 fragmented.</pre></td>
 	<td><pre>To verify if GnuTLS uses defined DoD-approved TLS Crypto Policy, run:
 $ sudo grep
-'+VERS-ALL:-VERS-DTLS0.9:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-VERS-DTLS1.0'
+'+VERS-ALL:-VERS-DTLS0.9:-VERS-TLS1.1:-VERS-TLS1.0:-VERS-SSL3.0:-VERS-DTLS1.0'
 /etc/crypto-policies/back-ends/gnutls.config and verify that a match exists.
       Is it the case that cryptographic policy for gnutls is not configured or is configured incorrectly?
       </pre></td>
@@ -1591,8 +1595,9 @@ set up to ignore it.
 To check that Crypto Policies settings are configured correctly, ensure that
 /etc/crypto-policies/back-ends/gnutls.config contains the following
 line and is not commented out:
-+VERS-ALL:-VERS-DTLS0.9:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-VERS-DTLS1.0
-            </pre></td>
++VERS-ALL:-VERS-DTLS0.9:-VERS-TLS1.1:-VERS-TLS1.0:-VERS-SSL3.0:-VERS-DTLS1.0
+
+These keywords are order-independent, so the line can be in any order. GnuTLS will then prefer the highest version.</pre></td>
 	<td>RHEL-08-010295</td>
 	<td>configure_gnutls_tls_crypto_policy</td>
 </tr>
@@ -1910,10 +1915,10 @@ accessible and configurable, as in the case of interpreted languages. Software l
 also include privileged programs which execute with escalated privileges. Only qualified
 and authorized individuals must be allowed to obtain access to information system components
 for purposes of initiating changes, including upgrades and modifications.</pre></td>
-	<td><pre>Verify the system-wide shared library files are group-owned by "root" with the following command:
+	<td><pre>Verify the system-wide shared library files are group-owned by root with the following command:
 
 $ sudo find -L /lib /lib64 /usr/lib /usr/lib64 ! -group root -exec ls -l {} \;
-      Is it the case that any system wide shared library file is returned and is not group-owned by a required system account?
+      Is it the case that any system wide shared library file is returned and is not group-owned by root?
       </pre></td>
 	<td><pre>System-wide library files are stored in the following directories
 by default:
@@ -1923,8 +1928,8 @@ by default:
 /usr/lib64
 
 All system-wide shared library files should be protected from unauthorised
-access. If any of these files is not group-owned by root, correct its group-owner with
-the following command:
+access. If any of these files is not group-owned by root,
+correct its group-owner with the following command:
 $ sudo chgrp root FILE
               
             </pre></td>
@@ -2068,36 +2073,25 @@ AIDE can be executed periodically through other means; this is merely one exampl
 	<td>SRG-OS-ID</td>
 	<td><pre>Changes to any software components can have significant effects on the
 overall security of the operating system. This requirement ensures the
-software has not been tampered with and that it has been provided by a
-trusted vendor.
-
-Accordingly, patches, service packs, device drivers, or operating system
-components must be signed with a certificate recognized and approved by the
-organization.
-Verifying the authenticity of the software prior to installation
-validates the integrity of the patch or upgrade received from a vendor.
-This ensures the software has not been tampered with and that it has been
-provided by a trusted vendor. Self-signed certificates are disallowed by
-this requirement. Certificates used to verify the software must be from an
-approved Certificate Authority (CA).</pre></td>
-	<td><pre>Verify that yum verifies the signature of packages from a repository prior to install with the following command:
-
-$ grep gpgcheck /etc/yum.conf
-
-gpgcheck=1
-
-If "gpgcheck" is not set to "1", or if the option is missing or commented out, ask the System Administrator how the certificates for patches and other operating system components are verified.
-      Is it the case that there is no process to validate certificates that is approved by the organization?
+software has not been tampered with and that it has been provided by
+a trusted vendor.</pre></td>
+	<td><pre>To determine whether yum has been configured to disable
+gpgcheck for any repos, inspect all files in
+ and ensure the following does not appear in any
+sections:
+gpgcheck=0
+A value of 0 indicates that gpgcheck has been disabled for that repo.
+      Is it the case that GPG checking is disabled?
       </pre></td>
-	<td><pre>The gpgcheck option controls whether
-RPM packages' signatures are always checked prior to installation.
-To configure yum to check package signatures before installing
-them, ensure the following line appears in /etc/yum.conf in
-the [main] section:
+	<td><pre>To ensure signature checking is enabled for all package repositories, the
+gpgcheck option must be enabled for all repos.
+Configure the operating system to verify the signature of packages from
+a repository prior to install by setting the following option in
+the "/etc/yum.repos.d/[your_repo_name].repo" file:
 gpgcheck=1
           </pre></td>
 	<td>RHEL-08-010370</td>
-	<td>ensure_gpgcheck_globally_activated</td>
+	<td>enable_gpgcheck_for_all_repositories</td>
 </tr>
 
 <tr>
@@ -2456,9 +2450,8 @@ authentication device.
                 
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</pre></td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</pre></td>
 	<td><pre>Check that Red Hat Enterprise Linux 8 has the packages for smart card support installed.
 
 Run the following command to determine if the openssl-pkcs11 package is installed:
@@ -2516,9 +2509,8 @@ authentication device.
                 
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</pre></td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</pre></td>
 	<td><pre>Run the following command to determine if the opensc package is installed: $ rpm -q opensc
       Is it the case that the package is not installed?
       </pre></td>
@@ -2644,40 +2636,13 @@ Run the following command to update command line for already installed kernels:#
 	<td>medium</td>
 	<td>RHEL 8 must clear memory when it is freed to prevent use-after-free attacks.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Poisoning writes an arbitrary value to freed objects, so any modification or
-reference to that object after being freed or before being initialized will be
-detected and prevented.
-This prevents many types of use-after-free vulnerabilities at little performance cost.
-Also prevents leak of data and detection of corrupted memory.</pre></td>
-	<td><pre>Inspect the form of default GRUB 2 command line for the Linux operating system
-in /etc/default/grub. If it includes slub_debug=,
-then the parameter will be configured for newly installed kernels.
-First check if the GRUB recovery is enabled:
-$ sudo grep 'GRUB_DISABLE_RECOVERY' /etc/default/grub
-If this option is set to true, then check that a line is output by the following command:
-$ sudo grep 'GRUB_CMDLINE_LINUX_DEFAULT.*slub_debug=.*' /etc/default/grub
-If the recovery is disabled, check the line with
-$ sudo grep 'GRUB_CMDLINE_LINUX.*slub_debug=.*' /etc/default/grub.Moreover, command line parameters for currently installed kernels should be checked as well.
-Run the following command:
-$ sudo grubby --info=ALL | grep args | grep -v 'slub_debug='
-The command should not return any output.
-      Is it the case that SLUB/SLAB poisoning is not enabled?
-      </pre></td>
-	<td><pre>To enable poisoning of SLUB/SLAB objects,
-add the argument slub_debug=
-               to the default
-GRUB 2 command line for the Linux operating system.
-To ensure that slub_debug=
-               is added as a kernel command line
-argument to newly installed kernels, add slub_debug=
-               to the
-default Grub2 command line for Linux operating systems. Modify the line within
-/etc/default/grub as shown below:
-GRUB_CMDLINE_LINUX="... slub_debug= ..."
-Run the following command to update command line for already installed kernels:# grubby --update-kernel=ALL --args="slub_debug="
-            </pre></td>
+	<td><pre>
+          init_on_free is a Linux kernel boot parameter that enhances security by initializing memory regions when they are freed, preventing data leakage.
+This process ensures that stale data in freed memory cannot be accessed by malicious programs.</pre></td>
+	<td><pre></pre></td>
+	<td><pre>Setting init_on_free=1 on boot guarantees that pages and heap objects are initialized right after they're freed, so it won't be possible to access stale data by using a dangling pointer.</pre></td>
 	<td>RHEL-08-010423</td>
-	<td>grub2_slub_debug_argument</td>
+	<td>grub2_init_on_free</td>
 </tr>
 
 <tr>
@@ -3696,12 +3661,14 @@ debuging. Permitting temporary enablement of core dumps during such situations
 should be reviewed through local needs and policy.</pre></td>
 	<td><pre>Verify Red Hat Enterprise Linux 8 disables storing core dumps for all users by issuing the following command:
 
-$ grep -i storage /etc/systemd/coredump.conf
+$ grep -i storage /etc/systemd/coredump.conf /etc/systemd/coredump.conf.d/*.conf
 
 Storage=none
       Is it the case that Storage is not set to none or is commented out and the need for core dumps is not documented with the Information System Security Officer (ISSO) as an operational requirement for all domains that have the "core" item assigned?
       </pre></td>
-	<td><pre>The Storage option in [Coredump] sectionof /etc/systemd/coredump.conf
+	<td><pre>The Storage option in [Coredump] section
+of /etc/systemd/coredump.conf or a drop-in file in
+/etc/systemd/coredump.conf.d/*.conf
 can be set to none to disable storing core dumps permanently.</pre></td>
 	<td>RHEL-08-010674</td>
 	<td>coredump_disable_storage</td>
@@ -3724,16 +3691,16 @@ debuging. Permitting temporary enablement of core dumps during such situations
 should be reviewed through local needs and policy.</pre></td>
 	<td><pre>Verify Red Hat Enterprise Linux 8 disables core dump backtraces by issuing the following command:
 
-$ grep -i process /etc/systemd/coredump.conf
+$ grep -i process /etc/systemd/coredump.conf /etc/systemd/coredump.conf.d/*.conf
 
 ProcessSizeMax=0
       Is it the case that the "ProcessSizeMax" item is missing, commented out, or the value is anything other than "0" and the need for core dumps is not documented with the Information System Security Officer (ISSO) as an operational requirement for all domains that have the "core" item assigned?
       </pre></td>
 	<td><pre>The ProcessSizeMax option in [Coredump] section
-of /etc/systemd/coredump.conf
-specifies the maximum size in bytes of a core which will be processed.
-Core dumps exceeding this size may be stored, but the backtrace will not
-be generated.</pre></td>
+of /etc/systemd/coredump.conf or in a drop-in file under
+/etc/systemd/coredump.conf.d/ specifies the maximum size in bytes
+of a core which will be processed. Core dumps exceeding this size may be
+stored, but the backtrace will not be generated.</pre></td>
 	<td>RHEL-08-010675</td>
 	<td>coredump_disable_backtraces</td>
 </tr>
@@ -5169,7 +5136,8 @@ Edit the /etc/security/pwquality.conf to include
 
 retry=
                 , or a lower value if site
-policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+policy is more restrictive. The profile requirement is a maximum of retry=
+                 prompts
 per session.</pre></td>
 	<td>RHEL-08-020104</td>
 	<td>accounts_password_pam_retry</td>
@@ -5477,7 +5445,7 @@ and add or correct the following line:
 PASS_MIN_DAYS 
               
 A value of 1 day is considered sufficient for many
-environments. The DoD requirement is 1.
+environments.
 The profile requirement is 
                 
               .</pre></td>
@@ -5513,8 +5481,6 @@ edit the file /etc/login.defs
 and add or correct the following line:
 PASS_MAX_DAYS 
               
-A value of 180 days is sufficient for many environments.
-The DoD requirement is 60.
 The profile requirement is 
                 
               .</pre></td>
@@ -5593,7 +5559,8 @@ must be carefully weighed against usability problems, support costs, or counterp
 behavior that may result.</pre></td>
 	<td><pre>To check the minimum password length, run the command:
 $ grep PASS_MIN_LEN /etc/login.defs
-The DoD requirement is 15.
+The profile requirement is
+.
       Is it the case that it is not set to the required value?
       </pre></td>
 	<td><pre>To specify password length requirements for new accounts, edit the file
@@ -5602,8 +5569,6 @@ PASS_MIN_LEN
               
               
               
-The DoD requirement is 15.
-The FISMA requirement is 12.
 The profile requirement is
 
                 
@@ -5649,9 +5614,8 @@ authentication device.
           
 Multi-Factor Authentication (MFA) solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</pre></td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</pre></td>
 	<td><pre>To verify that smart cards are enabled in SSSD, run the following command:
 $ sudo grep pam_cert_auth /etc/sssd/sssd.conf
 If configured properly, output should be
@@ -8862,6 +8826,44 @@ If one or more lines are missing, this is a finding.
 </tr>
 
 <tr>
+	<td>V-274877</td>
+	<td></td>
+	<td>medium</td>
+	<td>RHEL 8 must audit any script or executable called by cron as root or by any privileged user.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</pre></td>
+	<td><pre>
+Verify Red Hat Enterprise Linux 8 generates audit records for all events that affect "/var/spool/cron" with the following command:
+
+$ sudo auditctl -l | grep /var/spool/cron
+
+-w /var/spool/cron -p wa -k cronjobs
+      Is it the case that command does not return a line, or the line is commented out?
+      </pre></td>
+	<td><pre>
+
+
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix .rules in the
+directory /etc/audit/rules.d:
+
+-w /var/spool/cron -p wa -k cronjobs
+
+If the auditd daemon is configured to use the auditctl
+utility to read audit rules during daemon startup, add the following lines to
+/etc/audit/audit.rules:
+
+-w /var/spool/cron -p wa -k cronjobs
+        </pre></td>
+	<td>RHEL-08-030655</td>
+	<td>audit_rules_var_spool_cron</td>
+</tr>
+
+<tr>
 	<td>V-230476</td>
 	<td></td>
 	<td>medium</td>
@@ -9397,22 +9399,11 @@ Run the following command to update command line for already installed kernels:#
 	<td>high</td>
 	<td>RHEL 8 must not have the rsh-server package installed.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>The rsh-server service provides unencrypted remote access service which does not
-provide for the confidentiality and integrity of user passwords or the remote session and has very weak
-authentication. If a privileged user were to login using this service, the privileged user password
-could be compromised. The rsh-server package provides several obsolete and insecure
-network services. Removing it decreases the risk of those services' accidental (or intentional)
-activation.</pre></td>
-	<td><pre>Run the following command to determine if the rsh-server package is installed:
-$ rpm -q rsh-server
-      Is it the case that the package is installed?
-      </pre></td>
-	<td><pre>The rsh-server package can be removed with the following command:
-
-$ sudo yum erase rsh-server
-          </pre></td>
+	<td><pre></pre></td>
+	<td><pre></pre></td>
+	<td><pre></pre></td>
 	<td>RHEL-08-040010</td>
-	<td>package_rsh-server_removed</td>
+	<td>Missing Rule</td>
 </tr>
 
 <tr>
@@ -9830,7 +9821,7 @@ DefaultZone=drop
 
 Remote access services, such as those providing remote access to network devices and information systems, which lack automated control capabilities, increase risk and make remote user access management difficult at best.
 
-Remote access is access to DoD nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
+Remote access is access to nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
 
 Red Hat Enterprise Linux 8 functionality (e.g., SSH) must be capable of taking enforcement action if the audit reveals unauthorized activity.
 Automated control of remote access sessions allows organizations to ensure ongoing compliance with remote access policies by enforcing connection rules of remote access applications on a variety of information system components (e.g., servers, workstations, notebook computers, smartphones, and tablets)."</pre></td>
@@ -11314,6 +11305,7 @@ The output of the command should indicate either:
 net.ipv4.conf.all.rp_filter = 1
 or:
 net.ipv4.conf.all.rp_filter = 2
+
 The output of the command should not indicate:
 net.ipv4.conf.all.rp_filter = 0
 
@@ -11328,6 +11320,7 @@ The command should not find any assignments other than:
 net.ipv4.conf.all.rp_filter = 1
 or:
 net.ipv4.conf.all.rp_filter = 2
+
 
 Conflicting assignments are not allowed.
       Is it the case that the net.ipv4.conf.all.rp_filter is not set to 1 or 2 or is configured to be 0?
@@ -11612,7 +11605,7 @@ X11UseLocalhost yes
 	<td>medium</td>
 	<td>RHEL 8 SSH server must be configured to use only FIPS-validated key exchange algorithms.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>DoD information systems are required to use FIPS-approved key exchange algorithms.
+	<td><pre>FIPS-approved key exchange algorithms are required to be used.
 The system will attempt to use the first algorithm presented by the client that matches
 the server list. Listing the values "strongest to weakest" is a method to ensure the use
 of the strongest algorithm available to secure the SSH connection.</pre></td>

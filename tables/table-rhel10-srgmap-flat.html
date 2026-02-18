@@ -1715,8 +1715,9 @@ After the settings have been set, run <tt>dconf update</tt>.</td>
 
 The session lock is implemented at the point where session activity can be determined and/or controlled.</td>
     <td>Setting the <tt>TMOUT</tt> option in <tt>/etc/profile</tt> ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of <tt>0</tt> (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The <tt>TMOUT</tt>
 
 setting in a file loaded by <tt>/etc/profile</tt>, e.g.
@@ -1733,11 +1734,12 @@ on the system:
 <pre>$ sudo grep TMOUT /etc/profile /etc/profile.d/*.sh</pre>
 
 The output should return the following:
-<pre>TMOUT=<sub idref="var_accounts_tmout" /></pre> Is it the case that value of TMOUT is not less than or equal to expected setting?</td>
+<pre>TMOUT=<sub idref="var_accounts_tmout" /></pre> Is it the case that the TMOUT value is not configured, is set to 0, or is not less than or equal to the expected setting?</td>
     <td>Configure the operating system to initiate a session lock after a 15-minute period of inactivity for all connection types.</td>
     <td>Setting the <tt>TMOUT</tt> option in <tt>/etc/profile</tt> ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of <tt>0</tt> (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The <tt>TMOUT</tt>
 
 setting in a file loaded by <tt>/etc/profile</tt>, e.g.
@@ -21981,7 +21983,7 @@ Password complexity is one factor of several that determines how long it takes t
     <td>To configure the number of retry prompts that are permitted per-session:
 Edit the <tt>/etc/security/pwquality.conf</tt> to include
 <tt>retry=<sub idref="var_password_pam_retry" /></tt>, or a lower value if site
-policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+policy is more restrictive. The profile requirement is a maximum of <tt>retry=<sub idref="var_password_pam_retry" /></tt> prompts
 per session.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system enforces password complexity by requiring that at least one uppercase character be used. If it does not, this is a finding.</td>
@@ -21993,7 +21995,7 @@ Check for the use of the "pwquality" retry option in the pwquality.conf file wit
     <td>To configure the number of retry prompts that are permitted per-session:
 Edit the <tt>/etc/security/pwquality.conf</tt> to include
 <tt>retry=<sub idref="var_password_pam_retry" /></tt>, or a lower value if site
-policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+policy is more restrictive. The profile requirement is a maximum of <tt>retry=<sub idref="var_password_pam_retry" /></tt> prompts
 per session.</td>
     <td>medium</td>
     <td></td>
@@ -22572,7 +22574,7 @@ Verify that the shadow password suite configuration is set to encrypt password w
 
 Check the hashing algorithm that is being used to hash passwords with the following command:
 
-$ sudo grep -i ENCRYPT_METHOD /etc/login.defs
+$ sudo grep -i ENCRYPT_METHOD  /etc/login.defs
 
 ENCRYPT_METHOD <sub idref="var_password_hashing_algorithm" /> Is it the case that ENCRYPT_METHOD is not set to <sub idref="var_password_hashing_algorithm" />?</td>
     <td>Configure the operating system to store only encrypted representations of passwords.</td>
@@ -22720,39 +22722,6 @@ If either is set, they must have the minimum value of <sub idref="var_password_h
     <td></td>
   </tr>
 
-  <tr>
-    <td>CCI-004062</td>
-    <td>SRG-OS-000073-GPOS-00041</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must store only encrypted representations of passwords.</td>
-
-    <td>CCE-86594-9: Set yescrypt Cost Factor in /etc/login.defs</td>
-
-    <td>Passwords need to be protected at all times, and encryption is the standard method for protecting passwords. If passwords are not encrypted, they can be plainly read (i.e., clear text) and easily compromised.</td>
-    <td>In <tt>/etc/login.defs</tt>, ensure <tt>YESCRYPT_COST_FACTOR</tt> has the minimum value of <tt><sub idref="var_password_yescrypt_cost_factor_login_defs" /></tt>.
-For example:
-<pre>YESCRYPT_COST_FACTOR <sub idref="var_password_yescrypt_cost_factor_login_defs" />
-YESCRYPT_COST_FACTOR <sub idref="var_password_yescrypt_cost_factor_login_defs" /></pre>
-Notice that if is not set, it already has the default value of 5.
-If it is set, it must have the minimum value of <sub idref="var_password_yescrypt_cost_factor_login_defs" />.</td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system stores only encrypted representations of passwords. If it does not, this is a finding.</td>
-    <td>Inspect <tt>/etc/login.defs</tt> and ensure that if
-<tt>YESCRYPT_COST_FACTOR</tt>
-is set, it must have the minimum value of <tt><sub idref="var_password_yescrypt_cost_factor_login_defs" /></tt>. Is it the case that the cost factor is too low?</td>
-    <td>Configure the operating system to store only encrypted representations of passwords.</td>
-    <td>In <tt>/etc/login.defs</tt>, ensure <tt>YESCRYPT_COST_FACTOR</tt> has the minimum value of <tt><sub idref="var_password_yescrypt_cost_factor_login_defs" /></tt>.
-For example:
-<pre>YESCRYPT_COST_FACTOR <sub idref="var_password_yescrypt_cost_factor_login_defs" />
-YESCRYPT_COST_FACTOR <sub idref="var_password_yescrypt_cost_factor_login_defs" /></pre>
-Notice that if is not set, it already has the default value of 5.
-If it is set, it must have the minimum value of <sub idref="var_password_yescrypt_cost_factor_login_defs" />.</td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
 
 
 
@@ -22869,7 +22838,7 @@ edit the file <tt>/etc/login.defs</tt>
 and add or correct the following line:
 <pre>PASS_MIN_DAYS <sub idref="var_accounts_minimum_age_login_defs" /></pre>
 A value of 1 day is considered sufficient for many
-environments. The DoD requirement is 1.
+environments.
 The profile requirement is <tt><sub idref="var_accounts_minimum_age_login_defs" /></tt>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify operating system enforces 24 hours/1 day as the minimum password lifetime. If it does not, this is a finding.</td>
@@ -22886,7 +22855,7 @@ edit the file <tt>/etc/login.defs</tt>
 and add or correct the following line:
 <pre>PASS_MIN_DAYS <sub idref="var_accounts_minimum_age_login_defs" /></pre>
 A value of 1 day is considered sufficient for many
-environments. The DoD requirement is 1.
+environments.
 The profile requirement is <tt><sub idref="var_accounts_minimum_age_login_defs" /></tt>.</td>
     <td>medium</td>
     <td></td>
@@ -22939,8 +22908,6 @@ lifetime by running the following command:
 edit the file <tt>/etc/login.defs</tt>
 and add or correct the following line:
 <pre>PASS_MAX_DAYS <sub idref="var_accounts_maximum_age_login_defs" /></pre>
-A value of 180 days is sufficient for many environments.
-The DoD requirement is 60.
 The profile requirement is <tt><sub idref="var_accounts_maximum_age_login_defs" /></tt>.</td>
     <td>Applicable - Configurable</td>
     <td>Verify operating system enforces a 60-day maximum password lifetime restriction. If it does not, this is a finding.</td>
@@ -22954,8 +22921,6 @@ PASS_MAX_DAYS <sub idref="var_accounts_maximum_age_login_defs" /></pre> Is it th
 edit the file <tt>/etc/login.defs</tt>
 and add or correct the following line:
 <pre>PASS_MAX_DAYS <sub idref="var_accounts_maximum_age_login_defs" /></pre>
-A value of 180 days is sufficient for many environments.
-The DoD requirement is 60.
 The profile requirement is <tt><sub idref="var_accounts_maximum_age_login_defs" /></tt>.</td>
     <td>medium</td>
     <td></td>
@@ -23123,7 +23088,7 @@ so that the <tt>superusers</tt> is honored.
 Once the superuser account has been added,
 update the
 <tt>grub.cfg</tt> file by running:
-<pre>grub-mkconfig -o /boot/grub2/grub.cfg</pre></td>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system enforces approved authorizations for logical access to information and system resources in accordance with applicable access control policies. If it does not, this is a finding.</td>
     <td>To verify the boot loader superuser account has been set, run the following
@@ -23153,7 +23118,7 @@ so that the <tt>superusers</tt> is honored.
 Once the superuser account has been added,
 update the
 <tt>grub.cfg</tt> file by running:
-<pre>grub-mkconfig -o /boot/grub2/grub.cfg</pre></td>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre></td>
     <td>high</td>
     <td></td>
     <td></td>
@@ -25606,43 +25571,6 @@ If either is set, they must have the minimum value of <sub idref="var_password_h
     <td></td>
   </tr>
 
-  <tr>
-    <td>CCI-000803</td>
-    <td>SRG-OS-000120-GPOS-00061</td>
-    <td><i>TBD - Assigned by DISA after STIG release</i></td>
-    <td>The operating system must use mechanisms meeting the requirements of applicable federal laws, Executive orders, directives, policies, regulations, standards, and guidance for authentication to a cryptographic module.</td>
-
-    <td>CCE-86594-9: Set yescrypt Cost Factor in /etc/login.defs</td>
-
-    <td>Unapproved mechanisms that are used for authentication to the cryptographic module are not verified and therefore cannot be relied upon to provide confidentiality or integrity, and DoD data may be compromised.
-
-Operating systems utilizing encryption are required to use FIPS-compliant mechanisms for authenticating to cryptographic modules. 
-
-FIPS 140-2/140-3 is the current standard for validating that mechanisms used to access cryptographic modules utilize authentication that meets DoD requirements. This allows for Security Levels 1, 2, 3, or 4 for use on a general purpose computing system.</td>
-    <td>In <tt>/etc/login.defs</tt>, ensure <tt>YESCRYPT_COST_FACTOR</tt> has the minimum value of <tt><sub idref="var_password_yescrypt_cost_factor_login_defs" /></tt>.
-For example:
-<pre>YESCRYPT_COST_FACTOR <sub idref="var_password_yescrypt_cost_factor_login_defs" />
-YESCRYPT_COST_FACTOR <sub idref="var_password_yescrypt_cost_factor_login_defs" /></pre>
-Notice that if is not set, it already has the default value of 5.
-If it is set, it must have the minimum value of <sub idref="var_password_yescrypt_cost_factor_login_defs" />.</td>
-    <td>Applicable - Configurable</td>
-    <td>Verify the operating system uses mechanisms meeting the requirements of applicable federal laws, Executive orders, directives, policies, regulations, standards, and guidance for authentication to a cryptographic module. If it does not, this is a finding.</td>
-    <td>Inspect <tt>/etc/login.defs</tt> and ensure that if
-<tt>YESCRYPT_COST_FACTOR</tt>
-is set, it must have the minimum value of <tt><sub idref="var_password_yescrypt_cost_factor_login_defs" /></tt>. Is it the case that the cost factor is too low?</td>
-    <td>Configure the operating system to use mechanisms meeting the requirements of applicable federal laws, Executive orders, directives, policies, regulations, standards, and guidance for authentication to a cryptographic module.</td>
-    <td>In <tt>/etc/login.defs</tt>, ensure <tt>YESCRYPT_COST_FACTOR</tt> has the minimum value of <tt><sub idref="var_password_yescrypt_cost_factor_login_defs" /></tt>.
-For example:
-<pre>YESCRYPT_COST_FACTOR <sub idref="var_password_yescrypt_cost_factor_login_defs" />
-YESCRYPT_COST_FACTOR <sub idref="var_password_yescrypt_cost_factor_login_defs" /></pre>
-Notice that if is not set, it already has the default value of 5.
-If it is set, it must have the minimum value of <sub idref="var_password_yescrypt_cost_factor_login_defs" />.</td>
-    <td>medium</td>
-    <td></td>
-    <td></td>
-    <td></td>
-  </tr>
-
 
 
 
@@ -26471,7 +26399,10 @@ Developers and implementers can increase the assurance in security functions by 
     <td>The SELinux state should be set to <tt><sub idref="var_selinux_state" /></tt> at
 system boot time.  In the file <tt>/etc/selinux/config</tt>, add or correct the
 following line to configure the system to boot into enforcing mode:
-<pre>SELINUX=<sub idref="var_selinux_state" /></pre></td>
+<pre>SELINUX=<sub idref="var_selinux_state" /></pre>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system isolates security functions from nonsecurity functions. If it does not, this is a finding.</td>
     <td>Ensure that Red Hat Enterprise Linux 10 verifies correct operation of security functions.
@@ -26484,7 +26415,10 @@ $ sudo getenforce
     <td>The SELinux state should be set to <tt><sub idref="var_selinux_state" /></tt> at
 system boot time.  In the file <tt>/etc/selinux/config</tt>, add or correct the
 following line to configure the system to boot into enforcing mode:
-<pre>SELINUX=<sub idref="var_selinux_state" /></pre></td>
+<pre>SELINUX=<sub idref="var_selinux_state" /></pre>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.</td>
     <td>high</td>
     <td></td>
     <td></td>
@@ -26692,8 +26626,9 @@ To make sure that the setting is persistent, add the following line to a file in
 
 Terminating network connections associated with communications sessions includes, for example, de-allocating associated TCP/IP address/port pairs at the operating system level, and de-allocating networking assignments at the application level if multiple application sessions are using a single operating system-level network connection. This does not mean that the operating system terminates all sessions or network access; it only ends the inactive session and releases the resources associated with that session.</td>
     <td>Setting the <tt>TMOUT</tt> option in <tt>/etc/profile</tt> ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of <tt>0</tt> (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The <tt>TMOUT</tt>
 
 setting in a file loaded by <tt>/etc/profile</tt>, e.g.
@@ -26712,11 +26647,12 @@ on the system:
 <pre>$ sudo grep TMOUT /etc/profile /etc/profile.d/*.sh</pre>
 
 The output should return the following:
-<pre>TMOUT=<sub idref="var_accounts_tmout" /></pre> Is it the case that value of TMOUT is not less than or equal to expected setting?</td>
+<pre>TMOUT=<sub idref="var_accounts_tmout" /></pre> Is it the case that the TMOUT value is not configured, is set to 0, or is not less than or equal to the expected setting?</td>
     <td>Configure the operating system to terminate all network connections associated with a communications session at the end of the session, or as follows: for in-band management sessions (privileged sessions), the session must be terminated after 10 minutes of inactivity; and for user sessions (non-privileged session), the session must be terminated after 15 minutes of inactivity, except to fulfill documented and validated mission requirements.</td>
     <td>Setting the <tt>TMOUT</tt> option in <tt>/etc/profile</tt> ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of <tt>0</tt> (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The <tt>TMOUT</tt>
 
 setting in a file loaded by <tt>/etc/profile</tt>, e.g.
@@ -30796,14 +30732,14 @@ by default:
 /usr/lib64
 </pre>
 All system-wide shared library files should be protected from unauthorised
-access. If any of these files is not group-owned by root, correct its group-owner with
-the following command:
+access. If any of these files is not group-owned by root,
+correct its group-owner with the following command:
 <pre>$ sudo chgrp root <i>FILE</i></pre></td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system limits privileges to change software resident within software libraries. If it does not, this is a finding.</td>
-    <td>Verify the system-wide shared library files are group-owned by "root" with the following command:
+    <td>Verify the system-wide shared library files are group-owned by root with the following command:
 
-$ sudo find -L /lib /lib64 /usr/lib /usr/lib64 ! -group root -exec ls -l {} \; Is it the case that any system wide shared library file is returned and is not group-owned by a required system account?</td>
+$ sudo find -L /lib /lib64 /usr/lib /usr/lib64 ! -group root -exec ls -l {} \; Is it the case that any system wide shared library file is returned and is not group-owned by root?</td>
     <td>Configure the operating system to limit privileges to change software resident within software libraries.</td>
     <td>System-wide library files are stored in the following directories
 by default:
@@ -30813,8 +30749,8 @@ by default:
 /usr/lib64
 </pre>
 All system-wide shared library files should be protected from unauthorised
-access. If any of these files is not group-owned by root, correct its group-owner with
-the following command:
+access. If any of these files is not group-owned by root,
+correct its group-owner with the following command:
 <pre>$ sudo chgrp root <i>FILE</i></pre></td>
     <td>medium</td>
     <td></td>
@@ -45490,7 +45426,10 @@ This requirement applies to operating systems performing security function verif
     <td>The SELinux state should be set to <tt><sub idref="var_selinux_state" /></tt> at
 system boot time.  In the file <tt>/etc/selinux/config</tt>, add or correct the
 following line to configure the system to boot into enforcing mode:
-<pre>SELINUX=<sub idref="var_selinux_state" /></pre></td>
+<pre>SELINUX=<sub idref="var_selinux_state" /></pre>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system verifies correct operation of all security functions. If it does not, this is a finding.</td>
     <td>Ensure that Red Hat Enterprise Linux 10 verifies correct operation of security functions.
@@ -45503,7 +45442,10 @@ $ sudo getenforce
     <td>The SELinux state should be set to <tt><sub idref="var_selinux_state" /></tt> at
 system boot time.  In the file <tt>/etc/selinux/config</tt>, add or correct the
 following line to configure the system to boot into enforcing mode:
-<pre>SELINUX=<sub idref="var_selinux_state" /></pre></td>
+<pre>SELINUX=<sub idref="var_selinux_state" /></pre>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.</td>
     <td>high</td>
     <td></td>
     <td></td>
@@ -64458,23 +64400,23 @@ To configure NTS for given time server add <tt>nts</tt> to each <tt>server</tt> 
 
 Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
     <td>The <tt>ProcessSizeMax</tt> option in <tt>[Coredump]</tt> section
-of <tt>/etc/systemd/coredump.conf</tt>
-specifies the maximum size in bytes of a core which will be processed.
-Core dumps exceeding this size may be stored, but the backtrace will not
-be generated.</td>
+of <tt>/etc/systemd/coredump.conf</tt> or in a drop-in file under
+<tt>/etc/systemd/coredump.conf.d/</tt> specifies the maximum size in bytes
+of a core which will be processed. Core dumps exceeding this size may be
+stored, but the backtrace will not be generated.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 10 disables core dump backtraces by issuing the following command:
 
-<pre>$ grep -i process /etc/systemd/coredump.conf
+<pre>$ grep -i process /etc/systemd/coredump.conf /etc/systemd/coredump.conf.d/*.conf
 
 ProcessSizeMax=0</pre> Is it the case that the "ProcessSizeMax" item is missing, commented out, or the value is anything other than "0" and the need for core dumps is not documented with the Information System Security Officer (ISSO) as an operational requirement for all domains that have the "core" item assigned?</td>
     <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
     <td>The <tt>ProcessSizeMax</tt> option in <tt>[Coredump]</tt> section
-of <tt>/etc/systemd/coredump.conf</tt>
-specifies the maximum size in bytes of a core which will be processed.
-Core dumps exceeding this size may be stored, but the backtrace will not
-be generated.</td>
+of <tt>/etc/systemd/coredump.conf</tt> or in a drop-in file under
+<tt>/etc/systemd/coredump.conf.d/</tt> specifies the maximum size in bytes
+of a core which will be processed. Core dumps exceeding this size may be
+stored, but the backtrace will not be generated.</td>
     <td>medium</td>
     <td></td>
     <td></td>
@@ -64492,17 +64434,21 @@ be generated.</td>
     <td>Configuring the operating system to implement organization-wide security implementation guides and security checklists ensures compliance with federal standards and establishes a common security baseline across DoD that reflects the most restrictive security posture consistent with operational requirements.
 
 Configuration settings are the set of parameters that can be changed in hardware, software, or firmware components of the system that affect the security posture and/or functionality of the system. Security-related parameters are those parameters impacting the security state of the system, including the parameters required to satisfy other security control requirements. Security-related parameters include, for example: registry settings; account, file, directory permission settings; and settings for functions, ports, protocols, services, and remote connections.</td>
-    <td>The <tt>Storage</tt> option in <tt>[Coredump]</tt> sectionof <tt>/etc/systemd/coredump.conf</tt>
+    <td>The <tt>Storage</tt> option in <tt>[Coredump]</tt> section
+of <tt>/etc/systemd/coredump.conf</tt> or a drop-in file in
+<tt>/etc/systemd/coredump.conf.d/*.conf</tt>
 can be set to <tt>none</tt> to disable storing core dumps permanently.</td>
     <td>Applicable - Configurable</td>
     <td>Verify the operating system is configured in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs. If it is not, this is a finding.</td>
     <td>Verify Red Hat Enterprise Linux 10 disables storing core dumps for all users by issuing the following command:
 
-$ grep -i storage /etc/systemd/coredump.conf
+$ grep -i storage /etc/systemd/coredump.conf /etc/systemd/coredump.conf.d/*.conf
 
 Storage=none Is it the case that Storage is not set to none or is commented out and the need for core dumps is not documented with the Information System Security Officer (ISSO) as an operational requirement for all domains that have the "core" item assigned?</td>
     <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>
-    <td>The <tt>Storage</tt> option in <tt>[Coredump]</tt> sectionof <tt>/etc/systemd/coredump.conf</tt>
+    <td>The <tt>Storage</tt> option in <tt>[Coredump]</tt> section
+of <tt>/etc/systemd/coredump.conf</tt> or a drop-in file in
+<tt>/etc/systemd/coredump.conf.d/*.conf</tt>
 can be set to <tt>none</tt> to disable storing core dumps permanently.</td>
     <td>medium</td>
     <td></td>
@@ -70676,6 +70622,7 @@ The output of the command should indicate either:
 <code>net.ipv4.conf.all.rp_filter = 1</code>
 or:
 <code>net.ipv4.conf.all.rp_filter = 2</code>
+
 The output of the command should not indicate:
 <code>net.ipv4.conf.all.rp_filter = 0</code>
 
@@ -70690,6 +70637,7 @@ The command should not find any assignments other than:
 net.ipv4.conf.all.rp_filter = 1
 or:
 net.ipv4.conf.all.rp_filter = 2
+
 
 Conflicting assignments are not allowed. Is it the case that the net.ipv4.conf.all.rp_filter is not set to 1 or 2 or is configured to be 0?</td>
     <td>Configure the operating system in accordance with the security configuration settings based on DoD security configuration or implementation guidance, including STIGs, NSA configuration guides, CTOs, and DTMs.</td>

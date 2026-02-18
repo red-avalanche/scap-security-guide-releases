@@ -48,10 +48,10 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>452</td>
+			<td>449</td>
 			<td>7</td>
-			<td>445</td>
-			<td>98.45%</td>
+			<td>442</td>
+			<td>98.44%</td>
 			<td>
 				
 					RHEL-09-211035
@@ -535,7 +535,7 @@ so that the superusers is honored.
 Once the superuser account has been added,
 update the
 grub.cfg file by running:
-grub-mkconfig -o /boot/grub2/grub.cfg
+grub2-mkconfig -o /boot/grub2/grub.cfg
           </pre></td>
 	<td>RHEL-09-212020</td>
 	<td>grub2_admin_username</td>
@@ -1209,16 +1209,16 @@ debuging. Permitting temporary enablement of core dumps during such situations
 should be reviewed through local needs and policy.</pre></td>
 	<td><pre>Verify Red Hat Enterprise Linux 9 disables core dump backtraces by issuing the following command:
 
-$ grep -i process /etc/systemd/coredump.conf
+$ grep -i process /etc/systemd/coredump.conf /etc/systemd/coredump.conf.d/*.conf
 
 ProcessSizeMax=0
       Is it the case that the "ProcessSizeMax" item is missing, commented out, or the value is anything other than "0" and the need for core dumps is not documented with the Information System Security Officer (ISSO) as an operational requirement for all domains that have the "core" item assigned?
       </pre></td>
 	<td><pre>The ProcessSizeMax option in [Coredump] section
-of /etc/systemd/coredump.conf
-specifies the maximum size in bytes of a core which will be processed.
-Core dumps exceeding this size may be stored, but the backtrace will not
-be generated.</pre></td>
+of /etc/systemd/coredump.conf or in a drop-in file under
+/etc/systemd/coredump.conf.d/ specifies the maximum size in bytes
+of a core which will be processed. Core dumps exceeding this size may be
+stored, but the backtrace will not be generated.</pre></td>
 	<td>RHEL-09-213085</td>
 	<td>coredump_disable_backtraces</td>
 </tr>
@@ -1238,12 +1238,14 @@ debuging. Permitting temporary enablement of core dumps during such situations
 should be reviewed through local needs and policy.</pre></td>
 	<td><pre>Verify Red Hat Enterprise Linux 9 disables storing core dumps for all users by issuing the following command:
 
-$ grep -i storage /etc/systemd/coredump.conf
+$ grep -i storage /etc/systemd/coredump.conf /etc/systemd/coredump.conf.d/*.conf
 
 Storage=none
       Is it the case that Storage is not set to none or is commented out and the need for core dumps is not documented with the Information System Security Officer (ISSO) as an operational requirement for all domains that have the "core" item assigned?
       </pre></td>
-	<td><pre>The Storage option in [Coredump] sectionof /etc/systemd/coredump.conf
+	<td><pre>The Storage option in [Coredump] section
+of /etc/systemd/coredump.conf or a drop-in file in
+/etc/systemd/coredump.conf.d/*.conf
 can be set to none to disable storing core dumps permanently.</pre></td>
 	<td>RHEL-09-213090</td>
 	<td>coredump_disable_storage</td>
@@ -1891,9 +1893,8 @@ authentication device.
                 
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</pre></td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</pre></td>
 	<td><pre>Check that Red Hat Enterprise Linux 9 has the packages for smart card support installed.
 
 Run the following command to determine if the openssl-pkcs11 package is installed:
@@ -2041,7 +2042,7 @@ $ sudo dnf install postfix
 	<td>V-258241</td>
 	<td></td>
 	<td>medium</td>
-	<td>RHEL 9 must implement a FIPS 140-3 compliant systemwide cryptographic policy.</td>
+	<td>RHEL 9 must implement a FIPS 140-3-compliant systemwide cryptographic policy.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Centralized cryptographic policies simplify applying secure ciphers across an operating system and
 the applications that run on that operating system. Use of weak or untested encryption algorithms
@@ -4221,10 +4222,10 @@ accessible and configurable, as in the case of interpreted languages. Software l
 also include privileged programs which execute with escalated privileges. Only qualified
 and authorized individuals must be allowed to obtain access to information system components
 for purposes of initiating changes, including upgrades and modifications.</pre></td>
-	<td><pre>Verify the system-wide shared library files are group-owned by "root" with the following command:
+	<td><pre>Verify the system-wide shared library files are group-owned by root with the following command:
 
 $ sudo find -L /lib /lib64 /usr/lib /usr/lib64 ! -group root -exec ls -l {} \;
-      Is it the case that any system wide shared library file is returned and is not group-owned by a required system account?
+      Is it the case that any system wide shared library file is returned and is not group-owned by root?
       </pre></td>
 	<td><pre>System-wide library files are stored in the following directories
 by default:
@@ -4234,8 +4235,8 @@ by default:
 /usr/lib64
 
 All system-wide shared library files should be protected from unauthorised
-access. If any of these files is not group-owned by root, correct its group-owner with
-the following command:
+access. If any of these files is not group-owned by root,
+correct its group-owner with the following command:
 $ sudo chgrp root FILE
               
             </pre></td>
@@ -4637,7 +4638,7 @@ $ sudo chmod 0000 /etc/shadow
 
 Remote access services, such as those providing remote access to network devices and information systems, which lack automated control capabilities, increase risk and make remote user access management difficult at best.
 
-Remote access is access to DoD nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
+Remote access is access to nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
 
 Red Hat Enterprise Linux 9 functionality (e.g., SSH) must be capable of taking enforcement action if the audit reveals unauthorized activity.
 Automated control of remote access sessions allows organizations to ensure ongoing compliance with remote access policies by enforcing connection rules of remote access applications on a variety of information system components (e.g., servers, workstations, notebook computers, smartphones, and tablets)."</pre></td>
@@ -4681,7 +4682,7 @@ $ sudo systemctl enable firewalld.service
 	<td>V-257937</td>
 	<td></td>
 	<td>medium</td>
-	<td>A RHEL 9 firewall must employ a deny-all, allow-by-exception policy for allowing connections to other systems.</td>
+	<td>The RHEL 9 firewall must employ a deny-all, allow-by-exception policy for allowing connections to other systems.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Failure to restrict network connectivity only to authorized systems permits inbound connections from malicious systems.
 It also permits outbound connections that may facilitate exfiltration of data.</pre></td>
@@ -5308,8 +5309,7 @@ by running the following command:
 $ sysctl net.ipv4.conf.all.rp_filter
 The output of the command should indicate either:
 net.ipv4.conf.all.rp_filter = 1
-or:
-net.ipv4.conf.all.rp_filter = 2
+
 The output of the command should not indicate:
 net.ipv4.conf.all.rp_filter = 0
 
@@ -5322,11 +5322,10 @@ Verify that there is not any existing incorrect configuration by executing the f
 $ grep -r '^\s*net.ipv4.conf.all.rp_filter\s*=' /etc/sysctl.conf /etc/sysctl.d
 The command should not find any assignments other than:
 net.ipv4.conf.all.rp_filter = 1
-or:
-net.ipv4.conf.all.rp_filter = 2
+
 
 Conflicting assignments are not allowed.
-      Is it the case that the net.ipv4.conf.all.rp_filter is not set to 1 or 2 or is configured to be 0?
+      Is it the case that the net.ipv4.conf.all.rp_filter is not set to 1 or is configured to be 0 or 2?
       </pre></td>
 	<td><pre>To set the runtime status of the net.ipv4.conf.all.rp_filter kernel parameter, run the following command: $ sudo sysctl -w net.ipv4.conf.all.rp_filter=1
 To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv4.conf.all.rp_filter = 1
@@ -5849,8 +5848,8 @@ privileged functions is greatly increased. Multifactor authentication
 requires using two or more factors to achieve authentication.
 A privileged account is defined as an information system account with
 authorizations of a privileged user. 
-The DoD CAC with DoD-approved PKI is an example of multifactor
-authentication.</pre></td>
+Smart cards or hardware tokens paired with digital certificates are
+common examples of multifactor implementations.</pre></td>
 	<td><pre>To determine how the SSH daemon's PubkeyAuthentication option is set, run the following command:
 
 $ sudo grep -i PubkeyAuthentication /etc/ssh/sshd_config.d/00-complianceascode-hardening.conf
@@ -5978,40 +5977,6 @@ UsePAM yes
           </pre></td>
 	<td>RHEL-09-255050</td>
 	<td>sshd_enable_pam</td>
-</tr>
-
-<tr>
-	<td>V-257987</td>
-	<td></td>
-	<td>medium</td>
-	<td>RHEL 9 SSH daemon must be configured to use system-wide crypto policies.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre>Without cryptographic integrity protections, information can be altered by unauthorized users without detection.</pre></td>
-	<td><pre></pre></td>
-	<td><pre>SSHD should follow the system cryptographic policy.
-In order to accomplish this the SSHD configuration should include the configuration file provided by the system crypto policy.
-The following line should be present in /etc/ssh/sshd_config or in a file included by this file (a file within the /etc/ssh/sshd_config.d directory):
-Include /etc/crypto-policies/back-ends/opensshserver.config
-          </pre></td>
-	<td>RHEL-09-255055</td>
-	<td>sshd_include_crypto_policy</td>
-</tr>
-
-<tr>
-	<td>V-257988</td>
-	<td></td>
-	<td>medium</td>
-	<td>RHEL 9 must implement DOD-approved encryption ciphers to protect the confidentiality of SSH connections.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre>Without cryptographic integrity protections, information can be altered by unauthorized users without detection.</pre></td>
-	<td><pre></pre></td>
-	<td><pre>SSHD should follow the system cryptographic policy.
-In order to accomplish this the SSHD configuration should include the configuration file provided by the system crypto policy.
-The following line should be present in /etc/ssh/sshd_config or in a file included by this file (a file within the /etc/ssh/sshd_config.d directory):
-Include /etc/crypto-policies/back-ends/opensshserver.config
-          </pre></td>
-	<td>RHEL-09-255060</td>
-	<td>sshd_include_crypto_policy</td>
 </tr>
 
 <tr>
@@ -7518,23 +7483,20 @@ insmod program to load the module manually.</pre></td>
 	<td>medium</td>
 	<td>RHEL 9 must have the USBGuard package installed.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>The usbguard service must be running in order to
-enforce the USB device authorization policy for all USB devices.</pre></td>
 	<td><pre>
-
-Run the following command to determine the current status of the
-usbguard service:
-$ sudo systemctl is-active usbguard
-If the service is running, it should return the following: active
-      Is it the case that the service is not enabled?
+          usbguard is a software framework that helps to protect
+against rogue USB devices by implementing basic whitelisting/blacklisting
+capabilities based on USB device attributes.</pre></td>
+	<td><pre>Run the following command to determine if the usbguard package is installed: $ rpm -q usbguard
+      Is it the case that the package is not installed?
       </pre></td>
-	<td><pre>The USBGuard service should be enabled.
+	<td><pre>
+The usbguard package can be installed with the following command:
 
-The usbguard service can be enabled with the following command:
-$ sudo systemctl enable usbguard.service
+$ sudo dnf install usbguard
         </pre></td>
 	<td>RHEL-09-291015</td>
-	<td>service_usbguard_enabled</td>
+	<td>package_usbguard_installed</td>
 </tr>
 
 <tr>
@@ -7706,8 +7668,6 @@ edit the file /etc/login.defs
 and add or correct the following line:
 PASS_MAX_DAYS 
               
-A value of 180 days is sufficient for many environments.
-The DoD requirement is 60.
 The profile requirement is 
                 
               .</pre></td>
@@ -8361,11 +8321,12 @@ $ sudo grep TMOUT /etc/profile /etc/profile.d/*.sh
 
 The output should return the following:
 TMOUT=
-      Is it the case that value of TMOUT is not less than or equal to expected setting?
+      Is it the case that the TMOUT value is not configured, is set to 0, or is not less than or equal to the expected setting?
       </pre></td>
 	<td><pre>Setting the TMOUT option in /etc/profile ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of 0 (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The TMOUT
 
 setting in a file loaded by /etc/profile, e.g.
@@ -8636,7 +8597,9 @@ system boot time.  In the file /etc/selinux/config, add or correct the
 following line to configure the system to boot into enforcing mode:
 SELINUX=
           
-        </pre></td>
+Ensure that all files have correct SELinux labels by running:
+fixfiles onboot
+Then reboot the system.</pre></td>
 	<td>RHEL-09-431010</td>
 	<td>selinux_state</td>
 </tr>
@@ -9060,7 +9023,8 @@ $ grep retry /etc/security/pwquality.conf
 Edit the /etc/security/pwquality.conf to include
 retry=
                 , or a lower value if site
-policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+policy is more restrictive. The profile requirement is a maximum of retry=
+                 prompts
 per session.</pre></td>
 	<td>RHEL-09-611010</td>
 	<td>accounts_password_pam_pwquality_retry</td>
@@ -9371,7 +9335,7 @@ and add or correct the following line:
 PASS_MIN_DAYS 
               
 A value of 1 day is considered sufficient for many
-environments. The DoD requirement is 1.
+environments.
 The profile requirement is 
                 
               .</pre></td>
@@ -9757,7 +9721,7 @@ Using a stronger hashing algorithm makes password cracking attacks more difficul
 
 Check the hashing algorithm that is being used to hash passwords with the following command:
 
-$ sudo grep -i ENCRYPT_METHOD /etc/login.defs
+$ sudo grep -i ENCRYPT_METHOD  /etc/login.defs
 
 ENCRYPT_METHOD 
       Is it the case that ENCRYPT_METHOD is not set to <sub idref="var_password_hashing_algorithm" />?
@@ -9876,9 +9840,8 @@ authentication device.
           
 Multi-Factor Authentication (MFA) solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</pre></td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</pre></td>
 	<td><pre>To verify that smart cards are enabled in SSSD, run the following command:
 $ sudo grep pam_cert_auth /etc/sssd/sssd.conf
 If configured properly, output should be
@@ -9973,9 +9936,8 @@ authentication device.
                 
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</pre></td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</pre></td>
 	<td><pre>
 
 Run the following command to determine the current status of the
@@ -10006,9 +9968,8 @@ authentication device.
                 
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</pre></td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</pre></td>
 	<td><pre>Run the following command to determine if the opensc package is installed: $ rpm -q opensc
       Is it the case that the package is not installed?
       </pre></td>
@@ -11512,33 +11473,6 @@ chmod 0640 /etc/audit/audit*.{rules,conf} /etc/audit/rules.d/*
 </tr>
 
 <tr>
-	<td>V-258172</td>
-	<td></td>
-	<td>medium</td>
-	<td>RHEL 9 /etc/audit/auditd.conf file must have 0640 or less permissive to prevent unauthorized access.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre>Without the capability to restrict the roles and individuals that can select which events
-are audited, unauthorized personnel may be able to prevent the auditing of critical
-events. Misconfigured audits may degrade the system's performance by overwhelming
-the audit log. Misconfigured audits may also make it more difficult to establish,
-correlate, and investigate the events relating to an incident or identify
-those responsible for one.</pre></td>
-	<td><pre>To check the permissions of /etc/audit/auditd.conf,
-run the command:
-$ ls -l /etc/audit/auditd.conf
-If properly configured, the output should indicate the following permissions:
--rw-r-----
-      Is it the case that /etc/audit/auditd.conf does not have unix mode -rw-r-----?
-      </pre></td>
-	<td><pre>
-To properly set the permissions of /etc/audit/auditd.conf, run the command:
-$ sudo chmod 0640 /etc/audit/auditd.conf
-        </pre></td>
-	<td>RHEL-09-653115</td>
-	<td>file_permissions_etc_audit_auditd</td>
-</tr>
-
-<tr>
 	<td>V-258173</td>
 	<td></td>
 	<td>low</td>
@@ -12380,6 +12314,44 @@ following form to /etc/audit/audit.rules:
           </pre></td>
 	<td>RHEL-09-654095</td>
 	<td>audit_rules_privileged_commands_crontab</td>
+</tr>
+
+<tr>
+	<td>V-274878</td>
+	<td></td>
+	<td>medium</td>
+	<td>RHEL 9 must audit any script or executable called by cron as root or by any privileged user.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</pre></td>
+	<td><pre>
+Verify Red Hat Enterprise Linux 9 generates audit records for all events that affect "/var/spool/cron" with the following command:
+
+$ sudo auditctl -l | grep /var/spool/cron
+
+-w /var/spool/cron -p wa -k cronjobs
+      Is it the case that command does not return a line, or the line is commented out?
+      </pre></td>
+	<td><pre>
+
+
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix .rules in the
+directory /etc/audit/rules.d:
+
+-w /var/spool/cron -p wa -k cronjobs
+
+If the auditd daemon is configured to use the auditctl
+utility to read audit rules during daemon startup, add the following lines to
+/etc/audit/audit.rules:
+
+-w /var/spool/cron -p wa -k cronjobs
+        </pre></td>
+	<td>RHEL-09-654096</td>
+	<td>audit_rules_var_spool_cron</td>
 </tr>
 
 <tr>
@@ -13829,34 +13801,32 @@ With this setting, a reboot will be required to change any audit rules.</pre></t
 	<td>high</td>
 	<td>RHEL 9 must enable FIPS mode.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Centralized cryptographic policies simplify applying secure ciphers across an operating system and
-the applications that run on that operating system. Use of weak or untested encryption algorithms
-undermines the purposes of utilizing encryption to protect data.</pre></td>
-	<td><pre>To verify that cryptography policy has been configured correctly, run the
-following command:
-$ update-crypto-policies --show
-The output should return .
-Run the command to check if the policy is correctly applied:
-$ update-crypto-policies --is-applied
-The output should be The configured policy is applied.
-Moreover, check if settings for selected crypto policy are as expected.
-List all libraries for which it holds that their crypto policies do not have symbolic link in /etc/crypto-policies/back-ends.
-$ ls -l /etc/crypto-policies/back-ends/ | grep '^[^l]' | tail -n +2 | awk -F' ' '{print $NF}' | awk -F'.' '{print $1}' | sort
-Subsequently, check if matching libraries have drop in files in the /etc/crypto-policies/local.d directory.
-$ ls /etc/crypto-policies/local.d/ | awk -F'-' '{print $1}' | uniq | sort
-Outputs of two previous commands should match.
-      Is it the case that cryptographic policy is not configured or is configured incorrectly?
+	<td><pre>Use of weak or untested encryption algorithms undermines the purposes of utilizing encryption to
+protect data. The operating system must implement cryptographic modules adhering to the higher
+standards approved by the federal government since this provides assurance they have been tested
+and validated.</pre></td>
+	<td><pre>To verify that kernel parameter 'crypto.fips_enabled' is set properly, run the following command:
+sysctl crypto.fips_enabled
+The output should contain the following:
+crypto.fips_enabled = 1
+      Is it the case that crypto.fips_enabled is not 1?
       </pre></td>
-	<td><pre>To configure the system cryptography policy to use ciphers only from the 
-                
-              
-policy, run the following command:
-$ sudo update-crypto-policies --set 
-              
-The rule checks if settings for selected crypto policy are configured as expected. Configuration files in the /etc/crypto-policies/back-ends are either symlinks to correct files provided by Crypto-policies package or they are regular files in case crypto policy customizations are applied.
-Crypto policies may be customized by crypto policy modules, in which case it is delimited from the base policy using a colon.</pre></td>
+	<td><pre>System running in FIPS mode is indicated by kernel parameter
+'crypto.fips_enabled'. This parameter should be set to 1 in FIPS mode.
+
+Red Hat Enterprise Linux 9 has an installation-time kernel flag that can enable FIPS mode.
+The installer must be booted with fips=1 for the system to have FIPS mode
+enabled. Enabling FIPS mode on a preexisting system is not supported. If
+this rule fails on an installed system, then this is a permanent
+finding and cannot be fixed.
+
+
+
+To enable strict FIPS compliance, the fips=1 kernel option needs to be added to the kernel boot
+parameters during system installation so key generation is done with FIPS-approved algorithms
+and continuous monitoring tests in place.</pre></td>
 	<td>RHEL-09-671010</td>
-	<td>configure_crypto_policy</td>
+	<td>sysctl_crypto_fips_enabled</td>
 </tr>
 
 <tr>
@@ -13990,30 +13960,6 @@ This will help ensure that new passwords for local users will be stored using th
 	<td><pre></pre></td>
 	<td>RHEL-09-672020</td>
 	<td>Missing Rule</td>
-</tr>
-
-<tr>
-	<td>V-258237</td>
-	<td></td>
-	<td>medium</td>
-	<td>RHEL 9 must use mechanisms meeting the requirements of applicable federal laws, executive orders, directives, policies, regulations, standards, and guidance for authentication to a cryptographic module.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre>Overriding the system crypto policy makes the behavior of Kerberos violate expectations,
-and makes system configuration more fragmented.</pre></td>
-	<td><pre>Check that the symlink exists and target the correct Kerberos crypto policy, with the following command:
-file /etc/krb5.conf.d/crypto-policies
-If command ouput shows the following line, Kerberos is configured to use the system-wide crypto policy.
-/etc/krb5.conf.d/crypto-policies: symbolic link to /etc/crypto-policies/back-ends/krb5.config
-      Is it the case that the symlink does not exist or points to a different target?
-      </pre></td>
-	<td><pre>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
-Kerberos is supported by crypto policy, but it's configuration may be
-set up to ignore it.
-To check that Crypto Policies settings for Kerberos are configured correctly, examine that there is a symlink at
-/etc/krb5.conf.d/crypto-policies targeting /etc/cypto-policies/back-ends/krb5.config.
-If the symlink exists, Kerberos is configured to use the system-wide crypto policy settings.</pre></td>
-	<td>RHEL-09-672025</td>
-	<td>configure_kerberos_crypto_policy</td>
 </tr>
 
 <tr>

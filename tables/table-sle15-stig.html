@@ -48,10 +48,10 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>215</td>
+			<td>216</td>
 			<td>3</td>
-			<td>212</td>
-			<td>98.60%</td>
+			<td>213</td>
+			<td>98.61%</td>
 			<td>
 				
 					SLES-15-010370
@@ -566,11 +566,12 @@ TMOUT=
 
 readonly TMOUT
 export TMOUT
-      Is it the case that value of TMOUT is not less than or equal to expected setting?
+      Is it the case that the TMOUT value is not configured, is set to 0, or is not less than or equal to the expected setting?
       </pre></td>
 	<td><pre>Setting the TMOUT option in /etc/profile ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of 0 (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The TMOUT
 
 setting in /etc/profile.d/autologout.sh should read as follows:
@@ -709,9 +710,8 @@ authentication device.
                 
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</pre></td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</pre></td>
 	<td><pre>To verify the operating system implements certificate status checking for PKI
 authentication, run the following command:
 $ sudo grep -i cert_policy /etc/pam_pkcs11/pam_pkcs11.conf
@@ -805,7 +805,7 @@ root account and password.
 Once the superuser password has been added,
 update the
 grub.cfg file by running:
-grub2-mkconfig -o /boot/grub2/grub2.cfg
+grub2-mkconfig -o /boot/grub2/grub.cfg
           </pre></td>
 	<td>SLES-15-010190</td>
 	<td>grub2_password</td>
@@ -853,7 +853,7 @@ root account and password.
 Once the superuser password has been added,
 update the
 grub.cfg file by running:
-grub2-mkconfig -o /boot/grub2/grub2.cfg
+grub2-mkconfig -o /boot/grub2/grub.cfg
           </pre></td>
 	<td>SLES-15-010200</td>
 	<td>grub2_uefi_password</td>
@@ -973,7 +973,7 @@ Verify that the shadow password suite configuration is set to encrypt password w
 
 Check the hashing algorithm that is being used to hash passwords with the following command:
 
-$ sudo grep -i ENCRYPT_METHOD /etc/login.defs
+$ sudo grep -i ENCRYPT_METHOD  /etc/login.defs
 
 ENCRYPT_METHOD 
       Is it the case that ENCRYPT_METHOD is not set to <sub idref="var_password_hashing_algorithm" />?
@@ -993,8 +993,8 @@ ENCRYPT_METHOD
 	<td>medium</td>
 	<td>The SUSE operating system SSH daemon must be configured to only use Message Authentication Codes (MACs) employing FIPS 140-2 approved cryptographic hash algorithms.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>DoD Information Systems are required to use FIPS-approved cryptographic hash
-functions. The only SSHv2 hash algorithms meeting this requirement is SHA2.</pre></td>
+	<td><pre>FIPS-approved cryptographic hash functions are required to be used.
+The only SSHv2 hash algorithms meeting this requirement is SHA2.</pre></td>
 	<td><pre>Only FIPS-approved MACs should be used. To verify that only FIPS-approved
 MACs are in use, run the following command:
 $ sudo grep -i macs /etc/ssh/sshd_config
@@ -1122,7 +1122,7 @@ To make sure that the setting is persistent, add the following line to a file in
 	<td>V-234830</td>
 	<td></td>
 	<td>medium</td>
-	<td>The SUSE operating system for all network connections associated with SSH traffic must immediately terminate at the end of the session or after 10 minutes of inactivity.</td>
+	<td>The SUSE operating system, for all network connections associated with SSH traffic, must immediately terminate at the end of the session or after 10 minutes of inactivity.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>This ensures a user login will be terminated as soon as the ClientAliveInterval
 is reached.</pre></td>
@@ -1443,10 +1443,10 @@ accessible and configurable, as in the case of interpreted languages. Software l
 also include privileged programs which execute with escalated privileges. Only qualified
 and authorized individuals must be allowed to obtain access to information system components
 for purposes of initiating changes, including upgrades and modifications.</pre></td>
-	<td><pre>Verify the system-wide shared library files are group-owned by "root" with the following command:
+	<td><pre>Verify the system-wide shared library files are group-owned by root with the following command:
 
 $ sudo find -L /lib /lib64 /usr/lib /usr/lib64 ! -group root -exec ls -l {} \;
-      Is it the case that any system wide shared library file is returned and is not group-owned by a required system account?
+      Is it the case that any system wide shared library file is returned and is not group-owned by root?
       </pre></td>
 	<td><pre>System-wide library files are stored in the following directories
 by default:
@@ -1456,8 +1456,8 @@ by default:
 /usr/lib64
 
 All system-wide shared library files should be protected from unauthorised
-access. If any of these files is not group-owned by root, correct its group-owner with
-the following command:
+access. If any of these files is not group-owned by root,
+correct its group-owner with the following command:
 $ sudo chgrp root FILE
               
             </pre></td>
@@ -2117,9 +2117,8 @@ authentication device.
                 
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</pre></td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</pre></td>
 	<td><pre>Check that SUSE Linux Enterprise 15 has the packages for smart card support installed.
 
 Run the following command to determine if the pam_pkcs11 package is installed:
@@ -2193,9 +2192,8 @@ authentication device.
                 
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</pre></td>
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</pre></td>
 	<td><pre>To verify the operating system implements certificate status checking for PKI
 authentication, run the following command:
 $ sudo grep -i cert_policy /etc/pam_pkcs11/pam_pkcs11.conf
@@ -2699,10 +2697,9 @@ authentication device.
 
 Multifactor solutions that require devices separate from information
 systems gaining access include, for example, hardware tokens providing
-time-based or challenge-response authenticators and smart cards such as the
-U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.</pre></td>
-	<td><pre>Remote access is access to DoD nonpublic information systems by an
+time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.</pre></td>
+	<td><pre>Remote access is access to nonpublic information systems by an
 authorized user (or an information system) communicating through an
 external, non-organization-controlled network. Remote access methods
 include, for example, dial-up, broadband, and wireless.
@@ -3250,8 +3247,8 @@ grep pam_cracklib.so /etc/pam.d/common-password
 password requisite pam_cracklib.so ucredit=
 The ucredit parameter (as a negative number) will indicate how
 many uppercase characters are required.
-The DoD and FISMA require at least one uppercase character in a password.
-This would appear as ucredit=-1.
+The profile require at least  uppercase character in a password.
+This would appear as ucredit=-.
       Is it the case that ucredit is not found or not set to the required value?
       </pre></td>
 	<td><pre>The pam_cracklib module's ucredit= parameter controls requirements
@@ -3284,8 +3281,8 @@ If the command does not return anything, the returned line is commented
 out, or has a second column value different from "requisite", or does not
 contain lcredit=, this is a finding.
 
-The DoD and FISMA require at least one lowercase character in a password.
-This would appear as lcredit=-1.
+The profile requires at least  lowercase character in a password.
+This would appear as lcredit=-.
       Is it the case that lcredit is not found or not set to the required value?
       </pre></td>
 	<td><pre>The pam_cracklib module's lcredit= parameter controls requirements
@@ -3313,8 +3310,8 @@ command:
 password requisite pam_cracklib.so dcredit=
 The dcredit parameter (as a negative number) will indicate how
 many digits are required.
-The DoD requires at least one digit in a password.
-This would appear as dcredit=-1.
+The profile requires at least  digit in a password.
+This would appear as dcredit=-.
       Is it the case that dcredit is not found or not set to the required value?
       </pre></td>
 	<td><pre>The pam_cracklib module's dcredit parameter controls requirements
@@ -3342,8 +3339,8 @@ following command:
 # grep pam_cracklib.so /etc/pam.d/common-password
 password requisite pam_cracklib.so difok=
 The difok parameter will indicate how many characters must differ.
-The DoD requires at least eight characters differ during a password change.
-This would appear as difok=8.
+The profile requires at least  characters differ during a password change.
+This would appear as difok=.
       Is it the case that difok is not found or not set to the required value?
       </pre></td>
 	<td><pre>The pam_cracklib module's difok parameter controls requirements for
@@ -3533,7 +3530,7 @@ and add or correct the following line:
 PASS_MIN_DAYS 
               
 A value of 1 day is considered sufficient for many
-environments. The DoD requirement is 1.
+environments.
 The profile requirement is 
                 
               .</pre></td>
@@ -3594,8 +3591,6 @@ edit the file /etc/login.defs
 and add or correct the following line:
 PASS_MAX_DAYS 
               
-A value of 180 days is sufficient for many environments.
-The DoD requirement is 60.
 The profile requirement is 
                 
               .</pre></td>
@@ -3668,8 +3663,8 @@ following command:
 password requisite pam_cracklib.so ocredit=
 The ocredit parameter (as a negative number) will indicate how
 many special characters are required.
-The DoD and FISMA require at least one special character in a password.
-This would appear as ocredit=-1.
+The profile requires at least  special character in a password.
+This would appear as ocredit=-.
       Is it the case that ocredit is not found or not set to the required value?
       </pre></td>
 	<td><pre>The pam_cracklib module's ocredit= parameter controls requirements
@@ -3817,6 +3812,44 @@ utility to read audit rules during daemon startup, add the following lines to
         </pre></td>
 	<td>SLES-15-030010</td>
 	<td>audit_rules_usergroup_modification_group</td>
+</tr>
+
+<tr>
+	<td>V-274879</td>
+	<td></td>
+	<td>medium</td>
+	<td>The SUSE operating system must audit any script or executable called by cron as root or by any privileged user.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>In addition to auditing new user and group accounts, these watches
+will alert the system administrator(s) to any modifications. Any unexpected
+users, groups, or modifications should be investigated for legitimacy.</pre></td>
+	<td><pre>
+Verify SUSE Linux Enterprise 15 generates audit records for all events that affect "/var/spool/cron" with the following command:
+
+$ sudo auditctl -l | grep /var/spool/cron
+
+-w /var/spool/cron -p wa -k cronjobs
+      Is it the case that command does not return a line, or the line is commented out?
+      </pre></td>
+	<td><pre>
+
+
+
+If the auditd daemon is configured to use the augenrules
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix .rules in the
+directory /etc/audit/rules.d:
+
+-w /var/spool/cron -p wa -k cronjobs
+
+If the auditd daemon is configured to use the auditctl
+utility to read audit rules during daemon startup, add the following lines to
+/etc/audit/audit.rules:
+
+-w /var/spool/cron -p wa -k cronjobs
+        </pre></td>
+	<td>SLES-15-030015</td>
+	<td>audit_rules_var_spool_cron</td>
 </tr>
 
 <tr>
@@ -7571,7 +7604,7 @@ PermitUserEnvironment no
 	<td>medium</td>
 	<td>The SUSE operating system SSH server must be configured to use only FIPS-validated key exchange algorithms.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>DoD information systems are required to use FIPS-approved key exchange algorithms.
+	<td><pre>FIPS-approved key exchange algorithms are required to be used.
 The system will attempt to use the first algorithm presented by the client that matches
 the server list. Listing the values "strongest to weakest" is a method to ensure the use
 of the strongest algorithm available to secure the SSH connection.</pre></td>

@@ -2118,6 +2118,9 @@ The SELinux state should be set to <tt><tt>enforcing</tt></tt> at
 system boot time.  In the file <tt>/etc/selinux/config</tt>, add or correct the
 following line to configure the system to boot into enforcing mode:
 <pre>SELINUX=<tt>enforcing</tt></pre>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.
   </td>
   <td xml:lang="en-US">
 Setting the SELinux state to enforcing ensures SELinux is able to confine
@@ -2386,8 +2389,6 @@ To specify password maximum age for new accounts,
 edit the file <tt>/etc/login.defs</tt>
 and add or correct the following line:
 <pre>PASS_MAX_DAYS <tt>60</tt></pre>
-A value of 180 days is sufficient for many environments.
-The DoD requirement is 60.
 The profile requirement is <tt><tt>60</tt></tt>.
   </td>
   <td xml:lang="en-US">
@@ -2413,7 +2414,7 @@ edit the file <tt>/etc/login.defs</tt>
 and add or correct the following line:
 <pre>PASS_MIN_DAYS <tt>1</tt></pre>
 A value of 1 day is considered sufficient for many
-environments. The DoD requirement is 1.
+environments.
 The profile requirement is <tt><tt>1</tt></tt>.
   </td>
   <td xml:lang="en-US">
@@ -2437,8 +2438,6 @@ To specify password length requirements for new accounts, edit the file
 <tt>/etc/login.defs</tt> and add or correct the following line:
 <pre>PASS_MIN_LEN <tt>15</tt></pre>
 <br /><br />
-The DoD requirement is <tt>15</tt>.
-The FISMA requirement is <tt>12</tt>.
 The profile requirement is
 <tt><tt>15</tt></tt>.
 If a program consults <tt>/etc/login.defs</tt> and also another PAM module
@@ -3406,8 +3405,8 @@ by default:
 /usr/lib64
 </pre>
 All system-wide shared library files should be protected from unauthorised
-access. If any of these files is not group-owned by root, correct its group-owner with
-the following command:
+access. If any of these files is not group-owned by root,
+correct its group-owner with the following command:
 <pre>$ sudo chgrp root <i>FILE</i></pre>
   </td>
   <td xml:lang="en-US">
@@ -3433,7 +3432,7 @@ To configure the number of retry prompts that are permitted per-session:
 Edit the <tt>/etc/security/pwquality.conf</tt> to include
 
 <tt>retry=<tt>3</tt></tt>, or a lower value if site
-policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+policy is more restrictive. The profile requirement is a maximum of <tt>retry=<tt>3</tt></tt> prompts
 per session.
   </td>
   <td xml:lang="en-US">
@@ -3694,10 +3693,10 @@ fragmented.
   <td>Disable core dump backtraces</td>
   <td xml:lang="en-US">
 The <tt>ProcessSizeMax</tt> option in <tt>[Coredump]</tt> section
-of <tt>/etc/systemd/coredump.conf</tt>
-specifies the maximum size in bytes of a core which will be processed.
-Core dumps exceeding this size may be stored, but the backtrace will not
-be generated.
+of <tt>/etc/systemd/coredump.conf</tt> or in a drop-in file under
+<tt>/etc/systemd/coredump.conf.d/</tt> specifies the maximum size in bytes
+of a core which will be processed. Core dumps exceeding this size may be
+stored, but the backtrace will not be generated.
   </td>
   <td xml:lang="en-US">
 A core dump includes a memory image taken at the time the operating system
@@ -3717,7 +3716,9 @@ should be reviewed through local needs and policy.
   <td>N/A</td>
   <td>Disable storing core dump</td>
   <td xml:lang="en-US">
-The <tt>Storage</tt> option in <tt>[Coredump]</tt> sectionof <tt>/etc/systemd/coredump.conf</tt>
+The <tt>Storage</tt> option in <tt>[Coredump]</tt> section
+of <tt>/etc/systemd/coredump.conf</tt> or a drop-in file in
+<tt>/etc/systemd/coredump.conf.d/*.conf</tt>
 can be set to <tt>none</tt> to disable storing core dumps permanently.
   </td>
   <td xml:lang="en-US">
@@ -4411,9 +4412,8 @@ authentication device.
 <br /><br />
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.
   </td>
   <td></td>
 </tr>
@@ -4623,7 +4623,7 @@ $ sudo yum install firewalld</pre>
 
 Remote access services, such as those providing remote access to network devices and information systems, which lack automated control capabilities, increase risk and make remote user access management difficult at best.
 
-Remote access is access to DoD nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
+Remote access is access to nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
 
 Oracle Linux 8 functionality (e.g., SSH) must be capable of taking enforcement action if the audit reveals unauthorized activity.
 Automated control of remote access sessions allows organizations to ensure ongoing compliance with remote access policies by enforcing connection rules of remote access applications on a variety of information system components (e.g., servers, workstations, notebook computers, smartphones, and tablets)."
@@ -4648,9 +4648,8 @@ authentication device.
 <br /><br />
 Multifactor solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.
   </td>
   <td></td>
 </tr>
@@ -7507,7 +7506,9 @@ set up to ignore it.
 To check that Crypto Policies settings are configured correctly, ensure that
 <tt>/etc/crypto-policies/back-ends/gnutls.config</tt> contains the following
 line and is not commented out:
-<tt>+VERS-ALL:-VERS-DTLS0.9:-VERS-SSL3.0:-VERS-TLS1.0:-VERS-TLS1.1:-VERS-DTLS1.0</tt>
+<tt>+VERS-ALL:-VERS-DTLS0.9:-VERS-TLS1.1:-VERS-TLS1.0:-VERS-SSL3.0:-VERS-DTLS1.0</tt>
+
+These keywords are order-independent, so the line can be in any order. GnuTLS will then prefer the highest version.
   </td>
   <td xml:lang="en-US">
 Overriding the system crypto policy makes the behavior of the GnuTLS
@@ -7609,7 +7610,7 @@ above (or their subset) are configured for use, keeping the given
 order of algorithms.
   </td>
   <td xml:lang="en-US">
-DoD information systems are required to use FIPS-approved key exchange algorithms.
+FIPS-approved key exchange algorithms are required to be used.
 The system will attempt to use the first algorithm presented by the client that matches
 the server list. Listing the values "strongest to weakest" is a method to ensure the use
 of the strongest algorithm available to secure the SSH connection.
@@ -8554,7 +8555,7 @@ personnel.
   <td xml:lang="en-US">
 
 To properly set the permissions of <code>/var/log/messages</code>, run the command:
-<pre>$ sudo chmod 0600 /var/log/messages</pre>
+<pre>$ sudo chmod 0640 /var/log/messages</pre>
   </td>
   <td xml:lang="en-US">
 The <tt>/var/log/messages</tt> file contains logs of error messages in
@@ -9044,9 +9045,8 @@ authentication device.
 <br /><br />
 Multi-Factor Authentication (MFA) solutions that require devices separate from
 information systems gaining access include, for example, hardware tokens
-providing time-based or challenge-response authenticators and smart cards such
-as the U.S. Government Personal Identity Verification card and the DoD Common
-Access Card.
+providing time-based or challenge-response authenticators and smart cards
+or similar secure authentication devices issued by an organization or identity provider.
   </td>
   <td></td>
 </tr>

@@ -293,7 +293,7 @@ are also available.</td>
 <td>CCE-92487-8</td>
 <td>Ensure McAfee Endpoint Security for Linux (ENSL) is running</td>
 <td>Install McAfee Endpoint Security for Linux antivirus software
-which is provided for DoD systems and uses signatures to search for the
+which is provided for systems and uses signatures to search for the
 presence of viruses on the filesystem.</td>
 </tr>
 <tr>
@@ -660,8 +660,9 @@ $ sudo zypper install sudo</pre>
 <td>Ensure That the sudo Binary Has the Correct Permissions</td>
 <td>
 To properly set the permissions of <code>/usr/bin/sudo</code>, run the command:
-<pre>$ sudo chmod 4111 /usr/bin/sudo</pre>
-       </td>
+<pre>$ sudo chmod 4110 /usr/bin/sudo</pre>
+In order to use this rule, the group owner for /usr/bin/sudo needs to be changed to a
+group other than root to effectively limit access to sudo.</td>
 </tr>
 <tr>
 <td>CCE-91184-2</td>
@@ -1360,7 +1361,7 @@ In the file <code>/etc/pam.d/common-password</code>, make sure the parameters
 <code>remember</code> and <code>use_authtok</code> are present, and that the value
 for the <code>remember</code> parameter is <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub> or greater. For example:
 <pre>password requisite pam_pwhistory.so <i>...existing_options...</i> remember=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub> use_authtok</pre>
-The DoD STIG requirement is 5 passwords.</td>
+The profile requirement is <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_remember" use="legacy"></xccdf-1.2:sub> passwords.</td>
 </tr>
 <tr>
 <td>CCE-85619-5</td>
@@ -1825,8 +1826,6 @@ edit the file <code>/etc/login.defs</code>
 and add or correct the following line:
 <pre>PASS_MAX_DAYS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></xccdf-1.2:sub>
          </pre>
-A value of 180 days is sufficient for many environments.
-The DoD requirement is 60.
 The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
@@ -1838,7 +1837,7 @@ and add or correct the following line:
 <pre>PASS_MIN_DAYS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_minimum_age_login_defs" use="legacy"></xccdf-1.2:sub>
          </pre>
 A value of 1 day is considered sufficient for many
-environments. The DoD requirement is 1.
+environments.
 The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_minimum_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
@@ -1850,8 +1849,6 @@ The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklis
          </pre>
          <br>
          <br>
-The DoD requirement is <code>15</code>.
-The FISMA requirement is <code>12</code>.
 The profile requirement is
 <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_minlen_login_defs" use="legacy"></xccdf-1.2:sub></code>.
 If a program consults <code>/etc/login.defs</code> and also another PAM module
@@ -1893,7 +1890,6 @@ users, run the command:
 <pre>$ sudo chage --warndays <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub>
           <i>USER</i>
          </pre>
-The DoD requirement is 7, and CIS recommendation is no less than 7 days.
 This profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
@@ -1905,7 +1901,6 @@ edit the file <code>/etc/login.defs</code> and add or correct
  the following line:
 <pre>PASS_WARN_AGE <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub>
          </pre>
-The DoD requirement is 7.
 The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
@@ -2196,8 +2191,9 @@ Then, add the following entry to <code>/etc/security/namespace.conf</code>:
 <td>CCE-83269-1</td>
 <td>Set Interactive Session Timeout</td>
 <td>Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of <code>0</code> (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The <code>TMOUT</code>
 
 setting in <code>/etc/profile.d/autologout.sh</code> should read as follows:
@@ -2513,7 +2509,7 @@ to prevent services from being started. The <code>GRUB_DISABLE_RECOVERY</code>
 configuration option in <code>/etc/default/grub</code> should be set to
 <code>true</code> to disable the generation of recovery mode menu entries. It is
 also required to change the runtime configuration, run:
-<pre>$ sudo grub2-mkconfig -o /boot/grub2/grub2.cfg</pre>
+<pre>$ sudo grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
       </td>
 </tr>
 <tr>
@@ -2781,7 +2777,7 @@ root account and password.
 Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
-<pre>grub2-mkconfig -o /boot/grub2/grub2.cfg</pre>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
        </td>
 </tr>
 <tr>
@@ -2874,7 +2870,7 @@ root account and password.
 Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
-<pre>grub2-mkconfig -o /boot/grub2/grub2.cfg</pre>
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
        </td>
 </tr>
 <tr>
@@ -5391,8 +5387,8 @@ by default:
 /usr/lib64
 </pre>
 All system-wide shared library files should be protected from unauthorised
-access. If any of these files is not group-owned by root, correct its group-owner with
-the following command:
+access. If any of these files is not group-owned by root,
+correct its group-owner with the following command:
 <pre>$ sudo chgrp root <i>FILE</i>
          </pre>
         </td>
@@ -5906,16 +5902,17 @@ To make sure that the setting is persistent, add the following line to a file in
 <td>CCE-85745-8</td>
 <td>Disable core dump backtraces</td>
 <td>The <code>ProcessSizeMax</code> option in <code>[Coredump]</code> section
-of <code>/etc/systemd/coredump.conf</code>
-specifies the maximum size in bytes of a core which will be processed.
-Core dumps exceeding this size may be stored, but the backtrace will not
-be generated.</td>
+of <code>/etc/systemd/coredump.conf</code> or in a drop-in file under
+<code>/etc/systemd/coredump.conf.d/</code> specifies the maximum size in bytes
+of a core which will be processed. Core dumps exceeding this size may be
+stored, but the backtrace will not be generated.</td>
 </tr>
 <tr>
 <td>CCE-85746-6</td>
 <td>Disable storing core dump</td>
 <td>The <code>Storage</code> option in <code>[Coredump]</code> section
-of <code>/etc/systemd/coredump.conf</code> or <code>/etc/systemd/coredump.conf.d/*.conf</code>
+of <code>/etc/systemd/coredump.conf</code> or a drop-in file in
+<code>/etc/systemd/coredump.conf.d/*.conf</code>
 can be set to <code>none</code> to disable storing core dumps permanently.</td>
 </tr>
 <tr>
@@ -6113,7 +6110,9 @@ the system to boot into enforcing or permissive mode:
 <pre>SELINUX=enforcing</pre>
 OR
 <pre>SELINUX=permissive</pre>
-      </td>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.</td>
 </tr>
 <tr>
 <td>CCE-91445-7</td>
@@ -6136,7 +6135,9 @@ system boot time.  In the file <code>/etc/selinux/config</code>, add or correct 
 following line to configure the system to boot into enforcing mode:
 <pre>SELINUX=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_selinux_state" use="legacy"></xccdf-1.2:sub>
        </pre>
-      </td>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.</td>
 </tr>
 <tr>
 <td>CCE-91265-9</td>
@@ -8253,6 +8254,29 @@ To make sure that syscall auditing works, this line must be removed from
       </td>
 </tr>
 <tr>
+<td>CCE-92586-7</td>
+<td>Ensure auditd Collects Changes to Cron Jobs - /etc/cron.d/</td>
+<td>At a minimum, the audit system should collect administrator actions
+for all users and root.
+
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /etc/cron.d/ -p wa -k cronjobs</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code>:
+
+<pre>-w /etc/cron.d/ -p wa -k cronjobs</pre>
+      </td>
+</tr>
+<tr>
 <td>CCE-85831-6</td>
 <td>Make the auditd Configuration Immutable</td>
 <td>If the <code>auditd</code> daemon is configured to use the
@@ -8647,6 +8671,27 @@ utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code>:
 
 <pre>-w /etc/shadow -p wa -k audit_rules_usergroup_modification</pre>
+      </td>
+</tr>
+<tr>
+<td>CCE-92588-3</td>
+<td>Ensure auditd Collects Changes to Cron Jobs - /var/spool/cron</td>
+<td>
+
+
+
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add the
+following lines to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre>
+
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code>:
+
+<pre>-w /var/spool/cron -p wa -k cronjobs</pre>
       </td>
 </tr>
 <tr>

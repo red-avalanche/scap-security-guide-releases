@@ -536,7 +536,8 @@ Edit the <code>pam_pwquality.so</code> statement in
 
 <code>retry=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_retry" use="legacy"></xccdf-1.2:sub>
           </code>, or a lower value if site
-policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+policy is more restrictive. The profile requirement is a maximum of <code>retry=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_retry" use="legacy"></xccdf-1.2:sub>
+          </code> prompts
 per session.</td>
 </tr>
 <tr>
@@ -632,8 +633,6 @@ edit the file <code>/etc/login.defs</code>
 and add or correct the following line:
 <pre>PASS_MAX_DAYS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></xccdf-1.2:sub>
          </pre>
-A value of 180 days is sufficient for many environments.
-The DoD requirement is 60.
 The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_maximum_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
@@ -645,7 +644,7 @@ and add or correct the following line:
 <pre>PASS_MIN_DAYS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_minimum_age_login_defs" use="legacy"></xccdf-1.2:sub>
          </pre>
 A value of 1 day is considered sufficient for many
-environments. The DoD requirement is 1.
+environments.
 The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_minimum_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
@@ -675,7 +674,6 @@ users, run the command:
 <pre>$ sudo chage --warndays <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub>
           <i>USER</i>
          </pre>
-The DoD requirement is 7, and CIS recommendation is no less than 7 days.
 This profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
@@ -687,7 +685,6 @@ edit the file <code>/etc/login.defs</code> and add or correct
  the following line:
 <pre>PASS_WARN_AGE <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub>
          </pre>
-The DoD requirement is 7.
 The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_password_warn_age_login_defs" use="legacy"></xccdf-1.2:sub></code>.</td>
 </tr>
 <tr>
@@ -812,8 +809,9 @@ command, make sure that the following line exists in the file <code>/etc/pam.d/s
 <td></td>
 <td>Set Interactive Session Timeout</td>
 <td>Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
-all user sessions will terminate based on inactivity.
-The value of TMOUT should be exported and read only.
+all user sessions will terminate based on inactivity. A value of <code>0</code> (zero)
+disables the automatic logout feature and is therefore not a compliant setting.
+The value of TMOUT should be a positive integer, exported, and read only.
 The <code>TMOUT</code>
 
 setting in a file loaded by <code>/etc/profile</code>, e.g.
@@ -2036,15 +2034,17 @@ To make sure that the setting is persistent, add the following line to a file in
 <td></td>
 <td>Disable core dump backtraces</td>
 <td>The <code>ProcessSizeMax</code> option in <code>[Coredump]</code> section
-of <code>/etc/systemd/coredump.conf</code>
-specifies the maximum size in bytes of a core which will be processed.
-Core dumps exceeding this size may be stored, but the backtrace will not
-be generated.</td>
+of <code>/etc/systemd/coredump.conf</code> or in a drop-in file under
+<code>/etc/systemd/coredump.conf.d/</code> specifies the maximum size in bytes
+of a core which will be processed. Core dumps exceeding this size may be
+stored, but the backtrace will not be generated.</td>
 </tr>
 <tr>
 <td></td>
 <td>Disable storing core dump</td>
-<td>The <code>Storage</code> option in <code>[Coredump]</code> sectionof <code>/etc/systemd/coredump.conf</code>
+<td>The <code>Storage</code> option in <code>[Coredump]</code> section
+of <code>/etc/systemd/coredump.conf</code> or a drop-in file in
+<code>/etc/systemd/coredump.conf.d/*.conf</code>
 can be set to <code>none</code> to disable storing core dumps permanently.</td>
 </tr>
 <tr>
@@ -2113,7 +2113,9 @@ the system to boot into enforcing or permissive mode:
 <pre>SELINUX=enforcing</pre>
 OR
 <pre>SELINUX=permissive</pre>
-      </td>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.</td>
 </tr>
 <tr>
 <td></td>
@@ -2136,7 +2138,9 @@ system boot time.  In the file <code>/etc/selinux/config</code>, add or correct 
 following line to configure the system to boot into enforcing mode:
 <pre>SELINUX=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_selinux_state" use="legacy"></xccdf-1.2:sub>
        </pre>
-      </td>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.</td>
 </tr>
 <tr>
 <td></td>

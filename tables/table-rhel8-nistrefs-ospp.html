@@ -771,6 +771,9 @@ The SELinux state should be set to <tt><tt>enforcing</tt></tt> at
 system boot time.  In the file <tt>/etc/selinux/config</tt>, add or correct the
 following line to configure the system to boot into enforcing mode:
 <pre>SELINUX=<tt>enforcing</tt></pre>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.
   </td>
   <td xml:lang="en-US">
 Setting the SELinux state to enforcing ensures SELinux is able to confine
@@ -1311,10 +1314,10 @@ fragmented.
   <td>Disable core dump backtraces</td>
   <td xml:lang="en-US">
 The <tt>ProcessSizeMax</tt> option in <tt>[Coredump]</tt> section
-of <tt>/etc/systemd/coredump.conf</tt>
-specifies the maximum size in bytes of a core which will be processed.
-Core dumps exceeding this size may be stored, but the backtrace will not
-be generated.
+of <tt>/etc/systemd/coredump.conf</tt> or in a drop-in file under
+<tt>/etc/systemd/coredump.conf.d/</tt> specifies the maximum size in bytes
+of a core which will be processed. Core dumps exceeding this size may be
+stored, but the backtrace will not be generated.
   </td>
   <td xml:lang="en-US">
 A core dump includes a memory image taken at the time the operating system
@@ -1334,7 +1337,9 @@ should be reviewed through local needs and policy.
   <td>CCE-82252-8</td>
   <td>Disable storing core dump</td>
   <td xml:lang="en-US">
-The <tt>Storage</tt> option in <tt>[Coredump]</tt> sectionof <tt>/etc/systemd/coredump.conf</tt>
+The <tt>Storage</tt> option in <tt>[Coredump]</tt> section
+of <tt>/etc/systemd/coredump.conf</tt> or a drop-in file in
+<tt>/etc/systemd/coredump.conf.d/*.conf</tt>
 can be set to <tt>none</tt> to disable storing core dumps permanently.
   </td>
   <td xml:lang="en-US">
@@ -1566,7 +1571,7 @@ $ sudo yum install firewalld</pre>
 
 Remote access services, such as those providing remote access to network devices and information systems, which lack automated control capabilities, increase risk and make remote user access management difficult at best.
 
-Remote access is access to DoD nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
+Remote access is access to nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
 
 Red Hat Enterprise Linux 8 functionality (e.g., SSH) must be capable of taking enforcement action if the audit reveals unauthorized activity.
 Automated control of remote access sessions allows organizations to ensure ongoing compliance with remote access policies by enforcing connection rules of remote access applications on a variety of information system components (e.g., servers, workstations, notebook computers, smartphones, and tablets)."

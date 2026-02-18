@@ -771,6 +771,9 @@ The SELinux state should be set to <tt><tt>enforcing</tt></tt> at
 system boot time.  In the file <tt>/etc/selinux/config</tt>, add or correct the
 following line to configure the system to boot into enforcing mode:
 <pre>SELINUX=<tt>enforcing</tt></pre>
+Ensure that all files have correct SELinux labels by running:
+<pre>fixfiles onboot</pre>
+Then reboot the system.
   </td>
   <td xml:lang="en-US">
 Setting the SELinux state to enforcing ensures SELinux is able to confine
@@ -831,8 +834,6 @@ To specify password length requirements for new accounts, edit the file
 <tt>/etc/login.defs</tt> and add or correct the following line:
 <pre>PASS_MIN_LEN <tt>12</tt></pre>
 <br /><br />
-The DoD requirement is <tt>15</tt>.
-The FISMA requirement is <tt>12</tt>.
 The profile requirement is
 <tt><tt>12</tt></tt>.
 If a program consults <tt>/etc/login.defs</tt> and also another PAM module
@@ -1343,10 +1344,10 @@ fragmented.
   <td>Disable core dump backtraces</td>
   <td xml:lang="en-US">
 The <tt>ProcessSizeMax</tt> option in <tt>[Coredump]</tt> section
-of <tt>/etc/systemd/coredump.conf</tt>
-specifies the maximum size in bytes of a core which will be processed.
-Core dumps exceeding this size may be stored, but the backtrace will not
-be generated.
+of <tt>/etc/systemd/coredump.conf</tt> or in a drop-in file under
+<tt>/etc/systemd/coredump.conf.d/</tt> specifies the maximum size in bytes
+of a core which will be processed. Core dumps exceeding this size may be
+stored, but the backtrace will not be generated.
   </td>
   <td xml:lang="en-US">
 A core dump includes a memory image taken at the time the operating system
@@ -1366,7 +1367,9 @@ should be reviewed through local needs and policy.
   <td>N/A</td>
   <td>Disable storing core dump</td>
   <td xml:lang="en-US">
-The <tt>Storage</tt> option in <tt>[Coredump]</tt> sectionof <tt>/etc/systemd/coredump.conf</tt>
+The <tt>Storage</tt> option in <tt>[Coredump]</tt> section
+of <tt>/etc/systemd/coredump.conf</tt> or a drop-in file in
+<tt>/etc/systemd/coredump.conf.d/*.conf</tt>
 can be set to <tt>none</tt> to disable storing core dumps permanently.
   </td>
   <td xml:lang="en-US">
@@ -1598,7 +1601,7 @@ $ sudo yum install firewalld</pre>
 
 Remote access services, such as those providing remote access to network devices and information systems, which lack automated control capabilities, increase risk and make remote user access management difficult at best.
 
-Remote access is access to DoD nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
+Remote access is access to nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
 
 Oracle Linux 8 functionality (e.g., SSH) must be capable of taking enforcement action if the audit reveals unauthorized activity.
 Automated control of remote access sessions allows organizations to ensure ongoing compliance with remote access policies by enforcing connection rules of remote access applications on a variety of information system components (e.g., servers, workstations, notebook computers, smartphones, and tablets)."
@@ -4077,7 +4080,7 @@ By decreasing the limit based on the amount of data and enabling
 time-based limit, effects of potential attacks against
 encryption keys are limited.
   </td>
-  <td>var_ssh_client_rekey_limit_time=1hour<br/>var_ssh_client_rekey_limit_size=1G</td>
+  <td>var_ssh_client_rekey_limit_size=1G<br/>var_ssh_client_rekey_limit_time=1hour</td>
 </tr>
 <tr>
   <td></td>
@@ -4140,7 +4143,7 @@ By decreasing the limit based on the amount of data and enabling
 time-based limit, effects of potential attacks against
 encryption keys are limited.
   </td>
-  <td>var_rekey_limit_size=1G<br/>var_rekey_limit_time=1hour</td>
+  <td>var_rekey_limit_time=1hour<br/>var_rekey_limit_size=1G</td>
 </tr>
 <tr>
   <td></td>
