@@ -22,13 +22,13 @@
       <ds:component-ref id="scap_org.open-scap_cref_ssg-sle11-cpe-oval.xml" xlink:href="#scap_org.open-scap_comp_ssg-sle11-cpe-oval.xml"/>
     </ds:checks>
   </ds:data-stream>
-  <ds:component id="scap_org.open-scap_comp_ssg-sle11-oval.xml" timestamp="2017-10-31T16:14:50">
+  <ds:component id="scap_org.open-scap_comp_ssg-sle11-oval.xml" timestamp="2018-01-03T14:22:20">
     <ns0:oval_definitions xmlns:ns0="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ns2="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ns3="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:ns4="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:ns5="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
       <ns0:generator>
         <ns2:product_name>combine-ovals.py from SCAP Security Guide</ns2:product_name>
-        <ns2:product_version>ssg: 0.1.36, python: 2.7.13</ns2:product_version>
+        <ns2:product_version>ssg: 0.1.37, python: 2.7.14</ns2:product_version>
         <ns2:schema_version>5.11</ns2:schema_version>
-        <ns2:timestamp>2017-10-31T16:14:45</ns2:timestamp>
+        <ns2:timestamp>2018-01-03T14:22:16</ns2:timestamp>
       </ns0:generator>
       <ns0:definitions>
         <ns0:definition class="compliance" id="oval:ssg-package_openssh-server_installed:def:1" version="1">
@@ -982,10 +982,14 @@
       be disabled (and dependencies are met)</ns0:description>
             <reference ref_id="sshd_disable_empty_passwords" source="ssg"/>
           </ns0:metadata>
-          <ns0:criteria comment="SSH is not installed or conditions are met" operator="OR">
-            <ns0:extend_definition comment="sshd is not required and not installed, or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+          <ns0:criteria comment="SSH is configured correctly or is not installed" operator="OR">
+            <ns0:criteria comment="sshd is not installed" operator="AND">
+              <ns0:extend_definition comment="sshd is not required or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server removed" definition_ref="oval:ssg-package_openssh-server_removed:def:1"/>
+            </ns0:criteria>
             <ns0:criteria comment="sshd is installed and configured" operator="AND">
-              <ns0:extend_definition comment="sshd is required and installed, or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="sshd is required or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server installed" definition_ref="oval:ssg-package_openssh-server_installed:def:1"/>
               <ns0:criterion comment="Check PermitEmptyPasswords in /etc/ssh/sshd_config" negate="true" test_ref="oval:ssg-test_sshd_permitemptypasswords_no:tst:1"/>
             </ns0:criteria>
           </ns0:criteria>
@@ -999,11 +1003,18 @@
       through the use of the authenticating user's SSH keys. This should be disabled.</ns0:description>
             <reference ref_id="sshd_disable_rhosts_rsa" source="ssg"/>
           </ns0:metadata>
-          <ns0:criteria comment="SSH is not installed or conditions are met" operator="OR">
-            <ns0:extend_definition comment="sshd is not required and not installed, or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+          <ns0:criteria comment="SSH is configured correctly or is not installed" operator="OR">
+            <ns0:criteria comment="sshd is not installed" operator="AND">
+              <ns0:extend_definition comment="sshd is not required or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server removed" definition_ref="oval:ssg-package_openssh-server_removed:def:1"/>
+            </ns0:criteria>
             <ns0:criteria comment="sshd is installed and configured" operator="AND">
-              <ns0:extend_definition comment="sshd is required and installed, or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
-              <ns0:criterion comment="Check RhostsRSAAuthentication in /etc/ssh/sshd_config" negate="true" test_ref="oval:ssg-test_sshd_disable_rhosts_rsa:tst:1"/>
+              <ns0:extend_definition comment="sshd is required or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server installed" definition_ref="oval:ssg-package_openssh-server_installed:def:1"/>
+              <ns0:criteria comment="SSH version is equal or higher than 7.4 has deprecated RhostsRSAAuthentication" operator="OR">
+                <ns0:extend_definition comment="OpenSSH version 7.4 or higher has deprecated RhostsRSAAuthentication" definition_ref="oval:ssg-sshd_version_equal_or_higher_than_74:def:1"/>
+                <ns0:criterion comment="Check RhostsRSAAuthentication in /etc/ssh/sshd_config" negate="true" test_ref="oval:ssg-test_sshd_disable_rhosts_rsa:tst:1"/>
+              </ns0:criteria>
             </ns0:criteria>
           </ns0:criteria>
         </ns0:definition>
@@ -1016,10 +1027,14 @@
       met)</ns0:description>
             <reference ref_id="sshd_disable_root_login" source="ssg"/>
           </ns0:metadata>
-          <ns0:criteria comment="SSH is not installed or conditions are met" operator="OR">
-            <ns0:extend_definition comment="sshd is not required and not installed, or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+          <ns0:criteria comment="SSH is configured correctly or is not installed" operator="OR">
+            <ns0:criteria comment="sshd is not installed" operator="AND">
+              <ns0:extend_definition comment="sshd is not required or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server removed" definition_ref="oval:ssg-package_openssh-server_removed:def:1"/>
+            </ns0:criteria>
             <ns0:criteria comment="sshd is installed and configured" operator="AND">
-              <ns0:extend_definition comment="sshd is required and installed, or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="sshd is required or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server installed" definition_ref="oval:ssg-package_openssh-server_installed:def:1"/>
               <ns0:criterion comment="Check PermitRootLogin in /etc/ssh/sshd_config" negate="true" test_ref="oval:ssg-test_sshd_permitrootlogin_no:tst:1"/>
             </ns0:criteria>
           </ns0:criteria>
@@ -1034,10 +1049,14 @@ to connect to systems if a cache of the remote systems public keys are available
 This should be disabled.</ns0:description>
             <reference ref_id="sshd_disable_user_known_hosts" source="ssg"/>
           </ns0:metadata>
-          <ns0:criteria comment="SSH is not installed or conditions are met" operator="OR">
-            <ns0:extend_definition comment="sshd is not required and not installed, or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+          <ns0:criteria comment="SSH is configured correctly or is not installed" operator="OR">
+            <ns0:criteria comment="sshd is not installed" operator="AND">
+              <ns0:extend_definition comment="sshd is not required or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server removed" definition_ref="oval:ssg-package_openssh-server_removed:def:1"/>
+            </ns0:criteria>
             <ns0:criteria comment="sshd is installed and configured" operator="AND">
-              <ns0:extend_definition comment="sshd is required and installed, or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="sshd is required or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server installed" definition_ref="oval:ssg-package_openssh-server_installed:def:1"/>
               <ns0:criterion comment="Check IgnoreUserKnownHosts in /etc/ssh/sshd_config" test_ref="oval:ssg-test_sshd_disable_user_known_hosts:tst:1"/>
             </ns0:criteria>
           </ns0:criteria>
@@ -1050,10 +1069,14 @@ This should be disabled.</ns0:description>
             <ns0:description>Enable X11Forwarding to encrypt X11 remote connections over SSH.</ns0:description>
             <reference ref_id="sshd_enable_x11_forwarding" source="ssg"/>
           </ns0:metadata>
-          <ns0:criteria comment="SSH is not installed or conditions are met" operator="OR">
-            <ns0:extend_definition comment="sshd is not required and not installed, or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+          <ns0:criteria comment="SSH is configured correctly or is not installed" operator="OR">
+            <ns0:criteria comment="sshd is not installed" operator="AND">
+              <ns0:extend_definition comment="sshd is not required or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server removed" definition_ref="oval:ssg-package_openssh-server_removed:def:1"/>
+            </ns0:criteria>
             <ns0:criteria comment="sshd is installed and configured" operator="AND">
-              <ns0:extend_definition comment="sshd is required and installed, or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="sshd is required or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server installed" definition_ref="oval:ssg-package_openssh-server_installed:def:1"/>
               <ns0:criterion comment="Check X11Forwarding in /etc/ssh/sshd_config" test_ref="oval:ssg-test_sshd_enable_x11_forwarding:tst:1"/>
             </ns0:criteria>
           </ns0:criteria>
@@ -1067,10 +1090,7 @@ This should be disabled.</ns0:description>
             <reference ref_id="sshd_not_required_or_unset" source="ssg"/>
           </ns0:metadata>
           <ns0:criteria comment="SSH not required or not set" operator="OR">
-            <ns0:criteria comment="SSH is not required and not installed" operator="AND">
-              <ns0:criterion test_ref="oval:ssg-test_sshd_not_required:tst:1"/>
-              <ns0:extend_definition comment="rpm package openssh-server removed" definition_ref="oval:ssg-package_openssh-server_removed:def:1"/>
-            </ns0:criteria>
+            <ns0:criterion test_ref="oval:ssg-test_sshd_not_required:tst:1"/>
             <ns0:extend_definition comment="SSH requirement is unset" definition_ref="oval:ssg-sshd_requirement_unset:def:1"/>
           </ns0:criteria>
         </ns0:definition>
@@ -1083,10 +1103,7 @@ This should be disabled.</ns0:description>
             <reference ref_id="sshd_required_or_unset" source="ssg"/>
           </ns0:metadata>
           <ns0:criteria comment="SSH required or not set" operator="OR">
-            <ns0:criteria comment="SSH is required and installed" operator="AND">
-              <ns0:criterion test_ref="oval:ssg-test_sshd_required:tst:1"/>
-              <ns0:extend_definition comment="rpm package openssh-server installed" definition_ref="oval:ssg-package_openssh-server_installed:def:1"/>
-            </ns0:criteria>
+            <ns0:criterion test_ref="oval:ssg-test_sshd_required:tst:1"/>
             <ns0:extend_definition comment="SSH requirement is unset" definition_ref="oval:ssg-sshd_requirement_unset:def:1"/>
           </ns0:criteria>
         </ns0:definition>
@@ -1111,10 +1128,14 @@ This should be disabled.</ns0:description>
       appropriate value.</ns0:description>
             <reference ref_id="sshd_set_idle_timeout" source="ssg"/>
           </ns0:metadata>
-          <ns0:criteria comment="SSH is not installed or conditions are met" operator="OR">
-            <ns0:extend_definition comment="sshd is not required and not installed, or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+          <ns0:criteria comment="SSH is configured correctly or is not installed" operator="OR">
+            <ns0:criteria comment="sshd is not installed" operator="AND">
+              <ns0:extend_definition comment="sshd is not required or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server removed" definition_ref="oval:ssg-package_openssh-server_removed:def:1"/>
+            </ns0:criteria>
             <ns0:criteria comment="sshd is installed and configured" operator="AND">
-              <ns0:extend_definition comment="sshd is required and installed, or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="sshd is required or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server installed" definition_ref="oval:ssg-package_openssh-server_installed:def:1"/>
               <ns0:criterion comment="Check ClientAliveInterval in /etc/ssh/sshd_config" test_ref="oval:ssg-test_sshd_idle_timeout:tst:1"/>
             </ns0:criteria>
           </ns0:criteria>
@@ -1128,10 +1149,14 @@ This should be disabled.</ns0:description>
       value (and dependencies are met)</ns0:description>
             <reference ref_id="sshd_set_keepalive" source="ssg"/>
           </ns0:metadata>
-          <ns0:criteria comment="SSH is not installed or conditions are met" operator="OR">
-            <ns0:extend_definition comment="sshd is not required and not installed, or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+          <ns0:criteria comment="SSH is configured correctly or is not installed" operator="OR">
+            <ns0:criteria comment="sshd is not installed" operator="AND">
+              <ns0:extend_definition comment="sshd is not required or requirement is unset" definition_ref="oval:ssg-sshd_not_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server removed" definition_ref="oval:ssg-package_openssh-server_removed:def:1"/>
+            </ns0:criteria>
             <ns0:criteria comment="sshd is installed and configured" operator="AND">
-              <ns0:extend_definition comment="sshd is required and installed, or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="sshd is required or requirement is unset" definition_ref="oval:ssg-sshd_required_or_unset:def:1"/>
+              <ns0:extend_definition comment="rpm package openssh-server installed" definition_ref="oval:ssg-package_openssh-server_installed:def:1"/>
               <ns0:criterion comment="Check ClientAliveCountMax in /etc/ssh/sshd_config" test_ref="oval:ssg-test_sshd_clientalivecountmax:tst:1"/>
             </ns0:criteria>
           </ns0:criteria>
@@ -2540,10 +2565,10 @@ This should be disabled.</ns0:description>
         <ns0:external_variable comment="audit disk_full_action setting" datatype="string" id="oval:ssg-var_auditd_disk_full_action:var:1" version="1"/>
         <ns0:external_variable comment="audit action_mail_acct setting" datatype="string" id="oval:ssg-var_auditd_action_mail_acct:var:1" version="1"/>
         <ns0:external_variable comment="audit admin_space_left_action setting" datatype="string" id="oval:ssg-var_auditd_admin_space_left_action:var:1" version="1"/>
-        <ns0:external_variable comment="audit max_log_file settting" datatype="int" id="oval:ssg-var_auditd_max_log_file:var:1" version="1"/>
+        <ns0:external_variable comment="audit max_log_file setting" datatype="int" id="oval:ssg-var_auditd_max_log_file:var:1" version="1"/>
         <ns0:external_variable comment="audit max_log_file_action setting" datatype="string" id="oval:ssg-var_auditd_max_log_file_action:var:1" version="1"/>
-        <ns0:external_variable comment="audit num_logs settting" datatype="int" id="oval:ssg-var_auditd_num_logs:var:1" version="1"/>
-        <ns0:external_variable comment="audit space_left settting" datatype="int" id="oval:ssg-var_auditd_space_left:var:1" version="1"/>
+        <ns0:external_variable comment="audit num_logs setting" datatype="int" id="oval:ssg-var_auditd_num_logs:var:1" version="1"/>
+        <ns0:external_variable comment="audit space_left setting" datatype="int" id="oval:ssg-var_auditd_space_left:var:1" version="1"/>
         <ns0:external_variable comment="audit space_left_action setting" datatype="string" id="oval:ssg-var_auditd_space_left_action:var:1" version="2"/>
         <ns0:local_variable comment="UIDs retrieved from /etc/passwd" datatype="int" id="oval:ssg-variable_sys_uids_etc_passwd:var:1" version="1">
           <ns0:object_component item_field="subexpression" object_ref="oval:ssg-object_etc_passwd_entries:obj:1"/>
@@ -2614,13 +2639,13 @@ This should be disabled.</ns0:description>
       </ns0:variables>
     </ns0:oval_definitions>
   </ds:component>
-  <ds:component id="scap_org.open-scap_comp_ssg-sle11-ocil.xml" timestamp="2017-10-31T16:14:50">
+  <ds:component id="scap_org.open-scap_comp_ssg-sle11-ocil.xml" timestamp="2018-01-03T14:22:20">
     <ns0:ocil xmlns:ns0="http://scap.nist.gov/schema/ocil/2.0">
       <ns0:generator>
         <ns0:product_name>xccdf-create-ocil.xslt from SCAP Security Guide</ns0:product_name>
-        <ns0:product_version>ssg: 0.1.36</ns0:product_version>
+        <ns0:product_version>ssg: 0.1.37</ns0:product_version>
         <ns0:schema_version>2.0</ns0:schema_version>
-        <ns0:timestamp>2017-10-31T16:14:44Z</ns0:timestamp>
+        <ns0:timestamp>2018-01-03T14:22:15Z</ns0:timestamp>
       </ns0:generator>
       <ns0:questionnaires>
         <ns0:questionnaire id="ocil:ssg-file_owner_etc_passwd_ocil:questionnaire:1">
@@ -3229,7 +3254,12 @@ MaxAuthTries tries
         </ns0:boolean_question>
         <ns0:boolean_question id="ocil:ssg-sshd_disable_rhosts_rsa_question:question:1">
           <ns0:question_text>
-            
+To check which SSH protocol version is allowed, check version of
+openssh-server with following command:
+$ rpm -qi openssh-server | grep Version
+Versions equal to or higher than 7.4 have deprecated the RhostsRSAAuthentication option.
+If version is lower than 7.4, run the following command to check configuration:
+
     To determine how the SSH daemon's
     RhostsRSAAuthentication
     option is set, run the following command:
@@ -3237,7 +3267,7 @@ MaxAuthTries tries
       If no line, a commented line, or a line indicating the value
       no is returned, then the required value is set.
     
-          
+
 			Is it the case that the required value is not set?
 			</ns0:question_text>
         </ns0:boolean_question>
@@ -3365,9 +3395,9 @@ hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh
       </ns0:questions>
     </ns0:ocil>
   </ds:component>
-  <ds:component id="scap_org.open-scap_comp_ssg-sle11-xccdf-1.2.xml" timestamp="2017-10-31T16:14:50">
+  <ds:component id="scap_org.open-scap_comp_ssg-sle11-xccdf-1.2.xml" timestamp="2018-01-03T14:22:20">
     <Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_org.ssgproject.content_benchmark_SUSE-11" resolved="1" xml:lang="en-US" style="SCAP_1.2">
-      <status date="2017-10-31">draft</status>
+      <status date="2018-01-03">draft</status>
       <title xml:lang="en-US">Guide to the Secure Configuration of SUSE Linux Enterprise 11</title>
       <description xml:lang="en-US">This guide presents a catalog of security-relevant
 configuration settings for SUSE Linux Enterprise 11. It is a rendering of
@@ -3438,7 +3468,7 @@ trademarks or trademarks of Red Hat, Inc. in the United States and other
 countries. All other names are registered trademarks or trademarks of their
 respective companies.</rear-matter>
       <platform idref="cpe:/o:suse:linux_enterprise_server:11"/>
-      <version update="https://github.com/OpenSCAP/scap-security-guide/releases/latest">0.1.36</version>
+      <version update="https://github.com/OpenSCAP/scap-security-guide/releases/latest">0.1.37</version>
       <metadata>
         <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">SCAP Security Guide Project</dc:publisher>
         <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">SCAP Security Guide Project</dc:creator>
@@ -3452,6 +3482,7 @@ respective companies.</rear-matter>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Jose Luis BG &lt;bgjoseluis@gmail.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Joseph Bisch &lt;joseph.bisch@gmail.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Jeffrey Blank &lt;blank@eclipse.ncsc.mil&gt;</dc:contributor>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Olivier Bonhomme &lt;ptitoliv@ptitoliv.net&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Ted Brunell &lt;tbrunell@redhat.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Blake Burkhart &lt;blake.burkhart@us.af.mil&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Patrick Callahan &lt;pmc@patrickcallahan.com&gt;</dc:contributor>
@@ -3477,6 +3508,7 @@ respective companies.</rear-matter>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Robin Price II &lt;robin@redhat.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Jeremiah Jahn &lt;jeremiah@goodinassociates.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Stephan Joerrens &lt;Stephan.Joerrens@fiduciagad.de&gt;</dc:contributor>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Charles Kernstock &lt;charles.kernstock@ultra-ats.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Yuli Khodorkovskiy &lt;ykhodorkovskiy@tresys.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Luke Kordell &lt;luke.t.kordell@lmco.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">kspargur &lt;kspargur@kspargur.csb&gt;</dc:contributor>
@@ -3484,6 +3516,7 @@ respective companies.</rear-matter>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Ian Lee &lt;lee1001@llnl.gov&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Jan Lieskovsky &lt;jlieskov@redhat.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Šimon Lukašík &lt;slukasik@redhat.com&gt;</dc:contributor>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Matus Marhefka &lt;mmarhefk@redhat.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Jamie Lorwey Martin &lt;jlmartin@redhat.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Michael McConachie &lt;michael@redhat.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Khary Mendez &lt;kharyam@gmail.com&gt;</dc:contributor>
@@ -3501,6 +3534,7 @@ respective companies.</rear-matter>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Max R.D. Parmer &lt;maxp@trystero.is&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">pcactr &lt;paul.c.arnold4.ctr@mail.mil&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Kenneth Peeples &lt;kennethwpeeples@gmail.com&gt;</dc:contributor>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Nathan Peters &lt;petna01@ca.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Frank Lin PIAT &lt;fpiat@klabs.be&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Stefan Pietsch &lt;mail.ipv4v6+gh@gmail.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Martin Preisler &lt;mpreisle@redhat.com&gt;</dc:contributor>
@@ -3529,7 +3563,7 @@ respective companies.</rear-matter>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Philippe Thierry &lt;phil@reseau-libre.net&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Paul Tittle &lt;ptittle@cmf.nrl.navy.mil&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Jeb Trayer &lt;jeb.d.trayer@uscg.mil&gt;</dc:contributor>
-        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Matěj Týč &lt;matej.tyc@gmail.com&gt;</dc:contributor>
+        <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Matěj Týč &lt;matyc@redhat.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">VadimDor &lt;29509093+VadimDor@users.noreply.github.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Shawn Wells &lt;shawn@redhat.com&gt;</dc:contributor>
         <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Roy Williams &lt;roywilli@roywilli.redhat.com&gt;</dc:contributor>
@@ -3739,10 +3773,11 @@ respective companies.</rear-matter>
         <select idref="xccdf_org.ssgproject.content_group_httpd_deploy_mod_security" selected="false"/>
         <select idref="xccdf_org.ssgproject.content_group_httpd_use_dos_protection_modules" selected="false"/>
         <select idref="xccdf_org.ssgproject.content_group_httpd_configure_php_securely" selected="false"/>
+        <select idref="xccdf_org.ssgproject.content_group_httpd_configure_perl_securely" selected="false"/>
         <select idref="xccdf_org.ssgproject.content_group_httpd_configure_os_protect_web_server" selected="false"/>
         <select idref="xccdf_org.ssgproject.content_group_httpd_restrict_file_dir_access" selected="false"/>
-        <select idref="xccdf_org.ssgproject.content_group_httpd_configure_firewalld" selected="false"/>
         <select idref="xccdf_org.ssgproject.content_group_httpd_chroot" selected="false"/>
+        <select idref="xccdf_org.ssgproject.content_group_httpd_secure_content" selected="false"/>
         <select idref="xccdf_org.ssgproject.content_group_imap" selected="false"/>
         <select idref="xccdf_org.ssgproject.content_group_disabling_dovecot" selected="false"/>
         <select idref="xccdf_org.ssgproject.content_group_configure_dovecot" selected="false"/>
@@ -3960,10 +3995,11 @@ respective companies.</rear-matter>
         <select idref="xccdf_org.ssgproject.content_group_httpd_deploy_mod_security" selected="false"/>
         <select idref="xccdf_org.ssgproject.content_group_httpd_use_dos_protection_modules" selected="false"/>
         <select idref="xccdf_org.ssgproject.content_group_httpd_configure_php_securely" selected="false"/>
+        <select idref="xccdf_org.ssgproject.content_group_httpd_configure_perl_securely" selected="false"/>
         <select idref="xccdf_org.ssgproject.content_group_httpd_configure_os_protect_web_server" selected="false"/>
         <select idref="xccdf_org.ssgproject.content_group_httpd_restrict_file_dir_access" selected="false"/>
-        <select idref="xccdf_org.ssgproject.content_group_httpd_configure_firewalld" selected="false"/>
         <select idref="xccdf_org.ssgproject.content_group_httpd_chroot" selected="false"/>
+        <select idref="xccdf_org.ssgproject.content_group_httpd_secure_content" selected="false"/>
         <select idref="xccdf_org.ssgproject.content_group_imap" selected="false"/>
         <select idref="xccdf_org.ssgproject.content_group_disabling_dovecot" selected="false"/>
         <select idref="xccdf_org.ssgproject.content_group_configure_dovecot" selected="false"/>
@@ -4379,7 +4415,229 @@ done
         <Value id="xccdf_org.ssgproject.content_value_function_rhel7_fedora_perform_audit_adjtimex_settimeofday_stime_remediation" hidden="true" prohibitChanges="true" operator="equals" type="string">
           <title xml:lang="en-US">Remediation function rhel7_fedora_perform_audit_adjtimex_settimeofday_stime_remediation</title>
           <description xml:lang="en-US">Shared bash remediation function. Not intended to be changed by tailoring.</description>
-          <value># Perform the remediation for the 'adjtimex', 'settimeofday', and 'stime' audit
+          <value># Function to fix syscall audit rule for given system call. It is
+# based on example audit syscall rule definitions as outlined in
+# /usr/share/doc/audit-2.3.7/stig.rules file provided with the audit
+# package. It will combine multiple system calls belonging to the same
+# syscall group into one audit rule (rather than to create audit rule per
+# different system call) to avoid audit infrastructure performance penalty
+# in the case of 'one-audit-rule-definition-per-one-system-call'. See:
+#
+#   https://www.redhat.com/archives/linux-audit/2014-November/msg00009.html
+#
+# for further details.
+#
+# Expects five arguments (each of them is required) in the form of:
+# * audit tool				tool used to load audit rules,
+# 					either 'auditctl', or 'augenrules
+# * audit rules' pattern		audit rule skeleton for same syscall
+# * syscall group			greatest common string this rule shares
+# 					with other rules from the same group
+# * architecture			architecture this rule is intended for
+# * full form of new rule to add	expected full form of audit rule as to be
+# 					added into audit.rules file
+#
+# Note: The 2-th up to 4-th arguments are used to determine how many existing
+# audit rules will be inspected for resemblance with the new audit rule
+# (5-th argument) the function is going to add. The rule's similarity check
+# is performed to optimize audit.rules definition (merge syscalls of the same
+# group into one rule) to avoid the "single-syscall-per-audit-rule" performance
+# penalty.
+#
+# Example call:
+#
+#	See e.g. 'audit_rules_file_deletion_events.sh' remediation script
+#
+function fix_audit_syscall_rule {
+
+# Load function arguments into local variables
+local tool="$1"
+local pattern="$2"
+local group="$3"
+local arch="$4"
+local full_rule="$5"
+
+# Check sanity of the input
+if [ $# -ne "5" ]
+then
+	echo "Usage: fix_audit_syscall_rule 'tool' 'pattern' 'group' 'arch' 'full rule'"
+	echo "Aborting."
+	exit 1
+fi
+
+# Create a list of audit *.rules files that should be inspected for presence and correctness
+# of a particular audit rule. The scheme is as follows:
+# 
+# -----------------------------------------------------------------------------------------
+#  Tool used to load audit rules | Rule already defined  |  Audit rules file to inspect    |
+# -----------------------------------------------------------------------------------------
+#        auditctl                |     Doesn't matter    |  /etc/audit/audit.rules         |
+# -----------------------------------------------------------------------------------------
+#        augenrules              |          Yes          |  /etc/audit/rules.d/*.rules     |
+#        augenrules              |          No           |  /etc/audit/rules.d/$key.rules  |
+# -----------------------------------------------------------------------------------------
+#
+declare -a files_to_inspect
+
+retval=0
+
+# First check sanity of the specified audit tool
+if [ "$tool" != 'auditctl' ] &amp;&amp; [ "$tool" != 'augenrules' ]
+then
+	echo "Unknown audit rules loading tool: $1. Aborting."
+	echo "Use either 'auditctl' or 'augenrules'!"
+	return 1
+# If audit tool is 'auditctl', then add '/etc/audit/audit.rules'
+# file to the list of files to be inspected
+elif [ "$tool" == 'auditctl' ]
+then
+	files_to_inspect=("${files_to_inspect[@]}" '/etc/audit/audit.rules' )
+# If audit tool is 'augenrules', then check if the audit rule is defined
+# If rule is defined, add '/etc/audit/rules.d/*.rules' to the list for inspection
+# If rule isn't defined yet, add '/etc/audit/rules.d/$key.rules' to the list for inspection
+elif [ "$tool" == 'augenrules' ]
+then
+	# Extract audit $key from audit rule so we can use it later
+	key=$(expr "$full_rule" : '.*-k[[:space:]]\([^[:space:]]\+\)')
+	# Check if particular audit rule is already defined
+	IFS=$'\n' matches=($(sed -s -n -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d;F" /etc/audit/rules.d/*.rules))
+	if [ $? -ne 0 ]
+	then
+		retval=1
+	fi
+	# Reset IFS back to default
+	unset IFS
+	for match in "${matches[@]}"
+	do
+		files_to_inspect=("${files_to_inspect[@]}" "${match}")
+	done
+	# Case when particular rule isn't defined in /etc/audit/rules.d/*.rules yet
+	if [ ${#files_to_inspect[@]} -eq "0" ]
+	then
+		files_to_inspect="/etc/audit/rules.d/$key.rules"
+		if [ ! -e "$files_to_inspect" ]
+		then
+			touch "$files_to_inspect"
+			chmod 0640 "$files_to_inspect"
+		fi
+	fi
+fi
+
+#
+# Indicator that we want to append $full_rule into $audit_file by default
+local append_expected_rule=0
+
+for audit_file in "${files_to_inspect[@]}"
+do
+
+	# Filter existing $audit_file rules' definitions to select those that:
+	# * follow the rule pattern, and
+	# * meet the hardware architecture requirement, and
+	# * are current syscall group specific
+	IFS=$'\n' existing_rules=($(sed -e "\;${pattern};!d" -e "/${arch}/!d" -e "/${group}/!d"  "$audit_file"))
+	if [ $? -ne 0 ]
+	then
+		retval=1
+	fi
+	# Reset IFS back to default
+	unset IFS
+
+	# Process rules found case-by-case
+	for rule in "${existing_rules[@]}"
+	do
+		# Found rule is for same arch &amp; key, but differs (e.g. in count of -S arguments)
+		if [ "${rule}" != "${full_rule}" ]
+		then
+			# If so, isolate just '(-S \w)+' substring of that rule
+			rule_syscalls=$(echo $rule | grep -o -P '(-S \w+ )+')
+			# Check if list of '-S syscall' arguments of that rule is subset
+			# of '-S syscall' list of expected $full_rule
+			if grep -q -- "$rule_syscalls" &lt;&lt;&lt; "$full_rule"
+			then
+				# Rule is covered (i.e. the list of -S syscalls for this rule is
+				# subset of -S syscalls of $full_rule =&gt; existing rule can be deleted
+				# Thus delete the rule from audit.rules &amp; our array
+				sed -i -e "\;${rule};d" "$audit_file"
+				if [ $? -ne 0 ]
+				then
+					retval=1
+				fi
+				existing_rules=("${existing_rules[@]//$rule/}")
+			else
+				# Rule isn't covered by $full_rule - it besides -S syscall arguments
+				# for this group contains also -S syscall arguments for other syscall
+				# group. Example: '-S lchown -S fchmod -S fchownat' =&gt; group='chown'
+				# since 'lchown' &amp; 'fchownat' share 'chown' substring
+				# Therefore:
+				# * 1) delete the original rule from audit.rules
+				# (original '-S lchown -S fchmod -S fchownat' rule would be deleted)
+				# * 2) delete the -S syscall arguments for this syscall group, but
+				# keep those not belonging to this syscall group
+				# (original '-S lchown -S fchmod -S fchownat' would become '-S fchmod'
+				# * 3) append the modified (filtered) rule again into audit.rules
+				# if the same rule not already present
+				#
+				# 1) Delete the original rule
+				sed -i -e "\;${rule};d" "$audit_file"
+				if [ $? -ne 0 ]
+				then
+					retval=1
+				fi
+				# 2) Delete syscalls for this group, but keep those from other groups
+				# Convert current rule syscall's string into array splitting by '-S' delimiter
+				IFS=$'-S' read -a rule_syscalls_as_array &lt;&lt;&lt; "$rule_syscalls"
+				# Reset IFS back to default
+				unset IFS
+				# Declare new empty string to hold '-S syscall' arguments from other groups
+				new_syscalls_for_rule=''
+				# Walk through existing '-S syscall' arguments
+				for syscall_arg in "${rule_syscalls_as_array[@]}"
+				do
+					# Skip empty $syscall_arg values
+					if [ "$syscall_arg" == '' ]
+					then
+						continue
+					fi
+					# If the '-S syscall' doesn't belong to current group add it to the new list
+					# (together with adding '-S' delimiter back for each of such item found)
+					if grep -q -v -- "$group" &lt;&lt;&lt; "$syscall_arg"
+					then
+						new_syscalls_for_rule="$new_syscalls_for_rule -S $syscall_arg"
+					fi
+				done
+				# Replace original '-S syscall' list with the new one for this rule
+				updated_rule=${rule//$rule_syscalls/$new_syscalls_for_rule}
+				# Squeeze repeated whitespace characters in rule definition (if any) into one
+				updated_rule=$(echo "$updated_rule" | tr -s '[:space:]')
+				# 3) Append the modified / filtered rule again into audit.rules
+				#    (but only in case it's not present yet to prevent duplicate definitions)
+				if ! grep -q -- "$updated_rule" "$audit_file"
+				then
+					echo "$updated_rule" &gt;&gt; "$audit_file"
+				fi
+			fi
+		else
+			# $audit_file already contains the expected rule form for this
+			# architecture &amp; key =&gt; don't insert it second time
+			append_expected_rule=1
+		fi
+	done
+
+	# We deleted all rules that were subset of the expected one for this arch &amp; key.
+	# Also isolated rules containing system calls not from this system calls group.
+	# Now append the expected rule if it's not present in $audit_file yet
+	if [[ ${append_expected_rule} -eq "0" ]]
+	then
+		echo "$full_rule" &gt;&gt; "$audit_file"
+	fi
+done
+
+return $retval
+
+}
+
+
+# Perform the remediation for the 'adjtimex', 'settimeofday', and 'stime' audit
 # system calls on Red Hat Enterprise Linux 7 or Fedora OSes
 function rhel7_fedora_perform_audit_adjtimex_settimeofday_stime_remediation {
 
@@ -11187,6 +11445,10 @@ To ensure this behavior is disabled, add or correct the
 following line in <html:code xmlns:html="http://www.w3.org/1999/xhtml">/etc/ssh/sshd_config</html:code>:
 <html:pre xmlns:html="http://www.w3.org/1999/xhtml">RhostsRSAAuthentication no</html:pre>
 </description>
+              <warning xml:lang="en-US" category="general">As of <html:code xmlns:html="http://www.w3.org/1999/xhtml">openssh-server</html:code> version <html:code xmlns:html="http://www.w3.org/1999/xhtml">7.4</html:code> and above,
+the <html:code xmlns:html="http://www.w3.org/1999/xhtml">RhostsRSAAuthentication</html:code> option has been deprecated, and the line
+<html:pre xmlns:html="http://www.w3.org/1999/xhtml">RhostsRSAAuthentication no</html:pre> in <html:code xmlns:html="http://www.w3.org/1999/xhtml">/etc/ssh/sshd_config</html:code> is not
+necessary.</warning>
               <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">CM-6(a)</reference>
               <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx">CCI-000366</reference>
               <reference href="http://iase.disa.mil/stigs/os/general/Pages/index.aspx">SRG-OS-000480-GPOS-00227</reference>
@@ -12461,6 +12723,26 @@ the webserver.
             <description xml:lang="en-US">The <html:code xmlns:html="http://www.w3.org/1999/xhtml">httpd</html:code> configuration file is
 <html:code xmlns:html="http://www.w3.org/1999/xhtml">/etc/httpd/conf/httpd.conf</html:code>. Apply the recommendations in the remainder
 of this section to this file.</description>
+            <Value id="xccdf_org.ssgproject.content_value_var_httpd_loglevel" type="string">
+              <title xml:lang="en-US">HTTPD Log Level</title>
+              <description xml:lang="en-US">The setting for LogLevel in /etc/httpd/conf/httpd.conf</description>
+              <value>warn</value>
+              <value selector="alert">alert</value>
+              <value selector="crit">crit</value>
+              <value selector="emerg">emerg</value>
+              <value selector="error">error</value>
+              <value selector="warn">warn</value>
+            </Value>
+            <Value id="xccdf_org.ssgproject.content_value_var_max_keepalive_requests" type="number">
+              <title xml:lang="en-US">Maximum KeepAlive Requests for HTTPD</title>
+              <description xml:lang="en-US">The setting for MaxKeepAliveRequests in httpd.conf</description>
+              <value>100</value>
+              <value selector="100">100</value>
+              <value selector="500">500</value>
+              <value selector="1000">1000</value>
+              <value selector="10000">10000</value>
+              <value selector="100000">100000</value>
+            </Value>
             <Group id="xccdf_org.ssgproject.content_group_httpd_restrict_info_leakage">
               <title xml:lang="en-US">Restrict Web Server Information Leakage</title>
               <description xml:lang="en-US">
@@ -12673,6 +12955,16 @@ sql.safe_mode = On
 </html:pre>
 </description>
             </Group>
+            <Group id="xccdf_org.ssgproject.content_group_httpd_configure_perl_securely">
+              <title xml:lang="en-US">Configure PHP Securely</title>
+              <description xml:lang="en-US">
+PERL (Practical Extraction and Report Language) is an interpreted language
+optimized for scanning arbitrary text files, extracting information from those
+text files, and printing reports based on that information. The language is
+often used in shell scripting and is intended to be practical, easy to use, and
+efficient means of generating interactive web pages for the user.
+</description>
+            </Group>
             <Group id="xccdf_org.ssgproject.content_group_httpd_configure_os_protect_web_server">
               <title xml:lang="en-US">Configure Operating System to Protect Web Server</title>
               <description xml:lang="en-US">
@@ -12683,19 +12975,6 @@ web server, in order to provide as safe an environment as possible for the web s
                 <title xml:lang="en-US">Restrict File and Directory Access</title>
                 <description xml:lang="en-US">
 Minimize access to critical <html:code xmlns:html="http://www.w3.org/1999/xhtml">httpd</html:code> files and directories.
-</description>
-              </Group>
-              <Group id="xccdf_org.ssgproject.content_group_httpd_configure_firewalld">
-                <title xml:lang="en-US">Configure firewalld to Allow Access to the Web Server</title>
-                <description xml:lang="en-US">
-By default, <html:code xmlns:html="http://www.w3.org/1999/xhtml">firewalld</html:code>
-blocks access to the ports used by the web server.
-
-        To configure <html:code xmlns:html="http://www.w3.org/1999/xhtml">firewalld</html:code> to allow access, run the following command(s):
-        <html:code xmlns:html="http://www.w3.org/1999/xhtml">firewall-cmd --permanent --add-service=http</html:code>
-
-        To configure <html:code xmlns:html="http://www.w3.org/1999/xhtml">firewalld</html:code> to allow access, run the following command(s):
-        <html:code xmlns:html="http://www.w3.org/1999/xhtml">firewall-cmd --permanent --add-service=https</html:code>
 </description>
               </Group>
               <Group id="xccdf_org.ssgproject.content_group_httpd_chroot">
@@ -12714,6 +12993,32 @@ are beyond the scope of this guide. This may also require additional SELinux
 configuration.
 </description>
               </Group>
+            </Group>
+            <Group id="xccdf_org.ssgproject.content_group_httpd_secure_content">
+              <title xml:lang="en-US">Configure HTTPD-Served Web Content Securely</title>
+              <description xml:lang="en-US">
+Running <html:code xmlns:html="http://www.w3.org/1999/xhtml">httpd</html:code> inside a <html:code xmlns:html="http://www.w3.org/1999/xhtml">chroot</html:code> jail is designed to isolate the
+web server process to a small section of the filesystem, limiting the damage if
+it is compromised. Versions of Apache greater than 2.2.10 (such as the one
+included with Red Hat Enterprise Linux 7) provide the <html:code xmlns:html="http://www.w3.org/1999/xhtml">ChrootDir</html:code> directive. To run Apache
+inside a chroot jail in <html:code xmlns:html="http://www.w3.org/1999/xhtml">/chroot/apache</html:code>, add the following line to
+<html:code xmlns:html="http://www.w3.org/1999/xhtml">/etc/httpd/conf/httpd.conf</html:code>: <html:pre xmlns:html="http://www.w3.org/1999/xhtml">ChrootDir /chroot/apache</html:pre> This
+necessitates placing all files required by <html:code xmlns:html="http://www.w3.org/1999/xhtml">httpd</html:code> inside
+<html:code xmlns:html="http://www.w3.org/1999/xhtml">/chroot/apache</html:code> , including <html:code xmlns:html="http://www.w3.org/1999/xhtml">httpd</html:code>'s binaries, modules,
+configuration files, and served web pages. The details of this configuration
+are beyond the scope of this guide. This may also require additional SELinux
+configuration.
+</description>
+              <Value id="xccdf_org.ssgproject.content_value_var_web_login_banner_text" operator="equals" type="string">
+                <title xml:lang="en-US">Login Banner Verbiage</title>
+                <description xml:lang="en-US">Enter an appropriate login banner for your organization. Please note that new lines must
+be expressed by the '\n' character and special characters like parentheses and quotation marks must be escaped with '\'.</description>
+                <value selector="usgcb_default">--[\s\n]+WARNING[\s\n]+--[\s\n]*This[\s\n]+system[\s\n]+is[\s\n]+for[\s\n]+the[\s\n]+use[\s\n]+of[\s\n]+authorized[\s\n]+users[\s\n]+only.[\s\n]+Individuals[\s\n]*using[\s\n]+this[\s\n]+computer[\s\n]+system[\s\n]+without[\s\n]+authority[\s\n]+or[\s\n]+in[\s\n]+excess[\s\n]+of[\s\n]+their[\s\n]*authority[\s\n]+are[\s\n]+subject[\s\n]+to[\s\n]+having[\s\n]+all[\s\n]+their[\s\n]+activities[\s\n]+on[\s\n]+this[\s\n]+system[\s\n]*monitored[\s\n]+and[\s\n]+recorded[\s\n]+by[\s\n]+system[\s\n]+personnel.[\s\n]+Anyone[\s\n]+using[\s\n]+this[\s\n]*system[\s\n]+expressly[\s\n]+consents[\s\n]+to[\s\n]+such[\s\n]+monitoring[\s\n]+and[\s\n]+is[\s\n]+advised[\s\n]+that[\s\n]*if[\s\n]+such[\s\n]+monitoring[\s\n]+reveals[\s\n]+possible[\s\n]+evidence[\s\n]+of[\s\n]+criminal[\s\n]+activity[\s\n]*system[\s\n]+personal[\s\n]+may[\s\n]+provide[\s\n]+the[\s\n]+evidence[\s\n]+of[\s\n]+such[\s\n]+monitoring[\s\n]+to[\s\n]+law[\s\n]*enforcement[\s\n]+officials.</value>
+                <value selector="dod_default">You[\s\n]+are[\s\n]+accessing[\s\n]+a[\s\n]+U.S.[\s\n]+Government[\s\n]+\(USG\)[\s\n]+Information[\s\n]+System[\s\n]+\(IS\)[\s\n]+that[\s\n]+is[\s\n]+provided[\s\n]+for[\s\n]+USG-authorized[\s\n]+use[\s\n]+only.[\s\n]*By[\s\n]+using[\s\n]+this[\s\n]+IS[\s\n]+\(which[\s\n]+includes[\s\n]+any[\s\n]+device[\s\n]+attached[\s\n]+to[\s\n]+this[\s\n]+IS\),[\s\n]+you[\s\n]+consent[\s\n]+to[\s\n]+the[\s\n]+following[\s\n]+conditions\:[\s\n]*-[\s\n]*The[\s\n]+USG[\s\n]+routinely[\s\n]+intercepts[\s\n]+and[\s\n]+monitors[\s\n]+communications[\s\n]+on[\s\n]+this[\s\n]+IS[\s\n]+for[\s\n]+purposes[\s\n]+including,[\s\n]+but[\s\n]+not[\s\n]+limited[\s\n]+to,[\s\n]+penetration[\s\n]+testing,[\s\n]+COMSEC[\s\n]+monitoring,[\s\n]+network[\s\n]+operations[\s\n]+and[\s\n]+defense,[\s\n]+personnel[\s\n]+misconduct[\s\n]+\(PM\),[\s\n]+law[\s\n]+enforcement[\s\n]+\(LE\),[\s\n]+and[\s\n]+counterintelligence[\s\n]+\(CI\)[\s\n]+investigations.[\s\n]*-[\s\n]*At[\s\n]+any[\s\n]+time,[\s\n]+the[\s\n]+USG[\s\n]+may[\s\n]+inspect[\s\n]+and[\s\n]+seize[\s\n]+data[\s\n]+stored[\s\n]+on[\s\n]+this[\s\n]+IS.[\s\n]*-[\s\n]*Communications[\s\n]+using,[\s\n]+or[\s\n]+data[\s\n]+stored[\s\n]+on,[\s\n]+this[\s\n]+IS[\s\n]+are[\s\n]+not[\s\n]+private,[\s\n]+are[\s\n]+subject[\s\n]+to[\s\n]+routine[\s\n]+monitoring,[\s\n]+interception,[\s\n]+and[\s\n]+search,[\s\n]+and[\s\n]+may[\s\n]+be[\s\n]+disclosed[\s\n]+or[\s\n]+used[\s\n]+for[\s\n]+any[\s\n]+USG-authorized[\s\n]+purpose.[\s\n]*-[\s\n]*This[\s\n]+IS[\s\n]+includes[\s\n]+security[\s\n]+measures[\s\n]+\(e.g.,[\s\n]+authentication[\s\n]+and[\s\n]+access[\s\n]+controls\)[\s\n]+to[\s\n]+protect[\s\n]+USG[\s\n]+interests--not[\s\n]+for[\s\n]+your[\s\n]+personal[\s\n]+benefit[\s\n]+or[\s\n]+privacy.[\s\n]*-[\s\n]*Notwithstanding[\s\n]+the[\s\n]+above,[\s\n]+using[\s\n]+this[\s\n]+IS[\s\n]+does[\s\n]+not[\s\n]+constitute[\s\n]+consent[\s\n]+to[\s\n]+PM,[\s\n]+LE[\s\n]+or[\s\n]+CI[\s\n]+investigative[\s\n]+searching[\s\n]+or[\s\n]+monitoring[\s\n]+of[\s\n]+the[\s\n]+content[\s\n]+of[\s\n]+privileged[\s\n]+communications,[\s\n]+or[\s\n]+work[\s\n]+product,[\s\n]+related[\s\n]+to[\s\n]+personal[\s\n]+representation[\s\n]+or[\s\n]+services[\s\n]+by[\s\n]+attorneys,[\s\n]+psychotherapists,[\s\n]+or[\s\n]+clergy,[\s\n]+and[\s\n]+their[\s\n]+assistants.[\s\n]+Such[\s\n]+communications[\s\n]+and[\s\n]+work[\s\n]+product[\s\n]+are[\s\n]+private[\s\n]+and[\s\n]+confidential.[\s\n]+See[\s\n]+User[\s\n]+Agreement[\s\n]+for[\s\n]+details.</value>
+                <value selector="dod_short">I\'ve[\s\n]+read[\s\n]+\&amp;[\s\n]+consent[\s\n]+to[\s\n]+terms[\s\n]+in[\s\n]+IS[\s\n]+user[\s\n]+agreem\'t.</value>
+                <value selector="dss_odaa_default">[\s\n]+Use[\s\n]+of[\s\n]+this[\s\n]+or[\s\n]+any[\s\n]+other[\s\n]+DoD[\s\n]+interest[\s\n]+computer[\s\n]+system[\s\n]+constitutes[\s\n]+consent[\s\n]+to[\s\n]+monitoring[\s\n]+at[\s\n]+all[\s\n]+times.[\s\n]+This[\s\n]+is[\s\n]+a[\s\n]+DoD[\s\n]+interest[\s\n]+computer[\s\n]+system.[\s\n]+All[\s\n]+DoD[\s\n]+interest[\s\n]+computer[\s\n]+systems[\s\n]+and[\s\n]+related[\s\n]+equipment[\s\n]+are[\s\n]+intended[\s\n]+for[\s\n]+the[\s\n]+communication,[\s\n]+transmission,[\s\n]+processing,[\s\n]+and[\s\n]+storage[\s\n]+of[\s\n]+official[\s\n]+U.S.[\s\n]+Government[\s\n]+or[\s\n]+other[\s\n]+authorized[\s\n]+information[\s\n]+only.[\s\n]+All[\s\n]+DoD[\s\n]+interest[\s\n]+computer[\s\n]+systems[\s\n]+are[\s\n]+subject[\s\n]+to[\s\n]+monitoring[\s\n]+at[\s\n]+all[\s\n]+times[\s\n]+to[\s\n]+ensure[\s\n]+proper[\s\n]+functioning[\s\n]+of[\s\n]+equipment[\s\n]+and[\s\n]+systems[\s\n]+including[\s\n]+security[\s\n]+devices[\s\n]+and[\s\n]+systems,[\s\n]+to[\s\n]+prevent[\s\n]+unauthorized[\s\n]+use[\s\n]+and[\s\n]+violations[\s\n]+of[\s\n]+statutes[\s\n]+and[\s\n]+security[\s\n]+regulations,[\s\n]+to[\s\n]+deter[\s\n]+criminal[\s\n]+activity,[\s\n]+and[\s\n]+for[\s\n]+other[\s\n]+similar[\s\n]+purposes.[\s\n]+Any[\s\n]+user[\s\n]+of[\s\n]+a[\s\n]+DoD[\s\n]+interest[\s\n]+computer[\s\n]+system[\s\n]+should[\s\n]+be[\s\n]+aware[\s\n]+that[\s\n]+any[\s\n]+information[\s\n]+placed[\s\n]+in[\s\n]+the[\s\n]+system[\s\n]+is[\s\n]+subject[\s\n]+to[\s\n]+monitoring[\s\n]+and[\s\n]+is[\s\n]+not[\s\n]+subject[\s\n]+to[\s\n]+any[\s\n]+expectation[\s\n]+of[\s\n]+privacy.[\s\n]+If[\s\n]+monitoring[\s\n]+of[\s\n]+this[\s\n]+or[\s\n]+any[\s\n]+other[\s\n]+DoD[\s\n]+interest[\s\n]+computer[\s\n]+system[\s\n]+reveals[\s\n]+possible[\s\n]+evidence[\s\n]+of[\s\n]+violation[\s\n]+of[\s\n]+criminal[\s\n]+statutes,[\s\n]+this[\s\n]+evidence[\s\n]+and[\s\n]+any[\s\n]+other[\s\n]+related[\s\n]+information,[\s\n]+including[\s\n]+identification[\s\n]+information[\s\n]+about[\s\n]+the[\s\n]+user,[\s\n]+may[\s\n]+be[\s\n]+provided[\s\n]+to[\s\n]+law[\s\n]+enforcement[\s\n]+officials.[\s\n]+If[\s\n]+monitoring[\s\n]+of[\s\n]+this[\s\n]+or[\s\n]+any[\s\n]+other[\s\n]+DoD[\s\n]+interest[\s\n]+computer[\s\n]+systems[\s\n]+reveals[\s\n]+violations[\s\n]+of[\s\n]+security[\s\n]+regulations[\s\n]+or[\s\n]+unauthorized[\s\n]+use,[\s\n]+employees[\s\n]+who[\s\n]+violate[\s\n]+security[\s\n]+regulations[\s\n]+or[\s\n]+make[\s\n]+unauthorized[\s\n]+use[\s\n]+of[\s\n]+DoD[\s\n]+interest[\s\n]+computer[\s\n]+systems[\s\n]+are[\s\n]+subject[\s\n]+to[\s\n]+appropriate[\s\n]+disciplinary[\s\n]+action.[\s\n]+Use[\s\n]+of[\s\n]+this[\s\n]+or[\s\n]+any[\s\n]+other[\s\n]+DoD[\s\n]+interest[\s\n]+computer[\s\n]+system[\s\n]+constitutes[\s\n]+consent[\s\n]+to[\s\n]+monitoring[\s\n]+at[\s\n]+all[\s\n]+times.</value>
+                <value selector="dod_banners">^(You[\s\n]+are[\s\n]+accessing[\s\n]+a[\s\n]+U.S.[\s\n]+Government[\s\n]+\(USG\)[\s\n]+Information[\s\n]+System[\s\n]+\(IS\)[\s\n]+that[\s\n]+is[\s\n]+provided[\s\n]+for[\s\n]+USG-authorized[\s\n]+use[\s\n]+only.[\s\n]*By[\s\n]+using[\s\n]+this[\s\n]+IS[\s\n]+\(which[\s\n]+includes[\s\n]+any[\s\n]+device[\s\n]+attached[\s\n]+to[\s\n]+this[\s\n]+IS\),[\s\n]+you[\s\n]+consent[\s\n]+to[\s\n]+the[\s\n]+following[\s\n]+conditions\:[\s\n]*-[\s\n]*The[\s\n]+USG[\s\n]+routinely[\s\n]+intercepts[\s\n]+and[\s\n]+monitors[\s\n]+communications[\s\n]+on[\s\n]+this[\s\n]+IS[\s\n]+for[\s\n]+purposes[\s\n]+including,[\s\n]+but[\s\n]+not[\s\n]+limited[\s\n]+to,[\s\n]+penetration[\s\n]+testing,[\s\n]+COMSEC[\s\n]+monitoring,[\s\n]+network[\s\n]+operations[\s\n]+and[\s\n]+defense,[\s\n]+personnel[\s\n]+misconduct[\s\n]+\(PM\),[\s\n]+law[\s\n]+enforcement[\s\n]+\(LE\),[\s\n]+and[\s\n]+counterintelligence[\s\n]+\(CI\)[\s\n]+investigations.[\s\n]*-[\s\n]*At[\s\n]+any[\s\n]+time,[\s\n]+the[\s\n]+USG[\s\n]+may[\s\n]+inspect[\s\n]+and[\s\n]+seize[\s\n]+data[\s\n]+stored[\s\n]+on[\s\n]+this[\s\n]+IS.[\s\n]*-[\s\n]*Communications[\s\n]+using,[\s\n]+or[\s\n]+data[\s\n]+stored[\s\n]+on,[\s\n]+this[\s\n]+IS[\s\n]+are[\s\n]+not[\s\n]+private,[\s\n]+are[\s\n]+subject[\s\n]+to[\s\n]+routine[\s\n]+monitoring,[\s\n]+interception,[\s\n]+and[\s\n]+search,[\s\n]+and[\s\n]+may[\s\n]+be[\s\n]+disclosed[\s\n]+or[\s\n]+used[\s\n]+for[\s\n]+any[\s\n]+USG-authorized[\s\n]+purpose.[\s\n]*-[\s\n]*This[\s\n]+IS[\s\n]+includes[\s\n]+security[\s\n]+measures[\s\n]+\(e.g.,[\s\n]+authentication[\s\n]+and[\s\n]+access[\s\n]+controls\)[\s\n]+to[\s\n]+protect[\s\n]+USG[\s\n]+interests--not[\s\n]+for[\s\n]+your[\s\n]+personal[\s\n]+benefit[\s\n]+or[\s\n]+privacy.[\s\n]*-[\s\n]*Notwithstanding[\s\n]+the[\s\n]+above,[\s\n]+using[\s\n]+this[\s\n]+IS[\s\n]+does[\s\n]+not[\s\n]+constitute[\s\n]+consent[\s\n]+to[\s\n]+PM,[\s\n]+LE[\s\n]+or[\s\n]+CI[\s\n]+investigative[\s\n]+searching[\s\n]+or[\s\n]+monitoring[\s\n]+of[\s\n]+the[\s\n]+content[\s\n]+of[\s\n]+privileged[\s\n]+communications,[\s\n]+or[\s\n]+work[\s\n]+product,[\s\n]+related[\s\n]+to[\s\n]+personal[\s\n]+representation[\s\n]+or[\s\n]+services[\s\n]+by[\s\n]+attorneys,[\s\n]+psychotherapists,[\s\n]+or[\s\n]+clergy,[\s\n]+and[\s\n]+their[\s\n]+assistants.[\s\n]+Such[\s\n]+communications[\s\n]+and[\s\n]+work[\s\n]+product[\s\n]+are[\s\n]+private[\s\n]+and[\s\n]+confidential.[\s\n]+See[\s\n]+User[\s\n]+Agreement[\s\n]+for[\s\n]+details.|I\'ve[\s\n]+read[\s\n]+\&amp;[\s\n]+consent[\s\n]+to[\s\n]+terms[\s\n]+in[\s\n]+IS[\s\n]+user[\s\n]+agreem\'t.)$</value>
+              </Value>
             </Group>
           </Group>
         </Group>
@@ -12936,13 +13241,13 @@ stations</html:li><html:li>ensure that permissions on the <html:code>snmpd.conf<
       </Group>
     </Benchmark>
   </ds:component>
-  <ds:component id="scap_org.open-scap_comp_ssg-sle11-cpe-oval.xml" timestamp="2017-10-31T16:14:49">
+  <ds:component id="scap_org.open-scap_comp_ssg-sle11-cpe-oval.xml" timestamp="2018-01-03T14:22:20">
     <ns0:oval_definitions xmlns:ns0="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:ns2="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ns3="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:ns4="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:ns5="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
       <ns0:generator>
         <ns2:product_name>combine-ovals.py from SCAP Security Guide</ns2:product_name>
-        <ns2:product_version>ssg: 0.1.36, python: 2.7.13</ns2:product_version>
+        <ns2:product_version>ssg: 0.1.37, python: 2.7.14</ns2:product_version>
         <ns2:schema_version>5.11</ns2:schema_version>
-        <ns2:timestamp>2017-10-31T16:14:45</ns2:timestamp>
+        <ns2:timestamp>2018-01-03T14:22:16</ns2:timestamp>
       </ns0:generator>
       <ns0:definitions>
         <ns0:definition class="inventory" id="oval:ssg-installed_OS_is_centos6:def:1" version="2">
@@ -13528,7 +13833,7 @@ stations</html:li><html:li>ensure that permissions on the <html:code>snmpd.conf<
       </ns0:states>
     </ns0:oval_definitions>
   </ds:component>
-  <ds:component id="scap_org.open-scap_comp_ssg-sle11-cpe-dictionary.xml" timestamp="2017-10-31T16:14:49">
+  <ds:component id="scap_org.open-scap_comp_ssg-sle11-cpe-dictionary.xml" timestamp="2018-01-03T14:22:20">
     <ns0:cpe-list xmlns:ns0="http://cpe.mitre.org/dictionary/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd">
       <ns0:cpe-item name="cpe:/o:suse:linux_enterprise_server:11">
         <ns0:title xml:lang="en-us">SUSE Linux Enterprise Server 11</ns0:title>
