@@ -17,10 +17,10 @@
 </tr></thead>
 <tbody><tr>
 <td>252</td>
-<td>7</td>
-<td>245</td>
-<td>97.22%</td>
-<td>OL07-00-010118OL07-00-010480OL07-00-010490OL07-00-020111OL07-00-030201OL07-00-030819OL07-00-030840</td>
+<td>5</td>
+<td>247</td>
+<td>98.02%</td>
+<td>OL07-00-010118OL07-00-020111OL07-00-030201OL07-00-030819OL07-00-030840</td>
 </tr></tbody>
 </table></div>
 <style type="text/css">
@@ -1446,14 +1446,39 @@ following line in <code>/etc/ssh/sshd_config</code>:
 </tr>
 <tr>
 <td>V-221698</td>
-<td></td>
+<td>213</td>
 <td>high</td>
 <td>Oracle Linux operating systems prior to version 7.2 with a Basic Input/Output System (BIOS) must require authentication upon booting into single-user and maintenance modes.</td>
-<td></td>
-<td></td>
-<td></td>
+<td>Password protection on the boot loader configuration ensures
+users with physical access cannot trivially alter
+important bootloader settings. These include which kernel to use,
+and whether to enter single-user mode.</td>
+<td>To verify the boot loader superuser password has been set, run the following
+command:
+# grep -i ^password_pbkdf2 /boot/grub2/grub.cfg
+The output should show the following:
+password_pbkdf2 superusers-account ${GRUB2_PASSWORD}
+      Is it the case that it does not?
+      </td>
+<td>The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
+<br><br>
+Since plaintext passwords are a security risk, generate an encrypted grub2 password
+for the grub superusers with the following command:
+<pre>$ grub2-mkpasswd-pbkdf2</pre>
+When prompted, enter the password that was selected.
+<br><br>
+Using the hash from the output, modify the <code>/etc/grub.d/40_custom</code>
+file with the following content:
+<pre>set superusers="root"
+password_pbkdf2 root grub.pbkdf2.sha512.VeryLongString
+</pre>
+Once the superuser password has been added, update the
+<code>grub.cfg</code> file by running:
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
+</td>
 <td>OL07-00-010480</td>
-<td>Missing Rule</td>
+<td>grub2_password_legacy</td>
 </tr>
 <tr>
 <td>V-221699</td>
@@ -1565,14 +1590,38 @@ update the
 </tr>
 <tr>
 <td>V-221701</td>
-<td></td>
+<td>213</td>
 <td>high</td>
 <td>Oracle Linux operating systems prior to version 7.2 using Unified Extensible Firmware Interface (UEFI) must require authentication upon booting into single-user and maintenance modes.</td>
-<td></td>
-<td></td>
-<td></td>
+<td>Password protection on the boot loader configuration ensures
+users with physical access cannot trivially alter
+important bootloader settings. These include which kernel to use,
+and whether to enter single-user mode.</td>
+<td>To verify the boot loader superuser password has been set, run the following
+command:
+# grep -i password /boot/grub2/grub.cfg
+The output should show the following:
+password_pbkdf2 superusers-account ${GRUB2_PASSWORD}
+      Is it the case that it does not?
+      </td>
+<td>The grub2 boot loader should have a superuser account and password
+protection enabled to protect boot-time settings.
+<br><br>
+Since plaintext passwords are a security risk, generate a hash for the password
+by running the following command: <pre># grub2-mkpasswd-pbkdf2</pre>
+When prompted, enter the password that was selected.
+<br><br>
+Using the hash from the output, modify the <code>/etc/grub.d/40_custom</code>
+file with the following content:
+<pre>set superusers="root"
+password_pbkdf2 boot grub.pbkdf2.sha512.VeryLongString
+</pre>
+Once the superuser password has been added, update the
+<code>grub.cfg</code> file by running:
+<pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
+</td>
 <td>OL07-00-010490</td>
-<td>Missing Rule</td>
+<td>grub2_uefi_password_legacy</td>
 </tr>
 <tr>
 <td>V-221702</td>
@@ -1668,12 +1717,19 @@ that provided by a username and password combination. Smart cards leverage PKI
 <td>Interview the SA to determine if all accounts not exempted by policy are
 using CAC authentication. For DoD systems, the following systems and
 accounts are exempt from using smart card (CAC) authentication:
-SIPRNET systemsStandalone systemsApplication accountsTemporary employee accounts, such as students or interns, who cannot
-easily receive a CAC or PIVOperational tactical locations that are not collocated with RAPIDS
-workstations to issue CAC or ALTTest systems, such as those with an Interim Approval to Test (IATT) and
+
+SIPRNET systems
+Standalone systems
+Application accounts
+Temporary employee accounts, such as students or interns, who cannot
+easily receive a CAC or PIV
+Operational tactical locations that are not collocated with RAPIDS
+workstations to issue CAC or ALT
+Test systems, such as those with an Interim Approval to Test (IATT) and
 use a separate VPN, firewall, or security measure preventing access to
 network and system components from outside the protection boundary
 documented in the IATT.
+
       Is it the case that non-exempt accounts are not using CAC authentication?
       </td>
 <td>To enable smart card authentication, consult the documentation at:
@@ -2293,13 +2349,13 @@ To remove unauthorized system accounts, use the following command:
 <td>low</td>
 <td>The Oracle Linux operating system must be configured so that all Group Identifiers (GIDs) referenced in the /etc/passwd file are defined in the /etc/group file.</td>
 <td>If a user is assigned the Group Identifier (GID) of a group not existing on the system, and a group
-with the Gruop Identifier (GID) is subsequently created, the user may have unintended rights to
+with the Group Identifier (GID) is subsequently created, the user may have unintended rights to
 any files associated with the group.</td>
 <td>To ensure all GIDs referenced in /etc/passwd are defined in /etc/group,
 run the following command:
 $ sudo pwck -qr
 There should be no output.
-      Is it the case that GIFs referenced in /etc/passwd are returned as not defined in /etc/group?
+      Is it the case that GIDs referenced in /etc/passwd are returned as not defined in /etc/group?
       </td>
 <td>Add a group to the system for each GID referenced without a corresponding group.</td>
 <td>OL07-00-020300</td>
@@ -2491,7 +2547,10 @@ access their own files.</td>
 owner. To change the owner of a interactive users home directory, use
 the following command:
 <pre>$ sudo chown <i>USER</i> /home/<i>USER</i></pre>
-</td>
+
+This rule ensures every home directory related to an interactive user is
+owned by an interactive user. It also ensures that interactive users are
+owners of one and only one home directory.</td>
 <td>OL07-00-020640</td>
 <td>file_ownership_home_directories</td>
 </tr>
@@ -2513,7 +2572,10 @@ owned by that users primary GID, run the following command:
 group found in <code>/etc/passwd</code>. To change the group owner of
 interactive users home directory, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i></pre>
-</td>
+
+This rule ensures every home directory related to an interactive user is
+group-owned by an interactive user. It also ensures that interactive users
+are group-owners of one and only one home directory.</td>
 <td>OL07-00-020650</td>
 <td>file_groupownership_home_directories</td>
 </tr>
@@ -2535,7 +2597,9 @@ do not have a valid user, or assign a valid user to all unowned
 files and directories. To assign a valid owner to a local
 interactive user's files and directories, use the following command:
 <pre>$ sudo chown -R <i>USER</i> /home/<i>USER</i></pre>
-</td>
+
+This rule ensures every file or directory under the home directory related
+to an interactive user is owned by an interactive user.</td>
 <td>OL07-00-020660</td>
 <td>accounts_users_home_files_ownership</td>
 </tr>
@@ -2556,7 +2620,9 @@ $ sudo ls -lLR /home/USER
 group that the interactive user is a member of. To change the group owner of a
 local interactive users files and directories, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i>/<i>FILE_DIR</i></pre>
-</td>
+
+This rule ensures every file or directory under the home directory related
+to an interactive user is group-owned by an interactive user.</td>
 <td>OL07-00-020670</td>
 <td>accounts_users_home_files_groupownership</td>
 </tr>
@@ -2597,7 +2663,9 @@ The user initialization files should be owned by USER.
 <td>Set the owner of the user initialization files for interactive users to
 the primary owner with the following command:
 <pre>$ sudo chown <i>USER</i> /home/<i>USER</i>/.*</pre>
-</td>
+
+This rule ensures every initialization file related to an interactive user
+is owned by an interactive user.</td>
 <td>OL07-00-020690</td>
 <td>accounts_user_dot_user_ownership</td>
 </tr>
@@ -2620,7 +2688,9 @@ initialization files.
 in <pre>/etc/passwd</pre> for the user. To change the group owner of a local
 interactive user home directory, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i>/.<i>INIT_FILE</i></pre>
-</td>
+
+This rule ensures every initialization file related to an interactive user
+is group-owned by an interactive user.</td>
 <td>OL07-00-020700</td>
 <td>accounts_user_dot_group_ownership</td>
 </tr>
@@ -3351,7 +3421,7 @@ top of the <code>/etc/audit/audit.rules</code> file:
 <td>The audit system should have an action setup in the event the internal event queue becomes full
 so that no data is lost.</td>
 <td>Verify the audit system is configured to take an appropriate action when the internal event queue is full:
-$ sudo grep -i overflow_action /etc/audit/auditd.conf
+$ sudo grep -i overflow_action /etc/audisp/audispd.conf
 
 The output should contain be like overflow_action = syslog
 
@@ -3361,7 +3431,7 @@ to indicate how the audit logs are off-loaded to a different system or media.
       Is it the case that auditd overflow action is not setup correctly?
       </td>
 <td>The audit system should have an action setup in the event the internal event queue becomes full.
-To setup an overflow action edit <code>/etc/audit/auditd.conf</code>. Set <code>overflow_action</code>
+To setup an overflow action edit <code>/etc/audisp/audispd.conf</code>. Set <code>overflow_action</code>
 to one of the following values: <code>syslog</code>, <code>single</code>, <code>halt</code>.</td>
 <td>OL07-00-030210</td>
 <td>auditd_overflow_action</td>
@@ -3396,7 +3466,8 @@ in <code>/etc/audit/auditd.conf</code>.</td>
 <td>Information stored in one location is vulnerable to accidental or incidental
 deletion or alteration.Off-loading is a common process in information systems
 with limited audit storage capacity.</td>
-<td>To verify the audispd plugin off-loads audit records onto a different system or
+<td>
+To verify the audispd plugin off-loads audit records onto a different system or
 media from the system being audited, run the following command:
 
 $ sudo grep -i remote_server /etc/audisp/audisp-remote.conf
@@ -3407,6 +3478,7 @@ remote_server =
       </td>
 <td>Configure the audispd plugin to off-load audit records onto a different
 system or media from the system being audited.
+
 Set the <code>remote_server</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>
 with an IP address or hostname of the system that the audispd plugin should
 send audit records to. For example
@@ -3636,7 +3708,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 chown system call, run the following command:
-preserve$ sudo grep "chown" /etc/audit/audit.*
+$ sudo grep "chown" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -3670,7 +3742,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 fchown system call, run the following command:
-preserve$ sudo grep "fchown" /etc/audit/audit.*
+$ sudo grep "fchown" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -3707,7 +3779,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 lchown system call, run the following command:
-preserve$ sudo grep "lchown" /etc/audit/audit.*
+$ sudo grep "lchown" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -3741,7 +3813,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 fchownat system call, run the following command:
-preserve$ sudo grep "fchownat" /etc/audit/audit.*
+$ sudo grep "fchownat" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -3775,7 +3847,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 chmod system call, run the following command:
-preserve$ sudo grep "chmod" /etc/audit/audit.*
+$ sudo grep "chmod" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -3809,7 +3881,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 fchmod system call, run the following command:
-preserve$ sudo grep "fchmod" /etc/audit/audit.*
+$ sudo grep "fchmod" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -3843,7 +3915,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 fchmodat system call, run the following command:
-preserve$ sudo grep "fchmodat" /etc/audit/audit.*
+$ sudo grep "fchmodat" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -3877,7 +3949,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 setxattr system call, run the following command:
-preserve$ sudo grep "setxattr" /etc/audit/audit.*
+$ sudo grep "setxattr" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -3911,7 +3983,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 fsetxattr system call, run the following command:
-preserve$ sudo grep "fsetxattr" /etc/audit/audit.*
+$ sudo grep "fsetxattr" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -3945,7 +4017,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 lsetxattr system call, run the following command:
-preserve$ sudo grep "lsetxattr" /etc/audit/audit.*
+$ sudo grep "lsetxattr" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -3979,7 +4051,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 removexattr system call, run the following command:
-preserve$ sudo grep "removexattr" /etc/audit/audit.*
+$ sudo grep "removexattr" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4017,7 +4089,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 fremovexattr system call, run the following command:
-preserve$ sudo grep "fremovexattr" /etc/audit/audit.*
+$ sudo grep "fremovexattr" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4056,7 +4128,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 lremovexattr system call, run the following command:
-preserve$ sudo grep "lremovexattr" /etc/audit/audit.*
+$ sudo grep "lremovexattr" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4093,7 +4165,7 @@ If the system is 64 bit then also add the following line:
 these events could serve as evidence of potential system compromise.</td>
 <td>To determine if the system is configured to audit calls to the
 creat system call, run the following command:
-preserve$ sudo grep "creat" /etc/audit/audit.*
+$ sudo grep "creat" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4131,7 +4203,7 @@ If the system is 64 bit then also add the following lines:
 these events could serve as evidence of potential system compromise.</td>
 <td>To determine if the system is configured to audit calls to the
 open system call, run the following command:
-preserve$ sudo grep "open" /etc/audit/audit.*
+$ sudo grep "open" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4172,7 +4244,7 @@ If the system is 64 bit then also add the following lines:
 these events could serve as evidence of potential system compromise.</td>
 <td>To determine if the system is configured to audit calls to the
 openat system call, run the following command:
-preserve$ sudo grep "openat" /etc/audit/audit.*
+$ sudo grep "openat" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4213,7 +4285,7 @@ If the system is 64 bit then also add the following lines:
 these events could serve as evidence of potential system compromise.</td>
 <td>To determine if the system is configured to audit calls to the
 open_by_handle_at system call, run the following command:
-preserve$ sudo grep "open_by_handle_at" /etc/audit/audit.*
+$ sudo grep "open_by_handle_at" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4251,7 +4323,7 @@ If the system is 64 bit then also add the following lines:
 these events could serve as evidence of potential system compromise.</td>
 <td>To determine if the system is configured to audit calls to the
 truncate system call, run the following command:
-preserve$ sudo grep "truncate" /etc/audit/audit.*
+$ sudo grep "truncate" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -4292,7 +4364,7 @@ If the system is 64 bit then also add the following lines:
 these events could serve as evidence of potential system compromise.</td>
 <td>To determine if the system is configured to audit calls to the
 ftruncate system call, run the following command:
-preserve$ sudo grep "ftruncate" /etc/audit/audit.*
+$ sudo grep "ftruncate" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -5128,7 +5200,7 @@ the kernel and potentially introduce malicious code into kernel space. It is imp
 to have an audit trail of modules that have been introduced into the kernel.</td>
 <td>To determine if the system is configured to audit calls to the
 init_module system call, run the following command:
-preserve$ sudo grep "init_module" /etc/audit/audit.*
+$ sudo grep "init_module" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -5156,7 +5228,7 @@ the kernel and potentially introduce malicious code into kernel space. It is imp
 to have an audit trail of modules that have been introduced into the kernel.</td>
 <td>To determine if the system is configured to audit calls to the
 finit_module system call, run the following command:
-preserve$ sudo grep "finit_module" /etc/audit/audit.*
+$ sudo grep "finit_module" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -5185,7 +5257,7 @@ the kernel and potentially introduce malicious code into kernel space. It is imp
 to have an audit trail of modules that have been introduced into the kernel.</td>
 <td>To determine if the system is configured to audit calls to the
 delete_module system call, run the following command:
-preserve$ sudo grep "delete_module" /etc/audit/audit.*
+$ sudo grep "delete_module" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -5399,7 +5471,7 @@ from the system. The audit trail could aid in system troubleshooting, as well as
 malicious processes that attempt to delete log files to conceal their presence.</td>
 <td>To determine if the system is configured to audit calls to the
 rename system call, run the following command:
-preserve$ sudo grep "rename" /etc/audit/audit.*
+$ sudo grep "rename" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -5430,7 +5502,7 @@ from the system. The audit trail could aid in system troubleshooting, as well as
 malicious processes that attempt to delete log files to conceal their presence.</td>
 <td>To determine if the system is configured to audit calls to the
 renameat system call, run the following command:
-preserve$ sudo grep "renameat" /etc/audit/audit.*
+$ sudo grep "renameat" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -5461,7 +5533,7 @@ from the system. The audit trail could aid in system troubleshooting, as well as
 malicious processes that attempt to delete log files to conceal their presence.</td>
 <td>To determine if the system is configured to audit calls to the
 rmdir system call, run the following command:
-preserve$ sudo grep "rmdir" /etc/audit/audit.*
+$ sudo grep "rmdir" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -5492,7 +5564,7 @@ from the system. The audit trail could aid in system troubleshooting, as well as
 malicious processes that attempt to delete log files to conceal their presence.</td>
 <td>To determine if the system is configured to audit calls to the
 unlink system call, run the following command:
-preserve$ sudo grep "unlink" /etc/audit/audit.*
+$ sudo grep "unlink" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -5523,7 +5595,7 @@ from the system. The audit trail could aid in system troubleshooting, as well as
 malicious processes that attempt to delete log files to conceal their presence.</td>
 <td>To determine if the system is configured to audit calls to the
 unlinkat system call, run the following command:
-preserve$ sudo grep "unlinkat" /etc/audit/audit.*
+$ sudo grep "unlinkat" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -5892,9 +5964,9 @@ $ grep -r '^\s*kernel.randomize_va_space\s*=' /etc/sysctl.conf /etc/sysctl.d
 If any assignments other than
 kernel.randomize_va_space = 2
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains kernel.randomize_va_space = 2, and that one assignment
-is returned when 
+is returned when
 $ grep -r kernel.randomize_va_space /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -6220,13 +6292,12 @@ impersonated.</td>
 run the command:
 $ ls -l /etc/ssh/*_key
 If properly configured, the output should indicate the following permissions:
--rw-r-----
-      Is it the case that /etc/ssh/*_key has unix mode -rw-r-----?
+-rw-------
+      Is it the case that /etc/ssh/*_key has unix mode -rw-------?
       </td>
 <td>
-
 To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/ssh/*_key</pre>
+<pre>$ sudo chmod 0600 /etc/ssh/*_key</pre>
 </td>
 <td>OL07-00-040420</td>
 <td>file_permissions_sshd_private_key</td>
@@ -6566,9 +6637,9 @@ $ grep -r '^\s*net.ipv4.conf.all.accept_source_route\s*=' /etc/sysctl.conf /etc/
 If any assignments other than
 net.ipv4.conf.all.accept_source_route = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.conf.all.accept_source_route = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.conf.all.accept_source_route /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -6604,9 +6675,9 @@ $ grep -r '^\s*net.ipv4.conf.all.rp_filter\s*=' /etc/sysctl.conf /etc/sysctl.d
 If any assignments other than
 net.ipv4.conf.all.rp_filter = 1
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.conf.all.rp_filter = 1, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.conf.all.rp_filter /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -6642,9 +6713,9 @@ $ grep -r '^\s*net.ipv4.conf.default.rp_filter\s*=' /etc/sysctl.conf /etc/sysctl
 If any assignments other than
 net.ipv4.conf.default.rp_filter = 1
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.conf.default.rp_filter = 1, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.conf.default.rp_filter /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -6683,9 +6754,9 @@ $ grep -r '^\s*net.ipv4.conf.default.accept_source_route\s*=' /etc/sysctl.conf /
 If any assignments other than
 net.ipv4.conf.default.accept_source_route = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.conf.default.accept_source_route = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.conf.default.accept_source_route /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -6721,9 +6792,9 @@ $ grep -r '^\s*net.ipv4.icmp_echo_ignore_broadcasts\s*=' /etc/sysctl.conf /etc/s
 If any assignments other than
 net.ipv4.icmp_echo_ignore_broadcasts = 1
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.icmp_echo_ignore_broadcasts = 1, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.icmp_echo_ignore_broadcasts /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -6760,9 +6831,9 @@ $ grep -r '^\s*net.ipv4.conf.default.accept_redirects\s*=' /etc/sysctl.conf /etc
 If any assignments other than
 net.ipv4.conf.default.accept_redirects = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.conf.default.accept_redirects = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.conf.default.accept_redirects /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -6800,9 +6871,9 @@ $ grep -r '^\s*net.ipv4.conf.all.accept_redirects\s*=' /etc/sysctl.conf /etc/sys
 If any assignments other than
 net.ipv4.conf.all.accept_redirects = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.conf.all.accept_redirects = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.conf.all.accept_redirects /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -6838,9 +6909,9 @@ $ grep -r '^\s*net.ipv4.conf.default.send_redirects\s*=' /etc/sysctl.conf /etc/s
 If any assignments other than
 net.ipv4.conf.default.send_redirects = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.conf.default.send_redirects = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.conf.default.send_redirects /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -6876,9 +6947,9 @@ $ grep -r '^\s*net.ipv4.conf.all.send_redirects\s*=' /etc/sysctl.conf /etc/sysct
 If any assignments other than
 net.ipv4.conf.all.send_redirects = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.conf.all.send_redirects = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.conf.all.send_redirects /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -7116,9 +7187,9 @@ $ grep -r '^\s*net.ipv4.ip_forward\s*=' /etc/sysctl.conf /etc/sysctl.d
 If any assignments other than
 net.ipv4.ip_forward = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.ip_forward = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.ip_forward /etc/sysctl.conf /etc/sysctl.d
 is executed.
 The ability to forward packets is only appropriate for routers.
@@ -7245,9 +7316,9 @@ $ grep -r '^\s*net.ipv6.conf.all.accept_source_route\s*=' /etc/sysctl.conf /etc/
 If any assignments other than
 net.ipv6.conf.all.accept_source_route = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv6.conf.all.accept_source_route = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv6.conf.all.accept_source_route /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -7385,6 +7456,9 @@ following command:
 <td>The Oracle Linux operating system must protect audit information from unauthorized read, modification, or deletion.</td>
 <td>If users can write to audit logs, audit trails can be modified or destroyed.</td>
 <td>Run the following command to check the mode of the system audit logs:
+$ sudo grep -iw log_file /etc/audit/auditd.conf
+log_file=/var/log/audit/audit.log
+$ sudo stat -c "%n %a" /var/log/audit/*
 $ sudo ls -l /var/log/audit
 Audit logs must be mode 0640 or less permissive.
       Is it the case that any are more permissive?

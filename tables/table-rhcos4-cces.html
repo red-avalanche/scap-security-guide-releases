@@ -1103,6 +1103,11 @@ Otherwise assign a UID greater than "1000" that has not already been
 assigned.</td>
 </tr>
 <tr>
+<td></td>
+<td>Verify Root Has A Primary GID 0</td>
+<td xml:lang="en-US">The <code>root</code> user should have a primary group of 0.</td>
+</tr>
+<tr>
 <td>CCE-82698-2</td>
 <td>Direct root Logins Not Allowed</td>
 <td xml:lang="en-US">To further limit access to the <code>root</code> account, administrators
@@ -3034,7 +3039,8 @@ If the system is 64 bit then also add the following lines:
 <tr>
 <td>CCE-82649-5</td>
 <td>Record Unsuccessul Delete Attempts to Files - renameat</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+<td xml:lang="en-US">
+The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following lines to a file with suffix
@@ -3100,7 +3106,8 @@ If the system is 64 bit then also add the following lines:
 <tr>
 <td>CCE-82652-9</td>
 <td>Record Unsuccessul Delete Attempts to Files - unlink</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+<td xml:lang="en-US">
+The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following lines to a file with suffix
@@ -3121,7 +3128,8 @@ If the system is 64 bit then also add the following lines:
 <tr>
 <td>CCE-82653-7</td>
 <td>Record Unsuccessul Delete Attempts to Files - unlinkat</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
+<td xml:lang="en-US">
+The audit system should collect unsuccessful file deletion
 attempts for all users and root. If the <code>auditd</code> daemon is configured
 to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following lines to a file with suffix
@@ -3742,6 +3750,7 @@ should always be used.</td>
 <td>Configure audispd Plugin To Send Logs To Remote Server</td>
 <td xml:lang="en-US">Configure the audispd plugin to off-load audit records onto a different
 system or media from the system being audited.
+
 Set the <code>remote_server</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>
 with an IP address or hostname of the system that the audispd plugin should
 send audit records to. For example
@@ -3886,6 +3895,7 @@ by <code>auditd</code>, add or correct the line in <code>/etc/audit/auditd.conf<
 Possible values for <i>ACTION</i> are described in the <code>auditd.conf</code> man
 page. These include:
 <ul>
+<li><code>ignore</code></li>
 <li><code>syslog</code></li>
 <li><code>suspend</code></li>
 <li><code>rotate</code></li>
@@ -4161,7 +4171,8 @@ Note: This rule utilizes a file provided by <code>Audit</code> package to comply
 <tr>
 <td></td>
 <td>Configure immutable Audit login UIDs</td>
-<td xml:lang="en-US">Configure kernel to prevent modification of login UIDs once they are set. Changing login UUIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.   
+<td xml:lang="en-US">Configure kernel to prevent modification of login UIDs once they are set.
+Changing login UIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.
 
 The following rules configure audit as described above:
 <pre>## Make the loginuid immutable. This prevents tampering with the auid.
@@ -4439,7 +4450,7 @@ Note: This rule utilizes a file provided by <code>Audit</code> package to comply
 <tr>
 <td></td>
 <td>Configure auditing of successful permission changes</td>
-<td xml:lang="en-US">Ensure that successful attempts to modify permissions of iles or directories are audited.
+<td xml:lang="en-US">Ensure that successful attempts to modify permissions of files or directories are audited.
 
 The following rules configure audit as described above:
 <pre>## Successful permission change
@@ -7254,7 +7265,6 @@ To properly set the permissions of <code>/etc/ssh/sshd_config</code>, run the co
 <td></td>
 <td>Verify Permissions on SSH Server Private *_key Key Files</td>
 <td xml:lang="en-US">
-
 To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
 <pre>$ sudo chmod 0640 /etc/ssh/*_key</pre>
 </td>
@@ -7464,6 +7474,28 @@ To enable GSSAPI authentication, add or correct the following line in the
 </tr>
 <tr>
 <td></td>
+<td>Enable PAM</td>
+<td xml:lang="en-US">UsePAM Enables the Pluggable Authentication Module interface. If set to “yes” this will
+enable PAM authentication using ChallengeResponseAuthentication and
+PasswordAuthentication in addition to PAM account and session module processing for all
+authentication types.
+
+To enable PAM authentication, add or correct the following line in the
+<code>/etc/ssh/sshd_config</code> file:
+<pre>UsePAM yes</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Enable Public Key Authentication</td>
+<td xml:lang="en-US">Verify the sshd daemon allows public key authentication with the
+following:
+<pre>$ grep ^PubkeyAuthentication /etc/ssh/sshd_config
+PubkeyAuthentication yes</pre>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>Enable Use of Strict Mode Checking</td>
 <td xml:lang="en-US">SSHs <code>StrictModes</code> option checks file and ownership permissions in
 the user's home directory <code>.ssh</code> folder before accepting login. If world-
@@ -7478,6 +7510,15 @@ add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <td xml:lang="en-US">To enable the warning banner and ensure it is consistent
 across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
 <pre>Banner /etc/issue</pre>
+Another section contains information on how to create an
+appropriate system-wide warning banner.</td>
+</tr>
+<tr>
+<td></td>
+<td>Enable SSH Warning Banner</td>
+<td xml:lang="en-US">To enable the warning banner and ensure it is consistent
+across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+<pre>Banner /etc/issue.net</pre>
 Another section contains information on how to create an
 appropriate system-wide warning banner.</td>
 </tr>
@@ -7567,6 +7608,14 @@ and terminated.
 To ensure the SSH idle timeout occurs precisely when the
 <code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
 value of <code>0</code>.</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure SSH LoginGraceTime is configured</td>
+<td xml:lang="en-US">The <code>LoginGraceTime</code> parameter to the SSH server specifies the time allowed for successful authentication to
+the SSH server. The longer the Grace period is the more open unauthenticated connections
+can exist. Like other session controls in this session the Grace Period should be limited to
+appropriate limits to ensure the service is available for needed access.</td>
 </tr>
 <tr>
 <td></td>

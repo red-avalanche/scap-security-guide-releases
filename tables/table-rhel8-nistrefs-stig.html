@@ -823,7 +823,12 @@ must be documented with the Information System Security Officer (ISSO).</td>
 <td>CCE-84036-3</td>
 <td>All Interactive Users Must Have A Home Directory Defined</td>
 <td xml:lang="en-US">Assign home directories to all interactive users that currently do not
-have a home directory assigned.</td>
+have a home directory assigned.
+
+This rule checks if the home directory is properly defined in a folder which has
+at least one parent folder, like "user" in "/home/user" or "/remote/users/user".
+Therefore, this rule will report a finding for home directories like <code>/users</code>,
+<code>/tmp</code> or <code>/</code>.</td>
 <td xml:lang="en-US">If local interactive users are not assigned a valid home directory, there is no
 place for the storage and control of files they should own.</td>
 <td></td>
@@ -951,7 +956,8 @@ with security implications.</td>
 <tr>
 <td>CCE-82828-5</td>
 <td>Configure immutable Audit login UIDs</td>
-<td xml:lang="en-US">Configure kernel to prevent modification of login UIDs once they are set. Changing login UUIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.   
+<td xml:lang="en-US">Configure kernel to prevent modification of login UIDs once they are set.
+Changing login UIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.
 
 The following rules configure audit as described above:
 <pre>## Make the loginuid immutable. This prevents tampering with the auid.
@@ -2785,6 +2791,7 @@ by <code>auditd</code>, add or correct the line in <code>/etc/audit/auditd.conf<
 Possible values for <i>ACTION</i> are described in the <code>auditd.conf</code> man
 page. These include:
 <ul>
+<li><code>ignore</code></li>
 <li><code>syslog</code></li>
 <li><code>suspend</code></li>
 <li><code>rotate</code></li>
@@ -2853,7 +2860,8 @@ This is the default setting.</td>
 <td xml:lang="en-US">If option <code>local_events</code> isn't set to <code>yes</code> only events from
 network will be aggregated.</td>
 <td></td>
-<td></td>
+<td>CM-6<br>
+</td>
 </tr>
 <tr>
 <td>CCE-82201-5</td>
@@ -2865,7 +2873,8 @@ in <code>/etc/audit/auditd.conf</code>.</td>
 <td xml:lang="en-US">If option <code>log_format</code> isn't set to <code>ENRICHED</code>, the
 audit records will be stored in a format exactly as the kernel sends them.</td>
 <td></td>
-<td></td>
+<td>CM-6<br>AU-3<br>
+</td>
 </tr>
 <tr>
 <td>CCE-82897-0</td>
@@ -2878,7 +2887,8 @@ in <code>/etc/audit/auditd.conf</code>.</td>
 <code>none</code>, audit events from different computers may be hard
 to distinguish.</td>
 <td></td>
-<td></td>
+<td>CM-6<br>AU-3<br>
+</td>
 </tr>
 <tr>
 <td>CCE-85889-4</td>
@@ -2960,7 +2970,8 @@ for server operation and to operate strictly in a client-only mode.</td>
 <td xml:lang="en-US">Minimizing the exposure of the server functionality of the chrony
 daemon diminishes the attack surface.</td>
 <td></td>
-<td></td>
+<td>AU-8(1)<br>
+</td>
 </tr>
 <tr>
 <td>CCE-82840-0</td>
@@ -2971,7 +2982,8 @@ for management connections made by chronyc.</td>
 <td xml:lang="en-US">Not exposing the management interface of the chrony daemon on
 the network diminishes the attack space.</td>
 <td></td>
-<td></td>
+<td>CM-7(1)<br>
+</td>
 </tr>
 <tr>
 <td>CCE-84059-5</td>
@@ -3233,7 +3245,8 @@ needs to be set to <code>LinuxAudit</code>.</td>
 <td xml:lang="en-US">Using the Linux Audit logging allows for centralized trace
 of events.</td>
 <td></td>
-<td></td>
+<td>AU-2<br>CM-8(3)<br>IA-3<br>
+</td>
 </tr>
 <tr>
 <td>CCE-82251-0</td>
@@ -3253,7 +3266,8 @@ however there may be overriding operational requirements to enable advanced
 debuging. Permitting temporary enablement of core dumps during such situations
 should be reviewed through local needs and policy.</td>
 <td></td>
-<td></td>
+<td>CM-6<br>
+</td>
 </tr>
 <tr>
 <td>CCE-82252-8</td>
@@ -3269,7 +3283,8 @@ however there may be overriding operational requirements to enable advanced
 debuging. Permitting temporary enablement of core dumps during such situations
 should be reviewed through local needs and policy.</td>
 <td></td>
-<td></td>
+<td>CM-6<br>
+</td>
 </tr>
 <tr>
 <td>CCE-80768-5</td>
@@ -3583,7 +3598,8 @@ loss of availability of systems due to unintentional reboot.</td>
 terminates an application. The memory image could contain sensitive data and is generally useful
 only for developers trying to debug problems.</td>
 <td></td>
-<td></td>
+<td>CM-6<br>SC-7(10)<br>
+</td>
 </tr>
 <tr>
 <td>CCE-80788-3</td>
@@ -3733,12 +3749,15 @@ be signed with a certificate recognized and approved by the organization.</td>
 <tr>
 <td>CCE-88227-4</td>
 <td>System Audit Logs Must Be Group Owned By Root</td>
-<td xml:lang="en-US">All audit logs must be group owned by root user. By default, the path for audit log is <pre>/var/log/audit/</pre>.
+<td xml:lang="en-US">All audit logs must be group owned by root user. The path for audit log can
+be configured via <code>log_file</code> parameter in <pre>/etc/audit/auditd.conf</pre>
+or, by default, the path for audit log is <pre>/var/log/audit/</pre>.
 
 To properly set the group owner of <code>/var/log/audit/*</code>, run the command:
 <pre>$ sudo chgrp root /var/log/audit/*</pre>
-If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other than the <code>root</code>
-group account, change the group ownership of the audit logs to this specific group.</td>
+If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other
+than the <code>root</code> group account, change the group ownership of the audit logs
+to this specific group.</td>
 <td xml:lang="en-US">Unauthorized disclosure of audit records can reveal system and configuration data to
 attackers, thus compromising its confidentiality.</td>
 <td></td>
@@ -3773,7 +3792,10 @@ the system and should only be accessed by authorized personnel.</td>
 group found in <code>/etc/passwd</code>. To change the group owner of
 interactive users home directory, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i></pre>
-</td>
+
+This rule ensures every home directory related to an interactive user is
+group-owned by an interactive user. It also ensures that interactive users
+are group-owners of one and only one home directory.</td>
 <td xml:lang="en-US">If the Group Identifier (GID) of a local interactive users home directory is
 not the same as the primary GID of the user, this would allow unauthorized
 access to the users files, and users that share the same group may not be
@@ -3884,7 +3906,9 @@ runtime. Proper ownership is necessary to protect the integrity of the system.</
 <tr>
 <td>CCE-88228-2</td>
 <td>System Audit Logs Must Be Owned By Root</td>
-<td xml:lang="en-US">All audit logs must be owned by root user. By default, the path for audit log is <pre>/var/log/audit/</pre>.
+<td xml:lang="en-US">All audit logs must be owned by root user. The path for audit log can be
+configured via <code>log_file</code> parameter in <pre>/etc/audit/auditd.conf</pre>
+or by default, the path for audit log is <pre>/var/log/audit/</pre>.
 
 To properly set the owner of <code>/var/log/audit/*</code>, run the command:
 <pre>$ sudo chown root /var/log/audit/* </pre>
@@ -4008,9 +4032,8 @@ runtime. Restrictive permissions are necessary to protect the integrity of the s
 <td>CCE-82424-3</td>
 <td>Verify Permissions on SSH Server Private *_key Key Files</td>
 <td xml:lang="en-US">
-
 To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/ssh/*_key</pre>
+<pre>$ sudo chmod 0600 /etc/ssh/*_key</pre>
 </td>
 <td xml:lang="en-US">If an unauthorized user obtains the private SSH host key file, the host could be
 impersonated.</td>
@@ -4463,7 +4486,8 @@ kernel module from being loaded, add the following line to a file in the directo
 <td xml:lang="en-US">Disabling ATM protects the system against exploitation of any
 flaws in its implementation.</td>
 <td></td>
-<td></td>
+<td>AC-18<br>
+</td>
 </tr>
 <tr>
 <td>CCE-80832-9</td>
@@ -4495,7 +4519,8 @@ kernel module from being loaded, add the following line to a file in the directo
 <td xml:lang="en-US">Disabling CAN protects the system against exploitation of any
 flaws in its implementation.</td>
 <td></td>
-<td></td>
+<td>AC-18<br>
+</td>
 </tr>
 <tr>
 <td>CCE-81031-7</td>
@@ -4529,7 +4554,8 @@ kernel module from being loaded, add the following line to a file in the directo
 <td xml:lang="en-US">Disabling FireWire protects the system against exploitation of any
 flaws in its implementation.</td>
 <td></td>
-<td></td>
+<td>AC-18<br>
+</td>
 </tr>
 <tr>
 <td>CCE-80834-5</td>
@@ -5086,7 +5112,8 @@ automatic session locking. It should not be listed in
 prevents malicious program running as user
 from lowering security by disabling the screen lock.</td>
 <td></td>
-<td></td>
+<td>CM-6<br>
+</td>
 </tr>
 <tr>
 <td>CCE-84056-1</td>
@@ -5537,7 +5564,8 @@ $ sudo yum install usbguard</pre>
 against rogue USB devices by implementing basic whitelisting/blacklisting
 capabilities based on USB device attributes.</td>
 <td></td>
-<td></td>
+<td>CM-8(3)<br>IA-3<br>
+</td>
 </tr>
 <tr>
 <td>CCE-82414-4</td>
@@ -5979,7 +6007,8 @@ The <code>debug-shell</code> service can be disabled with the following command:
 on the machine through valid troubleshooting configurations and gaining root
 access when the system is rebooted.</td>
 <td></td>
-<td></td>
+<td>CM-6<br>
+</td>
 </tr>
 <tr>
 <td>CCE-82249-4</td>
@@ -6086,7 +6115,8 @@ By masking the unit, core dump processing is disabled.</td>
 terminates an application. The memory image could contain sensitive data
 and is generally useful only for developers trying to debug problems.</td>
 <td></td>
-<td></td>
+<td>SC-7(10)<br>
+</td>
 </tr>
 <tr>
 <td>CCE-82853-3</td>
@@ -6640,7 +6670,8 @@ To make sure that the setting is persistent, add the following line to a file in
 terminates an application. The memory image could contain sensitive data and is generally useful
 only for developers trying to debug problems.</td>
 <td></td>
-<td></td>
+<td>SC-7(10)<br>
+</td>
 </tr>
 <tr>
 <td>CCE-80913-7</td>
@@ -6664,7 +6695,8 @@ To make sure that the setting is persistent, add the following line to a file in
 It makes it impossible to load another kernel image after it has been disabled.
 </td>
 <td></td>
-<td></td>
+<td>CM-6<br>
+</td>
 </tr>
 <tr>
 <td>CCE-80915-2</td>
@@ -6689,7 +6721,8 @@ To make sure that the setting is persistent, add the following line to a file in
 </td>
 <td xml:lang="en-US">Kernel profiling can reveal sensitive information about kernel behaviour.</td>
 <td></td>
-<td></td>
+<td>AC-6<br>
+</td>
 </tr>
 <tr>
 <td>CCE-80916-0</td>
@@ -6716,7 +6749,8 @@ To make sure that the setting is persistent, add the following line to a file in
 <td xml:lang="en-US">Loading and accessing the packet filters programs and maps using the bpf()
 syscall has the potential of revealing sensitive information about the kernel state.</td>
 <td></td>
-<td></td>
+<td>AC-6<br>SC-7(10)<br>
+</td>
 </tr>
 <tr>
 <td>CCE-80953-3</td>
@@ -6730,7 +6764,8 @@ sensitive information from the target processes (e.g. SSH sessions, web browser,
 without any additional assistance from the user (i.e. without resorting to phishing).
 </td>
 <td></td>
-<td></td>
+<td>SC-7(10)<br>
+</td>
 </tr>
 <tr>
 <td>CCE-82934-1</td>
@@ -6742,7 +6777,7 @@ To make sure that the setting is persistent, add the following line to a file in
 will randomize any kernel addresses in the BPF programs and maps,
 and will not expose the JIT addresses in <code>/proc/kallsyms</code>.</td>
 <td></td>
-<td>CM-6b<br>
+<td>CM-6<br>SC-7(10)<br>
 </td>
 </tr>
 <tr>

@@ -812,7 +812,12 @@ directory other than the users home directory.</td>
 <table><tr>
 <td>All Interactive Users Must Have A Home Directory Defined</td>
 <td xml:lang="en-US">Assign home directories to all interactive users that currently do not
-have a home directory assigned.</td>
+have a home directory assigned.
+
+This rule checks if the home directory is properly defined in a folder which has
+at least one parent folder, like "user" in "/home/user" or "/remote/users/user".
+Therefore, this rule will report a finding for home directories like <code>/users</code>,
+<code>/tmp</code> or <code>/</code>.</td>
 </tr></table>
 <table><tr>
 <td>All Interactive Users Home Directories Must Exist</td>
@@ -828,7 +833,10 @@ home directory assigned in <code>/etc/passwd</code>:
 group found in <code>/etc/passwd</code>. To change the group owner of
 interactive users home directory, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i></pre>
-</td>
+
+This rule ensures every home directory related to an interactive user is
+group-owned by an interactive user. It also ensures that interactive users
+are group-owners of one and only one home directory.</td>
 </tr></table>
 <table><tr>
 <td>Ensure All User Initialization Files Have Mode 0740 Or Less Permissive</td>
@@ -1395,9 +1403,8 @@ The <code>rngd</code> service can be enabled with the following command:
 <table><tr>
 <td>Verify Permissions on SSH Server Private *_key Key Files</td>
 <td xml:lang="en-US">
-
 To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/ssh/*_key</pre>
+<pre>$ sudo chmod 0600 /etc/ssh/*_key</pre>
 </td>
 </tr></table>
 <table><tr>
@@ -2014,7 +2021,8 @@ Audit records can be generated from various components within the information sy
 </tr></table>
 <table><tr>
 <td>Configure immutable Audit login UIDs</td>
-<td xml:lang="en-US">Configure kernel to prevent modification of login UIDs once they are set. Changing login UUIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.   
+<td xml:lang="en-US">Configure kernel to prevent modification of login UIDs once they are set.
+Changing login UIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.
 
 The following rules configure audit as described above:
 <pre>## Make the loginuid immutable. This prevents tampering with the auid.
@@ -6025,7 +6033,8 @@ form to <code>/etc/audit/audit.rules</code>:
 </tr></table>
 <table><tr>
 <td>Configure immutable Audit login UIDs</td>
-<td xml:lang="en-US">Configure kernel to prevent modification of login UIDs once they are set. Changing login UUIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.   
+<td xml:lang="en-US">Configure kernel to prevent modification of login UIDs once they are set.
+Changing login UIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.
 
 The following rules configure audit as described above:
 <pre>## Make the loginuid immutable. This prevents tampering with the auid.
@@ -8489,6 +8498,7 @@ by <code>auditd</code>, add or correct the line in <code>/etc/audit/auditd.conf<
 Possible values for <i>ACTION</i> are described in the <code>auditd.conf</code> man
 page. These include:
 <ul>
+<li><code>ignore</code></li>
 <li><code>syslog</code></li>
 <li><code>suspend</code></li>
 <li><code>rotate</code></li>
@@ -8622,16 +8632,21 @@ Otherwise, change the mode of the audit log files with the following command:
 </tr></table>
 <table><tr>
 <td>System Audit Logs Must Be Group Owned By Root</td>
-<td xml:lang="en-US">All audit logs must be group owned by root user. By default, the path for audit log is <pre>/var/log/audit/</pre>.
+<td xml:lang="en-US">All audit logs must be group owned by root user. The path for audit log can
+be configured via <code>log_file</code> parameter in <pre>/etc/audit/auditd.conf</pre>
+or, by default, the path for audit log is <pre>/var/log/audit/</pre>.
 
 To properly set the group owner of <code>/var/log/audit/*</code>, run the command:
 <pre>$ sudo chgrp root /var/log/audit/*</pre>
-If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other than the <code>root</code>
-group account, change the group ownership of the audit logs to this specific group.</td>
+If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other
+than the <code>root</code> group account, change the group ownership of the audit logs
+to this specific group.</td>
 </tr></table>
 <table><tr>
 <td>System Audit Logs Must Be Owned By Root</td>
-<td xml:lang="en-US">All audit logs must be owned by root user. By default, the path for audit log is <pre>/var/log/audit/</pre>.
+<td xml:lang="en-US">All audit logs must be owned by root user. The path for audit log can be
+configured via <code>log_file</code> parameter in <pre>/etc/audit/auditd.conf</pre>
+or by default, the path for audit log is <pre>/var/log/audit/</pre>.
 
 To properly set the owner of <code>/var/log/audit/*</code>, run the command:
 <pre>$ sudo chown root /var/log/audit/* </pre>
@@ -8649,7 +8664,8 @@ Otherwise, change the mode of the audit log files with the following command:
 </tr></table>
 <table><tr>
 <td>Configure immutable Audit login UIDs</td>
-<td xml:lang="en-US">Configure kernel to prevent modification of login UIDs once they are set. Changing login UUIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.   
+<td xml:lang="en-US">Configure kernel to prevent modification of login UIDs once they are set.
+Changing login UIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.
 
 The following rules configure audit as described above:
 <pre>## Make the loginuid immutable. This prevents tampering with the auid.
@@ -8730,16 +8746,21 @@ Otherwise, change the mode of the audit log files with the following command:
 </tr></table>
 <table><tr>
 <td>System Audit Logs Must Be Group Owned By Root</td>
-<td xml:lang="en-US">All audit logs must be group owned by root user. By default, the path for audit log is <pre>/var/log/audit/</pre>.
+<td xml:lang="en-US">All audit logs must be group owned by root user. The path for audit log can
+be configured via <code>log_file</code> parameter in <pre>/etc/audit/auditd.conf</pre>
+or, by default, the path for audit log is <pre>/var/log/audit/</pre>.
 
 To properly set the group owner of <code>/var/log/audit/*</code>, run the command:
 <pre>$ sudo chgrp root /var/log/audit/*</pre>
-If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other than the <code>root</code>
-group account, change the group ownership of the audit logs to this specific group.</td>
+If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other
+than the <code>root</code> group account, change the group ownership of the audit logs
+to this specific group.</td>
 </tr></table>
 <table><tr>
 <td>System Audit Logs Must Be Owned By Root</td>
-<td xml:lang="en-US">All audit logs must be owned by root user. By default, the path for audit log is <pre>/var/log/audit/</pre>.
+<td xml:lang="en-US">All audit logs must be owned by root user. The path for audit log can be
+configured via <code>log_file</code> parameter in <pre>/etc/audit/auditd.conf</pre>
+or by default, the path for audit log is <pre>/var/log/audit/</pre>.
 
 To properly set the owner of <code>/var/log/audit/*</code>, run the command:
 <pre>$ sudo chown root /var/log/audit/* </pre>
@@ -8757,7 +8778,8 @@ Otherwise, change the mode of the audit log files with the following command:
 </tr></table>
 <table><tr>
 <td>Configure immutable Audit login UIDs</td>
-<td xml:lang="en-US">Configure kernel to prevent modification of login UIDs once they are set. Changing login UUIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.   
+<td xml:lang="en-US">Configure kernel to prevent modification of login UIDs once they are set.
+Changing login UIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.
 
 The following rules configure audit as described above:
 <pre>## Make the loginuid immutable. This prevents tampering with the auid.
@@ -8838,16 +8860,21 @@ Otherwise, change the mode of the audit log files with the following command:
 </tr></table>
 <table><tr>
 <td>System Audit Logs Must Be Group Owned By Root</td>
-<td xml:lang="en-US">All audit logs must be group owned by root user. By default, the path for audit log is <pre>/var/log/audit/</pre>.
+<td xml:lang="en-US">All audit logs must be group owned by root user. The path for audit log can
+be configured via <code>log_file</code> parameter in <pre>/etc/audit/auditd.conf</pre>
+or, by default, the path for audit log is <pre>/var/log/audit/</pre>.
 
 To properly set the group owner of <code>/var/log/audit/*</code>, run the command:
 <pre>$ sudo chgrp root /var/log/audit/*</pre>
-If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other than the <code>root</code>
-group account, change the group ownership of the audit logs to this specific group.</td>
+If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other
+than the <code>root</code> group account, change the group ownership of the audit logs
+to this specific group.</td>
 </tr></table>
 <table><tr>
 <td>System Audit Logs Must Be Owned By Root</td>
-<td xml:lang="en-US">All audit logs must be owned by root user. By default, the path for audit log is <pre>/var/log/audit/</pre>.
+<td xml:lang="en-US">All audit logs must be owned by root user. The path for audit log can be
+configured via <code>log_file</code> parameter in <pre>/etc/audit/auditd.conf</pre>
+or by default, the path for audit log is <pre>/var/log/audit/</pre>.
 
 To properly set the owner of <code>/var/log/audit/*</code>, run the command:
 <pre>$ sudo chown root /var/log/audit/* </pre>
@@ -8865,7 +8892,8 @@ Otherwise, change the mode of the audit log files with the following command:
 </tr></table>
 <table><tr>
 <td>Configure immutable Audit login UIDs</td>
-<td xml:lang="en-US">Configure kernel to prevent modification of login UIDs once they are set. Changing login UUIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.   
+<td xml:lang="en-US">Configure kernel to prevent modification of login UIDs once they are set.
+Changing login UIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.
 
 The following rules configure audit as described above:
 <pre>## Make the loginuid immutable. This prevents tampering with the auid.
@@ -10457,6 +10485,20 @@ If the system is 64 bit then also add the following lines:
 <pre>
 -a always,exit -F arch=b64 -S truncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=access
 -a always,exit -F arch=b64 -S truncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=access</pre>
+</td>
+</tr></table>
+<table><tr>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - unix_update</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/unix_update -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/sbin/unix_update -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 </tr></table>
 <table><tr>
@@ -14912,16 +14954,21 @@ To properly set the owner of <code>/var/log/audit</code>, run the command:
 </tr></table>
 <table><tr>
 <td>System Audit Logs Must Be Group Owned By Root</td>
-<td xml:lang="en-US">All audit logs must be group owned by root user. By default, the path for audit log is <pre>/var/log/audit/</pre>.
+<td xml:lang="en-US">All audit logs must be group owned by root user. The path for audit log can
+be configured via <code>log_file</code> parameter in <pre>/etc/audit/auditd.conf</pre>
+or, by default, the path for audit log is <pre>/var/log/audit/</pre>.
 
 To properly set the group owner of <code>/var/log/audit/*</code>, run the command:
 <pre>$ sudo chgrp root /var/log/audit/*</pre>
-If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other than the <code>root</code>
-group account, change the group ownership of the audit logs to this specific group.</td>
+If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other
+than the <code>root</code> group account, change the group ownership of the audit logs
+to this specific group.</td>
 </tr></table>
 <table><tr>
 <td>System Audit Logs Must Be Owned By Root</td>
-<td xml:lang="en-US">All audit logs must be owned by root user. By default, the path for audit log is <pre>/var/log/audit/</pre>.
+<td xml:lang="en-US">All audit logs must be owned by root user. The path for audit log can be
+configured via <code>log_file</code> parameter in <pre>/etc/audit/auditd.conf</pre>
+or by default, the path for audit log is <pre>/var/log/audit/</pre>.
 
 To properly set the owner of <code>/var/log/audit/*</code>, run the command:
 <pre>$ sudo chown root /var/log/audit/* </pre>

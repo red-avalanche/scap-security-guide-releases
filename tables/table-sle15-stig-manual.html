@@ -96,27 +96,25 @@ If the system requires Long-Term Service Pack Support (LTSS), obtain the correct
 <td>V-234801</td>
 <td>CCI-001233</td>
 <td>medium</td>
-<td>The SUSE operating system must deploy Endpoint Security for Linux Threat Prevention (ENSLTP).</td>
-<td>Adding host-based intrusion detection tools can provide the capability to automatically take actions in response to malicious behavior, which can provide additional agility in reacting to network threats. These tools also often include a reporting capability to provide network awareness of the system, which may not otherwise exist in an organization's systems management regime.</td>
-<td>Per OPORD 16-0080, the preferred intrusion detection system is McAfee Host Intrusion Prevention System (HIPS) in conjunction with SELinux. McAfee Endpoint Security for Linux (ENSL) is an approved alternative to McAfee Virus Scan Enterprise (VSE) and HIPS.
+<td>The SUSE operating system must implement the Endpoint Security for Linux Threat Prevention tool.</td>
+<td>Adding endpoint security tools can provide the capability to automatically take actions in response to malicious behavior, which can provide additional agility in reacting to network threats. These tools also often include a reporting capability to provide network awareness of the system, which may not otherwise exist in an organization's systems management regime.</td>
+<td>Per OPORD 16-0080, the preferred endpoint security tool is Endpoint Security for Linux (ENSL) in conjunction with SELinux.
 
 Procedure:
-Verify the SUSE operating system deploys ENSLTP.
-
 Check that the following package has been installed:
 
-# rpm -qa | grep isectp
+# rpm -qa | grep -i mcafeetp
 
-If the "isectp" package is not installed, this is a finding.
+If the "mcafeetp" package is not installed, this is a finding.
 
 Verify that the daemon is running:
 
-# ps -ef | grep -i “isectpd”
+# ps -ef | grep -i mfetpd
 
 If the daemon is not running, this is a finding.</td>
-<td>Install and enable the latest McAfee ENSLTP.</td>
+<td>Install and enable the latest McAfee ENSLTP package.</td>
 <td>SLES-15-010001</td>
-<td>SV-234801r622137_rule</td>
+<td>SV-234801r754757_rule</td>
 </tr>
 <tr>
 <td>V-234802</td>
@@ -435,7 +433,7 @@ By using this IS (which includes any device attached to this IS), you consent to
 </tr>
 <tr>
 <td>V-234808</td>
-<td>CCI-001388</td>
+<td>CCI-001384</td>
 <td>medium</td>
 <td>The SUSE operating system must display a banner before granting local or remote access to the system via a graphical user logon.</td>
 <td>Display of a standardized and approved use notification before granting access to the SUSE operating system ensures privacy and security notification verbiage used is consistent with applicable federal laws, Executive Orders, directives, policies, regulations, standards, and guidance.
@@ -563,7 +561,7 @@ Run the following command to update the database:
 </tr>
 <tr>
 <td>V-234810</td>
-<td>CCI-000058</td>
+<td>CCI-000056</td>
 <td>medium</td>
 <td>The SUSE operating system must be able to lock the graphical user interface (GUI).</td>
 <td>A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not want to log out because of the temporary nature of the absence.
@@ -749,7 +747,7 @@ Remote access is access to DoD nonpublic information systems by an authorized us
 
 Encryption provides a means to secure the remote connection to prevent unauthorized access to the data traversing the remote access connection (e.g., RDP), thereby providing a degree of confidentiality. The encryption strength of a mechanism is selected based on the security categorization of the information.
 
-By specifying a cipher list with the order of ciphers being in a "strongest to weakest" orientation, the system will automatically attempt to use the strongest cipher for securing SSH connections.
+The system will attempt to use the first cipher presented by the client that matches the server list. Listing the values "strongest to weakest" is a method to ensure the use of the strongest cipher available to secure the SSH connection.
 
 Satisfies: SRG-OS-000033-GPOS-00014, SRG-OS-000125-GPOS-00065, SRG-OS-000250-GPOS-00093, SRG-OS-000393-GPOS-00173</td>
 <td>Verify that the SUSE operating system implements DoD-approved encryption to protect the confidentiality of SSH remote connections.
@@ -769,7 +767,7 @@ Restart the SSH daemon:
 
 &gt; sudo systemctl restart sshd.service</td>
 <td>SLES-15-010160</td>
-<td>SV-234816r622137_rule</td>
+<td>SV-234816r744125_rule</td>
 </tr>
 <tr>
 <td>V-234817</td>
@@ -1084,7 +1082,7 @@ Remote access (e.g., RDP) is access to DoD nonpublic information systems by an a
 
 Cryptographic mechanisms used for protecting the integrity of information include, for example, signed hash functions using asymmetric cryptography enabling distribution of the public key to verify the hash information while maintaining the confidentiality of the secret key used to generate the hash.
 
-By specifying a hash algorithm list with the order of hashes being in a “strongest to weakest” orientation, the system will automatically attempt to use the strongest hash for securing SSH connections.
+The system will attempt to use the first hash presented by the client that matches the server list. Listing the values "strongest to weakest" is a method to ensure the use of the strongest hash available to secure the SSH connection.
 
 Satisfies: SRG-OS-000125-GPOS-00065, SRG-OS-000394-GPOS-00174</td>
 <td>Verify the SUSE operating system SSH daemon is configured to only use MACs that employ FIPS 140-2 approved hashes.
@@ -1101,7 +1099,7 @@ Edit the "/etc/ssh/sshd_config" file to uncomment or add the line for the "MACs"
 
 MACs hmac-sha2-512,hmac-sha2-256</td>
 <td>SLES-15-010270</td>
-<td>SV-234826r622137_rule</td>
+<td>SV-234826r744126_rule</td>
 </tr>
 <tr>
 <td>V-234827</td>
@@ -1190,7 +1188,7 @@ If "1" is not the system's default value, add or update the following line in "/
 </tr>
 <tr>
 <td>V-234830</td>
-<td>CCI-001133</td>
+<td>CCI-000879</td>
 <td>medium</td>
 <td>The SUSE operating system for all network connections associated with SSH traffic must immediately terminate at the end of the session or after 10 minutes of inactivity.</td>
 <td>Automatic session termination addresses the termination of user-initiated logical sessions in contrast to the termination of network connections associated with communications sessions (i.e., network disconnect). A logical session (for local, network, and remote access) is initiated whenever a user (or process acting on behalf of a user) accesses an organizational information system. Such user sessions can be terminated (and thus terminate user access) without terminating network sessions.
@@ -1732,7 +1730,7 @@ For each interface of type wireless, for each configuration of type "wicked:xml:
 </tr>
 <tr>
 <td>V-234848</td>
-<td>CCI-002165</td>
+<td>CCI-001764</td>
 <td>medium</td>
 <td>SUSE operating system AppArmor tool must be configured to control whitelisted applications and user home directory access control.</td>
 <td>Using a whitelist provides a configuration management method for allowing the execution of only authorized software. Using only authorized software decreases risk by limiting the number of potential vulnerabilities.
@@ -1783,7 +1781,7 @@ Note: "pam_apparmor" must have properly configured profiles. All configurations 
 </tr>
 <tr>
 <td>V-234849</td>
-<td>CCI-002046</td>
+<td>CCI-001891</td>
 <td>medium</td>
 <td>The SUSE operating system clock must, for networked systems, be synchronized to an authoritative DoD time source at least every 24 hours.</td>
 <td>Inaccurate time stamps make it more difficult to correlate events and can lead to an inaccurate analysis. Determining the correct time a particular event occurred on a system is critical when conducting forensic analysis and investigating system events. Sources outside the configured acceptable allowance (drift) may be inaccurate.
@@ -1993,7 +1991,7 @@ Additional information on the configuration of multifactor authentication on the
 </tr>
 <tr>
 <td>V-234855</td>
-<td>CCI-001953</td>
+<td>CCI-001948</td>
 <td>medium</td>
 <td>The SUSE operating system must implement certificate status checking for multifactor authentication.</td>
 <td>Using an authentication device, such as a Common Access Card (CAC) or token separate from the information system, ensures credentials stored on the authentication device will not be affected if the information system is compromised.
@@ -2652,7 +2650,7 @@ If the value is set to an integer less than 0, the user's time stamp will not ex
 &gt; sudo grep -i 'timestamp_timeout'
 
 /etc/sudoers /etc/sudoers.d/*
-/etc/sudoers:Defaults timestamp_timout=0
+/etc/sudoers:Defaults timestamp_timeout=0
 
 If "timestamp_timeout" is set to a negative number, is commented out, or no results are returned, this is a finding.</td>
 <td>Configure the "sudo" command to require re-authentication.
@@ -2664,7 +2662,7 @@ Add or modify the following line:
 Defaults timestamp_timeout=[value]
 Note: The "[value]" must be a number that is greater than or equal to "0".</td>
 <td>SLES-15-020102</td>
-<td>SV-234878r622137_rule</td>
+<td>SV-234878r744128_rule</td>
 </tr>
 <tr>
 <td>V-234879</td>
@@ -3130,7 +3128,7 @@ Remove any instances of the "nullok" option in "/etc/pam.d/common-auth" and "/et
 </tr>
 <tr>
 <td>V-234899</td>
-<td>CCI-000172</td>
+<td>CCI-000018</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/passwd.</td>
 <td>Once an attacker establishes initial access to a system, the attacker often attempts to create a persistent method of reestablishing access. One way to accomplish this is for the attacker to simply create a new account. Auditing of account creation mitigates this risk.
@@ -3282,7 +3280,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234903</td>
-<td>CCI-000172</td>
+<td>CCI-000018</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all account creations, modifications, disabling, and termination events that affect /etc/gshadow.</td>
 <td>Once an attacker establishes initial access to a system, the attacker often attempts to create a persistent method of reestablishing access. One way to accomplish this is for the attacker to simply create a new account. Auditing of account creation mitigates this risk.
@@ -3320,7 +3318,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234904</td>
-<td>CCI-000154</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>SUSE operating system audit records must contain information to establish what type of events occurred, the source of events, where events occurred, and the outcome of events.</td>
 <td>Without establishing what type of events occurred, the source of events, where events occurred, and the outcome of events, it would be difficult to establish, correlate, and investigate the events leading up to an outage or attack.
@@ -3388,7 +3386,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234906</td>
-<td>CCI-000172</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the passwd command.</td>
 <td>Reconstruction of harmful events or forensic analysis is not possible if audit records do not contain enough information.
@@ -3464,7 +3462,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234908</td>
-<td>CCI-000172</td>
+<td>CCI-000130</td>
 <td>low</td>
 <td>The SUSE operating system must generate audit records for all uses of the newgrp command.</td>
 <td>Reconstruction of harmful events or forensic analysis is not possible if audit records do not contain enough information.
@@ -3540,7 +3538,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234910</td>
-<td>CCI-000172</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the unix_chkpwd or unix2_chkpwd commands.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -3618,7 +3616,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234912</td>
-<td>CCI-000172</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the crontab command.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -3697,7 +3695,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234914</td>
-<td>CCI-000172</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the open system call.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -3797,7 +3795,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234916</td>
-<td>CCI-000169</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the openat system call.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -3897,7 +3895,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234918</td>
-<td>CCI-000169</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the removexattr system call.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -3977,7 +3975,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234920</td>
-<td>CCI-000169</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the fremovexattr system call.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -4057,7 +4055,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234922</td>
-<td>CCI-000169</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the fsetxattr system call.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -4137,7 +4135,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234924</td>
-<td>CCI-000169</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the chown system call.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -4217,7 +4215,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234926</td>
-<td>CCI-000169</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the lchown system call.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -4297,7 +4295,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234928</td>
-<td>CCI-000169</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the chmod system call.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -4377,7 +4375,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234930</td>
-<td>CCI-000169</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the fchmodat system call.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -4467,7 +4465,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234932</td>
-<td>CCI-000172</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the sudoedit command.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -4505,7 +4503,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234933</td>
-<td>CCI-000169</td>
+<td>CCI-000130</td>
 <td>low</td>
 <td>The SUSE operating system must generate audit records for all uses of the chfn command.</td>
 <td>Reconstruction of harmful events or forensic analysis is not possible if audit records do not contain enough information.
@@ -4543,7 +4541,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234934</td>
-<td>CCI-000172</td>
+<td>CCI-000130</td>
 <td>low</td>
 <td>The SUSE operating system must generate audit records for all uses of the mount system call.</td>
 <td>Reconstruction of harmful events or forensic analysis is not possible if audit records do not contain enough information.
@@ -4583,7 +4581,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234935</td>
-<td>CCI-000169</td>
+<td>CCI-000130</td>
 <td>low</td>
 <td>The SUSE operating system must generate audit records for all uses of the umount system call.</td>
 <td>Reconstruction of harmful events or forensic analysis is not possible if audit records do not contain enough information.
@@ -4625,7 +4623,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234936</td>
-<td>CCI-000172</td>
+<td>CCI-000130</td>
 <td>low</td>
 <td>The SUSE operating system must generate audit records for all uses of the ssh-agent command.</td>
 <td>Reconstruction of harmful events or forensic analysis is not possible if audit records do not contain enough information.
@@ -4663,7 +4661,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234937</td>
-<td>CCI-000169</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the insmod command.</td>
 <td>Without the capability to generate audit records, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -4713,7 +4711,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234938</td>
-<td>CCI-000172</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the rmmod command.</td>
 <td>Without the capability to generate audit records, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -4763,7 +4761,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234939</td>
-<td>CCI-000169</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the modprobe command.</td>
 <td>Without the capability to generate audit records, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -4813,7 +4811,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234940</td>
-<td>CCI-000172</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the kmod command.</td>
 <td>Without the capability to generate audit records, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -4863,7 +4861,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234941</td>
-<td>CCI-000169</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the chmod command.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -4901,7 +4899,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234942</td>
-<td>CCI-000172</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the setfacl command.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -4939,7 +4937,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234943</td>
-<td>CCI-000169</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the chacl command.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -4977,7 +4975,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234944</td>
-<td>CCI-000172</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the chcon command.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -5015,7 +5013,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234945</td>
-<td>CCI-000169</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the rm command.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -5053,7 +5051,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234946</td>
-<td>CCI-000172</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all modifications to the tallylog file must generate an audit record.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -5091,7 +5089,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234947</td>
-<td>CCI-000169</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all modifications to the lastlog file.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -5129,7 +5127,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234948</td>
-<td>CCI-000172</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the passmass command.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -5167,7 +5165,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234949</td>
-<td>CCI-000169</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the usermod command.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -5205,7 +5203,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234950</td>
-<td>CCI-000172</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the pam_timestamp_check command.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -5243,7 +5241,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234951</td>
-<td>CCI-000169</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the delete_module system call.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one. 
@@ -5283,7 +5281,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234952</td>
-<td>CCI-000172</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the finit_module system call.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one. 
@@ -5323,7 +5321,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234953</td>
-<td>CCI-000169</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the init_module system call.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one. 
@@ -5363,7 +5361,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234954</td>
-<td>CCI-000172</td>
+<td>CCI-000130</td>
 <td>medium</td>
 <td>The SUSE operating system must generate audit records for all uses of the su command.</td>
 <td>Without generating audit records specific to the security and mission needs of the organization, it would be difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
@@ -5401,7 +5399,7 @@ or issue the following command:
 </tr>
 <tr>
 <td>V-234955</td>
-<td>CCI-000169</td>
+<td>CCI-000130</td>
 <td>low</td>
 <td>The SUSE operating system must generate audit records for all uses of the sudo command.</td>
 <td>Reconstruction of harmful events or forensic analysis is not possible if audit records do not contain enough information.
@@ -5721,7 +5719,7 @@ Add or update the following lines to "/etc/aide.conf" to protect the integrity o
 </tr>
 <tr>
 <td>V-234963</td>
-<td>CCI-001877</td>
+<td>CCI-001814</td>
 <td>low</td>
 <td>The SUSE operating system must generate audit records for all uses of the privileged functions.</td>
 <td>Misuse of privileged functions, either intentionally or unintentionally by authorized users, or by unauthorized external entities that have compromised information system accounts, is a serious and ongoing concern and can have significant adverse impacts on organizations. Auditing the use of privileged functions is one way to detect such misuse and identify the risk from insider threats and the advanced persistent threat.
@@ -6736,18 +6734,17 @@ Note: The example will be for the smithj user, who has a home directory of "/hom
 <td>The executable search path (typically the PATH environment variable) contains a list of directories for the shell to search to find executables. If this path includes the current working directory (other than the user's home directory), executables in these directories may be executed instead of system commands. This variable is formatted as a colon-separated list of directories. If there is an empty entry, such as a leading or trailing colon or two consecutive colons, this is interpreted as the current working directory. If deviations from the default system search path for the local interactive user are required, they must be documented with the Information System Security Officer (ISSO).</td>
 <td>Verify that all SUSE operating system local interactive user initialization files executable search path statements do not contain statements that will reference a working directory other than the user's home directory.
 
-Check the executable search path statement for all operating system local interactive user initialization files in the users' home directory with the following commands:
+Check the executable search path statement for all operating system local interactive user initialization files in the user's home directory with the following commands:
 
 Note: The example will be for the user "smithj", who has a home directory of "/home/smithj".
 
-&gt; sudo grep -i path /home/smithj/.*
+&gt; sudo grep -i path= /home/smithj/.*
 /home/smithj/.bash_profile:PATH=$PATH:$HOME/.local/bin:$HOME/bin
-/home/smithj/.bash_profile:export PATH
 
 If any local interactive user initialization files have executable search path statements that include directories outside of their home directory, and the additional path statements are not documented with the ISSO as an operational requirement, this is a finding.</td>
 <td>Edit the SUSE operating system local interactive user initialization files to change any PATH variable statements for executables that reference directories other than their home directory. If a local interactive user requires path variables to reference a directory owned by the application, it must be documented with the ISSO.</td>
 <td>SLES-15-040120</td>
-<td>SV-234996r622137_rule</td>
+<td>SV-234996r793060_rule</td>
 </tr>
 <tr>
 <td>V-234997</td>

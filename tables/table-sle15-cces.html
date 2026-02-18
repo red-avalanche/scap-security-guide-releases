@@ -414,6 +414,38 @@ Enable=false
 </td>
 </tr>
 <tr>
+<td>CCE-85777-1</td>
+<td>Require Credential Prompting for Remote Access in GNOME3</td>
+<td xml:lang="en-US">By default, <code>GNOME</code> does not require credentials when using <code>Vino</code> for
+remote access. To configure the system to require remote credentials, add or set
+<code>authentication-methods</code> to <code>['vnc']</code> in
+<code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
+<pre>[org/gnome/Vino]
+authentication-methods=['vnc']
+</pre>
+Once the settings have been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/Vino/authentication-methods</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+</tr>
+<tr>
+<td>CCE-85822-5</td>
+<td>Require Encryption for Remote Access in GNOME3</td>
+<td xml:lang="en-US">By default, <code>GNOME</code> requires encryption when using <code>Vino</code> for remote access.
+To prevent remote access encryption from being disabled, add or set
+<code>require-encryption</code> to <code>true</code> in
+<code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
+<pre>[org/gnome/Vino]
+require-encryption=true
+</pre>
+Once the settings have been added, add a lock to
+<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/Vino/require-encryption</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+</tr>
+<tr>
 <td>CCE-85783-9</td>
 <td>Enable GNOME3 Screensaver Idle Activation</td>
 <td xml:lang="en-US">To activate the screensaver in the GNOME3 desktop after a period of inactivity,
@@ -1277,6 +1309,22 @@ Notice that if neither are set, they already have the default value of 5000.
 If either is set, they must have the minimum value of 5000.</td>
 </tr>
 <tr>
+<td>CCE-91421-8</td>
+<td>Disable debug-shell SystemD Service</td>
+<td xml:lang="en-US">SystemD's <code>debug-shell</code> service is intended to
+diagnose SystemD related boot issues with various <code>systemctl</code>
+commands. Once enabled and following a system reboot, the root shell
+will be available on <code>tty9</code> which is access by pressing
+<code>CTRL-ALT-F9</code>. The <code>debug-shell</code> service should only be used
+for SystemD related issues and should otherwise be disabled.
+<br><br>
+By default, the <code>debug-shell</code> SystemD service is already disabled.
+
+The <code>debug-shell</code> service can be disabled with the following command:
+<pre>$ sudo systemctl mask --now debug-shell.service</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-85665-8</td>
 <td>Disable Ctrl-Alt-Del Burst Action</td>
 <td xml:lang="en-US">By default, <code>SystemD</code> will reboot the system if the <code>Ctrl-Alt-Del</code>
@@ -1315,7 +1363,7 @@ By default, Emergency mode is protected by requiring a password and is set
 in <code>/usr/lib/systemd/system/emergency.service</code>.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91428-3</td>
 <td>Require Authentication for Single User Mode</td>
 <td xml:lang="en-US">Single-user mode is intended as a system recovery
 method, providing a single user root access to the system by
@@ -1690,6 +1738,11 @@ assigned.</td>
 </tr>
 <tr>
 <td></td>
+<td>Verify Root Has A Primary GID 0</td>
+<td xml:lang="en-US">The <code>root</code> user should have a primary group of 0.</td>
+</tr>
+<tr>
+<td>CCE-91427-5</td>
 <td>Direct root Logins Not Allowed</td>
 <td xml:lang="en-US">To further limit access to the <code>root</code> account, administrators
 can disable root logins at the console by editing the <code>/etc/securetty</code> file.
@@ -1741,7 +1794,7 @@ command: <pre>$ sudo usermod -s /sbin/nologin <i>SYSACCT</i></pre>
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91429-1</td>
 <td>Restrict Serial Port Root Logins</td>
 <td xml:lang="en-US">To restrict root logins on serial ports,
 ensure lines of this form do not appear in <code>/etc/securetty</code>:
@@ -1750,7 +1803,7 @@ ttyS1</pre>
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91430-9</td>
 <td>Restrict Virtual Console Root Logins</td>
 <td xml:lang="en-US">To restrict root logins through the (deprecated) virtual console devices,
 ensure lines of this form do not appear in <code>/etc/securetty</code>:
@@ -1849,7 +1902,12 @@ directory other than the users home directory.</td>
 <td>CCE-85627-8</td>
 <td>All Interactive Users Must Have A Home Directory Defined</td>
 <td xml:lang="en-US">Assign home directories to all interactive users that currently do not
-have a home directory assigned.</td>
+have a home directory assigned.
+
+This rule checks if the home directory is properly defined in a folder which has
+at least one parent folder, like "user" in "/home/user" or "/remote/users/user".
+Therefore, this rule will report a finding for home directories like <code>/users</code>,
+<code>/tmp</code> or <code>/</code>.</td>
 </tr>
 <tr>
 <td>CCE-85628-6</td>
@@ -1867,7 +1925,9 @@ home directory assigned in <code>/etc/passwd</code>:
 group that the interactive user is a member of. To change the group owner of a
 local interactive users files and directories, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i>/<i>FILE_DIR</i></pre>
-</td>
+
+This rule ensures every file or directory under the home directory related
+to an interactive user is group-owned by an interactive user.</td>
 </tr>
 <tr>
 <td></td>
@@ -1877,7 +1937,9 @@ do not have a valid user, or assign a valid user to all unowned
 files and directories. To assign a valid owner to a local
 interactive user's files and directories, use the following command:
 <pre>$ sudo chown -R <i>USER</i> /home/<i>USER</i></pre>
-</td>
+
+This rule ensures every file or directory under the home directory related
+to an interactive user is owned by an interactive user.</td>
 </tr>
 <tr>
 <td></td>
@@ -1894,7 +1956,10 @@ directory with the following command:
 group found in <code>/etc/passwd</code>. To change the group owner of
 interactive users home directory, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i></pre>
-</td>
+
+This rule ensures every home directory related to an interactive user is
+group-owned by an interactive user. It also ensures that interactive users
+are group-owners of one and only one home directory.</td>
 </tr>
 <tr>
 <td></td>
@@ -1903,7 +1968,10 @@ interactive users home directory, use the following command:
 owner. To change the owner of a interactive users home directory, use
 the following command:
 <pre>$ sudo chown <i>USER</i> /home/<i>USER</i></pre>
-</td>
+
+This rule ensures every home directory related to an interactive user is
+owned by an interactive user. It also ensures that interactive users are
+owners of one and only one home directory.</td>
 </tr>
 <tr>
 <td>CCE-85630-2</td>
@@ -2219,6 +2287,20 @@ utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-w /etc/sudoers -p wa -k actions
 -w /etc/sudoers.d/ -p wa -k actions</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-85774-8</td>
+<td>Shutdown System When Auditing Failures Occur</td>
+<td xml:lang="en-US">If the <code>auditd</code> daemon is configured to use the
+<code>augenrules</code> program to read audit rules during daemon startup (the
+default), add the following line to a file with suffix <code>.rules</code> in the
+directory <code>/etc/audit/rules.d</code>:
+<pre>-f 2</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following line to the
+top of the <code>/etc/audit/audit.rules</code> file:
+<pre>-f 2</pre>
 </td>
 </tr>
 <tr>
@@ -2749,6 +2831,21 @@ utility to read audit rules during daemon startup, add the following lines to
 </td>
 </tr>
 <tr>
+<td>CCE-85817-5</td>
+<td>Record Any Attempts to Run restorecon</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect any execution attempt
+of the <code>restorecon</code> command for all users and root. If the <code>auditd</code>
+daemon is configured to use the <code>augenrules</code> program to read audit rules
+during daemon startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/restorecon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F path=/usr/sbin/restorecon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-85596-5</td>
 <td>Record Any Attempts to Run rm</td>
 <td xml:lang="en-US">At a minimum, the audit system should collect any execution attempt
@@ -2761,6 +2858,36 @@ If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F path=/usr/bin/rm -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-85819-1</td>
+<td>Record Any Attempts to Run semanage</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect any execution attempt
+of the <code>semanage</code> command for all users and root. If the <code>auditd</code>
+daemon is configured to use the <code>augenrules</code> program to read audit rules
+during daemon startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/semanage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F path=/usr/sbin/semanage -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-85818-3</td>
+<td>Record Any Attempts to Run setsebool</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect any execution attempt
+of the <code>setsebool</code> command for all users and root. If the <code>auditd</code>
+daemon is configured to use the <code>augenrules</code> program to read audit rules
+during daemon startup (the default), add the following lines to a file with suffix
+<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/setsebool -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add the following lines to
+<code>/etc/audit/audit.rules</code> file:
+<pre>-a always,exit -F path=/usr/sbin/setsebool -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 </tr>
 <tr>
@@ -3069,39 +3196,31 @@ If the system is 64 bit then also add the following lines:
 <tr>
 <td>CCE-85702-9</td>
 <td>Record Unsuccessul Delete Attempts to Files - renameat</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
-attempts for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file.
-<pre>-a always,exit -F arch=b32 -S renameat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b32 -S renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
-If the system is 64 bit then also add the following lines:
+<td xml:lang="en-US">
+The operating system must generate audit records for all uses of the <code>renameat</code> system call.
+Without generating audit records specific to the security and mission needs of the organization, it would be 
+difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
+Audit records can be generated from various components within the information system (e.g., module or policy filter).
+Add or update the following lines to <code>/etc/audit/rules.d/audit.rules</code> to configure the the operating system to generate 
+an audit record for all uses of the <code>renameat</code> system call:  
 <pre>
--a always,exit -F arch=b64 -S renameat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b64 -S renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+-a always,exit -F arch=b32 -S renameat -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod
+-a always,exit -F arch=b64 -S renameat -F auid&gt;=1000 -F auid!=4294967295 -k perm_mod 
+</pre>
 </td>
 </tr>
 <tr>
 <td>CCE-85726-8</td>
 <td>Record Unsuccessul Delete Attempts to Files - renameat2</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
-attempts for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file.
-<pre>-a always,exit -F arch=b32 -S renameat2 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b32 -S renameat2 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
-If the system is 64 bit then also add the following lines:
+<td xml:lang="en-US">The operating system must generate audit records for all uses of the <code>renameat2</code> system call.
+Without generating audit records specific to the security and mission needs of the organization, it would be 
+difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
+Audit records can be generated from various components within the information system (e.g., module or policy filter).
+Add or update the following lines to <code>/etc/audit/rules.d/audit.rules</code> to configure the the operating system to generate 
+an audit record for all uses of the <code>renameat2</code> system call:  
 <pre>
--a always,exit -F arch=b64 -S renameat2 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b64 -S renameat2 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+-a always,exit -F arch=b32 -S renameat2 -F auid&gt;=1000 -F auid!=-1 -k perm_mod
+-a always,exit -F arch=b64 -S renameat2 -F auid&gt;=1000 -F auid!=-1 -k perm_mod</pre>
 </td>
 </tr>
 <tr>
@@ -3135,43 +3254,31 @@ If the system is 64 bit then also add the following lines:
 <tr>
 <td>CCE-85703-7</td>
 <td>Record Unsuccessul Delete Attempts to Files - unlink</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
-attempts for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file.
-<pre>-a always,exit -F arch=b32 -S unlink -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b32 -S unlink -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
-
-If the system is 64 bit then also add the following lines:
+<td xml:lang="en-US">
+The operating system must generate audit records for all uses of the <code>unlink</code> system call.
+Without generating audit records specific to the security and mission needs of the organization, it would be 
+difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
+Audit records can be generated from various components within the information system (e.g., module or policy filter).
+Add or update the following lines to <code>/etc/audit/rules.d/audit.rules</code> to configure the the operating system to generate 
+an audit record for all uses of the <code>unlink</code> system call:  
 <pre>
--a always,exit -F arch=b64 -S unlink -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b64 -S unlink -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+-a always,exit -F arch=b32 -S unlink -F auid&gt;=1000 -F auid!=-1 -k perm_mod
+-a always,exit -F arch=b64 -S unlink -F auid&gt;=1000 -F auid!=-1 -k perm_mod </pre>
 </td>
 </tr>
 <tr>
 <td>CCE-85704-5</td>
 <td>Record Unsuccessul Delete Attempts to Files - unlinkat</td>
-<td xml:lang="en-US">The audit system should collect unsuccessful file deletion
-attempts for all users and root. If the <code>auditd</code> daemon is configured
-to use the <code>augenrules</code> program to read audit rules during daemon
-startup (the default), add the following lines to a file with suffix
-<code>.rules</code> in the directory <code>/etc/audit/rules.d</code>.
-
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file.
-<pre>-a always,exit -F arch=b32 -S unlinkat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b32 -S unlinkat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
-
-If the system is 64 bit then also add the following lines:
+<td xml:lang="en-US">
+The operating system must generate audit records for all uses of the <code>unlinkat</code> system call.
+Without generating audit records specific to the security and mission needs of the organization, it would be 
+difficult to establish, correlate, and investigate the events relating to an incident or identify those responsible for one.
+Audit records can be generated from various components within the information system (e.g., module or policy filter).
+Add or update the following lines to <code>/etc/audit/rules.d/audit.rules</code> to configure the the operating system to generate 
+an audit record for all uses of the <code>unlinkat</code> system call:  
 <pre>
--a always,exit -F arch=b64 -S unlinkat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
--a always,exit -F arch=b64 -S unlinkat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete</pre>
+-a always,exit -F arch=b32 -S unlinkat -F auid&gt;=1000 -F auid!=-1 -k perm_mod
+-a always,exit -F arch=b64 -S unlinkat -F auid&gt;=1000 -F auid!=-1 -k perm_mod</pre>
 </td>
 </tr>
 <tr>
@@ -3255,7 +3362,7 @@ edits of files involved in storing logon events:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91449-9</td>
 <td>Record Attempts to Alter Logon and Logout Events - faillock</td>
 <td xml:lang="en-US">The audit system already collects login information for all users
 and root. If the <code>auditd</code> daemon is configured to use the
@@ -3522,6 +3629,36 @@ form to <code>/etc/audit/audit.rules</code>:
 </td>
 </tr>
 <tr>
+<td>CCE-85820-9</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - postdrop</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/postdrop -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/sbin/postdrop -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-85821-7</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - postqueue</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/postqueue -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/sbin/postqueue -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-85732-6</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - rmmod</td>
 <td xml:lang="en-US">At a minimum, the audit system should collect the execution of
@@ -3608,7 +3745,7 @@ form to <code>/etc/audit/audit.rules</code>:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91450-7</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - umount</td>
 <td xml:lang="en-US">At a minimum, the audit system should collect the execution of
 privileged commands for all users and root. If the <code>auditd</code> daemon is
@@ -3650,6 +3787,21 @@ If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-85773-0</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - userhelper</td>
+<td xml:lang="en-US">At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-a always,exit -F path=/usr/sbin/userhelper -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code>:
+<pre>-a always,exit -F path=/usr/sbin/userhelper -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 </tr>
 <tr>
@@ -3784,6 +3936,7 @@ should always be used.</td>
 <td>Configure audispd Plugin To Send Logs To Remote Server</td>
 <td xml:lang="en-US">Configure the audispd plugin to off-load audit records onto a different
 system or media from the system being audited.
+
 Set the <code>remote_server</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>
 with an IP address or hostname of the system that the audispd plugin should
 send audit records to. For example
@@ -3921,6 +4074,16 @@ determined. Details regarding all possible values for <i>ACTION</i> are describe
 <code>auditd.conf</code> man page.</td>
 </tr>
 <tr>
+<td>CCE-85775-5</td>
+<td>Configure auditd flush priority</td>
+<td xml:lang="en-US">The <code>auditd</code> service can be configured to
+synchronously write audit event data to disk. Add or correct the following
+line in <code>/etc/audit/auditd.conf</code> to ensure that audit event data is
+fully synchronized with the log files on the disk:
+<pre>flush = <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_auditd_flush"></xccdf-1.1:sub></pre>
+</td>
+</tr>
+<tr>
 <td>CCE-85825-8</td>
 <td>Configure auditd Max Log File Size</td>
 <td xml:lang="en-US">Determine the amount of audit data (in megabytes)
@@ -3942,6 +4105,7 @@ by <code>auditd</code>, add or correct the line in <code>/etc/audit/auditd.conf<
 Possible values for <i>ACTION</i> are described in the <code>auditd.conf</code> man
 page. These include:
 <ul>
+<li><code>ignore</code></li>
 <li><code>syslog</code></li>
 <li><code>suspend</code></li>
 <li><code>rotate</code></li>
@@ -4070,8 +4234,8 @@ The <code>apparmor</code> service can be enabled with the following command:
 be group-owned by the <code>root</code> group to prevent
 destruction or modification of the file.
 
-To properly set the group owner of <code>{{{ grub2_boot_path }}}/grub.cfg</code>, run the command:
-<pre>$ sudo chgrp root {{{ grub2_boot_path }}}/grub.cfg</pre>
+To properly set the group owner of <code>/boot/grub2/grub.cfg</code>, run the command:
+<pre>$ sudo chgrp root /boot/grub2/grub.cfg</pre>
 </td>
 </tr>
 <tr>
@@ -4081,17 +4245,17 @@ To properly set the group owner of <code>{{{ grub2_boot_path }}}/grub.cfg</code>
 be owned by the <code>root</code> user to prevent destruction
 or modification of the file.
 
-To properly set the owner of <code>{{{ grub2_boot_path }}}/grub.cfg</code>, run the command:
-<pre>$ sudo chown root {{{ grub2_boot_path }}}/grub.cfg </pre>
+To properly set the owner of <code>/boot/grub2/grub.cfg</code>, run the command:
+<pre>$ sudo chown root /boot/grub2/grub.cfg </pre>
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91426-7</td>
 <td>Verify /boot/grub2/grub.cfg Permissions</td>
 <td xml:lang="en-US">File permissions for <code>/boot/grub2/grub.cfg</code> should be set to 600.
 
-To properly set the permissions of <code>{{{ grub2_boot_path }}}/grub.cfg</code>, run the command:
-<pre>$ sudo chmod 600 {{{ grub2_boot_path }}}/grub.cfg</pre>
+To properly set the permissions of <code>/boot/grub2/grub.cfg</code>, run the command:
+<pre>$ sudo chmod 600 /boot/grub2/grub.cfg</pre>
 </td>
 </tr>
 <tr>
@@ -5629,7 +5793,7 @@ Check that "permissions.local" file contains the correct permissions rules with 
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91448-1</td>
 <td>Restrict Access to Kernel Message Buffer</td>
 <td xml:lang="en-US">To set the runtime status of the <code>kernel.dmesg_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.dmesg_restrict=1</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.dmesg_restrict = 1</pre>
@@ -5661,7 +5825,7 @@ can be set to <code>none</code> to disable storing core dumps permanently.</td>
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91447-3</td>
 <td>Disable Core Dumps for SUID programs</td>
 <td xml:lang="en-US">To set the runtime status of the <code>fs.suid_dumpable</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.suid_dumpable=0</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.suid_dumpable = 0</pre>
@@ -5743,7 +5907,7 @@ Remove any instances of <code>selinux=0</code> from the kernel arguments in that
 file to prevent SELinux from being disabled at boot.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91443-2</td>
 <td>Ensure SELinux Not Disabled in /etc/default/grub</td>
 <td xml:lang="en-US">SELinux can be disabled at boot time by an argument in
 <code>/etc/default/grub</code>.
@@ -5751,7 +5915,7 @@ Remove any instances of <code>selinux=0</code> from the kernel arguments in that
 file to prevent SELinux from being disabled at boot.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91444-0</td>
 <td>Ensure No Daemons are Unconfined by SELinux</td>
 <td xml:lang="en-US">Daemons for which the SELinux policy does not contain rules will inherit the
 context of the parent process. Because daemons are launched during
@@ -5763,7 +5927,7 @@ To check for unconfined daemons, run the following command:
 It should produce no output in a well-configured system.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91445-7</td>
 <td>Configure SELinux Policy</td>
 <td xml:lang="en-US">The SELinux <code>targeted</code> policy is appropriate for
 general-purpose desktops and servers, as well as systems in many other roles.
@@ -5775,12 +5939,44 @@ and greater confinement but are not compatible with many general-purpose
 use cases.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91446-5</td>
 <td>Ensure SELinux State is Enforcing</td>
 <td xml:lang="en-US">The SELinux state should be set to <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_selinux_state"></xccdf-1.1:sub></code> at
 system boot time.  In the file <code>/etc/selinux/config</code>, add or correct the
 following line to configure the system to boot into enforcing mode:
 <pre>SELINUX=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_selinux_state"></xccdf-1.1:sub></pre>
+</td>
+</tr>
+<tr>
+<td>CCE-91424-2</td>
+<td>Disable the selinuxuser_execheap SELinux Boolean</td>
+<td xml:lang="en-US">By default, the SELinux boolean <code>selinuxuser_execheap</code> is disabled.
+When enabled this boolean is enabled it allows selinuxusers to execute code from the heap.
+If this setting is enabled, it should be disabled.
+
+To disable the <code>selinuxuser_execheap</code> SELinux boolean, run the following command:
+<pre>$ sudo setsebool -P selinuxuser_execheap off</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-91423-4</td>
+<td>Enable the selinuxuser_execmod SELinux Boolean</td>
+<td xml:lang="en-US">By default, the SELinux boolean <code>selinuxuser_execmod</code> is enabled.
+If this setting is disabled, it should be enabled.
+
+To enable the <code>selinuxuser_execmod</code> SELinux boolean, run the following command:
+<pre>$ sudo setsebool -P selinuxuser_execmod on</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-91422-6</td>
+<td>disable the selinuxuser_execstack SELinux Boolean</td>
+<td xml:lang="en-US">By default, the SELinux boolean <code>selinuxuser_execstack</code> is enabled.
+This setting should be disabled as unconfined executables should not be able
+to make their stack executable.
+
+To disable the <code>selinuxuser_execstack</code> SELinux boolean, run the following command:
+<pre>$ sudo setsebool -P selinuxuser_execstack off</pre>
 </td>
 </tr>
 <tr>
@@ -5816,7 +6012,7 @@ The <code>kdump</code> service can be disabled with the following command:
 <td xml:lang="en-US">The Cron service should be installed.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91437-4</td>
 <td>Enable cron Service</td>
 <td xml:lang="en-US">The <code>crond</code> service is used to execute commands at
 preconfigured times. It is required by almost all systems to perform necessary
@@ -6025,7 +6221,7 @@ or more restrictive.
 
 
 To properly set the permissions of <code>/etc/at.allow</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/at.allow</pre>
+<pre>$ sudo chmod  /etc/at.allow</pre>
 </td>
 </tr>
 <tr>
@@ -6510,7 +6706,7 @@ $ sudo zypper install tcp_wrappers</pre>
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91436-6</td>
 <td>Uninstall xinetd Package</td>
 <td xml:lang="en-US">The <code>xinetd</code> package can be removed with the following command:
 <pre>
@@ -6518,7 +6714,7 @@ $ sudo zypper remove xinetd</pre>
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91438-2</td>
 <td>Disable xinetd Service</td>
 <td xml:lang="en-US">
 The <code>xinetd</code> service can be disabled with the following command:
@@ -6554,12 +6750,43 @@ $ sudo zypper remove ypserv</pre>
 </td>
 </tr>
 <tr>
+<td>CCE-91425-9</td>
+<td>Uninstall rsh-server Package</td>
+<td xml:lang="en-US">The <code>rsh-server</code> package can be removed with the following command:
+<pre>
+$ sudo zypper remove rsh-server</pre>
+</td>
+</tr>
+<tr>
 <td></td>
 <td>Uninstall rsh Package</td>
 <td xml:lang="en-US">
 The <code>rsh</code> package contains the client commands
 
 for the rsh services</td>
+</tr>
+<tr>
+<td>CCE-91420-0</td>
+<td>Disable rexec Service</td>
+<td xml:lang="en-US">The <code>rexec</code> service, which is available with the <code>rsh-server</code> package
+and runs as a service through xinetd or separately as a systemd socket, should be disabled.
+If using xinetd, set <code>disable</code> to <code>yes</code> in <code>/etc/xinetd.d/rexec</code>.
+
+The <code>rexec</code> socket can be disabled with the following command:
+<pre>$ sudo systemctl mask --now rexec.socket</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-91419-2</td>
+<td>Disable rlogin Service</td>
+<td xml:lang="en-US">The <code>rlogin</code> service, which is available with
+the <code>rsh-server</code> package and runs as a service through xinetd or separately
+as a systemd socket, should be disabled.
+If using xinetd, set <code>disable</code> to <code>yes</code> in <code>/etc/xinetd.d/rlogin</code>.
+
+The <code>rlogin</code> socket can be disabled with the following command:
+<pre>$ sudo systemctl mask --now rlogin.socket</pre>
+</td>
 </tr>
 <tr>
 <td>CCE-85622-9</td>
@@ -6572,7 +6799,7 @@ location:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91431-7</td>
 <td>Remove Rsh Trust Files</td>
 <td xml:lang="en-US">The files <code>/etc/hosts.equiv</code> and <code>~/.rhosts</code> (in
 each user's home directory) list remote hosts and users that are trusted by the
@@ -6594,7 +6821,13 @@ to delete them from any location:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91433-3</td>
+<td>Uninstall talk-server Package</td>
+<td xml:lang="en-US">The <code>talk-server</code> package can be removed with the following command: <pre> $ sudo zypper remove talk-server</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-91432-5</td>
 <td>Uninstall talk Package</td>
 <td xml:lang="en-US">The <code>talk</code> package contains the client program for the
 Internet talk protocol, which allows the user to chat with other users on
@@ -6614,10 +6847,40 @@ $ sudo zypper remove telnet-server</pre>
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91434-1</td>
 <td>Remove telnet Clients</td>
 <td xml:lang="en-US">The telnet client allows users to start connections to other systems via
 the telnet protocol.</td>
+</tr>
+<tr>
+<td>CCE-91435-8</td>
+<td>Disable telnet Service</td>
+<td xml:lang="en-US">The <code>telnet</code> service configuration file <code>/etc/xinetd.d/telnet</code>
+is not created automatically. If it was created manually, check the
+<code>/etc/xinetd.d/telnet</code> file and ensure that <code>disable = no</code>
+is changed to read <code>disable = yes</code> as follows below:
+<pre>
+# description: The telnet server serves telnet sessions; it uses \\
+#       unencrypted username/password pairs for authentication.
+service telnet
+{
+        flags           = REUSE
+        socket_type     = stream
+
+        wait            = no
+        user            = root
+        server          = /usr/sbin/in.telnetd
+        log_on_failure  += USERID
+        disable         = yes
+}
+</pre>
+If the <code>/etc/xinetd.d/telnet</code> file does not exist, make sure that
+the activation of the <code>telnet</code> service on system boot is disabled
+via the following command:
+
+The <code>rexec</code> socket can be disabled with the following command:
+<pre>$ sudo systemctl mask --now rexec.socket</pre>
+</td>
 </tr>
 <tr>
 <td></td>
@@ -6648,6 +6911,14 @@ The <code>cups</code> service can be disabled with the following command:
 <td xml:lang="en-US">
 The <code>squid</code> service can be disabled with the following command:
 <pre>$ sudo systemctl mask --now squid.service</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-91418-4</td>
+<td>Disable Quagga Service</td>
+<td xml:lang="en-US">
+The <code>zebra</code> service can be disabled with the following command:
+<pre>$ sudo systemctl mask --now zebra.service</pre>
 </td>
 </tr>
 <tr>
@@ -6777,7 +7048,6 @@ To properly set the permissions of <code>/etc/ssh/sshd_config</code>, run the co
 <td>CCE-85644-3</td>
 <td>Verify Permissions on SSH Server Private *_key Key Files</td>
 <td xml:lang="en-US">
-
 To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
 <pre>$ sudo chmod 0600 /etc/ssh/*_key</pre>
 </td>
@@ -6803,7 +7073,7 @@ This is unusual, as SSH is a common method for encrypted and authenticated
 remote access.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91439-0</td>
 <td>Disable Host-Based Authentication</td>
 <td xml:lang="en-US">SSH's cryptographic host-based authentication is
 more secure than <code>.rhosts</code> authentication. However, it is
@@ -6816,7 +7086,7 @@ following line in <code>/etc/ssh/sshd_config</code>:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91440-8</td>
 <td>Allow Only SSH Protocol 2</td>
 <td xml:lang="en-US">Only SSH protocol version 2 connections should be
 permitted. The default setting in
@@ -6850,7 +7120,7 @@ Any accounts with empty passwords should be disabled immediately, and PAM config
 should prevent users from being able to assign themselves empty passwords.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91441-6</td>
 <td>Disable GSSAPI Authentication</td>
 <td xml:lang="en-US">Unless needed, SSH should not permit extraneous or unnecessary
 authentication mechanisms like GSSAPI. To disable GSSAPI authentication, add or
@@ -6859,7 +7129,7 @@ correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91442-4</td>
 <td>Disable Kerberos Authentication</td>
 <td xml:lang="en-US">Unless needed, SSH should not permit extraneous or unnecessary
 authentication mechanisms like Kerberos. To disable Kerberos authentication, add
@@ -6970,6 +7240,28 @@ To enable GSSAPI authentication, add or correct the following line in the
 </td>
 </tr>
 <tr>
+<td></td>
+<td>Enable PAM</td>
+<td xml:lang="en-US">UsePAM Enables the Pluggable Authentication Module interface. If set to “yes” this will
+enable PAM authentication using ChallengeResponseAuthentication and
+PasswordAuthentication in addition to PAM account and session module processing for all
+authentication types.
+
+To enable PAM authentication, add or correct the following line in the
+<code>/etc/ssh/sshd_config</code> file:
+<pre>UsePAM yes</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Enable Public Key Authentication</td>
+<td xml:lang="en-US">Verify the sshd daemon allows public key authentication with the
+following:
+<pre>$ grep ^PubkeyAuthentication /etc/ssh/sshd_config
+PubkeyAuthentication yes</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-85645-0</td>
 <td>Enable Use of Strict Mode Checking</td>
 <td xml:lang="en-US">SSHs <code>StrictModes</code> option checks file and ownership permissions in
@@ -6985,6 +7277,15 @@ add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <td xml:lang="en-US">To enable the warning banner and ensure it is consistent
 across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
 <pre>Banner /etc/issue</pre>
+Another section contains information on how to create an
+appropriate system-wide warning banner.</td>
+</tr>
+<tr>
+<td></td>
+<td>Enable SSH Warning Banner</td>
+<td xml:lang="en-US">To enable the warning banner and ensure it is consistent
+across the system, add or correct the following line in <code>/etc/ssh/sshd_config</code>:
+<pre>Banner /etc/issue.net</pre>
 Another section contains information on how to create an
 appropriate system-wide warning banner.</td>
 </tr>
@@ -7074,6 +7375,14 @@ and terminated.
 To ensure the SSH idle timeout occurs precisely when the
 <code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
 value of <code>0</code>.</td>
+</tr>
+<tr>
+<td></td>
+<td>Ensure SSH LoginGraceTime is configured</td>
+<td xml:lang="en-US">The <code>LoginGraceTime</code> parameter to the SSH server specifies the time allowed for successful authentication to
+the SSH server. The longer the Grace period is the more open unauthenticated connections
+can exist. Like other session controls in this session the Grace Period should be limited to
+appropriate limits to ensure the service is available for needed access.</td>
 </tr>
 <tr>
 <td></td>

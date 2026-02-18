@@ -135,24 +135,26 @@ dictates.</td>
 <td>68</td>
 <td>high</td>
 <td>RHEL 8 must implement NIST FIPS-validated cryptography for the following: to provision digital signatures, to generate cryptographic hashes, and to protect data requiring data-at-rest protections in accordance with applicable federal laws, Executive Orders, directives, policies, regulations, and standards.</td>
-<td>Use of weak or untested encryption algorithms undermines the purposes of utilizing encryption to
-protect data. The operating system must implement cryptographic modules adhering to the higher
-standards approved by the federal government since this provides assurance they have been tested
-and validated.</td>
-<td>To verify that kernel parameter 'crypto.fips_enabled' is set properly, run the following command:
-sysctl crypto.fips_enabled
-The output should contain the following:
-crypto.fips_enabled =  1
-      Is it the case that crypto.fips_enabled is not 1?
+<td>Overriding the system crypto policy makes the behavior of the OpenSSH
+client violate expectations, and makes system configuration more
+fragmented.</td>
+<td>To verify if the OpenSSH client uses defined MACs in the Crypto Policy, run:
+$ grep -i macs /etc/crypto-policies/back-ends/openssh.config
+and verify that the line matches:
+MACs hmac-sha2-512,hmac-sha2-256
+      Is it the case that Crypto Policy for OpenSSH client is not configured correctly?
       </td>
-<td>System running in FIPS mode is indicated by kernel parameter
-<code>'crypto.fips_enabled'</code>. This parameter should be set to <code>1</code>
-in FIPS mode.
-To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
+<td>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
+OpenSSH is supported by system crypto policy, but the OpenSSH configuration may be
+set up incorrectly.
+
+To check that Crypto Policies settings are configured correctly, ensure that
+<code>/etc/crypto-policies/back-ends/openssh.config</code> contains the following
+line and is not commented out:
+<code>MACs hmac-sha2-512,hmac-sha2-256</code>
 </td>
 <td>RHEL-08-010020</td>
-<td>sysctl_crypto_fips_enabled</td>
+<td>harden_sshd_macs_openssh_conf_crypto_policy</td>
 </tr>
 <tr>
 <td>V-230224</td>
@@ -1614,9 +1616,9 @@ $ grep -r '^\s*kernel.kexec_load_disabled\s*=' /etc/sysctl.conf /etc/sysctl.d
 If any assignments other than
 kernel.kexec_load_disabled = 1
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains kernel.kexec_load_disabled = 1, and that one assignment
-is returned when 
+is returned when
 $ grep -r kernel.kexec_load_disabled /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -1653,9 +1655,9 @@ $ grep -r '^\s*fs.protected_symlinks\s*=' /etc/sysctl.conf /etc/sysctl.d
 If any assignments other than
 fs.protected_symlinks = 1
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains fs.protected_symlinks = 1, and that one assignment
-is returned when 
+is returned when
 $ grep -r fs.protected_symlinks /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -1690,9 +1692,9 @@ $ grep -r '^\s*fs.protected_hardlinks\s*=' /etc/sysctl.conf /etc/sysctl.d
 If any assignments other than
 fs.protected_hardlinks = 1
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains fs.protected_hardlinks = 1, and that one assignment
-is returned when 
+is returned when
 $ grep -r fs.protected_hardlinks /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -1725,9 +1727,9 @@ $ grep -r '^\s*kernel.dmesg_restrict\s*=' /etc/sysctl.conf /etc/sysctl.d
 If any assignments other than
 kernel.dmesg_restrict = 1
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains kernel.dmesg_restrict = 1, and that one assignment
-is returned when 
+is returned when
 $ grep -r kernel.dmesg_restrict /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -1759,9 +1761,9 @@ $ grep -r '^\s*kernel.perf_event_paranoid\s*=' /etc/sysctl.conf /etc/sysctl.d
 If any assignments other than
 kernel.perf_event_paranoid = 2
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains kernel.perf_event_paranoid = 2, and that one assignment
-is returned when 
+is returned when
 $ grep -r kernel.perf_event_paranoid /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -2104,9 +2106,9 @@ $ grep -r '^\s*kernel.randomize_va_space\s*=' /etc/sysctl.conf /etc/sysctl.d
 If any assignments other than
 kernel.randomize_va_space = 2
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains kernel.randomize_va_space = 2, and that one assignment
-is returned when 
+is returned when
 $ grep -r kernel.randomize_va_space /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -2295,13 +2297,12 @@ impersonated.</td>
 run the command:
 $ ls -l /etc/ssh/*_key
 If properly configured, the output should indicate the following permissions:
--rw-r-----
-      Is it the case that /etc/ssh/*_key has unix mode -rw-r-----?
+-rw-------
+      Is it the case that /etc/ssh/*_key has unix mode -rw-------?
       </td>
 <td>
-
 To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/ssh/*_key</pre>
+<pre>$ sudo chmod 0600 /etc/ssh/*_key</pre>
 </td>
 <td>RHEL-08-010490</td>
 <td>file_permissions_sshd_private_key</td>
@@ -2917,9 +2918,9 @@ $ grep -r '^\s*kernel.core_pattern\s*=' /etc/sysctl.conf /etc/sysctl.d
 If any assignments other than
 kernel.core_pattern = |/bin/false
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains kernel.core_pattern = |/bin/false, and that one assignment
-is returned when 
+is returned when
 $ grep -r kernel.core_pattern /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -3132,7 +3133,12 @@ defined.
       Is it the case that users home directory is not defined?
       </td>
 <td>Assign home directories to all interactive users that currently do not
-have a home directory assigned.</td>
+have a home directory assigned.
+
+This rule checks if the home directory is properly defined in a folder which has
+at least one parent folder, like "user" in "/home/user" or "/remote/users/user".
+Therefore, this rule will report a finding for home directories like <code>/users</code>,
+<code>/tmp</code> or <code>/</code>.</td>
 <td>RHEL-08-010720</td>
 <td>accounts_user_interactive_home_directory_defined</td>
 </tr>
@@ -3186,7 +3192,10 @@ owned by that users primary GID, run the following command:
 group found in <code>/etc/passwd</code>. To change the group owner of
 interactive users home directory, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i></pre>
-</td>
+
+This rule ensures every home directory related to an interactive user is
+group-owned by an interactive user. It also ensures that interactive users
+are group-owners of one and only one home directory.</td>
 <td>RHEL-08-010740</td>
 <td>file_groupownership_home_directories</td>
 </tr>
@@ -5053,6 +5062,7 @@ by <code>auditd</code>, add or correct the line in <code>/etc/audit/auditd.conf<
 Possible values for <i>ACTION</i> are described in the <code>auditd.conf</code> man
 page. These include:
 <ul>
+<li><code>ignore</code></li>
 <li><code>syslog</code></li>
 <li><code>suspend</code></li>
 <li><code>rotate</code></li>
@@ -5165,6 +5175,9 @@ in <code>/etc/audit/auditd.conf</code>.</td>
 <td>RHEL 8 audit logs must have a mode of 0600 or less permissive to prevent unauthorized read access.</td>
 <td>If users can write to audit logs, audit trails can be modified or destroyed.</td>
 <td>Run the following command to check the mode of the system audit logs:
+$ sudo grep -iw log_file /etc/audit/auditd.conf
+log_file=/var/log/audit/audit.log
+$ sudo stat -c "%n %a" /var/log/audit/*
 $ sudo ls -l /var/log/audit
 Audit logs must be mode 0640 or less permissive.
       Is it the case that any are more permissive?
@@ -5186,12 +5199,16 @@ Otherwise, change the mode of the audit log files with the following command:
 <td>RHEL 8 audit logs must be owned by root to prevent unauthorized read access.</td>
 <td>Unauthorized disclosure of audit records can reveal system and configuration data to
 attackers, thus compromising its confidentiality.</td>
-<td>
-To properly set the owner of /var/log/audit/*, run the command:
-$ sudo chown root /var/log/audit/* 
+<td>Run the following commands to check who owns the system audit logs:
+$ sudo grep -iw log_file /etc/audit/auditd.conf
+log_file = /var/log/audit/audit.log
+sudo stat -c "%n %U" /var/log/audit/*
+Audit logs must be owned by user root.
       Is it the case that ?
       </td>
-<td>All audit logs must be owned by root user. By default, the path for audit log is <pre>/var/log/audit/</pre>.
+<td>All audit logs must be owned by root user. The path for audit log can be
+configured via <code>log_file</code> parameter in <pre>/etc/audit/auditd.conf</pre>
+or by default, the path for audit log is <pre>/var/log/audit/</pre>.
 
 To properly set the owner of <code>/var/log/audit/*</code>, run the command:
 <pre>$ sudo chown root /var/log/audit/* </pre>
@@ -5206,17 +5223,22 @@ To properly set the owner of <code>/var/log/audit/*</code>, run the command:
 <td>RHEL 8 audit logs must be group-owned by root to prevent unauthorized read access.</td>
 <td>Unauthorized disclosure of audit records can reveal system and configuration data to
 attackers, thus compromising its confidentiality.</td>
-<td>
-To properly set the group owner of /var/log/audit/*, run the command:
-$ sudo chgrp root /var/log/audit/*
+<td>Run the following commands to check who owns the system audit logs:
+$ sudo grep -iw ^log_file /etc/audit/auditd.conf
+log_file = /var/log/audit/audit.log
+$ sudo stat -c "%n %G" log_file
+Audit logs must be owned by group root or adm.
       Is it the case that ?
       </td>
-<td>All audit logs must be group owned by root user. By default, the path for audit log is <pre>/var/log/audit/</pre>.
+<td>All audit logs must be group owned by root user. The path for audit log can
+be configured via <code>log_file</code> parameter in <pre>/etc/audit/auditd.conf</pre>
+or, by default, the path for audit log is <pre>/var/log/audit/</pre>.
 
 To properly set the group owner of <code>/var/log/audit/*</code>, run the command:
 <pre>$ sudo chgrp root /var/log/audit/*</pre>
-If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other than the <code>root</code>
-group account, change the group ownership of the audit logs to this specific group.</td>
+If <code>log_group</code> in <code>/etc/audit/auditd.conf</code> is set to a group other
+than the <code>root</code> group account, change the group ownership of the audit logs
+to this specific group.</td>
 <td>RHEL-08-030090</td>
 <td>file_group_ownership_var_log_audit</td>
 </tr>
@@ -5322,7 +5344,8 @@ The output has to be exactly as follows:
 
       Is it the case that the file does not exist or the content differs?
       </td>
-<td>Configure kernel to prevent modification of login UIDs once they are set. Changing login UUIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.   
+<td>Configure kernel to prevent modification of login UIDs once they are set.
+Changing login UIDs while this configuration is enforced requires special capabilities which are not available to unprivileged users.
 
 The following rules configure audit as described above:
 <pre>## Make the loginuid immutable. This prevents tampering with the auid.
@@ -5657,7 +5680,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 lremovexattr system call, run the following command:
-preserve$ sudo grep "lremovexattr" /etc/audit/audit.*
+$ sudo grep "lremovexattr" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -5700,7 +5723,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 removexattr system call, run the following command:
-preserve$ sudo grep "removexattr" /etc/audit/audit.*
+$ sudo grep "removexattr" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -5742,7 +5765,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 lsetxattr system call, run the following command:
-preserve$ sudo grep "lsetxattr" /etc/audit/audit.*
+$ sudo grep "lsetxattr" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -5780,7 +5803,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 fsetxattr system call, run the following command:
-preserve$ sudo grep "fsetxattr" /etc/audit/audit.*
+$ sudo grep "fsetxattr" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -5818,7 +5841,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 fremovexattr system call, run the following command:
-preserve$ sudo grep "fremovexattr" /etc/audit/audit.*
+$ sudo grep "fremovexattr" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -5931,7 +5954,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 setxattr system call, run the following command:
-preserve$ sudo grep "setxattr" /etc/audit/audit.*
+$ sudo grep "setxattr" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -6558,7 +6581,7 @@ the kernel and potentially introduce malicious code into kernel space. It is imp
 to have an audit trail of modules that have been introduced into the kernel.</td>
 <td>To determine if the system is configured to audit calls to the
 init_module system call, run the following command:
-preserve$ sudo grep "init_module" /etc/audit/audit.*
+$ sudo grep "init_module" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -6586,7 +6609,7 @@ from the system. The audit trail could aid in system troubleshooting, as well as
 malicious processes that attempt to delete log files to conceal their presence.</td>
 <td>To determine if the system is configured to audit calls to the
 rename system call, run the following command:
-preserve$ sudo grep "rename" /etc/audit/audit.*
+$ sudo grep "rename" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -6617,7 +6640,7 @@ from the system. The audit trail could aid in system troubleshooting, as well as
 malicious processes that attempt to delete log files to conceal their presence.</td>
 <td>To determine if the system is configured to audit calls to the
 renameat system call, run the following command:
-preserve$ sudo grep "renameat" /etc/audit/audit.*
+$ sudo grep "renameat" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -6648,7 +6671,7 @@ from the system. The audit trail could aid in system troubleshooting, as well as
 malicious processes that attempt to delete log files to conceal their presence.</td>
 <td>To determine if the system is configured to audit calls to the
 rmdir system call, run the following command:
-preserve$ sudo grep "rmdir" /etc/audit/audit.*
+$ sudo grep "rmdir" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -6679,7 +6702,7 @@ from the system. The audit trail could aid in system troubleshooting, as well as
 malicious processes that attempt to delete log files to conceal their presence.</td>
 <td>To determine if the system is configured to audit calls to the
 unlink system call, run the following command:
-preserve$ sudo grep "unlink" /etc/audit/audit.*
+$ sudo grep "unlink" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -6710,7 +6733,7 @@ from the system. The audit trail could aid in system troubleshooting, as well as
 malicious processes that attempt to delete log files to conceal their presence.</td>
 <td>To determine if the system is configured to audit calls to the
 unlinkat system call, run the following command:
-preserve$ sudo grep "unlinkat" /etc/audit/audit.*
+$ sudo grep "unlinkat" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -6776,7 +6799,7 @@ the kernel and potentially introduce malicious code into kernel space. It is imp
 to have an audit trail of modules that have been introduced into the kernel.</td>
 <td>To determine if the system is configured to audit calls to the
 finit_module system call, run the following command:
-preserve$ sudo grep "finit_module" /etc/audit/audit.*
+$ sudo grep "finit_module" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -6805,7 +6828,7 @@ the kernel and potentially introduce malicious code into kernel space. It is imp
 to have an audit trail of modules that have been introduced into the kernel.</td>
 <td>To determine if the system is configured to audit calls to the
 delete_module system call, run the following command:
-preserve$ sudo grep "delete_module" /etc/audit/audit.*
+$ sudo grep "delete_module" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -6902,7 +6925,7 @@ form to <code>/etc/audit/audit.rules</code>:
 these events could serve as evidence of potential system compromise.</td>
 <td>To determine if the system is configured to audit calls to the
 truncate system call, run the following command:
-preserve$ sudo grep "truncate" /etc/audit/audit.*
+$ sudo grep "truncate" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -6943,7 +6966,7 @@ If the system is 64 bit then also add the following lines:
 these events could serve as evidence of potential system compromise.</td>
 <td>To determine if the system is configured to audit calls to the
 openat system call, run the following command:
-preserve$ sudo grep "openat" /etc/audit/audit.*
+$ sudo grep "openat" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -6984,7 +7007,7 @@ If the system is 64 bit then also add the following lines:
 these events could serve as evidence of potential system compromise.</td>
 <td>To determine if the system is configured to audit calls to the
 open system call, run the following command:
-preserve$ sudo grep "open" /etc/audit/audit.*
+$ sudo grep "open" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -7025,7 +7048,7 @@ If the system is 64 bit then also add the following lines:
 these events could serve as evidence of potential system compromise.</td>
 <td>To determine if the system is configured to audit calls to the
 open_by_handle_at system call, run the following command:
-preserve$ sudo grep "open_by_handle_at" /etc/audit/audit.*
+$ sudo grep "open_by_handle_at" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -7063,7 +7086,7 @@ If the system is 64 bit then also add the following lines:
 these events could serve as evidence of potential system compromise.</td>
 <td>To determine if the system is configured to audit calls to the
 ftruncate system call, run the following command:
-preserve$ sudo grep "ftruncate" /etc/audit/audit.*
+$ sudo grep "ftruncate" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -7104,7 +7127,7 @@ If the system is 64 bit then also add the following lines:
 these events could serve as evidence of potential system compromise.</td>
 <td>To determine if the system is configured to audit calls to the
 creat system call, run the following command:
-preserve$ sudo grep "creat" /etc/audit/audit.*
+$ sudo grep "creat" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -7144,7 +7167,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 chown system call, run the following command:
-preserve$ sudo grep "chown" /etc/audit/audit.*
+$ sudo grep "chown" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -7178,7 +7201,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 chmod system call, run the following command:
-preserve$ sudo grep "chmod" /etc/audit/audit.*
+$ sudo grep "chmod" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -7212,7 +7235,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 lchown system call, run the following command:
-preserve$ sudo grep "lchown" /etc/audit/audit.*
+$ sudo grep "lchown" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -7246,7 +7269,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 fchownat system call, run the following command:
-preserve$ sudo grep "fchownat" /etc/audit/audit.*
+$ sudo grep "fchownat" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -7280,7 +7303,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 fchown system call, run the following command:
-preserve$ sudo grep "fchown" /etc/audit/audit.*
+$ sudo grep "fchown" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -7317,7 +7340,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 fchmodat system call, run the following command:
-preserve$ sudo grep "fchmodat" /etc/audit/audit.*
+$ sudo grep "fchmodat" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -7351,7 +7374,7 @@ can facilitate the identification of patterns of abuse among both authorized and
 unauthorized users.</td>
 <td>To determine if the system is configured to audit calls to the
 fchmod system call, run the following command:
-preserve$ sudo grep "fchmod" /etc/audit/audit.*
+$ sudo grep "fchmod" /etc/audit/audit.*
 If the system is configured to audit this activity, it will return a line.
 
       Is it the case that no line is returned?
@@ -9353,9 +9376,9 @@ $ grep -r '^\s*net.ipv4.conf.default.accept_redirects\s*=' /etc/sysctl.conf /etc
 If any assignments other than
 net.ipv4.conf.default.accept_redirects = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.conf.default.accept_redirects = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.conf.default.accept_redirects /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -9387,9 +9410,9 @@ $ grep -r '^\s*net.ipv6.conf.default.accept_redirects\s*=' /etc/sysctl.conf /etc
 If any assignments other than
 net.ipv6.conf.default.accept_redirects = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv6.conf.default.accept_redirects = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv6.conf.default.accept_redirects /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -9425,9 +9448,9 @@ $ grep -r '^\s*net.ipv4.conf.all.send_redirects\s*=' /etc/sysctl.conf /etc/sysct
 If any assignments other than
 net.ipv4.conf.all.send_redirects = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.conf.all.send_redirects = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.conf.all.send_redirects /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -9463,9 +9486,9 @@ $ grep -r '^\s*net.ipv4.icmp_echo_ignore_broadcasts\s*=' /etc/sysctl.conf /etc/s
 If any assignments other than
 net.ipv4.icmp_echo_ignore_broadcasts = 1
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.icmp_echo_ignore_broadcasts = 1, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.icmp_echo_ignore_broadcasts /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -9504,9 +9527,9 @@ $ grep -r '^\s*net.ipv4.conf.all.accept_source_route\s*=' /etc/sysctl.conf /etc/
 If any assignments other than
 net.ipv4.conf.all.accept_source_route = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.conf.all.accept_source_route = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.conf.all.accept_source_route /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -9545,9 +9568,9 @@ $ grep -r '^\s*net.ipv6.conf.all.accept_source_route\s*=' /etc/sysctl.conf /etc/
 If any assignments other than
 net.ipv6.conf.all.accept_source_route = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv6.conf.all.accept_source_route = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv6.conf.all.accept_source_route /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -9586,9 +9609,9 @@ $ grep -r '^\s*net.ipv4.conf.default.accept_source_route\s*=' /etc/sysctl.conf /
 If any assignments other than
 net.ipv4.conf.default.accept_source_route = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.conf.default.accept_source_route = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.conf.default.accept_source_route /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -9627,9 +9650,9 @@ $ grep -r '^\s*net.ipv6.conf.default.accept_source_route\s*=' /etc/sysctl.conf /
 If any assignments other than
 net.ipv6.conf.default.accept_source_route = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv6.conf.default.accept_source_route = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv6.conf.default.accept_source_route /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -9664,9 +9687,9 @@ $ grep -r '^\s*net.ipv4.ip_forward\s*=' /etc/sysctl.conf /etc/sysctl.d
 If any assignments other than
 net.ipv4.ip_forward = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.ip_forward = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.ip_forward /etc/sysctl.conf /etc/sysctl.d
 is executed.
 The ability to forward packets is only appropriate for routers.
@@ -9698,9 +9721,9 @@ $ grep -r '^\s*net.ipv6.conf.all.accept_ra\s*=' /etc/sysctl.conf /etc/sysctl.d
 If any assignments other than
 net.ipv6.conf.all.accept_ra = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv6.conf.all.accept_ra = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv6.conf.all.accept_ra /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -9732,9 +9755,9 @@ $ grep -r '^\s*net.ipv6.conf.default.accept_ra\s*=' /etc/sysctl.conf /etc/sysctl
 If any assignments other than
 net.ipv6.conf.default.accept_ra = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv6.conf.default.accept_ra = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv6.conf.default.accept_ra /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -9770,9 +9793,9 @@ $ grep -r '^\s*net.ipv4.conf.default.send_redirects\s*=' /etc/sysctl.conf /etc/s
 If any assignments other than
 net.ipv4.conf.default.send_redirects = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.conf.default.send_redirects = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.conf.default.send_redirects /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -9810,9 +9833,9 @@ $ grep -r '^\s*net.ipv4.conf.all.accept_redirects\s*=' /etc/sysctl.conf /etc/sys
 If any assignments other than
 net.ipv4.conf.all.accept_redirects = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.conf.all.accept_redirects = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.conf.all.accept_redirects /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -9844,9 +9867,9 @@ $ grep -r '^\s*net.ipv6.conf.all.accept_redirects\s*=' /etc/sysctl.conf /etc/sys
 If any assignments other than
 net.ipv6.conf.all.accept_redirects = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv6.conf.all.accept_redirects = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv6.conf.all.accept_redirects /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -9879,9 +9902,9 @@ $ grep -r '^\s*kernel.unprivileged_bpf_disabled\s*=' /etc/sysctl.conf /etc/sysct
 If any assignments other than
 kernel.unprivileged_bpf_disabled = 1
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains kernel.unprivileged_bpf_disabled = 1, and that one assignment
-is returned when 
+is returned when
 $ grep -r kernel.unprivileged_bpf_disabled /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -9917,9 +9940,9 @@ $ grep -r '^\s*kernel.yama.ptrace_scope\s*=' /etc/sysctl.conf /etc/sysctl.d
 If any assignments other than
 kernel.yama.ptrace_scope = 1
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains kernel.yama.ptrace_scope = 1, and that one assignment
-is returned when 
+is returned when
 $ grep -r kernel.yama.ptrace_scope /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -9955,9 +9978,9 @@ $ grep -r '^\s*kernel.kptr_restrict\s*=' /etc/sysctl.conf /etc/sysctl.d
 If any assignments other than
 kernel.kptr_restrict = 1
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains kernel.kptr_restrict = 1, and that one assignment
-is returned when 
+is returned when
 $ grep -r kernel.kptr_restrict /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -9990,9 +10013,9 @@ $ grep -r '^\s*user.max_user_namespaces\s*=' /etc/sysctl.conf /etc/sysctl.d
 If any assignments other than
 user.max_user_namespaces = 0
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains user.max_user_namespaces = 0, and that one assignment
-is returned when 
+is returned when
 $ grep -r user.max_user_namespaces /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -10034,9 +10057,9 @@ $ grep -r '^\s*net.ipv4.conf.all.rp_filter\s*=' /etc/sysctl.conf /etc/sysctl.d
 If any assignments other than
 net.ipv4.conf.all.rp_filter = 1
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.ipv4.conf.all.rp_filter = 1, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.ipv4.conf.all.rp_filter /etc/sysctl.conf /etc/sysctl.d
 is executed.
 
@@ -10070,9 +10093,9 @@ $ grep -r '^\s*net.core.bpf_jit_harden\s*=' /etc/sysctl.conf /etc/sysctl.d
 If any assignments other than
 net.core.bpf_jit_harden = 2
 are found, or the correct assignment is duplicated, remove those offending lines from respective files,
-and make sure that exactly one file in 
+and make sure that exactly one file in
 /etc/sysctl.d contains net.core.bpf_jit_harden = 2, and that one assignment
-is returned when 
+is returned when
 $ grep -r net.core.bpf_jit_harden /etc/sysctl.conf /etc/sysctl.d
 is executed.
 

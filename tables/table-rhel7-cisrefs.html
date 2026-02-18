@@ -1467,6 +1467,20 @@ by configuring the bootloader password.</td>
 <td></td>
 </tr>
 <tr>
+<td>6.2.7</td>
+<td>Ensure All Groups on the System Have Unique Group ID</td>
+<td xml:lang="en-US">Change the group name or delete groups, so each has a unique id.</td>
+<td xml:lang="en-US">To assure accountability and prevent unauthenticated access, groups must be identified uniquely to prevent potential misuse and compromise of the system.</td>
+<td></td>
+</tr>
+<tr>
+<td>6.2.6</td>
+<td>Ensure All Groups on the System Have Unique Group Names</td>
+<td xml:lang="en-US">Change the group name or delete groups, so each has a unique name.</td>
+<td xml:lang="en-US">To assure accountability and prevent unauthenticated access, groups must be identified uniquely to prevent potential misuse and compromise of the system.</td>
+<td></td>
+</tr>
+<tr>
 <td>5.5.1.4</td>
 <td>Set Account Expiration Following Inactivity</td>
 <td xml:lang="en-US">To specify the number of days after a password expires (which
@@ -1568,7 +1582,7 @@ which is readable by all users.</td>
 <td>All GIDs referenced in /etc/passwd must be defined in /etc/group</td>
 <td xml:lang="en-US">Add a group to the system for each GID referenced without a corresponding group.</td>
 <td xml:lang="en-US">If a user is assigned the Group Identifier (GID) of a group not existing on the system, and a group
-with the Gruop Identifier (GID) is subsequently created, the user may have unintended rights to
+with the Group Identifier (GID) is subsequently created, the user may have unintended rights to
 any files associated with the group.</td>
 <td></td>
 </tr>
@@ -1630,6 +1644,13 @@ with a UID of 0 afford more opportunity for potential intruders to
 guess a password for a privileged account. Proper configuration of
 sudo is recommended to afford multiple system administrators
 access to root privileges in an accountable manner.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.5.3</td>
+<td>Verify Root Has A Primary GID 0</td>
+<td xml:lang="en-US">The <code>root</code> user should have a primary group of 0.</td>
+<td xml:lang="en-US">To help ensure that root-owned files are not inadvertently exposed to other users.</td>
 <td></td>
 </tr>
 <tr>
@@ -3125,6 +3146,7 @@ by <code>auditd</code>, add or correct the line in <code>/etc/audit/auditd.conf<
 Possible values for <i>ACTION</i> are described in the <code>auditd.conf</code> man
 page. These include:
 <ul>
+<li><code>ignore</code></li>
 <li><code>syslog</code></li>
 <li><code>suspend</code></li>
 <li><code>rotate</code></li>
@@ -3171,8 +3193,8 @@ allow them to take corrective action prior to any disruption.</td>
 be group-owned by the <code>root</code> group to prevent
 destruction or modification of the file.
 
-To properly set the group owner of <code>{{{ grub2_boot_path }}}/grub.cfg</code>, run the command:
-<pre>$ sudo chgrp root {{{ grub2_boot_path }}}/grub.cfg</pre>
+To properly set the group owner of <code>/boot/grub2/grub.cfg</code>, run the command:
+<pre>$ sudo chgrp root /boot/grub2/grub.cfg</pre>
 </td>
 <td xml:lang="en-US">The <code>root</code> group is a highly-privileged group. Furthermore, the group-owner of this
 file should not have any access privileges anyway.</td>
@@ -3185,8 +3207,8 @@ file should not have any access privileges anyway.</td>
 be owned by the <code>root</code> user to prevent destruction
 or modification of the file.
 
-To properly set the owner of <code>{{{ grub2_boot_path }}}/grub.cfg</code>, run the command:
-<pre>$ sudo chown root {{{ grub2_boot_path }}}/grub.cfg </pre>
+To properly set the owner of <code>/boot/grub2/grub.cfg</code>, run the command:
+<pre>$ sudo chown root /boot/grub2/grub.cfg </pre>
 </td>
 <td xml:lang="en-US">Only root should be able to modify important boot parameters.</td>
 <td></td>
@@ -3196,8 +3218,8 @@ To properly set the owner of <code>{{{ grub2_boot_path }}}/grub.cfg</code>, run 
 <td>Verify /boot/grub2/grub.cfg Permissions</td>
 <td xml:lang="en-US">File permissions for <code>/boot/grub2/grub.cfg</code> should be set to 600.
 
-To properly set the permissions of <code>{{{ grub2_boot_path }}}/grub.cfg</code>, run the command:
-<pre>$ sudo chmod 600 {{{ grub2_boot_path }}}/grub.cfg</pre>
+To properly set the permissions of <code>/boot/grub2/grub.cfg</code>, run the command:
+<pre>$ sudo chmod 600 /boot/grub2/grub.cfg</pre>
 </td>
 <td xml:lang="en-US">Proper permissions ensure that only the root user can modify important boot
 parameters.</td>
@@ -3331,6 +3353,29 @@ command to correct this:
 <td xml:lang="en-US">Log files can contain valuable information regarding system
 configuration. If the system log files are not protected unauthorized
 users could change the logged data, eliminating their forensic value.</td>
+<td></td>
+</tr>
+<tr>
+<td>4.2.2.2</td>
+<td>Ensure journald is configured to compress large log files</td>
+<td xml:lang="en-US">The journald system can compress large log files to avoid fill the system disk.</td>
+<td xml:lang="en-US">Log files that are not properly compressed run the risk of growing so large that they fill up the log partition. Valuable logging information could be lost if the log partition becomes full.</td>
+<td></td>
+</tr>
+<tr>
+<td>4.2.2.1</td>
+<td>Ensure journald is configured to send logs to rsyslog</td>
+<td xml:lang="en-US">Data from journald may be stored in volatile memory or persisted locally.
+Utilities exist to accept remote export of journald logs.</td>
+<td xml:lang="en-US">Storing log data on a remote host protects log integrity from local attacks. If an attacker gains root access on the local system, they could tamper with or remove log data that is stored on the local system.</td>
+<td></td>
+</tr>
+<tr>
+<td>4.2.2.3</td>
+<td>Ensure journald is configured to write log files to persistent disk</td>
+<td xml:lang="en-US">The journald system may store log files in volatile memory or locally on disk.
+If the logs are only stored in volatile memory they will we lost upon reboot.</td>
+<td xml:lang="en-US">Log files contain valuable data and need to be persistent to aid in possible investigations.</td>
 <td></td>
 </tr>
 <tr>
@@ -5114,6 +5159,24 @@ correct access rights to prevent unauthorized changes.</td>
 </tr>
 <tr>
 <td>5.1.8</td>
+<td>Ensure that /etc/at.deny does not exist</td>
+<td xml:lang="en-US">The file <code>/etc/at.deny</code> should not exist.
+Use <code>/etc/at.allow</code> instead.</td>
+<td xml:lang="en-US">Access to <code>at</code> should be restricted.
+It is easier to manage an allow list than a deny list.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.1.8</td>
+<td>Ensure that /etc/cron.deny does not exist</td>
+<td xml:lang="en-US">The file <code>/etc/cron.deny</code> should not exist.
+Use <code>/etc/cron.allow</code> instead.</td>
+<td xml:lang="en-US">Access to <code>cron</code> should be restricted.
+It is easier to manage an allow list than a deny list.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.1.8</td>
 <td>Verify Group Who Owns /etc/cron.allow file</td>
 <td xml:lang="en-US">If <code>/etc/cron.allow</code> exists, it must be group-owned by <code>root</code>.
 
@@ -5134,6 +5197,20 @@ To properly set the owner of <code>/etc/cron.allow</code>, run the command:
 </td>
 <td xml:lang="en-US">If the owner of the cron.allow file is not set to root, the possibility exists for an
 unauthorized user to view or edit sensitive information.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.1.8</td>
+<td>Verify Permissions on /etc/cron.allow file</td>
+<td xml:lang="en-US">If <code>/etc/cron.allow</code> exists, it must have permissions <code>0600</code>
+or more restrictive.
+
+
+To properly set the permissions of <code>/etc/cron.allow</code>, run the command:
+<pre>$ sudo chmod  /etc/cron.allow</pre>
+</td>
+<td xml:lang="en-US">If the permissions of the cron.allow file are not set to 0600 or more restrictive,
+the possibility exists for an unauthorized user to view or edit sensitive information.</td>
 <td></td>
 </tr>
 <tr>
@@ -6068,6 +6145,24 @@ access restriction in some configurations.</td>
 <td></td>
 </tr>
 <tr>
+<td>5.3.19</td>
+<td>Enable PAM</td>
+<td xml:lang="en-US">UsePAM Enables the Pluggable Authentication Module interface. If set to “yes” this will
+enable PAM authentication using ChallengeResponseAuthentication and
+PasswordAuthentication in addition to PAM account and session module processing for all
+authentication types.
+
+To enable PAM authentication, add or correct the following line in the
+<code>/etc/ssh/sshd_config</code> file:
+<pre>UsePAM yes</pre>
+</td>
+<td xml:lang="en-US">When UsePAM is set to yes, PAM runs through account and session types properly. This is
+important if you want to restrict access to services based off of IP, time or other factors of
+the account. Additionally, you can make sure users inherit certain environment variables
+on login or disallow access to the server.</td>
+<td></td>
+</tr>
+<tr>
 <td>5.2.15</td>
 <td>Enable SSH Warning Banner</td>
 <td xml:lang="en-US">To enable the warning banner and ensure it is consistent
@@ -6149,6 +6244,18 @@ To ensure the SSH idle timeout occurs precisely when the
 value of <code>0</code>.</td>
 <td xml:lang="en-US">This ensures a user login will be terminated as soon as the <code>ClientAliveInterval</code>
 is reached.</td>
+<td></td>
+</tr>
+<tr>
+<td>5.3.17</td>
+<td>Ensure SSH LoginGraceTime is configured</td>
+<td xml:lang="en-US">The <code>LoginGraceTime</code> parameter to the SSH server specifies the time allowed for successful authentication to
+the SSH server. The longer the Grace period is the more open unauthenticated connections
+can exist. Like other session controls in this session the Grace Period should be limited to
+appropriate limits to ensure the service is available for needed access.</td>
+<td xml:lang="en-US">Setting the <code>LoginGraceTime</code> parameter to a low number will minimize the risk of successful
+brute force attacks to the SSH server. It will also limit the number of concurrent
+unauthenticated connections.</td>
 <td></td>
 </tr>
 <tr>

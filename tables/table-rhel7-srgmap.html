@@ -582,11 +582,6 @@ If the system processes inbound SMTP mail, the virus scanner must be configured
 to scan all received mail.</td>
 </tr></table>
 <table><tr>
-<td>Install the Host Intrusion Prevention System (HIPS) Module</td>
-<td xml:lang="en-US">Install the McAfee Host Intrusion Prevention System (HIPS) Module if it is absolutely
-necessary. If SELinux is enabled, do not install or enable this module.</td>
-</tr></table>
-<table><tr>
 <td>Ensure /home Located On Separate Partition</td>
 <td xml:lang="en-US">If user home directories will be stored locally, create a separate partition
 for <code>/home</code> at installation time (or migrate it later using LVM). If
@@ -783,7 +778,9 @@ parameter in <code>/etc/login.defs</code> to <code>yes</code> as follows:
 in <pre>/etc/passwd</pre> for the user. To change the group owner of a local
 interactive user home directory, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i>/.<i>INIT_FILE</i></pre>
-</td>
+
+This rule ensures every initialization file related to an interactive user
+is group-owned by an interactive user.</td>
 </tr></table>
 <table><tr>
 <td>User Initialization Files Must Not Run World-Writable Programs</td>
@@ -797,7 +794,9 @@ following command:
 <td xml:lang="en-US">Set the owner of the user initialization files for interactive users to
 the primary owner with the following command:
 <pre>$ sudo chown <i>USER</i> /home/<i>USER</i>/.*</pre>
-</td>
+
+This rule ensures every initialization file related to an interactive user
+is owned by an interactive user.</td>
 </tr></table>
 <table><tr>
 <td>Ensure that Users Path Contains Only Local Directories</td>
@@ -819,7 +818,9 @@ home directory assigned in <code>/etc/passwd</code>:
 group that the interactive user is a member of. To change the group owner of a
 local interactive users files and directories, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i>/<i>FILE_DIR</i></pre>
-</td>
+
+This rule ensures every file or directory under the home directory related
+to an interactive user is group-owned by an interactive user.</td>
 </tr></table>
 <table><tr>
 <td>All User Files and Directories In The Home Directory Must Have a Valid Owner</td>
@@ -828,7 +829,9 @@ do not have a valid user, or assign a valid user to all unowned
 files and directories. To assign a valid owner to a local
 interactive user's files and directories, use the following command:
 <pre>$ sudo chown -R <i>USER</i> /home/<i>USER</i></pre>
-</td>
+
+This rule ensures every file or directory under the home directory related
+to an interactive user is owned by an interactive user.</td>
 </tr></table>
 <table><tr>
 <td>All User Files and Directories In The Home Directory Must Have Mode 0750 Or Less Permissive</td>
@@ -843,7 +846,10 @@ directory with the following command:
 group found in <code>/etc/passwd</code>. To change the group owner of
 interactive users home directory, use the following command:
 <pre>$ sudo chgrp <i>USER_GROUP</i> /home/<i>USER</i></pre>
-</td>
+
+This rule ensures every home directory related to an interactive user is
+group-owned by an interactive user. It also ensures that interactive users
+are group-owners of one and only one home directory.</td>
 </tr></table>
 <table><tr>
 <td>All Interactive User Home Directories Must Be Owned By The Primary User</td>
@@ -851,7 +857,10 @@ interactive users home directory, use the following command:
 owner. To change the owner of a interactive users home directory, use
 the following command:
 <pre>$ sudo chown <i>USER</i> /home/<i>USER</i></pre>
-</td>
+
+This rule ensures every home directory related to an interactive user is
+owned by an interactive user. It also ensures that interactive users are
+owners of one and only one home directory.</td>
 </tr></table>
 <table><tr>
 <td>Ensure All User Initialization Files Have Mode 0740 Or Less Permissive</td>
@@ -1253,9 +1262,8 @@ Once the default community strings have been changed, restart the SNMP service:
 <table><tr>
 <td>Verify Permissions on SSH Server Private *_key Key Files</td>
 <td xml:lang="en-US">
-
 To properly set the permissions of <code>/etc/ssh/*_key</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/ssh/*_key</pre>
+<pre>$ sudo chmod 0600 /etc/ssh/*_key</pre>
 </td>
 </tr></table>
 <table><tr>
@@ -1550,6 +1558,7 @@ Off-loading is a common process in information systems with limited audit storag
 <td>Configure audispd Plugin To Send Logs To Remote Server</td>
 <td xml:lang="en-US">Configure the audispd plugin to off-load audit records onto a different
 system or media from the system being audited.
+
 Set the <code>remote_server</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>
 with an IP address or hostname of the system that the audispd plugin should
 send audit records to. For example
@@ -1601,7 +1610,7 @@ in <code>/etc/audit/auditd.conf</code>.</td>
 <table><tr>
 <td>Appropriate Action Must be Setup When the Internal Audit Event Queue is Full</td>
 <td xml:lang="en-US">The audit system should have an action setup in the event the internal event queue becomes full.
-To setup an overflow action edit <code>/etc/audit/auditd.conf</code>. Set <code>overflow_action</code>
+To setup an overflow action edit <code>/etc/audisp/audispd.conf</code>. Set <code>overflow_action</code>
 to one of the following values: <code>syslog</code>, <code>single</code>, <code>halt</code>.</td>
 </tr></table>
 <table><tr>
@@ -12903,11 +12912,6 @@ $ sudo yum install mcafeetp</pre>
 which is provided for DoD systems and uses signatures to search for the
 presence of viruses on the filesystem.</td>
 </tr></table>
-<table><tr>
-<td>Install the Host Intrusion Prevention System (HIPS) Module</td>
-<td xml:lang="en-US">Install the McAfee Host Intrusion Prevention System (HIPS) Module if it is absolutely
-necessary. If SELinux is enabled, do not install or enable this module.</td>
-</tr></table>
 </td>
 </tr>
 <tr>
@@ -14583,6 +14587,15 @@ users must be mapped to the <code>user_u</code> role or the appropriate domain
 <pre>$ sudo semanage login -m -s user_u <i>USER</i></pre>
 </td>
 </tr></table>
+<table><tr>
+<td>Disable the ssh_sysadm_login SELinux Boolean</td>
+<td xml:lang="en-US">By default, the SELinux boolean <code>ssh_sysadm_login</code> is disabled.
+If this setting is enabled, it should be disabled.
+
+To disable the <code>ssh_sysadm_login</code> SELinux boolean, run the following command:
+<pre>$ sudo setsebool -P ssh_sysadm_login off</pre>
+</td>
+</tr></table>
 </td>
 </tr>
 <tr>
@@ -14771,6 +14784,7 @@ Off-loading is a common process in information systems with limited audit storag
 <td>Configure audispd Plugin To Send Logs To Remote Server</td>
 <td xml:lang="en-US">Configure the audispd plugin to off-load audit records onto a different
 system or media from the system being audited.
+
 Set the <code>remote_server</code> option in <pre>/etc/audisp/audisp-remote.conf</pre>
 with an IP address or hostname of the system that the audispd plugin should
 send audit records to. For example
@@ -14822,7 +14836,7 @@ in <code>/etc/audit/auditd.conf</code>.</td>
 <table><tr>
 <td>Appropriate Action Must be Setup When the Internal Audit Event Queue is Full</td>
 <td xml:lang="en-US">The audit system should have an action setup in the event the internal event queue becomes full.
-To setup an overflow action edit <code>/etc/audit/auditd.conf</code>. Set <code>overflow_action</code>
+To setup an overflow action edit <code>/etc/audisp/audispd.conf</code>. Set <code>overflow_action</code>
 to one of the following values: <code>syslog</code>, <code>single</code>, <code>halt</code>.</td>
 </tr></table>
 <table><tr>
