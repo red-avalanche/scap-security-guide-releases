@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<html>
 <head lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Standard System Security Profile for SUSE Linux Enterprise 15</title>
@@ -384,7 +384,7 @@ to the system time should be audited.
 </tr>
 <tr>
   <td>AU-2(d)<br/>AU-12(c)<br/>CM-6(a)</td>
-  <td>N/A</td>
+  <td>CCE-91246-9</td>
   <td>Ensure auditd Collects Unauthorized Access Attempts to Files (unsuccessful)</td>
   <td xml:lang="en-US">
 At a minimum the audit system should collect unauthorized file
@@ -478,7 +478,7 @@ unusual activity.
 </tr>
 <tr>
   <td>AC-2(4)<br/>AU-2(d)<br/>AU-12(c)<br/>AC-6(9)<br/>CM-6(a)</td>
-  <td>N/A</td>
+  <td>CCE-91292-3</td>
   <td>Record Events that Modify User/Group Information</td>
   <td xml:lang="en-US">
 If the <tt>auditd</tt> daemon is configured to use the
@@ -541,10 +541,10 @@ The SSH server sends at most <tt>ClientAliveCountMax</tt> messages
 during a SSH session and waits for a response from the SSH client.
 The option <tt>ClientAliveInterval</tt> configures timeout after
 each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 
-To ensure the SSH idle timeout occurs precisely when the
+To ensure the SSH timeout occurs precisely when the
 <tt>ClientAliveInterval</tt> is set, set the <tt>ClientAliveCountMax</tt> to
 value of <tt>0</tt> in
 
@@ -1397,7 +1397,7 @@ The cron service allow periodic job execution, needed for almost all administrat
 </tr>
 <tr>
   <td>CM-6(a)</td>
-  <td>N/A</td>
+  <td>CCE-91293-1</td>
   <td>Install the ntp service</td>
   <td xml:lang="en-US">
 The ntpd service should be installed.
@@ -1616,15 +1616,15 @@ enabling the cron daemon is essential.
 </tr>
 <tr>
   <td>CM-6(a)<br/>AU-8(1)(a)</td>
-  <td>N/A</td>
+  <td>CCE-91294-9</td>
   <td>Enable the NTP Daemon</td>
   <td xml:lang="en-US">
 
-The <code>ntpd</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable ntpd.service</pre>
+The <code>ntp</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable ntp.service</pre>
   </td>
   <td xml:lang="en-US">
-Enabling the <tt>ntpd</tt> service ensures that the <tt>ntpd</tt>
+Enabling the <tt>ntp</tt> service ensures that the <tt>ntp</tt>
 service will be running and that the system will synchronize its time to
 any servers specified. This is important whether the system is configured to be
 a client (and synchronize only its own clock) or it is also acting as an NTP
@@ -1747,12 +1747,12 @@ remotely.
 <tr>
   <td>CM-6(a)<br/>AC-17(a)<br/>AC-2(5)<br/>AC-12<br/>AC-17(a)<br/>SC-10<br/>CM-6(a)</td>
   <td>CCE-83281-6</td>
-  <td>Set SSH Idle Timeout Interval</td>
+  <td>Set SSH Client Alive Interval</td>
   <td xml:lang="en-US">
-SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br /><br />
-To set an idle timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
+To set this timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
 follows:
 <pre>ClientAliveInterval <b><tt>5_minutes</tt></b></pre>
 <br/><br/>
@@ -1761,7 +1761,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br /><br />
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.
+some processes may stop SSH from correctly detecting that the user is idle.
   </td>
   <td xml:lang="en-US">
 Terminating an idle ssh session within a short time period reduces the window of
@@ -1893,7 +1893,7 @@ Automated control of remote access sessions allows organizations to ensure ongoi
 </tr>
 <tr>
   <td>CM-7(a)<br/>CM-7(b)<br/>CM-6(a)</td>
-  <td>N/A</td>
+  <td>CCE-91286-5</td>
   <td>Uninstall httpd Package</td>
   <td xml:lang="en-US">
 
@@ -2172,7 +2172,7 @@ The ability to send ICMP redirects is only appropriate for systems acting as rou
 </tr>
 <tr>
   <td>CM-7(a)<br/>CM-7(b)<br/>SC-5</td>
-  <td>N/A</td>
+  <td>CCE-91243-6</td>
   <td>Enable Kernel Parameter to Ignore ICMP Broadcast Echo Requests on IPv4 Interfaces</td>
   <td xml:lang="en-US">
 To set the runtime status of the <code>net.ipv4.icmp_echo_ignore_broadcasts</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.icmp_echo_ignore_broadcasts=1</pre>
@@ -2220,7 +2220,7 @@ enables the system to continue servicing valid connection requests.
   <td></td>
 </tr>
 <tr>
-  <td>AC-9(1)<br/>CM-6(a)</td>
+  <td>AC-9<br/>AC-9(1)</td>
   <td>CCE-85560-1</td>
   <td>Ensure PAM Displays Last Logon/Access Notification</td>
   <td xml:lang="en-US">
@@ -2545,7 +2545,7 @@ ntpdate is an old not security-compliant ntp client. It should be replaced by mo
 </tr>
 <tr>
   <td></td>
-  <td>N/A</td>
+  <td>CCE-91309-5</td>
   <td>Set SSH MaxSessions limit</td>
   <td xml:lang="en-US">
 The <tt>MaxSessions</tt> parameter specifies the maximum number of open sessions permitted

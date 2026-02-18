@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<html>
 <head lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>DISA STIG for Oracle Linux 8</title>
@@ -1908,10 +1908,10 @@ The SSH server sends at most <tt>ClientAliveCountMax</tt> messages
 during a SSH session and waits for a response from the SSH client.
 The option <tt>ClientAliveInterval</tt> configures timeout after
 each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 
-To ensure the SSH idle timeout occurs precisely when the
+To ensure the SSH timeout occurs precisely when the
 <tt>ClientAliveInterval</tt> is set, set the <tt>ClientAliveCountMax</tt> to
 value of <tt>0</tt> in
 
@@ -2573,7 +2573,7 @@ In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter
   <td xml:lang="en-US">
 Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
   </td>
-  <td>var_password_pam_remember_control_flag=ol8<br/>var_password_pam_remember=5</td>
+  <td>var_password_pam_remember=5<br/>var_password_pam_remember_control_flag=ol8</td>
 </tr>
 <tr>
   <td>IA-5(f)<br/>IA-5(1)(e)</td>
@@ -2593,7 +2593,7 @@ For example:
   <td xml:lang="en-US">
 Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
   </td>
-  <td>var_password_pam_remember_control_flag=ol8<br/>var_password_pam_remember=5</td>
+  <td>var_password_pam_remember=5<br/>var_password_pam_remember_control_flag=ol8</td>
 </tr>
 <tr>
   <td>IA-5(c)<br/>IA-5(1)(a)<br/>CM-6(a)<br/>IA-5(4)</td>
@@ -3932,7 +3932,7 @@ Detailed information on encrypting partitions using LUKS or LUKS ciphers can be 
 the Oracle Linux 8 Documentation web site:<br />
 
     
-    <a xmlns='http://www.w3.org/1999/xhtml' href='https://docs.oracle.com/en/operating-systems/oracle-linux/8/install/install-InstallingOracleLinuxManually.html#install-storage-network'>https://docs.oracle.com/en/operating-systems/oracle-linux/8/install/install-InstallingOracleLinuxManually.html#install-storage-network</a>
+    <a xmlns='http://www.w3.org/1999/xhtml' href='https://docs.oracle.com/en/operating-systems/oracle-linux/8/install/install-InstallingOracleLinuxManually.html#system-options'>https://docs.oracle.com/en/operating-systems/oracle-linux/8/install/install-InstallingOracleLinuxManually.html#system-options</a>
 .
   </td>
   <td xml:lang="en-US">
@@ -4865,12 +4865,12 @@ may be able to log into the system as another user.
 <tr>
   <td>CM-6(a)<br/>AC-17(a)<br/>AC-2(5)<br/>AC-12<br/>AC-17(a)<br/>SC-10<br/>CM-6(a)</td>
   <td>N/A</td>
-  <td>Set SSH Idle Timeout Interval</td>
+  <td>Set SSH Client Alive Interval</td>
   <td xml:lang="en-US">
-SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br /><br />
-To set an idle timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
+To set this timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
 follows:
 <pre>ClientAliveInterval <b><tt>10_minutes</tt></b></pre>
 <br/><br/>
@@ -4879,7 +4879,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br /><br />
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.
+some processes may stop SSH from correctly detecting that the user is idle.
   </td>
   <td xml:lang="en-US">
 Terminating an idle ssh session within a short time period reduces the window of
@@ -5083,10 +5083,10 @@ and will not expose the JIT addresses in <tt>/proc/kallsyms</tt>.
   <td>N/A</td>
   <td>Ensure tftp Daemon Uses Secure Mode</td>
   <td xml:lang="en-US">
-If running the <tt>tftp</tt> service is necessary, it should be configured
-to change its root directory at startup. To do so, ensure
-<tt>/etc/xinetd.d/tftp</tt> includes <tt>-s</tt> as a command line argument, as shown in
-the following example:
+If running the Trivial File Transfer Protocol (TFTP) service is necessary,
+it should be configured to change its root directory at startup. To do so,
+ensure <tt>/etc/xinetd.d/tftp</tt> includes <tt>-s</tt> as a command line argument,
+as shown in the following example:
 <pre>server_args = -s <tt>/var/lib/tftpboot</tt></pre>
   </td>
   <td xml:lang="en-US">
@@ -5246,18 +5246,6 @@ unauthorized access to the directory.
   <td></td>
 </tr>
 <tr>
-  <td>AC-7 (a)</td>
-  <td>N/A</td>
-  <td>Account Lockouts Must Be Logged</td>
-  <td xml:lang="en-US">
-PAM faillock locks an account due to excessive password failures, this event must be logged.
-  </td>
-  <td xml:lang="en-US">
-Without auditing of these events it may be harder or impossible to identify what an attacker did after an attack.
-  </td>
-  <td></td>
-</tr>
-<tr>
   <td>AC-7(b)<br/>CM-6(a)</td>
   <td>N/A</td>
   <td>Ensure the Logon Failure Delay is Set Correctly in login.defs</td>
@@ -5273,12 +5261,24 @@ enter credentials helps to slow a single-threaded brute force attack.
   <td>var_accounts_fail_delay=4</td>
 </tr>
 <tr>
+  <td>AC-7 (a)</td>
+  <td>N/A</td>
+  <td>Account Lockouts Must Be Logged</td>
+  <td xml:lang="en-US">
+PAM faillock locks an account due to excessive password failures, this event must be logged.
+  </td>
+  <td xml:lang="en-US">
+Without auditing of these events it may be harder or impossible to identify what an attacker did after an attack.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>AC-7(b)<br/>AC-7(a)<br/>AC-7.1(ii)</td>
   <td>N/A</td>
   <td>Lock Accounts Must Persist</td>
   <td xml:lang="en-US">
 This rule ensures that the system lock out accounts using <tt>pam_faillock.so</tt> persist
-after system reboot. From "Pam_Faillock" man pages:
+after system reboot. From "pam_faillock" man pages:
 <pre>Note that the default directory that "pam_faillock" uses is usually cleared on system
 boot so the access will be reenabled after system reboot. If that is undesirable, a different
 tally directory must be set with the "dir" option.</pre>
@@ -6361,8 +6361,8 @@ The <tt>cmdport</tt> option in <tt>/etc/chrony.conf</tt> can be set to
 for management connections made by chronyc.
   </td>
   <td xml:lang="en-US">
-Not exposing the management interface of the chrony daemon on
-the network diminishes the attack space.
+Minimizing the exposure of the server functionality of the chrony
+daemon diminishes the attack surface.
   </td>
   <td></td>
 </tr>
@@ -6557,8 +6557,9 @@ The <tt>port</tt> option in <tt>/etc/chrony.conf</tt> can be set to
 for server operation and to operate strictly in a client-only mode.
   </td>
   <td xml:lang="en-US">
-Minimizing the exposure of the server functionality of the chrony
-daemon diminishes the attack surface.
+In order to prevent unauthorized connection of devices, unauthorized transfer of information, or unauthorized tunneling (i.e., embedding of data types within data types), organizations must disable or restrict unused or unnecessary physical and logical ports/protocols on information systems.
+Operating systems are capable of providing a wide variety of functions and services. Some of the functions and services provided by default may not be necessary to support essential organizational operations. Additionally, it is sometimes convenient to provide multiple services from a single component (e.g., VPN and IPS); however, doing so increases risk over limiting the services provided by any one component.
+To support the requirements and principles of least functionality, the operating system must support the organizational requirements, providing only essential capabilities and limiting the use of ports, protocols, and/or services to only those required, authorized, and approved to conduct official business or to address authorized quality of life issues.
   </td>
   <td></td>
 </tr>
@@ -6608,6 +6609,28 @@ devices.
   <td xml:lang="en-US">
 The <tt>usbguard</tt> must be configured to allow connected USB devices to work
 properly, avoiding the system to become inaccessible.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>AC-9<br/>AC-9(1)</td>
+  <td>N/A</td>
+  <td>Ensure PAM Displays Last Logon/Access Notification</td>
+  <td xml:lang="en-US">
+To configure the system to notify users of last logon/access
+using <tt>pam_lastlog</tt>, add or correct the <tt>pam_lastlog</tt>
+settings in
+<tt>/etc/pam.d/postlogin</tt> to read as follows:
+<pre>session     required pam_lastlog.so showfailed</pre>
+And make sure that the <tt>silent</tt> option is not set for
+<tt>pam_lastlog</tt> module.
+  </td>
+  <td xml:lang="en-US">
+Users need to be aware of activity that occurs regarding
+their account. Providing users with information regarding the number
+of unsuccessful attempts that were made to login to their account
+allows the user to determine if any unauthorized activity has occurred
+and gives them an opportunity to notify administrators.
   </td>
   <td></td>
 </tr>
@@ -6663,7 +6686,7 @@ Therefore, protecting audit tools is necessary to prevent unauthorized operation
   <td></td>
 </tr>
 <tr>
-  <td>AC-9<br/>AC-17(a)<br/>CM-6(a)</td>
+  <td>AC-9<br/>AC-9(1)</td>
   <td>N/A</td>
   <td>Enable SSH Print Last Log</td>
   <td xml:lang="en-US">
@@ -6682,28 +6705,6 @@ To explicitly enable LastLog in SSH, add or correct the following line in
   <td xml:lang="en-US">
 Providing users feedback on when account accesses last occurred facilitates user
 recognition and reporting of unauthorized account use.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>AC-9(1)<br/>CM-6(a)</td>
-  <td>N/A</td>
-  <td>Ensure PAM Displays Last Logon/Access Notification</td>
-  <td xml:lang="en-US">
-To configure the system to notify users of last logon/access
-using <tt>pam_lastlog</tt>, add or correct the <tt>pam_lastlog</tt>
-settings in
-<tt>/etc/pam.d/postlogin</tt> to read as follows:
-<pre>session     required pam_lastlog.so showfailed</pre>
-And make sure that the <tt>silent</tt> option is not set for
-<tt>pam_lastlog</tt> module.
-  </td>
-  <td xml:lang="en-US">
-Users need to be aware of activity that occurs regarding
-their account. Providing users with information regarding the number
-of unsuccessful attempts that were made to login to their account
-allows the user to determine if any unauthorized activity has occurred
-and gives them an opportunity to notify administrators.
   </td>
   <td></td>
 </tr>
@@ -7177,6 +7178,7 @@ and makes system configuration more fragmented.
   <td xml:lang="en-US">
 SSH server private keys - files that match the <code>/etc/ssh/*_key</code> glob, have to have restricted permissions.
 If those files are owned by the <code>root</code> user and the <code>root</code> group, they have to have the <code>0600</code> permission or stricter.
+If they are owned by the <code>root</code> user, but by a dedicated group <code>ssh_keys</code>, they can have the <code>0640</code> permission or stricter.
   </td>
   <td xml:lang="en-US">
 If an unauthorized user obtains the private SSH host key file, the host could be

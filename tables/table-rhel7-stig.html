@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<html>
 <head lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Rules in DISA STIG for Red Hat Enterprise Linux 7</title>
@@ -48,9 +48,9 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>236</td>
+			<td>237</td>
 			<td>4</td>
-			<td>232</td>
+			<td>233</td>
 			<td>98.31%</td>
 			<td>
 				
@@ -617,11 +617,14 @@ at guessing and brute-force attacks.
 Password complexity is one factor of several that determines how long it takes to crack a password. The more
 complex the password, the greater the number of possible combinations that need to be tested before
 the password is compromised.</pre></td>
-	<td><pre>To check how many uppercase characters are required in a password, run the following command:
-$ grep ucredit /etc/security/pwquality.conf
-The ucredit parameter (as a negative number) will indicate how many uppercase characters are required.
-This would appear as ucredit = -1.
-      Is it the case that ucredit is not found or not set to the required value?
+	<td><pre>Verify that Red Hat Enterprise Linux 7 enforces password complexity by requiring that at least one upper-case character.
+
+Check the value for "ucredit" with the following command:
+
+$ sudo grep ucredit /etc/security/pwquality.conf /etc/security/pwquality.conf.d/*.conf
+
+ucredit = -1
+      Is it the case that the value of "ucredit" is a positive number or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's ucredit= parameter controls requirements for
 usage of uppercase letters in a password. When set to a negative number, any password will be required to
@@ -648,10 +651,14 @@ to crack a password. The more complex the password, the greater the number of
 possble combinations that need to be tested before the password is compromised.
 Requiring a minimum number of lowercase characters makes password guessing attacks
 more difficult by ensuring a larger search space.</pre></td>
-	<td><pre>To check how many lowercase characters are required in a password, run the following command:
-$ grep lcredit /etc/security/pwquality.conf
-The lcredit parameter (as a negative number) will indicate how many special characters are required.
-      Is it the case that lcredit is not found or not less than or equal to the required value?
+	<td><pre>Verify that Red Hat Enterprise Linux 7 enforces password complexity by requiring that at least one lower-case character.
+
+Check the value for "lcredit" with the following command:
+
+$ sudo grep lcredit /etc/security/pwquality.conf /etc/security/pwquality.conf.d/*.conf
+
+/etc/security/pwquality.conf:lcredit = -1
+      Is it the case that the value of "lcredit" is a positive number or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's lcredit parameter controls requirements for
 usage of lowercase letters in a password. When set to a negative number, any password will be required to
@@ -678,10 +685,14 @@ to crack a password. The more complex the password, the greater the number of
 possible combinations that need to be tested before the password is compromised.
 Requiring digits makes password guessing attacks more difficult by ensuring a larger
 search space.</pre></td>
-	<td><pre>To check how many digits are required in a password, run the following command:
-$ grep dcredit /etc/security/pwquality.conf
-The dcredit parameter (as a negative number) will indicate how many digits are required.
-      Is it the case that dcredit is not found or not equal to or less than the required value?
+	<td><pre>Verify that Red Hat Enterprise Linux 7 enforces password complexity by requiring that at least one numeric character be used.
+
+Check the value for "dcredit" with the following command:
+
+$ sudo grep dcredit /etc/security/pwquality.conf /etc/security/pwquality.conf.d/*.conf
+
+/etc/security/pwquality.conf:dcredit = 
+      Is it the case that the value of "dcredit" is a positive number or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's dcredit parameter controls requirements for
 usage of digits in a password. When set to a negative number, any password will be required to
@@ -708,10 +719,11 @@ to crack a password. The more complex the password, the greater the number of
 possible combinations that need to be tested before the password is compromised.
 Requiring a minimum number of special characters makes password guessing attacks
 more difficult by ensuring a larger search space.</pre></td>
-	<td><pre>To check how many special characters are required in a password, run the following command:
-$ grep ocredit /etc/security/pwquality.conf
-The ocredit parameter (as a negative number) will indicate how many special
-characters are required.
+	<td><pre>Verify that Red Hat Enterprise Linux 7 enforces password complexity by requiring that at least one special character with the following command:
+
+$ sudo grep ocredit /etc/security/pwquality.conf /etc/security/pwquality.conf.d/*.conf
+
+ocredit = 
       Is it the case that value of "ocredit" is a positive number or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's ocredit= parameter controls requirements for
@@ -744,12 +756,12 @@ before the password is compromised.
 Requiring a minimum number of different characters during password changes ensures that
 newly changed passwords should not resemble previously compromised ones.
 Note that passwords which are changed on compromised systems will still be compromised, however.</pre></td>
-	<td><pre>To check how many characters must differ during a password change, run the following command:
-$ sudo grep difok /etc/security/pwquality.conf
-difok = 
+	<td><pre>Verify the value of the "difok" option in "/etc/security/pwquality.conf" with the following command:
 
-The difok parameter will indicate how many characters must differ.
-      Is it the case that difok is not found or set to less than the required value?
+$ sudo grep difok /etc/security/pwquality.conf
+
+difok = 
+      Is it the case that the value of "difok" is set to less than "<sub idref="var_password_pam_difok" />", or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's difok parameter sets the number of characters
 in a password that must not be present in and old password during a password change.
@@ -777,12 +789,11 @@ the password is compromised.
 
 Requiring a minimum number of character categories makes password guessing attacks more difficult
 by ensuring a larger search space.</pre></td>
-	<td><pre>To check how many categories of characters must be used in password during a password change,
-run the following command:
-$ sudo grep minclass /etc/security/pwquality.conf
-The minclass parameter will indicate how many character classes must be used. If
-the requirement was for the password to contain characters from  different categories,
-then this would appear as minclass = .
+	<td><pre>Verify the value of the "minclass" option in "/etc/security/pwquality.conf" with the following command:
+
+$ grep minclass /etc/security/pwquality.conf
+
+minclass = 
       Is it the case that the value of "minclass" is set to less than "<sub idref="var_password_pam_minclass" />" or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's minclass parameter controls
@@ -820,8 +831,11 @@ complex the password, the greater the number of possible combinations that need 
 password is compromised.
 
 Passwords with excessive repeating characters may be more vulnerable to password-guessing attacks.</pre></td>
-	<td><pre>To check the maximum value for consecutive repeating characters, run the following command:
-$ sudo grep maxrepeat /etc/security/pwquality.conf
+	<td><pre>Verify the value of the "maxrepeat" option in "/etc/security/pwquality.conf" with the following command:
+
+$ grep maxrepeat /etc/security/pwquality.conf
+
+maxrepeat = 
       Is it the case that the value of "maxrepeat" is set to more than "<sub idref="var_password_pam_maxrepeat" />" or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's maxrepeat parameter controls requirements for
@@ -846,8 +860,11 @@ attempts at guessing and brute-force attacks.
 Password complexity is one factor of several that determines how long it takes to crack a password. The
 more complex a password, the greater the number of possible combinations that need to be tested before the
 password is compromised.</pre></td>
-	<td><pre>To check the value for maximum consecutive repeating characters, run the following command:
-$ sudo grep maxclassrepeat /etc/security/pwquality.conf
+	<td><pre>Verify the value of the "maxclassrepeat" option in "/etc/security/pwquality.conf" with the following command:
+
+$ grep maxclassrepeat /etc/security/pwquality.conf
+
+maxclassrepeat = 
       Is it the case that the value of "maxclassrepeat" is set to "0", more than "<sub idref="var_password_pam_maxclassrepeat" />" or is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's maxclassrepeat parameter controls requirements for
@@ -980,9 +997,14 @@ defeat the organization's policy regarding password reuse.
 
 Setting the minimum password age protects against users cycling back to a
 favorite password after satisfying the password reuse requirement.</pre></td>
-	<td><pre>To check the minimum password age, run the command:
-$ grep PASS_MIN_DAYS /etc/login.defs
-      Is it the case that it is not equal to or greater than the required value?
+	<td><pre>Verify Red Hat Enterprise Linux 7 enforces 24 hours/1 day as the minimum password lifetime for new user accounts.
+
+Check for the value of "PASS_MIN_DAYS" in "/etc/login.defs" with the following command:
+
+$ grep -i pass_min_days /etc/login.defs
+
+PASS_MIN_DAYS 
+      Is it the case that the "PASS_MIN_DAYS" parameter value is not "<sub idref="var_accounts_minimum_age_login_defs" />" or greater, or is commented out?
       </pre></td>
 	<td><pre>To specify password minimum age for new accounts,
 edit the file /etc/login.defs
@@ -1006,7 +1028,7 @@ changes to defeat the password reuse or history enforcement requirement. If
 users are allowed to immediately and continually change their password, the
 password could be repeatedly changed in a short period of time to defeat the
 organization's policy regarding password reuse.</pre></td>
-	<td><pre>Check whether the minimum time period between password changes for each user account is one day or greater.
+	<td><pre>Verify that Red Hat Enterprise Linux 7 has configured the minimum time period between password changes for each user account is one day or greater with the following command:
 
 $ sudo awk -F: '$4 < 1 {print $1 " " $4}' /etc/shadow
       Is it the case that any results are returned that are not associated with a system account?
@@ -1033,10 +1055,12 @@ Setting the password maximum age ensures users are required to
 periodically change their passwords. Requiring shorter password lifetimes
 increases the risk of users writing down the password in a convenient
 location subject to physical compromise.</pre></td>
-	<td><pre>To check the maximum password age, run the command:
-$ grep PASS_MAX_DAYS /etc/login.defs
-The profile requirement is .
-      Is it the case that PASS_MAX_DAYS is not set equal to or greater than the required value?
+	<td><pre>Verify that Red Hat Enterprise Linux 7 enforces a -day maximum password lifetime for new user accounts by running the following command:
+
+$ grep -i pass_max_days /etc/login.defs
+
+PASS_MAX_DAYS 
+      Is it the case that the "PASS_MAX_DAYS" parameter value is greater than "<sub idref="var_accounts_maximum_age_login_defs" />", or commented out?
       </pre></td>
 	<td><pre>To specify password maximum age for new accounts,
 edit the file /etc/login.defs
@@ -1104,6 +1128,42 @@ control_flag should be one of the next values: </pre></td>
 </tr>
 
 <tr>
+	<td>V-254523</td>
+	<td>1682</td>
+	<td>medium</td>
+	<td>The Red Hat Enterprise Linux operating system emergency accounts must be automatically removed or disabled after the crisis is resolved or within 72 hours.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>If emergency user accounts remain active when no longer needed or for
+an excessive period, these accounts may be used to gain unauthorized access.
+To mitigate this risk, automated termination of all emergency accounts
+must be set upon account creation.
+</pre></td>
+	<td><pre>Verify emergency accounts have been provisioned with an expiration date of 72 hours.
+
+For every emergency account, run the following command to obtain its account aging and expiration information:
+
+$ sudo chage -l emergency_account_name
+
+Verify each of these accounts has an expiration date set within 72 hours or as documented.
+      Is it the case that any emergency accounts have no expiration date set or do not expire within 72 hours?
+      </pre></td>
+	<td><pre>Emergency accounts are privileged accounts established in response to
+crisis situations where the need for rapid account activation is required.
+In the event emergency accounts are required, configure the system to
+terminate them after a documented time period. For every emergency account,
+run the following command to set an expiration date on it, substituting
+ACCOUNT_NAME and YYYY-MM-DD
+appropriately:
+$ sudo chage -E YYYY-MM-DD ACCOUNT_NAME
+YYYY-MM-DD indicates the documented expiration date for the
+account. For U.S. Government systems, the operating system must be
+configured to automatically terminate these types of accounts after a
+period of 72 hours.</pre></td>
+	<td>RHEL-07-010271</td>
+	<td>account_emergency_expire_date</td>
+</tr>
+
+<tr>
 	<td>V-204423</td>
 	<td>205</td>
 	<td>medium</td>
@@ -1118,10 +1178,12 @@ Password length is one factor of several that helps to determine strength
 and how long it takes to crack a password. Use of more characters in a password
 helps to exponentially increase the time and/or resources required to
 compromise the password.</pre></td>
-	<td><pre>To check how many characters are required in a password, run the following command:
+	<td><pre>Verify that Red Hat Enterprise Linux 7 enforces a minimum -character password length with the following command:
+
 $ grep minlen /etc/security/pwquality.conf
-Your output should contain minlen = 
-      Is it the case that minlen is not found, or not equal to or greater than the required value?
+
+minlen = 
+      Is it the case that the command does not return a "minlen" value of "<sub idref="var_password_pam_minlen" />" or greater, does not return a line, or the line is commented out?
       </pre></td>
 	<td><pre>The pam_pwquality module's minlen parameter controls requirements for
 minimum characters required in a password. Add minlen=
@@ -1492,13 +1554,11 @@ any sudo configuration snippets in /etc/sudoers.d/.</pre></td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Increasing the time between a failed authentication attempt and re-prompting to
 enter credentials helps to slow a single-threaded brute force attack.</pre></td>
-	<td><pre>Verify the FAIL_DELAY setting is configured correctly in the /etc/login.defs file by
-running the following command:
-$ sudo grep -i "FAIL_DELAY" /etc/login.defs
-All output must show the value of FAIL_DELAY set as shown in the below:
+	<td><pre>Verify Red Hat Enterprise Linux 7 enforces a delay of at least  seconds between console logon prompts following a failed logon attempt with the following command:
+
 $ sudo grep -i "FAIL_DELAY" /etc/login.defs
 FAIL_DELAY 
-      Is it the case that the above command returns no output, or FAIL_DELAY is configured less than the expected value?
+      Is it the case that the value of "FAIL_DELAY" is not set to "<sub idref="var_accounts_fail_delay" />" or greater, or the line is commented out?
       </pre></td>
 	<td><pre>To ensure the logon failure delay controlled by /etc/login.defs is set properly,
 add or correct the FAIL_DELAY setting in /etc/login.defs to read as follows:
@@ -1900,7 +1960,7 @@ $ sudo yum erase ypserv</pre></td>
 
 <tr>
 	<td>V-214800</td>
-	<td>1263</td>
+	<td>366</td>
 	<td>medium</td>
 	<td>The Red Hat Enterprise Linux operating system must implement the Endpoint Security for Linux Threat Prevention tool.</td>
 	<td>SRG-OS-ID</td>
@@ -2158,14 +2218,14 @@ This ensures the software has not been tampered with and that it has been
 provided by a trusted vendor. Self-signed certificates are disallowed by
 this requirement. Certificates used to verify the software must be from an
 approved Certificate Authority (CA).</pre></td>
-	<td><pre>To determine whether yum is configured to use gpgcheck,
-inspect /etc/yum.conf and ensure the following appears in the
-[main] section:
+	<td><pre>Verify that yum verifies the signature of packages from a repository prior to install with the following command:
+
+$ grep gpgcheck /etc/yum.conf
+
 gpgcheck=1
-A value of 1 indicates that gpgcheck is enabled. Absence of a
-gpgcheck line or a setting of 0 indicates that it is
-disabled.
-      Is it the case that GPG checking is not enabled?
+
+If "gpgcheck" is not set to "1", or if the option is missing or commented out, ask the System Administrator how the certificates for patches and other operating system components are verified.
+      Is it the case that there is no process to validate certificates that is approved by the organization?
       </pre></td>
 	<td><pre>The gpgcheck option controls whether
 RPM packages' signatures are always checked prior to installation.
@@ -2189,12 +2249,14 @@ has been provided by a trusted vendor.
 
 Accordingly, patches, service packs, device drivers, or operating system components must
 be signed with a certificate recognized and approved by the organization.</pre></td>
-	<td><pre>To verify that localpkg_gpgcheck is configured properly, run the following
-command:
+	<td><pre>Verify that yum verifies the signature of local packages prior to install with the following command:
+
 $ grep localpkg_gpgcheck /etc/yum.conf
-The output should return something similar to:
+
 localpkg_gpgcheck=1
-      Is it the case that gpgcheck is not enabled or configured correctly to verify local packages?
+
+If "localpkg_gpgcheck" is not set to "1", or if the option is missing or commented out, ask the System Administrator how the certificates for patches and other operating system components are verified.
+      Is it the case that there is no process to validate certificates for local packages that is approved by the organization?
       </pre></td>
 	<td><pre>yum should be configured to verify the signature(s) of local packages
 prior to installation. To configure yum to verify signatures of local
@@ -2526,12 +2588,12 @@ After the settings have been set, run dconf update.</pre></td>
 	<td><pre>The umask value influences the permissions assigned to files when they are created.
 A misconfigured umask value could result in files with excessive permissions that can be read and
 written to by unauthorized users.</pre></td>
-	<td><pre>Verify the UMASK setting is configured correctly in the /etc/login.defs file by
-running the following command:
-$ sudo grep "UMASK" /etc/login.defs
-All output must show the value of UMASK set as shown in the below:
+	<td><pre>Verify Red Hat Enterprise Linux 7 defines default permissions for all authenticated users in such a way that the user can only read and modify their own files with the following command:
+
+# grep -i umask /etc/login.defs
+
 UMASK 
-      Is it the case that the above command returns no output, or the umask is configured incorrectly?
+      Is it the case that the value for the "UMASK" parameter is not "<sub idref="var_accounts_user_umask" />", or the "UMASK" parameter is missing or is commented out?
       </pre></td>
 	<td><pre>To ensure the default umask controlled by /etc/login.defs is set properly,
 add or correct the UMASK setting in /etc/login.defs to read as follows:
@@ -2779,9 +2841,13 @@ the user may be given access to the / directory as the current working directory
 upon logon. This could create a Denial of Service because the user would not be
 able to access their logon configuration files, and it may give them visibility
 to system files they normally would not be able to access.</pre></td>
-	<td><pre>To verify the assigned home directory of all interactive users on the system
-exist, run the following command:
+	<td><pre>Verify the assigned home directories of all interactive users on the system exist with the following command:
+
 $ sudo pwck -r
+
+user 'mailnull': directory 'var/spool/mqueue' does not exist
+
+The output should not return any interactive users.
       Is it the case that users home directory does not exist?
       </pre></td>
 	<td><pre>Create home directories to all interactive users that currently do not
@@ -3028,12 +3094,12 @@ an empty entry, such as a leading or trailing colon or two consecutive colons,
 this is interpreted as the current working directory. If deviations from the
 default system search path for the local interactive user are required, they
 must be documented with the Information System Security Officer (ISSO).</pre></td>
-	<td><pre>To verify that all interactive user initialization files executable search
-path statements do not contain statements that will reference a working
-directory other than the users home directory, run the following command:
-$ sudo grep -r PATH /home/
-Inspect the output for any PATH is references directories outside the home directory.
-      Is it the case that paths contain more than local home directories?
+	<td><pre>Verify that all local interactive user initialization file executable search path statements do not contain statements that will reference a working directory other than user home directories with the following commands:
+
+$ sudo grep -i path= /home/*/.*
+
+/home/[localinteractiveuser]/.bash_profile:PATH=$PATH:$HOME/.local/bin:$HOME/bin
+      Is it the case that any local interactive user initialization files have executable search path statements that include directories outside of their home directory and is not documented with the ISSO as an operational requirement?
       </pre></td>
 	<td><pre>Ensure that all interactive user initialization files executable search
 path statements do not contain statements that will reference a working
@@ -3053,15 +3119,12 @@ unprotected directories, they could be maliciously modified to destroy user
 files or otherwise compromise the system at the user level. If the system is
 compromised at the user level, it is easier to elevate privileges to eventually
 compromise the system at the root and network level.</pre></td>
-	<td><pre>Verify that local initialization files do not execute world-writable programs,
-execute the following command:
+	<td><pre>Verify that local initialization files do not execute world-writable programs with the following command:
+
+Note: The example will be for a system that is configured to create user home directories in the "/home" directory.
+
 $ sudo find /home -perm -002 -type f -name ".[^.]*" -exec ls -ld {} \;
-For all files listed, check for their presence in the local
-initialization files with the following command:
-Note: The example will be for a system that is configured to create
-users' home directories in the "/home" directory.
- sudo find /home/* -maxdepth 1 -type f -name \.\* -exec grep -H <file> {} \; 
-      Is it the case that user initialization files are executing world-writable programs?
+      Is it the case that any local initialization files are found to reference world-writable files?
       </pre></td>
 	<td><pre>Set the mode on files being executed by the user initialization files with the
 following command:
@@ -3285,10 +3348,19 @@ be represented as a four-digit number, the first digit representing special
 access modes is typically ignored or required to be 0. This requirement
 applies to the globally configured system defaults and the local interactive
 user defaults for each account on the system.</pre></td>
-	<td><pre>Verify the UMASK setting is not configured for interactive users,
-run the following command:
-$ sudo grep -ri "UMASK" /home
-      Is it the case that the above command returns no output, or if the umask is configured incorrectly?
+	<td><pre>Verify that the default umask for all local interactive users is "077".
+
+Identify the locations of all local interactive user home directories by looking at the "/etc/passwd" file.
+
+Check all local interactive user initialization files for interactive users with the following command:
+
+Note: The example is for a system that is configured to create users home directories in the "/home" directory.
+
+# grep -ri umask /home/
+
+/home/smithj/.bash_history:grep -i umask /etc/bashrc /etc/csh.cshrc /etc/profile
+/home/smithj/.bash_history:grep -i umask /etc/login.defs
+      Is it the case that any local interactive user initialization files are found to have a umask statement that sets a value less restrictive than "077"?
       </pre></td>
 	<td><pre>Remove the UMASK environment variable from all interactive users initialization files.</pre></td>
 	<td>RHEL-07-021040</td>
@@ -3922,10 +3994,12 @@ This profile configures the action to be .</pre></td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Notifying administrators of an impending disk space problem may allow them to
 take corrective action prior to any disruption.</pre></td>
-	<td><pre>Inspect /etc/audit/auditd.conf and locate the following line to
-determine if the system is configured correctly:
-space_left PERCENTAGE%
-      Is it the case that the system is not configured with a specific percentage to notify administrators of an issue?
+	<td><pre>Verify Red Hat Enterprise Linux 7 takes action when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity with the following command:
+
+$ sudo grep -w space_left /etc/audit/auditd.conf
+
+space_left = %
+      Is it the case that the value of the "space_left" keyword is not set to <sub idref="var_auditd_space_left_percentage" />% of the storage volume allocated to audit logs, or if the line is commented out, ask the System Administrator to indicate how the system is providing real-time alerts to the SA and ISSO. If the "space_left" value is not configured to the correct value?
       </pre></td>
 	<td><pre>The auditd service can be configured to take an action
 when disk space is running low but prior to running out of space completely.
@@ -3946,13 +4020,14 @@ notify the user of an issue.</pre></td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Notifying administrators of an impending disk space problem may
 allow them to take corrective action prior to any disruption.</pre></td>
-	<td><pre>Inspect /etc/audit/auditd.conf and locate the following line to
-determine if the system is configured to email the administrator when
-disk space is starting to run low:
-$ sudo grep space_left_action /etc/audit/auditd.conf
-space_left_action
-Acceptable values are email, suspend, single, and halt.
-      Is it the case that the system is not configured to send an email to the system administrator when disk space is starting to run low?
+	<td><pre>Verify Red Hat Enterprise Linux 7 notifies the SA and ISSO (at a minimum) when allocated audit record storage volume reaches 75 percent of the repository maximum audit record storage capacity with the following command:
+
+$ sudo grep -w space_left_action /etc/audit/auditd.conf
+
+space_left_action = 
+
+If the value of the "space_left_action" is not set to "", or if the line is commented out, ask the System Administrator to indicate how the system is providing real-time alerts to the SA and ISSO.
+      Is it the case that there is no evidence that real-time alerts are configured on the system?
       </pre></td>
 	<td><pre>The auditd service can be configured to take an action
 when disk space starts to run low.
@@ -3977,12 +4052,12 @@ also include suspend, single, and halt.</pre></td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Email sent to the root account is typically aliased to the
 administrators of the system, who can take appropriate action.</pre></td>
-	<td><pre>Verify that the Red Hat Enterprise Linux 7 "auditd" service is configured to notify the SA and ISSO in the event of an audit processing failure.
-Inspect /etc/audit/auditd.conf and locate the following line to
-determine if the system is configured to send email to an
-account when it needs to notify an administrator:
+	<td><pre>Verify that Red Hat Enterprise Linux 7 is configured to notify the SA and/or ISSO (at a minimum) in the event of an audit processing failure with the following command:
+
+$ sudo grep action_mail_acct /etc/audit/auditd.conf
+
 action_mail_acct = 
-      Is it the case that auditd is not configured to send emails per identified actions?
+      Is it the case that the value of the "action_mail_acct" keyword is not set to "<sub idref="var_auditd_action_mail_acct" />" and/or other accounts for security personnel, the "action_mail_acct" keyword is missing, or the retuned line is commented out, ask the system administrator to indicate how they and the ISSO are notified of an audit process failure. If there is no evidence of the proper personnel being notified of an audit processing failure?
       </pre></td>
 	<td><pre>The auditd service can be configured to send email to
 a designated account in certain situations. Add or correct the following line
@@ -5152,11 +5227,11 @@ privileged commands for all users and root. If the auditd daemon is
 configured to use the augenrules program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix .rules in the directory /etc/audit/rules.d:
--w /usr/bin/kmod -p x -F auid!=unset -k module-change
+-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
--w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre></td>
+-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre></td>
 	<td>RHEL-07-030840</td>
 	<td>audit_rules_privileged_commands_kmod</td>
 </tr>
@@ -5450,7 +5525,7 @@ $InputRELPServerRun port</pre></td>
 
 <tr>
 	<td>V-214801</td>
-	<td>1668</td>
+	<td>366</td>
 	<td>high</td>
 	<td>The Red Hat Enterprise Linux operating system must use a virus scan program.</td>
 	<td>SRG-OS-ID</td>
@@ -5524,8 +5599,11 @@ use of ports, protocols, and/or services to only those required, authorized, and
 conduct official business.</pre></td>
 	<td><pre>Inspect the list of enabled firewall ports and verify they are configured correctly by running
 the following command:
+
 $ sudo firewall-cmd --list-all
-      Is it the case that the firewalld rules are not configured?
+
+Ask the System Administrator for the site or program Ports, Protocols, and Services Management Component Local Service Assessment (PPSM CLSA). Verify the services allowed by the firewall match the PPSM CLSA.
+      Is it the case that there are additional ports, protocols, or services that are not in the PPSM CLSA, or there are ports, protocols, or services that are prohibited by the PPSM Category Assurance List (CAL), or there are no firewall rules configured?
       </pre></td>
 	<td><pre>Configure the firewalld ports to allow approved services to have access to the system.
 To configure firewalld to open ports, run the following command:
@@ -5586,7 +5664,7 @@ $ sudo grep TMOUT /etc/profile /etc/profile.d/*.sh
 
 The output should return the following:
 TMOUT=
-      Is it the case that TMOUT is not set or its value is greater than expected setting?
+      Is it the case that value of TMOUT is not less than or equal to expected setting?
       </pre></td>
 	<td><pre>Setting the TMOUT option in /etc/profile ensures that
 all user sessions will terminate based on inactivity.
@@ -5802,10 +5880,10 @@ If properly configured, the output should be:
 ClientAliveInterval 
       Is it the case that it is commented out or not configured properly?
       </pre></td>
-	<td><pre>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+	<td><pre>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 
-To set an idle timeout interval, edit the following line in /etc/ssh/sshd_config as
+To set this timeout interval, edit the following line in /etc/ssh/sshd_config as
 follows:
 ClientAliveInterval 
 
@@ -5814,7 +5892,7 @@ of 10 minutes, set interval to 600.
 
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in /etc/ssh/sshd_config. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</pre></td>
+some processes may stop SSH from correctly detecting that the user is idle.</pre></td>
 	<td>RHEL-07-040320</td>
 	<td>sshd_set_idle_timeout</td>
 </tr>
@@ -5866,7 +5944,7 @@ $ sudo grep ClientAliveCountMax /etc/ssh/sshd_config
 If properly configured, the output should be:
 ClientAliveCountMax 0
 
-In this case, the SSH idle timeout occurs precisely when
+In this case, the SSH timeout occurs precisely when
 the ClientAliveInterval is set.
       Is it the case that it is commented out or not configured properly?
       </pre></td>
@@ -5874,10 +5952,10 @@ the ClientAliveInterval is set.
 during a SSH session and waits for a response from the SSH client.
 The option ClientAliveInterval configures timeout after
 each ClientAliveCountMax message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 
-To ensure the SSH idle timeout occurs precisely when the
+To ensure the SSH timeout occurs precisely when the
 ClientAliveInterval is set, set the ClientAliveCountMax to
 value of 0 in
 
@@ -5922,7 +6000,7 @@ IgnoreRhosts yes</pre></td>
 
 <tr>
 	<td>V-204591</td>
-	<td>366</td>
+	<td>52</td>
 	<td>medium</td>
 	<td>The Red Hat Enterprise Linux operating system must display the date and time of the last successful account logon upon an SSH logon.</td>
 	<td>SRG-OS-ID</td>
@@ -6311,7 +6389,7 @@ $ sudo systemctl enable firewalld.service</pre></td>
 
 <tr>
 	<td>V-204605</td>
-	<td>366</td>
+	<td>52</td>
 	<td>low</td>
 	<td>The Red Hat Enterprise Linux operating system must display the date and time of the last successful account logon upon logon.</td>
 	<td>SRG-OS-ID</td>
@@ -6842,20 +6920,27 @@ X11UseLocalhost yes</pre></td>
 	<td><pre>Using the -s option causes the TFTP service to only serve files from the
 given directory. Serving files from an intentionally-specified directory
 reduces the risk of sharing files which should remain private.</pre></td>
-	<td><pre>If TFTP is not installed, this is not applicable. To determine if TFTP is
-installed, run the following command:
+	<td><pre>Verify the TFTP daemon is configured to operate in secure mode.
+
+Check if a TFTP server is installed with the following command:
+
 $ rpm -qa | grep tftp
 
-Verify tftp is configured by with the -s option by
-running the following command:
+
+If a TFTP server is not installed, this is Not Applicable.
+
+
+If a TFTP server is installed, verify TFTP is configured by with
+the -s option by running the following command:
+
 grep "server_args" /etc/xinetd.d/tftp
 server_args = -s 
-      Is it the case that "server_args" line does not have a "-s" option, and a subdirectory is not assigned?
+      Is it the case that '"server_args" line does not have a "-s" option, and a subdirectory is not assigned'?
       </pre></td>
-	<td><pre>If running the tftp service is necessary, it should be configured
-to change its root directory at startup. To do so, ensure
-/etc/xinetd.d/tftp includes -s as a command line argument, as shown in
-the following example:
+	<td><pre>If running the Trivial File Transfer Protocol (TFTP) service is necessary,
+it should be configured to change its root directory at startup. To do so,
+ensure /etc/xinetd.d/tftp includes -s as a command line argument,
+as shown in the following example:
 server_args = -s </pre></td>
 	<td>RHEL-07-040720</td>
 	<td>tftpd_uses_secure_mode</td>
@@ -7157,11 +7242,17 @@ service to valid network resources.</pre></td>
 	<td><pre>Verify that there are no wireless interfaces configured on the system
 with the following command:
 
-$ sudo nmcli device
-The output should only contain wireless devices in unavailable state, like in the
-following example:
-wlp0s20f3          wifi      unavailable             -- 
-      Is it the case that wireless interfaces are not active?
+Note: This requirement is Not Applicable for systems that do not have physical wireless network radios.
+
+$ nmcli device status
+DEVICE          TYPE      STATE         CONNECTION
+virbr0          bridge    connected     virbr0
+wlp7s0          wifi      connected     wifiSSID
+enp6s0          ethernet  disconnected  --
+p2p-dev-wlp7s0  wifi-p2p  disconnected  --
+lo              loopback  unmanaged     --
+virbr0-nic      tun       unmanaged     --
+      Is it the case that a wireless interface is configured and has not been documented and approved by the Information System Security Officer (ISSO)?
       </pre></td>
 	<td><pre>Deactivating wireless network interfaces should prevent normal usage of the wireless
 capability.

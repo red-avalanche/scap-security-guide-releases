@@ -46,7 +46,7 @@
 <td>Prefer installation of 64-bit operating systems when the CPU supports it.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91341-8</td>
 <td>Disable Prelinking</td>
 <td>The prelinking feature changes binaries in an attempt to decrease their startup
 time. In order to disable it, change or add the following line inside the file
@@ -82,7 +82,7 @@ Alternatively, the package can be reinstalled from trusted media using the comma
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91290-7</td>
 <td>Verify and Correct Ownership with RPM</td>
 <td>The RPM package management system can check file ownership
 permissions of installed software packages, including many that are
@@ -308,7 +308,7 @@ intrusion prevention capabilities by confining privileged programs and user
 sessions which may become compromised.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91291-5</td>
 <td>Install the Host Intrusion Prevention System (HIPS) Module</td>
 <td>Install the McAfee Host Intrusion Prevention System (HIPS) Module if it is absolutely
 necessary. If SELinux is enabled, do not install or enable this module.</td>
@@ -566,6 +566,16 @@ For example:
 After the settings have been set, run <code>dconf update</code>.</td>
 </tr>
 <tr>
+<td>CCE-91245-1</td>
+<td>Ensure Users Cannot Change GNOME3 Session Idle Settings</td>
+<td>If not already configured, ensure that users cannot change GNOME3 session idle settings
+by adding <code>/org/gnome/desktop/session/idle-delay</code>
+to <code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/desktop/session/idle-delay</pre>
+After the settings have been set, run <code>dconf update</code>.</td>
+</tr>
+<tr>
 <td>CCE-91183-4</td>
 <td>Install sudo Package</td>
 <td>The <code>sudo</code> package can be installed with the following command:
@@ -637,7 +647,7 @@ This should be enabled by making sure that the <code>use_pty</code> tag exists i
 in <code>/etc/sudoers.d/</code>.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91311-1</td>
 <td>Ensure Sudo Logfile Exists - sudo logfile</td>
 <td>A custom log sudo file can be configured with the 'logfile' tag. This rule configures
 a sudo custom logfile at the default location suggested by CIS, which uses
@@ -1184,6 +1194,11 @@ is at least <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2
 </td>
 </tr>
 <tr>
+<td></td>
+<td>Account Lockouts Must Be Logged</td>
+<td>PAM faillock locks an account due to excessive password failures, this event must be logged.</td>
+</tr>
+<tr>
 <td>CCE-85842-3</td>
 <td>Lock Accounts After Failed Password Attempts</td>
 <td>This rule configures the system to lock out accounts after a number of incorrect login attempts
@@ -1231,6 +1246,18 @@ to unlock a user. This should be done using the <code>faillock</code> tool.</td>
 <td>Set Deny For Failed Password Attempts</td>
 <td>The SUSE Linux Enterprise 15 operating system must lock an account after - at most - <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_tally2" use="legacy"></xccdf-1.2:sub>
 consecutive invalid access attempts.</td>
+</tr>
+<tr>
+<td>CCE-91281-6</td>
+<td>Configure the root Account lock for Failed Password Attempts via pam_tally2</td>
+<td>This rule configures the system to lock out the <code>root</code> account after a number of
+incorrect login attempts using <code>pam_tally2.so</code>.</td>
+</tr>
+<tr>
+<td>CCE-91282-4</td>
+<td>Set Lockout Time for Failed Password Attempts using pam_tally2</td>
+<td>This rule configures the system to lock out accounts during a specified time period after a
+number of incorrect login attempts using <code>pam_tally2.so</code>.</td>
 </tr>
 <tr>
 <td>CCE-85564-3</td>
@@ -1657,12 +1684,12 @@ To remove unauthorized system accounts, use the following command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91339-2</td>
 <td>Ensure All Groups on the System Have Unique Group ID</td>
 <td>Change the group name or delete groups, so each has a unique id.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91340-0</td>
 <td>Ensure All Groups on the System Have Unique Group Names</td>
 <td>Change the group name or delete groups, so each has a unique name.</td>
 </tr>
@@ -1733,6 +1760,12 @@ one based on Identity Management tools such as Active Directory, Kerberos,
 Directory Server, etc.</td>
 </tr>
 <tr>
+<td>CCE-91344-2</td>
+<td>Ensure shadow group is empty</td>
+<td>The shadow group allows system programs which require access the ability 
+to read the /etc/shadow file. No users should be assigned to the shadow group.</td>
+</tr>
+<tr>
 <td>CCE-85570-0</td>
 <td>Set Password Maximum Age</td>
 <td>To specify password maximum age for new accounts,
@@ -1787,7 +1820,7 @@ lifetime by running the following command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91335-0</td>
 <td>Set Password Warning Age</td>
 <td>To specify how many days prior to password
 expiration that a warning will be issued to users,
@@ -1914,7 +1947,7 @@ Otherwise assign a UID greater than "1000" that has not already been
 assigned.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91289-9</td>
 <td>Verify Root Has A Primary GID 0</td>
 <td>The <code>root</code> user should have a primary group of 0.</td>
 </tr>
@@ -1988,6 +2021,15 @@ ensure lines of this form do not appear in <code>/etc/securetty</code>:
 vc/2
 vc/3
 vc/4</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-91336-8</td>
+<td>Enforce usage of pam_wheel for su authentication</td>
+<td>To ensure that only users who are members of the <code>wheel</code> group can
+run commands with altered privileges through the <code>su</code> command, make
+sure that the following line exists in the file <code>/etc/pam.d/su</code>:
+<pre>auth             required        pam_wheel.so use_uid</pre>
 </td>
 </tr>
 <tr>
@@ -2501,7 +2543,7 @@ bottom of the <code>/etc/audit/audit.rules</code> file:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91292-3</td>
 <td>Record Events that Modify User/Group Information</td>
 <td>If the <code>auditd</code> daemon is configured to use the
 <code>augenrules</code> program to read audit rules during daemon startup (the
@@ -3235,7 +3277,7 @@ If the system is 64 bit then also add the following lines:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91246-9</td>
 <td>Ensure auditd Collects Unauthorized Access Attempts to Files (unsuccessful)</td>
 <td>At a minimum the audit system should collect unauthorized file
 accesses for all users and root. If the <code>auditd</code> daemon is configured
@@ -3501,7 +3543,7 @@ an audit record for all uses of the <code>unlinkat</code> system call:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91247-7</td>
 <td>Ensure auditd Collects Information on Kernel Module Loading and Unloading</td>
 <td>To capture kernel module loading and unloading events, use following lines, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
@@ -3566,7 +3608,7 @@ If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 add the line to file <code>/etc/audit/audit.rules</code>.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91248-5</td>
 <td>Record Attempts to Alter Logon and Logout Events</td>
 <td>The audit system already collects login information for all users
 and root. If the <code>auditd</code> daemon is configured to use the
@@ -4430,7 +4472,7 @@ Set the <code><i>ACTION</i></code> to <code>rotate</code> to ensure log rotation
 occurs. This is the default. The setting is case-insensitive.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91249-3</td>
 <td>Configure auditd max_log_file_action Upon Reaching Maximum Log Size</td>
 <td>The default action to take when the logs reach their maximum size
 is to rotate the log files, discarding the oldest one. To configure the action taken
@@ -5737,7 +5779,7 @@ network requirements such as filtering. Verify that if any IPsec connection
 exists is an approved organizational connection.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91244-4</td>
 <td>Install iptables Package</td>
 <td>The <code>iptables</code> package can be installed with the following command:
 <pre>
@@ -5761,7 +5803,7 @@ The <code>iptables</code> service can be enabled with the following command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91342-6</td>
 <td>Set Default ip6tables Policy for Incoming Packets</td>
 <td>To set the default policy to DROP (instead of ACCEPT) for
 the built-in INPUT chain which processes incoming packets,
@@ -5771,6 +5813,20 @@ add or correct the following line in
 If changes were required, reload the ip6tables rules:
 <pre>$ sudo service ip6tables reload</pre>
 </td>
+</tr>
+<tr>
+<td>CCE-91346-7</td>
+<td>Set configuration for IPv6 loopback traffic</td>
+<td>Configure the loopback interface to accept traffic.
+Configure all other interfaces to deny traffic to the loopback
+network.</td>
+</tr>
+<tr>
+<td>CCE-91345-9</td>
+<td>Set configuration for loopback traffic</td>
+<td>Configure the loopback interface to accept traffic. 
+Configure all other interfaces to deny traffic to the loopback 
+network.</td>
 </tr>
 <tr>
 <td></td>
@@ -5794,7 +5850,7 @@ add or correct the following line in
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91240-2</td>
 <td>Ensure IPv6 is disabled through kernel boot parameter</td>
 <td>To disable IPv6 protocol support in the Linux kernel,
 add the argument <code>ipv6.disable=1</code> to the default
@@ -6078,7 +6134,7 @@ To make sure that the setting is persistent, add the following line to a file in
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91243-6</td>
 <td>Enable Kernel Parameter to Ignore ICMP Broadcast Echo Requests on IPv4 Interfaces</td>
 <td>To set the runtime status of the <code>net.ipv4.icmp_echo_ignore_broadcasts</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.icmp_echo_ignore_broadcasts=1</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.icmp_echo_ignore_broadcasts = 1</pre>
@@ -6160,7 +6216,7 @@ The <code>ufw</code> service can be enabled with the following command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91241-0</td>
 <td>Disable DCCP Support</td>
 <td>The Datagram Congestion Control Protocol (DCCP) is a
 relatively new transport layer protocol, designed to support
@@ -6184,7 +6240,7 @@ kernel module from being loaded, add the following line to the file <code>/etc/m
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91242-8</td>
 <td>Disable SCTP Support</td>
 <td>The Stream Control Transmission Protocol (SCTP) is a
 transport layer protocol, designed to support the idea of
@@ -6411,7 +6467,7 @@ To properly set the permissions of <code>/etc/security/opasswd</code>, run the c
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91329-3</td>
 <td>Verify Group Who Owns Backup group File</td>
 <td> To properly set the group owner of <code>/etc/group-</code>, run the command: <pre>$ sudo chgrp root /etc/group-</pre>
 </td>
@@ -6423,13 +6479,13 @@ To properly set the permissions of <code>/etc/security/opasswd</code>, run the c
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91323-6</td>
 <td>Verify Group Who Owns Backup passwd File</td>
 <td> To properly set the group owner of <code>/etc/passwd-</code>, run the command: <pre>$ sudo chgrp root /etc/passwd-</pre>
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91327-7</td>
 <td>Verify User Who Owns Backup shadow File</td>
 <td> To properly set the group owner of <code>/etc/shadow-</code>, run the command: <pre>$ sudo chgrp shadow /etc/shadow-</pre>
 </td>
@@ -6459,7 +6515,7 @@ To properly set the permissions of <code>/etc/security/opasswd</code>, run the c
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91330-1</td>
 <td>Verify User Who Owns Backup group File</td>
 <td> To properly set the owner of <code>/etc/group-</code>, run the command: <pre>$ sudo chown root /etc/group- </pre>
 </td>
@@ -6471,13 +6527,13 @@ To properly set the permissions of <code>/etc/security/opasswd</code>, run the c
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91324-4</td>
 <td>Verify User Who Owns Backup passwd File</td>
 <td> To properly set the owner of <code>/etc/passwd-</code>, run the command: <pre>$ sudo chown root /etc/passwd- </pre>
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91326-9</td>
 <td>Verify Group Who Owns Backup shadow File</td>
 <td> To properly set the owner of <code>/etc/shadow-</code>, run the command: <pre>$ sudo chown root /etc/shadow- </pre>
 </td>
@@ -6507,7 +6563,7 @@ To properly set the permissions of <code>/etc/security/opasswd</code>, run the c
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91331-9</td>
 <td>Verify Permissions on Backup group File</td>
 <td>
 To properly set the permissions of <code>/etc/group-</code>, run the command:
@@ -6523,7 +6579,7 @@ To properly set the permissions of <code>/etc/gshadow-</code>, run the command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91325-1</td>
 <td>Verify Permissions on Backup passwd File</td>
 <td>
 To properly set the permissions of <code>/etc/passwd-</code>, run the command:
@@ -6531,7 +6587,7 @@ To properly set the permissions of <code>/etc/passwd-</code>, run the command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91328-5</td>
 <td>Verify Permissions on Backup shadow File</td>
 <td>
 To properly set the permissions of <code>/etc/shadow-</code>, run the command:
@@ -7360,7 +7416,7 @@ To make sure that the setting is persistent, add the following line to a file in
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-85745-8</td>
 <td>Disable core dump backtraces</td>
 <td>The <code>ProcessSizeMax</code> option in <code>[Coredump]</code> section
 of <code>/etc/systemd/coredump.conf</code>
@@ -7369,14 +7425,14 @@ Core dumps exceeding this size may be stored, but the backtrace will not
 be generated.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-85746-6</td>
 <td>Disable storing core dump</td>
 <td>The <code>Storage</code> option in <code>[Coredump]</code> section
 of <code>/etc/systemd/coredump.conf</code>
 can be set to <code>none</code> to disable storing core dumps permanently.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-85740-9</td>
 <td>Disable Core Dumps for All Users</td>
 <td>To disable core dumps for all users, add the following line to
 <code>/etc/security/limits.conf</code>, or to a file within the
@@ -7621,7 +7677,7 @@ and ensure the following line appears in the <code>[publish]</code> section:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91321-0</td>
 <td>Disable Avahi Server Software</td>
 <td>
 The <code>avahi-daemon</code> service can be disabled with the following command:
@@ -7763,7 +7819,7 @@ To properly set the owner of <code>/etc/crontab</code>, run the command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91304-6</td>
 <td>Verify Permissions on cron.d</td>
 <td>
 To properly set the permissions of <code>/etc/cron.d</code>, run the command:
@@ -7771,7 +7827,7 @@ To properly set the permissions of <code>/etc/cron.d</code>, run the command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91301-2</td>
 <td>Verify Permissions on cron.daily</td>
 <td>
 To properly set the permissions of <code>/etc/cron.daily</code>, run the command:
@@ -7779,7 +7835,7 @@ To properly set the permissions of <code>/etc/cron.daily</code>, run the command
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91300-4</td>
 <td>Verify Permissions on cron.hourly</td>
 <td>
 To properly set the permissions of <code>/etc/cron.hourly</code>, run the command:
@@ -7787,7 +7843,7 @@ To properly set the permissions of <code>/etc/cron.hourly</code>, run the comman
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91303-8</td>
 <td>Verify Permissions on cron.monthly</td>
 <td>
 To properly set the permissions of <code>/etc/cron.monthly</code>, run the command:
@@ -7795,7 +7851,7 @@ To properly set the permissions of <code>/etc/cron.monthly</code>, run the comma
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91302-0</td>
 <td>Verify Permissions on cron.weekly</td>
 <td>
 To properly set the permissions of <code>/etc/cron.weekly</code>, run the command:
@@ -7803,7 +7859,7 @@ To properly set the permissions of <code>/etc/cron.weekly</code>, run the comman
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91299-8</td>
 <td>Verify Permissions on crontab</td>
 <td>
 To properly set the permissions of <code>/etc/crontab</code>, run the command:
@@ -7811,13 +7867,19 @@ To properly set the permissions of <code>/etc/crontab</code>, run the command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91313-7</td>
+<td>Ensure that /etc/at.deny does not exist</td>
+<td>The file <code>/etc/at.deny</code> should not exist.
+Use <code>/etc/at.allow</code> instead.</td>
+</tr>
+<tr>
+<td>CCE-91314-5</td>
 <td>Ensure that /etc/cron.deny does not exist</td>
 <td>The file <code>/etc/cron.deny</code> should not exist.
 Use <code>/etc/cron.allow</code> instead.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91315-2</td>
 <td>Verify Group Who Owns /etc/at.allow file</td>
 <td>If <code>/etc/at.allow</code> exists, it must be group-owned by <code>root</code>.
 
@@ -7826,7 +7888,7 @@ To properly set the group owner of <code>/etc/at.allow</code>, run the command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91316-0</td>
 <td>Verify Group Who Owns /etc/cron.allow file</td>
 <td>If <code>/etc/cron.allow</code> exists, it must be group-owned by <code>root</code>.
 
@@ -7835,7 +7897,7 @@ To properly set the group owner of <code>/etc/cron.allow</code>, run the command
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91317-8</td>
 <td>Verify User Who Owns /etc/at.allow file</td>
 <td>If <code>/etc/at.allow</code> exists, it must be owned by <code>root</code>.
 
@@ -7844,7 +7906,7 @@ To properly set the owner of <code>/etc/at.allow</code>, run the command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91318-6</td>
 <td>Verify User Who Owns /etc/cron.allow file</td>
 <td>If <code>/etc/cron.allow</code> exists, it must be owned by <code>root</code>.
 
@@ -7853,7 +7915,7 @@ To properly set the owner of <code>/etc/cron.allow</code>, run the command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91319-4</td>
 <td>Verify Permissions on /etc/at.allow file</td>
 <td>If <code>/etc/at.allow</code> exists, it must have permissions <code>0640</code>
 or more restrictive.
@@ -7864,7 +7926,7 @@ To properly set the permissions of <code>/etc/at.allow</code>, run the command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91320-2</td>
 <td>Verify Permissions on /etc/cron.allow file</td>
 <td>If <code>/etc/cron.allow</code> exists, it must have permissions <code>0640</code>
 or more restrictive.
@@ -7962,7 +8024,7 @@ The <code>dhcpd</code> service can be disabled with the following command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91285-7</td>
 <td>Uninstall bind Package</td>
 <td>The <code>named</code> service is provided by the <code>bind</code> package.
 The <code>bind</code> package can be removed with the following command:
@@ -8029,7 +8091,7 @@ ftp</pre>
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91286-5</td>
 <td>Uninstall httpd Package</td>
 <td>
 The <code>httpd</code> package can be removed with the following command:
@@ -8063,15 +8125,7 @@ The <code>dovecot</code> service can be disabled with the following command:
 </td>
 </tr>
 <tr>
-<td></td>
-<td>Disable Kerberos by removing host keytab</td>
-<td>Kerberos is not an approved key distribution method for
-Common Criteria. To prevent using Kerberos by system daemons,
-remove the Kerberos keytab files, especially
-<code>/etc/krb5.keytab</code>.</td>
-</tr>
-<tr>
-<td></td>
+<td>CCE-91310-3</td>
 <td>Ensure LDAP client is not installed</td>
 <td>The Lightweight Directory Access Protocol (LDAP) is a service that provides
 a method for looking up information from a central database.
@@ -8081,7 +8135,7 @@ $ sudo zypper remove openldap-clients</pre>
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91283-2</td>
 <td>Uninstall openldap-servers Package</td>
 <td>
 The openldap-servers package is not installed by default on a SUSE Linux Enterprise 15
@@ -8161,7 +8215,7 @@ Edit the file <code>/etc/postfix/main.cf</code> to ensure that only the followin
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91284-0</td>
 <td>Uninstall nfs-utils Package</td>
 <td>The <code>nfs-utils</code> package can be removed with the following command:
 <pre>
@@ -8182,7 +8236,7 @@ The <code>netfs</code> service can be disabled with the following command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91312-9</td>
 <td>Disable rpcbind Service</td>
 <td>The rpcbind utility maps RPC services to the ports on which they listen.
 RPC processes notify rpcbind when they start, registering the ports they
@@ -8233,7 +8287,7 @@ $ sudo zypper install chrony</pre>
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91293-1</td>
 <td>Install the ntp service</td>
 <td>The ntpd service should be installed.</td>
 </tr>
@@ -8277,7 +8331,15 @@ be preferred to be used rather than the <code>chronyd</code> one. Refer to:
 for guidance which NTP daemon to choose depending on the environment used.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91294-9</td>
+<td>Enable the NTP Daemon</td>
+<td>
+The <code>ntp</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable ntp.service</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-91295-6</td>
 <td>Enable the NTP Daemon</td>
 <td>
 The <code>ntpd</code> service can be enabled with the following command:
@@ -8285,15 +8347,7 @@ The <code>ntpd</code> service can be enabled with the following command:
 </td>
 </tr>
 <tr>
-<td></td>
-<td>Enable the NTP Daemon</td>
-<td>
-The <code>ntpd</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable ntpd.service</pre>
-</td>
-</tr>
-<tr>
-<td></td>
+<td>CCE-91296-4</td>
 <td>Enable systemd_timesyncd Service</td>
 <td>
 The <code>systemd_timesyncd</code> service can be enabled with the following command:
@@ -8377,7 +8431,7 @@ Add or edit server or pool lines to <code>/etc/chrony.conf</code> as appropriate
 Multiple servers may be configured.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91297-2</td>
 <td>Specify Additional Remote NTP Servers</td>
 <td>Additional NTP servers can be specified for time synchronization
 in the file <code>/etc/ntp.conf</code>.  To do so, add additional lines of the
@@ -8387,7 +8441,7 @@ following form, substituting the IP address or hostname of a remote NTP server f
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91298-0</td>
 <td>Specify a Remote NTP Server</td>
 <td>To specify a remote NTP server for time synchronization, edit
 the file <code>/etc/ntp.conf</code>. Add or correct the following lines,
@@ -8397,8 +8451,8 @@ This instructs the NTP software to contact that remote server to obtain time
 data.</td>
 </tr>
 <tr>
-<td></td>
-<td>Ensure rsyncd service is diabled</td>
+<td>CCE-91305-3</td>
+<td>Ensure rsyncd service is disabled</td>
 <td>
 The <code>rsyncd</code> service can be disabled with the following command:
 <pre>$ sudo systemctl mask --now rsyncd.service</pre>
@@ -8615,7 +8669,7 @@ The <code>tftp</code> service can be disabled with the following command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91322-8</td>
 <td>Disable the CUPS Service</td>
 <td>
 The <code>cups</code> service can be disabled with the following command:
@@ -8654,7 +8708,7 @@ $ sudo zypper install samba-common</pre>
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91287-3</td>
 <td>Uninstall Samba Package</td>
 <td>The <code>samba</code> package can be removed with the following command: <pre> $ sudo zypper remove samba</pre>
 </td>
@@ -8668,7 +8722,7 @@ The <code>smb</code> service can be disabled with the following command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91288-1</td>
 <td>Uninstall net-snmp Package</td>
 <td>
 The <code>net-snmp</code> package provides the snmpd service.
@@ -8760,7 +8814,7 @@ To properly set the owner of <code>/etc/ssh/sshd_config</code>, run the command:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91306-1</td>
 <td>Verify Permissions on SSH Server config file</td>
 <td>
 To properly set the permissions of <code>/etc/ssh/sshd_config</code>, run the command:
@@ -8800,10 +8854,10 @@ remote access.</td>
 during a SSH session and waits for a response from the SSH client.
 The option <code>ClientAliveInterval</code> configures timeout after
 each <code>ClientAliveCountMax</code> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 
-To ensure the SSH idle timeout occurs precisely when the
+To ensure the SSH timeout occurs precisely when the
 <code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
 value of <code>0</code> in
 
@@ -8817,22 +8871,23 @@ value of <code>0</code> in
 during a SSH session and waits for a response from the SSH client.
 The option <code>ClientAliveInterval</code> configures timeout after
 each <code>ClientAliveCountMax</code> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 For SSH earlier than v8.2, a <code>ClientAliveCountMax</code> value of <code>0</code>
-causes an idle timeout precisely when the <code>ClientAliveInterval</code> is set.
+causes a timeout precisely when the <code>ClientAliveInterval</code> is set.
 Starting with v8.2, a value of <code>0</code> disables the timeout functionality
 completely. If the option is set to a number greater than <code>0</code>, then
-the idle session will be disconnected after
-<code>ClientAliveInterval * ClientAliveCountMax</code> seconds.</td>
+the session will be disconnected after
+<code>ClientAliveInterval * ClientAliveCountMax</code> seconds without receiving
+a keep alive message.</td>
 </tr>
 <tr>
 <td>CCE-83281-6</td>
-<td>Set SSH Idle Timeout Interval</td>
-<td>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+<td>Set SSH Client Alive Interval</td>
+<td>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br><br>
-To set an idle timeout interval, edit the following line in <code>/etc/ssh/sshd_config</code> as
+To set this timeout interval, edit the following line in <code>/etc/ssh/sshd_config</code> as
 follows:
 <pre>ClientAliveInterval <b><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sshd_idle_timeout_value" use="legacy"></xccdf-1.2:sub></b></pre>
 <br><br>
@@ -8841,7 +8896,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br><br>
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <code>/etc/ssh/sshd_config</code>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</td>
+some processes may stop SSH from correctly detecting that the user is idle.</td>
 </tr>
 <tr>
 <td>CCE-91439-0</td>
@@ -8952,7 +9007,7 @@ correct the following line in
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91307-9</td>
 <td>Disable SSH Support for .rhosts Files</td>
 <td>SSH can emulate the behavior of the obsolete rsh
 command in allowing users to enable insecure access to their
@@ -9005,7 +9060,7 @@ To disable root login via SSH, add or correct the following line in
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91334-3</td>
 <td>Disable SSH TCP Forwarding</td>
 <td>The <code>AllowTcpForwarding</code> parameter specifies whether TCP forwarding is permitted.
 To disable TCP forwarding, add or correct the following line in
@@ -9079,7 +9134,7 @@ To enable GSSAPI authentication, add or correct the following line in
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91333-5</td>
 <td>Enable PAM</td>
 <td>UsePAM Enables the Pluggable Authentication Module interface. If set to “yes” this will
 enable PAM authentication using ChallengeResponseAuthentication and
@@ -9169,7 +9224,7 @@ To enable X11 Forwarding, add or correct the following line in
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91343-4</td>
 <td>Limit Users' SSH Access</td>
 <td>By default, the SSH configuration allows any user with an account
 to access the system. In order to specify the users that are allowed to login
@@ -9247,7 +9302,7 @@ SSH, add or correct the following line in
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91332-7</td>
 <td>Set SSH authentication attempt limit</td>
 <td>The <code>MaxAuthTries</code> parameter specifies the maximum number of authentication attempts
 permitted per connection. Once the number of failures reaches half this value, additional failures are logged.
@@ -9256,7 +9311,7 @@ to set MaxAUthTries edit <code>/etc/ssh/sshd_config</code> as follows:
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91309-5</td>
 <td>Set SSH MaxSessions limit</td>
 <td>The <code>MaxSessions</code> parameter specifies the maximum number of open sessions permitted
 from a given connection. To set MaxSessions edit
@@ -9264,7 +9319,7 @@ from a given connection. To set MaxSessions edit
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91308-7</td>
 <td>Ensure SSH MaxStartups is configured</td>
 <td>The MaxStartups parameter specifies the maximum number of concurrent
 unauthenticated connections to the SSH daemon. Additional connections will be
@@ -9277,7 +9332,7 @@ CIS recommends a MaxStartups value of '10:30:60', or more restrictive where
 dictated by site policy.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91337-6</td>
 <td>Use Only FIPS 140-2 Validated Ciphers</td>
 <td>Limit the ciphers to those algorithms which are FIPS-approved.
 Counter (CTR) mode is also preferred over cipher-block chaining (CBC) mode.
@@ -9299,7 +9354,7 @@ This rule ensures that there are configured ciphers mentioned
 above (or their subset), keeping the given order of algorithms.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-91338-4</td>
 <td>Use Only FIPS 140-2 Validated MACs</td>
 <td>Limit the MACs to those hash algorithms which are FIPS-approved.
 The following line in <code>/etc/ssh/sshd_config</code>

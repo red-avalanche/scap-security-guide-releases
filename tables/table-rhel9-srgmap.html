@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<html>
 <head lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>SRGs from General Purpose Operating System Security Requirements Guide Mapped to DISA STIG for Red Hat Enterprise Linux 9</title>
@@ -304,13 +304,6 @@ records is stored. The configured directory must have the correct SELinux contex
 
       <table>
         <tr>
-          <td>Account Lockouts Must Persist</td>
-          <td>By setting a `dir` in the faillock configuration account lockouts will persist across reboots.</td>
-        </tr>
-      </table>
-
-      <table>
-        <tr>
           <td>Lock Accounts After Failed Password Attempts</td>
           <td>This rule configures the system to lock out accounts after a number of incorrect login attempts
 using <tt>pam_faillock.so</tt>.
@@ -327,6 +320,22 @@ depending on the OS version.</td>
           <td>Configure the root Account for Failed Password Attempts</td>
           <td>This rule configures the system to lock out the <tt>root</tt> account after a number of
 incorrect login attempts using <tt>pam_faillock.so</tt>.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Lock Accounts Must Persist</td>
+          <td>This rule ensures that the system lock out accounts using <tt>pam_faillock.so</tt> persist
+after system reboot. From "pam_faillock" man pages:
+<pre>Note that the default directory that "pam_faillock" uses is usually cleared on system
+boot so the access will be reenabled after system reboot. If that is undesirable, a different
+tally directory must be set with the "dir" option.</pre>
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
 defined to work as expected. In order to avoid errors when manually editing these files, it is
@@ -7395,9 +7404,9 @@ command:
       <table>
         <tr>
           <td>Enable SSH Server firewalld Firewall Exception</td>
-          <td>By default, inbound connections to SSH's port are allowed. If
-the SSH server is being used but denied by the firewall, this exception should
-be added to the firewall configuration.
+          <td>If the SSH server is in use, inbound connections to SSH's port should be allowed to permit
+remote access through SSH. In more restrictive firewalld settings, the SSH port should be
+added to the proper firewalld zone in order to allow SSH remote access.
 <br /><br />
 
 
@@ -8410,11 +8419,11 @@ Nonlocal maintenance and diagnostic activities are those activities conducted by
 
       <table>
         <tr>
-          <td>Set SSH Idle Timeout Interval</td>
-          <td>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+          <td>Set SSH Client Alive Interval</td>
+          <td>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br /><br />
-To set an idle timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
+To set this timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
 follows:
 <pre>ClientAliveInterval <b><sub idref="sshd_idle_timeout_value" /></b></pre>
 <br/><br/>
@@ -8423,7 +8432,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br /><br />
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</td>
+some processes may stop SSH from correctly detecting that the user is idle.</td>
         </tr>
       </table>
 
@@ -8434,10 +8443,10 @@ some processes may stop SSH  from correctly detecting that the user is idle.</td
 during a SSH session and waits for a response from the SSH client.
 The option <tt>ClientAliveInterval</tt> configures timeout after
 each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 
-To ensure the SSH idle timeout occurs precisely when the
+To ensure the SSH timeout occurs precisely when the
 <tt>ClientAliveInterval</tt> is set, set the <tt>ClientAliveCountMax</tt> to
 value of <tt>0</tt> in
 
@@ -8703,11 +8712,11 @@ setting in a file loaded by <tt>/etc/profile</tt>, e.g.
 
       <table>
         <tr>
-          <td>Set SSH Idle Timeout Interval</td>
-          <td>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+          <td>Set SSH Client Alive Interval</td>
+          <td>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br /><br />
-To set an idle timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
+To set this timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
 follows:
 <pre>ClientAliveInterval <b><sub idref="sshd_idle_timeout_value" /></b></pre>
 <br/><br/>
@@ -8716,7 +8725,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br /><br />
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</td>
+some processes may stop SSH from correctly detecting that the user is idle.</td>
         </tr>
       </table>
 
@@ -8727,14 +8736,15 @@ some processes may stop SSH  from correctly detecting that the user is idle.</td
 during a SSH session and waits for a response from the SSH client.
 The option <tt>ClientAliveInterval</tt> configures timeout after
 each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 For SSH earlier than v8.2, a <tt>ClientAliveCountMax</tt> value of <tt>0</tt>
-causes an idle timeout precisely when the <tt>ClientAliveInterval</tt> is set.
+causes a timeout precisely when the <tt>ClientAliveInterval</tt> is set.
 Starting with v8.2, a value of <tt>0</tt> disables the timeout functionality
 completely. If the option is set to a number greater than <tt>0</tt>, then
-the idle session will be disconnected after
-<tt>ClientAliveInterval * ClientAliveCountMax</tt> seconds.</td>
+the session will be disconnected after
+<tt>ClientAliveInterval * ClientAliveCountMax</tt> seconds without receiving
+a keep alive message.</td>
         </tr>
       </table>
 
@@ -8745,10 +8755,10 @@ the idle session will be disconnected after
 during a SSH session and waits for a response from the SSH client.
 The option <tt>ClientAliveInterval</tt> configures timeout after
 each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 
-To ensure the SSH idle timeout occurs precisely when the
+To ensure the SSH timeout occurs precisely when the
 <tt>ClientAliveInterval</tt> is set, set the <tt>ClientAliveCountMax</tt> to
 value of <tt>0</tt> in
 
@@ -10394,11 +10404,11 @@ This capability is typically reserved for specific operating system functionalit
 
       <table>
         <tr>
-          <td>Set SSH Idle Timeout Interval</td>
-          <td>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+          <td>Set SSH Client Alive Interval</td>
+          <td>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br /><br />
-To set an idle timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
+To set this timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
 follows:
 <pre>ClientAliveInterval <b><sub idref="sshd_idle_timeout_value" /></b></pre>
 <br/><br/>
@@ -10407,7 +10417,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br /><br />
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</td>
+some processes may stop SSH from correctly detecting that the user is idle.</td>
         </tr>
       </table>
 
@@ -10418,14 +10428,15 @@ some processes may stop SSH  from correctly detecting that the user is idle.</td
 during a SSH session and waits for a response from the SSH client.
 The option <tt>ClientAliveInterval</tt> configures timeout after
 each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 For SSH earlier than v8.2, a <tt>ClientAliveCountMax</tt> value of <tt>0</tt>
-causes an idle timeout precisely when the <tt>ClientAliveInterval</tt> is set.
+causes a timeout precisely when the <tt>ClientAliveInterval</tt> is set.
 Starting with v8.2, a value of <tt>0</tt> disables the timeout functionality
 completely. If the option is set to a number greater than <tt>0</tt>, then
-the idle session will be disconnected after
-<tt>ClientAliveInterval * ClientAliveCountMax</tt> seconds.</td>
+the session will be disconnected after
+<tt>ClientAliveInterval * ClientAliveCountMax</tt> seconds without receiving
+a keep alive message.</td>
         </tr>
       </table>
 
@@ -10436,10 +10447,10 @@ the idle session will be disconnected after
 during a SSH session and waits for a response from the SSH client.
 The option <tt>ClientAliveInterval</tt> configures timeout after
 each <tt>ClientAliveCountMax</tt> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 
-To ensure the SSH idle timeout occurs precisely when the
+To ensure the SSH timeout occurs precisely when the
 <tt>ClientAliveInterval</tt> is set, set the <tt>ClientAliveCountMax</tt> to
 value of <tt>0</tt> in
 
@@ -11242,6 +11253,22 @@ depending on the OS version.</td>
 
       <table>
         <tr>
+          <td>Lock Accounts Must Persist</td>
+          <td>This rule ensures that the system lock out accounts using <tt>pam_faillock.so</tt> persist
+after system reboot. From "pam_faillock" man pages:
+<pre>Note that the default directory that "pam_faillock" uses is usually cleared on system
+boot so the access will be reenabled after system reboot. If that is undesirable, a different
+tally directory must be set with the "dir" option.</pre>
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Set Interval For Counting Failed Password Attempts</td>
           <td>Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
@@ -11480,6 +11507,19 @@ mode for corrective action. Acceptable values also include <tt>suspend</tt> and
 outweighs the need to log all actions, and a different setting should be
 determined. Details regarding all possible values for <i>ACTION</i> are described in the
 <tt>auditd.conf</tt> man page.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Configure auditd admin_space_left on Low Disk Space</td>
+          <td>The <tt>auditd</tt> service can be configured to take an action
+when disk space is running low but prior to running out of space completely.
+Edit the file <tt>/etc/audit/auditd.conf</tt>. Add or modify the following line,
+substituting <i>PERCENTAGE</i> appropriately:
+<pre>admin_space_left = <i>PERCENTAGE</i>%</pre>
+Set this value to <sub idref="var_auditd_admin_space_left_percentage" />
+to cause the system to perform an action.</td>
         </tr>
       </table>
 
@@ -13485,6 +13525,22 @@ utility to read audit rules during daemon startup, add the following lines to
 
       <table>
         <tr>
+          <td>Record Any Attempts to Run restorecon</td>
+          <td>At a minimum, the audit system should collect any execution attempt
+of the <tt>restorecon</tt> command for all users and root. If the <tt>auditd</tt>
+daemon is configured to use the <tt>augenrules</tt> program to read audit rules
+during daemon startup (the default), add the following lines to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt> file:
+<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Record Any Attempts to Run semanage</td>
           <td>At a minimum, the audit system should collect any execution attempt
 of the <tt>semanage</tt> command for all users and root. If the <tt>auditd</tt>
@@ -14760,11 +14816,11 @@ and continuous monitoring tests in place.</td>
 
       <table>
         <tr>
-          <td>Set SSH Idle Timeout Interval</td>
-          <td>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+          <td>Set SSH Client Alive Interval</td>
+          <td>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br /><br />
-To set an idle timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
+To set this timeout interval, edit the following line in <tt>/etc/ssh/sshd_config</tt> as
 follows:
 <pre>ClientAliveInterval <b><sub idref="sshd_idle_timeout_value" /></b></pre>
 <br/><br/>
@@ -14773,7 +14829,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br /><br />
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <tt>/etc/ssh/sshd_config</tt>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</td>
+some processes may stop SSH from correctly detecting that the user is idle.</td>
         </tr>
       </table>
 
@@ -17844,6 +17900,22 @@ utility to read audit rules during daemon startup, add the following lines to
 
       <table>
         <tr>
+          <td>Record Any Attempts to Run restorecon</td>
+          <td>At a minimum, the audit system should collect any execution attempt
+of the <tt>restorecon</tt> command for all users and root. If the <tt>auditd</tt>
+daemon is configured to use the <tt>augenrules</tt> program to read audit rules
+during daemon startup (the default), add the following lines to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt> file:
+<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Record Any Attempts to Run semanage</td>
           <td>At a minimum, the audit system should collect any execution attempt
 of the <tt>semanage</tt> command for all users and root. If the <tt>auditd</tt>
@@ -17918,6 +17990,22 @@ If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following lines to
 <tt>/etc/audit/audit.rules</tt> file:
 <pre>-a always,exit -F path=/usr/bin/chcon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Record Any Attempts to Run restorecon</td>
+          <td>At a minimum, the audit system should collect any execution attempt
+of the <tt>restorecon</tt> command for all users and root. If the <tt>auditd</tt>
+daemon is configured to use the <tt>augenrules</tt> program to read audit rules
+during daemon startup (the default), add the following lines to a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
+<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
+utility to read audit rules during daemon startup, add the following lines to
+<tt>/etc/audit/audit.rules</tt> file:
+<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre></td>
         </tr>
       </table>
 
@@ -21849,6 +21937,26 @@ After the settings have been set, run <tt>dconf update</tt>.</td>
 
       <table>
         <tr>
+          <td>Disable the GNOME3 Login User List</td>
+          <td>In the default graphical environment, users logging directly into the
+system are greeted with a login screen that displays all known users.
+This functionality should be disabled by setting <tt>disable-user-list</tt>
+to <tt>true</tt>.
+<br /><br />
+To disable, add or edit <tt>disable-user-list</tt> to
+<tt>/etc/dconf/db/distro.d/00-security-settings</tt>. For example:
+<pre>[org/gnome/login-screen]
+disable-user-list=true</pre>
+Once the setting has been added, add a lock to
+<tt>/etc/dconf/db/distro.d/locks/00-security-settings-lock</tt> to prevent
+user modification. For example:
+<pre>/org/gnome/login-screen/disable-user-list</pre>
+After the settings have been set, run <tt>dconf update</tt>.</td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
           <td>Ensure All World-Writable Directories Are Owned by root user</td>
           <td>All directories in local partitions which are world-writable should be owned
 by root. If any world-writable directories are not owned by root, this
@@ -23675,11 +23783,23 @@ to large non-zero value.</td>
       <table>
         <tr>
           <td>Ensure tftp Daemon Uses Secure Mode</td>
-          <td>If running the <tt>tftp</tt> service is necessary, it should be configured
-to change its root directory at startup. To do so, ensure
-<tt>/etc/xinetd.d/tftp</tt> includes <tt>-s</tt> as a command line argument, as shown in
-the following example:
-<pre>server_args = -s <sub idref="var_tftpd_secure_directory" /></pre></td>
+          <td>If running the Trivial File Transfer Protocol (TFTP) service is necessary,
+it should be configured to change its root directory at startup. To do so,
+find the path for the <tt>tftp</tt> systemd service:
+<pre>$ sudo systemctl show tftp | grep FragmentPath=
+FragmentPath=/etc/systemd/system/tftp.service</pre>
+
+and ensure the <tt>ExecStart</tt> line on that file includes the <tt>-s</tt> option with a subdirectory:
+<pre>ExecStart=/usr/sbin/in.tftpd -s <sub idref="var_tftpd_secure_directory" /></pre></td>
+        </tr>
+      </table>
+
+      <table>
+        <tr>
+          <td>Use Kerberos Security on All Exports</td>
+          <td>Using Kerberos on all exported mounts prevents a malicious client or user from
+impersonating a system user. To cryptography authenticate users to the NFS server,
+add <tt>sec=krb5:krb5i:krb5p</tt> to each export in <tt>/etc/exports</tt>.</td>
         </tr>
       </table>
 
@@ -23865,13 +23985,6 @@ To explicitly disable Environment options, add or correct the following
 
 
     <td>
-
-      <table>
-        <tr>
-          <td>fapolicyd Must be Configured to Limit Access to Users Home Folders</td>
-          <td>fapolicyd needs be configured so that users cannot give access to their home folders to other users.</td>
-        </tr>
-      </table>
 
       <table>
         <tr>

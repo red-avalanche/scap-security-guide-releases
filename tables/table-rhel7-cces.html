@@ -1537,6 +1537,41 @@ OR:
 </td>
 </tr>
 <tr>
+<td>CCE-86146-8</td>
+<td>Modify the System Login Banner for Remote Connections</td>
+<td>To configure the system login banner edit <code>/etc/issue.net</code>. Replace the
+default text with a message compliant with the local site policy or a legal
+disclaimer.
+
+The DoD required text is either:
+<br><br>
+<code>You are accessing a U.S. Government (USG) Information System (IS) that
+is provided for USG-authorized use only. By using this IS (which includes
+any device attached to this IS), you consent to the following conditions:
+<br>-The USG routinely intercepts and monitors communications on this IS
+for purposes including, but not limited to, penetration testing, COMSEC
+monitoring, network operations and defense, personnel misconduct (PM), law
+enforcement (LE), and counterintelligence (CI) investigations.
+<br>-At any time, the USG may inspect and seize data stored on this IS.
+<br>-Communications using, or data stored on, this IS are not private,
+are subject to routine monitoring, interception, and search, and may be
+disclosed or used for any USG-authorized purpose.
+<br>-This IS includes security measures (e.g., authentication and access
+controls) to protect USG interests -- not for your personal benefit or
+privacy.
+<br>-Notwithstanding the above, using this IS does not constitute consent
+to PM, LE or CI investigative searching or monitoring of the content of
+privileged communications, or work product, related to personal
+representation or services by attorneys, psychotherapists, or clergy, and
+their assistants. Such communications and work product are private and
+confidential. See User Agreement for details.</code>
+<br><br>
+OR:
+<br><br>
+<code>I've read &amp; consent to terms in IS user agreem't.</code>
+</td>
+</tr>
+<tr>
 <td>CCE-83394-7</td>
 <td>Modify the System Message of the Day Banner</td>
 <td>To configure the system message banner edit <code>/etc/motd</code>. Replace the
@@ -1580,6 +1615,14 @@ To properly set the group owner of <code>/etc/issue</code>, run the command:
 </td>
 </tr>
 <tr>
+<td>CCE-86050-2</td>
+<td>Verify Group Ownership of System Login Banner for Remote Connections</td>
+<td>
+To properly set the group owner of <code>/etc/issue.net</code>, run the command:
+<pre>$ sudo chgrp root /etc/issue.net</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-83727-8</td>
 <td>Verify Group Ownership of Message of the Day Banner</td>
 <td>
@@ -1596,6 +1639,14 @@ To properly set the owner of <code>/etc/issue</code>, run the command:
 </td>
 </tr>
 <tr>
+<td>CCE-86053-6</td>
+<td>Verify ownership of System Login Banner for Remote Connections</td>
+<td>
+To properly set the owner of <code>/etc/issue.net</code>, run the command:
+<pre>$ sudo chown root /etc/issue.net </pre>
+</td>
+</tr>
+<tr>
 <td>CCE-83737-7</td>
 <td>Verify ownership of Message of the Day Banner</td>
 <td>
@@ -1609,6 +1660,14 @@ To properly set the owner of <code>/etc/motd</code>, run the command:
 <td>
 To properly set the permissions of <code>/etc/issue</code>, run the command:
 <pre>$ sudo chmod 0644 /etc/issue</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86058-5</td>
+<td>Verify permissions on System Login Banner for Remote Connections</td>
+<td>
+To properly set the permissions of <code>/etc/issue.net</code>, run the command:
+<pre>$ sudo chmod 0644 /etc/issue.net</pre>
 </td>
 </tr>
 <tr>
@@ -1736,6 +1795,11 @@ For example:
 <td>Limit Password Reuse</td>
 <td>Do not allow users to reuse recent passwords. This can be accomplished by using the
 <code>remember</code> option for the <code>pam_unix</code> or <code>pam_pwhistory</code> PAM modules.</td>
+</tr>
+<tr>
+<td></td>
+<td>Account Lockouts Must Be Logged</td>
+<td>PAM faillock locks an account due to excessive password failures, this event must be logged.</td>
 </tr>
 <tr>
 <td>CCE-27350-8</td>
@@ -2205,6 +2269,22 @@ disabled. However, if the password will not expire for another 60 days, then 60
 days plus <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_account_disable_post_pw_expiration" use="legacy"></xccdf-1.2:sub></code> day(s) could
 elapse until the account would be automatically disabled. See the
 <code>useradd</code> man page for more information.</td>
+</tr>
+<tr>
+<td>CCE-88242-3</td>
+<td>Assign Expiration Date to Emergency Accounts</td>
+<td>Emergency accounts are privileged accounts established in response to
+crisis situations where the need for rapid account activation is required.
+In the event emergency accounts are required, configure the system to
+terminate them after a documented time period. For every emergency account,
+run the following command to set an expiration date on it, substituting
+<code><i>ACCOUNT_NAME</i></code> and <code><i>YYYY-MM-DD</i></code>
+appropriately:
+<pre>$ sudo chage -E <i>YYYY-MM-DD ACCOUNT_NAME</i></pre>
+<code><i>YYYY-MM-DD</i></code> indicates the documented expiration date for the
+account. For U.S. Government systems, the operating system must be
+configured to automatically terminate these types of accounts after a
+period of 72 hours.</td>
 </tr>
 <tr>
 <td>CCE-81000-2</td>
@@ -5692,11 +5772,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-w /usr/bin/kmod -p x -F auid!=unset -k module-change</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 </tr>
 <tr>
@@ -6243,6 +6323,17 @@ determined. Details regarding all possible values for <i>ACTION</i> are describe
 <code>auditd.conf</code> man page.</td>
 </tr>
 <tr>
+<td></td>
+<td>Configure auditd admin_space_left on Low Disk Space</td>
+<td>The <code>auditd</code> service can be configured to take an action
+when disk space is running low but prior to running out of space completely.
+Edit the file <code>/etc/audit/auditd.conf</code>. Add or modify the following line,
+substituting <i>PERCENTAGE</i> appropriately:
+<pre>admin_space_left = <i>PERCENTAGE</i>%</pre>
+Set this value to <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_auditd_admin_space_left_percentage" use="legacy"></xccdf-1.2:sub>
+to cause the system to perform an action.</td>
+</tr>
+<tr>
 <td>CCE-27331-8</td>
 <td>Configure auditd flush priority</td>
 <td>The <code>auditd</code> service can be configured to
@@ -6658,6 +6749,16 @@ To properly set the group owner of <code>/boot/grub2/grub.cfg</code>, run the co
 </td>
 </tr>
 <tr>
+<td>CCE-86008-0</td>
+<td>Verify /boot/grub2/user.cfg Group Ownership</td>
+<td>The file <code>/boot/grub2/user.cfg</code> should be group-owned by the <code>root</code>
+group to prevent reading or modification of the file.
+
+To properly set the group owner of <code>/boot/grub2/user.cfg</code>, run the command:
+<pre>$ sudo chgrp root /boot/grub2/user.cfg</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-82026-6</td>
 <td>Verify /boot/grub2/grub.cfg User Ownership</td>
 <td>The file <code>/boot/grub2/grub.cfg</code> should
@@ -6669,12 +6770,31 @@ To properly set the owner of <code>/boot/grub2/grub.cfg</code>, run the command:
 </td>
 </tr>
 <tr>
+<td>CCE-86014-8</td>
+<td>Verify /boot/grub2/user.cfg User Ownership</td>
+<td>The file <code>/boot/grub2/user.cfg</code> should be owned by the <code>root</code>
+user to prevent reading or modification of the file.
+
+To properly set the owner of <code>/boot/grub2/user.cfg</code>, run the command:
+<pre>$ sudo chown root /boot/grub2/user.cfg </pre>
+</td>
+</tr>
+<tr>
 <td>CCE-82039-9</td>
 <td>Verify /boot/grub2/grub.cfg Permissions</td>
 <td>File permissions for <code>/boot/grub2/grub.cfg</code> should be set to 600.
 
 To properly set the permissions of <code>/boot/grub2/grub.cfg</code>, run the command:
 <pre>$ sudo chmod 600 /boot/grub2/grub.cfg</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86023-9</td>
+<td>Verify /boot/grub2/user.cfg Permissions</td>
+<td>File permissions for <code>/boot/grub2/user.cfg</code> should be set to 600.
+
+To properly set the permissions of <code>/boot/grub2/user.cfg</code>, run the command:
+<pre>$ sudo chmod 600 /boot/grub2/user.cfg</pre>
 </td>
 </tr>
 <tr>
@@ -6735,6 +6855,16 @@ To properly set the group owner of <code>/boot/efi/EFI/redhat/grub.cfg</code>, r
 </td>
 </tr>
 <tr>
+<td>CCE-86011-4</td>
+<td>Verify /boot/efi/EFI/redhat/user.cfg Group Ownership</td>
+<td>The file <code>/boot/efi/EFI/redhat/user.cfg</code> should be group-owned by the
+<code>root</code> group to prevent reading or modification of the file.
+
+To properly set the group owner of <code>/boot/efi/EFI/redhat/user.cfg</code>, run the command:
+<pre>$ sudo chgrp root /boot/efi/EFI/redhat/user.cfg</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-83429-1</td>
 <td>Verify the UEFI Boot Loader grub.cfg User Ownership</td>
 <td>The file <code>/boot/efi/EFI/redhat/grub.cfg</code> should
@@ -6746,12 +6876,31 @@ To properly set the owner of <code>/boot/efi/EFI/redhat/grub.cfg</code>, run the
 </td>
 </tr>
 <tr>
+<td>CCE-86019-7</td>
+<td>Verify /boot/efi/EFI/redhat/user.cfg User Ownership</td>
+<td>The file <code>/boot/efi/EFI/redhat/user.cfg</code> should be owned by the <code>root</code>
+user to prevent reading or modification of the file.
+
+To properly set the owner of <code>/boot/efi/EFI/redhat/user.cfg</code>, run the command:
+<pre>$ sudo chown root /boot/efi/EFI/redhat/user.cfg </pre>
+</td>
+</tr>
+<tr>
 <td>CCE-83431-7</td>
 <td>Verify the UEFI Boot Loader grub.cfg Permissions</td>
 <td>File permissions for <code>/boot/efi/EFI/redhat/grub.cfg</code> should be set to 700.
 
 To properly set the permissions of <code>/boot/efi/EFI/redhat/grub.cfg</code>, run the command:
 <pre>$ sudo chmod 700 /boot/efi/EFI/redhat/grub.cfg</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86026-2</td>
+<td>Verify /boot/efi/EFI/redhat/user.cfg Permissions</td>
+<td>File permissions for <code>/boot/efi/EFI/redhat/user.cfg</code> should be set to 600.
+
+To properly set the permissions of <code>/boot/efi/EFI/redhat/user.cfg</code>, run the command:
+<pre>$ sudo chmod 600 /boot/efi/EFI/redhat/user.cfg</pre>
 </td>
 </tr>
 <tr>
@@ -7902,6 +8051,20 @@ add or correct the following line in
 If changes were required, reload the ip6tables rules:
 <pre>$ sudo service ip6tables reload</pre>
 </td>
+</tr>
+<tr>
+<td></td>
+<td>Set configuration for IPv6 loopback traffic</td>
+<td>Configure the loopback interface to accept traffic.
+Configure all other interfaces to deny traffic to the loopback
+network.</td>
+</tr>
+<tr>
+<td></td>
+<td>Set configuration for loopback traffic</td>
+<td>Configure the loopback interface to accept traffic. 
+Configure all other interfaces to deny traffic to the loopback 
+network.</td>
 </tr>
 <tr>
 <td></td>
@@ -9262,6 +9425,14 @@ Add the <code>nosuid</code> option to the fourth column of
 <code>/dev/shm</code>.</td>
 </tr>
 <tr>
+<td>CCE-86037-9</td>
+<td>Add grpquota Option to /home</td>
+<td>The <code>grpquota</code> mount option allows for the filesystem to have disk quotas configured.
+Add the <code>grpquota</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+<code>/home</code>.</td>
+</tr>
+<tr>
 <td>CCE-81047-3</td>
 <td>Add nodev Option to /home</td>
 <td>The <code>nodev</code> mount option can be used to prevent device files from
@@ -9289,6 +9460,14 @@ Add the <code>noexec</code> option to the fourth column of
 execution of setuid programs in <code>/home</code>. The SUID and SGID permissions
 should not be required in these user data directories.
 Add the <code>nosuid</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+<code>/home</code>.</td>
+</tr>
+<tr>
+<td>CCE-86034-6</td>
+<td>Add usrquota Option to /home</td>
+<td>The <code>usrquota</code> mount option allows for the filesystem to have disk quotas configured.
+Add the <code>usrquota</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
 <code>/home</code>.</td>
 </tr>
@@ -14892,8 +15071,8 @@ for guidance which NTP daemon to choose depending on the environment used.</td>
 <td></td>
 <td>Enable the NTP Daemon</td>
 <td>
-The <code>ntpd</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable ntpd.service</pre>
+The <code>ntp</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable ntp.service</pre>
 </td>
 </tr>
 <tr>
@@ -15055,7 +15234,7 @@ data.</td>
 </tr>
 <tr>
 <td>CCE-83334-3</td>
-<td>Ensure rsyncd service is diabled</td>
+<td>Ensure rsyncd service is disabled</td>
 <td>
 The <code>rsyncd</code> service can be disabled with the following command:
 <pre>$ sudo systemctl mask --now rsyncd.service</pre>
@@ -15344,10 +15523,10 @@ The <code>tftp</code> service can be disabled with the following command:
 <tr>
 <td>CCE-80214-0</td>
 <td>Ensure tftp Daemon Uses Secure Mode</td>
-<td>If running the <code>tftp</code> service is necessary, it should be configured
-to change its root directory at startup. To do so, ensure
-<code>/etc/xinetd.d/tftp</code> includes <code>-s</code> as a command line argument, as shown in
-the following example:
+<td>If running the Trivial File Transfer Protocol (TFTP) service is necessary,
+it should be configured to change its root directory at startup. To do so,
+ensure <code>/etc/xinetd.d/tftp</code> includes <code>-s</code> as a command line argument,
+as shown in the following example:
 <pre>server_args = -s <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_tftpd_secure_directory" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
@@ -15637,10 +15816,10 @@ remote access.</td>
 during a SSH session and waits for a response from the SSH client.
 The option <code>ClientAliveInterval</code> configures timeout after
 each <code>ClientAliveCountMax</code> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 
-To ensure the SSH idle timeout occurs precisely when the
+To ensure the SSH timeout occurs precisely when the
 <code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
 value of <code>0</code> in
 
@@ -15654,22 +15833,23 @@ value of <code>0</code> in
 during a SSH session and waits for a response from the SSH client.
 The option <code>ClientAliveInterval</code> configures timeout after
 each <code>ClientAliveCountMax</code> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 For SSH earlier than v8.2, a <code>ClientAliveCountMax</code> value of <code>0</code>
-causes an idle timeout precisely when the <code>ClientAliveInterval</code> is set.
+causes a timeout precisely when the <code>ClientAliveInterval</code> is set.
 Starting with v8.2, a value of <code>0</code> disables the timeout functionality
 completely. If the option is set to a number greater than <code>0</code>, then
-the idle session will be disconnected after
-<code>ClientAliveInterval * ClientAliveCountMax</code> seconds.</td>
+the session will be disconnected after
+<code>ClientAliveInterval * ClientAliveCountMax</code> seconds without receiving
+a keep alive message.</td>
 </tr>
 <tr>
 <td>CCE-27433-2</td>
-<td>Set SSH Idle Timeout Interval</td>
-<td>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+<td>Set SSH Client Alive Interval</td>
+<td>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br><br>
-To set an idle timeout interval, edit the following line in <code>/etc/ssh/sshd_config</code> as
+To set this timeout interval, edit the following line in <code>/etc/ssh/sshd_config</code> as
 follows:
 <pre>ClientAliveInterval <b><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sshd_idle_timeout_value" use="legacy"></xccdf-1.2:sub></b></pre>
 <br><br>
@@ -15678,7 +15858,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br><br>
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <code>/etc/ssh/sshd_config</code>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</td>
+some processes may stop SSH from correctly detecting that the user is idle.</td>
 </tr>
 <tr>
 <td>CCE-27413-4</td>
@@ -15703,9 +15883,9 @@ following line in
 <tr>
 <td>CCE-80361-9</td>
 <td>Enable SSH Server firewalld Firewall Exception</td>
-<td>By default, inbound connections to SSH's port are allowed. If
-the SSH server is being used but denied by the firewall, this exception should
-be added to the firewall configuration.
+<td>If the SSH server is in use, inbound connections to SSH's port should be allowed to permit
+remote access through SSH. In more restrictive firewalld settings, the SSH port should be
+added to the proper firewalld zone in order to allow SSH remote access.
 <br><br>
 
 

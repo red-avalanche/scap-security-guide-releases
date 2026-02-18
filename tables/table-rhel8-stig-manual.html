@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<html>
 <head lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Rules in Red Hat Enterprise Linux 8 Security Technical Implementation Guide</title>
@@ -48,9 +48,9 @@
 		</thead>
 		<tbody>
 		<tr>
-			<td>371</td>
+			<td>372</td>
 			<td>0</td>
-			<td>371</td>
+			<td>372</td>
 			<td>100.00%</td>
 			<td>
 				
@@ -82,37 +82,40 @@
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>An operating system release is considered "supported" if the vendor continues to provide security patches for the product. With an unsupported release, it will not be possible to resolve security issues discovered in the system software.
 
-Red Hat offers the Extended Update Support (EUS) ad-on to a Red Hat Enterprise Linux subscription, for a fee, for those customers who wish to standardize on a specific minor release for an extended period. The RHEL 8 minor releases eligible for EUS are 8.1, 8.2, 8.4, 8.6, and 8.8. Each RHEL 8 EUS stream is available for 24 months from the availability of the minor release. RHEL 8.10 will be the final minor release overall. For more details on the Red Hat Enterprise Linux Life Cycle  visit https://access.redhat.com/support/policy/updates/errata.</pre></td>
+Red Hat offers the Extended Update Support (EUS) add-on to a Red Hat Enterprise Linux subscription, for a fee, for those customers who wish to standardize on a specific minor release for an extended period. The RHEL 8 minor releases eligible for EUS are 8.1, 8.2, 8.4, 8.6, and 8.8. Each RHEL 8 EUS stream is available for 24 months from the availability of the minor release. RHEL 8.10 will be the final minor release overall. For more details on the Red Hat Enterprise Linux Life Cycle  visit https://access.redhat.com/support/policy/updates/errata/.
+Note: The life-cycle time spans and dates are subject to adjustment.</pre></td>
 	<td><pre>Verify the version of the operating system is vendor supported.
+
+Note: The lifecycle time spans and dates are subject to adjustment.
 
 Check the version of the operating system with the following command:
 
 $ sudo cat /etc/redhat-release
 
-Red Hat Enterprise Linux Server release 8.4 (Ootpa)
+Red Hat Enterprise Linux Server release 8.6 (Ootpa)
 
 Current End of Extended Update Support for RHEL 8.1 is 30 November 2021.
 
 Current End of Extended Update Support for RHEL 8.2 is 30 April 2022.
 
-Current End of Extended Update Support for RHEL 8.4 is 30 April 2023.
+Current End of Extended Update Support for RHEL 8.4 is 31 May 2023.
 
-Current End of Maintenance Support for RHEL 8.5 is 30 April 2022.
+Current End of Maintenance Support for RHEL 8.5 is 31 May 2022.
 
-Current End of Extended Update Support for RHEL 8.6 is 30 April 2024.
+Current End of Extended Update Support for RHEL 8.6 is 31 May 2024.
 
-Current End of Maintenance Support for RHEL 8.7 is 30 April 2023.
+Current End of Maintenance Support for RHEL 8.7 is 31 May 2023.
 
-Current End of Extended Update Support for RHEL 8.8 is 30 April 2025.
+Current End of Extended Update Support for RHEL 8.8 is 31 May 2025.
 
-Current End of Maintenance Support for RHEL 8.9 is 30 April 2024.
+Current End of Maintenance Support for RHEL 8.9 is 31 May 2024.
 
 Current End of Maintenance Support for RHEL 8.10 is 31 May 2029.
 
 If the release is not supported by the vendor, this is a finding.</pre></td>
 	<td><pre>Upgrade to a supported version of RHEL 8.</pre></td>
 	<td>RHEL-08-010000</td>
-	<td>SV-230221r743913_rule</td>
+	<td>SV-230221r858734_rule</td>
 </tr>
 
 <tr>
@@ -259,13 +262,14 @@ Satisfies: SRG-OS-000023-GPOS-00006, SRG-OS-000228-GPOS-00088</pre></td>
 
 Check for the location of the banner file being used with the following command:
 
-$ sudo grep -i banner /etc/ssh/sshd_config
+$ sudo grep -ir banner /etc/ssh/sshd_config*
 
 banner /etc/issue
 
 This command will return the banner keyword and the name of the file that contains the ssh banner (in this case "/etc/issue").
 
 If the line is commented out, this is a finding.
+If conflicting results are returned, this is a finding.
 
 View the file specified by the banner keyword to check that it matches the text of the Standard Mandatory DoD Notice and Consent Banner:
 
@@ -306,7 +310,7 @@ Either create the file containing the banner or replace the text in the file wit
 
 The SSH service must be restarted for changes to take effect.</pre></td>
 	<td>RHEL-08-010040</td>
-	<td>SV-230225r627750_rule</td>
+	<td>SV-230225r858694_rule</td>
 </tr>
 
 <tr>
@@ -490,6 +494,8 @@ This requirement verifies that a certification path to an accepted trust anchor 
 Satisfies: SRG-OS-000066-GPOS-00034, SRG-OS-000384-GPOS-00167</pre></td>
 	<td><pre>Verify RHEL 8 for PKI-based authentication has valid certificates by constructing a certification path (which includes status information) to an accepted trust anchor.
 
+Note: If the System Administrator demonstrates the use of an approved alternate multifactor authentication method, this requirement is not applicable.
+
 Check that the system has a valid DoD root CA installed with the following command:
 
 $ sudo openssl x509 -text -in /etc/sssd/pki/sssd_auth_ca_db.pem
@@ -514,7 +520,7 @@ Obtain a valid copy of the DoD root CA file from the PKI CA certificate bundle a
 
 /etc/sssd/pki/sssd_auth_ca_db.pem</pre></td>
 	<td>RHEL-08-010090</td>
-	<td>SV-230229r809270_rule</td>
+	<td>SV-230229r858739_rule</td>
 </tr>
 
 <tr>
@@ -871,25 +877,26 @@ RHEL 8 utilizes /etc/ssh/sshd_config for configurations of OpenSSH. Within the s
 Satisfies: SRG-OS-000163-GPOS-00072, SRG-OS-000126-GPOS-00066, SRG-OS-000279-GPOS-00109</pre></td>
 	<td><pre>Verify all network connections associated with SSH traffic are automatically terminated at the end of the session or after 10 minutes of inactivity.
 
-Check that the "ClientAliveCountMax" is set to "0" by performing the following command:
+Check that the "ClientAliveCountMax" is set to "1" by performing the following command:
 
-$ sudo grep -i clientalive /etc/ssh/sshd_config
+$ sudo grep -ir clientalive /etc/ssh/sshd_config*
 
 ClientAliveInterval 600
-ClientAliveCountMax 0
+ClientAliveCountMax 1
 
-If "ClientAliveCountMax" do not exist, is not set to a value of "0" in "/etc/ssh/sshd_config", or is commented out, this is a finding.</pre></td>
+If "ClientAliveCountMax" do not exist, is not set to a value of "1" in "/etc/ssh/sshd_config", or is commented out, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure RHEL 8 to automatically terminate all network connections associated with SSH traffic at the end of a session or after 10 minutes of inactivity.
 
 Modify or append the following lines in the "/etc/ssh/sshd_config" file:
 
-ClientAliveCountMax 0
+ClientAliveCountMax 1
 
 In order for the changes to take effect, the SSH daemon must be restarted.
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-010200</td>
-	<td>SV-230244r743934_rule</td>
+	<td>SV-230244r858697_rule</td>
 </tr>
 
 <tr>
@@ -1414,8 +1421,8 @@ $ sudo ls -al /etc/cron.* | grep aide
 
 $ sudo grep aide /etc/crontab /var/spool/cron/root
 
-/etc/crontab: 30 04 * * * root usr/sbin/aide
-/var/spool/cron/root: 30 04 * * * root usr/sbin/aide
+/etc/crontab: 30 04 * * * root /usr/sbin/aide
+/var/spool/cron/root: 30 04 * * * root /usr/sbin/aide
 
 $ sudo more /etc/cron.daily/aide
 
@@ -1433,7 +1440,7 @@ $ sudo more /etc/cron.daily/aide
 
 /usr/sbin/aide --check | /bin/mail -s "$HOSTNAME - Daily aide integrity check run" root@sysname.mil</pre></td>
 	<td>RHEL-08-010360</td>
-	<td>SV-230263r627750_rule</td>
+	<td>SV-230263r858725_rule</td>
 </tr>
 
 <tr>
@@ -1465,7 +1472,7 @@ If there is no process to validate certificates that is approved by the organiza
 
 gpgcheck=1</pre></td>
 	<td>RHEL-08-010370</td>
-	<td>SV-230264r627750_rule</td>
+	<td>SV-230264r854016_rule</td>
 </tr>
 
 <tr>
@@ -1494,7 +1501,7 @@ Set the "localpkg_gpgcheck" option to "True" in the "/etc/dnf/dnf.conf" file:
 
 localpkg_gpgcheck=True</pre></td>
 	<td>RHEL-08-010371</td>
-	<td>SV-230265r627750_rule</td>
+	<td>SV-230265r854017_rule</td>
 </tr>
 
 <tr>
@@ -1539,11 +1546,19 @@ Add or edit the following line in a system configuration file, in the "/etc/sysc
 
 kernel.kexec_load_disabled = 1
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-010372</td>
-	<td>SV-230266r833290_rule</td>
+	<td>SV-230266r858748_rule</td>
 </tr>
 
 <tr>
@@ -1592,11 +1607,19 @@ Add or edit the following line in a system configuration file, in the "/etc/sysc
 
 fs.protected_symlinks = 1
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-010373</td>
-	<td>SV-230267r833292_rule</td>
+	<td>SV-230267r858751_rule</td>
 </tr>
 
 <tr>
@@ -1645,11 +1668,19 @@ Add or edit the following line in a system configuration file, in the "/etc/sysc
 
 fs.protected_hardlinks = 1
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-010374</td>
-	<td>SV-230268r833294_rule</td>
+	<td>SV-230268r858754_rule</td>
 </tr>
 
 <tr>
@@ -1698,11 +1729,19 @@ Add or edit the following line in a system configuration file, in the "/etc/sysc
 
 kernel.dmesg_restrict = 1
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-010375</td>
-	<td>SV-230269r833296_rule</td>
+	<td>SV-230269r858756_rule</td>
 </tr>
 
 <tr>
@@ -1751,11 +1790,19 @@ Add or edit the following line in a system configuration file, in the "/etc/sysc
 
 kernel.perf_event_paranoid = 2
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-010376</td>
-	<td>SV-230270r833298_rule</td>
+	<td>SV-230270r858758_rule</td>
 </tr>
 
 <tr>
@@ -1773,24 +1820,14 @@ Satisfies: SRG-OS-000373-GPOS-00156, SRG-OS-000373-GPOS-00157, SRG-OS-000373-GPO
 
 Check that the "/etc/sudoers" file has no occurrences of "NOPASSWD" by running the following command:
 
-$ sudo grep -ir nopasswd /etc/sudoers /etc/sudoers.d
+$ sudo grep -i nopasswd /etc/sudoers /etc/sudoers.d/*
 
 %admin ALL=(ALL) NOPASSWD: ALL
 
 If any occurrences of "NOPASSWD" are returned from the command and have not been documented with the ISSO as an organizationally defined administrative group utilizing MFA, this is a finding.</pre></td>
-	<td><pre>Configure the operating system to require users to supply a password for privilege escalation.
-
-Check the configuration of the "/etc/sudoers" file with the following command:
-$ sudo visudo
-
-Remove any occurrences of "NOPASSWD" tags in the file.
-
-Check the configuration of the /etc/sudoers.d/* files with the following command:
-$ sudo grep -ir nopasswd /etc/sudoers.d
-
-Remove any occurrences of "NOPASSWD" tags in the file.</pre></td>
+	<td><pre>Remove any occurrence of "NOPASSWD" found in "/etc/sudoers" file or files in the "/etc/sudoers.d" directory.</pre></td>
 	<td>RHEL-08-010380</td>
-	<td>SV-230271r833301_rule</td>
+	<td>SV-230271r854026_rule</td>
 </tr>
 
 <tr>
@@ -1813,7 +1850,7 @@ $ sudo grep -i !authenticate /etc/sudoers /etc/sudoers.d/*
 If any occurrences of "!authenticate" return from the command, this is a finding.</pre></td>
 	<td><pre>Remove any occurrence of "!authenticate" found in "/etc/sudoers" file or files in the "/etc/sudoers.d" directory.</pre></td>
 	<td>RHEL-08-010381</td>
-	<td>SV-230272r627750_rule</td>
+	<td>SV-230272r854027_rule</td>
 </tr>
 
 <tr>
@@ -1842,7 +1879,7 @@ If the "openssl-pkcs11" package is not installed, ask the administrator to indic
 
 $ sudo yum install openssl-pkcs11</pre></td>
 	<td>RHEL-08-010390</td>
-	<td>SV-230273r743943_rule</td>
+	<td>SV-230273r854028_rule</td>
 </tr>
 
 <tr>
@@ -1859,6 +1896,8 @@ RHEL 8 includes multiple options for configuring certificate status checking, bu
 
 Satisfies: SRG-OS-000375-GPOS-00160, SRG-OS-000377-GPOS-00162</pre></td>
 	<td><pre>Verify the operating system implements certificate status checking for multifactor authentication.
+
+Note: If the System Administrator demonstrates the use of an approved alternate multifactor authentication method, this requirement is not applicable.
 
 Check to see if Online Certificate Status Protocol (OCSP) is enabled and using the proper digest value on the system with the following command:
 
@@ -1879,7 +1918,7 @@ The "sssd" service must be restarted for the changes to take effect. To restart 
 
 $ sudo systemctl restart sssd.service</pre></td>
 	<td>RHEL-08-010400</td>
-	<td>SV-230274r809281_rule</td>
+	<td>SV-230274r858741_rule</td>
 </tr>
 
 <tr>
@@ -1912,7 +1951,7 @@ Install the "opensc" package using the following command:
 
 $ sudo yum install opensc</pre></td>
 	<td>RHEL-08-010410</td>
-	<td>SV-230275r627750_rule</td>
+	<td>SV-230275r854030_rule</td>
 </tr>
 
 <tr>
@@ -1940,7 +1979,7 @@ flags : fpu vme de pse tsc ms nx rdtscp lm constant_tsc
 If "flags" does not contain the "nx" flag, this is a finding.</pre></td>
 	<td><pre>The NX bit execute protection must be enabled in the system BIOS.</pre></td>
 	<td>RHEL-08-010420</td>
-	<td>SV-230276r627750_rule</td>
+	<td>SV-230276r854031_rule</td>
 </tr>
 
 <tr>
@@ -2102,11 +2141,19 @@ Add or edit the following line in a system configuration file, in the "/etc/sysc
 
 kernel.randomize_va_space=2
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Issue the following command to make the changes take effect:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-010430</td>
-	<td>SV-230280r833303_rule</td>
+	<td>SV-230280r858767_rule</td>
 </tr>
 
 <tr>
@@ -2131,7 +2178,7 @@ Set the "clean_requirements_on_remove" option to "True" in the "/etc/dnf/dnf.con
 
 clean_requirements_on_remove=True</pre></td>
 	<td>RHEL-08-010440</td>
-	<td>SV-230281r627750_rule</td>
+	<td>SV-230281r854034_rule</td>
 </tr>
 
 <tr>
@@ -2177,7 +2224,7 @@ SELINUXTYPE=targeted
 
 A reboot is required for the changes to take effect.</pre></td>
 	<td>RHEL-08-010450</td>
-	<td>SV-230282r627750_rule</td>
+	<td>SV-230282r854035_rule</td>
 </tr>
 
 <tr>
@@ -2314,11 +2361,12 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td><pre>If other users have access to modify user-specific SSH configuration files, they may be able to log on to the system as another user.</pre></td>
 	<td><pre>Verify the SSH daemon performs strict mode checking of home directory configuration files with the following command:
 
-$ sudo grep -i strictmodes /etc/ssh/sshd_config
+$ sudo grep -ir strictmodes /etc/ssh/sshd_config*
 
 StrictModes yes
 
-If "StrictModes" is set to "no", is missing, or the returned line is commented out, this is a finding.</pre></td>
+If "StrictModes" is set to "no", is missing, or the returned line is commented out, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure SSH to perform strict mode checking of home directory configuration files. Uncomment the "StrictModes" keyword in "/etc/ssh/sshd_config" and set the value to "yes":
 
 StrictModes yes
@@ -2327,7 +2375,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-010500</td>
-	<td>SV-230288r627750_rule</td>
+	<td>SV-230288r858701_rule</td>
 </tr>
 
 <tr>
@@ -2339,18 +2387,19 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td><pre>If compression is allowed in an SSH connection prior to authentication, vulnerabilities in the compression software could result in compromise of the system from an unauthenticated connection, potentially with root privileges.</pre></td>
 	<td><pre>Verify the SSH daemon performs compression after a user successfully authenticates with the following command:
 
-$ sudo grep -i compression /etc/ssh/sshd_config
+$ sudo grep -ir compression /etc/ssh/sshd_config*
 
 Compression delayed
 
-If the "Compression" keyword is set to "yes", is missing, or the returned line is commented out, this is a finding.</pre></td>
+If the "Compression" keyword is set to "yes", is missing, or the returned line is commented out, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Uncomment the "Compression" keyword in "/etc/ssh/sshd_config" (this file may be named differently or be in a different location if using a version of SSH that is provided by a third-party vendor) on the system and set the value to "delayed" or "no":
 
 Compression no
 
 The SSH service must be restarted for changes to take effect.</pre></td>
 	<td>RHEL-08-010510</td>
-	<td>SV-230289r743954_rule</td>
+	<td>SV-230289r858703_rule</td>
 </tr>
 
 <tr>
@@ -2362,11 +2411,12 @@ The SSH service must be restarted for changes to take effect.</pre></td>
 	<td><pre>Configuring this setting for the SSH daemon provides additional assurance that remote logon via SSH will require a password, even in the event of misconfiguration elsewhere.</pre></td>
 	<td><pre>Verify the SSH daemon does not allow authentication using known host’s authentication with the following command:
 
-$ sudo grep -i IgnoreUserKnownHosts /etc/ssh/sshd_config
+$ sudo grep -ir IgnoreUserKnownHosts /etc/ssh/sshd_config*
 
 IgnoreUserKnownHosts yes
 
-If the value is returned as "no", the returned line is commented out, or no output is returned, this is a finding.</pre></td>
+If the value is returned as "no", the returned line is commented out, or no output is returned, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure the SSH daemon to not allow authentication using known host’s authentication.
 
 Add the following line in "/etc/ssh/sshd_config", or uncomment the line and set the value to "yes":
@@ -2377,7 +2427,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-010520</td>
-	<td>SV-230290r627750_rule</td>
+	<td>SV-230290r858705_rule</td>
 </tr>
 
 <tr>
@@ -2389,11 +2439,12 @@ $ sudo systemctl restart sshd.service</pre></td>
 	<td><pre>Configuring these settings for the SSH daemon provides additional assurance that remote logon via SSH will not use unused methods of authentication, even in the event of misconfiguration elsewhere.</pre></td>
 	<td><pre>Verify the SSH daemon does not allow Kerberos authentication with the following command:
 
-$ sudo grep -i KerberosAuthentication  /etc/ssh/sshd_config
+$ sudo grep -ir KerberosAuthentication  /etc/ssh/sshd_config*
 
 KerberosAuthentication no
 
-If the value is returned as "yes", the returned line is commented out, no output is returned, or has not been documented with the ISSO, this is a finding.</pre></td>
+If the value is returned as "yes", the returned line is commented out, no output is returned, or has not been documented with the ISSO, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure the SSH daemon to not allow Kerberos authentication.
 
 Add the following line in "/etc/ssh/sshd_config", or uncomment the line and set the value to "no":
@@ -2404,7 +2455,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-010521</td>
-	<td>SV-230291r743957_rule</td>
+	<td>SV-230291r858707_rule</td>
 </tr>
 
 <tr>
@@ -2502,11 +2553,12 @@ If a separate entry for the file system/partition "/tmp" does not exist, this is
 
 Check that SSH prevents users from logging on directly as "root" with the following command:
 
-$ sudo grep -i PermitRootLogin /etc/ssh/sshd_config
+$ sudo grep -ir PermitRootLogin /etc/ssh/sshd_config*
 
 PermitRootLogin no
 
-If the "PermitRootLogin" keyword is set to "yes", is missing, or is commented out, this is a finding.</pre></td>
+If the "PermitRootLogin" keyword is set to "yes", is missing, or is commented out, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure RHEL 8 to stop users from logging on remotely as the "root" user via SSH.
 
 Edit the appropriate "/etc/ssh/sshd_config" file to uncomment or add the line for the "PermitRootLogin" keyword and set its value to "no":
@@ -2517,7 +2569,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-010550</td>
-	<td>SV-230296r627750_rule</td>
+	<td>SV-230296r858711_rule</td>
 </tr>
 
 <tr>
@@ -2858,11 +2910,19 @@ Add or edit the following line in a system configuration file, in the "/etc/sysc
 
 kernel.core_pattern = |/bin/false
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 The system configuration files need to be reloaded for the changes to take effect. To reload the contents of the files, run the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-010671</td>
-	<td>SV-230311r833305_rule</td>
+	<td>SV-230311r858769_rule</td>
 </tr>
 
 <tr>
@@ -3360,11 +3420,12 @@ AutomaticLoginEnable=false</pre></td>
 	<td><pre>SSH environment options potentially allow users to bypass access restriction in some configurations.</pre></td>
 	<td><pre>Verify that unattended or automatic logon via ssh is disabled with the following command:
 
-$ sudo grep -i PermitUserEnvironment /etc/ssh/sshd_config
+$ sudo grep -ir PermitUserEnvironment /etc/ssh/sshd_config*
 
 PermitUserEnvironment no
 
-If "PermitUserEnvironment" is set to "yes", is missing completely, or is commented out, this is a finding.</pre></td>
+If "PermitUserEnvironment" is set to "yes", is missing completely, or is commented out, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure RHEL 8 to allow the SSH daemon to not allow unattended or automatic logon to the system.
 
 Add or edit the following line in the "/etc/ssh/sshd_config" file:
@@ -3375,7 +3436,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-010830</td>
-	<td>SV-230330r646870_rule</td>
+	<td>SV-230330r858713_rule</td>
 </tr>
 
 <tr>
@@ -4308,6 +4369,8 @@ Add the following setting to prevent non-privileged users from modifying it:
 There are various methods of mapping certificates to user/group accounts for RHEL 8. For the purposes of this requirement, the check and fix will account for Active Directory mapping. Some of the other possible methods include joining the system to a domain and utilizing a Red Hat idM server, or a local system mapping, where the system is not part of a domain.</pre></td>
 	<td><pre>Verify the certificate of the user or group is mapped to the corresponding user or group in the "sssd.conf" file with the following command:
 
+Note: If the System Administrator demonstrates the use of an approved alternate multifactor authentication method, this requirement is not applicable.
+
 $ sudo cat /etc/sssd/sssd.conf
 
 [sssd]
@@ -4326,7 +4389,7 @@ matchrule =<SAN>.*EDIPI@mil
 maprule = (userCertificate;binary={cert!bin})
 domains = testing.test
 
-If the certmap section does not exist, ask the System Administrator to indicate how certificates are mapped to accounts.  If there is no evidence of certificate mapping, this is a finding.</pre></td>
+If the certmap section does not exist, ask the System Administrator to indicate how certificates are mapped to accounts. If there is no evidence of certificate mapping, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to map the authenticated identity to the user or group account by adding or modifying the certmap section of the "/etc/sssd/sssd.conf file based on the following example:
 
 [certmap/testing.test/rule_name]
@@ -4338,7 +4401,7 @@ The "sssd" service must be restarted for the changes to take effect. To restart 
 
 $ sudo systemctl restart sssd.service</pre></td>
 	<td>RHEL-08-020090</td>
-	<td>SV-230355r818836_rule</td>
+	<td>SV-230355r858743_rule</td>
 </tr>
 
 <tr>
@@ -4393,9 +4456,11 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 Add the following line to /etc/security/pwquality.conf (or modify the line to have the required value):
 
-ucredit = -1</pre></td>
+ucredit = -1
+
+Remove any configurations that conflict with the above value.</pre></td>
 	<td>RHEL-08-020110</td>
-	<td>SV-230357r833313_rule</td>
+	<td>SV-230357r858771_rule</td>
 </tr>
 
 <tr>
@@ -4421,9 +4486,11 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 Add the following line to /etc/security/pwquality.conf (or modify the line to have the required value):
 
-lcredit = -1</pre></td>
+lcredit = -1
+
+Remove any configurations that conflict with the above value.</pre></td>
 	<td>RHEL-08-020120</td>
-	<td>SV-230358r833315_rule</td>
+	<td>SV-230358r858773_rule</td>
 </tr>
 
 <tr>
@@ -4449,9 +4516,11 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 Add the following line to /etc/security/pwquality.conf (or modify the line to have the required value):
 
-dcredit = -1</pre></td>
+dcredit = -1
+
+Remove any configurations that conflict with the above value.</pre></td>
 	<td>RHEL-08-020130</td>
-	<td>SV-230359r833317_rule</td>
+	<td>SV-230359r858775_rule</td>
 </tr>
 
 <tr>
@@ -4477,9 +4546,11 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 Add the following line to "/etc/security/pwquality.conf" conf (or modify the line to have the required value):
 
-maxclassrepeat = 4</pre></td>
+maxclassrepeat = 4
+
+Remove any configurations that conflict with the above value.</pre></td>
 	<td>RHEL-08-020140</td>
-	<td>SV-230360r833319_rule</td>
+	<td>SV-230360r858777_rule</td>
 </tr>
 
 <tr>
@@ -4505,9 +4576,11 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 Add the following line to "/etc/security/pwquality.conf conf" (or modify the line to have the required value):
 
-maxrepeat = 3</pre></td>
+maxrepeat = 3
+
+Remove any configurations that conflict with the above value.</pre></td>
 	<td>RHEL-08-020150</td>
-	<td>SV-230361r833321_rule</td>
+	<td>SV-230361r858779_rule</td>
 </tr>
 
 <tr>
@@ -4533,9 +4606,11 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 Add the following line to "/etc/security/pwquality.conf conf" (or modify the line to have the required value):
 
-minclass = 4</pre></td>
+minclass = 4
+
+Remove any configurations that conflict with the above value.</pre></td>
 	<td>RHEL-08-020160</td>
-	<td>SV-230362r833323_rule</td>
+	<td>SV-230362r858781_rule</td>
 </tr>
 
 <tr>
@@ -4561,9 +4636,11 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 Add the following line to "/etc/security/pwquality.conf" (or modify the line to have the required value):
 
-difok = 8</pre></td>
+difok = 8
+
+Remove any configurations that conflict with the above value.</pre></td>
 	<td>RHEL-08-020170</td>
-	<td>SV-230363r833325_rule</td>
+	<td>SV-230363r858783_rule</td>
 </tr>
 
 <tr>
@@ -4589,7 +4666,7 @@ $ sudo chage -m 1 [user]</pre></td>
 	<td>V-230365</td>
 	<td>CCI-000198</td>
 	<td>medium</td>
-	<td>RHEL 8 passwords for new users or password changes must have a 24 hours/1 day minimum password lifetime restriction in /etc/logins.def.</td>
+	<td>RHEL 8 passwords for new users or password changes must have a 24 hours/1 day minimum password lifetime restriction in /etc/login.defs.</td>
 	<td>SRG-OS-000075-GPOS-00043</td>
 	<td><pre>Enforcing a minimum password lifetime helps to prevent repeated password changes to defeat the password reuse or history enforcement requirement. If users are allowed to immediately and continually change their password, the password could be repeatedly changed in a short period of time to defeat the organization's policy regarding password reuse.</pre></td>
 	<td><pre>Verify the operating system enforces 24 hours/1 day as the minimum password lifetime for new user accounts.
@@ -4606,7 +4683,7 @@ Add the following line in "/etc/login.defs" (or modify the line to have the requ
 
 PASS_MIN_DAYS 1</pre></td>
 	<td>RHEL-08-020190</td>
-	<td>SV-230365r627750_rule</td>
+	<td>SV-230365r858727_rule</td>
 </tr>
 
 <tr>
@@ -4712,9 +4789,11 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 Add the following line to "/etc/security/pwquality.conf" (or modify the line to have the required value):
 
-minlen = 15</pre></td>
+minlen = 15
+
+Remove any configurations that conflict with the above value.</pre></td>
 	<td>RHEL-08-020230</td>
-	<td>SV-230369r833327_rule</td>
+	<td>SV-230369r858785_rule</td>
 </tr>
 
 <tr>
@@ -4901,9 +4980,11 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 Add the following line to /etc/security/pwquality.conf (or modify the line to have the required value):
 
-ocredit = -1</pre></td>
+ocredit = -1
+
+Remove any configurations that conflict with the above value.</pre></td>
 	<td>RHEL-08-020280</td>
-	<td>SV-230375r833329_rule</td>
+	<td>SV-230375r858787_rule</td>
 </tr>
 
 <tr>
@@ -4940,7 +5021,7 @@ Add or change the following line in "/etc/sssd/sssd.conf" just below the line "[
 
 offline_credentials_expiration = 1</pre></td>
 	<td>RHEL-08-020290</td>
-	<td>SV-230376r627750_rule</td>
+	<td>SV-230376r854036_rule</td>
 </tr>
 
 <tr>
@@ -4964,9 +5045,11 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 Add or update the following line in the "/etc/security/pwquality.conf" file or a configuration file in the /etc/pwquality.conf.d/ directory to contain the "dictcheck" parameter:
 
-dictcheck=1</pre></td>
+dictcheck=1
+
+Remove any configurations that conflict with the above value.</pre></td>
 	<td>RHEL-08-020300</td>
-	<td>SV-230377r833331_rule</td>
+	<td>SV-230377r858789_rule</td>
 </tr>
 
 <tr>
@@ -5039,11 +5122,12 @@ Document all authorized accounts on the system.</pre></td>
 	<td><pre>If an account has an empty password, anyone could log on and run commands with the privileges of that account. Accounts with empty passwords should never be used in operational environments.</pre></td>
 	<td><pre>To verify that null passwords cannot be used, run the following command:
 
-$ sudo grep -i permitemptypasswords /etc/ssh/sshd_config
+$ sudo grep -ir permitemptypasswords /etc/ssh/sshd_config*
 
 PermitEmptyPasswords no
 
-If "PermitEmptyPasswords" is set to "yes", this is a finding.</pre></td>
+If "PermitEmptyPasswords" is set to "yes", this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Edit the following line in "etc/ssh/sshd_config" to prevent logons with empty passwords.
 
 PermitEmptyPasswords no
@@ -5052,12 +5136,12 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-020330</td>
-	<td>SV-230380r743993_rule</td>
+	<td>SV-230380r858715_rule</td>
 </tr>
 
 <tr>
 	<td>V-230381</td>
-	<td>CCI-000366</td>
+	<td>CCI-000052</td>
 	<td>low</td>
 	<td>RHEL 8 must display the date and time of the last successful account logon upon logon.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
@@ -5075,23 +5159,24 @@ Add the following line to the top of "/etc/pam.d/postlogin":
 
 session required pam_lastlog.so showfailed</pre></td>
 	<td>RHEL-08-020340</td>
-	<td>SV-230381r627750_rule</td>
+	<td>SV-230381r858726_rule</td>
 </tr>
 
 <tr>
 	<td>V-230382</td>
-	<td>CCI-000366</td>
+	<td>CCI-000052</td>
 	<td>medium</td>
 	<td>RHEL 8 must display the date and time of the last successful account logon upon an SSH logon.</td>
 	<td>SRG-OS-000480-GPOS-00227</td>
 	<td><pre>Providing users with feedback on when account accesses via SSH last occurred facilitates user recognition and reporting of unauthorized account use.</pre></td>
 	<td><pre>Verify SSH provides users with feedback on when account accesses last occurred with the following command:
 
-$ sudo grep -i printlastlog /etc/ssh/sshd_config
+$ sudo grep -ir printlastlog /etc/ssh/sshd_config*
 
 PrintLastLog yes
 
-If the "PrintLastLog" keyword is set to "no", is missing, or is commented out, this is a finding.</pre></td>
+If the "PrintLastLog" keyword is set to "no", is missing, or is commented out, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure SSH to provide users with feedback on when account accesses last occurred by setting the required configuration options in "/etc/pam.d/sshd" or in the "sshd_config" file used by the system ("/etc/ssh/sshd_config" will be used in the example) (this file may be named differently or be in a different location if using a version of SSH that is provided by a third-party vendor).
 
 Modify the "PrintLastLog" line in "/etc/ssh/sshd_config" to match the following:
@@ -5100,7 +5185,7 @@ PrintLastLog yes
 
 The SSH service must be restarted for changes to "sshd_config" to take effect.</pre></td>
 	<td>RHEL-08-020350</td>
-	<td>SV-230382r627750_rule</td>
+	<td>SV-230382r858717_rule</td>
 </tr>
 
 <tr>
@@ -5145,14 +5230,14 @@ Check all local interactive user initialization files for interactive users with
 
 Note: The example is for a system that is configured to create users home directories in the "/home" directory.
 
-# grep -i umask /home/*/.*
+$ sudo grep -ir ^umask /home | grep -v '.bash_history'
 
 If any local interactive user initialization files are found to have a umask statement that has a value less restrictive than "077", this is a finding.</pre></td>
 	<td><pre>Remove the umask statement from all local interactive user's initialization files. 
 
 If the account is for an application, the requirement for a umask less restrictive than "077" can be documented with the Information System Security Officer, but the user agreement for access to the account must specify that the local interactive user must log on to their account first and then switch the user to the application account with the correct option to gain the account's environment variables.</pre></td>
 	<td>RHEL-08-020352</td>
-	<td>SV-230384r627750_rule</td>
+	<td>SV-230384r858732_rule</td>
 </tr>
 
 <tr>
@@ -5221,7 +5306,7 @@ Add or update the following file system rules to "/etc/audit/rules.d/audit.rules
 
 The audit daemon must be restarted for the changes to take effect.</pre></td>
 	<td>RHEL-08-030000</td>
-	<td>SV-230386r627750_rule</td>
+	<td>SV-230386r854037_rule</td>
 </tr>
 
 <tr>
@@ -5429,7 +5514,7 @@ name_format = hostname
 
 The audit daemon must be restarted for changes to take effect.</pre></td>
 	<td>RHEL-08-030062</td>
-	<td>SV-230394r627750_rule</td>
+	<td>SV-230394r854038_rule</td>
 </tr>
 
 <tr>
@@ -7204,7 +7289,7 @@ Add or modify the following line in "/etc/default/grub" to ensure the configurat
 
 GRUB_CMDLINE_LINUX="audit_backlog_limit=8192"</pre></td>
 	<td>RHEL-08-030602</td>
-	<td>SV-230469r792906_rule</td>
+	<td>SV-230469r854039_rule</td>
 </tr>
 
 <tr>
@@ -7463,7 +7548,7 @@ If audit records are stored on a partition made specifically for audit records, 
 
 If audit records are not stored on a partition made specifically for audit records, a new partition with sufficient space will need be to be created.</pre></td>
 	<td>RHEL-08-030660</td>
-	<td>SV-230476r809313_rule</td>
+	<td>SV-230476r854040_rule</td>
 </tr>
 
 <tr>
@@ -7563,7 +7648,7 @@ If there is no evidence that the audit logs are being off-loaded to another syst
 
 *.* @@[remoteloggingserver]:[port]</pre></td>
 	<td>RHEL-08-030690</td>
-	<td>SV-230479r627750_rule</td>
+	<td>SV-230479r854041_rule</td>
 </tr>
 
 <tr>
@@ -7594,7 +7679,7 @@ overflow_action = syslog
 
 The audit daemon must be restarted for changes to take effect.</pre></td>
 	<td>RHEL-08-030700</td>
-	<td>SV-230480r627750_rule</td>
+	<td>SV-230480r854042_rule</td>
 </tr>
 
 <tr>
@@ -7632,7 +7717,7 @@ If there is no evidence that the transfer of the audit logs being off-loaded to 
 $DefaultNetstreamDriver gtls
 $ActionSendStreamDriverMode 1</pre></td>
 	<td>RHEL-08-030710</td>
-	<td>SV-230481r818840_rule</td>
+	<td>SV-230481r854043_rule</td>
 </tr>
 
 <tr>
@@ -7667,7 +7752,7 @@ If there is no evidence that the transfer of the audit logs being off-loaded to 
 
 $ActionSendStreamDriverAuthMode x509/name</pre></td>
 	<td>RHEL-08-030720</td>
-	<td>SV-230482r627750_rule</td>
+	<td>SV-230482r854044_rule</td>
 </tr>
 
 <tr>
@@ -7692,7 +7777,7 @@ space_left = 25%
 
 Note: Option names and values in the auditd.conf file are case insensitive.</pre></td>
 	<td>RHEL-08-030730</td>
-	<td>SV-230483r744014_rule</td>
+	<td>SV-230483r854045_rule</td>
 </tr>
 
 <tr>
@@ -7734,7 +7819,7 @@ If the parameter "server" is not set or is not set to an authoritative DoD time 
 
 server [ntp.server.name] iburst maxpoll 16</pre></td>
 	<td>RHEL-08-030740</td>
-	<td>SV-230484r627750_rule</td>
+	<td>SV-230484r854046_rule</td>
 </tr>
 
 <tr>
@@ -8379,7 +8464,7 @@ $ sudo firewall-cmd --permanent --zone=[custom] --change-interface=ens33
 Reload the firewall rules for changes to take effect:
 $ sudo firewall-cmd --reload</pre></td>
 	<td>RHEL-08-040090</td>
-	<td>SV-230504r809321_rule</td>
+	<td>SV-230504r854047_rule</td>
 </tr>
 
 <tr>
@@ -8406,7 +8491,7 @@ If the "firewalld" package is not installed, ask the System Administrator if ano
 
 $ sudo yum install firewalld.noarch</pre></td>
 	<td>RHEL-08-040100</td>
-	<td>SV-230505r744020_rule</td>
+	<td>SV-230505r854048_rule</td>
 </tr>
 
 <tr>
@@ -8523,7 +8608,7 @@ If results are returned and the "nodev" option is missing, or if /dev/shm is mou
 
 tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>RHEL-08-040120</td>
-	<td>SV-230508r627750_rule</td>
+	<td>SV-230508r854049_rule</td>
 </tr>
 
 <tr>
@@ -8554,7 +8639,7 @@ If results are returned and the "nosuid" option is missing, or if /dev/shm is mo
 
 tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>RHEL-08-040121</td>
-	<td>SV-230509r627750_rule</td>
+	<td>SV-230509r854050_rule</td>
 </tr>
 
 <tr>
@@ -8587,7 +8672,7 @@ If results are returned and the "noexec" option is missing, or if /dev/shm is mo
 
 tmpfs /dev/shm tmpfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>RHEL-08-040122</td>
-	<td>SV-230510r627750_rule</td>
+	<td>SV-230510r854051_rule</td>
 </tr>
 
 <tr>
@@ -8620,7 +8705,7 @@ If results are returned and the "nodev" option is missing, or if /tmp is mounted
 
 /dev/mapper/rhel-tmp /tmp xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>RHEL-08-040123</td>
-	<td>SV-230511r627750_rule</td>
+	<td>SV-230511r854052_rule</td>
 </tr>
 
 <tr>
@@ -8651,7 +8736,7 @@ If results are returned and the "nosuid" option is missing, or if /tmp is mounte
 
 /dev/mapper/rhel-tmp /tmp xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>RHEL-08-040124</td>
-	<td>SV-230512r627750_rule</td>
+	<td>SV-230512r854053_rule</td>
 </tr>
 
 <tr>
@@ -8684,7 +8769,7 @@ If results are returned and the "noexec" option is missing, or if /tmp is mounte
 
 /dev/mapper/rhel-tmp /tmp xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>RHEL-08-040125</td>
-	<td>SV-230513r627750_rule</td>
+	<td>SV-230513r854054_rule</td>
 </tr>
 
 <tr>
@@ -8717,7 +8802,7 @@ If results are returned and the "nodev" option is missing, or if /var/log is mou
 
 /dev/mapper/rhel-var-log /var/log xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>RHEL-08-040126</td>
-	<td>SV-230514r627750_rule</td>
+	<td>SV-230514r854055_rule</td>
 </tr>
 
 <tr>
@@ -8750,7 +8835,7 @@ If results are returned and the "nosuid" option is missing, or if /var/log is mo
 
 /dev/mapper/rhel-var-log /var/log xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>RHEL-08-040127</td>
-	<td>SV-230515r627750_rule</td>
+	<td>SV-230515r854056_rule</td>
 </tr>
 
 <tr>
@@ -8783,7 +8868,7 @@ If results are returned and the "noexec" option is missing, or if /var/log is mo
 
 /dev/mapper/rhel-var-log /var/log xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>RHEL-08-040128</td>
-	<td>SV-230516r627750_rule</td>
+	<td>SV-230516r854057_rule</td>
 </tr>
 
 <tr>
@@ -8816,7 +8901,7 @@ If results are returned and the "nodev" option is missing, or if /var/log/audit 
 
 /dev/mapper/rhel-var-log-audit /var/log/audit xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>RHEL-08-040129</td>
-	<td>SV-230517r627750_rule</td>
+	<td>SV-230517r854058_rule</td>
 </tr>
 
 <tr>
@@ -8849,7 +8934,7 @@ If results are returned and the "nosuid" option is missing, or if /var/log/audit
 
 /dev/mapper/rhel-var-log-audit /var/log/audit xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>RHEL-08-040130</td>
-	<td>SV-230518r627750_rule</td>
+	<td>SV-230518r854059_rule</td>
 </tr>
 
 <tr>
@@ -8882,7 +8967,7 @@ If results are returned and the "noexec" option is missing, or if /var/log/audit
 
 /dev/mapper/rhel-var-log-audit /var/log/audit xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>RHEL-08-040131</td>
-	<td>SV-230519r627750_rule</td>
+	<td>SV-230519r854060_rule</td>
 </tr>
 
 <tr>
@@ -8915,7 +9000,7 @@ If results are returned and the "nodev" option is missing, or if /var/tmp is mou
 
 /dev/mapper/rhel-var-tmp /var/tmp xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>RHEL-08-040132</td>
-	<td>SV-230520r792927_rule</td>
+	<td>SV-230520r854061_rule</td>
 </tr>
 
 <tr>
@@ -8948,7 +9033,7 @@ If results are returned and the "nosuid" option is missing, or if /var/tmp is mo
 
 /dev/mapper/rhel-var-tmp /var/tmp xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>RHEL-08-040133</td>
-	<td>SV-230521r792930_rule</td>
+	<td>SV-230521r854062_rule</td>
 </tr>
 
 <tr>
@@ -8981,7 +9066,7 @@ If results are returned and the "noexec" option is missing, or if /var/tmp is mo
 
 /dev/mapper/rhel-var-tmp /var/tmp xfs defaults,nodev,nosuid,noexec 0 0</pre></td>
 	<td>RHEL-08-040134</td>
-	<td>SV-230522r792933_rule</td>
+	<td>SV-230522r854063_rule</td>
 </tr>
 
 <tr>
@@ -9015,7 +9100,7 @@ If fapolicyd is not installed, this is a finding.</pre></td>
 
 $ sudo yum install fapolicyd.x86_64</pre></td>
 	<td>RHEL-08-040135</td>
-	<td>SV-230523r744023_rule</td>
+	<td>SV-230523r854064_rule</td>
 </tr>
 
 <tr>
@@ -9045,7 +9130,7 @@ This command must be run from a root shell and will create an allow list for any
 
 Note: Enabling and starting usbguard without properly configuring it for an individual system will immediately prevent any access over a usb device such as a keyboard or mouse</pre></td>
 	<td>RHEL-08-040140</td>
-	<td>SV-230524r744026_rule</td>
+	<td>SV-230524r854065_rule</td>
 </tr>
 
 <tr>
@@ -9075,7 +9160,7 @@ FirewallBackend=nftables
 
 Establish rate-limiting rules based on organization-defined types of DoS attacks on impacted network interfaces.</pre></td>
 	<td>RHEL-08-040150</td>
-	<td>SV-230525r744029_rule</td>
+	<td>SV-230525r854066_rule</td>
 </tr>
 
 <tr>
@@ -9107,7 +9192,7 @@ If "sshd" does not show a status of "active" and "running", this is a finding.</
 
 $ sudo systemctl enable sshd.service</pre></td>
 	<td>RHEL-08-040160</td>
-	<td>SV-230526r744032_rule</td>
+	<td>SV-230526r854067_rule</td>
 </tr>
 
 <tr>
@@ -9127,11 +9212,12 @@ Session key regeneration limits the chances of a session key becoming compromise
 Satisfies: SRG-OS-000033-GPOS-00014, SRG-OS-000420-GPOS-00186, SRG-OS-000424-GPOS-00188</pre></td>
 	<td><pre>Verify the SSH server is configured to force frequent session key renegotiation with the following command:
 
-$ sudo grep -i RekeyLimit /etc/ssh/sshd_config
+$ sudo grep -ir RekeyLimit /etc/ssh/sshd_config*
 
 RekeyLimit 1G 1h
 
-If "RekeyLimit" does not have a maximum data amount and maximum time defined, is missing or commented out, this is a finding.</pre></td>
+If "RekeyLimit" does not have a maximum data amount and maximum time defined, is missing or commented out, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure the system to force a frequent session key renegotiation for SSH connections to the server by add or modifying the following line in the "/etc/ssh/sshd_config" file:
 
 RekeyLimit 1G 1h
@@ -9140,7 +9226,7 @@ Restart the SSH daemon for the settings to take effect.
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-040161</td>
-	<td>SV-230527r627750_rule</td>
+	<td>SV-230527r858719_rule</td>
 </tr>
 
 <tr>
@@ -9342,11 +9428,19 @@ Add or edit the following line in a system configuration file, in the "/etc/sysc
 
 net.ipv6.conf.default.accept_redirects = 0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-040210</td>
-	<td>SV-230535r833340_rule</td>
+	<td>SV-230535r858793_rule</td>
 </tr>
 
 <tr>
@@ -9391,11 +9485,19 @@ Add or edit the following line in a system configuration file, in the "/etc/sysc
 
 net.ipv4.conf.all.send_redirects=0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-040220</td>
-	<td>SV-230536r833342_rule</td>
+	<td>SV-230536r858795_rule</td>
 </tr>
 
 <tr>
@@ -9439,11 +9541,19 @@ Add or edit the following line in a system configuration file, in the "/etc/sysc
 
 net.ipv4.icmp_echo_ignore_broadcasts=1
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-040230</td>
-	<td>SV-230537r833344_rule</td>
+	<td>SV-230537r858797_rule</td>
 </tr>
 
 <tr>
@@ -9488,11 +9598,19 @@ Add or edit the following line in a system configuration file, in the "/etc/sysc
 
 net.ipv6.conf.all.accept_source_route=0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-040240</td>
-	<td>SV-230538r833346_rule</td>
+	<td>SV-230538r858801_rule</td>
 </tr>
 
 <tr>
@@ -9537,11 +9655,19 @@ Add or edit the following line in a system configuration file, in the "/etc/sysc
 
 net.ipv6.conf.default.accept_source_route=0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-040250</td>
-	<td>SV-230539r838722_rule</td>
+	<td>SV-230539r861085_rule</td>
 </tr>
 
 <tr>
@@ -9586,11 +9712,19 @@ Add or edit the following line in a system configuration file, in the "/etc/sysc
 
 net.ipv6.conf.all.forwarding=0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-040260</td>
-	<td>SV-230540r833349_rule</td>
+	<td>SV-230540r858810_rule</td>
 </tr>
 
 <tr>
@@ -9637,11 +9771,19 @@ Add or edit the following line in a system configuration file, in the "/etc/sysc
 
 net.ipv6.conf.all.accept_ra=0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-040261</td>
-	<td>SV-230541r833351_rule</td>
+	<td>SV-230541r858812_rule</td>
 </tr>
 
 <tr>
@@ -9688,11 +9830,19 @@ Add or edit the following line in a system configuration file, in the "/etc/sysc
 
 net.ipv6.conf.default.accept_ra=0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-040262</td>
-	<td>SV-230542r833353_rule</td>
+	<td>SV-230542r858814_rule</td>
 </tr>
 
 <tr>
@@ -9737,11 +9887,19 @@ Add or edit the following line in a system configuration file, in the "/etc/sysc
 
 net.ipv4.conf.default.send_redirects = 0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-040270</td>
-	<td>SV-230543r833355_rule</td>
+	<td>SV-230543r858816_rule</td>
 </tr>
 
 <tr>
@@ -9786,11 +9944,19 @@ Add or edit the following line in a system configuration file, in the "/etc/sysc
 
 net.ipv6.conf.all.accept_redirects = 0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-040280</td>
-	<td>SV-230544r833357_rule</td>
+	<td>SV-230544r858820_rule</td>
 </tr>
 
 <tr>
@@ -9829,11 +9995,19 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 kernel.unprivileged_bpf_disabled = 1
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 The system configuration files need to be reloaded for the changes to take effect. To reload the contents of the files, run the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-040281</td>
-	<td>SV-230545r833359_rule</td>
+	<td>SV-230545r858822_rule</td>
 </tr>
 
 <tr>
@@ -9872,11 +10046,19 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 kernel.yama.ptrace_scope = 1
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 The system configuration files need to be reloaded for the changes to take effect. To reload the contents of the files, run the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-040282</td>
-	<td>SV-230546r833361_rule</td>
+	<td>SV-230546r858824_rule</td>
 </tr>
 
 <tr>
@@ -9915,11 +10097,19 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 kernel.kptr_restrict = 1
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 The system configuration files need to be reloaded for the changes to take effect. To reload the contents of the files, run the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-040283</td>
-	<td>SV-230547r833363_rule</td>
+	<td>SV-230547r858826_rule</td>
 </tr>
 
 <tr>
@@ -9962,11 +10152,19 @@ Note: User namespaces are used primarily for Linux containers. If containers are
 
 user.max_user_namespaces = 0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 The system configuration files need to be reloaded for the changes to take effect. To reload the contents of the files, run the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-040284</td>
-	<td>SV-230548r833365_rule</td>
+	<td>SV-230548r858828_rule</td>
 </tr>
 
 <tr>
@@ -10005,11 +10203,19 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 net.ipv4.conf.all.rp_filter = 1
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 The system configuration files need to be reloaded for the changes to take effect. To reload the contents of the files, run the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-040285</td>
-	<td>SV-230549r833367_rule</td>
+	<td>SV-230549r858830_rule</td>
 </tr>
 
 <tr>
@@ -10174,11 +10380,12 @@ X11 forwarding should be enabled with caution. Users with the ability to bypass 
 If X11 services are not required for the system's intended function, they should be disabled or restricted as appropriate to the system’s needs.</pre></td>
 	<td><pre>Verify X11Forwarding is disabled with the following command:
 
-$ sudo grep -i x11forwarding /etc/ssh/sshd_config | grep -v "^#"
+$ sudo grep -ir x11forwarding /etc/ssh/sshd_config* | grep -v "^#"
 
 X11Forwarding no
 
-If the "X11Forwarding" keyword is set to "yes" and is not documented with the Information System Security Officer (ISSO) as an operational requirement or is missing, this is a finding.</pre></td>
+If the "X11Forwarding" keyword is set to "yes" and is not documented with the Information System Security Officer (ISSO) as an operational requirement or is missing, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Edit the "/etc/ssh/sshd_config" file to uncomment or add the line for the "X11Forwarding" keyword and set its value to "no" (this file may be named differently or be in a different location if using a version of SSH that is provided by a third-party vendor):
 
 X11Forwarding no
@@ -10187,7 +10394,7 @@ The SSH service must be restarted for changes to take effect:
 
 $ sudo systemctl restart sshd</pre></td>
 	<td>RHEL-08-040340</td>
-	<td>SV-230555r627750_rule</td>
+	<td>SV-230555r858721_rule</td>
 </tr>
 
 <tr>
@@ -10201,17 +10408,18 @@ $ sudo systemctl restart sshd</pre></td>
 
 Check the SSH X11UseLocalhost setting with the following command:
 
-# sudo grep -i x11uselocalhost /etc/ssh/sshd_config
+# sudo grep -ir x11uselocalhost /etc/ssh/sshd_config*
 X11UseLocalhost yes
 
-If the "X11UseLocalhost" keyword is set to "no", is missing, or is commented out, this is a finding.</pre></td>
+If the "X11UseLocalhost" keyword is set to "no", is missing, or is commented out, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure the SSH daemon to prevent remote hosts from connecting to the proxy display.
 
 Edit the "/etc/ssh/sshd_config" file to uncomment or add the line for the "X11UseLocalhost" keyword and set its value to "yes" (this file may be named differently or be in a different location if using a version of SSH that is provided by a third-party vendor):
 
 X11UseLocalhost yes</pre></td>
 	<td>RHEL-08-040341</td>
-	<td>SV-230556r627750_rule</td>
+	<td>SV-230556r858723_rule</td>
 </tr>
 
 <tr>
@@ -10411,9 +10619,13 @@ If "Defaults !runaspw" is not defined, this is a finding.</pre></td>
 	<td><pre>Define the following in the Defaults section of the /etc/sudoers file or a configuration file in the /etc/sudoers.d/ directory:
 Defaults !targetpw
 Defaults !rootpw
-Defaults !runaspw</pre></td>
+Defaults !runaspw
+
+Remove any configurations that conflict with the above from the following locations: 
+/etc/sudoers
+/etc/sudoers.d/</pre></td>
 	<td>RHEL-08-010383</td>
-	<td>SV-237642r833369_rule</td>
+	<td>SV-237642r861086_rule</td>
 </tr>
 
 <tr>
@@ -10441,9 +10653,11 @@ $ sudo visudo
 
 Add or modify the following line:
 Defaults timestamp_timeout=[value]
-Note: The "[value]" must be a number that is greater than or equal to "0".</pre></td>
+Note: The "[value]" must be a number that is greater than or equal to "0".
+
+Remove any duplicate or conflicting lines from /etc/sudoers and /etc/sudoers.d/ files.</pre></td>
 	<td>RHEL-08-010384</td>
-	<td>SV-237643r838720_rule</td>
+	<td>SV-237643r861088_rule</td>
 </tr>
 
 <tr>
@@ -10622,12 +10836,13 @@ Satisfies: SRG-OS-000163-GPOS-00072, SRG-OS-000126-GPOS-00066, SRG-OS-000279-GPO
 
 Check that the "ClientAliveInterval" variable is set to a value of "600" or less by performing the following command:
 
-$ sudo grep -i clientalive /etc/ssh/sshd_config
+$ sudo grep -ir clientalive /etc/ssh/sshd_config*
 
 ClientAliveInterval 600
-ClientAliveCountMax 0
+ClientAliveCountMax 1
 
-If "ClientAliveInterval" does not exist, does not have a value of "600" or less in "/etc/ssh/sshd_config", or is commented out, this is a finding.</pre></td>
+If "ClientAliveInterval" does not exist, does not have a value of "600" or less in "/etc/ssh/sshd_config", or is commented out, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure RHEL 8 to automatically terminate all network connections associated with SSH traffic at the end of a session or after 10 minutes of inactivity.
 
 Modify or append the following lines in the "/etc/ssh/sshd_config" file:
@@ -10638,7 +10853,7 @@ In order for the changes to take effect, the SSH daemon must be restarted.
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-010201</td>
-	<td>SV-244525r743824_rule</td>
+	<td>SV-244525r858699_rule</td>
 </tr>
 
 <tr>
@@ -10704,11 +10919,12 @@ $ sudo yum install rng-tools</pre></td>
 	<td><pre>Configuring this setting for the SSH daemon provides additional assurance that remote logon via SSH will require a password, even in the event of misconfiguration elsewhere.</pre></td>
 	<td><pre>Verify the SSH daemon does not allow GSSAPI authentication with the following command:
 
-$ sudo grep -i GSSAPIAuthentication  /etc/ssh/sshd_config
+$ sudo grep -ir GSSAPIAuthentication  /etc/ssh/sshd_config*
 
 GSSAPIAuthentication no
 
-If the value is returned as "yes", the returned line is commented out, no output is returned, or has not been documented with the ISSO, this is a finding.</pre></td>
+If the value is returned as "yes", the returned line is commented out, no output is returned, or has not been documented with the ISSO, this is a finding.
+If conflicting results are returned, this is a finding.</pre></td>
 	<td><pre>Configure the SSH daemon to not allow GSSAPI authentication.
 
 Add the following line in "/etc/ssh/sshd_config", or uncomment the line and set the value to "no":
@@ -10719,7 +10935,7 @@ The SSH daemon must be restarted for the changes to take effect. To restart the 
 
 $ sudo systemctl restart sshd.service</pre></td>
 	<td>RHEL-08-010522</td>
-	<td>SV-244528r743833_rule</td>
+	<td>SV-244528r858709_rule</td>
 </tr>
 
 <tr>
@@ -11184,7 +11400,7 @@ space_left_action = email
 
 Note: Option names and values in the auditd.conf file are case insensitive.</pre></td>
 	<td>RHEL-08-030731</td>
-	<td>SV-244543r743878_rule</td>
+	<td>SV-244543r854072_rule</td>
 </tr>
 
 <tr>
@@ -11210,7 +11426,7 @@ If the "firewalld" package is not "active", ask the System Administrator if anot
 
 $ sudo systemctl enable firewalld</pre></td>
 	<td>RHEL-08-040101</td>
-	<td>SV-244544r743881_rule</td>
+	<td>SV-244544r854073_rule</td>
 </tr>
 
 <tr>
@@ -11243,7 +11459,7 @@ If fapolicyd is not enabled and running, this is a finding.</pre></td>
 
 $ sudo systemctl enable --now fapolicyd</pre></td>
 	<td>RHEL-08-040136</td>
-	<td>SV-244545r743884_rule</td>
+	<td>SV-244545r854074_rule</td>
 </tr>
 
 <tr>
@@ -11271,9 +11487,13 @@ $ sudo grep permissive /etc/fapolicyd/fapolicyd.conf
 
 permissive = 0
 
-Check that fapolicyd employs a deny-all policy on system mounts with the following command:
+Check that fapolicyd employs a deny-all policy on system mounts with the following commands:
 
+For RHEL 8.4 systems and older:
 $ sudo tail /etc/fapolicyd/fapolicyd.rules
+
+For RHEL 8.5 systems and newer:
+$ sudo tail /etc/fapolicyd/compiled.rules
 
 allow exe=/usr/bin/python3.7 : ftype=text/x-python
 deny_audit perm=any pattern=ld_so : all
@@ -11286,13 +11506,17 @@ With the "fapolicyd" installed and enabled, configure the daemon to function in 
 
 permissive = 1
 
+For RHEL 8.4 systems and older:
 Build the whitelist in the "/etc/fapolicyd/fapolicyd.rules" file ensuring the last rule is "deny perm=any all : all".
+
+For RHEL 8.5 systems and newer:
+Build the whitelist in a file within the "/etc/fapolicyd/rules.d" directory ensuring the last rule is "deny perm=any all : all".
 
 Once it is determined the whitelist is built correctly, set the fapolicyd to enforcing mode by editing the "permissive" line in the /etc/fapolicyd/fapolicyd.conf file.
 
 permissive = 0</pre></td>
 	<td>RHEL-08-040137</td>
-	<td>SV-244546r809339_rule</td>
+	<td>SV-244546r858730_rule</td>
 </tr>
 
 <tr>
@@ -11319,7 +11543,7 @@ If there is no evidence that unauthorized peripherals are being blocked before e
 
 $ sudo yum install usbguard.x86_64</pre></td>
 	<td>RHEL-08-040139</td>
-	<td>SV-244547r743890_rule</td>
+	<td>SV-244547r854076_rule</td>
 </tr>
 
 <tr>
@@ -11353,7 +11577,7 @@ $ sudo systemctl start usbguard.service
 
 Note: Enabling and starting usbguard without properly configuring it for an individual system will immediately prevent any access over a usb device such as a keyboard or mouse</pre></td>
 	<td>RHEL-08-040141</td>
-	<td>SV-244548r743893_rule</td>
+	<td>SV-244548r854077_rule</td>
 </tr>
 
 <tr>
@@ -11380,7 +11604,7 @@ If the "SSH server" package is not installed, this is a finding.</pre></td>
 
 $ sudo yum install openssh-server.x86_64</pre></td>
 	<td>RHEL-08-040159</td>
-	<td>SV-244549r743896_rule</td>
+	<td>SV-244549r854078_rule</td>
 </tr>
 
 <tr>
@@ -11423,11 +11647,19 @@ Add or edit the following line in a system configuration file, in the "/etc/sysc
 
 net.ipv4.conf.default.accept_redirects = 0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-040209</td>
-	<td>SV-244550r833373_rule</td>
+	<td>SV-244550r858791_rule</td>
 </tr>
 
 <tr>
@@ -11470,11 +11702,19 @@ Add or edit the following line in a system configuration file, in the "/etc/sysc
 
 net.ipv4.conf.all.accept_source_route=0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-040239</td>
-	<td>SV-244551r833375_rule</td>
+	<td>SV-244551r858799_rule</td>
 </tr>
 
 <tr>
@@ -11517,11 +11757,19 @@ Add or edit the following line in a system configuration file, in the "/etc/sysc
 
 net.ipv4.conf.default.accept_source_route=0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-040249</td>
-	<td>SV-244552r833377_rule</td>
+	<td>SV-244552r858803_rule</td>
 </tr>
 
 <tr>
@@ -11564,11 +11812,19 @@ Add or edit the following line in a system configuration file, in the "/etc/sysc
 
 net.ipv4.conf.all.accept_redirects = 0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-040279</td>
-	<td>SV-244553r833379_rule</td>
+	<td>SV-244553r858818_rule</td>
 </tr>
 
 <tr>
@@ -11609,11 +11865,19 @@ If conflicting results are returned, this is a finding.</pre></td>
 
 net.core.bpf_jit_harden = 2
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 The system configuration files need to be reloaded for the changes to take effect. To reload the contents of the files, run the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-040286</td>
-	<td>SV-244554r833381_rule</td>
+	<td>SV-244554r858832_rule</td>
 </tr>
 
 <tr>
@@ -11684,7 +11948,7 @@ Next, update the context type of the non-default faillock directory/subdirectori
 
 $ sudo restorecon -R -v /var/log/faillock</pre></td>
 	<td>RHEL-08-020027</td>
-	<td>SV-250315r793009_rule</td>
+	<td>SV-250315r854079_rule</td>
 </tr>
 
 <tr>
@@ -11726,7 +11990,7 @@ Next, update the context type of the non-default faillock directory/subdirectori
 
 $ sudo restorecon -R -v /var/log/faillock</pre></td>
 	<td>RHEL-08-020028</td>
-	<td>SV-250316r793010_rule</td>
+	<td>SV-250316r854080_rule</td>
 </tr>
 
 <tr>
@@ -11768,11 +12032,19 @@ Add or edit the following line in a system configuration file, in the "/etc/sysc
 
 net.ipv4.conf.all.forwarding=0
 
+Remove any configurations that conflict with the above from the following locations: 
+/run/sysctl.d/*.conf
+/usr/local/lib/sysctl.d/*.conf
+/usr/lib/sysctl.d/*.conf
+/lib/sysctl.d/*.conf
+/etc/sysctl.conf
+/etc/sysctl.d/*.conf
+
 Load settings from all system configuration files with the following command:
 
 $ sudo sysctl --system</pre></td>
 	<td>RHEL-08-040259</td>
-	<td>SV-250317r833383_rule</td>
+	<td>SV-250317r858808_rule</td>
 </tr>
 
 <tr>
@@ -11888,7 +12160,7 @@ If there is no application installed to perform integrity checks, this is a find
 
 $ sudo yum install aide</pre></td>
 	<td>RHEL-08-010359</td>
-	<td>SV-251710r809354_rule</td>
+	<td>SV-251710r854081_rule</td>
 </tr>
 
 <tr>
@@ -11952,7 +12224,7 @@ $ sudo vi /etc/pam.d/sudo
 
 Remove any occurrences of "pam_succeed_if" in the file.</pre></td>
 	<td>RHEL-08-010385</td>
-	<td>SV-251712r810017_rule</td>
+	<td>SV-251712r854083_rule</td>
 </tr>
 
 <tr>
@@ -12078,16 +12350,18 @@ If conflicting results are returned, this is a finding.
 
 Check for the use of the "pwquality" retry option in the system-auth and password-auth files with the following command:
 
-$ sudo grep retry /etc/pam.d/system-auth /etc/pam.d/password-auth
+$ sudo grep pwquality /etc/pam.d/system-auth /etc/pam.d/password-auth | grep retry
 
 If the command returns any results, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to limit the "pwquality" retry option to 3.
 
 Add the following line to the "/etc/security/pwquality.conf" file(or modify the line to have the required value):
 
-retry = 3</pre></td>
+retry = 3
+
+Remove any configurations that conflict with the above value.</pre></td>
 	<td>RHEL-08-020104</td>
-	<td>SV-251716r833387_rule</td>
+	<td>SV-251716r858737_rule</td>
 </tr>
 
 <tr>
@@ -12105,9 +12379,9 @@ RHEL 8 uses "pwhistory" consecutively as a mechanism to prohibit password reuse.
 Note that manual changes to the listed files may be overwritten by the "authselect" program.</pre></td>
 	<td><pre>Verify the operating system is configured in the system-auth file to prohibit password reuse for a minimum of five generations.
 
-Check for the value of the "remember" argument in "/etc/pam.d/password-auth" with the following command:
+Check for the value of the "remember" argument in "/etc/pam.d/system-auth" with the following command:
 
-$ sudo grep -i remember /etc/pam.d/password-auth
+$ sudo grep -i remember /etc/pam.d/system-auth
 
 password required pam_pwhistory.so use_authtok remember=5 retry=3
 
@@ -12118,7 +12392,7 @@ Add the following line in "/etc/pam.d/system-auth" (or modify the line to have t
 
 password required pam_pwhistory.so use_authtok remember=5 retry=3</pre></td>
 	<td>RHEL-08-020221</td>
-	<td>SV-251717r810415_rule</td>
+	<td>SV-251717r858745_rule</td>
 </tr>
 
 <tr>
@@ -12143,6 +12417,62 @@ $ sudo systemctl set-default multi-user.target
 A reboot is required for the changes to take effect.</pre></td>
 	<td>RHEL-08-040321</td>
 	<td>SV-251718r809378_rule</td>
+</tr>
+
+<tr>
+	<td>V-254520</td>
+	<td>CCI-002265</td>
+	<td>medium</td>
+	<td>RHEL 8 must prevent non-privileged users from executing privileged functions, including disabling, circumventing, or altering implemented security safeguards/countermeasures.</td>
+	<td>SRG-OS-000324-GPOS-00125</td>
+	<td><pre>Preventing non-privileged users from executing privileged functions mitigates the risk that unauthorized individuals or processes may gain unnecessary access to information or privileges. 
+ 
+Privileged functions include, for example, establishing accounts, performing system integrity checks, or administering cryptographic key management activities. Non-privileged users are individuals who do not possess appropriate authorizations. Circumventing intrusion detection and prevention mechanisms or malicious code protection mechanisms are examples of privileged functions that require protection from non-privileged users.</pre></td>
+	<td><pre>Verify the operating system prevents non-privileged users from executing privileged functions, including disabling, circumventing, or altering implemented security safeguards/countermeasures. 
+ 
+Obtain a list of authorized users (other than System Administrator and guest accounts) for the system. 
+ 
+Check the list against the system by using the following command: 
+ 
+$ sudo semanage login -l | more 
+Login Name SELinux User MLS/MCS Range Service 
+__default__ user_u s0-s0:c0.c1023 * 
+root unconfined_u s0-s0:c0.c1023 * 
+system_u system_u s0-s0:c0.c1023 * 
+joe staff_u s0-s0:c0.c1023 * 
+ 
+All administrators must be mapped to the "sysadm_u", "staff_u", or an appropriately tailored confined role as defined by the organization. 
+ 
+All authorized non-administrative users must be mapped to the "user_u" role. 
+ 
+If they are not mapped in this way, this is a finding.</pre></td>
+	<td><pre>Configure RHEL 8 to prevent non-privileged users from executing privileged functions, including disabling, circumventing, or altering implemented security safeguards/countermeasures. 
+ 
+Use the following command to map a new user to the "sysadm_u" role: 
+ 
+$ sudo semanage login -a -s sysadm_u <username> 
+ 
+Use the following command to map an existing user to the "sysadm_u" role: 
+ 
+$ sudo semanage login -m -s sysadm_u <username> 
+ 
+Use the following command to map a new user to the "staff_u" role: 
+ 
+$ sudo semanage login -a -s staff_u <username> 
+ 
+Use the following command to map an existing user to the "staff_u" role: 
+ 
+$ sudo semanage login -m -s staff_u <username> 
+ 
+Use the following command to map a new user to the "user_u" role: 
+ 
+$ sudo  semanage login -a -s user_u <username> 
+ 
+Use the following command to map an existing user to the "user_u" role: 
+ 
+$ sudo semanage login -m -s user_u <username></pre></td>
+	<td>RHEL-08-040400</td>
+	<td>SV-254520r858835_rule</td>
 </tr>
 
 </table>

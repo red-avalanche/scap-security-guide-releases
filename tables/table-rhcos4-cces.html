@@ -721,10 +721,53 @@ Operator see
 </tr>
 <tr>
 <td></td>
+<td>Modify the System Login Banner for Remote Connections</td>
+<td>To configure the system login banner edit <code>/etc/issue.net</code>. Replace the
+default text with a message compliant with the local site policy or a legal
+disclaimer.
+
+The DoD required text is either:
+<br><br>
+<code>You are accessing a U.S. Government (USG) Information System (IS) that
+is provided for USG-authorized use only. By using this IS (which includes
+any device attached to this IS), you consent to the following conditions:
+<br>-The USG routinely intercepts and monitors communications on this IS
+for purposes including, but not limited to, penetration testing, COMSEC
+monitoring, network operations and defense, personnel misconduct (PM), law
+enforcement (LE), and counterintelligence (CI) investigations.
+<br>-At any time, the USG may inspect and seize data stored on this IS.
+<br>-Communications using, or data stored on, this IS are not private,
+are subject to routine monitoring, interception, and search, and may be
+disclosed or used for any USG-authorized purpose.
+<br>-This IS includes security measures (e.g., authentication and access
+controls) to protect USG interests -- not for your personal benefit or
+privacy.
+<br>-Notwithstanding the above, using this IS does not constitute consent
+to PM, LE or CI investigative searching or monitoring of the content of
+privileged communications, or work product, related to personal
+representation or services by attorneys, psychotherapists, or clergy, and
+their assistants. Such communications and work product are private and
+confidential. See User Agreement for details.</code>
+<br><br>
+OR:
+<br><br>
+<code>I've read &amp; consent to terms in IS user agreem't.</code>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>Verify Group Ownership of System Login Banner</td>
 <td>
 To properly set the group owner of <code>/etc/issue</code>, run the command:
 <pre>$ sudo chgrp root /etc/issue</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Verify Group Ownership of System Login Banner for Remote Connections</td>
+<td>
+To properly set the group owner of <code>/etc/issue.net</code>, run the command:
+<pre>$ sudo chgrp root /etc/issue.net</pre>
 </td>
 </tr>
 <tr>
@@ -737,10 +780,26 @@ To properly set the owner of <code>/etc/issue</code>, run the command:
 </tr>
 <tr>
 <td></td>
+<td>Verify ownership of System Login Banner for Remote Connections</td>
+<td>
+To properly set the owner of <code>/etc/issue.net</code>, run the command:
+<pre>$ sudo chown root /etc/issue.net </pre>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>Verify permissions on System Login Banner</td>
 <td>
 To properly set the permissions of <code>/etc/issue</code>, run the command:
 <pre>$ sudo chmod 0644 /etc/issue</pre>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Verify permissions on System Login Banner for Remote Connections</td>
+<td>
+To properly set the permissions of <code>/etc/issue.net</code>, run the command:
+<pre>$ sudo chmod 0644 /etc/issue.net</pre>
 </td>
 </tr>
 <tr>
@@ -771,6 +830,11 @@ And make sure that the <code>silent</code> option is not set for
 <td></td>
 <td>Account Lockouts Must Persist</td>
 <td>By setting a `dir` in the faillock configuration account lockouts will persist across reboots.</td>
+</tr>
+<tr>
+<td></td>
+<td>Account Lockouts Must Be Logged</td>
+<td>PAM faillock locks an account due to excessive password failures, this event must be logged.</td>
 </tr>
 <tr>
 <td>CCE-82496-1</td>
@@ -5919,6 +5983,20 @@ If changes were required, reload the ip6tables rules:
 </tr>
 <tr>
 <td></td>
+<td>Set configuration for IPv6 loopback traffic</td>
+<td>Configure the loopback interface to accept traffic.
+Configure all other interfaces to deny traffic to the loopback
+network.</td>
+</tr>
+<tr>
+<td></td>
+<td>Set configuration for loopback traffic</td>
+<td>Configure the loopback interface to accept traffic. 
+Configure all other interfaces to deny traffic to the loopback 
+network.</td>
+</tr>
+<tr>
+<td></td>
 <td>Set Default iptables Policy for Incoming Packets</td>
 <td>To set the default policy to DROP (instead of ACCEPT) for
 the built-in INPUT chain which processes incoming packets,
@@ -7911,7 +7989,7 @@ for guidance which NTP daemon to choose depending on the environment used.</td>
 <td></td>
 <td>Enable the NTP Daemon</td>
 <td>
-The <code>ntpd</code> service can be enabled with the following manifest:
+The <code>ntp</code> service can be enabled with the following manifest:
 <pre>
 ---
 apiVersion: machineconfiguration.openshift.io/v1
@@ -7919,18 +7997,18 @@ kind: MachineConfig
 metadata:
   labels:
     machineconfiguration.openshift.io/role: master
-  name: 75-master-ntpd-enable
+  name: 75-master-ntp-enable
 spec:
   config:
     ignition:
       version: 3.1.0
     systemd:
       units:
-      - name: ntpd.service
+      - name: ntp.service
         enabled: true
 </pre>
 <p>
-This will enable the <code>ntpd</code> service in all the
+This will enable the <code>ntp</code> service in all the
 nodes labeled with the "master" role.
 </p>
 <p>
@@ -8440,10 +8518,10 @@ processed before <code>02-rekey-limit.conf</code> containing definition of
 during a SSH session and waits for a response from the SSH client.
 The option <code>ClientAliveInterval</code> configures timeout after
 each <code>ClientAliveCountMax</code> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 
-To ensure the SSH idle timeout occurs precisely when the
+To ensure the SSH timeout occurs precisely when the
 <code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
 value of <code>0</code> in
 
@@ -8457,22 +8535,23 @@ value of <code>0</code> in
 during a SSH session and waits for a response from the SSH client.
 The option <code>ClientAliveInterval</code> configures timeout after
 each <code>ClientAliveCountMax</code> message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 For SSH earlier than v8.2, a <code>ClientAliveCountMax</code> value of <code>0</code>
-causes an idle timeout precisely when the <code>ClientAliveInterval</code> is set.
+causes a timeout precisely when the <code>ClientAliveInterval</code> is set.
 Starting with v8.2, a value of <code>0</code> disables the timeout functionality
 completely. If the option is set to a number greater than <code>0</code>, then
-the idle session will be disconnected after
-<code>ClientAliveInterval * ClientAliveCountMax</code> seconds.</td>
+the session will be disconnected after
+<code>ClientAliveInterval * ClientAliveCountMax</code> seconds without receiving
+a keep alive message.</td>
 </tr>
 <tr>
 <td>CCE-82549-7</td>
-<td>Set SSH Idle Timeout Interval</td>
-<td>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+<td>Set SSH Client Alive Interval</td>
+<td>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 <br><br>
-To set an idle timeout interval, edit the following line in <code>/etc/ssh/sshd_config</code> as
+To set this timeout interval, edit the following line in <code>/etc/ssh/sshd_config</code> as
 follows:
 <pre>ClientAliveInterval <b><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sshd_idle_timeout_value" use="legacy"></xccdf-1.2:sub></b></pre>
 <br><br>
@@ -8481,7 +8560,7 @@ of 10 minutes, set <b>interval</b> to 600.
 <br><br>
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in <code>/etc/ssh/sshd_config</code>. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</td>
+some processes may stop SSH from correctly detecting that the user is idle.</td>
 </tr>
 <tr>
 <td></td>

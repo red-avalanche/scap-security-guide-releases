@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:cdf="http://checklists.nist.gov/xccdf/1.1" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+<html>
 <head lang="en">
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <title>Rules in DISA STIG for SUSE Linux Enterprise 15</title>
@@ -605,7 +605,7 @@ TMOUT=
 
 readonly TMOUT
 export TMOUT
-      Is it the case that TMOUT is not set or its value is greater than expected setting?
+      Is it the case that value of TMOUT is not less than or equal to expected setting?
       </pre></td>
 	<td><pre>Setting the TMOUT option in /etc/profile ensures that
 all user sessions will terminate based on inactivity.
@@ -918,13 +918,12 @@ $ sudo systemctl enable firewalld.service</pre></td>
 	<td>The SUSE operating system must not have duplicate User IDs (UIDs) for interactive users.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>To assure accountability and prevent unauthenticated access, interactive users must be identified and authenticated to prevent potential misuse and compromise of the system.</pre></td>
-	<td><pre>Run the following command to check for duplicate account names:
-Check that the operating system contains no duplicate UIDs for interactive users by running the following command:
-# awk -F ":" 'list[$3]++{print $1, $3}' /etc/passwd
-If output is produced, this is a finding.
-Configure the operating system to contain no duplicate UIDs for interactive users.
-Edit the file "/etc/passwd" and provide each interactive user account that has a duplicate UID with a unique UID.
-      Is it the case that a line is returned?
+	<td><pre>Verify that SUSE Linux Enterprise 15 contains no duplicate User IDs (UIDs) for interactive users.
+
+Check that the operating system contains no duplicate UIDs for interactive users with the following command:
+
+$ sudo awk -F ":" 'list[$3]++{print $1, $3}' /etc/passwd
+      Is it the case that output is produced and the accounts listed are interactive user accounts?
       </pre></td>
 	<td><pre>Change user IDs (UIDs), or delete accounts, so each has a unique name.</pre></td>
 	<td>SLES-15-010230</td>
@@ -1061,10 +1060,10 @@ If properly configured, the output should be:
 ClientAliveInterval 
       Is it the case that it is commented out or not configured properly?
       </pre></td>
-	<td><pre>SSH allows administrators to set an idle timeout interval. After this interval
-has passed, the idle user will be automatically logged out.
+	<td><pre>SSH allows administrators to set a network responsiveness timeout interval.
+After this interval has passed, the unresponsive client will be automatically logged out.
 
-To set an idle timeout interval, edit the following line in /etc/ssh/sshd_config as
+To set this timeout interval, edit the following line in /etc/ssh/sshd_config as
 follows:
 ClientAliveInterval 
 
@@ -1073,7 +1072,7 @@ of 10 minutes, set interval to 600.
 
 If a shorter timeout has already been set for the login shell, that value will
 preempt any SSH setting made in /etc/ssh/sshd_config. Keep in mind that
-some processes may stop SSH  from correctly detecting that the user is idle.</pre></td>
+some processes may stop SSH from correctly detecting that the user is idle.</pre></td>
 	<td>SLES-15-010280</td>
 	<td>sshd_set_idle_timeout</td>
 </tr>
@@ -1154,7 +1153,7 @@ $ sudo grep ClientAliveCountMax /etc/ssh/sshd_config
 If properly configured, the output should be:
 ClientAliveCountMax 0
 
-In this case, the SSH idle timeout occurs precisely when
+In this case, the SSH timeout occurs precisely when
 the ClientAliveInterval is set.
       Is it the case that it is commented out or not configured properly?
       </pre></td>
@@ -1162,10 +1161,10 @@ the ClientAliveInterval is set.
 during a SSH session and waits for a response from the SSH client.
 The option ClientAliveInterval configures timeout after
 each ClientAliveCountMax message. If the SSH server does not
-receive a response from the client, then the connection is considered idle
+receive a response from the client, then the connection is considered unresponsive
 and terminated.
 
-To ensure the SSH idle timeout occurs precisely when the
+To ensure the SSH timeout occurs precisely when the
 ClientAliveInterval is set, set the ClientAliveCountMax to
 value of 0 in
 
@@ -1790,7 +1789,7 @@ state up.
 
 If a wireless interface is configured it must be documented and approved by
 the local Authorizing Official.
-      Is it the case that wireless interfaces are not active?
+      Is it the case that a wireless interface is configured and has not been documented and approved by the Information System Security Officer (ISSO)?
       </pre></td>
 	<td><pre>Deactivating wireless network interfaces should prevent normal usage of the wireless
 capability.
@@ -1943,14 +1942,14 @@ This ensures the software has not been tampered with and that it has been
 provided by a trusted vendor. Self-signed certificates are disallowed by
 this requirement. Certificates used to verify the software must be from an
 approved Certificate Authority (CA).</pre></td>
-	<td><pre>To determine whether zypper is configured to use gpgcheck,
-inspect /etc/zypp/zypp.conf and ensure the following appears in the
-[main] section:
+	<td><pre>Verify that zypper verifies the signature of packages from a repository prior to install with the following command:
+
+$ grep gpgcheck /etc/zypp/zypp.conf
+
 gpgcheck=1
-A value of 1 indicates that gpgcheck is enabled. Absence of a
-gpgcheck line or a setting of 0 indicates that it is
-disabled.
-      Is it the case that GPG checking is not enabled?
+
+If "gpgcheck" is not set to "1", or if the option is missing or commented out, ask the System Administrator how the certificates for patches and other operating system components are verified.
+      Is it the case that there is no process to validate certificates that is approved by the organization?
       </pre></td>
 	<td><pre>The gpgcheck option controls whether
 RPM packages' signatures are always checked prior to installation.
@@ -3211,9 +3210,14 @@ defeat the organization's policy regarding password reuse.
 
 Setting the minimum password age protects against users cycling back to a
 favorite password after satisfying the password reuse requirement.</pre></td>
-	<td><pre>To check the minimum password age, run the command:
-$ grep PASS_MIN_DAYS /etc/login.defs
-      Is it the case that it is not equal to or greater than the required value?
+	<td><pre>Verify SUSE Linux Enterprise 15 enforces 24 hours/1 day as the minimum password lifetime for new user accounts.
+
+Check for the value of "PASS_MIN_DAYS" in "/etc/login.defs" with the following command:
+
+$ grep -i pass_min_days /etc/login.defs
+
+PASS_MIN_DAYS 
+      Is it the case that the "PASS_MIN_DAYS" parameter value is not "<sub idref="var_accounts_minimum_age_login_defs" />" or greater, or is commented out?
       </pre></td>
 	<td><pre>To specify password minimum age for new accounts,
 edit the file /etc/login.defs
@@ -3237,7 +3241,7 @@ changes to defeat the password reuse or history enforcement requirement. If
 users are allowed to immediately and continually change their password, the
 password could be repeatedly changed in a short period of time to defeat the
 organization's policy regarding password reuse.</pre></td>
-	<td><pre>Check whether the minimum time period between password changes for each user account is one day or greater.
+	<td><pre>Verify that SUSE Linux Enterprise 15 has configured the minimum time period between password changes for each user account is one day or greater with the following command:
 
 $ sudo awk -F: '$4 < 1 {print $1 " " $4}' /etc/shadow
       Is it the case that any results are returned that are not associated with a system account?
@@ -3264,10 +3268,12 @@ Setting the password maximum age ensures users are required to
 periodically change their passwords. Requiring shorter password lifetimes
 increases the risk of users writing down the password in a convenient
 location subject to physical compromise.</pre></td>
-	<td><pre>To check the maximum password age, run the command:
-$ grep PASS_MAX_DAYS /etc/login.defs
-The profile requirement is .
-      Is it the case that PASS_MAX_DAYS is not set equal to or greater than the required value?
+	<td><pre>Verify that SUSE Linux Enterprise 15 enforces a -day maximum password lifetime for new user accounts by running the following command:
+
+$ grep -i pass_max_days /etc/login.defs
+
+PASS_MAX_DAYS 
+      Is it the case that the "PASS_MAX_DAYS" parameter value is greater than "<sub idref="var_accounts_maximum_age_login_defs" />", or commented out?
       </pre></td>
 	<td><pre>To specify password maximum age for new accounts,
 edit the file /etc/login.defs
@@ -5143,12 +5149,12 @@ form to /etc/audit/audit.rules:
 	<td>SRG-OS-ID</td>
 	<td><pre>Email sent to the root account is typically aliased to the
 administrators of the system, who can take appropriate action.</pre></td>
-	<td><pre>Verify that the SUSE Linux Enterprise 15 "auditd" service is configured to notify the SA and ISSO in the event of an audit processing failure.
-Inspect /etc/audit/auditd.conf and locate the following line to
-determine if the system is configured to send email to an
-account when it needs to notify an administrator:
+	<td><pre>Verify that SUSE Linux Enterprise 15 is configured to notify the SA and/or ISSO (at a minimum) in the event of an audit processing failure with the following command:
+
+$ sudo grep action_mail_acct /etc/audit/auditd.conf
+
 action_mail_acct = 
-      Is it the case that auditd is not configured to send emails per identified actions?
+      Is it the case that the value of the "action_mail_acct" keyword is not set to "<sub idref="var_auditd_action_mail_acct" />" and/or other accounts for security personnel, the "action_mail_acct" keyword is missing, or the retuned line is commented out, ask the system administrator to indicate how they and the ISSO are notified of an audit process failure. If there is no evidence of the proper personnel being notified of an audit processing failure?
       </pre></td>
 	<td><pre>The auditd service can be configured to send email to
 a designated account in certain situations. Add or correct the following line
@@ -6127,11 +6133,11 @@ CtrlAltDelBurstAction=none</pre></td>
 	<td>SRG-OS-ID</td>
 	<td><pre>If local interactive users are not assigned a valid home directory, there is no
 place for the storage and control of files they should own.</pre></td>
-	<td><pre>To verify interactive users on the system have a home directory assigned,
-run the following command:
-$ sudo awk -F":" '{print $1 ":" $6}' /etc/passwd
-Inspect the output and verify that all interactive users have a home directory
-defined.
+	<td><pre>Verify that interactive users on the system have a home directory assigned with the following command:
+
+$ sudo awk -F: '($3>=1000)&&($7 !~ /nologin/){print $1, $3, $6}' /etc/passwd
+
+Inspect the output and verify that all interactive users (normally users with a UID greater that 1000) have a home directory defined.
       Is it the case that users home directory is not defined?
       </pre></td>
 	<td><pre>Assign home directories to all interactive users that currently do not
@@ -6156,9 +6162,13 @@ the user may be given access to the / directory as the current working directory
 upon logon. This could create a Denial of Service because the user would not be
 able to access their logon configuration files, and it may give them visibility
 to system files they normally would not be able to access.</pre></td>
-	<td><pre>To verify the assigned home directory of all interactive users on the system
-exist, run the following command:
+	<td><pre>Verify the assigned home directories of all interactive users on the system exist with the following command:
+
 $ sudo pwck -r
+
+user 'mailnull': directory 'var/spool/mqueue' does not exist
+
+The output should not return any interactive users.
       Is it the case that users home directory does not exist?
       </pre></td>
 	<td><pre>Create home directories to all interactive users that currently do not
@@ -6255,12 +6265,12 @@ an empty entry, such as a leading or trailing colon or two consecutive colons,
 this is interpreted as the current working directory. If deviations from the
 default system search path for the local interactive user are required, they
 must be documented with the Information System Security Officer (ISSO).</pre></td>
-	<td><pre>To verify that all interactive user initialization files executable search
-path statements do not contain statements that will reference a working
-directory other than the users home directory, run the following command:
-$ sudo grep -r PATH /home/
-Inspect the output for any PATH is references directories outside the home directory.
-      Is it the case that paths contain more than local home directories?
+	<td><pre>Verify that all local interactive user initialization file executable search path statements do not contain statements that will reference a working directory other than user home directories with the following commands:
+
+$ sudo grep -i path= /home/*/.*
+
+/home/[localinteractiveuser]/.bash_profile:PATH=$PATH:$HOME/.local/bin:$HOME/bin
+      Is it the case that any local interactive user initialization files have executable search path statements that include directories outside of their home directory and is not documented with the ISSO as an operational requirement?
       </pre></td>
 	<td><pre>Ensure that all interactive user initialization files executable search
 path statements do not contain statements that will reference a working
@@ -6280,15 +6290,12 @@ unprotected directories, they could be maliciously modified to destroy user
 files or otherwise compromise the system at the user level. If the system is
 compromised at the user level, it is easier to elevate privileges to eventually
 compromise the system at the root and network level.</pre></td>
-	<td><pre>Verify that local initialization files do not execute world-writable programs,
-execute the following command:
+	<td><pre>Verify that local initialization files do not execute world-writable programs with the following command:
+
+Note: The example will be for a system that is configured to create user home directories in the "/home" directory.
+
 $ sudo find /home -perm -002 -type f -name ".[^.]*" -exec ls -ld {} \;
-For all files listed, check for their presence in the local
-initialization files with the following command:
-Note: The example will be for a system that is configured to create
-users' home directories in the "/home" directory.
- sudo find /home/* -maxdepth 1 -type f -name \.\* -exec grep -H <file> {} \; 
-      Is it the case that user initialization files are executing world-writable programs?
+      Is it the case that any local initialization files are found to reference world-writable files?
       </pre></td>
 	<td><pre>Set the mode on files being executed by the user initialization files with the
 following command:
@@ -7125,12 +7132,12 @@ $ sudo find PARTITION -xdev -nogroup</pre></td>
 	<td><pre>The umask value influences the permissions assigned to files when they are created.
 A misconfigured umask value could result in files with excessive permissions that can be read and
 written to by unauthorized users.</pre></td>
-	<td><pre>Verify the UMASK setting is configured correctly in the /etc/login.defs file by
-running the following command:
-$ sudo grep "UMASK" /etc/login.defs
-All output must show the value of UMASK set as shown in the below:
+	<td><pre>Verify SUSE Linux Enterprise 15 defines default permissions for all authenticated users in such a way that the user can only read and modify their own files with the following command:
+
+# grep -i umask /etc/login.defs
+
 UMASK 
-      Is it the case that the above command returns no output, or the umask is configured incorrectly?
+      Is it the case that the value for the "UMASK" parameter is not "<sub idref="var_accounts_user_umask" />", or the "UMASK" parameter is missing or is commented out?
       </pre></td>
 	<td><pre>To ensure the default umask controlled by /etc/login.defs is set properly,
 add or correct the UMASK setting in /etc/login.defs to read as follows:
