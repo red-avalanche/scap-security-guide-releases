@@ -48,7 +48,7 @@
 <td xml:lang="en-US">Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
 all user sessions will terminate based on inactivity. The <code>TMOUT</code>
 setting in <code>/etc/profile</code> should read as follows:
-<pre>TMOUT=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></ns0:sub></pre>
+<pre>TMOUT=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></xccdf-1.1:sub></pre>
 </td>
 <td xml:lang="en-US">Terminating an idle session within a short time period reduces
 the window of opportunity for unauthorized personnel to take control of a
@@ -62,7 +62,7 @@ left unattended.</td>
 <td>Ensure the Default Umask is Set Correctly in login.defs</td>
 <td xml:lang="en-US">To ensure the default umask controlled by <code>/etc/login.defs</code> is set properly,
 add or correct the <code>UMASK</code> setting in <code>/etc/login.defs</code> to read as follows:
-<pre>UMASK <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_user_umask"></ns0:sub></pre>
+<pre>UMASK <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_user_umask"></xccdf-1.1:sub></pre>
 </td>
 <td xml:lang="en-US">The umask value influences the permissions assigned to files when they are created.
 A misconfigured umask value could result in files with excessive permissions that can be read and
@@ -75,7 +75,7 @@ written to by unauthorized users.</td>
 <td>Ensure the Default Umask is Set Correctly in /etc/profile</td>
 <td xml:lang="en-US">To ensure the default umask controlled by <code>/etc/profile</code> is set properly,
 add or correct the <code>umask</code> setting in <code>/etc/profile</code> to read as follows:
-<pre>umask <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_user_umask"></ns0:sub></pre>
+<pre>umask <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_user_umask"></xccdf-1.1:sub></pre>
 </td>
 <td xml:lang="en-US">The umask value influences the permissions assigned to files when they are created.
 A misconfigured umask value could result in files with excessive permissions that can be read or
@@ -320,28 +320,16 @@ strictly controlled on the system.</td>
 <td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
 protection enabled to protect boot-time settings.
 <br><br>
-To do so, select a superuser account name and password and and modify the
-<code>/etc/grub.d/01_users</code> configuration file with the new account name.
-<br><br>
 Since plaintext passwords are a security risk, generate a hash for the pasword
 by running the following command:
 <pre>$ grub2-setpassword</pre>
 When prompted, enter the password that was selected.
 <br><br>
-NOTE: It is recommended not to use common administrator account names like root,
-admin, or administrator for the grub2 superuser account.
-<br><br>
-Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i s/root/bootuser/g /etc/grub.d/01_users</pre>
-<br><br>
-To meet FISMA Moderate, the bootloader superuser account and password MUST
-differ from the root account and password.
-Once the superuser account and password have been added,
+Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
 <pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
-NOTE: Do NOT manually add the superuser account and password to the
-<code>grub.cfg</code> file as the grub2-mkconfig command overwrites this file.</td>
+</td>
 <td xml:lang="en-US">Password protection on the boot loader configuration ensures
 users with physical access cannot trivially alter
 important bootloader settings. These include which kernel to use,
@@ -362,28 +350,16 @@ please refer to
 <td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
 protection enabled to protect boot-time settings.
 <br><br>
-To do so, select a superuser account name and password and and modify the
-<code>/etc/grub.d/01_users</code> configuration file with the new account name.
-<br><br>
 Since plaintext passwords are a security risk, generate a hash for the pasword
 by running the following command:
 <pre>$ grub2-setpassword</pre>
 When prompted, enter the password that was selected.
 <br><br>
-NOTE: It is recommended not to use common administrator account names like root,
-admin, or administrator for the grub2 superuser account.
-<br><br>
-Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i s/root/bootuser/g /etc/grub.d/01_users</pre>
-<br><br>
-To meet FISMA Moderate, the bootloader superuser account and password MUST
-differ from the root account and password.
-Once the superuser account and password have been added,
+Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
 <pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
-NOTE: Do NOT manually add the superuser account and password to the
-<code>grub.cfg</code> file as the grub2-mkconfig command overwrites this file.</td>
+</td>
 <td xml:lang="en-US">Password protection on the boot loader configuration ensures
 users with physical access cannot trivially alter
 important bootloader settings. These include which kernel to use,
@@ -655,15 +631,15 @@ restrictive mount options, which can help protect programs which use it.</td>
 </td>
 <td>Ensure Log Files Are Owned By Appropriate Group</td>
 <td xml:lang="en-US">The group-owner of all log files written by
-<code>rsyslog</code> should be <code><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="file_groupowner_logfiles_value"></ns0:sub></code>.
+<code>rsyslog</code> should be <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="file_groupowner_logfiles_value"></xccdf-1.1:sub></code>.
 These log files are determined by the second part of each Rule line in
 <code>/etc/rsyslog.conf</code> and typically all appear in <code>/var/log</code>.
 For each log file <i>LOGFILE</i> referenced in <code>/etc/rsyslog.conf</code>,
 run the following command to inspect the file's group owner:
 <pre>$ ls -l <i>LOGFILE</i></pre>
-If the owner is not <code><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="file_groupowner_logfiles_value"></ns0:sub></code>, run the following command to
+If the owner is not <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="file_groupowner_logfiles_value"></xccdf-1.1:sub></code>, run the following command to
 correct this:
-<pre>$ sudo chgrp <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="file_groupowner_logfiles_value"></ns0:sub> <i>LOGFILE</i></pre>
+<pre>$ sudo chgrp <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="file_groupowner_logfiles_value"></xccdf-1.1:sub> <i>LOGFILE</i></pre>
 </td>
 <td xml:lang="en-US">The log files generated by rsyslog contain valuable information regarding system
 configuration, user authentication, and other such information. Log files should be
@@ -675,15 +651,15 @@ protected from unauthorized access.</td>
 </td>
 <td>Ensure Log Files Are Owned By Appropriate User</td>
 <td xml:lang="en-US">The owner of all log files written by
-<code>rsyslog</code> should be <code><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="file_owner_logfiles_value"></ns0:sub></code>.
+<code>rsyslog</code> should be <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="file_owner_logfiles_value"></xccdf-1.1:sub></code>.
 These log files are determined by the second part of each Rule line in
 <code>/etc/rsyslog.conf</code> and typically all appear in <code>/var/log</code>.
 For each log file <i>LOGFILE</i> referenced in <code>/etc/rsyslog.conf</code>,
 run the following command to inspect the file's owner:
 <pre>$ ls -l <i>LOGFILE</i></pre>
-If the owner is not <code><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="file_owner_logfiles_value"></ns0:sub></code>, run the following command to
+If the owner is not <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="file_owner_logfiles_value"></xccdf-1.1:sub></code>, run the following command to
 correct this:
-<pre>$ sudo chown <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="file_owner_logfiles_value"></ns0:sub> <i>LOGFILE</i></pre>
+<pre>$ sudo chown <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="file_owner_logfiles_value"></xccdf-1.1:sub> <i>LOGFILE</i></pre>
 </td>
 <td xml:lang="en-US">The log files generated by rsyslog contain valuable information regarding system
 configuration, user authentication, and other such information. Log files should be
@@ -720,21 +696,21 @@ logging.
 Along with these other directives, the system can be configured
 to forward its logs to a particular log server by
 adding or correcting one of the following lines,
-substituting <code><i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></code> appropriately.
+substituting <code><i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub></i></code> appropriately.
 The choice of protocol depends on the environment of the system;
 although TCP and RELP provide more reliable message delivery,
 they may not be supported in all environments.
 <br>
 To use UDP for log message delivery:
-<pre>*.* @<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
+<pre>*.* @<i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub></i></pre>
 <br>
 To use TCP for log message delivery:
-<pre>*.* @@<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
+<pre>*.* @@<i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub></i></pre>
 <br>
 To use RELP for log message delivery:
-<pre>*.* :omrelp:<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub></i></pre>
+<pre>*.* :omrelp:<i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub></i></pre>
 <br>
-There must be a resolvable DNS CNAME or Alias record set to "<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></ns0:sub>" for logs to be sent correctly to the centralized logging utility.</td>
+There must be a resolvable DNS CNAME or Alias record set to "<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="rsyslog_remote_loghost_address"></xccdf-1.1:sub>" for logs to be sent correctly to the centralized logging utility.</td>
 <td xml:lang="en-US">A log server (loghost) receives syslog messages from one or more
 systems. This data can be used as an additional log source in the event a
 system is compromised and its local logs are suspect. Forwarding log messages
@@ -812,12 +788,12 @@ direct attack attempts on root's password.</td>
 <td>NT28(R29)<br>
 </td>
 <td>Set SSH Idle Timeout Interval</td>
-<td xml:lang="en-US">SSH allows administrators to set an idle timeout interval. After this interval 
+<td xml:lang="en-US">SSH allows administrators to set an idle timeout interval. After this interval
 has passed, the idle user will be automatically logged out.
 <br><br>
 To set an idle timeout interval, edit the following line in <code>/etc/ssh/sshd_config</code> as
 follows:
-<pre>ClientAliveInterval <b><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="sshd_idle_timeout_value"></ns0:sub></b></pre>
+<pre>ClientAliveInterval <b><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sshd_idle_timeout_value"></xccdf-1.1:sub></b></pre>
 <br><br>
 The timeout <b>interval</b> is given in seconds. For example, have a timeout
 of 10 minutes, set <b>interval</b> to 600.
@@ -866,7 +842,7 @@ is critical that the user re-authenticate.</td>
 </td>
 <td>Enable Kernel Parameter to Enforce DAC on Hardlinks</td>
 <td xml:lang="en-US">To set the runtime status of the <code>fs.protected_hardlinks</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.protected_hardlinks=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.protected_hardlinks = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.protected_hardlinks = 1</pre>
 </td>
 <td xml:lang="en-US">By enabling this kernel parameter, users can no longer create soft or hard links to
 files which they do not own. Disallowing such hardlinks mitigate vulnerabilities
@@ -879,7 +855,7 @@ exploitation vector exploiting unsafe use of <code>open()</code> or <code>creat(
 </td>
 <td>Enable Kernel Parameter to Enforce DAC on Symlinks</td>
 <td xml:lang="en-US">To set the runtime status of the <code>fs.protected_symlinks</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.protected_symlinks=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.protected_symlinks = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.protected_symlinks = 1</pre>
 </td>
 <td xml:lang="en-US">By enabling this kernel parameter, symbolic links are permitted to be followed
 only when outside a sticky world-writable directory, or when the UID of the
@@ -894,7 +870,7 @@ accessed by privileged programs, avoiding an exploitation vector exploiting unsa
 </td>
 <td>Disable Core Dumps for SUID programs</td>
 <td xml:lang="en-US">To set the runtime status of the <code>fs.suid_dumpable</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.suid_dumpable=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.suid_dumpable = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.suid_dumpable = 0</pre>
 </td>
 <td xml:lang="en-US">The core dump of a setuid program is more likely to contain
 sensitive data, as the program itself runs with greater privileges than the
@@ -908,7 +884,7 @@ of such data.</td>
 </td>
 <td>Restrict Access to Kernel Message Buffer</td>
 <td xml:lang="en-US">To set the runtime status of the <code>kernel.dmesg_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.dmesg_restrict=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.dmesg_restrict = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.dmesg_restrict = 1</pre>
 </td>
 <td xml:lang="en-US">Unprivileged access to the kernel syslog can expose sensitive kernel
 address information.</td>
@@ -919,7 +895,7 @@ address information.</td>
 </td>
 <td>Restrict Exposed Kernel Pointer Addresses Access</td>
 <td xml:lang="en-US">To set the runtime status of the <code>kernel.kptr_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.kptr_restrict=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.kptr_restrict = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.kptr_restrict = 1</pre>
 </td>
 <td xml:lang="en-US">Exposing kernel pointers (through procfs or <code>seq_printf()</code>) exposes
 kernel writeable structures that can contain functions pointers. If a write vulnereability occurs
@@ -933,7 +909,7 @@ replacing them with 0.</td>
 </td>
 <td>Disallow kernel profiling by unprivileged users</td>
 <td xml:lang="en-US">To set the runtime status of the <code>kernel.perf_event_paranoid</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.perf_event_paranoid=2</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.perf_event_paranoid = 2</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.perf_event_paranoid = 2</pre>
 </td>
 <td xml:lang="en-US">Kernel profiling can reveal sensitive information about kernel behaviour.</td>
 <td></td>
@@ -943,7 +919,7 @@ If this is not the system default value, add the following line to a file in the
 </td>
 <td>Enable Randomized Layout of Virtual Address Space</td>
 <td xml:lang="en-US">To set the runtime status of the <code>kernel.randomize_va_space</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.randomize_va_space=2</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.randomize_va_space = 2</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.randomize_va_space = 2</pre>
 </td>
 <td xml:lang="en-US">Address space layout randomization (ASLR) makes it more difficult for an
 attacker to predict the location of attack code they have introduced into a
@@ -958,7 +934,7 @@ existing code in order to re-purpose it using return oriented programming
 </td>
 <td>Restrict usage of ptrace to descendant processes</td>
 <td xml:lang="en-US">To set the runtime status of the <code>kernel.yama.ptrace_scope</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.yama.ptrace_scope=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.yama.ptrace_scope = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.yama.ptrace_scope = 1</pre>
 </td>
 <td xml:lang="en-US">Unrestricted usage of ptrace allows compromised binaries to run ptrace
 on another processes of the user. Like this, the attacker can steal
@@ -972,7 +948,7 @@ without any additional assistance from the user (i.e. without resorting to phish
 </td>
 <td>Disable Accepting ICMP Redirects for All IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.accept_redirects=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.accept_redirects = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.accept_redirects = 0</pre>
 </td>
 <td xml:lang="en-US">ICMP redirect messages are used by routers to inform hosts that a more
 direct route exists for a particular destination. These messages modify the
@@ -988,7 +964,7 @@ disabled unless absolutely required."</td>
 </td>
 <td>Disable Kernel Parameter for Accepting Source-Routed Packets on all IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.accept_source_route=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.accept_source_route = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.accept_source_route = 0</pre>
 </td>
 <td xml:lang="en-US">Source-routed packets allow the source of the packet to suggest routers
 forward the packet along a different path than configured on the router,
@@ -1005,7 +981,7 @@ uses. It should be disabled unless it is absolutely required.</td>
 </td>
 <td>Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.log_martians</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.log_martians=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.log_martians = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.log_martians = 1</pre>
 </td>
 <td xml:lang="en-US">The presence of "martian" packets (which have impossible addresses)
 as well as spoofed packets, source-routed packets, and redirects could be a
@@ -1018,7 +994,7 @@ to be detected.</td>
 </td>
 <td>Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.rp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.rp_filter=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.rp_filter = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.rp_filter = 1</pre>
 </td>
 <td xml:lang="en-US">Enabling reverse path filtering drops packets with source addresses
 that should not have been able to be received on the interface they were
@@ -1032,7 +1008,7 @@ networks.</td>
 </td>
 <td>Disable Kernel Parameter for Accepting Secure ICMP Redirects on all IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.secure_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.secure_redirects=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.secure_redirects = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.secure_redirects = 0</pre>
 </td>
 <td xml:lang="en-US">Accepting "secure" ICMP redirects (from those gateways listed as
 default gateways) has few legitimate uses. It should be disabled unless it is
@@ -1044,7 +1020,7 @@ absolutely required.</td>
 </td>
 <td>Disable Kernel Parameter for Sending ICMP Redirects on all IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.send_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.send_redirects=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.send_redirects = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.send_redirects = 0</pre>
 </td>
 <td xml:lang="en-US">ICMP redirect messages are used by routers to inform hosts that a more
 direct route exists for a particular destination. These messages contain information
@@ -1058,7 +1034,7 @@ The ability to send ICMP redirects is only appropriate for systems acting as rou
 </td>
 <td>Disable Kernel Parameter for Accepting ICMP Redirects by Default on IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.accept_redirects=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.accept_redirects = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.accept_redirects = 0</pre>
 </td>
 <td xml:lang="en-US">ICMP redirect messages are used by routers to inform hosts that a more
 direct route exists for a particular destination. These messages modify the
@@ -1073,7 +1049,7 @@ be disabled unless absolutely required.</td>
 </td>
 <td>Disable Kernel Parameter for Accepting Source-Routed Packets on IPv4 Interfaces by Default</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.accept_source_route=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.accept_source_route = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.accept_source_route = 0</pre>
 </td>
 <td xml:lang="en-US">Source-routed packets allow the source of the packet to suggest routers
 forward the packet along a different path than configured on the router,
@@ -1090,7 +1066,7 @@ router.</td>
 </td>
 <td>Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces by Default</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.rp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.rp_filter=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.rp_filter = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.rp_filter = 1</pre>
 </td>
 <td xml:lang="en-US">Enabling reverse path filtering drops packets with source addresses
 that should not have been able to be received on the interface they were
@@ -1104,7 +1080,7 @@ networks.</td>
 </td>
 <td>Configure Kernel Parameter for Accepting Secure Redirects By Default</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.secure_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.secure_redirects=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.secure_redirects = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.secure_redirects = 0</pre>
 </td>
 <td xml:lang="en-US">Accepting "secure" ICMP redirects (from those gateways listed as
 default gateways) has few legitimate uses. It should be disabled unless it is
@@ -1116,7 +1092,7 @@ absolutely required.</td>
 </td>
 <td>Disable Kernel Parameter for Sending ICMP Redirects on all IPv4 Interfaces by Default</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.send_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.send_redirects=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.send_redirects = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.send_redirects = 0</pre>
 </td>
 <td xml:lang="en-US">ICMP redirect messages are used by routers to inform hosts that a more
 direct route exists for a particular destination. These messages contain information
@@ -1130,7 +1106,7 @@ The ability to send ICMP redirects is only appropriate for systems acting as rou
 </td>
 <td>Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.icmp_ignore_bogus_error_responses</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.icmp_ignore_bogus_error_responses=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.icmp_ignore_bogus_error_responses = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.icmp_ignore_bogus_error_responses = 1</pre>
 </td>
 <td xml:lang="en-US">Ignoring bogus ICMP error responses reduces
 log size, although some activity would not be logged.</td>
@@ -1141,7 +1117,7 @@ log size, although some activity would not be logged.</td>
 </td>
 <td>Disable Kernel Parameter for IP Forwarding on IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.ip_forward</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.ip_forward=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.ip_forward = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.ip_forward = 0</pre>
 </td>
 <td xml:lang="en-US">Routing protocol daemons are typically used on routers to exchange
 network topology information with other routers. If this capability is used when
@@ -1154,7 +1130,7 @@ the network.</td>
 </td>
 <td>Enable Kernel Parameter to Use TCP Syncookies on IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.tcp_syncookies</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.tcp_syncookies=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.tcp_syncookies = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.tcp_syncookies = 1</pre>
 </td>
 <td xml:lang="en-US">A TCP SYN flood attack can cause a denial of service by filling a
 system's TCP connection table with connections in the SYN_RCVD state.
@@ -1169,7 +1145,7 @@ enables the system to continue servicing valid connection requests.</td>
 </td>
 <td>Disable Accepting ICMP Redirects for All IPv6 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.accept_redirects=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_redirects = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_redirects = 0</pre>
 </td>
 <td xml:lang="en-US">An illicit ICMP redirect message could result in a man-in-the-middle attack.</td>
 <td></td>
@@ -1179,7 +1155,7 @@ If this is not the system default value, add the following line to a file in the
 </td>
 <td>Disable Kernel Parameter for Accepting Source-Routed Packets on all IPv6 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.accept_source_route=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_source_route = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_source_route = 0</pre>
 </td>
 <td xml:lang="en-US">Source-routed packets allow the source of the packet to suggest routers
 forward the packet along a different path than configured on the router, which can
@@ -1196,7 +1172,7 @@ uses. It should be disabled unless it is absolutely required.</td>
 </td>
 <td>Disable Kernel Parameter for Accepting ICMP Redirects by Default on IPv6 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_redirects=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_redirects = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_redirects = 0</pre>
 </td>
 <td xml:lang="en-US">An illicit ICMP redirect message could result in a man-in-the-middle attack.</td>
 <td></td>
@@ -1206,7 +1182,7 @@ If this is not the system default value, add the following line to a file in the
 </td>
 <td>Disable Kernel Parameter for Accepting Source-Routed Packets on IPv6 Interfaces by Default</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_source_route=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_source_route = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_source_route = 0</pre>
 </td>
 <td xml:lang="en-US">Source-routed packets allow the source of the packet to suggest routers
 forward the packet along a different path than configured on the router, which can

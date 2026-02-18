@@ -49,9 +49,9 @@
 signifies inactivity) until an account is permanently disabled, add or correct
 the following lines in <code>/etc/default/useradd</code>, substituting
 <code><i>NUM_DAYS</i></code> appropriately:
-<pre>INACTIVE=<i><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></ns0:sub></i></pre>
+<pre>INACTIVE=<i><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></i></pre>
 A value of 35 is recommended; however, this profile expects that the value is set to
-<code><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></ns0:sub></code>.
+<code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_account_disable_post_pw_expiration"></xccdf-1.1:sub></code>.
 If a password is currently on the
 verge of expiration, then 35 days remain until the account is automatically
 disabled. However, if the password will not expire for another 60 days, then 95
@@ -99,8 +99,9 @@ must be set upon account creation.
 <td xml:lang="en-US">Limiting the number of allowed users and sessions per user can limit risks related to Denial of
 Service attacks. This addresses concurrent sessions for a single account and does not address
 concurrent sessions by a single user via multiple accounts. To set the number of concurrent
-sessions per user add the following line in <code>/etc/security/limits.conf</code>:
-<pre>* hard maxlogins <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_max_concurrent_login_sessions"></ns0:sub></pre>
+sessions per user add the following line in <code>/etc/security/limits.conf</code> or
+a file under <code>/etc/security/limits.d/</code>:
+<pre>* hard maxlogins <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_max_concurrent_login_sessions"></xccdf-1.1:sub></pre>
 </td>
 <td xml:lang="en-US">Limiting simultaneous user logins can insulate the system from denial of service
 problems caused by excessive logins. Automated login processes operating improperly or
@@ -114,12 +115,12 @@ maliciously may result in an exceptional number of simultaneous login sessions.<
 <td>Set Password Minimum Length in login.defs</td>
 <td xml:lang="en-US">To specify password length requirements for new accounts, edit the file
 <code>/etc/login.defs</code> and add or correct the following line:
-<pre>PASS_MIN_LEN <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_password_minlen_login_defs"></ns0:sub></pre>
+<pre>PASS_MIN_LEN <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_password_minlen_login_defs"></xccdf-1.1:sub></pre>
 <br><br>
 The DoD requirement is <code>15</code>. 
 The FISMA requirement is <code>12</code>.
 The profile requirement is
-<code><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_password_minlen_login_defs"></ns0:sub></code>.
+<code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_password_minlen_login_defs"></xccdf-1.1:sub></code>.
 If a program consults <code>/etc/login.defs</code> and also another PAM module
 (such as <code>pam_pwquality</code>) during a password change operation, then
 the most restrictive must be satisfied. See PAM section for more
@@ -162,7 +163,7 @@ search space.</td>
 in a password that must not be present in and old password during a password change.
 <br><br>
 Modify the <code>difok</code> setting in <code>/etc/security/pwquality.conf</code>
-to equal <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_difok"></ns0:sub> to require differing characters
+to equal <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_difok"></xccdf-1.1:sub> to require differing characters
 when changing passwords.</td>
 <td xml:lang="en-US">Use of a complex password helps to increase the time and resources
 required to compromise the password. Password complexity, or strength,
@@ -209,8 +210,8 @@ more difficult by ensuring a larger search space.</td>
 <td xml:lang="en-US">The pam_pwquality module's <code>maxclassrepeat</code> parameter controls requirements for
 consecutive repeating characters from the same character class. When set to a positive number, it will reject passwords
 which contain more than that number of consecutive characters from the same character class. Modify the
-<code>maxclassrepeat</code> setting in <code>/etc/security/pwquality.conf</code> to equal <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_maxclassrepeat"></ns0:sub>
-to prevent a run of (<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_maxclassrepeat"></ns0:sub> + 1) or more identical characters.</td>
+<code>maxclassrepeat</code> setting in <code>/etc/security/pwquality.conf</code> to equal <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_maxclassrepeat"></xccdf-1.1:sub>
+to prevent a run of (<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_maxclassrepeat"></xccdf-1.1:sub> + 1) or more identical characters.</td>
 <td xml:lang="en-US">Use of a complex password helps to increase the time and resources required to comrpomise the password.
 Password complexity, or strength, is a measure of the effectiveness of a password in resisting
 attempts at guessing and brute-force attacks.
@@ -228,8 +229,8 @@ password is compromised.</td>
 <td xml:lang="en-US">The pam_pwquality module's <code>maxrepeat</code> parameter controls requirements for
 consecutive repeating characters. When set to a positive number, it will reject passwords
 which contain more than that number of consecutive characters. Modify the <code>maxrepeat</code> setting
-in <code>/etc/security/pwquality.conf</code> to equal <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_maxrepeat"></ns0:sub> to prevent a
-run of (<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_maxrepeat"></ns0:sub> + 1) or more identical characters.</td>
+in <code>/etc/security/pwquality.conf</code> to equal <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_maxrepeat"></xccdf-1.1:sub> to prevent a
+run of (<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_maxrepeat"></xccdf-1.1:sub> + 1) or more identical characters.</td>
 <td xml:lang="en-US">Use of a complex password helps to increase the time and resources required to compromise the password.
 Password complexity, or strength, is a measure of the effectiveness of a password in resisting attempts at
 guessing and brute-force attacks.
@@ -247,7 +248,7 @@ Passwords with excessive repeating characters may be more vulnerable to password
 <td>CCE-80656-2</td>
 <td>Ensure PAM Enforces Password Requirements - Minimum Length</td>
 <td xml:lang="en-US">The pam_pwquality module's <code>minlen</code> parameter controls requirements for
-minimum characters required in a password. Add <code>minlen=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_minlen"></ns0:sub></code>
+minimum characters required in a password. Add <code>minlen=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_minlen"></xccdf-1.1:sub></code>
 after pam_pwquality to set minimum password length requirements.</td>
 <td xml:lang="en-US">The shorter the password, the lower the number of possible combinations
 that need to be tested before the password is compromised.
@@ -270,7 +271,7 @@ usage of special (or "other") characters in a password. When set to a negative n
 any password will be required to contain that many special characters.
 When set to a positive number, pam_pwquality will grant +1
 additional length credit for each special character. Modify the <code>ocredit</code> setting
-in <code>/etc/security/pwquality.conf</code> to equal <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_ocredit"></ns0:sub>
+in <code>/etc/security/pwquality.conf</code> to equal <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_ocredit"></xccdf-1.1:sub>
 to require use of a special character in passwords.</td>
 <td xml:lang="en-US">Use of a complex password helps to increase the time and resources required
 to compromise the password. Password complexity, or strength, is a measure of
@@ -312,14 +313,14 @@ the password is compromised.</td>
 accomplished by using the <code>remember</code> option for the <code>pam_unix</code>
 or <code>pam_pwhistory</code> PAM modules.
 <br><br>
-In the file <code>/etc/pam.d/system-auth</code>, append <code>remember=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_remember"></ns0:sub></code>
+In the file <code>/etc/pam.d/system-auth</code>, append <code>remember=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_remember"></xccdf-1.1:sub></code>
 to the line which refers to the <code>pam_unix.so</code> or <code>pam_pwhistory.so</code>module, as shown below:
 <ul>
 <li>for the <code>pam_unix.so</code> case:
-<pre>password sufficient pam_unix.so <i>...existing_options...</i> remember=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_remember"></ns0:sub></pre>
+<pre>password sufficient pam_unix.so <i>...existing_options...</i> remember=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_remember"></xccdf-1.1:sub></pre>
 </li>
 <li>for the <code>pam_pwhistory.so</code> case:
-<pre>password requisite pam_pwhistory.so <i>...existing_options...</i> remember=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_remember"></ns0:sub></pre>
+<pre>password requisite pam_pwhistory.so <i>...existing_options...</i> remember=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_password_pam_unix_remember"></xccdf-1.1:sub></pre>
 </li>
 </ul>
 The DoD STIG requirement is 5 passwords.</td>
@@ -369,10 +370,10 @@ attempts using <code>pam_faillock.so</code>, modify the content of both
 <br><br>
 <ul>
 <li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth required pam_faillock.so preauth silent deny=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></ns0:sub> unlock_time=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></ns0:sub> fail_interval=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></ns0:sub></pre>
+<pre>auth required pam_faillock.so preauth silent deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
 </li>
 <li> add the following line immediately <code>after</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth [default=die] pam_faillock.so authfail deny=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></ns0:sub> unlock_time=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></ns0:sub> fail_interval=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></ns0:sub></pre>
+<pre>auth [default=die] pam_faillock.so authfail deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
 </li>
 <li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>ACCOUNT</code> section:
 <pre>account required pam_faillock.so</pre>
@@ -397,11 +398,11 @@ as follows:
 <ul>
 <li>Add the following line immediately <code>before</code> the
     <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth required pam_faillock.so preauth silent deny=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></ns0:sub> unlock_time=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></ns0:sub> fail_interval=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></ns0:sub></pre>
+<pre>auth required pam_faillock.so preauth silent deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
 </li>
 <li>Add the following line immediately <code>after</code> the
     <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth [default=die] pam_faillock.so authfail deny=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></ns0:sub> unlock_time=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></ns0:sub> fail_interval=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></ns0:sub>
+<pre>auth [default=die] pam_faillock.so authfail deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub>
 </pre>
 </li>
 <li>Add the following line immediately <code>before</code> the
@@ -426,10 +427,10 @@ modify the content of both <code>/etc/pam.d/system-auth</code> and <code>/etc/pa
 <br><br>
 <ul>
 <li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth required pam_faillock.so preauth silent deny=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></ns0:sub> unlock_time=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></ns0:sub> fail_interval=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></ns0:sub></pre>
+<pre>auth required pam_faillock.so preauth silent deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
 </li>
 <li> add the following line immediately <code>after</code> the <code>pam_unix.so</code> statement in the <code>AUTH</code> section:
-<pre>auth [default=die] pam_faillock.so authfail deny=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></ns0:sub> unlock_time=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></ns0:sub> fail_interval=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></ns0:sub></pre>
+<pre>auth [default=die] pam_faillock.so authfail deny=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_deny"></xccdf-1.1:sub> unlock_time=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_unlock_time"></xccdf-1.1:sub> fail_interval=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_passwords_pam_faillock_fail_interval"></xccdf-1.1:sub></pre>
 </li>
 <li> add the following line immediately <code>before</code> the <code>pam_unix.so</code> statement in the <code>ACCOUNT</code> section:
 <pre>account required pam_faillock.so</pre>
@@ -450,7 +451,7 @@ situations.</td>
 <td xml:lang="en-US">To ensure the default umask for users of the Bash shell is set properly,
 add or correct the <code>umask</code> setting in <code>/etc/bashrc</code> to read
 as follows:
-<pre>umask <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_user_umask"></ns0:sub></pre>
+<pre>umask <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_user_umask"></xccdf-1.1:sub></pre>
 </td>
 <td xml:lang="en-US">The umask value influences the permissions assigned to files when they are created.
 A misconfigured umask value could result in files with excessive permissions that can be read or
@@ -464,7 +465,7 @@ written to by unauthorized users.</td>
 <td>Ensure the Default C Shell Umask is Set Correctly</td>
 <td xml:lang="en-US">To ensure the default umask for users of the C shell is set properly,
 add or correct the <code>umask</code> setting in <code>/etc/csh.cshrc</code> to read as follows:
-<pre>umask <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_user_umask"></ns0:sub></pre>
+<pre>umask <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_user_umask"></xccdf-1.1:sub></pre>
 </td>
 <td xml:lang="en-US">The umask value influences the permissions assigned to files when they are created.
 A misconfigured umask value could result in files with excessive permissions that can be read or
@@ -478,7 +479,7 @@ written to by unauthorized users.</td>
 <td>Ensure the Default Umask is Set Correctly in /etc/profile</td>
 <td xml:lang="en-US">To ensure the default umask controlled by <code>/etc/profile</code> is set properly,
 add or correct the <code>umask</code> setting in <code>/etc/profile</code> to read as follows:
-<pre>umask <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_user_umask"></ns0:sub></pre>
+<pre>umask <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_user_umask"></xccdf-1.1:sub></pre>
 </td>
 <td xml:lang="en-US">The umask value influences the permissions assigned to files when they are created.
 A misconfigured umask value could result in files with excessive permissions that can be read or
@@ -1076,7 +1077,7 @@ to the local syslog server</td>
 synchronously write audit event data to disk. Add or correct the following
 line in <code>/etc/audit/auditd.conf</code> to ensure that audit event data is
 fully synchronized with the log files on the disk:
-<pre>flush = <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_auditd_flush"></ns0:sub></pre>
+<pre>flush = <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_auditd_flush"></xccdf-1.1:sub></pre>
 </td>
 <td xml:lang="en-US">Audit data should be synchronously written to disk to ensure
 log integrity. These parameters assure that all audit event data is fully
@@ -1259,9 +1260,9 @@ and makes system configuration more fragmented.</td>
 <tr>
 <td>CCE-80935-0</td>
 <td>Configure System Cryptography Policy</td>
-<td xml:lang="en-US">To configure the system cryptography policy to use ciphers only from the <code><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_system_crypto_policy"></ns0:sub></code>
+<td xml:lang="en-US">To configure the system cryptography policy to use ciphers only from the <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_system_crypto_policy"></xccdf-1.1:sub></code>
 policy, run the following command:
-<pre>$ sudo update-crypto-policies --set <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_system_crypto_policy"></ns0:sub></pre>
+<pre>$ sudo update-crypto-policies --set <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_system_crypto_policy"></xccdf-1.1:sub></pre>
 The rule checks if settings for selected crypto policy are configured as expected. Configuration files in the <code>/etc/crypto-policies/back-ends</code> are either symlinks to correct files provided by Crypto-policies package or they are regular files in case crypto policy customizations are applied.
 Crypto policies may be customized by crypto policy modules, in which case it is delimited from the base policy using a colon.</td>
 <td xml:lang="en-US">Centralized cryptographic policies simplify applying secure ciphers across an operating system and
@@ -1440,6 +1441,31 @@ with human users and are not required when such human interfaces do not exist.</
 </td>
 </tr>
 <tr>
+<td>CCE-80770-1</td>
+<td>Set the GNOME3 Login Warning Banner Text</td>
+<td xml:lang="en-US">In the default graphical environment, configuring the login warning banner text
+in the GNOME Display Manager's login screen can be configured on the login
+screen by setting <code>banner-message-text</code> to <code>string '<i>APPROVED_BANNER</i>'</code>
+where <i>APPROVED_BANNER</i> is the approved banner for your environment.
+<br><br>
+To enable, add or edit <code>banner-message-text</code> to
+<code>/etc/dconf/db/gdm.d/00-security-settings</code>. For example:
+<pre>[org/gnome/login-screen]
+banner-message-text='<i>APPROVED_BANNER</i>'</pre>
+Once the setting has been added, add a lock to
+<code>/etc/dconf/db/gdm.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/login-screen/banner-message-text</pre>
+After the settings have been set, run <code>dconf update</code>.
+When entering a warning banner that spans several lines, remember
+to begin and end the string with <code>'</code> and use <code>\n</code> for new lines.</td>
+<td xml:lang="en-US">An appropriate warning message reinforces policy awareness during the logon
+process and facilitates possible legal action against attackers.</td>
+<td></td>
+<td>AC-8(a)<br>AC-8(c)<br>
+</td>
+</tr>
+<tr>
 <td>CCE-80784-2</td>
 <td>Disable Ctrl-Alt-Del Burst Action</td>
 <td xml:lang="en-US">By default, <code>SystemD</code> will reboot the system if the <code>Ctrl-Alt-Del</code>
@@ -1502,7 +1528,8 @@ can allow an attacker to move trivially to other hosts.</td>
 <td>CCE-81038-2</td>
 <td>Disable Core Dumps for All Users</td>
 <td xml:lang="en-US">To disable core dumps for all users, add the following line to
-<code>/etc/security/limits.conf</code>:
+<code>/etc/security/limits.conf</code>, or to a file within the
+<code>/etc/security/limits.d/</code> directory:
 <pre>*     hard   core    0</pre>
 </td>
 <td xml:lang="en-US">A core dump includes a memory image taken at the time the operating system
@@ -1823,28 +1850,16 @@ Also prevents leak of data and detection of corrupted memory.</td>
 <td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
 protection enabled to protect boot-time settings.
 <br><br>
-To do so, select a superuser account name and password and and modify the
-<code>/etc/grub.d/01_users</code> configuration file with the new account name.
-<br><br>
 Since plaintext passwords are a security risk, generate a hash for the pasword
 by running the following command:
 <pre>$ grub2-setpassword</pre>
 When prompted, enter the password that was selected.
 <br><br>
-NOTE: It is recommended not to use common administrator account names like root,
-admin, or administrator for the grub2 superuser account.
-<br><br>
-Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i s/root/bootuser/g /etc/grub.d/01_users</pre>
-<br><br>
-To meet FISMA Moderate, the bootloader superuser account and password MUST
-differ from the root account and password.
-Once the superuser account and password have been added,
+Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
 <pre>grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
-NOTE: Do NOT manually add the superuser account and password to the
-<code>grub.cfg</code> file as the grub2-mkconfig command overwrites this file.</td>
+</td>
 <td xml:lang="en-US">Password protection on the boot loader configuration ensures
 users with physical access cannot trivially alter
 important bootloader settings. These include which kernel to use,
@@ -1934,9 +1949,14 @@ flaws in its implementation.</td>
 To configure the system to prevent the <code>cramfs</code>
 kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
 <pre>install cramfs /bin/true</pre>
-This effectively prevents usage of this uncommon filesystem.</td>
-<td xml:lang="en-US">Linux kernel modules which implement filesystems that are not needed by the
-local system should be disabled.</td>
+This effectively prevents usage of this uncommon filesystem.
+
+The <code>cramfs</code> filesystem type is a compressed read-only
+Linux filesystem embedded in small footprint systems. A
+<code>cramfs</code> image can be used without having to first
+decompress the image.</td>
+<td xml:lang="en-US">Removing support for unneeded filesystem types reduces the local attack surface
+of the server.</td>
 <td></td>
 <td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
 </td>
@@ -3064,7 +3084,7 @@ using the root account.</td>
 general-purpose desktops and servers, as well as systems in many other roles.
 To configure the system to use this policy, add or correct the following line
 in <code>/etc/selinux/config</code>:
-<pre>SELINUXTYPE=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_selinux_policy_name"></ns0:sub></pre>
+<pre>SELINUXTYPE=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_selinux_policy_name"></xccdf-1.1:sub></pre>
 Other policies, such as <code>mls</code>, provide additional security labeling
 and greater confinement but are not compatible with many general-purpose
 use cases.</td>
@@ -3076,7 +3096,7 @@ Note: During the development or debugging of SELinux modules, it is common to
 temporarily place non-production systems in <code>permissive</code> mode. In such
 temporary cases, SELinux policies should be developed, and once work
 is completed, the system should be reconfigured to
-<code><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_selinux_policy_name"></ns0:sub></code>.</td>
+<code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_selinux_policy_name"></xccdf-1.1:sub></code>.</td>
 <td></td>
 <td>AC-3<br>AC-3(3)(a)<br>AU-9<br>SC-7(21)<br>
 </td>
@@ -3084,10 +3104,10 @@ is completed, the system should be reconfigured to
 <tr>
 <td>CCE-80869-1</td>
 <td>Ensure SELinux State is Enforcing</td>
-<td xml:lang="en-US">The SELinux state should be set to <code><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_selinux_state"></ns0:sub></code> at
+<td xml:lang="en-US">The SELinux state should be set to <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_selinux_state"></xccdf-1.1:sub></code> at
 system boot time.  In the file <code>/etc/selinux/config</code>, add or correct the
 following line to configure the system to boot into enforcing mode:
-<pre>SELINUX=<ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_selinux_state"></ns0:sub></pre>
+<pre>SELINUX=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_selinux_state"></xccdf-1.1:sub></pre>
 </td>
 <td xml:lang="en-US">Setting the SELinux state to enforcing ensures SELinux is able to confine
 potentially compromised processes to the security policy, which is designed to
@@ -3238,7 +3258,7 @@ empty passwords, add or correct the following line in <code>/etc/ssh/sshd_config
 Any accounts with empty passwords should be disabled immediately, and PAM configuration
 should prevent users from being able to assign themselves empty passwords.</td>
 <td xml:lang="en-US">Configuring this setting for the SSH daemon provides additional assurance
-that remote login via SSH will require a password, even in the event of 
+that remote login via SSH will require a password, even in the event of
 misconfiguration elsewhere.</td>
 <td></td>
 <td>AC-17(a)<br>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
@@ -3341,12 +3361,12 @@ encryption keys are limited.</td>
 <tr>
 <td>CCE-80906-1</td>
 <td>Set SSH Idle Timeout Interval</td>
-<td xml:lang="en-US">SSH allows administrators to set an idle timeout interval. After this interval 
+<td xml:lang="en-US">SSH allows administrators to set an idle timeout interval. After this interval
 has passed, the idle user will be automatically logged out.
 <br><br>
 To set an idle timeout interval, edit the following line in <code>/etc/ssh/sshd_config</code> as
 follows:
-<pre>ClientAliveInterval <b><ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="sshd_idle_timeout_value"></ns0:sub></b></pre>
+<pre>ClientAliveInterval <b><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sshd_idle_timeout_value"></xccdf-1.1:sub></b></pre>
 <br><br>
 The timeout <b>interval</b> is given in seconds. For example, have a timeout
 of 10 minutes, set <b>interval</b> to 600.
@@ -3366,7 +3386,7 @@ enabled on the console or console port that has been let unattended.</td>
 <td>Set SSH Client Alive Max Count</td>
 <td xml:lang="en-US">To ensure the SSH idle timeout occurs precisely when the <code>ClientAliveInterval</code> is set,
 edit <code>/etc/ssh/sshd_config</code> as follows:
-<pre>ClientAliveCountMax <ns0:sub xmlns:ns0="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_set_keepalive"></ns0:sub></pre>
+<pre>ClientAliveCountMax <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_set_keepalive"></xccdf-1.1:sub></pre>
 </td>
 <td xml:lang="en-US">This ensures a user login will be terminated as soon as the <code>ClientAliveInterval</code>
 is reached.</td>
@@ -3434,7 +3454,7 @@ authentication information may be questionable.</td>
 <td>CCE-81027-5</td>
 <td>Enable Kernel Parameter to Enforce DAC on Hardlinks</td>
 <td xml:lang="en-US">To set the runtime status of the <code>fs.protected_hardlinks</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.protected_hardlinks=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.protected_hardlinks = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.protected_hardlinks = 1</pre>
 </td>
 <td xml:lang="en-US">By enabling this kernel parameter, users can no longer create soft or hard links to
 files which they do not own. Disallowing such hardlinks mitigate vulnerabilities
@@ -3448,7 +3468,7 @@ exploitation vector exploiting unsafe use of <code>open()</code> or <code>creat(
 <td>CCE-81030-9</td>
 <td>Enable Kernel Parameter to Enforce DAC on Symlinks</td>
 <td xml:lang="en-US">To set the runtime status of the <code>fs.protected_symlinks</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.protected_symlinks=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.protected_symlinks = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.protected_symlinks = 1</pre>
 </td>
 <td xml:lang="en-US">By enabling this kernel parameter, symbolic links are permitted to be followed
 only when outside a sticky world-writable directory, or when the UID of the
@@ -3464,7 +3484,7 @@ accessed by privileged programs, avoiding an exploitation vector exploiting unsa
 <td>CCE-82215-5</td>
 <td>Disable storing core dumps</td>
 <td xml:lang="en-US">To set the runtime status of the <code>kernel.core_pattern</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.core_pattern=|/bin/false</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.core_pattern = |/bin/false</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.core_pattern = |/bin/false</pre>
 </td>
 <td xml:lang="en-US">A core dump includes a memory image taken at the time the operating system
 terminates an application. The memory image could contain sensitive data and is generally useful
@@ -3476,7 +3496,7 @@ only for developers trying to debug problems.</td>
 <td>CCE-80913-7</td>
 <td>Restrict Access to Kernel Message Buffer</td>
 <td xml:lang="en-US">To set the runtime status of the <code>kernel.dmesg_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.dmesg_restrict=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.dmesg_restrict = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.dmesg_restrict = 1</pre>
 </td>
 <td xml:lang="en-US">Unprivileged access to the kernel syslog can expose sensitive kernel
 address information.</td>
@@ -3488,7 +3508,7 @@ address information.</td>
 <td>CCE-80952-5</td>
 <td>Disable Kernel Image Loading</td>
 <td xml:lang="en-US">To set the runtime status of the <code>kernel.kexec_load_disabled</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.kexec_load_disabled=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.kexec_load_disabled = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.kexec_load_disabled = 1</pre>
 </td>
 <td xml:lang="en-US">Disabling kexec_load allows greater control of the kernel memory.
 It makes it impossible to load another kernel image after it has been disabled.
@@ -3500,7 +3520,7 @@ It makes it impossible to load another kernel image after it has been disabled.
 <td>CCE-80915-2</td>
 <td>Restrict Exposed Kernel Pointer Addresses Access</td>
 <td xml:lang="en-US">To set the runtime status of the <code>kernel.kptr_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.kptr_restrict=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.kptr_restrict = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.kptr_restrict = 1</pre>
 </td>
 <td xml:lang="en-US">Exposing kernel pointers (through procfs or <code>seq_printf()</code>) exposes
 kernel writeable structures that can contain functions pointers. If a write vulnereability occurs
@@ -3515,7 +3535,7 @@ replacing them with 0.</td>
 <td>CCE-81054-9</td>
 <td>Disallow kernel profiling by unprivileged users</td>
 <td xml:lang="en-US">To set the runtime status of the <code>kernel.perf_event_paranoid</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.perf_event_paranoid=2</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.perf_event_paranoid = 2</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.perf_event_paranoid = 2</pre>
 </td>
 <td xml:lang="en-US">Kernel profiling can reveal sensitive information about kernel behaviour.</td>
 <td></td>
@@ -3525,7 +3545,7 @@ If this is not the system default value, add the following line to a file in the
 <td>CCE-82974-7</td>
 <td>Disable Access to Network bpf() Syscall From Unprivileged Processes</td>
 <td xml:lang="en-US">To set the runtime status of the <code>kernel.unprivileged_bpf_disabled</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.unprivileged_bpf_disabled=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.unprivileged_bpf_disabled = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.unprivileged_bpf_disabled = 1</pre>
 </td>
 <td xml:lang="en-US">Loading and accessing the packet filters programs and maps using the bpf()
 syscall has the potential of revealing sensitive information about the kernel state.</td>
@@ -3536,7 +3556,7 @@ syscall has the potential of revealing sensitive information about the kernel st
 <td>CCE-80953-3</td>
 <td>Restrict usage of ptrace to descendant processes</td>
 <td xml:lang="en-US">To set the runtime status of the <code>kernel.yama.ptrace_scope</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.yama.ptrace_scope=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.yama.ptrace_scope = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.yama.ptrace_scope = 1</pre>
 </td>
 <td xml:lang="en-US">Unrestricted usage of ptrace allows compromised binaries to run ptrace
 on another processes of the user. Like this, the attacker can steal
@@ -3550,7 +3570,7 @@ without any additional assistance from the user (i.e. without resorting to phish
 <td>CCE-82934-1</td>
 <td>Harden the operation of the BPF just-in-time compiler</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.core.bpf_jit_harden</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.core.bpf_jit_harden=2</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.core.bpf_jit_harden = 2</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.core.bpf_jit_harden = 2</pre>
 </td>
 <td xml:lang="en-US">When hardened, the extended Berkeley Packet Filter just-in-time compiler
 will randomize any kernel addresses in the BPF programs and maps,
@@ -3562,7 +3582,7 @@ and will not expose the JIT addresses in <code>/proc/kallsyms</code>.</td>
 <td>CCE-80917-8</td>
 <td>Disable Accepting ICMP Redirects for All IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.accept_redirects=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.accept_redirects = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.accept_redirects = 0</pre>
 </td>
 <td xml:lang="en-US">ICMP redirect messages are used by routers to inform hosts that a more
 direct route exists for a particular destination. These messages modify the
@@ -3579,7 +3599,7 @@ disabled unless absolutely required."</td>
 <td>CCE-81011-9</td>
 <td>Disable Kernel Parameter for Accepting Source-Routed Packets on all IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.accept_source_route=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.accept_source_route = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.accept_source_route = 0</pre>
 </td>
 <td xml:lang="en-US">Source-routed packets allow the source of the packet to suggest routers
 forward the packet along a different path than configured on the router,
@@ -3597,7 +3617,7 @@ uses. It should be disabled unless it is absolutely required.</td>
 <td>CCE-81018-4</td>
 <td>Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.log_martians</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.log_martians=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.log_martians = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.log_martians = 1</pre>
 </td>
 <td xml:lang="en-US">The presence of "martian" packets (which have impossible addresses)
 as well as spoofed packets, source-routed packets, and redirects could be a
@@ -3611,7 +3631,7 @@ to be detected.</td>
 <td>CCE-81021-8</td>
 <td>Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.rp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.rp_filter=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.rp_filter = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.rp_filter = 1</pre>
 </td>
 <td xml:lang="en-US">Enabling reverse path filtering drops packets with source addresses
 that should not have been able to be received on the interface they were
@@ -3626,7 +3646,7 @@ networks.</td>
 <td>CCE-81016-8</td>
 <td>Disable Kernel Parameter for Accepting Secure ICMP Redirects on all IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.secure_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.secure_redirects=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.secure_redirects = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.secure_redirects = 0</pre>
 </td>
 <td xml:lang="en-US">Accepting "secure" ICMP redirects (from those gateways listed as
 default gateways) has few legitimate uses. It should be disabled unless it is
@@ -3639,7 +3659,7 @@ absolutely required.</td>
 <td>CCE-80918-6</td>
 <td>Disable Kernel Parameter for Sending ICMP Redirects on all IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.send_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.send_redirects=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.send_redirects = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.send_redirects = 0</pre>
 </td>
 <td xml:lang="en-US">ICMP redirect messages are used by routers to inform hosts that a more
 direct route exists for a particular destination. These messages contain information
@@ -3654,7 +3674,7 @@ The ability to send ICMP redirects is only appropriate for systems acting as rou
 <td>CCE-80919-4</td>
 <td>Disable Kernel Parameter for Accepting ICMP Redirects by Default on IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.accept_redirects=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.accept_redirects = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.accept_redirects = 0</pre>
 </td>
 <td xml:lang="en-US">ICMP redirect messages are used by routers to inform hosts that a more
 direct route exists for a particular destination. These messages modify the
@@ -3670,7 +3690,7 @@ be disabled unless absolutely required.</td>
 <td>CCE-80920-2</td>
 <td>Disable Kernel Parameter for Accepting Source-Routed Packets on IPv4 Interfaces by Default</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.accept_source_route=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.accept_source_route = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.accept_source_route = 0</pre>
 </td>
 <td xml:lang="en-US">Source-routed packets allow the source of the packet to suggest routers
 forward the packet along a different path than configured on the router,
@@ -3688,7 +3708,7 @@ router.</td>
 <td>CCE-81020-0</td>
 <td>Enable Kernel Paremeter to Log Martian Packets on all IPv4 Interfaces by Default</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.log_martians</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.log_martians=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.log_martians = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.log_martians = 1</pre>
 </td>
 <td xml:lang="en-US">The presence of "martian" packets (which have impossible addresses)
 as well as spoofed packets, source-routed packets, and redirects could be a
@@ -3702,7 +3722,7 @@ to be detected.</td>
 <td>CCE-81022-6</td>
 <td>Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces by Default</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.rp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.rp_filter=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.rp_filter = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.rp_filter = 1</pre>
 </td>
 <td xml:lang="en-US">Enabling reverse path filtering drops packets with source addresses
 that should not have been able to be received on the interface they were
@@ -3717,7 +3737,7 @@ networks.</td>
 <td>CCE-81017-6</td>
 <td>Configure Kernel Parameter for Accepting Secure Redirects By Default</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.secure_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.secure_redirects=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.secure_redirects = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.secure_redirects = 0</pre>
 </td>
 <td xml:lang="en-US">Accepting "secure" ICMP redirects (from those gateways listed as
 default gateways) has few legitimate uses. It should be disabled unless it is
@@ -3730,7 +3750,7 @@ absolutely required.</td>
 <td>CCE-80921-0</td>
 <td>Disable Kernel Parameter for Sending ICMP Redirects on all IPv4 Interfaces by Default</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.send_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.send_redirects=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.send_redirects = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.send_redirects = 0</pre>
 </td>
 <td xml:lang="en-US">ICMP redirect messages are used by routers to inform hosts that a more
 direct route exists for a particular destination. These messages contain information
@@ -3745,7 +3765,7 @@ The ability to send ICMP redirects is only appropriate for systems acting as rou
 <td>CCE-80922-8</td>
 <td>Enable Kernel Parameter to Ignore ICMP Broadcast Echo Requests on IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.icmp_echo_ignore_broadcasts</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.icmp_echo_ignore_broadcasts=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.icmp_echo_ignore_broadcasts = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.icmp_echo_ignore_broadcasts = 1</pre>
 </td>
 <td xml:lang="en-US">Responding to broadcast (ICMP) echoes facilitates network mapping
 and provides a vector for amplification attacks.
@@ -3760,7 +3780,7 @@ addresses makes the system slightly more difficult to enumerate on the network.<
 <td>CCE-81023-4</td>
 <td>Enable Kernel Parameter to Ignore Bogus ICMP Error Responses on IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.icmp_ignore_bogus_error_responses</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.icmp_ignore_bogus_error_responses=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.icmp_ignore_bogus_error_responses = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.icmp_ignore_bogus_error_responses = 1</pre>
 </td>
 <td xml:lang="en-US">Ignoring bogus ICMP error responses reduces
 log size, although some activity would not be logged.</td>
@@ -3772,7 +3792,7 @@ log size, although some activity would not be logged.</td>
 <td>CCE-81024-2</td>
 <td>Disable Kernel Parameter for IP Forwarding on IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.ip_forward</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.ip_forward=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.ip_forward = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.ip_forward = 0</pre>
 </td>
 <td xml:lang="en-US">Routing protocol daemons are typically used on routers to exchange
 network topology information with other routers. If this capability is used when
@@ -3786,7 +3806,7 @@ the network.</td>
 <td>CCE-80923-6</td>
 <td>Enable Kernel Parameter to Use TCP Syncookies on IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.tcp_syncookies</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.tcp_syncookies=1</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.tcp_syncookies = 1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.tcp_syncookies = 1</pre>
 </td>
 <td xml:lang="en-US">A TCP SYN flood attack can cause a denial of service by filling a
 system's TCP connection table with connections in the SYN_RCVD state.
@@ -3802,7 +3822,7 @@ enables the system to continue servicing valid connection requests.</td>
 <td>CCE-81006-9</td>
 <td>Configure Accepting Router Advertisements on All IPv6 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.accept_ra</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.accept_ra=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_ra = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_ra = 0</pre>
 </td>
 <td xml:lang="en-US">An illicit router advertisement message could result in a man-in-the-middle attack.</td>
 <td></td>
@@ -3813,7 +3833,7 @@ If this is not the system default value, add the following line to a file in the
 <td>CCE-81009-3</td>
 <td>Disable Accepting ICMP Redirects for All IPv6 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.accept_redirects=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_redirects = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_redirects = 0</pre>
 </td>
 <td xml:lang="en-US">An illicit ICMP redirect message could result in a man-in-the-middle attack.</td>
 <td></td>
@@ -3824,7 +3844,7 @@ If this is not the system default value, add the following line to a file in the
 <td>CCE-81013-5</td>
 <td>Disable Kernel Parameter for Accepting Source-Routed Packets on all IPv6 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.accept_source_route=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_source_route = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_source_route = 0</pre>
 </td>
 <td xml:lang="en-US">Source-routed packets allow the source of the packet to suggest routers
 forward the packet along a different path than configured on the router, which can
@@ -3842,7 +3862,7 @@ uses. It should be disabled unless it is absolutely required.</td>
 <td>CCE-81007-7</td>
 <td>Disable Accepting Router Advertisements on all IPv6 Interfaces by Default</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.accept_ra</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_ra=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_ra = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_ra = 0</pre>
 </td>
 <td xml:lang="en-US">An illicit router advertisement message could result in a man-in-the-middle attack.</td>
 <td></td>
@@ -3853,7 +3873,7 @@ If this is not the system default value, add the following line to a file in the
 <td>CCE-81010-1</td>
 <td>Disable Kernel Parameter for Accepting ICMP Redirects by Default on IPv6 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_redirects=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_redirects = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_redirects = 0</pre>
 </td>
 <td xml:lang="en-US">An illicit ICMP redirect message could result in a man-in-the-middle attack.</td>
 <td></td>
@@ -3864,7 +3884,7 @@ If this is not the system default value, add the following line to a file in the
 <td>CCE-81015-0</td>
 <td>Disable Kernel Parameter for Accepting Source-Routed Packets on IPv6 Interfaces by Default</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_source_route=0</pre>
-If this is not the system default value, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_source_route = 0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_source_route = 0</pre>
 </td>
 <td xml:lang="en-US">Source-routed packets allow the source of the packet to suggest routers
 forward the packet along a different path than configured on the router, which can
@@ -3885,8 +3905,8 @@ uses. It should be disabled unless it is absolutely required.</td>
 run the following command:
 <pre>$ sudo sysctl -w user.max_user_namespaces=0</pre>
 
-If this is not the system default value, add the following line to a file in the
-directory <code>/etc/sysctl.d</code>:
+To make sure that the setting is persistent,
+add the following line to a file in the directory <code>/etc/sysctl.d</code>:
 <pre>user.max_user_namespaces = 0</pre>
 When containers are deployed on the machine, the value should be set
 to large non-zero value.</td>
