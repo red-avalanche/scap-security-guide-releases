@@ -1139,6 +1139,21 @@ and makes system configuration more fragmented.</td>
 </td>
 </tr>
 <tr>
+<td>CCE-80939-2</td>
+<td>Configure SSH to use System Crypto Policy</td>
+<td xml:lang="en-US">Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
+SSH is supported by crypto policy, but the SSH configuration may be
+set up to ignore it.
+To check that Crypto Policies settings are configured correctly, ensure that
+the <code>CRYPTO_POLICY</code> variable is either commented or not set at all
+in the <code>/etc/sysconfig/sshd</code>.</td>
+<td xml:lang="en-US">Overriding the system crypto policy makes the behavior of the SSH service violate expectations,
+and makes system configuration more fragmented.</td>
+<td></td>
+<td>AC-17(a)<br>AC-17(2)<br>CM-6(a)<br>MA-4(6)<br>SC-13<br>
+</td>
+</tr>
+<tr>
 <td>CCE-82199-1</td>
 <td>Configure tmux to lock session after inactivity</td>
 <td xml:lang="en-US">To enable console screen locking in <code>tmux</code> terminal multiplexer
@@ -1564,7 +1579,7 @@ Also prevents leak of data and detection of corrupted memory.</td>
 <td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
 protection enabled to protect boot-time settings.
 <br><br>
-Since plaintext passwords are a security risk, generate a hash for the pasword
+Since plaintext passwords are a security risk, generate a hash for the password
 by running the following command:
 <pre>$ grub2-setpassword</pre>
 When prompted, enter the password that was selected.
@@ -3527,6 +3542,119 @@ to <code>/etc/usbguard/rules.conf</code>.</td>
 <td xml:lang="en-US">Without allowing Human Interface Devices, it might not be possible
 to interact with the system. Without allowing hubs, it might not be possible to use any
 USB devices on the system.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-83321-0</td>
+<td>Enable Auditing to Start Prior to the Audit Daemon in zIPL</td>
+<td xml:lang="en-US">To ensure all processes can be audited, even those which start prior to the audit daemon,
+check that all boot entries in <code>/boot/loader/entries/*.conf</code> have <code>audit=1</code>
+included in its options.<br>
+
+To ensure that new kernels and boot entries continue to enable audit,
+add <code>audit=1</code> to <code>/etc/kernel/cmdline</code>.</td>
+<td xml:lang="en-US">Each process on the system carries an "auditable" flag which indicates whether
+its activities can be audited. Although <code>auditd</code> takes care of enabling
+this for all processes which launch after it does, adding the kernel argument
+ensures it is set for every process during boot.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-83341-8</td>
+<td>Extend Audit Backlog Limit for the Audit Daemon in zIPL</td>
+<td xml:lang="en-US">To improve the kernel capacity to queue all log events, even those which start prior to the audit daemon,
+check that all boot entries in <code>/boot/loader/entries/*.conf</code> have <code>audit_backlog_limit=8192</code>
+included in its options.<br>
+To ensure that new kernels and boot entries continue to extend the audit log events queue,
+add <code>audit_backlog_limit=8192</code> to <code>/etc/kernel/cmdline</code>.</td>
+<td xml:lang="en-US">audit_backlog_limit sets the queue length for audit events awaiting transfer
+to the audit daemon. Until the audit daemon is up and running, all log messages
+are stored in this queue.  If the queue is overrun during boot process, the action
+defined by audit failure flag is taken.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-83485-3</td>
+<td>Ensure all zIPL boot entries are BLS compliant</td>
+<td xml:lang="en-US">Ensure that zIPL boot entries fully adheres to Boot Loader Specification (BLS)
+by checking that <code>/etc/zipl.conf</code> doesn't contain <code>image = </code>.</td>
+<td xml:lang="en-US">Red Hat Enterprise Linux 8 adheres to Boot Loader Specification (BLS) and is the prefered method of
+configuration.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-83486-1</td>
+<td>Ensure zIPL bootmap is up to date</td>
+<td xml:lang="en-US">Make sure that <code>/boot/bootmap</code> is up to date.<br>
+Every time a boot entry or zIPL configuration is changed <code>/boot/bootmap</code> needs to
+be updated to reflect the changes.<br>
+Run <code>zipl</code> command to generate an updated <code>/boot/bootmap</code>.</td>
+<td xml:lang="en-US">The file <code>/boot/bootmap</code> contains all boot data, keeping it up to date is crucial to
+boot correct kernel and options.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-83351-7</td>
+<td>Enable page allocator poisoning in zIPL</td>
+<td xml:lang="en-US">To enable poisoning of free pages,
+check that all boot entries in <code>/boot/loader/entries/*.conf</code> have <code>page_poison=1</code>
+included in its options.<br>
+To ensure that new kernels and boot entries continue to enable page poisoning,
+add <code>page_poison=1</code> to <code>/etc/kernel/cmdline</code>.</td>
+<td xml:lang="en-US">Poisoning writes an arbitrary value to freed pages, so any modification or
+reference to that page after being freed or before being initialized will be
+detected and prevented.
+This prevents many types of use-after-free vulnerabilities at little performance cost.
+Also prevents leak of data and detection of corrupted memory.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-83361-6</td>
+<td>Enable Kernel Page-Table Isolation (KPTI) in zIPL</td>
+<td xml:lang="en-US">To enable Kernel page-table isolation,
+check that all boot entries in <code>/boot/loader/entries/*.conf</code> have <code>pti=on</code>
+included in its options.<br>
+To ensure that new kernels and boot entries continue to enable page-table isolation,
+add <code>pti=on</code> to <code>/etc/kernel/cmdline</code>.</td>
+<td xml:lang="en-US">Kernel page-table isolation is a kernel feature that mitigates
+the Meltdown security vulnerability and hardens the kernel
+against attempts to bypass kernel address space layout
+randomization (KASLR).</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-83371-5</td>
+<td>Enable SLUB/SLAB allocator poisoning in zIPL</td>
+<td xml:lang="en-US">To enable poisoning of SLUB/SLAB objects,
+check that all boot entries in <code>/boot/loader/entries/*.conf</code> have <code>slub_debug=P</code>
+included in its options.<br>
+To ensure that new kernels and boot entries continue to enable poisoning of SLUB/SLAB objects,
+add <code>slub_debug=P</code> to <code>/etc/kernel/cmdline</code>.</td>
+<td xml:lang="en-US">Poisoning writes an arbitrary value to freed objects, so any modification or
+reference to that object after being freed or before being initialized will be
+detected and prevented.
+This prevents many types of use-after-free vulnerabilities at little performance cost.
+Also prevents leak of data and detection of corrupted memory.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>CCE-83381-4</td>
+<td>Disable vsyscalls in zIPL</td>
+<td xml:lang="en-US">To disable use of virtual syscalls,
+check that all boot entries in <code>/boot/loader/entries/*.conf</code> have <code>vsyscall=none</code>
+included in its options.<br>
+To ensure that new kernels and boot entries continue to disable virtual syscalls,
+add <code>vsyscall=none</code> to <code>/etc/kernel/cmdline</code>.</td>
+<td xml:lang="en-US">Virtual Syscalls provide an opportunity of attack for a user who has control
+of the return instruction pointer.</td>
 <td></td>
 <td></td>
 </tr>

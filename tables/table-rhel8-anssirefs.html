@@ -168,16 +168,12 @@ if the /var/log partition becomes full.</td>
 </tr>
 <tr>
 <td>NT28(R1)</td>
-<td>Uninstall Sendmail Package</td>
-<td xml:lang="en-US">Sendmail is not the default mail transfer agent and is
-not installed by default.
-The <code>sendmail</code> package can be removed with the following command:
-<pre>
-$ sudo yum erase sendmail</pre>
-</td>
-<td xml:lang="en-US">The sendmail software was not developed with security in mind and
-its design prevents it from being effectively contained by SELinux.  Postfix
-should be used instead.</td>
+<td>Uninstall the telnet server</td>
+<td xml:lang="en-US">The telnet daemon should be uninstalled.</td>
+<td xml:lang="en-US">
+<code>telnet</code> allows clear text communications, and does not protect
+any data transmission between client and server. Any confidential data
+can be listened and no integrity checking is made.'</td>
 <td></td>
 </tr>
 <tr>
@@ -195,12 +191,16 @@ accidentally reactivated and disrupt network operation.</td>
 </tr>
 <tr>
 <td>NT28(R1)</td>
-<td>Uninstall the telnet server</td>
-<td xml:lang="en-US">The telnet daemon should be uninstalled.</td>
-<td xml:lang="en-US">
-<code>telnet</code> allows clear text communications, and does not protect
-any data transmission between client and server. Any confidential data
-can be listened and no integrity checking is made.'</td>
+<td>Uninstall Sendmail Package</td>
+<td xml:lang="en-US">Sendmail is not the default mail transfer agent and is
+not installed by default.
+The <code>sendmail</code> package can be removed with the following command:
+<pre>
+$ sudo yum erase sendmail</pre>
+</td>
+<td xml:lang="en-US">The sendmail software was not developed with security in mind and
+its design prevents it from being effectively contained by SELinux.  Postfix
+should be used instead.</td>
 <td></td>
 </tr>
 <tr>
@@ -219,12 +219,11 @@ privileges.</td>
 </tr>
 <tr>
 <td>NT28(R5)</td>
-<td>Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD</td>
-<td xml:lang="en-US">The sudo <code>NOPASSWD</code> tag, when specified, allows a user to execute
-commands using sudo without having to authenticate. This should be disabled
-by making sure that the <code>NOPASSWD</code> tag does not exist in
-<code>/etc/sudoers</code> configuration file or any sudo configuration snippets
-in <code>/etc/sudoers.d/</code>.</td>
+<td>Ensure Users Re-Authenticate for Privilege Escalation - sudo !authenticate</td>
+<td xml:lang="en-US">The sudo <code>!authenticate</code> option, when specified, allows a user to execute commands using
+sudo without having to authenticate. This should be disabled by making sure that the
+<code>!authenticate</code> option does not exist in <code>/etc/sudoers</code> configuration file or
+any sudo configuration snippets in <code>/etc/sudoers.d/</code>.</td>
 <td xml:lang="en-US">Without re-authentication, users may access resources or perform tasks for which they
 do not have authorization.
 <br><br>
@@ -234,11 +233,12 @@ is critical that the user re-authenticate.</td>
 </tr>
 <tr>
 <td>NT28(R5)</td>
-<td>Ensure Users Re-Authenticate for Privilege Escalation - sudo !authenticate</td>
-<td xml:lang="en-US">The sudo <code>!authenticate</code> option, when specified, allows a user to execute commands using
-sudo without having to authenticate. This should be disabled by making sure that the
-<code>!authenticate</code> option does not exist in <code>/etc/sudoers</code> configuration file or
-any sudo configuration snippets in <code>/etc/sudoers.d/</code>.</td>
+<td>Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD</td>
+<td xml:lang="en-US">The sudo <code>NOPASSWD</code> tag, when specified, allows a user to execute
+commands using sudo without having to authenticate. This should be disabled
+by making sure that the <code>NOPASSWD</code> tag does not exist in
+<code>/etc/sudoers</code> configuration file or any sudo configuration snippets
+in <code>/etc/sudoers.d/</code>.</td>
 <td xml:lang="en-US">Without re-authentication, users may access resources or perform tasks for which they
 do not have authorization.
 <br><br>
@@ -392,6 +392,20 @@ lack of prompt attention to patching could result in a system compromise.</td>
 </tr>
 <tr>
 <td>NT28(R12)</td>
+<td>Ensure /srv Located On Separate Partition</td>
+<td xml:lang="en-US">If a file server (FTP, TFTP...) is hosted locally, create a separate partition
+for <code>/srv</code> at installation time (or migrate it later using LVM). If
+<code>/srv</code> will be mounted from another system such as an NFS server, then
+creating a separate partition is not necessary at installation time, and the
+mountpoint can instead be configured later.</td>
+<td xml:lang="en-US">Srv deserves files for local network file server such as FTP. Ensuring
+that <code>/srv</code> is mounted on its own partition enables the setting of
+more restrictive mount options, and also helps ensure that
+users cannot trivially fill partitions used for log or audit data storage.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R12)</td>
 <td>Ensure /tmp Located On Separate Partition</td>
 <td xml:lang="en-US">The <code>/tmp</code> directory is a world-writable directory used
 for temporary file storage. Ensure it has its own partition or
@@ -427,20 +441,6 @@ and other files in <code>/var/</code>.</td>
 </tr>
 <tr>
 <td>NT28(R12)</td>
-<td>Ensure /srv Located On Separate Partition</td>
-<td xml:lang="en-US">If a file server (FTP, TFTP...) is hosted locally, create a separate partition
-for <code>/srv</code> at installation time (or migrate it later using LVM). If
-<code>/srv</code> will be mounted from another system such as an NFS server, then
-creating a separate partition is not necessary at installation time, and the
-mountpoint can instead be configured later.</td>
-<td xml:lang="en-US">Srv deserves files for local network file server such as FTP. Ensuring
-that <code>/srv</code> is mounted on its own partition enables the setting of
-more restrictive mount options, and also helps ensure that
-users cannot trivially fill partitions used for log or audit data storage.</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R12)</td>
 <td>Ensure /var/tmp Located On Separate Partition</td>
 <td xml:lang="en-US">The <code>/var/tmp</code> directory is a world-writable directory used
 for temporary file storage. Ensure it has its own partition or
@@ -465,6 +465,19 @@ world-writable directories installed by other software packages.</td>
 </tr>
 <tr>
 <td>NT28(R12)</td>
+<td>Add nosuid Option to /home</td>
+<td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
+execution of setuid programs in <code>/home</code>. The SUID and SGID permissions
+should not be required in these user data directories.
+Add the <code>nosuid</code> option to the fourth column of
+<code>/etc/fstab</code> for the line which controls mounting of
+<code>/home</code>.</td>
+<td xml:lang="en-US">The presence of SUID and SGID executables should be tightly controlled. Users
+should not be able to execute SUID or SGID binaries from user home directory partitions.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R12)</td>
 <td>Add nosuid Option to /var/tmp</td>
 <td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
 execution of setuid programs in <code>/var/tmp</code>. The SUID and SGID permissions
@@ -478,15 +491,15 @@ should not be able to execute SUID or SGID binaries from temporary storage parti
 </tr>
 <tr>
 <td>NT28(R12)</td>
-<td>Add noexec Option to /tmp</td>
-<td xml:lang="en-US">The <code>noexec</code> mount option can be used to prevent binaries
-from being executed out of <code>/tmp</code>.
-Add the <code>noexec</code> option to the fourth column of
+<td>Add nosuid Option to /tmp</td>
+<td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
+execution of setuid programs in <code>/tmp</code>. The SUID and SGID permissions
+should not be required in these world-writable directories.
+Add the <code>nosuid</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
 <code>/tmp</code>.</td>
-<td xml:lang="en-US">Allowing users to execute binaries from world-writable directories
-such as <code>/tmp</code> should never be necessary in normal operation and
-can expose the system to potential compromise.</td>
+<td xml:lang="en-US">The presence of SUID and SGID executables should be tightly controlled. Users
+should not be able to execute SUID or SGID binaries from temporary storage partitions.</td>
 <td></td>
 </tr>
 <tr>
@@ -504,15 +517,15 @@ can expose the system to potential compromise.</td>
 </tr>
 <tr>
 <td>NT28(R12)</td>
-<td>Add nosuid Option to /tmp</td>
-<td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
-execution of setuid programs in <code>/tmp</code>. The SUID and SGID permissions
-should not be required in these world-writable directories.
-Add the <code>nosuid</code> option to the fourth column of
+<td>Add nodev Option to /tmp</td>
+<td xml:lang="en-US">The <code>nodev</code> mount option can be used to prevent device files from
+being created in <code>/tmp</code>. Legitimate character and block devices
+should not exist within temporary directories like <code>/tmp</code>.
+Add the <code>nodev</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
 <code>/tmp</code>.</td>
-<td xml:lang="en-US">The presence of SUID and SGID executables should be tightly controlled. Users
-should not be able to execute SUID or SGID binaries from temporary storage partitions.</td>
+<td xml:lang="en-US">The only legitimate location for device files is the <code>/dev</code> directory
+located on the root partition. The only exception to this is chroot jails.</td>
 <td></td>
 </tr>
 <tr>
@@ -532,15 +545,15 @@ located on the root partition. The only exception to this is chroot jails.</td>
 </tr>
 <tr>
 <td>NT28(R12)</td>
-<td>Add nodev Option to /tmp</td>
-<td xml:lang="en-US">The <code>nodev</code> mount option can be used to prevent device files from
-being created in <code>/tmp</code>. Legitimate character and block devices
-should not exist within temporary directories like <code>/tmp</code>.
-Add the <code>nodev</code> option to the fourth column of
+<td>Add noexec Option to /tmp</td>
+<td xml:lang="en-US">The <code>noexec</code> mount option can be used to prevent binaries
+from being executed out of <code>/tmp</code>.
+Add the <code>noexec</code> option to the fourth column of
 <code>/etc/fstab</code> for the line which controls mounting of
 <code>/tmp</code>.</td>
-<td xml:lang="en-US">The only legitimate location for device files is the <code>/dev</code> directory
-located on the root partition. The only exception to this is chroot jails.</td>
+<td xml:lang="en-US">Allowing users to execute binaries from world-writable directories
+such as <code>/tmp</code> should never be necessary in normal operation and
+can expose the system to potential compromise.</td>
 <td></td>
 </tr>
 <tr>
@@ -554,19 +567,6 @@ Add the <code>nodev</code> option to the fourth column of
 <code>/var/tmp</code>.</td>
 <td xml:lang="en-US">The only legitimate location for device files is the <code>/dev</code> directory
 located on the root partition. The only exception to this is chroot jails.</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R12)</td>
-<td>Add nosuid Option to /home</td>
-<td xml:lang="en-US">The <code>nosuid</code> mount option can be used to prevent
-execution of setuid programs in <code>/home</code>. The SUID and SGID permissions
-should not be required in these user data directories.
-Add the <code>nosuid</code> option to the fourth column of
-<code>/etc/fstab</code> for the line which controls mounting of
-<code>/home</code>.</td>
-<td xml:lang="en-US">The presence of SUID and SGID executables should be tightly controlled. Users
-should not be able to execute SUID or SGID binaries from user home directory partitions.</td>
 <td></td>
 </tr>
 <tr>
@@ -584,21 +584,6 @@ To properly set the permissions of <code>/boot/System.map-*</code>, run the comm
 </tr>
 <tr>
 <td>NT28(R15)</td>
-<td>Ensure gpgcheck Enabled for All yum Package Repositories</td>
-<td xml:lang="en-US">To ensure signature checking is not disabled for
-any repos, remove any lines from files in <code>/etc/yum.repos.d</code> of the form:
-<pre>gpgcheck=0</pre>
-</td>
-<td xml:lang="en-US">Verifying the authenticity of the software prior to installation validates
-the integrity of the patch or upgrade received from a vendor. This ensures
-the software has not been tampered with and that it has been provided by a
-trusted vendor. Self-signed certificates are disallowed by this
-requirement. Certificates used to verify the software must be from an
-approved Certificate Authority (CA)."</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R15)</td>
 <td>Ensure gpgcheck Enabled for Local Packages</td>
 <td xml:lang="en-US">
 <code>yum</code> should be configured to verify the signature(s) of local packages
@@ -610,6 +595,21 @@ has been provided by a trusted vendor.
 <br><br>
 Accordingly, patches, service packs, device drivers, or operating system components must
 be signed with a certificate recognized and approved by the organization.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R15)</td>
+<td>Ensure gpgcheck Enabled for All yum Package Repositories</td>
+<td xml:lang="en-US">To ensure signature checking is not disabled for
+any repos, remove any lines from files in <code>/etc/yum.repos.d</code> of the form:
+<pre>gpgcheck=0</pre>
+</td>
+<td xml:lang="en-US">Verifying the authenticity of the software prior to installation validates
+the integrity of the patch or upgrade received from a vendor. This ensures
+the software has not been tampered with and that it has been provided by a
+trusted vendor. Self-signed certificates are disallowed by this
+requirement. Certificates used to verify the software must be from an
+approved Certificate Authority (CA)."</td>
 <td></td>
 </tr>
 <tr>
@@ -667,25 +667,24 @@ approved Certificate Authority (CA).</td>
 </tr>
 <tr>
 <td>NT28(R17)</td>
-<td>Set the Boot Loader Admin Username to a Non-Default Value</td>
+<td>Set Boot Loader Password in grub2</td>
 <td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
 protection enabled to protect boot-time settings.
 <br><br>
-To maximize the protection, select a password-protected superuser account with unique name, and modify the
-<code>/etc/grub.d/01_users</code> configuration file to reflect the account name change.
+Since plaintext passwords are a security risk, generate a hash for the password
+by running the following command:
+<pre>$ grub2-setpassword</pre>
+When prompted, enter the password that was selected.
 <br><br>
-Do not to use common administrator account names like root,
-admin, or administrator for the grub2 superuser account.
-<br><br>
-Change the superuser to a different username (The default is 'root').
-<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
-<br><br>
-Once the superuser account has been added,
+Once the superuser password has been added,
 update the
 <code>grub.cfg</code> file by running:
 <pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
 </td>
-<td xml:lang="en-US">Having a non-default grub superuser username makes password-guessing attacks less effective.</td>
+<td xml:lang="en-US">Password protection on the boot loader configuration ensures
+users with physical access cannot trivially alter
+important bootloader settings. These include which kernel to use,
+and whether to enter single-user mode.</td>
 <td></td>
 </tr>
 <tr>
@@ -713,24 +712,25 @@ update the
 </tr>
 <tr>
 <td>NT28(R17)</td>
-<td>Set Boot Loader Password in grub2</td>
+<td>Set the Boot Loader Admin Username to a Non-Default Value</td>
 <td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
 protection enabled to protect boot-time settings.
 <br><br>
-Since plaintext passwords are a security risk, generate a hash for the pasword
-by running the following command:
-<pre>$ grub2-setpassword</pre>
-When prompted, enter the password that was selected.
+To maximize the protection, select a password-protected superuser account with unique name, and modify the
+<code>/etc/grub.d/01_users</code> configuration file to reflect the account name change.
 <br><br>
-Once the superuser password has been added,
+Do not to use common administrator account names like root,
+admin, or administrator for the grub2 superuser account.
+<br><br>
+Change the superuser to a different username (The default is 'root').
+<pre>$ sed -i 's/\(set superuser=\).*/\1"&lt;unique user ID&gt;"/g' /etc/grub.d/01_users</pre>
+<br><br>
+Once the superuser account has been added,
 update the
 <code>grub.cfg</code> file by running:
 <pre>grub2-mkconfig -o /boot/grub2/grub.cfg</pre>
 </td>
-<td xml:lang="en-US">Password protection on the boot loader configuration ensures
-users with physical access cannot trivially alter
-important bootloader settings. These include which kernel to use,
-and whether to enter single-user mode.</td>
+<td xml:lang="en-US">Having a non-default grub superuser username makes password-guessing attacks less effective.</td>
 <td></td>
 </tr>
 <tr>
@@ -739,7 +739,7 @@ and whether to enter single-user mode.</td>
 <td xml:lang="en-US">The grub2 boot loader should have a superuser account and password
 protection enabled to protect boot-time settings.
 <br><br>
-Since plaintext passwords are a security risk, generate a hash for the pasword
+Since plaintext passwords are a security risk, generate a hash for the password
 by running the following command:
 <pre>$ grub2-setpassword</pre>
 When prompted, enter the password that was selected.
@@ -797,74 +797,9 @@ direct attack attempts on root's password.</td>
 </tr>
 <tr>
 <td>NT28(R22)</td>
-<td>Disable Kernel Parameter for Accepting ICMP Redirects by Default on IPv6 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_redirects=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_redirects = 0</pre>
-</td>
-<td xml:lang="en-US">An illicit ICMP redirect message could result in a man-in-the-middle attack.</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R22)</td>
-<td>Disable Kernel Parameter for Accepting Source-Routed Packets on all IPv6 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.accept_source_route=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_source_route = 0</pre>
-</td>
-<td xml:lang="en-US">Source-routed packets allow the source of the packet to suggest routers
-forward the packet along a different path than configured on the router, which can
-be used to bypass network security measures. This requirement applies only to the
-forwarding of source-routerd traffic, such as when IPv6 forwarding is enabled and
-the system is functioning as a router.
-<br><br>
-Accepting source-routed packets in the IPv6 protocol has few legitimate
-uses. It should be disabled unless it is absolutely required.</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R22)</td>
-<td>Disable Accepting ICMP Redirects for All IPv6 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.accept_redirects=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_redirects = 0</pre>
-</td>
-<td xml:lang="en-US">An illicit ICMP redirect message could result in a man-in-the-middle attack.</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R22)</td>
-<td>Disable Kernel Parameter for Accepting Source-Routed Packets on IPv6 Interfaces by Default</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_source_route=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_source_route = 0</pre>
-</td>
-<td xml:lang="en-US">Source-routed packets allow the source of the packet to suggest routers
-forward the packet along a different path than configured on the router, which can
-be used to bypass network security measures. This requirement applies only to the
-forwarding of source-routerd traffic, such as when IPv6 forwarding is enabled and
-the system is functioning as a router.
-
-Accepting source-routed packets in the IPv6 protocol has few legitimate
-uses. It should be disabled unless it is absolutely required.</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R22)</td>
-<td>Disable Accepting ICMP Redirects for All IPv4 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.accept_redirects=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.accept_redirects = 0</pre>
-</td>
-<td xml:lang="en-US">ICMP redirect messages are used by routers to inform hosts that a more
-direct route exists for a particular destination. These messages modify the
-host's route table and are unauthenticated. An illicit ICMP redirect
-message could result in a man-in-the-middle attack.
-<br>
-This feature of the IPv4 protocol has few legitimate uses. It should be
-disabled unless absolutely required."</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R22)</td>
-<td>Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.rp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.rp_filter=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.rp_filter = 1</pre>
+<td>Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces by Default</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.rp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.rp_filter=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.rp_filter = 1</pre>
 </td>
 <td xml:lang="en-US">Enabling reverse path filtering drops packets with source addresses
 that should not have been able to be received on the interface they were
@@ -875,9 +810,20 @@ networks.</td>
 </tr>
 <tr>
 <td>NT28(R22)</td>
-<td>Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces by Default</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.rp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.rp_filter=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.rp_filter = 1</pre>
+<td>Disable Kernel Parameter for Accepting Secure ICMP Redirects on all IPv4 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.secure_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.secure_redirects=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.secure_redirects = 0</pre>
+</td>
+<td xml:lang="en-US">Accepting "secure" ICMP redirects (from those gateways listed as
+default gateways) has few legitimate uses. It should be disabled unless it is
+absolutely required.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R22)</td>
+<td>Enable Kernel Parameter to Use Reverse Path Filtering on all IPv4 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.rp_filter</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.rp_filter=1</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.rp_filter = 1</pre>
 </td>
 <td xml:lang="en-US">Enabling reverse path filtering drops packets with source addresses
 that should not have been able to be received on the interface they were
@@ -898,63 +844,6 @@ Syncookies can be used to track a connection when a subsequent ACK is received,
 verifying the initiator is attempting a valid connection and is not a flood
 source. This feature is activated when a flood condition is detected, and
 enables the system to continue servicing valid connection requests.</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R22)</td>
-<td>Disable Kernel Parameter for Accepting Source-Routed Packets on IPv4 Interfaces by Default</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.accept_source_route=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.accept_source_route = 0</pre>
-</td>
-<td xml:lang="en-US">Source-routed packets allow the source of the packet to suggest routers
-forward the packet along a different path than configured on the router,
-which can be used to bypass network security measures.
-<br>
-Accepting source-routed packets in the IPv4 protocol has few legitimate
-uses. It should be disabled unless it is absolutely required, such as when
-IPv4 forwarding is enabled and the system is legitimately functioning as a
-router.</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R22)</td>
-<td>Disable Kernel Parameter for Accepting Source-Routed Packets on all IPv4 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.accept_source_route=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.accept_source_route = 0</pre>
-</td>
-<td xml:lang="en-US">Source-routed packets allow the source of the packet to suggest routers
-forward the packet along a different path than configured on the router,
-which can be used to bypass network security measures. This requirement
-applies only to the forwarding of source-routerd traffic, such as when IPv4
-forwarding is enabled and the system is functioning as a router.
-<br><br>
-Accepting source-routed packets in the IPv4 protocol has few legitimate
-uses. It should be disabled unless it is absolutely required.</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R22)</td>
-<td>Disable Kernel Parameter for Accepting Secure ICMP Redirects on all IPv4 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.secure_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.secure_redirects=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.secure_redirects = 0</pre>
-</td>
-<td xml:lang="en-US">Accepting "secure" ICMP redirects (from those gateways listed as
-default gateways) has few legitimate uses. It should be disabled unless it is
-absolutely required.</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R22)</td>
-<td>Disable Kernel Parameter for Accepting ICMP Redirects by Default on IPv4 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.accept_redirects=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.accept_redirects = 0</pre>
-</td>
-<td xml:lang="en-US">ICMP redirect messages are used by routers to inform hosts that a more
-direct route exists for a particular destination. These messages modify the
-host's route table and are unauthenticated. An illicit ICMP redirect
-message could result in a man-in-the-middle attack.
-<br>This feature of the IPv4 protocol has few legitimate uses. It should
-be disabled unless absolutely required.</td>
 <td></td>
 </tr>
 <tr>
@@ -980,6 +869,22 @@ absolutely required.</td>
 </tr>
 <tr>
 <td>NT28(R22)</td>
+<td>Disable Kernel Parameter for Accepting Source-Routed Packets on all IPv4 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.accept_source_route=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.accept_source_route = 0</pre>
+</td>
+<td xml:lang="en-US">Source-routed packets allow the source of the packet to suggest routers
+forward the packet along a different path than configured on the router,
+which can be used to bypass network security measures. This requirement
+applies only to the forwarding of source-routerd traffic, such as when IPv4
+forwarding is enabled and the system is functioning as a router.
+<br><br>
+Accepting source-routed packets in the IPv4 protocol has few legitimate
+uses. It should be disabled unless it is absolutely required.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R22)</td>
 <td>Enable Kernel Parameter to Log Martian Packets on all IPv4 Interfaces</td>
 <td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.log_martians</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.log_martians=1</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.log_martians = 1</pre>
@@ -992,15 +897,59 @@ to be detected.</td>
 </tr>
 <tr>
 <td>NT28(R22)</td>
-<td>Disable Kernel Parameter for Sending ICMP Redirects on all IPv4 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.send_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.send_redirects=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.send_redirects = 0</pre>
+<td>Disable Accepting ICMP Redirects for All IPv4 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.accept_redirects=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.accept_redirects = 0</pre>
 </td>
 <td xml:lang="en-US">ICMP redirect messages are used by routers to inform hosts that a more
-direct route exists for a particular destination. These messages contain information
-from the system's route table possibly revealing portions of the network topology.
+direct route exists for a particular destination. These messages modify the
+host's route table and are unauthenticated. An illicit ICMP redirect
+message could result in a man-in-the-middle attack.
 <br>
-The ability to send ICMP redirects is only appropriate for systems acting as routers.</td>
+This feature of the IPv4 protocol has few legitimate uses. It should be
+disabled unless absolutely required."</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R22)</td>
+<td>Disable Kernel Parameter for Accepting Source-Routed Packets on IPv4 Interfaces by Default</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.accept_source_route=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.accept_source_route = 0</pre>
+</td>
+<td xml:lang="en-US">Source-routed packets allow the source of the packet to suggest routers
+forward the packet along a different path than configured on the router,
+which can be used to bypass network security measures.
+<br>
+Accepting source-routed packets in the IPv4 protocol has few legitimate
+uses. It should be disabled unless it is absolutely required, such as when
+IPv4 forwarding is enabled and the system is legitimately functioning as a
+router.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R22)</td>
+<td>Disable Kernel Parameter for Accepting ICMP Redirects by Default on IPv4 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.default.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.default.accept_redirects=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.default.accept_redirects = 0</pre>
+</td>
+<td xml:lang="en-US">ICMP redirect messages are used by routers to inform hosts that a more
+direct route exists for a particular destination. These messages modify the
+host's route table and are unauthenticated. An illicit ICMP redirect
+message could result in a man-in-the-middle attack.
+<br>This feature of the IPv4 protocol has few legitimate uses. It should
+be disabled unless absolutely required.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R22)</td>
+<td>Disable Kernel Parameter for IP Forwarding on IPv4 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.ip_forward</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.ip_forward=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.ip_forward = 0</pre>
+</td>
+<td xml:lang="en-US">Routing protocol daemons are typically used on routers to exchange
+network topology information with other routers. If this capability is used when
+not required, system network information may be unnecessarily transmitted across
+the network.</td>
 <td></td>
 </tr>
 <tr>
@@ -1018,14 +967,65 @@ The ability to send ICMP redirects is only appropriate for systems acting as rou
 </tr>
 <tr>
 <td>NT28(R22)</td>
-<td>Disable Kernel Parameter for IP Forwarding on IPv4 Interfaces</td>
-<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.ip_forward</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.ip_forward=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.ip_forward = 0</pre>
+<td>Disable Kernel Parameter for Sending ICMP Redirects on all IPv4 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv4.conf.all.send_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.send_redirects=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.send_redirects = 0</pre>
 </td>
-<td xml:lang="en-US">Routing protocol daemons are typically used on routers to exchange
-network topology information with other routers. If this capability is used when
-not required, system network information may be unnecessarily transmitted across
-the network.</td>
+<td xml:lang="en-US">ICMP redirect messages are used by routers to inform hosts that a more
+direct route exists for a particular destination. These messages contain information
+from the system's route table possibly revealing portions of the network topology.
+<br>
+The ability to send ICMP redirects is only appropriate for systems acting as routers.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R22)</td>
+<td>Disable Accepting ICMP Redirects for All IPv6 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.accept_redirects=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_redirects = 0</pre>
+</td>
+<td xml:lang="en-US">An illicit ICMP redirect message could result in a man-in-the-middle attack.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R22)</td>
+<td>Disable Kernel Parameter for Accepting ICMP Redirects by Default on IPv6 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.accept_redirects</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_redirects=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_redirects = 0</pre>
+</td>
+<td xml:lang="en-US">An illicit ICMP redirect message could result in a man-in-the-middle attack.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R22)</td>
+<td>Disable Kernel Parameter for Accepting Source-Routed Packets on IPv6 Interfaces by Default</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.default.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.default.accept_source_route=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.default.accept_source_route = 0</pre>
+</td>
+<td xml:lang="en-US">Source-routed packets allow the source of the packet to suggest routers
+forward the packet along a different path than configured on the router, which can
+be used to bypass network security measures. This requirement applies only to the
+forwarding of source-routerd traffic, such as when IPv6 forwarding is enabled and
+the system is functioning as a router.
+
+Accepting source-routed packets in the IPv6 protocol has few legitimate
+uses. It should be disabled unless it is absolutely required.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R22)</td>
+<td>Disable Kernel Parameter for Accepting Source-Routed Packets on all IPv6 Interfaces</td>
+<td xml:lang="en-US">To set the runtime status of the <code>net.ipv6.conf.all.accept_source_route</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv6.conf.all.accept_source_route=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv6.conf.all.accept_source_route = 0</pre>
+</td>
+<td xml:lang="en-US">Source-routed packets allow the source of the packet to suggest routers
+forward the packet along a different path than configured on the router, which can
+be used to bypass network security measures. This requirement applies only to the
+forwarding of source-routerd traffic, such as when IPv6 forwarding is enabled and
+the system is functioning as a router.
+<br><br>
+Accepting source-routed packets in the IPv6 protocol has few legitimate
+uses. It should be disabled unless it is absolutely required.</td>
 <td></td>
 </tr>
 <tr>
@@ -1075,16 +1075,15 @@ address information.</td>
 </tr>
 <tr>
 <td>NT28(R23)</td>
-<td>Enable Randomized Layout of Virtual Address Space</td>
-<td xml:lang="en-US">To set the runtime status of the <code>kernel.randomize_va_space</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.randomize_va_space=2</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.randomize_va_space = 2</pre>
+<td>Disable Core Dumps for SUID programs</td>
+<td xml:lang="en-US">To set the runtime status of the <code>fs.suid_dumpable</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.suid_dumpable=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.suid_dumpable = 0</pre>
 </td>
-<td xml:lang="en-US">Address space layout randomization (ASLR) makes it more difficult for an
-attacker to predict the location of attack code they have introduced into a
-process's address space during an attempt at exploitation.  Additionally,
-ASLR makes it more difficult for an attacker to know the location of
-existing code in order to re-purpose it using return oriented programming
-(ROP) techniques.</td>
+<td xml:lang="en-US">The core dump of a setuid program is more likely to contain
+sensitive data, as the program itself runs with greater privileges than the
+user who initiated execution of the program.  Disabling the ability for any
+setuid program to write a core file decreases the risk of unauthorized access
+of such data.</td>
 <td></td>
 </tr>
 <tr>
@@ -1102,15 +1101,16 @@ replacing them with 0.</td>
 </tr>
 <tr>
 <td>NT28(R23)</td>
-<td>Disable Core Dumps for SUID programs</td>
-<td xml:lang="en-US">To set the runtime status of the <code>fs.suid_dumpable</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w fs.suid_dumpable=0</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>fs.suid_dumpable = 0</pre>
+<td>Enable Randomized Layout of Virtual Address Space</td>
+<td xml:lang="en-US">To set the runtime status of the <code>kernel.randomize_va_space</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.randomize_va_space=2</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.randomize_va_space = 2</pre>
 </td>
-<td xml:lang="en-US">The core dump of a setuid program is more likely to contain
-sensitive data, as the program itself runs with greater privileges than the
-user who initiated execution of the program.  Disabling the ability for any
-setuid program to write a core file decreases the risk of unauthorized access
-of such data.</td>
+<td xml:lang="en-US">Address space layout randomization (ASLR) makes it more difficult for an
+attacker to predict the location of attack code they have introduced into a
+process's address space during an attempt at exploitation.  Additionally,
+ASLR makes it more difficult for an attacker to know the location of
+existing code in order to re-purpose it using return oriented programming
+(ROP) techniques.</td>
 <td></td>
 </tr>
 <tr>
@@ -1177,18 +1177,6 @@ Using a stronger hashing algorithm makes password cracking attacks more difficul
 </tr>
 <tr>
 <td>NT28(R35)</td>
-<td>Ensure the Default Umask is Set Correctly in login.defs</td>
-<td xml:lang="en-US">To ensure the default umask controlled by <code>/etc/login.defs</code> is set properly,
-add or correct the <code>UMASK</code> setting in <code>/etc/login.defs</code> to read as follows:
-<pre>UMASK <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_user_umask"></xccdf-1.1:sub></pre>
-</td>
-<td xml:lang="en-US">The umask value influences the permissions assigned to files when they are created.
-A misconfigured umask value could result in files with excessive permissions that can be read and
-written to by unauthorized users.</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R35)</td>
 <td>Ensure the Default Umask is Set Correctly in /etc/profile</td>
 <td xml:lang="en-US">To ensure the default umask controlled by <code>/etc/profile</code> is set properly,
 add or correct the <code>umask</code> setting in <code>/etc/profile</code> to read as follows:
@@ -1200,21 +1188,15 @@ written to by unauthorized users.</td>
 <td></td>
 </tr>
 <tr>
-<td>NT28(R36)</td>
-<td>Ensure System Log Files Have Correct Permissions</td>
-<td xml:lang="en-US">The file permissions for all log files written by <code>rsyslog</code> should
-be set to 600, or more restrictive. These log files are determined by the
-second part of each Rule line in <code>/etc/rsyslog.conf</code> and typically
-all appear in <code>/var/log</code>. For each log file <i>LOGFILE</i>
-referenced in <code>/etc/rsyslog.conf</code>, run the following command to
-inspect the file's permissions:
-<pre>$ ls -l <i>LOGFILE</i></pre>
-If the permissions are not 600 or more restrictive, run the following
-command to correct this:
-<pre>$ sudo chmod 0600 <i>LOGFILE</i></pre>"</td>
-<td xml:lang="en-US">Log files can contain valuable information regarding system
-configuration. If the system log files are not protected unauthorized
-users could change the logged data, eliminating their forensic value.</td>
+<td>NT28(R35)</td>
+<td>Ensure the Default Umask is Set Correctly in login.defs</td>
+<td xml:lang="en-US">To ensure the default umask controlled by <code>/etc/login.defs</code> is set properly,
+add or correct the <code>UMASK</code> setting in <code>/etc/login.defs</code> to read as follows:
+<pre>UMASK <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_user_umask"></xccdf-1.1:sub></pre>
+</td>
+<td xml:lang="en-US">The umask value influences the permissions assigned to files when they are created.
+A misconfigured umask value could result in files with excessive permissions that can be read and
+written to by unauthorized users.</td>
 <td></td>
 </tr>
 <tr>
@@ -1231,8 +1213,10 @@ which could weaken the system security posture.</td>
 </tr>
 <tr>
 <td>NT28(R36)</td>
-<td>Verify User Who Owns gshadow File</td>
-<td xml:lang="en-US"> To properly set the owner of <code>/etc/gshadow</code>, run the command: <pre>$ sudo chown root /etc/gshadow </pre>
+<td>Verify Permissions on gshadow File</td>
+<td xml:lang="en-US">
+To properly set the permissions of <code>/etc/gshadow</code>, run the command:
+<pre>$ sudo chmod 0000 /etc/gshadow</pre>
 </td>
 <td xml:lang="en-US">The <code>/etc/gshadow</code> file contains group password hashes. Protection of this file
 is critical for system security.</td>
@@ -1254,16 +1238,51 @@ which could weaken the system security posture.</td>
 </tr>
 <tr>
 <td>NT28(R36)</td>
-<td>Verify Permissions on gshadow File</td>
-<td xml:lang="en-US">
-To properly set the permissions of <code>/etc/gshadow</code>, run the command:
-<pre>$ sudo chmod 0000 /etc/gshadow</pre>
+<td>Verify User Who Owns gshadow File</td>
+<td xml:lang="en-US"> To properly set the owner of <code>/etc/gshadow</code>, run the command: <pre>$ sudo chown root /etc/gshadow </pre>
 </td>
 <td xml:lang="en-US">The <code>/etc/gshadow</code> file contains group password hashes. Protection of this file
 is critical for system security.</td>
 <td></td>
 </tr>
 <tr>
+<td>NT28(R36)</td>
+<td>Ensure System Log Files Have Correct Permissions</td>
+<td xml:lang="en-US">The file permissions for all log files written by <code>rsyslog</code> should
+be set to 600, or more restrictive. These log files are determined by the
+second part of each Rule line in <code>/etc/rsyslog.conf</code> and typically
+all appear in <code>/var/log</code>. For each log file <i>LOGFILE</i>
+referenced in <code>/etc/rsyslog.conf</code>, run the following command to
+inspect the file's permissions:
+<pre>$ ls -l <i>LOGFILE</i></pre>
+If the permissions are not 600 or more restrictive, run the following
+command to correct this:
+<pre>$ sudo chmod 0600 <i>LOGFILE</i></pre>"</td>
+<td xml:lang="en-US">Log files can contain valuable information regarding system
+configuration. If the system log files are not protected unauthorized
+users could change the logged data, eliminating their forensic value.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R37)</td>
+<td>Ensure All SGID Executables Are Authorized</td>
+<td xml:lang="en-US">The SGID (set group id) bit should be set only on files that were
+installed via authorized means. A straightforward means of identifying
+unauthorized SGID files is determine if any were not installed as part of an
+RPM package, which is cryptographically verified. Investigate the origin
+of any unpackaged SGID files.
+This configuration check considers authorized SGID files which were installed via RPM.
+It is assumed that when an individual has sudo access to install an RPM
+and all packages are signed with an organizationally-recognized GPG key,
+the software should be considered an approved package on the system.
+Any SGID file not deployed through an RPM will be flagged for further review.</td>
+<td xml:lang="en-US">Executable files with the SGID permission run with the privileges of
+the owner of the file. SGID files of uncertain provenance could allow for
+unprivileged users to elevate privileges. The presence of these files should be
+strictly controlled on the system.</td>
+<td></td>
+</tr>
+<tr>
 <td>NT28(R37)</td>
 <td>Ensure All SUID Executables Are Authorized</td>
 <td xml:lang="en-US">The SUID (set user id) bit should be set only on files that were
@@ -1283,7 +1302,7 @@ strictly controlled on the system.</td>
 <td></td>
 </tr>
 <tr>
-<td>NT28(R37)</td>
+<td>NT28(R38)</td>
 <td>Ensure All SGID Executables Are Authorized</td>
 <td xml:lang="en-US">The SGID (set group id) bit should be set only on files that were
 installed via authorized means. A straightforward means of identifying
@@ -1316,25 +1335,6 @@ the software should be considered an approved package on the system.
 Any SUID file not deployed through an RPM will be flagged for further review.</td>
 <td xml:lang="en-US">Executable files with the SUID permission run with the privileges of
 the owner of the file. SUID files of uncertain provenance could allow for
-unprivileged users to elevate privileges. The presence of these files should be
-strictly controlled on the system.</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R38)</td>
-<td>Ensure All SGID Executables Are Authorized</td>
-<td xml:lang="en-US">The SGID (set group id) bit should be set only on files that were
-installed via authorized means. A straightforward means of identifying
-unauthorized SGID files is determine if any were not installed as part of an
-RPM package, which is cryptographically verified. Investigate the origin
-of any unpackaged SGID files.
-This configuration check considers authorized SGID files which were installed via RPM.
-It is assumed that when an individual has sudo access to install an RPM
-and all packages are signed with an organizationally-recognized GPG key,
-the software should be considered an approved package on the system.
-Any SGID file not deployed through an RPM will be flagged for further review.</td>
-<td xml:lang="en-US">Executable files with the SGID permission run with the privileges of
-the owner of the file. SGID files of uncertain provenance could allow for
 unprivileged users to elevate privileges. The presence of these files should be
 strictly controlled on the system.</td>
 <td></td>
@@ -1506,16 +1506,33 @@ $ sudo yum install aide</pre>
 </tr>
 <tr>
 <td>NT28(R51)</td>
-<td>Configure AIDE to Verify Access Control Lists (ACLs)</td>
-<td xml:lang="en-US">By default, the <code>acl</code> option is added to the <code>FIPSR</code> ruleset in AIDE.
-If using a custom ruleset or the <code>acl</code> option is missing, add <code>acl</code>
+<td>Build and Test AIDE Database</td>
+<td xml:lang="en-US">Run the following command to generate a new database:
+<pre>$ sudo /usr/sbin/aide --init</pre>
+By default, the database will be written to the file <code>/var/lib/aide/aide.db.new.gz</code>.
+Storing the database, the configuration file <code>/etc/aide.conf</code>, and the binary
+<code>/usr/sbin/aide</code> (or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
+The newly-generated database can be installed as follows:
+<pre>$ sudo cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz</pre>
+To initiate a manual check, run the following command:
+<pre>$ sudo /usr/sbin/aide --check</pre>
+If this check produces any unexpected output, investigate.</td>
+<td xml:lang="en-US">For AIDE to be effective, an initial database of "known-good" information about files
+must be captured and it should be able to be verified against the installed files.</td>
+<td></td>
+</tr>
+<tr>
+<td>NT28(R51)</td>
+<td>Configure AIDE to Verify Extended Attributes</td>
+<td xml:lang="en-US">By default, the <code>xattrs</code> option is added to the <code>FIPSR</code> ruleset in AIDE.
+If using a custom ruleset or the <code>xattrs</code> option is missing, add <code>xattrs</code>
 to the appropriate ruleset.
-For example, add <code>acl</code> to the following line in <code>/etc/aide.conf</code>:
+For example, add <code>xattrs</code> to the following line in <code>/etc/aide.conf</code>:
 <pre>FIPSR = p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha256</pre>
 AIDE rules can be configured in multiple ways; this is merely one example that is already
 configured by default.</td>
-<td xml:lang="en-US">ACLs can provide permissions beyond those permitted through the file mode and must be
-verified by the file integrity tools.</td>
+<td xml:lang="en-US">Extended attributes in file systems are used to contain arbitrary data and file metadata
+with security implications.</td>
 <td></td>
 </tr>
 <tr>
@@ -1546,33 +1563,16 @@ monitoring system trap when there is an unauthorized modification of a configura
 </tr>
 <tr>
 <td>NT28(R51)</td>
-<td>Configure AIDE to Verify Extended Attributes</td>
-<td xml:lang="en-US">By default, the <code>xattrs</code> option is added to the <code>FIPSR</code> ruleset in AIDE.
-If using a custom ruleset or the <code>xattrs</code> option is missing, add <code>xattrs</code>
+<td>Configure AIDE to Verify Access Control Lists (ACLs)</td>
+<td xml:lang="en-US">By default, the <code>acl</code> option is added to the <code>FIPSR</code> ruleset in AIDE.
+If using a custom ruleset or the <code>acl</code> option is missing, add <code>acl</code>
 to the appropriate ruleset.
-For example, add <code>xattrs</code> to the following line in <code>/etc/aide.conf</code>:
+For example, add <code>acl</code> to the following line in <code>/etc/aide.conf</code>:
 <pre>FIPSR = p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha256</pre>
 AIDE rules can be configured in multiple ways; this is merely one example that is already
 configured by default.</td>
-<td xml:lang="en-US">Extended attributes in file systems are used to contain arbitrary data and file metadata
-with security implications.</td>
-<td></td>
-</tr>
-<tr>
-<td>NT28(R51)</td>
-<td>Build and Test AIDE Database</td>
-<td xml:lang="en-US">Run the following command to generate a new database:
-<pre>$ sudo /usr/sbin/aide --init</pre>
-By default, the database will be written to the file <code>/var/lib/aide/aide.db.new.gz</code>.
-Storing the database, the configuration file <code>/etc/aide.conf</code>, and the binary
-<code>/usr/sbin/aide</code> (or hashes of these files), in a secure location (such as on read-only media) provides additional assurance about their integrity.
-The newly-generated database can be installed as follows:
-<pre>$ sudo cp /var/lib/aide/aide.db.new.gz /var/lib/aide/aide.db.gz</pre>
-To initiate a manual check, run the following command:
-<pre>$ sudo /usr/sbin/aide --check</pre>
-If this check produces any unexpected output, investigate.</td>
-<td xml:lang="en-US">For AIDE to be effective, an initial database of "known-good" information about files
-must be captured and it should be able to be verified against the installed files.</td>
+<td xml:lang="en-US">ACLs can provide permissions beyond those permitted through the file mode and must be
+verified by the file integrity tools.</td>
 <td></td>
 </tr>
 <tr>
@@ -1599,12 +1599,11 @@ monitoring system trap when there is an unauthorized modification of a configura
 </tr>
 <tr>
 <td>NT28(R59)</td>
-<td>Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD</td>
-<td xml:lang="en-US">The sudo <code>NOPASSWD</code> tag, when specified, allows a user to execute
-commands using sudo without having to authenticate. This should be disabled
-by making sure that the <code>NOPASSWD</code> tag does not exist in
-<code>/etc/sudoers</code> configuration file or any sudo configuration snippets
-in <code>/etc/sudoers.d/</code>.</td>
+<td>Ensure Users Re-Authenticate for Privilege Escalation - sudo !authenticate</td>
+<td xml:lang="en-US">The sudo <code>!authenticate</code> option, when specified, allows a user to execute commands using
+sudo without having to authenticate. This should be disabled by making sure that the
+<code>!authenticate</code> option does not exist in <code>/etc/sudoers</code> configuration file or
+any sudo configuration snippets in <code>/etc/sudoers.d/</code>.</td>
 <td xml:lang="en-US">Without re-authentication, users may access resources or perform tasks for which they
 do not have authorization.
 <br><br>
@@ -1614,11 +1613,12 @@ is critical that the user re-authenticate.</td>
 </tr>
 <tr>
 <td>NT28(R59)</td>
-<td>Ensure Users Re-Authenticate for Privilege Escalation - sudo !authenticate</td>
-<td xml:lang="en-US">The sudo <code>!authenticate</code> option, when specified, allows a user to execute commands using
-sudo without having to authenticate. This should be disabled by making sure that the
-<code>!authenticate</code> option does not exist in <code>/etc/sudoers</code> configuration file or
-any sudo configuration snippets in <code>/etc/sudoers.d/</code>.</td>
+<td>Ensure Users Re-Authenticate for Privilege Escalation - sudo NOPASSWD</td>
+<td xml:lang="en-US">The sudo <code>NOPASSWD</code> tag, when specified, allows a user to execute
+commands using sudo without having to authenticate. This should be disabled
+by making sure that the <code>NOPASSWD</code> tag does not exist in
+<code>/etc/sudoers</code> configuration file or any sudo configuration snippets
+in <code>/etc/sudoers.d/</code>.</td>
 <td xml:lang="en-US">Without re-authentication, users may access resources or perform tasks for which they
 do not have authorization.
 <br><br>

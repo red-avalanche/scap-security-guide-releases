@@ -61,9 +61,9 @@ this guide without first testing them in a non-operational environment. The
 creators of this guidance assume no responsibility whatsoever for its use by
 other parties, and makes no guarantees, expressed or implied, about its
 quality, reliability, or any other characteristic.
-</div></div></div></div></div><div id="profileinfo"><h2>Profile Information</h2><div class="row"><div class="col-md-5 well well-lg horizontal-scroll"><table class="table table-bordered"><tr><th>Profile Title</th><td>Open Computing Information Security Profile for OpenShift Node</td></tr><tr><th>Profile ID</th><td>xccdf_org.ssgproject.content_profile_opencis-node</td></tr></table></div><div class="col-md-3"><h4>CPE Platforms</h4><ul class="list-group"><li class="list-group-item"><span class="label label-default" title="CPE platform cpe:/a:redhat:openshift_container_platform:3.10 is applicable to this Benchmark">cpe:/a:redhat:openshift_container_platform:3.10</span></li><li class="list-group-item"><span class="label label-default" title="CPE platform cpe:/a:redhat:openshift_container_platform:3.11 is applicable to this Benchmark">cpe:/a:redhat:openshift_container_platform:3.11</span></li></ul></div></div></div><div id="revisionhistory"><h2>Revision History</h2><p>Current version: <strong>0.1.51</strong></p><ul><li><strong>draft</strong>
-                    (as of 2020-07-17)
-                </li></ul></div><h2>Table of Contents</h2><ol><li><a href="#xccdf_org.ssgproject.content_group_openshift">OpenShift Settings</a></li><ol><li><a href="#xccdf_org.ssgproject.content_group_ocp-permissions">Permissions</a></li><li><a href="#xccdf_org.ssgproject.content_group_kubelet">Kubernetes Kubelet Settings</a></li></ol></ol><div id="guide-tree"><h2>Checklist</h2><table class="treetable table table-bordered"><tbody><tr data-tt-id="children-xccdf_org.ssgproject.content_benchmark_OCP-3"><td style="padding-left: 0px" colspan="2" id="xccdf_org.ssgproject.content_benchmark_OCP-3"><span class="label label-default">Group</span>  
+</div></div></div></div></div><div id="profileinfo"><h2>Profile Information</h2><div class="row"><div class="col-md-5 well well-lg horizontal-scroll"><table class="table table-bordered"><tr><th>Profile Title</th><td>Open Computing Information Security Profile for OpenShift Node</td></tr><tr><th>Profile ID</th><td>xccdf_org.ssgproject.content_profile_opencis-node</td></tr></table></div><div class="col-md-3"><h4>CPE Platforms</h4><ul class="list-group"><li class="list-group-item"><span class="label label-default" title="CPE platform cpe:/a:redhat:openshift_container_platform:3.10 is applicable to this Benchmark">cpe:/a:redhat:openshift_container_platform:3.10</span></li><li class="list-group-item"><span class="label label-default" title="CPE platform cpe:/a:redhat:openshift_container_platform:3.11 is applicable to this Benchmark">cpe:/a:redhat:openshift_container_platform:3.11</span></li></ul></div></div></div><div id="revisionhistory"><h2>Revision History</h2><p>Current version: <strong>0.1.52</strong></p><ul><li><strong>draft</strong>
+                    (as of 2020-09-18)
+                </li></ul></div><h2>Table of Contents</h2><ol><li><a href="#xccdf_org.ssgproject.content_group_openshift">OpenShift Settings</a></li><ol><li><a href="#xccdf_org.ssgproject.content_group_kubelet">Kubernetes Kubelet Settings</a></li><li><a href="#xccdf_org.ssgproject.content_group_ocp-permissions">Permissions</a></li></ol></ol><div id="guide-tree"><h2>Checklist</h2><table class="treetable table table-bordered"><tbody><tr data-tt-id="children-xccdf_org.ssgproject.content_benchmark_OCP-3"><td style="padding-left: 0px" colspan="2" id="xccdf_org.ssgproject.content_benchmark_OCP-3"><span class="label label-default">Group</span>  
                 Guide to the Secure Configuration of Red Hat OpenShift Container Platform 3
                           <small>Group contains 4 groups and 20 rules</small></td></tr><tr data-tt-id="children-xccdf_org.ssgproject.content_group_openshift" data-tt-parent-id="children-xccdf_org.ssgproject.content_benchmark_OCP-3"><td style="padding-left: 19px" colspan="2" id="xccdf_org.ssgproject.content_group_openshift"><span class="label label-default">Group</span>  
                 OpenShift Settings
@@ -78,7 +78,153 @@ settings is provided in order to verify that the cluster admininstrator has not 
 would be less secure than the OpenShift defaults. A small number of items require configuration.
 
 Finally, there are some recommendations that require decisions by the system operator, such as audit
-log size, retention, and related settings.</p></td></tr><tr data-tt-id="children-xccdf_org.ssgproject.content_group_ocp-permissions" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_openshift"><td style="padding-left: 38px" colspan="2" id="xccdf_org.ssgproject.content_group_ocp-permissions"><span class="label label-default">Group</span>  
+log size, retention, and related settings.</p></td></tr><tr data-tt-id="children-xccdf_org.ssgproject.content_group_kubelet" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_openshift"><td style="padding-left: 38px" colspan="2" id="xccdf_org.ssgproject.content_group_kubelet"><span class="label label-default">Group</span>  
+                Kubernetes Kubelet Settings
+                          <small>Group contains 11 rules</small></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_group_kubelet" class="guide-tree-inner-node guide-tree-inner-node-id-xccdf_org.ssgproject.content_group_kubelet" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_openshift"><td style="padding-left: 38px" colspan="2"><p><a class="small" href="#xccdf_org.ssgproject.content_group_kubelet">[ref]</a>  
+                        The Kubernetes Kubelet is an agent that runs on each node in the cluster. It
+makes sure that containers are running in a pod.
+
+The kubelet takes a set of PodSpecs that are provided through various
+mechanisms and ensures that the containers described in those PodSpecs are
+running and healthy. The kubelet doesn’t manage containers which were not
+created by Kubernetes.</p></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_kubelet_configure_client_ca" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_kubelet_configure_client_ca" id="guide-tree-leaf-idm46058358870944" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_kubelet"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_kubelet_configure_client_ca"><span class="label label-default">Rule</span>  
+                                kubelet - Configure the Client CA Certificate
+                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_kubelet_configure_client_ca">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>By default, the kubelet is not configured with a CA certificate which
+can subject the kubelet to man-in-the-middle attacks.
+
+To configure a client CA certificate, edit the kubelet configuration
+file <code>/etc/origin/node/node-config.yaml</code>
+on the kubelet node(s) and set the below parameter:
+<pre>servingInfo:
+  clientCA: client-ca.crt</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>Not having a CA certificate for the kubelet will subject the kubelet to possible
+man-in-the-middle attacks especially on unsafe or untrusted networks.
+Certificate validation for the kubelet allows the API server to validate
+the kubelet's identity.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_kubelet_configure_client_ca</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
+            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80594-5">CCE-80594-5</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
+            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.1.4</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_kubelet_configure_tls_cert" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_kubelet_configure_tls_cert" id="guide-tree-leaf-idm46058358848720" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_kubelet"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_kubelet_configure_tls_cert"><span class="label label-default">Rule</span>  
+                                Ensure That The kubelet Client Certificate Is Correctly Set
+                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_kubelet_configure_tls_cert">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>To ensure the kubelet TLS client certificate is configured, edit the
+kubelet configuration file <code>/etc/origin/node/node-config.yaml</code>
+and configure the <code>cert-dir</code> path for the kubelet certificates.
+For example:
+<pre>  cert-dir:
+  - /etc/origin/node/certificates</pre>
+A corresponding certificate should exist in the <code>cert-dir</code>. For
+example:
+<pre>/etc/origin/node/certificates/kubelet-client-current.pem</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>Without cryptographic integrity protections, information can be
+altered by unauthorized users without detection.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_kubelet_configure_tls_cert</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
+            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80596-0">CCE-80596-0</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
+            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.1.12</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_kubelet_enable_iptables_util_chains" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_kubelet_enable_iptables_util_chains" id="guide-tree-leaf-idm46058358858704" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_kubelet"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_kubelet_enable_iptables_util_chains"><span class="label label-default">Rule</span>  
+                                kubelet - Allow Automatic Firewall Configuration
+                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_kubelet_enable_iptables_util_chains">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>The kubelet has the ability to automatically configure the firewall to allow
+the containers required ports and connections to networking resources and destinations
+parameters potentially creating a security incident.
+To allow the kubelet to modify the firewall, edit the kubelet configuration
+file <code>/etc/origin/node/node-config.yaml</code>
+on the kubelet node(s) and set the below parameter:
+<pre>kubeletArguments:
+  make-iptables-util-chains:
+  - 'true'</pre></p></div><div class="panel panel-warning"><div class="panel-heading"><span class="label label-warning">Warning:</span> 
+                                        IT IS NOT RECOMMENDED FOR ANY REASON to manually configure firewall ports for running
+pods and containers as this not only can create conflicts with firewall rules but can
+also introduce inconsistences into the allowed/disabled ports on the firewall.</div></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>The kubelet should automatically configure the firewall settings to allow access and
+networking traffic through. This ensures that when a pod or container is running that
+the correct ports are configured as well as removing the ports when a pod or
+container is no longer in existence.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_kubelet_enable_iptables_util_chains</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
+            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80604-2">CCE-80604-2</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
+            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.1.8</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_kubelet_enable_streaming_connections" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_kubelet_enable_streaming_connections" id="guide-tree-leaf-idm46058358830336" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_kubelet"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_kubelet_enable_streaming_connections"><span class="label label-default">Rule</span>  
+                                kubelet - Do Not Disable Streaming Timeouts
+                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_kubelet_enable_streaming_connections">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>Timouts for streaming connections should not be disabled as they help to prevent
+denial-of-service attacks.
+To configure streaming connection timeouts, edit the kubelet configuration
+file <code>/etc/origin/node/node-config.yaml</code>
+on the kubelet node(s) and set the below parameter:
+<pre>kubeletArguments:
+  streaming-connection-idle-timeout:
+  - '<abbr title="from Benchmark/Value: xccdf_org.ssgproject.content_value_var_streaming_connection_timeouts">5m</abbr>'</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>Ensuring connections have timeouts helps to protect against denial-of-service attacks as
+well as disconnect inactive connections. In addition, setting connections timeouts helps
+to prevent from running out of ephemeral ports.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_kubelet_enable_streaming_connections</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
+            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80607-5">CCE-80607-5</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
+            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.1.6</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_kubelet_enable_client_cert_rotation" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_kubelet_enable_client_cert_rotation" id="guide-tree-leaf-idm46058358818800" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_kubelet"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_kubelet_enable_client_cert_rotation"><span class="label label-default">Rule</span>  
+                                kubelet - Enable Client Certificate Rotation
+                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_kubelet_enable_client_cert_rotation">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>To enable the kubelet to rotate client certificates, edit the kubelet configuration
+file <code>/etc/origin/node/node-config.yaml</code>
+on the kubelet node(s) and set the below parameter:
+<pre>kubeletArguments:
+  feature-gates:
+    - RotateKubeletClientCertificate=true</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>Allowing the kubelet to auto-update the certificates ensure that there is no downtime
+in certificate renewal as well as ensures confidentiality and integrity.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_kubelet_enable_client_cert_rotation</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
+            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80603-4">CCE-80603-4</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
+            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.1.14</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_kubelet_disable_readonly_port" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_kubelet_disable_readonly_port" id="guide-tree-leaf-idm46058358827888" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_kubelet"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_kubelet_disable_readonly_port"><span class="label label-default">Rule</span>  
+                                kubelet - Disable the Read-Only Port
+                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_kubelet_disable_readonly_port">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>To disable the read-only port, edit the kubelet configuration
+file <code>/etc/origin/node/node-config.yaml</code>
+on the kubelet node(s) and set the below parameter:
+<pre>kubeletArguments:
+  read-only-port:
+  - '0'</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>OpenShift disables the read-only port (<code>10255</code>) on all nodes by setting the
+read-only port kubelet flag to <code>0</code>. This ensures only
+authenticated connections are able to receive information about the OpenShift
+system.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_kubelet_disable_readonly_port</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
+            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80601-8">CCE-80601-8</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
+            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.1.5</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_kubelet_disable_cadvisor_port" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_kubelet_disable_cadvisor_port" id="guide-tree-leaf-idm46058358799184" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_kubelet"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_kubelet_disable_cadvisor_port"><span class="label label-default">Rule</span>  
+                                kubelet - Disable cAdvisor Port
+                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_kubelet_disable_cadvisor_port">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>The <code>cAdvisor</code> port should be disabled as it does not require
+any authentication to connect to the port.
+To disable the <code>cAdvisor</code> port, edit the kubelet configuration
+file <code>/etc/origin/node/node-config.yaml</code>
+on the kubelet node(s) and set the below parameter:
+<pre>kubeletArguments:
+  cadvisor-port:
+  - '0'</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>Any form of authentication to ports anonymously should be disabled. An attacker
+could connect to the port and gain cluster information anonymously.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">high</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_kubelet_disable_cadvisor_port</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
+            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80599-4">CCE-80599-4</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
+            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.1.13</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_kubelet_configure_tls_key" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_kubelet_configure_tls_key" id="guide-tree-leaf-idm46058358810112" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_kubelet"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_kubelet_configure_tls_key"><span class="label label-default">Rule</span>  
+                                Ensure That The kubelet Server Key Is Correctly Set
+                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_kubelet_configure_tls_key">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>To ensure the kubelet TLS private server key certificate is configured, edit the
+kubelet configuration file <code>/etc/origin/node/node-config.yaml</code>
+and configure the <code>cert-dir</code> path for the kubelet certificates.
+For example:
+<pre>  cert-dir:
+  - /etc/origin/node/certificates</pre>
+A corresponding certificate should exist in the <code>cert-dir</code>. For
+example:
+<pre>/etc/origin/node/certificates/kubelet-server-current.pem</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>Without cryptographic integrity protections, information can be
+altered by unauthorized users without detection.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_kubelet_configure_tls_key</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
+            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80597-8">CCE-80597-8</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
+            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.1.12</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_kubelet_enable_server_cert_rotation" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_kubelet_enable_server_cert_rotation" id="guide-tree-leaf-idm46058358789648" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_kubelet"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_kubelet_enable_server_cert_rotation"><span class="label label-default">Rule</span>  
+                                kubelet - Enable Server Certificate Rotation
+                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_kubelet_enable_server_cert_rotation">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>To enable the kubelet to rotate server certificates, edit the kubelet configuration
+file <code>/etc/origin/node/node-config.yaml</code>
+on the kubelet node(s) and ensure <code>RotateKubeletServerCertificate</code> is included
+in the <code>feature-gates</code> arguments:
+<pre>kubeletArguments:
+  feature-gates:
+    - RotateKubeletClientCertificate=true,RotateKubeletServerCertificate=true</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>Allowing the kubelet to auto-update the certificates ensure that there is no downtime
+in certificate renewal as well as ensures confidentiality and integrity.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_kubelet_enable_server_cert_rotation</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
+            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80606-7">CCE-80606-7</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
+            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">1.3.7</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_kubelet_configure_event_creation" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_kubelet_configure_event_creation" id="guide-tree-leaf-idm46058358778992" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_kubelet"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_kubelet_configure_event_creation"><span class="label label-default">Rule</span>  
+                                kubelet - Do Not Limit Event Creation
+                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_kubelet_configure_event_creation">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>All events should be captured and not restricted as this helps in
+reconstucting the chain-of-events.
+
+To prevent log creation limiting, edit the kubelet configuration
+file <code>/etc/origin/node/node-config.yaml</code>
+on the kubelet node(s) and set the below parameter:
+<pre>kubeletArguments:
+  event-qps:
+  - '0'</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>All events should be captured and not restricted as this helps in
+reconstucting the chain-of-events.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_kubelet_configure_event_creation</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
+            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80595-2">CCE-80595-2</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
+            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.1.11</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_kubelet_disable_hostname_override" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_kubelet_disable_hostname_override" id="guide-tree-leaf-idm46058358769312" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_kubelet"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_kubelet_disable_hostname_override"><span class="label label-default">Rule</span>  
+                                kubelet - Disable Hostname Override
+                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_kubelet_disable_hostname_override">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>To prevent the hostname from being overrided, edit the kubelet configuration file
+<code>/etc/origin/node/node-config.yaml</code> on the kubelet node(s) and
+remove the <code>hostname-override</code> option if it exists.</p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>Allowing hostnames to be overrided creates issues around resolving nodes
+in addition to TLS configuration, certificate validation, and log correlation
+and validation.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_kubelet_disable_hostname_override</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
+            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80600-0">CCE-80600-0</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
+            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.1.10</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"></div></td></tr></tbody></table></td></tr><tr data-tt-id="children-xccdf_org.ssgproject.content_group_ocp-permissions" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_openshift"><td style="padding-left: 38px" colspan="2" id="xccdf_org.ssgproject.content_group_ocp-permissions"><span class="label label-default">Group</span>  
                 Permissions
                           <small>Group contains 1 group and 9 rules</small></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_group_ocp-permissions" class="guide-tree-inner-node guide-tree-inner-node-id-xccdf_org.ssgproject.content_group_ocp-permissions" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_openshift"><td style="padding-left: 38px" colspan="2"><p><a class="small" href="#xccdf_org.ssgproject.content_group_ocp-permissions">[ref]</a>  
                         Traditional security relies heavily on file and
@@ -92,221 +238,7 @@ restrictively to ensure sensitive information is properly protected.
 This section discusses important
 permission restrictions which can be verified
 to ensure that no harmful discrepancies have
-arisen.</p></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_file_permissions_node_config" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_file_permissions_node_config" id="guide-tree-leaf-idm46060102810896" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_ocp-files"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_file_permissions_node_config"><span class="label label-default">Rule</span>  
-                                Verify Permissions on the OpenShift Node Configuration File
-                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_file_permissions_node_config">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>
-To properly set the permissions of <code>/etc/origin/node/node-config.yaml</code>, run the command:
-<pre>$ sudo chmod 0600 /etc/origin/node/node-config.yaml</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>If the <code>/etc/origin/node/node-config.yaml</code> file is writable by a group-owner or the
-world the risk of its compromise is increased. The file contains the configuration of
-an OpenShift node that is configured on the system. Protection of this file is
-critical for OpenShift security.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_file_permissions_node_config</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
-            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80640-6">CCE-80640-6</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
-            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.2.1</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#idm46060102789200" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br></br><div class="panel-collapse collapse" id="idm46060102789200"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>
-chmod 0600 /etc/origin/node/node-config.yaml
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#idm46060102785008" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br></br><div class="panel-collapse collapse" id="idm46060102785008"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Test for existence /etc/origin/node/node-config.yaml
-  stat:
-    path: /etc/origin/node/node-config.yaml
-  register: file_exists
-  tags:
-    - CCE-80640-6
-    - configure_strategy
-    - file_permissions_node_config
-    - low_complexity
-    - low_disruption
-    - medium_severity
-    - no_reboot_needed
-
-- name: Ensure permission 0600 on /etc/origin/node/node-config.yaml
-  file:
-    path: /etc/origin/node/node-config.yaml
-    mode: '0600'
-  when: file_exists.stat is defined and file_exists.stat.exists
-  tags:
-    - CCE-80640-6
-    - configure_strategy
-    - file_permissions_node_config
-    - low_complexity
-    - low_disruption
-    - medium_severity
-    - no_reboot_needed
-</code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_file_permissions_openshift_node_client_crt" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_file_permissions_openshift_node_client_crt" id="guide-tree-leaf-idm46060102766496" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_ocp-files"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_file_permissions_openshift_node_client_crt"><span class="label label-default">Rule</span>  
-                                Verify Permissions on OpenShift Node Certificate File
-                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_file_permissions_openshift_node_client_crt">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>
-To properly set the permissions of <code>/etc/origin/node/client-ca.crt</code>, run the command:
-<pre>$ sudo chmod 0644 /etc/origin/node/client-ca.crt</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>If the <code>/etc/origin/node/client-ca.crt</code> file is writable by a group-owner or the
-world the risk of its compromise is increased. The file contains the certificate authority
-certificate for an OpenShift node that is configured on the system. Protection of this file is
-critical for OpenShift security.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_file_permissions_openshift_node_client_crt</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
-            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80642-2">CCE-80642-2</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
-            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.2.</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#idm46060102748448" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br></br><div class="panel-collapse collapse" id="idm46060102748448"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>
-chmod 0600 /etc/origin/node/client-ca.crt
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#idm46060102743808" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br></br><div class="panel-collapse collapse" id="idm46060102743808"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Test for existence /etc/origin/node/client-ca.crt
-  stat:
-    path: /etc/origin/node/client-ca.crt
-  register: file_exists
-  tags:
-    - CCE-80642-2
-    - configure_strategy
-    - file_permissions_openshift_node_client_crt
-    - low_complexity
-    - low_disruption
-    - medium_severity
-    - no_reboot_needed
-
-- name: Ensure permission 0600 on /etc/origin/node/client-ca.crt
-  file:
-    path: /etc/origin/node/client-ca.crt
-    mode: '0600'
-  when: file_exists.stat is defined and file_exists.stat.exists
-  tags:
-    - CCE-80642-2
-    - configure_strategy
-    - file_permissions_openshift_node_client_crt
-    - low_complexity
-    - low_disruption
-    - medium_severity
-    - no_reboot_needed
-</code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_file_groupowner_node_config" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_file_groupowner_node_config" id="guide-tree-leaf-idm46060102714320" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_ocp-files"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_file_groupowner_node_config"><span class="label label-default">Rule</span>  
-                                Verify Group Who Owns The OpenShift Node Configuration File
-                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_file_groupowner_node_config">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p> To properly set the group owner of <code>/etc/origin/node/node-config.yaml</code>, run the command: <pre>$ sudo chgrp root /etc/origin/node/node-config.yaml</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>The <code>/etc/origin/node/node-config.yaml</code> file contains information about the configuration of the
-OpenShift node that is configured on the system. Protection of this file is
-critical for OpenShift security.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_file_groupowner_node_config</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
-            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80617-4">CCE-80617-4</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
-            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.2.2</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#idm46060102350528" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br></br><div class="panel-collapse collapse" id="idm46060102350528"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>
-
-chgrp 0 /etc/origin/node/node-config.yaml
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#idm46060102346208" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br></br><div class="panel-collapse collapse" id="idm46060102346208"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Test for existence /etc/origin/node/node-config.yaml
-  stat:
-    path: /etc/origin/node/node-config.yaml
-  register: file_exists
-  tags:
-    - CCE-80617-4
-    - configure_strategy
-    - file_groupowner_node_config
-    - low_complexity
-    - low_disruption
-    - medium_severity
-    - no_reboot_needed
-
-- name: Ensure group owner 0 on /etc/origin/node/node-config.yaml
-  file:
-    path: /etc/origin/node/node-config.yaml
-    group: '0'
-  when: file_exists.stat is defined and file_exists.stat.exists
-  tags:
-    - CCE-80617-4
-    - configure_strategy
-    - file_groupowner_node_config
-    - low_complexity
-    - low_disruption
-    - medium_severity
-    - no_reboot_needed
-</code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_file_owner_openshift_node_client_crt" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_file_owner_openshift_node_client_crt" id="guide-tree-leaf-idm46060102259312" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_ocp-files"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_file_owner_openshift_node_client_crt"><span class="label label-default">Rule</span>  
-                                Verify User Who Owns OpenShift Node Certificate File
-                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_file_owner_openshift_node_client_crt">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p> To properly set the owner of <code>/etc/origin/node/client-ca.crt</code>, run the command: <pre>$ sudo chown root /etc/origin/node/client-ca.crt </pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>The <code>/etc/origin/node/client-ca.crt</code> file contains the certificate authority
-certificate for an OpenShift node that is configured on the system. Protection of this file is
-critical for OpenShift security.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_file_owner_openshift_node_client_crt</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
-            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80631-5">CCE-80631-5</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
-            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.2.8</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#idm46060102240048" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br></br><div class="panel-collapse collapse" id="idm46060102240048"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>
-
-chown 0 /etc/origin/node/client-ca.crt
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#idm46060102235824" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br></br><div class="panel-collapse collapse" id="idm46060102235824"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Test for existence /etc/origin/node/client-ca.crt
-  stat:
-    path: /etc/origin/node/client-ca.crt
-  register: file_exists
-  tags:
-    - CCE-80631-5
-    - configure_strategy
-    - file_owner_openshift_node_client_crt
-    - low_complexity
-    - low_disruption
-    - medium_severity
-    - no_reboot_needed
-
-- name: Ensure owner 0 on /etc/origin/node/client-ca.crt
-  file:
-    path: /etc/origin/node/client-ca.crt
-    owner: '0'
-  when: file_exists.stat is defined and file_exists.stat.exists
-  tags:
-    - CCE-80631-5
-    - configure_strategy
-    - file_owner_openshift_node_client_crt
-    - low_complexity
-    - low_disruption
-    - medium_severity
-    - no_reboot_needed
-</code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_file_groupowner_openshift_node_service" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_file_groupowner_openshift_node_service" id="guide-tree-leaf-idm46060102227024" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_ocp-files"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_file_groupowner_openshift_node_service"><span class="label label-default">Rule</span>  
-                                Verify Group Who Owns The OpenShift Node Service File
-                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_file_groupowner_openshift_node_service">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p> To properly set the group owner of <code>/etc/systemd/system/atomic-openshift-node.service</code>, run the command: <pre>$ sudo chgrp root /etc/systemd/system/atomic-openshift-node.service</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>The <code>/etc/systemd/system/atomic-openshift-node.service</code> file contains information about the configuration of the
-OpenShift node service that is configured on the system. Protection of this file is
-critical for OpenShift security.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_file_groupowner_openshift_node_service</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
-            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80620-8">CCE-80620-8</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
-            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.2.4</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#idm46060102211776" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br></br><div class="panel-collapse collapse" id="idm46060102211776"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>
-
-chgrp 0 /etc/systemd/system/atomic-openshift-node.service
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#idm46060102207312" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br></br><div class="panel-collapse collapse" id="idm46060102207312"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Test for existence /etc/systemd/system/atomic-openshift-node.service
-  stat:
-    path: /etc/systemd/system/atomic-openshift-node.service
-  register: file_exists
-  tags:
-    - CCE-80620-8
-    - configure_strategy
-    - file_groupowner_openshift_node_service
-    - low_complexity
-    - low_disruption
-    - medium_severity
-    - no_reboot_needed
-
-- name: Ensure group owner 0 on /etc/systemd/system/atomic-openshift-node.service
-  file:
-    path: /etc/systemd/system/atomic-openshift-node.service
-    group: '0'
-  when: file_exists.stat is defined and file_exists.stat.exists
-  tags:
-    - CCE-80620-8
-    - configure_strategy
-    - file_groupowner_openshift_node_service
-    - low_complexity
-    - low_disruption
-    - medium_severity
-    - no_reboot_needed
-</code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_file_groupowner_openshift_node_client_crt" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_file_groupowner_openshift_node_client_crt" id="guide-tree-leaf-idm46060102194976" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_ocp-files"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_file_groupowner_openshift_node_client_crt"><span class="label label-default">Rule</span>  
-                                Verify Group Who Owns OpenShift Node Certificate File
-                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_file_groupowner_openshift_node_client_crt">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p> To properly set the group owner of <code>/etc/origin/node/client-ca.crt</code>, run the command: <pre>$ sudo chgrp root /etc/origin/node/client-ca.crt</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>The <code>/etc/origin/node/client-ca.crt</code> file contains the certificate authority
-certificate for an OpenShift node that is configured on the system. Protection of this file is
-critical for OpenShift security.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_file_groupowner_openshift_node_client_crt</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
-            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80619-0">CCE-80619-0</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
-            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.2.8</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#idm46060102188176" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br></br><div class="panel-collapse collapse" id="idm46060102188176"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>
-
-chgrp 0 /etc/origin/node/client-ca.crt
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#idm46060102182352" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br></br><div class="panel-collapse collapse" id="idm46060102182352"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Test for existence /etc/origin/node/client-ca.crt
-  stat:
-    path: /etc/origin/node/client-ca.crt
-  register: file_exists
-  tags:
-    - CCE-80619-0
-    - configure_strategy
-    - file_groupowner_openshift_node_client_crt
-    - low_complexity
-    - low_disruption
-    - medium_severity
-    - no_reboot_needed
-
-- name: Ensure group owner 0 on /etc/origin/node/client-ca.crt
-  file:
-    path: /etc/origin/node/client-ca.crt
-    group: '0'
-  when: file_exists.stat is defined and file_exists.stat.exists
-  tags:
-    - CCE-80619-0
-    - configure_strategy
-    - file_groupowner_openshift_node_client_crt
-    - low_complexity
-    - low_disruption
-    - medium_severity
-    - no_reboot_needed
-</code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_file_permissions_openshift_node_service" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_file_permissions_openshift_node_service" id="guide-tree-leaf-idm46060100885840" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_ocp-files"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_file_permissions_openshift_node_service"><span class="label label-default">Rule</span>  
+arisen.</p></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_file_permissions_openshift_node_service" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_file_permissions_openshift_node_service" id="guide-tree-leaf-idm46058361822272" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_ocp-files"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_file_permissions_openshift_node_service"><span class="label label-default">Rule</span>  
                                 Verify Permissions on the OpenShift Node Service File
                                   <a class="small" href="#xccdf_org.ssgproject.content_rule_file_permissions_openshift_node_service">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>
 To properly set the permissions of <code>/etc/systemd/system/atomic-openshift-node.service</code>, run the command:
@@ -315,9 +247,10 @@ world the risk of its compromise is increased. The file contains the service con
 OpenShift node service that is configured on the system. Protection of this file is
 critical for OpenShift security.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_file_permissions_openshift_node_service</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
             <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80643-0">CCE-80643-0</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
-            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.2.3</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#idm46060100866080" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br></br><div class="panel-collapse collapse" id="idm46060100866080"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>
+            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.2.3</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#idm46058361801376" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br></br><div class="panel-collapse collapse" id="idm46058361801376"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>
+
 chmod 0644 /etc/systemd/system/atomic-openshift-node.service
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#idm46060100861776" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br></br><div class="panel-collapse collapse" id="idm46060100861776"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Test for existence /etc/systemd/system/atomic-openshift-node.service
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#idm46058361797008" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br></br><div class="panel-collapse collapse" id="idm46058361797008"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Test for existence /etc/systemd/system/atomic-openshift-node.service
   stat:
     path: /etc/systemd/system/atomic-openshift-node.service
   register: file_exists
@@ -343,51 +276,54 @@ chmod 0644 /etc/systemd/system/atomic-openshift-node.service
     - low_disruption
     - medium_severity
     - no_reboot_needed
-</code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_file_owner_node_config" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_file_owner_node_config" id="guide-tree-leaf-idm46060100871600" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_ocp-files"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_file_owner_node_config"><span class="label label-default">Rule</span>  
-                                Verify User Who Owns The OpenShift Node Configuration File
-                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_file_owner_node_config">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p> To properly set the owner of <code>/etc/origin/node/node-config.yaml</code>, run the command: <pre>$ sudo chown root /etc/origin/node/node-config.yaml </pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>The <code>/etc/origin/node/node-config.yaml</code> file contains information about the configuration of the
-OpenShift node that is configured on the system. Protection of this file is
-critical for OpenShift security.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_file_owner_node_config</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
-            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80629-9">CCE-80629-9</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
-            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.2.2</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#idm46060100850544" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br></br><div class="panel-collapse collapse" id="idm46060100850544"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>
+</code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_file_permissions_openshift_node_client_crt" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_file_permissions_openshift_node_client_crt" id="guide-tree-leaf-idm46058361794144" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_ocp-files"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_file_permissions_openshift_node_client_crt"><span class="label label-default">Rule</span>  
+                                Verify Permissions on OpenShift Node Certificate File
+                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_file_permissions_openshift_node_client_crt">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>
+To properly set the permissions of <code>/etc/origin/node/client-ca.crt</code>, run the command:
+<pre>$ sudo chmod 0644 /etc/origin/node/client-ca.crt</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>If the <code>/etc/origin/node/client-ca.crt</code> file is writable by a group-owner or the
+world the risk of its compromise is increased. The file contains the certificate authority
+certificate for an OpenShift node that is configured on the system. Protection of this file is
+critical for OpenShift security.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_file_permissions_openshift_node_client_crt</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
+            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80642-2">CCE-80642-2</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
+            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.2.</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#idm46058361775856" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br></br><div class="panel-collapse collapse" id="idm46058361775856"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>
 
-chown 0 /etc/origin/node/node-config.yaml
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#idm46060100848688" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br></br><div class="panel-collapse collapse" id="idm46060100848688"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Test for existence /etc/origin/node/node-config.yaml
+chmod 0644 /etc/origin/node/client-ca.crt
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#idm46058361771216" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br></br><div class="panel-collapse collapse" id="idm46058361771216"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Test for existence /etc/origin/node/client-ca.crt
   stat:
-    path: /etc/origin/node/node-config.yaml
+    path: /etc/origin/node/client-ca.crt
   register: file_exists
   tags:
-    - CCE-80629-9
+    - CCE-80642-2
     - configure_strategy
-    - file_owner_node_config
+    - file_permissions_openshift_node_client_crt
     - low_complexity
     - low_disruption
     - medium_severity
     - no_reboot_needed
 
-- name: Ensure owner 0 on /etc/origin/node/node-config.yaml
+- name: Ensure permission 0644 on /etc/origin/node/client-ca.crt
   file:
-    path: /etc/origin/node/node-config.yaml
-    owner: '0'
+    path: /etc/origin/node/client-ca.crt
+    mode: '0644'
   when: file_exists.stat is defined and file_exists.stat.exists
   tags:
-    - CCE-80629-9
+    - CCE-80642-2
     - configure_strategy
-    - file_owner_node_config
+    - file_permissions_openshift_node_client_crt
     - low_complexity
     - low_disruption
     - medium_severity
     - no_reboot_needed
-</code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_file_owner_openshift_node_service" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_file_owner_openshift_node_service" id="guide-tree-leaf-idm46060100858800" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_ocp-files"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_file_owner_openshift_node_service"><span class="label label-default">Rule</span>  
+</code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_file_owner_openshift_node_service" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_file_owner_openshift_node_service" id="guide-tree-leaf-idm46058361752976" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_ocp-files"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_file_owner_openshift_node_service"><span class="label label-default">Rule</span>  
                                 Verify User Who Owns The OpenShift Node Service File
                                   <a class="small" href="#xccdf_org.ssgproject.content_rule_file_owner_openshift_node_service">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p> To properly set the owner of <code>/etc/systemd/system/atomic-openshift-node.service</code>, run the command: <pre>$ sudo chown root /etc/systemd/system/atomic-openshift-node.service </pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>The <code>/etc/systemd/system/atomic-openshift-node.service</code> file contains information about the configuration of the
 OpenShift node service that is configured on the system. Protection of this file is
 critical for OpenShift security.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_file_owner_openshift_node_service</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
             <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80632-3">CCE-80632-3</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
-            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.2.4</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#idm46060100840608" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br></br><div class="panel-collapse collapse" id="idm46060100840608"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>
+            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.2.4</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#idm46058361732128" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br></br><div class="panel-collapse collapse" id="idm46058361732128"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>
 
 chown 0 /etc/systemd/system/atomic-openshift-node.service
-</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#idm46060100836064" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br></br><div class="panel-collapse collapse" id="idm46060100836064"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Test for existence /etc/systemd/system/atomic-openshift-node.service
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#idm46058361727536" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br></br><div class="panel-collapse collapse" id="idm46058361727536"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Test for existence /etc/systemd/system/atomic-openshift-node.service
   stat:
     path: /etc/systemd/system/atomic-openshift-node.service
   register: file_exists
@@ -413,153 +349,220 @@ chown 0 /etc/systemd/system/atomic-openshift-node.service
     - low_disruption
     - medium_severity
     - no_reboot_needed
-</code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="children-xccdf_org.ssgproject.content_group_kubelet" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_openshift"><td style="padding-left: 38px" colspan="2" id="xccdf_org.ssgproject.content_group_kubelet"><span class="label label-default">Group</span>  
-                Kubernetes Kubelet Settings
-                          <small>Group contains 11 rules</small></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_group_kubelet" class="guide-tree-inner-node guide-tree-inner-node-id-xccdf_org.ssgproject.content_group_kubelet" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_openshift"><td style="padding-left: 38px" colspan="2"><p><a class="small" href="#xccdf_org.ssgproject.content_group_kubelet">[ref]</a>  
-                        The Kubernetes Kubelet is an agent that runs on each node in the cluster. It
-makes sure that containers are running in a pod.
+</code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_file_owner_node_config" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_file_owner_node_config" id="guide-tree-leaf-idm46058361697968" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_ocp-files"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_file_owner_node_config"><span class="label label-default">Rule</span>  
+                                Verify User Who Owns The OpenShift Node Configuration File
+                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_file_owner_node_config">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p> To properly set the owner of <code>/etc/origin/node/node-config.yaml</code>, run the command: <pre>$ sudo chown root /etc/origin/node/node-config.yaml </pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>The <code>/etc/origin/node/node-config.yaml</code> file contains information about the configuration of the
+OpenShift node that is configured on the system. Protection of this file is
+critical for OpenShift security.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_file_owner_node_config</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
+            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80629-9">CCE-80629-9</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
+            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.2.2</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#idm46058361679344" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br></br><div class="panel-collapse collapse" id="idm46058361679344"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>
 
-The kubelet takes a set of PodSpecs that are provided through various
-mechanisms and ensures that the containers described in those PodSpecs are
-running and healthy. The kubelet doesn’t manage containers which were not
-created by Kubernetes.</p></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_kubelet_enable_client_cert_rotation" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_kubelet_enable_client_cert_rotation" id="guide-tree-leaf-idm46060102537808" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_kubelet"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_kubelet_enable_client_cert_rotation"><span class="label label-default">Rule</span>  
-                                kubelet - Enable Client Certificate Rotation
-                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_kubelet_enable_client_cert_rotation">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>To enable the kubelet to rotate client certificates, edit the kubelet configuration
-file <code>/etc/origin/node/node-config.yaml</code>
-on the kubelet node(s) and set the below parameter:
-<pre>kubeletArguments:
-  feature-gates:
-    - RotateKubeletClientCertificate=true</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>Allowing the kubelet to auto-update the certificates ensure that there is no downtime
-in certificate renewal as well as ensures confidentiality and integrity.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_kubelet_enable_client_cert_rotation</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
-            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80603-4">CCE-80603-4</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
-            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.1.14</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_kubelet_enable_iptables_util_chains" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_kubelet_enable_iptables_util_chains" id="guide-tree-leaf-idm46060102535376" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_kubelet"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_kubelet_enable_iptables_util_chains"><span class="label label-default">Rule</span>  
-                                kubelet - Allow Automatic Firewall Configuration
-                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_kubelet_enable_iptables_util_chains">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>The kubelet has the ability to automatically configure the firewall to allow
-the containers required ports and connections to networking resources and destinations
-parameters potentially creating a security incident.
-To allow the kubelet to modify the firewall, edit the kubelet configuration
-file <code>/etc/origin/node/node-config.yaml</code>
-on the kubelet node(s) and set the below parameter:
-<pre>kubeletArguments:
-  make-iptables-util-chains:
-  - 'true'</pre></p></div><div class="panel panel-warning"><div class="panel-heading"><span class="label label-warning">Warning:</span> 
-                                        IT IS NOT RECOMMENDED FOR ANY REASON to manually configure firewall ports for running
-pods and containers as this not only can create conflicts with firewall rules but can
-also introduce inconsistences into the allowed/disabled ports on the firewall.</div></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>The kubelet should automatically configure the firewall settings to allow access and
-networking traffic through. This ensures that when a pod or container is running that
-the correct ports are configured as well as removing the ports when a pod or
-container is no longer in existence.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_kubelet_enable_iptables_util_chains</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
-            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80604-2">CCE-80604-2</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
-            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.1.8</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_kubelet_disable_cadvisor_port" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_kubelet_disable_cadvisor_port" id="guide-tree-leaf-idm46060102524256" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_kubelet"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_kubelet_disable_cadvisor_port"><span class="label label-default">Rule</span>  
-                                kubelet - Disable cAdvisor Port
-                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_kubelet_disable_cadvisor_port">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>The <code>cAdvisor</code> port should be disabled as it does not require
-any authentication to connect to the port.
-To disable the <code>cAdvisor</code> port, edit the kubelet configuration
-file <code>/etc/origin/node/node-config.yaml</code>
-on the kubelet node(s) and set the below parameter:
-<pre>kubeletArguments:
-  cadvisor-port:
-  - '0'</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>Any form of authentication to ports anonymously should be disabled. An attacker
-could connect to the port and gain cluster information anonymously.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">high</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_kubelet_disable_cadvisor_port</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
-            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80599-4">CCE-80599-4</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
-            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.1.13</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_kubelet_configure_tls_key" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_kubelet_configure_tls_key" id="guide-tree-leaf-idm46060102518896" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_kubelet"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_kubelet_configure_tls_key"><span class="label label-default">Rule</span>  
-                                Ensure That The kubelet Server Key Is Correctly Set
-                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_kubelet_configure_tls_key">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>To ensure the kubelet TLS private server key certificate is configured, edit the
-kubelet configuration file <code>/etc/origin/node/node-config.yaml</code>
-and configure the <code>cert-dir</code> path for the kubelet certificates.
-For example:
-<pre>  cert-dir:
-  - /etc/origin/node/certificates</pre>
-A corresponding certificate should exist in the <code>cert-dir</code>. For
-example:
-<pre>/etc/origin/node/certificates/kubelet-server-current.pem</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>Without cryptographic integrity protections, information can be
-altered by unauthorized users without detection.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_kubelet_configure_tls_key</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
-            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80597-8">CCE-80597-8</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
-            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.1.12</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_kubelet_configure_client_ca" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_kubelet_configure_client_ca" id="guide-tree-leaf-idm46060102501600" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_kubelet"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_kubelet_configure_client_ca"><span class="label label-default">Rule</span>  
-                                kubelet - Configure the Client CA Certificate
-                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_kubelet_configure_client_ca">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>By default, the kubelet is not configured with a CA certificate which
-can subject the kubelet to man-in-the-middle attacks.
+chown 0 /etc/origin/node/node-config.yaml
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#idm46058361674944" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br></br><div class="panel-collapse collapse" id="idm46058361674944"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Test for existence /etc/origin/node/node-config.yaml
+  stat:
+    path: /etc/origin/node/node-config.yaml
+  register: file_exists
+  tags:
+    - CCE-80629-9
+    - configure_strategy
+    - file_owner_node_config
+    - low_complexity
+    - low_disruption
+    - medium_severity
+    - no_reboot_needed
 
-To configure a client CA certificate, edit the kubelet configuration
-file <code>/etc/origin/node/node-config.yaml</code>
-on the kubelet node(s) and set the below parameter:
-<pre>servingInfo:
-  clientCA: client-ca.crt</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>Not having a CA certificate for the kubelet will subject the kubelet to possible
-man-in-the-middle attacks especially on unsafe or untrusted networks.
-Certificate validation for the kubelet allows the API server to validate
-the kubelet's identity.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_kubelet_configure_client_ca</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
-            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80594-5">CCE-80594-5</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
-            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.1.4</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_kubelet_disable_readonly_port" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_kubelet_disable_readonly_port" id="guide-tree-leaf-idm46060102493936" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_kubelet"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_kubelet_disable_readonly_port"><span class="label label-default">Rule</span>  
-                                kubelet - Disable the Read-Only Port
-                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_kubelet_disable_readonly_port">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>To disable the read-only port, edit the kubelet configuration
-file <code>/etc/origin/node/node-config.yaml</code>
-on the kubelet node(s) and set the below parameter:
-<pre>kubeletArguments:
-  read-only-port:
-  - '0'</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>OpenShift disables the read-only port (<code>10255</code>) on all nodes by setting the
-read-only port kubelet flag to <code>0</code>. This ensures only
-authenticated connections are able to receive information about the OpenShift
-system.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_kubelet_disable_readonly_port</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
-            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80601-8">CCE-80601-8</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
-            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.1.5</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_kubelet_enable_server_cert_rotation" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_kubelet_enable_server_cert_rotation" id="guide-tree-leaf-idm46060102474496" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_kubelet"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_kubelet_enable_server_cert_rotation"><span class="label label-default">Rule</span>  
-                                kubelet - Enable Server Certificate Rotation
-                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_kubelet_enable_server_cert_rotation">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>To enable the kubelet to rotate server certificates, edit the kubelet configuration
-file <code>/etc/origin/node/node-config.yaml</code>
-on the kubelet node(s) and ensure <code>RotateKubeletServerCertificate</code> is included
-in the <code>feature-gates</code> arguments:
-<pre>kubeletArguments:
-  feature-gates:
-    - RotateKubeletClientCertificate=true,RotateKubeletServerCertificate=true</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>Allowing the kubelet to auto-update the certificates ensure that there is no downtime
-in certificate renewal as well as ensures confidentiality and integrity.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_kubelet_enable_server_cert_rotation</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
-            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80606-7">CCE-80606-7</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
-            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">1.3.7</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_kubelet_configure_event_creation" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_kubelet_configure_event_creation" id="guide-tree-leaf-idm46060102463536" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_kubelet"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_kubelet_configure_event_creation"><span class="label label-default">Rule</span>  
-                                kubelet - Do Not Limit Event Creation
-                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_kubelet_configure_event_creation">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>All events should be captured and not restricted as this helps in
-reconstucting the chain-of-events.
+- name: Ensure owner 0 on /etc/origin/node/node-config.yaml
+  file:
+    path: /etc/origin/node/node-config.yaml
+    owner: '0'
+  when: file_exists.stat is defined and file_exists.stat.exists
+  tags:
+    - CCE-80629-9
+    - configure_strategy
+    - file_owner_node_config
+    - low_complexity
+    - low_disruption
+    - medium_severity
+    - no_reboot_needed
+</code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_file_owner_openshift_node_client_crt" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_file_owner_openshift_node_client_crt" id="guide-tree-leaf-idm46058361627936" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_ocp-files"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_file_owner_openshift_node_client_crt"><span class="label label-default">Rule</span>  
+                                Verify User Who Owns OpenShift Node Certificate File
+                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_file_owner_openshift_node_client_crt">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p> To properly set the owner of <code>/etc/origin/node/client-ca.crt</code>, run the command: <pre>$ sudo chown root /etc/origin/node/client-ca.crt </pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>The <code>/etc/origin/node/client-ca.crt</code> file contains the certificate authority
+certificate for an OpenShift node that is configured on the system. Protection of this file is
+critical for OpenShift security.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_file_owner_openshift_node_client_crt</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
+            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80631-5">CCE-80631-5</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
+            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.2.8</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#idm46058361614736" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br></br><div class="panel-collapse collapse" id="idm46058361614736"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>
 
-To prevent log creation limiting, edit the kubelet configuration
-file <code>/etc/origin/node/node-config.yaml</code>
-on the kubelet node(s) and set the below parameter:
-<pre>kubeletArguments:
-  event-qps:
-  - '0'</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>All events should be captured and not restricted as this helps in
-reconstucting the chain-of-events.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_kubelet_configure_event_creation</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
-            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80595-2">CCE-80595-2</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
-            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.1.11</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_kubelet_configure_tls_cert" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_kubelet_configure_tls_cert" id="guide-tree-leaf-idm46060102454944" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_kubelet"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_kubelet_configure_tls_cert"><span class="label label-default">Rule</span>  
-                                Ensure That The kubelet Client Certificate Is Correctly Set
-                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_kubelet_configure_tls_cert">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>To ensure the kubelet TLS client certificate is configured, edit the
-kubelet configuration file <code>/etc/origin/node/node-config.yaml</code>
-and configure the <code>cert-dir</code> path for the kubelet certificates.
-For example:
-<pre>  cert-dir:
-  - /etc/origin/node/certificates</pre>
-A corresponding certificate should exist in the <code>cert-dir</code>. For
-example:
-<pre>/etc/origin/node/certificates/kubelet-client-current.pem</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>Without cryptographic integrity protections, information can be
-altered by unauthorized users without detection.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_kubelet_configure_tls_cert</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
-            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80596-0">CCE-80596-0</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
-            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.1.12</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_kubelet_enable_streaming_connections" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_kubelet_enable_streaming_connections" id="guide-tree-leaf-idm46060102461344" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_kubelet"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_kubelet_enable_streaming_connections"><span class="label label-default">Rule</span>  
-                                kubelet - Do Not Disable Streaming Timeouts
-                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_kubelet_enable_streaming_connections">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>Timouts for streaming connections should not be disabled as they help to prevent
-denial-of-service attacks.
-To configure streaming connection timeouts, edit the kubelet configuration
-file <code>/etc/origin/node/node-config.yaml</code>
-on the kubelet node(s) and set the below parameter:
-<pre>kubeletArguments:
-  streaming-connection-idle-timeout:
-  - '<abbr title="from Benchmark/Value: xccdf_org.ssgproject.content_value_var_streaming_connection_timeouts">5m</abbr>'</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>Ensuring connections have timeouts helps to protect against denial-of-service attacks as
-well as disconnect inactive connections. In addition, setting connections timeouts helps
-to prevent from running out of ephemeral ports.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_kubelet_enable_streaming_connections</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
-            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80607-5">CCE-80607-5</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
-            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.1.6</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_kubelet_disable_hostname_override" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_kubelet_disable_hostname_override" id="guide-tree-leaf-idm46060102443888" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_kubelet"><td style="padding-left: 57px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_kubelet_disable_hostname_override"><span class="label label-default">Rule</span>  
-                                kubelet - Disable Hostname Override
-                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_kubelet_disable_hostname_override">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>To prevent the hostname from being overrided, edit the kubelet configuration file
-<code>/etc/origin/node/node-config.yaml</code> on the kubelet node(s) and
-remove the <code>hostname-override</code> option if it exists.</p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>Allowing hostnames to be overrided creates issues around resolving nodes
-in addition to TLS configuration, certificate validation, and log correlation
-and validation.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_kubelet_disable_hostname_override</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
-            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80600-0">CCE-80600-0</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
-            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.1.10</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"></div></td></tr></tbody></table></td></tr></tbody></table></div><div id="rear-matter"><div class="row top-spacer-10"><div class="col-md-12 well well-lg"><div class="rear-matter">Red Hat and Red Hat Enterprise Linux are either registered
+chown 0 /etc/origin/node/client-ca.crt
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#idm46058361610336" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br></br><div class="panel-collapse collapse" id="idm46058361610336"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Test for existence /etc/origin/node/client-ca.crt
+  stat:
+    path: /etc/origin/node/client-ca.crt
+  register: file_exists
+  tags:
+    - CCE-80631-5
+    - configure_strategy
+    - file_owner_openshift_node_client_crt
+    - low_complexity
+    - low_disruption
+    - medium_severity
+    - no_reboot_needed
+
+- name: Ensure owner 0 on /etc/origin/node/client-ca.crt
+  file:
+    path: /etc/origin/node/client-ca.crt
+    owner: '0'
+  when: file_exists.stat is defined and file_exists.stat.exists
+  tags:
+    - CCE-80631-5
+    - configure_strategy
+    - file_owner_openshift_node_client_crt
+    - low_complexity
+    - low_disruption
+    - medium_severity
+    - no_reboot_needed
+</code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_file_groupowner_node_config" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_file_groupowner_node_config" id="guide-tree-leaf-idm46058352438592" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_ocp-files"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_file_groupowner_node_config"><span class="label label-default">Rule</span>  
+                                Verify Group Who Owns The OpenShift Node Configuration File
+                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_file_groupowner_node_config">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p> To properly set the group owner of <code>/etc/origin/node/node-config.yaml</code>, run the command: <pre>$ sudo chgrp root /etc/origin/node/node-config.yaml</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>The <code>/etc/origin/node/node-config.yaml</code> file contains information about the configuration of the
+OpenShift node that is configured on the system. Protection of this file is
+critical for OpenShift security.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_file_groupowner_node_config</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
+            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80617-4">CCE-80617-4</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
+            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.2.2</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#idm46058352417088" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br></br><div class="panel-collapse collapse" id="idm46058352417088"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>
+
+chgrp 0 /etc/origin/node/node-config.yaml
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#idm46058352412592" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br></br><div class="panel-collapse collapse" id="idm46058352412592"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Test for existence /etc/origin/node/node-config.yaml
+  stat:
+    path: /etc/origin/node/node-config.yaml
+  register: file_exists
+  tags:
+    - CCE-80617-4
+    - configure_strategy
+    - file_groupowner_node_config
+    - low_complexity
+    - low_disruption
+    - medium_severity
+    - no_reboot_needed
+
+- name: Ensure group owner 0 on /etc/origin/node/node-config.yaml
+  file:
+    path: /etc/origin/node/node-config.yaml
+    group: '0'
+  when: file_exists.stat is defined and file_exists.stat.exists
+  tags:
+    - CCE-80617-4
+    - configure_strategy
+    - file_groupowner_node_config
+    - low_complexity
+    - low_disruption
+    - medium_severity
+    - no_reboot_needed
+</code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_file_permissions_node_config" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_file_permissions_node_config" id="guide-tree-leaf-idm46058352422560" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_ocp-files"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_file_permissions_node_config"><span class="label label-default">Rule</span>  
+                                Verify Permissions on the OpenShift Node Configuration File
+                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_file_permissions_node_config">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p>
+To properly set the permissions of <code>/etc/origin/node/node-config.yaml</code>, run the command:
+<pre>$ sudo chmod 0600 /etc/origin/node/node-config.yaml</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>If the <code>/etc/origin/node/node-config.yaml</code> file is writable by a group-owner or the
+world the risk of its compromise is increased. The file contains the configuration of
+an OpenShift node that is configured on the system. Protection of this file is
+critical for OpenShift security.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_file_permissions_node_config</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
+            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80640-6">CCE-80640-6</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
+            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.2.1</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#idm46058352405104" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br></br><div class="panel-collapse collapse" id="idm46058352405104"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>
+
+chmod 0600 /etc/origin/node/node-config.yaml
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#idm46058352400832" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br></br><div class="panel-collapse collapse" id="idm46058352400832"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Test for existence /etc/origin/node/node-config.yaml
+  stat:
+    path: /etc/origin/node/node-config.yaml
+  register: file_exists
+  tags:
+    - CCE-80640-6
+    - configure_strategy
+    - file_permissions_node_config
+    - low_complexity
+    - low_disruption
+    - medium_severity
+    - no_reboot_needed
+
+- name: Ensure permission 0600 on /etc/origin/node/node-config.yaml
+  file:
+    path: /etc/origin/node/node-config.yaml
+    mode: '0600'
+  when: file_exists.stat is defined and file_exists.stat.exists
+  tags:
+    - CCE-80640-6
+    - configure_strategy
+    - file_permissions_node_config
+    - low_complexity
+    - low_disruption
+    - medium_severity
+    - no_reboot_needed
+</code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_file_groupowner_openshift_node_client_crt" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_file_groupowner_openshift_node_client_crt" id="guide-tree-leaf-idm46058352381552" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_ocp-files"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_file_groupowner_openshift_node_client_crt"><span class="label label-default">Rule</span>  
+                                Verify Group Who Owns OpenShift Node Certificate File
+                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_file_groupowner_openshift_node_client_crt">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p> To properly set the group owner of <code>/etc/origin/node/client-ca.crt</code>, run the command: <pre>$ sudo chgrp root /etc/origin/node/client-ca.crt</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>The <code>/etc/origin/node/client-ca.crt</code> file contains the certificate authority
+certificate for an OpenShift node that is configured on the system. Protection of this file is
+critical for OpenShift security.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_file_groupowner_openshift_node_client_crt</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
+            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80619-0">CCE-80619-0</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
+            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.2.8</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#idm46058352339312" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br></br><div class="panel-collapse collapse" id="idm46058352339312"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>
+
+chgrp 0 /etc/origin/node/client-ca.crt
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#idm46058352335104" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br></br><div class="panel-collapse collapse" id="idm46058352335104"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Test for existence /etc/origin/node/client-ca.crt
+  stat:
+    path: /etc/origin/node/client-ca.crt
+  register: file_exists
+  tags:
+    - CCE-80619-0
+    - configure_strategy
+    - file_groupowner_openshift_node_client_crt
+    - low_complexity
+    - low_disruption
+    - medium_severity
+    - no_reboot_needed
+
+- name: Ensure group owner 0 on /etc/origin/node/client-ca.crt
+  file:
+    path: /etc/origin/node/client-ca.crt
+    group: '0'
+  when: file_exists.stat is defined and file_exists.stat.exists
+  tags:
+    - CCE-80619-0
+    - configure_strategy
+    - file_groupowner_openshift_node_client_crt
+    - low_complexity
+    - low_disruption
+    - medium_severity
+    - no_reboot_needed
+</code></pre></div></div></td></tr></tbody></table></td></tr><tr data-tt-id="xccdf_org.ssgproject.content_rule_file_groupowner_openshift_node_service" class="guide-tree-leaf guide-tree-leaf-id-xccdf_org.ssgproject.content_rule_file_groupowner_openshift_node_service" id="guide-tree-leaf-idm46058356095984" data-tt-parent-id="children-xccdf_org.ssgproject.content_group_ocp-files"><td style="padding-left: 76px"><table class="table table-striped table-bordered"><tbody><tr><td colspan="2"><h4 id="xccdf_org.ssgproject.content_rule_file_groupowner_openshift_node_service"><span class="label label-default">Rule</span>  
+                                Verify Group Who Owns The OpenShift Node Service File
+                                  <a class="small" href="#xccdf_org.ssgproject.content_rule_file_groupowner_openshift_node_service">[ref]</a></h4></td></tr><tr><td colspan="2"><div class="description"><p> To properly set the group owner of <code>/etc/systemd/system/atomic-openshift-node.service</code>, run the command: <pre>$ sudo chgrp root /etc/systemd/system/atomic-openshift-node.service</pre></p></div></td></tr><tr><td><span class="label label-primary">Rationale:</span></td><td><div class="rationale"><p>The <code>/etc/systemd/system/atomic-openshift-node.service</code> file contains information about the configuration of the
+OpenShift node service that is configured on the system. Protection of this file is
+critical for OpenShift security.</p></div></td></tr><tr><td><span class="label label-warning">Severity:</span> </td><td><div class="severity">medium</div></td></tr><tr><td><span class="label label-primary">Rule ID:</span></td><td>xccdf_org.ssgproject.content_rule_file_groupowner_openshift_node_service</td></tr><tr><td>Identifiers and References</td><td class="identifiers"><p><span class="label label-info" title="A globally meaningful identifiers for this rule. MAY be the name or identifier of a security configuration issue or vulnerability that the rule remediates. By setting an identifier on a rule, the benchmark author effectively declares that the rule instantiates, implements, or remediates the issue for which the name was assigned.">Identifiers:</span> 
+            <abbr title="https://nvd.nist.gov/cce/index.cfm: CCE-80620-8">CCE-80620-8</abbr></p><p><span class="label label-default" title="Provide a reference to a document or resource where the user can learn more about the subject of the Rule or Group.">References:</span> 
+            <a href="https://benchmarks.cisecurity.org/tools2/virtualization/CIS_Kubernetes_Benchmark_v1.2.0.pdf">2.2.4</a></p></td></tr><tr><td colspan="2"><div class="remediation-description"><a class="btn btn-success" data-toggle="collapse" data-target="#idm46058356077376" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Shell script ⇲</a><br></br><div class="panel-collapse collapse" id="idm46058356077376"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>
+
+chgrp 0 /etc/systemd/system/atomic-openshift-node.service
+</code></pre></div><a class="btn btn-success" data-toggle="collapse" data-target="#idm46058356072864" tabindex="0" role="button" aria-expanded="false" title="Activate to reveal" href="#!">Remediation Ansible snippet ⇲</a><br></br><div class="panel-collapse collapse" id="idm46058356072864"><table class="table table-striped table-bordered table-condensed"><tr><th>Complexity:</th><td>low</td></tr><tr><th>Disruption:</th><td>low</td></tr><tr><th>Strategy:</th><td>configure</td></tr></table><pre><code>- name: Test for existence /etc/systemd/system/atomic-openshift-node.service
+  stat:
+    path: /etc/systemd/system/atomic-openshift-node.service
+  register: file_exists
+  tags:
+    - CCE-80620-8
+    - configure_strategy
+    - file_groupowner_openshift_node_service
+    - low_complexity
+    - low_disruption
+    - medium_severity
+    - no_reboot_needed
+
+- name: Ensure group owner 0 on /etc/systemd/system/atomic-openshift-node.service
+  file:
+    path: /etc/systemd/system/atomic-openshift-node.service
+    group: '0'
+  when: file_exists.stat is defined and file_exists.stat.exists
+  tags:
+    - CCE-80620-8
+    - configure_strategy
+    - file_groupowner_openshift_node_service
+    - low_complexity
+    - low_disruption
+    - medium_severity
+    - no_reboot_needed
+</code></pre></div></div></td></tr></tbody></table></td></tr></tbody></table></div><div id="rear-matter"><div class="row top-spacer-10"><div class="col-md-12 well well-lg"><div class="rear-matter">Red Hat and Red Hat Enterprise Linux are either registered
 trademarks or trademarks of Red Hat, Inc. in the United States and other
 countries. All other names are registered trademarks or trademarks of their
 respective companies.
