@@ -20,76 +20,82 @@
       <ds:component-ref id="scap_org.open-scap_cref_output--ssg-firefox-cpe-oval.xml" xlink:href="#scap_org.open-scap_comp_output--ssg-firefox-cpe-oval.xml"/>
     <ds:component-ref id="scap_org.open-scap_cref_output--ssg-firefox-oval.xml" xlink:href="#scap_org.open-scap_comp_output--ssg-firefox-oval.xml"/></ds:checks>
   </ds:data-stream>
-  <ds:component id="scap_org.open-scap_comp_ssg-firefox-oval.xml" timestamp="2015-10-20T16:40:06">
+  <ds:component id="scap_org.open-scap_comp_ssg-firefox-oval.xml" timestamp="2015-12-11T20:21:05">
     <oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:linux="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
   <generator>
     <oval:product_name>python</oval:product_name>
-    <oval:product_version>2.6.6</oval:product_version>
+    <oval:product_version>2.7.5</oval:product_version>
     <oval:schema_version>5.10</oval:schema_version>
-    <oval:timestamp>2015-10-20T14:40:06</oval:timestamp>
+    <oval:timestamp>2015-12-11T19:21:04</oval:timestamp>
   </generator>
   <definitions>
     <definition class="compliance" id="oval:ssg:def:106" version="1">
       <metadata>
-        <title>Prevent Users from Changing Firefox Configuration Settings</title>
+        <title>Disable Addons Plugin Updates</title>
         <affected family="unix">
           <platform>Mozilla Firefox</platform>
         </affected>
-        <description>Locked settings prevents users from accessing about:config and
-      changing the security settings set by the system administrator.</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-lock_settings_obscure" source="ssg"/></metadata>
+        <description>Firefox automatically updates installed
+      add-ons and plugins.</description>
+      <reference ref_id="firefox_preferences-addons_plugin_updates" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="Do not obscure locked file content with ROT-13" test_ref="oval:ssg:tst:107"/>
+        <criterion comment="addons plugin updates configured" test_ref="oval:ssg:tst:107"/>
       </criteria>
     </definition>
     <definition class="compliance" id="oval:ssg:def:108" version="1">
       <metadata>
-        <title>Disable User Prompt For Clearing Cookies And Other Data</title>
+        <title>Disable Automatic Downloads of MIME Types</title>
         <affected family="unix">
           <platform>Mozilla Firefox</platform>
         </affected>
-        <description>Users should not be prompted about data and cookies being
-      cleared when the browser is closed.</description>
+        <description>Firefox automatically executes or downloads MIME types which are
+      not authorized for auto-download.</description>
         <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-cookies_user_notice" source="ssg"/></metadata>
+      <reference ref_id="firefox_preferences-auto-download_actions" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="disable promptOnSanitize" test_ref="oval:ssg:tst:109"/>
+        <criterion comment="Auto download actions of mime type is disabled" test_ref="oval:ssg:tst:109"/>
       </criteria>
     </definition>
     <definition class="compliance" id="oval:ssg:def:110" version="1">
       <metadata>
-        <title>Supported Version of Firefox Installed</title>
+        <title>Disable Firefox Auto-Update Capability</title>
         <affected family="unix">
           <platform>Mozilla Firefox</platform>
         </affected>
-        <description>Use of versions of an application which are not
-      supported by the vendor are not permitted. Vendors respond to
-      security flaws with updates and patches. These updates are not
-      available for unsupported versions which can leave the application
-      vulnerable to attack.</description>
+        <description>Firefox should not be able to automatically
+      update itself.</description>
         <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="installed_firefox_version_supported" source="ssg"/></metadata>
+      <reference ref_id="firefox_preferences-auto-update_of_firefox" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="installed version of firefox supported" test_ref="oval:ssg:tst:111"/>
+        <criterion comment="auto-update is disabled" test_ref="oval:ssg:tst:111"/>
       </criteria>
     </definition>
     <definition class="compliance" id="oval:ssg:def:112" version="1">
       <metadata>
-        <title>Disable Firefox Access to Shell Protocols</title>
+        <title>Disable Autofill Form Assistance</title>
         <affected family="unix">
           <platform>Mozilla Firefox</platform>
         </affected>
-        <description>Firefox can be configured to access systems shells which
-      could potentially allow Firefox and other users to access to the
-      underlying system.</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-shell_protocol" source="ssg"/></metadata>
+        <description>Firefox formfill assistance option is disabled.</description>
+      <reference ref_id="firefox_preferences-autofill_forms" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="Disable Firefox Shell Protocol Access" test_ref="oval:ssg:tst:113"/>
+        <criterion comment="autofill_forms disabled" test_ref="oval:ssg:tst:113"/>
       </criteria>
     </definition>
     <definition class="compliance" id="oval:ssg:def:114" version="1">
+      <metadata>
+        <title>Disable User Ability To Autofill Passwords</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>Firefox should not be configured to autofill passwords.</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-autofill_passwords" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="autofill_passwords disabled" test_ref="oval:ssg:tst:115"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:116" version="1">
       <metadata>
         <title>Clear Cookies And Other Data When Firefox Closes</title>
         <affected family="unix">
@@ -101,106 +107,37 @@
         <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
       <reference ref_id="firefox_preferences-cookies_clear" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="enabled sanitizeOnShutdown" test_ref="oval:ssg:tst:115"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg:def:116" version="1">
-      <metadata>
-        <title>Disable Autofill Form Assistance</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>Firefox formfill assistance option is disabled.</description>
-      <reference ref_id="firefox_preferences-autofill_forms" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="autofill_forms disabled" test_ref="oval:ssg:tst:117"/>
+        <criterion comment="enabled sanitizeOnShutdown" test_ref="oval:ssg:tst:117"/>
       </criteria>
     </definition>
     <definition class="compliance" id="oval:ssg:def:118" version="1">
       <metadata>
-        <title>Enable Downloading and Opening File Confirmation</title>
+        <title>Disable User Prompt For Clearing Cookies And Other Data</title>
         <affected family="unix">
           <platform>Mozilla Firefox</platform>
         </affected>
-        <description>Firefox is not configured to prompt user before downloading and
-      opening required file types.</description>
+        <description>Users should not be prompted about data and cookies being
+      cleared when the browser is closed.</description>
         <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-open_confirmation" source="ssg"/></metadata>
+      <reference ref_id="firefox_preferences-cookies_user_notice" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="open_confirmation configured" test_ref="oval:ssg:tst:119"/>
+        <criterion comment="disable promptOnSanitize" test_ref="oval:ssg:tst:119"/>
       </criteria>
     </definition>
     <definition class="compliance" id="oval:ssg:def:120" version="1">
       <metadata>
-        <title>Disable Firefox Auto-Update Capability</title>
+        <title>Default Firefox Home Page Configured</title>
         <affected family="unix">
           <platform>Mozilla Firefox</platform>
         </affected>
-        <description>Firefox should not be able to automatically
-      update itself.</description>
+        <description>The default homepage for Firefox is set and cannot be changed.</description>
         <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-auto-update_of_firefox" source="ssg"/></metadata>
+      <reference ref_id="firefox_preferences-home_page" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="auto-update is disabled" test_ref="oval:ssg:tst:121"/>
+        <criterion comment="home page configured" test_ref="oval:ssg:tst:121"/>
       </criteria>
     </definition>
     <definition class="compliance" id="oval:ssg:def:122" version="1">
-      <metadata>
-        <title>Enable TLS Usage in Firefox</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>DoD implementations of SSL must use TLS 1.0 in accordance with
-      the Network Infrastructure STIG.</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-ssl_protocol_tls" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="TLS is enabled" test_ref="oval:ssg:tst:123"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg:def:124" version="1">
-      <metadata>
-        <title>Disable SSL Version 3 in Firefox</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>Earlier versions of SSL have known security vulnerabilities
-      and are not authorized for use in DOD.</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-ssl_version_3" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="SSL V3 installed" test_ref="oval:ssg:tst:125"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg:def:126" version="1">
-      <metadata>
-        <title>Disable JavaScript's Moving Or Resizing Windows Capability</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>FireFox should not be configured to allow JavaScript to move
-      or resize windows.</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-javascript_window_resizing" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="move or resize windows disabled" test_ref="oval:ssg:tst:127"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg:def:128" version="1">
-      <metadata>
-        <title>Disable JavaScript's Ability To Change The Status Bar</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>Firefox should be configured to not allow JavaScript to
-      hide or change the status bar.</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-javascript_status_bar_changes" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="disable hiding or changing status bar menus" test_ref="oval:ssg:tst:129"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg:def:130" version="1">
       <metadata>
         <title>Disable JavaScript Context Menus</title>
         <affected family="unix">
@@ -211,24 +148,24 @@
         <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
       <reference ref_id="firefox_preferences-javascript_context_menus" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="disable javaScript context menus" test_ref="oval:ssg:tst:131"/>
+        <criterion comment="disable javaScript context menus" test_ref="oval:ssg:tst:123"/>
       </criteria>
     </definition>
-    <definition class="compliance" id="oval:ssg:def:132" version="1">
+    <definition class="compliance" id="oval:ssg:def:124" version="1">
       <metadata>
-        <title>Disable Automatic Downloads of MIME Types</title>
+        <title>Disable JavaScript's Ability To Change The Status Bar</title>
         <affected family="unix">
           <platform>Mozilla Firefox</platform>
         </affected>
-        <description>Firefox automatically executes or downloads MIME types which are
-      not authorized for auto-download.</description>
+        <description>Firefox should be configured to not allow JavaScript to
+      hide or change the status bar.</description>
         <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-auto-download_actions" source="ssg"/></metadata>
+      <reference ref_id="firefox_preferences-javascript_status_bar_changes" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="Auto download actions of mime type is disabled" test_ref="oval:ssg:tst:133"/>
+        <criterion comment="disable hiding or changing status bar menus" test_ref="oval:ssg:tst:125"/>
       </criteria>
     </definition>
-    <definition class="compliance" id="oval:ssg:def:134" version="1">
+    <definition class="compliance" id="oval:ssg:def:126" version="1">
       <metadata>
         <title>Disable JavaScript's Ability To Modify The Browser Appearance</title>
         <affected family="unix">
@@ -239,23 +176,94 @@
         <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
       <reference ref_id="firefox_preferences-javascript_status_bar_text" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="disable changing the status bar text" test_ref="oval:ssg:tst:135"/>
+        <criterion comment="disable changing the status bar text" test_ref="oval:ssg:tst:127"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:128" version="1">
+      <metadata>
+        <title>Disable JavaScript's Raise Or Lower Windows Capability</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>Firefox should be configured to not allow JavaScript to
+      raise or lower windows.</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-javascript_window_changes" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="raise or lower windows disabled" test_ref="oval:ssg:tst:129"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:130" version="1">
+      <metadata>
+        <title>Disable JavaScript's Moving Or Resizing Windows Capability</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>FireFox should not be configured to allow JavaScript to move
+      or resize windows.</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-javascript_window_resizing" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="move or resize windows disabled" test_ref="oval:ssg:tst:131"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:132" version="1">
+      <metadata>
+        <title>Prevent Users from Changing Firefox Configuration Settings</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>Locked settings prevents users from accessing about:config and
+      changing the security settings set by the system administrator.</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-lock_settings_config_file" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="Configuration file is set" test_ref="oval:ssg:tst:133"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:134" version="1">
+      <metadata>
+        <title>Prevent Users from Changing Firefox Configuration Settings</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>Locked settings prevents users from accessing about:config and
+      changing the security settings set by the system administrator.</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-lock_settings_obscure" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="Do not obscure locked file content with ROT-13" test_ref="oval:ssg:tst:135"/>
       </criteria>
     </definition>
     <definition class="compliance" id="oval:ssg:def:136" version="1">
       <metadata>
-        <title>Default Firefox Home Page Configured</title>
+        <title>Enable Non-Secure Page Warnings</title>
         <affected family="unix">
           <platform>Mozilla Firefox</platform>
         </affected>
-        <description>The default homepage for Firefox is set and cannot be changed.</description>
+        <description>Firefox is not configured to provide warnings when a user switches
+      from a secure (SSL-enabled) to a non-secure page.</description>
         <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-home_page" source="ssg"/></metadata>
+      <reference ref_id="firefox_preferences-non-secure_page_warning" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="home page configured" test_ref="oval:ssg:tst:137"/>
+        <criterion comment="non-secure page warning configured" test_ref="oval:ssg:tst:137"/>
       </criteria>
     </definition>
     <definition class="compliance" id="oval:ssg:def:138" version="1">
+      <metadata>
+        <title>Enable Downloading and Opening File Confirmation</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>Firefox is not configured to prompt user before downloading and
+      opening required file types.</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-open_confirmation" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="open_confirmation configured" test_ref="oval:ssg:tst:139"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:140" version="1">
       <metadata>
         <title>Disable the Firefox Password Store</title>
         <affected family="unix">
@@ -265,20 +273,107 @@
         <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
       <reference ref_id="firefox_preferences-password_store" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="password_store disabled" test_ref="oval:ssg:tst:139"/>
+        <criterion comment="password_store disabled" test_ref="oval:ssg:tst:141"/>
       </criteria>
     </definition>
-    <definition class="compliance" id="oval:ssg:def:140" version="1">
+    <definition class="compliance" id="oval:ssg:def:142" version="1">
       <metadata>
-        <title>Disable Addons Plugin Updates</title>
+        <title>Enable Firefox Pop-up Blocker</title>
         <affected family="unix">
           <platform>Mozilla Firefox</platform>
         </affected>
-        <description>Firefox automatically updates installed
-      add-ons and plugins.</description>
-      <reference ref_id="firefox_preferences-addons_plugin_updates" source="ssg"/></metadata>
+        <description>The Firefox Pop-up blocker should be enabled as windows may be
+      used to launch an attack within a new browser window with altered settings.
+      </description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-pop-up_windows" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="addons plugin updates configured" test_ref="oval:ssg:tst:141"/>
+        <criterion comment="pop-up_windows installed" test_ref="oval:ssg:tst:143"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:144" version="1">
+      <metadata>
+        <title>Disable Installed Search Plugins Update Checking</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>Search plugins can be automatically configured to check for
+      updates. Updates need to be controlled and installed from authorized and
+      trusted servers.</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-search_update" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="Disable search plugin update capability" test_ref="oval:ssg:tst:145"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:146" version="1">
+      <metadata>
+        <title>Disable Firefox Access to Shell Protocols</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>Firefox can be configured to access systems shells which
+      could potentially allow Firefox and other users to access to the
+      underlying system.</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-shell_protocol" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="Disable Firefox Shell Protocol Access" test_ref="oval:ssg:tst:147"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:148" version="1">
+      <metadata>
+        <title>Enable TLS Usage in Firefox</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>DoD implementations of SSL must use TLS 1.0 in accordance with
+      the Network Infrastructure STIG.</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-ssl_protocol_tls" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="TLS is enabled" test_ref="oval:ssg:tst:149"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:150" version="1">
+      <metadata>
+        <title>Disable SSL Version 2.0 in Firefox</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>SSL 2.0 and SSL 3.0 contain a number of security flaws.
+      Therefore, SSL 2.0 should be disabled.</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-ssl_version_2" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="SSL 2.0 protocol disabled" test_ref="oval:ssg:tst:151"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:152" version="1">
+      <metadata>
+        <title>Disable SSL Version 3 in Firefox</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>Earlier versions of SSL have known security vulnerabilities
+      and are not authorized for use in DOD.</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-ssl_version_3" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="SSL V3 installed" test_ref="oval:ssg:tst:153"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:154" version="1">
+      <metadata>
+        <title>Enable Certificate Verification</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>When a web site asks for a certificate for user authentication, Firefox must be configured to have the user choose which certificate to present. Websites within DOD require user authentication for access which increases security for DoD information. Access will be denied to the user if certificate management is not configured</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-verification" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="verification installed" test_ref="oval:ssg:tst:155"/>
       </criteria>
     </definition>
     <definition class="inventory" id="oval:ssg:def:100" version="1">
@@ -295,176 +390,101 @@
         <criterion comment="Firefox is installed" test_ref="oval:ssg:tst:102"/>
       </criteria>
     </definition>
-    <definition class="compliance" id="oval:ssg:def:142" version="1">
-      <metadata>
-        <title>Prevent Users from Changing Firefox Configuration Settings</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>Locked settings prevents users from accessing about:config and
-      changing the security settings set by the system administrator.</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-lock_settings_config_file" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Configuration file is set" test_ref="oval:ssg:tst:143"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg:def:144" version="1">
-      <metadata>
-        <title>Disable SSL Version 2.0 in Firefox</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>SSL 2.0 and SSL 3.0 contain a number of security flaws.
-      Therefore, SSL 2.0 should be disabled.</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-ssl_version_2" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="SSL 2.0 protocol disabled" test_ref="oval:ssg:tst:145"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg:def:146" version="1">
-      <metadata>
-        <title>Disable Installed Search Plugins Update Checking</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>Search plugins can be automatically configured to check for
-      updates. Updates need to be controlled and installed from authorized and
-      trusted servers.</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-search_update" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Disable search plugin update capability" test_ref="oval:ssg:tst:147"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg:def:148" version="1">
-      <metadata>
-        <title>Disable JavaScript's Raise Or Lower Windows Capability</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>Firefox should be configured to not allow JavaScript to
-      raise or lower windows.</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-javascript_window_changes" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="raise or lower windows disabled" test_ref="oval:ssg:tst:149"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg:def:150" version="1">
-      <metadata>
-        <title>Enable Firefox Pop-up Blocker</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>The Firefox Pop-up blocker should be enabled as windows may be
-      used to launch an attack within a new browser window with altered settings.
-      </description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-pop-up_windows" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="pop-up_windows installed" test_ref="oval:ssg:tst:151"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg:def:152" version="1">
-      <metadata>
-        <title>Enable Certificate Verification</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>When a web site asks for a certificate for user authentication, Firefox must be configured to have the user choose which certificate to present. Websites within DOD require user authentication for access which increases security for DoD information. Access will be denied to the user if certificate management is not configured</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-verification" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="verification installed" test_ref="oval:ssg:tst:153"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg:def:154" version="1">
-      <metadata>
-        <title>Disable User Ability To Autofill Passwords</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>Firefox should not be configured to autofill passwords.</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-autofill_passwords" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="autofill_passwords disabled" test_ref="oval:ssg:tst:155"/>
-      </criteria>
-    </definition>
     <definition class="compliance" id="oval:ssg:def:156" version="1">
       <metadata>
-        <title>Enable Non-Secure Page Warnings</title>
+        <title>Supported Version of Firefox Installed</title>
         <affected family="unix">
           <platform>Mozilla Firefox</platform>
         </affected>
-        <description>Firefox is not configured to provide warnings when a user switches
-      from a secure (SSL-enabled) to a non-secure page.</description>
+        <description>Use of versions of an application which are not
+      supported by the vendor are not permitted. Vendors respond to
+      security flaws with updates and patches. These updates are not
+      available for unsupported versions which can leave the application
+      vulnerable to attack.</description>
         <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-non-secure_page_warning" source="ssg"/></metadata>
+      <reference ref_id="installed_firefox_version_supported" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="non-secure page warning configured" test_ref="oval:ssg:tst:157"/>
+        <criterion comment="installed version of firefox supported" test_ref="oval:ssg:tst:157"/>
       </criteria>
     </definition>
   </definitions>
   <tests>
-    <ind:textfilecontent54_test check="all" comment="Check for obscure_value" id="oval:ssg:tst:107" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for addons plugin updates" id="oval:ssg:tst:107" version="1">
       <ind:object object_ref="oval:ssg:obj:158"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for promptOnSanitize disabled" id="oval:ssg:tst:109" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for Auto download Actions installed" id="oval:ssg:tst:109" version="1">
       <ind:object object_ref="oval:ssg:obj:159"/>
     </ind:textfilecontent54_test>
-    <linux:rpminfo_test check="all" check_existence="any_exist" comment="Installed version of firefox is greater than ESR 31.5" id="oval:ssg:tst:111" version="1">
-      <linux:object object_ref="oval:ssg:obj:160"/>
-      <linux:state state_ref="oval:ssg:ste:161"/>
-    </linux:rpminfo_test>
-    <ind:textfilecontent54_test check="all" comment="Check that the hell_protocol is disabled" id="oval:ssg:tst:113" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check that auto-update of firefox is disabled" id="oval:ssg:tst:111" version="1">
+      <ind:object object_ref="oval:ssg:obj:160"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test check="all" comment="Check for autofill_forms disabled" id="oval:ssg:tst:113" version="1">
+      <ind:object object_ref="oval:ssg:obj:161"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test check="all" comment="Check for autofill_passwords disabled" id="oval:ssg:tst:115" version="1">
       <ind:object object_ref="oval:ssg:obj:162"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for sanitizeOnShutdown enabled" id="oval:ssg:tst:115" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for sanitizeOnShutdown enabled" id="oval:ssg:tst:117" version="1">
       <ind:object object_ref="oval:ssg:obj:163"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for autofill_forms disabled" id="oval:ssg:tst:117" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for promptOnSanitize disabled" id="oval:ssg:tst:119" version="1">
       <ind:object object_ref="oval:ssg:obj:164"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for open_confirmation configured" id="oval:ssg:tst:119" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for home page configured" id="oval:ssg:tst:121" version="1">
       <ind:object object_ref="oval:ssg:obj:165"/>
       <ind:state state_ref="oval:ssg:ste:166"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check that auto-update of firefox is disabled" id="oval:ssg:tst:121" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for disable javaScript context menu is disabled" id="oval:ssg:tst:123" version="1">
       <ind:object object_ref="oval:ssg:obj:167"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check if TLS is enabled" id="oval:ssg:tst:123" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check that hiding or changing status bar is disabled" id="oval:ssg:tst:125" version="1">
       <ind:object object_ref="oval:ssg:obj:168"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for SSL Version 3 preferences" id="oval:ssg:tst:125" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check that changing the status bar text is disabled" id="oval:ssg:tst:127" version="1">
       <ind:object object_ref="oval:ssg:obj:169"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for move or resize windows disabled" id="oval:ssg:tst:127" version="1">
+    <ind:textfilecontent54_test check="all" comment="raise or lower windows is disabled" id="oval:ssg:tst:129" version="1">
       <ind:object object_ref="oval:ssg:obj:170"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check that hiding or changing status bar is disabled" id="oval:ssg:tst:129" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for move or resize windows disabled" id="oval:ssg:tst:131" version="1">
       <ind:object object_ref="oval:ssg:obj:171"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for disable javaScript context menu is disabled" id="oval:ssg:tst:131" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for configuration filename" id="oval:ssg:tst:133" version="1">
       <ind:object object_ref="oval:ssg:obj:172"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for Auto download Actions installed" id="oval:ssg:tst:133" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for obscure_value" id="oval:ssg:tst:135" version="1">
       <ind:object object_ref="oval:ssg:obj:173"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check that changing the status bar text is disabled" id="oval:ssg:tst:135" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for non-secure page warning configured" id="oval:ssg:tst:137" version="1">
       <ind:object object_ref="oval:ssg:obj:174"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for home page configured" id="oval:ssg:tst:137" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for open_confirmation configured" id="oval:ssg:tst:139" version="1">
       <ind:object object_ref="oval:ssg:obj:175"/>
       <ind:state state_ref="oval:ssg:ste:176"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check that the password_store is disabled" id="oval:ssg:tst:139" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check that the password_store is disabled" id="oval:ssg:tst:141" version="1">
       <ind:object object_ref="oval:ssg:obj:177"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for addons plugin updates" id="oval:ssg:tst:141" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for pop-up_windows installed" id="oval:ssg:tst:143" version="1">
       <ind:object object_ref="oval:ssg:obj:178"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test check="all" comment="Check search plugin update capability is disabled" id="oval:ssg:tst:145" version="1">
+      <ind:object object_ref="oval:ssg:obj:179"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test check="all" comment="Check that the hell_protocol is disabled" id="oval:ssg:tst:147" version="1">
+      <ind:object object_ref="oval:ssg:obj:180"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test check="all" comment="Check if TLS is enabled" id="oval:ssg:tst:149" version="1">
+      <ind:object object_ref="oval:ssg:obj:181"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test check="all" comment="Check SSL 2.0 protocol disabled" id="oval:ssg:tst:151" version="1">
+      <ind:object object_ref="oval:ssg:obj:182"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test check="all" comment="Check for SSL Version 3 preferences" id="oval:ssg:tst:153" version="1">
+      <ind:object object_ref="oval:ssg:obj:183"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test check="all" comment="Enable Certification verification" id="oval:ssg:tst:155" version="1">
+      <ind:object object_ref="oval:ssg:obj:184"/>
     </ind:textfilecontent54_test>
     <ind:family_test check="all" check_existence="at_least_one_exists" comment="installed OS part of unix family" id="oval:ssg:tst:101" version="1">
       <ind:object object_ref="oval:ssg:obj:103"/>
@@ -473,51 +493,40 @@
     <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="Firefox is installed" id="oval:ssg:tst:102" version="1">
       <linux:object object_ref="oval:ssg:obj:105"/>
     </linux:rpminfo_test>
-    <ind:textfilecontent54_test check="all" comment="Check for configuration filename" id="oval:ssg:tst:143" version="1">
-      <ind:object object_ref="oval:ssg:obj:179"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check SSL 2.0 protocol disabled" id="oval:ssg:tst:145" version="1">
-      <ind:object object_ref="oval:ssg:obj:180"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check search plugin update capability is disabled" id="oval:ssg:tst:147" version="1">
-      <ind:object object_ref="oval:ssg:obj:181"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="raise or lower windows is disabled" id="oval:ssg:tst:149" version="1">
-      <ind:object object_ref="oval:ssg:obj:182"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for pop-up_windows installed" id="oval:ssg:tst:151" version="1">
-      <ind:object object_ref="oval:ssg:obj:183"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Enable Certification verification" id="oval:ssg:tst:153" version="1">
-      <ind:object object_ref="oval:ssg:obj:184"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for autofill_passwords disabled" id="oval:ssg:tst:155" version="1">
-      <ind:object object_ref="oval:ssg:obj:185"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for non-secure page warning configured" id="oval:ssg:tst:157" version="1">
-      <ind:object object_ref="oval:ssg:obj:186"/>
-    </ind:textfilecontent54_test>
+    <linux:rpminfo_test check="all" check_existence="any_exist" comment="Installed version of firefox is greater than ESR 31.5" id="oval:ssg:tst:157" version="1">
+      <linux:object object_ref="oval:ssg:obj:185"/>
+      <linux:state state_ref="oval:ssg:ste:186"/>
+    </linux:rpminfo_test>
   </tests>
   <objects>
     <ind:textfilecontent54_object id="oval:ssg:obj:158" version="1">
-      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox\/defaults\/preferences</ind:path>
-      <ind:filename operation="pattern match">^.*\.js$</ind:filename>
-      <ind:pattern operation="pattern match">^pref\("general.config.obscure_value",[\s]+0\);$</ind:pattern>
+      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
+      <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
+      <ind:pattern operation="pattern match">^lockPref\("extensions.update.enabled",[\s]+false\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:159" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("privacy.sanitize.promptOnSanitize",[\s]+false\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("browser.helperApps.alwaysAsk.force",[\s]+true\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
-    <linux:rpminfo_object id="oval:ssg:obj:160" version="1">
-      <linux:name>firefox</linux:name>
-    </linux:rpminfo_object>
+    <ind:textfilecontent54_object id="oval:ssg:obj:160" version="1">
+      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
+      <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
+      <ind:pattern operation="pattern match">^lockPref\("app.update.enabled",[\s]+false\);$</ind:pattern>
+      <ind:instance datatype="int">1</ind:instance>
+    </ind:textfilecontent54_object>
+    <ind:textfilecontent54_object id="oval:ssg:obj:161" version="1">
+      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
+      <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
+      <ind:pattern operation="pattern match">^lockPref\("browser.formfill.enable",[\s]+false\);$</ind:pattern>
+      <ind:instance datatype="int">1</ind:instance>
+    </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:162" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("network.protocol-handler.external.shell",[\s]+false\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("signon.prefillForms",[\s]+false\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:163" version="1">
@@ -529,67 +538,67 @@
     <ind:textfilecontent54_object id="oval:ssg:obj:164" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("browser.formfill.enable",[\s]+false\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("privacy.sanitize.promptOnSanitize",[\s]+false\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:165" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("plugin.disable_full_page_plugin_for_types",[\s]+"(\S+)"\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("browser.startup.homepage",[\s]+"(\S+)"\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:167" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("app.update.enabled",[\s]+false\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("dom.event.contextmenu.enabled",[\s]+false\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:168" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("security.enable_tls",[\s]+true\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("dom.disable_window_status_change",[\s]+true\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:169" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("security.enable_ssl3",[\s]+false\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("dom.disable_window_open_feature.status",[\s]+true\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:170" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("dom.disable_window_move_resize",[\s]+true\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("dom.disable_window_flip",[\s]+true\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:171" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("dom.disable_window_status_change",[\s]+true\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("dom.disable_window_move_resize",[\s]+true\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:172" version="1">
-      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
-      <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("dom.event.contextmenu.enabled",[\s]+false\);$</ind:pattern>
+      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox\/defaults\/preferences</ind:path>
+      <ind:filename operation="pattern match">^.*\.js$</ind:filename>
+      <ind:pattern operation="pattern match">^pref\("general.config.filename",[\s]+"(\S+)\.cfg"\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:173" version="1">
-      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
-      <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("browser.helperApps.alwaysAsk.force",[\s]+true\);$</ind:pattern>
+      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox\/defaults\/preferences</ind:path>
+      <ind:filename operation="pattern match">^.*\.js$</ind:filename>
+      <ind:pattern operation="pattern match">^pref\("general.config.obscure_value",[\s]+0\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:174" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("dom.disable_window_open_feature.status",[\s]+true\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("security.warn_leaving_secure",[\s]+true\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:175" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("browser.startup.homepage",[\s]+"(\S+)"\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("plugin.disable_full_page_plugin_for_types",[\s]+"(\S+)"\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:177" version="1">
@@ -601,41 +610,37 @@
     <ind:textfilecontent54_object id="oval:ssg:obj:178" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("extensions.update.enabled",[\s]+false\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("dom.disable_window_open_feature.status",[\s]+true\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
-    <ind:family_object id="oval:ssg:obj:103" version="1"/>
-    <linux:rpminfo_object id="oval:ssg:obj:105" version="1">
-      <linux:name>firefox</linux:name>
-    </linux:rpminfo_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:179" version="1">
-      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox\/defaults\/preferences</ind:path>
-      <ind:filename operation="pattern match">^.*\.js$</ind:filename>
-      <ind:pattern operation="pattern match">^pref\("general.config.filename",[\s]+"(\S+)\.cfg"\);$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
-    <ind:textfilecontent54_object id="oval:ssg:obj:180" version="1">
-      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
-      <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("security.enable_ssl2",[\s]+false\);$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
-    <ind:textfilecontent54_object id="oval:ssg:obj:181" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
       <ind:pattern operation="pattern match">^lockPref\("browser.search.update",[\s]+false\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
+    <ind:textfilecontent54_object id="oval:ssg:obj:180" version="1">
+      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
+      <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
+      <ind:pattern operation="pattern match">^lockPref\("network.protocol-handler.external.shell",[\s]+false\);$</ind:pattern>
+      <ind:instance datatype="int">1</ind:instance>
+    </ind:textfilecontent54_object>
+    <ind:textfilecontent54_object id="oval:ssg:obj:181" version="1">
+      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
+      <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
+      <ind:pattern operation="pattern match">^lockPref\("security.enable_tls",[\s]+true\);$</ind:pattern>
+      <ind:instance datatype="int">1</ind:instance>
+    </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:182" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("dom.disable_window_flip",[\s]+true\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("security.enable_ssl2",[\s]+false\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:183" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("dom.disable_window_open_feature.status",[\s]+true\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("security.enable_ssl3",[\s]+false\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:184" version="1">
@@ -644,42 +649,37 @@
       <ind:pattern operation="pattern match">^lockPref\("security.default_personal_cert",[\s]+"Ask Every Time"\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
-    <ind:textfilecontent54_object id="oval:ssg:obj:185" version="1">
-      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
-      <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("signon.prefillForms",[\s]+false\);$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
-    <ind:textfilecontent54_object id="oval:ssg:obj:186" version="1">
-      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
-      <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("security.warn_leaving_secure",[\s]+true\);$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
+    <ind:family_object id="oval:ssg:obj:103" version="1"/>
+    <linux:rpminfo_object id="oval:ssg:obj:105" version="1">
+      <linux:name>firefox</linux:name>
+    </linux:rpminfo_object>
+    <linux:rpminfo_object id="oval:ssg:obj:185" version="1">
+      <linux:name>firefox</linux:name>
+    </linux:rpminfo_object>
   </objects>
   <states>
-    <linux:rpminfo_state id="oval:ssg:ste:161" version="1">
-      <linux:evr operation="greater than" datatype="evr_string">3.0.0</linux:evr>
-    </linux:rpminfo_state>
     <ind:textfilecontent54_state id="oval:ssg:ste:166" version="1">
-      <ind:subexpression operation="equals" var_check="all" var_ref="oval:ssg:var:187"/>
+      <ind:subexpression datatype="string" operation="equals" var_check="all" var_ref="oval:ssg:var:187"/>
     </ind:textfilecontent54_state>
     <ind:textfilecontent54_state id="oval:ssg:ste:176" version="1">
-      <ind:subexpression datatype="string" operation="equals" var_check="all" var_ref="oval:ssg:var:188"/>
+      <ind:subexpression operation="equals" var_check="all" var_ref="oval:ssg:var:188"/>
     </ind:textfilecontent54_state>
     <ind:family_state id="oval:ssg:ste:104" version="1">
       <ind:family>unix</ind:family>
     </ind:family_state>
+    <linux:rpminfo_state id="oval:ssg:ste:186" version="1">
+      <linux:evr operation="greater than" datatype="evr_string">3.0.0</linux:evr>
+    </linux:rpminfo_state>
   </states>
   <variables>
-    <external_variable id="oval:ssg:var:187" datatype="string" version="1" comment="Expected file types"/>
-    <external_variable id="oval:ssg:var:188" datatype="string" version="1" comment="Expected default home page"/>
+    <external_variable id="oval:ssg:var:187" datatype="string" version="1" comment="Expected default home page"/>
+    <external_variable id="oval:ssg:var:188" datatype="string" version="1" comment="Expected file types"/>
   </variables>
 </oval_definitions>
   </ds:component>
-  <ds:component id="scap_org.open-scap_comp_ssg-firefox-xccdf-1.2.xml" timestamp="2015-10-20T16:40:06">
+  <ds:component id="scap_org.open-scap_comp_ssg-firefox-xccdf-1.2.xml" timestamp="2015-12-11T20:21:05">
     <Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_org.ssgproject.content_benchmark_Firefox" resolved="1" xml:lang="en-US">
-  <status date="2015-10-20">draft</status>
+  <status date="2015-12-11">draft</status>
   <title xml:lang="en-US">Guide to the Secure Configuration for Firefox</title>
   <description xml:lang="en-US">This guide presents a catalog of security-relevant
 configuration settings for firefox formatted in the
@@ -746,7 +746,7 @@ trademarks or trademarks of Red Hat, Inc. in the United States and other
 countries. All other names are registered trademarks or trademarks of their
 respective companies.</rear-matter>
   <platform idref="cpe:/a:mozilla:firefox"/>
-  <version>0.1.26</version>
+  <version>0.1.27</version>
   <model system="urn:xccdf:scoring:default"/>
   <Profile id="xccdf_org.ssgproject.content_profile_stig-firefox-upstream">
     <title xml:lang="en-US">Upstream Firefox STIG</title>
@@ -911,7 +911,7 @@ and deploying Firefox configuration settings. It also prevents validating
 settings easily from automated security tools.
 </rationale>
         <ident system="http://cce.mitre.org">DISA FSO DTBF070</ident>
-        <fix system="urn:xccdf:fix:script:sh">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+        <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-lock_settings_obscure">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ] ; then
     PREFERENCE_DIR="${FIREFOX_DIR}"/defaults/preferences/
@@ -929,7 +929,7 @@ for FIREFOX_DIR in ${FIREFOX_DIRS}; do
 done
 </fix>
         <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-          <check-content-ref name="oval:ssg:def:106" href="ssg-firefox-oval.xml"/>
+          <check-content-ref name="oval:ssg:def:134" href="ssg-firefox-oval.xml"/>
         </check>
         <check system="ocil-transitional">
           <check-export export-name="users can change mandatory settings" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -955,7 +955,7 @@ Locked settings prevents users from accessing about:config and changing
 the security settings set by the system administrator.
 </rationale>
         <ident system="http://cce.mitre.org">DISA FSO DTBF070</ident>
-        <fix system="urn:xccdf:fix:script:sh">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+        <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-lock_settings_config_file">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ] ; then
     PREFERENCE_DIR="${FIREFOX_DIR}"/defaults/preferences/
@@ -973,7 +973,7 @@ for FIREFOX_DIR in ${FIREFOX_DIRS}; do
 done
 </fix>
         <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-          <check-content-ref name="oval:ssg:def:142" href="ssg-firefox-oval.xml"/>
+          <check-content-ref name="oval:ssg:def:132" href="ssg-firefox-oval.xml"/>
         </check>
         <check system="ocil-transitional">
           <check-export export-name="users can change mandatory settings" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -1015,7 +1015,7 @@ The DOD root certificate will ensure that the trust chain is
 established for server certificates issued from the DOD CA.
 </rationale>
         <ident system="http://cce.mitre.org">CCE-27457-1</ident>
-        <fix system="urn:xccdf:fix:script:sh">P11=$(readlink /etc/alternatives/libnssckbi.so*)
+        <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-enable_ca_trust">P11=$(readlink /etc/alternatives/libnssckbi.so*)
 P11LIB="/usr/lib/pkcs11/p11-kit-trust.so"
 P11LIB64="/usr/lib64/pkcs11/p11-kit-trust.so"
 
@@ -1077,7 +1077,7 @@ Automatic updates from untrusted sites puts the enclave at
 risk of attack and may override security settings.
 </rationale>
       <ident system="http://cce.mitre.org">DISA FSO DTBF090</ident>
-      <fix system="urn:xccdf:fix:script:sh">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+      <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-addons_plugin_updates">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ]; then
     grep -q '^lockPref(\"extensions.update.enabled\", false);' "${FIREFOX_DIR}"/mozilla.cfg &amp;&amp; \
@@ -1090,7 +1090,7 @@ done
 
 </fix>
       <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg:def:140" href="ssg-firefox-oval.xml"/>
+        <check-content-ref name="oval:ssg:def:106" href="ssg-firefox-oval.xml"/>
       </check>
       <check system="ocil-transitional">
         <check-export export-name="it is not disabled" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -1119,7 +1119,7 @@ is not saved. This mitigates the risk of a website gleaning private
 information from prefilled information.
 </rationale>
       <ident system="http://cce.mitre.org">DISA FSO DTBF140</ident>
-      <fix system="urn:xccdf:fix:script:sh">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+      <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-autofill_forms">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ]; then
     grep -q '^lockPref(\"browser.formfill.enable\", false);' "${FIREFOX_DIR}"/mozilla.cfg &amp;&amp; \
@@ -1131,7 +1131,7 @@ for FIREFOX_DIR in ${FIREFOX_DIRS}; do
 done
 </fix>
       <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg:def:116" href="ssg-firefox-oval.xml"/>
+        <check-content-ref name="oval:ssg:def:112" href="ssg-firefox-oval.xml"/>
       </check>
       <check system="ocil-transitional">
         <check-export export-name="it is not disabled" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -1159,7 +1159,7 @@ the saved password files and gain access to the user's accounts on
 various hosts.
 </rationale>
       <ident system="http://cce.mitre.org">DISA FSO DTBF150</ident>
-      <fix system="urn:xccdf:fix:script:sh">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+      <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-autofill_passwords">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ]; then
     grep -q '^lockPref(\"signon.prefillForms\", false);' "${FIREFOX_DIR}"/mozilla.cfg &amp;&amp; \
@@ -1171,7 +1171,7 @@ for FIREFOX_DIR in ${FIREFOX_DIRS}; do
 done
 </fix>
       <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg:def:154" href="ssg-firefox-oval.xml"/>
+        <check-content-ref name="oval:ssg:def:114" href="ssg-firefox-oval.xml"/>
       </check>
       <check system="ocil-transitional">
         <check-export export-name="it is not disabled" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -1200,7 +1200,7 @@ many other default settings which point to untrusted sites which must be
 changed to point to an authorized update site that is not publicly accessible.
 </rationale>
       <ident system="http://cce.mitre.org">DISA FSO DTBF080</ident>
-      <fix system="urn:xccdf:fix:script:sh">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+      <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-auto-update_of_firefox">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ]; then
     grep -q '^lockPref(\"app.update.enabled\", false);' "${FIREFOX_DIR}"/mozilla.cfg &amp;&amp; \
@@ -1212,7 +1212,7 @@ for FIREFOX_DIR in ${FIREFOX_DIRS}; do
 done
 </fix>
       <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg:def:120" href="ssg-firefox-oval.xml"/>
+        <check-content-ref name="oval:ssg:def:110" href="ssg-firefox-oval.xml"/>
       </check>
       <check system="ocil-transitional">
         <check-export export-name="it is not disabled" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -1250,7 +1250,7 @@ Data operation when closing the browser in order to clear cookies and
 other data installed by websites visited during the session.
 </rationale>
         <ident system="http://cce.mitre.org">DISA FSO DTBF170</ident>
-        <fix system="urn:xccdf:fix:script:sh">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+        <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-cookies_clear">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ]; then
     grep -q '^lockPref(\"privacy.sanitize.sanitizeOnShutdown\", true);' "${FIREFOX_DIR}"/mozilla.cfg &amp;&amp; \
@@ -1262,7 +1262,7 @@ for FIREFOX_DIR in ${FIREFOX_DIRS}; do
 done
 </fix>
         <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-          <check-content-ref name="oval:ssg:def:114" href="ssg-firefox-oval.xml"/>
+          <check-content-ref name="oval:ssg:def:116" href="ssg-firefox-oval.xml"/>
         </check>
         <check system="ocil-transitional">
           <check-export export-name="it is not set to clear" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -1291,7 +1291,7 @@ Data operation when closing the browser in order to clear cookies and
 other data installed by websites visited during the session.
 </rationale>
         <ident system="http://cce.mitre.org">DISA FSO DTBF170</ident>
-        <fix system="urn:xccdf:fix:script:sh">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+        <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-cookies_user_notice">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ]; then
     grep -q '^lockPref(\"privacy.sanitize.promptOnSanitize\", false);' "${FIREFOX_DIR}"/mozilla.cfg &amp;&amp; \
@@ -1303,7 +1303,7 @@ for FIREFOX_DIR in ${FIREFOX_DIRS}; do
 done
 </fix>
         <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-          <check-content-ref name="oval:ssg:def:108" href="ssg-firefox-oval.xml"/>
+          <check-content-ref name="oval:ssg:def:118" href="ssg-firefox-oval.xml"/>
         </check>
         <check system="ocil-transitional">
           <check-export export-name="it is not disabled" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -1338,7 +1338,7 @@ type is automatically opened in the future. This can be a security issue. New fi
 types cannot be added directly to the Application plugin listing.
 </rationale>
       <ident system="http://cce.mitre.org">DISA FSO DTBF110</ident>
-      <fix system="urn:xccdf:fix:script:sh">var_required_file_types="<sub idref="xccdf_org.ssgproject.content_value_var_required_file_types" use="legacy"/>"
+      <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-open_confirmation">var_required_file_types="<sub idref="xccdf_org.ssgproject.content_value_var_required_file_types" use="legacy"/>"
 FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ]; then
@@ -1351,8 +1351,8 @@ for FIREFOX_DIR in ${FIREFOX_DIRS}; do
 done
 </fix>
       <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-export export-name="oval:ssg:var:187" value-id="xccdf_org.ssgproject.content_value_var_required_file_types"/>
-        <check-content-ref name="oval:ssg:def:118" href="ssg-firefox-oval.xml"/>
+        <check-export export-name="oval:ssg:var:188" value-id="xccdf_org.ssgproject.content_value_var_required_file_types"/>
+        <check-content-ref name="oval:ssg:def:138" href="ssg-firefox-oval.xml"/>
       </check>
       <check system="ocil-transitional">
         <check-export export-name="it is not set or application listing is incorrect" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -1379,7 +1379,7 @@ Autofill of a password can be enabled when a site is visited. This feature could
 be used to autofill the certificate pin which could lead to compromise of DoD information.
 </rationale>
       <ident system="http://cce.mitre.org">DISA FSO DTBF160</ident>
-      <fix system="urn:xccdf:fix:script:sh">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+      <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-password_store">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ] ; then
     grep -q '^lockPref(\"signon.rememberSignons\", false);' "${FIREFOX_DIR}"/mozilla.cfg &amp;&amp; \
@@ -1391,7 +1391,7 @@ for FIREFOX_DIR in ${FIREFOX_DIRS}; do
 done
 </fix>
       <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg:def:138" href="ssg-firefox-oval.xml"/>
+        <check-content-ref name="oval:ssg:def:140" href="ssg-firefox-oval.xml"/>
       </check>
       <check system="ocil-transitional">
         <check-export export-name="it is not disabled" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -1419,7 +1419,7 @@ This setting overrides a number of other settings which may direct the applicati
 to access external URLs.
 </rationale>
       <ident system="http://cce.mitre.org">DISA FSO DTBF085</ident>
-      <fix system="urn:xccdf:fix:script:sh">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+      <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-search_update">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ]; then
     grep -q '^lockPref(\"browser.search.update\", false);' "${FIREFOX_DIR}"/mozilla.cfg &amp;&amp; \
@@ -1431,7 +1431,7 @@ for FIREFOX_DIR in ${FIREFOX_DIRS}; do
 done
 </fix>
       <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg:def:146" href="ssg-firefox-oval.xml"/>
+        <check-content-ref name="oval:ssg:def:144" href="ssg-firefox-oval.xml"/>
       </check>
       <check system="ocil-transitional">
         <check-export export-name="it is not disabled" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -1458,7 +1458,7 @@ If enabled, this setting would allow the browser to access the Windows shell.
 This could allow access to the underlying system.
 </rationale>
       <ident system="http://cce.mitre.org">DISA FSO DTBF105</ident>
-      <fix system="urn:xccdf:fix:script:sh">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+      <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-shell_protocol">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ]; then
     grep -q '^lockPref(\"network.protocol-handler.external.shell\", false);' "${FIREFOX_DIR}"/mozilla.cfg &amp;&amp; \
@@ -1470,7 +1470,7 @@ for FIREFOX_DIR in ${FIREFOX_DIRS}; do
 done
 </fix>
       <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg:def:112" href="ssg-firefox-oval.xml"/>
+        <check-content-ref name="oval:ssg:def:146" href="ssg-firefox-oval.xml"/>
       </check>
       <check system="ocil-transitional">
         <check-export export-name="it is not disabled" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -1497,7 +1497,7 @@ Use of versions prior to TLS 1.0 are not permitted because these versions are
 non-standard. SSL 2.0 and SSL 3.0 contain a number of security flaws.
 </rationale>
       <ident system="http://cce.mitre.org">DISA FSO DTBF010</ident>
-      <fix system="urn:xccdf:fix:script:sh">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+      <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-ssl_version_2">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ]; then
     grep -q '^lockPref(\"security.enable_ssl2\", false);' "${FIREFOX_DIR}"/mozilla.cfg &amp;&amp; \
@@ -1509,7 +1509,7 @@ for FIREFOX_DIR in ${FIREFOX_DIRS}; do
 done
 </fix>
       <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg:def:144" href="ssg-firefox-oval.xml"/>
+        <check-content-ref name="oval:ssg:def:150" href="ssg-firefox-oval.xml"/>
       </check>
       <check system="ocil-transitional">
         <check-export export-name="it is not disabled" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -1534,7 +1534,7 @@ Earlier versions of SSL have known security vulnerabilities and are not
 authorized for use in DOD environments.
 </rationale>
       <ident system="http://cce.mitre.org">DISA FSO DTBF030</ident>
-      <fix system="urn:xccdf:fix:script:sh">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+      <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-ssl_protocol_tls">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ]; then
     grep -q '^lockPref(\"security.enable_tls\", true);' "${FIREFOX_DIR}"/mozilla.cfg &amp;&amp; \
@@ -1546,7 +1546,7 @@ for FIREFOX_DIR in ${FIREFOX_DIRS}; do
 done
 </fix>
       <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg:def:122" href="ssg-firefox-oval.xml"/>
+        <check-content-ref name="oval:ssg:def:148" href="ssg-firefox-oval.xml"/>
       </check>
       <check system="ocil-transitional">
         <check-export export-name="it is not enabled" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -1573,7 +1573,7 @@ security for DoD information. Access will be denied to the user if
 certificate management is not configured.
 </rationale>
       <ident system="http://cce.mitre.org">DISA FSO DTBF050</ident>
-      <fix system="urn:xccdf:fix:script:sh">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+      <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-verification">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ]; then
     grep -q '^lockPref(\"security.default_personal_cert\", \"Ask Every Time\");' "${FIREFOX_DIR}"/mozilla.cfg &amp;&amp; \
@@ -1585,7 +1585,7 @@ for FIREFOX_DIR in ${FIREFOX_DIRS}; do
 done
 </fix>
       <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg:def:152" href="ssg-firefox-oval.xml"/>
+        <check-content-ref name="oval:ssg:def:154" href="ssg-firefox-oval.xml"/>
       </check>
       <check system="ocil-transitional">
         <check-export export-name="it is not enabled" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -1610,7 +1610,7 @@ Earlier versions of SSL have known security vulnerabilities and are not
 authorized for use in DOD.
 </rationale>
       <ident system="http://cce.mitre.org">DISA FSO DTBF020</ident>
-      <fix system="urn:xccdf:fix:script:sh">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+      <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-ssl_version_3">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ]; then
     grep -q '^lockPref(\"security.enable_ssl3\", false);' "${FIREFOX_DIR}"/mozilla.cfg &amp;&amp; \
@@ -1622,7 +1622,7 @@ for FIREFOX_DIR in ${FIREFOX_DIRS}; do
 done
 </fix>
       <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg:def:124" href="ssg-firefox-oval.xml"/>
+        <check-content-ref name="oval:ssg:def:152" href="ssg-firefox-oval.xml"/>
       </check>
       <check system="ocil-transitional">
         <check-export export-name="it is not enabled" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -1653,7 +1653,7 @@ mitigate the possibility of automatic inadvertent execution of scripts
 added to a previously safe site.
 </rationale>
       <ident system="http://cce.mitre.org">DISA FSO DTBF017</ident>
-      <fix system="urn:xccdf:fix:script:sh">var_default_home_page="<sub idref="xccdf_org.ssgproject.content_value_var_default_home_page" use="legacy"/>"
+      <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-home_page">var_default_home_page="<sub idref="xccdf_org.ssgproject.content_value_var_default_home_page" use="legacy"/>"
 FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ]; then
@@ -1666,8 +1666,8 @@ for FIREFOX_DIR in ${FIREFOX_DIRS}; do
 done
 </fix>
       <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-export export-name="oval:ssg:var:188" value-id="xccdf_org.ssgproject.content_value_var_default_home_page"/>
-        <check-content-ref name="oval:ssg:def:136" href="ssg-firefox-oval.xml"/>
+        <check-export export-name="oval:ssg:var:187" value-id="xccdf_org.ssgproject.content_value_var_default_home_page"/>
+        <check-content-ref name="oval:ssg:def:120" href="ssg-firefox-oval.xml"/>
       </check>
       <check system="ocil-transitional">
         <check-export export-name="it is not configured" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -1699,7 +1699,7 @@ can leave the application vulnerable to attack.
 </rationale>
       <ident system="http://cce.mitre.org">DISA FSO DTBF003</ident>
       <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg:def:110" href="ssg-firefox-oval.xml"/>
+        <check-content-ref name="oval:ssg:def:156" href="ssg-firefox-oval.xml"/>
       </check>
       <check system="ocil-transitional">
         <check-export export-name="it is not updated" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -1733,7 +1733,7 @@ Webpage authors can disable many features of a popup window that they open.
 This setting prevents the status bar from being hidden.
 </rationale>
       <ident system="http://cce.mitre.org">DISA FSO DTBF185</ident>
-      <fix system="urn:xccdf:fix:script:sh">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+      <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-javascript_status_bar_text">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ]; then
     grep -q '^lockPref(\"dom.disable_window_open_feature.status\", true);' "${FIREFOX_DIR}"/mozilla.cfg &amp;&amp; \
@@ -1745,7 +1745,7 @@ for FIREFOX_DIR in ${FIREFOX_DIRS}; do
 done
 </fix>
       <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg:def:134" href="ssg-firefox-oval.xml"/>
+        <check-content-ref name="oval:ssg:def:126" href="ssg-firefox-oval.xml"/>
       </check>
       <check system="ocil-transitional">
         <check-export export-name="it is not disabled" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -1772,7 +1772,7 @@ A website may execute JavaScript that can make changes to these
 context menus. This can help disguise an attack.
 </rationale>
       <ident system="http://cce.mitre.org">DISA FSO DTBF183</ident>
-      <fix system="urn:xccdf:fix:script:sh">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+      <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-javascript_context_menus">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ]; then
     grep -q '^lockPref(\"dom.event.contextmenu.enabled\", false);' "${FIREFOX_DIR}"/mozilla.cfg &amp;&amp; \
@@ -1785,7 +1785,7 @@ done
 
 </fix>
       <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg:def:130" href="ssg-firefox-oval.xml"/>
+        <check-content-ref name="oval:ssg:def:122" href="ssg-firefox-oval.xml"/>
       </check>
       <check system="ocil-transitional">
         <check-export export-name="it is not disabled" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -1813,7 +1813,7 @@ to the browser’s appearance to hide unauthorized activity. This activity
 can help disguise an attack taking place in a minimized background window.
 </rationale>
       <ident system="http://cce.mitre.org">DISA FSO DTBF184</ident>
-      <fix system="urn:xccdf:fix:script:sh">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+      <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-javascript_status_bar_changes">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ]; then
     grep -q '^lockPref(\"dom.disable_window_status_change\", true);' "${FIREFOX_DIR}"/mozilla.cfg &amp;&amp; \
@@ -1825,7 +1825,7 @@ for FIREFOX_DIR in ${FIREFOX_DIRS}; do
 done
 </fix>
       <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg:def:128" href="ssg-firefox-oval.xml"/>
+        <check-content-ref name="oval:ssg:def:124" href="ssg-firefox-oval.xml"/>
       </check>
       <check system="ocil-transitional">
         <check-export export-name="it is not disabled" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -1852,7 +1852,7 @@ JavaScript can make changes to the browser’s appearance. This activity
 can help disguise an attack taking place in a minimized background window.
 </rationale>
       <ident system="http://cce.mitre.org">DISA FSO DTBF181</ident>
-      <fix system="urn:xccdf:fix:script:sh">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+      <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-javascript_window_resizing">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ]; then
     grep -q '^lockPref(\"dom.disable_window_move_resize\", true);' "${FIREFOX_DIR}"/mozilla.cfg &amp;&amp; \
@@ -1864,7 +1864,7 @@ for FIREFOX_DIR in ${FIREFOX_DIRS}; do
 done
 </fix>
       <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg:def:126" href="ssg-firefox-oval.xml"/>
+        <check-content-ref name="oval:ssg:def:130" href="ssg-firefox-oval.xml"/>
       </check>
       <check system="ocil-transitional">
         <check-export export-name="it is not disabled" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -1891,7 +1891,7 @@ JavaScript can make changes to the browser’s appearance. Allowing a website
 to use JavaScript to raise and lower browser windows may disguise an attack.
 </rationale>
       <ident system="http://cce.mitre.org">DISA FSO DTBF182</ident>
-      <fix system="urn:xccdf:fix:script:sh">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+      <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-javascript_window_changes">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ]; then
     grep -q '^lockPref(\"dom.disable_window_flip\", true);' "${FIREFOX_DIR}"/mozilla.cfg &amp;&amp; \
@@ -1903,7 +1903,7 @@ for FIREFOX_DIR in ${FIREFOX_DIRS}; do
 done
 </fix>
       <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg:def:148" href="ssg-firefox-oval.xml"/>
+        <check-content-ref name="oval:ssg:def:128" href="ssg-firefox-oval.xml"/>
       </check>
       <check system="ocil-transitional">
         <check-export export-name="it is not disabled" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -1931,7 +1931,7 @@ conditions in a previous page are not currently being viewed under
 the same security settings.
 </rationale>
       <ident system="http://cce.mitre.org">DISA FSO DTBF130</ident>
-      <fix system="urn:xccdf:fix:script:sh">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+      <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-non-secure_page_warning">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ]; then
     grep -q '^lockPref(\"security.warn_leaving_secure\", true);' "${FIREFOX_DIR}"/mozilla.cfg &amp;&amp; \
@@ -1943,7 +1943,7 @@ for FIREFOX_DIR in ${FIREFOX_DIRS}; do
 done
 </fix>
       <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg:def:156" href="ssg-firefox-oval.xml"/>
+        <check-content-ref name="oval:ssg:def:136" href="ssg-firefox-oval.xml"/>
       </check>
       <check system="ocil-transitional">
         <check-export export-name="it is not enabled" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -1969,7 +1969,7 @@ Popup windows may be used to launch an attack within a new browser window
 with altered settings.
 </rationale>
       <ident system="http://cce.mitre.org">DISA FSO DTBF180</ident>
-      <fix system="urn:xccdf:fix:script:sh">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+      <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-pop-up_windows">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ]; then
     grep -q '^lockPref(\"dom.disable_window_open_feature.status\", true);' "${FIREFOX_DIR}"/mozilla.cfg &amp;&amp; \
@@ -1981,7 +1981,7 @@ for FIREFOX_DIR in ${FIREFOX_DIRS}; do
 done
 </fix>
       <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg:def:150" href="ssg-firefox-oval.xml"/>
+        <check-content-ref name="oval:ssg:def:142" href="ssg-firefox-oval.xml"/>
       </check>
       <check system="ocil-transitional">
         <check-export export-name="it is not enabled" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -2011,7 +2011,7 @@ file is opened with a selected external application or saved to disk
 instead.
 </rationale>
       <ident system="http://cce.mitre.org">DISA FSO DTBF100</ident>
-      <fix system="urn:xccdf:fix:script:sh">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+      <fix system="urn:xccdf:fix:script:sh" id="firefox_preferences-auto-download_actions">FIREFOX_DIRS="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
 for FIREFOX_DIR in ${FIREFOX_DIRS}; do
   if [ -d "${FIREFOX_DIR}" ]; then
     grep -q '^lockPref(\"browser.helperApps.alwaysAsk.force\", true);' "${FIREFOX_DIR}"/mozilla.cfg &amp;&amp; \
@@ -2023,7 +2023,7 @@ for FIREFOX_DIR in ${FIREFOX_DIRS}; do
 done
 </fix>
       <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg:def:132" href="ssg-firefox-oval.xml"/>
+        <check-content-ref name="oval:ssg:def:108" href="ssg-firefox-oval.xml"/>
       </check>
       <check system="ocil-transitional">
         <check-export export-name="it is not disabled" value-id="xccdf_org.ssgproject.content_value_conditional_clause"/>
@@ -2039,13 +2039,13 @@ The output should return:
   </Group>
 </Benchmark>
   </ds:component>
-  <ds:component id="scap_org.open-scap_comp_output--ssg-firefox-cpe-oval.xml" timestamp="2015-10-20T16:40:06">
+  <ds:component id="scap_org.open-scap_comp_output--ssg-firefox-cpe-oval.xml" timestamp="2015-12-11T20:21:04">
     <oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:linux="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
   <generator>
     <oval:product_name>python</oval:product_name>
-    <oval:product_version>2.6.6</oval:product_version>
+    <oval:product_version>2.7.5</oval:product_version>
     <oval:schema_version>5.10</oval:schema_version>
-    <oval:timestamp>2015-10-20T14:40:06</oval:timestamp>
+    <oval:timestamp>2015-12-11T19:21:04</oval:timestamp>
   </generator>
   <definitions><definition class="inventory" id="oval:ssg:def:100" version="1">
       <metadata>
@@ -2075,9 +2075,9 @@ The output should return:
     </objects><states><ind:family_state id="oval:ssg:ste:104" version="1">
       <ind:family>unix</ind:family>
     </ind:family_state>
-  </states></oval_definitions>
+    </states></oval_definitions>
   </ds:component>
-  <ds:component id="scap_org.open-scap_comp_output--ssg-firefox-cpe-dictionary.xml" timestamp="2015-10-20T16:40:06">
+  <ds:component id="scap_org.open-scap_comp_output--ssg-firefox-cpe-dictionary.xml" timestamp="2015-12-11T20:21:04">
     <cpe-list xmlns="http://cpe.mitre.org/dictionary/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd">
       <cpe-item name="cpe:/a:mozilla:firefox">
             <title xml:lang="en-us">Mozilla Firefox</title>
@@ -2086,75 +2086,81 @@ The output should return:
       </cpe-item>
 </cpe-list>
   </ds:component>
-<ds:component id="scap_org.open-scap_comp_output--ssg-firefox-oval.xml" timestamp="2015-10-20T16:40:06"><oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:linux="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
+<ds:component id="scap_org.open-scap_comp_output--ssg-firefox-oval.xml" timestamp="2015-12-11T20:21:05"><oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:linux="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
   <generator>
     <oval:product_name>python</oval:product_name>
-    <oval:product_version>2.6.6</oval:product_version>
+    <oval:product_version>2.7.5</oval:product_version>
     <oval:schema_version>5.10</oval:schema_version>
-    <oval:timestamp>2015-10-20T14:40:06</oval:timestamp>
+    <oval:timestamp>2015-12-11T19:21:04</oval:timestamp>
   </generator>
   <definitions>
     <definition class="compliance" id="oval:ssg:def:106" version="1">
       <metadata>
-        <title>Prevent Users from Changing Firefox Configuration Settings</title>
+        <title>Disable Addons Plugin Updates</title>
         <affected family="unix">
           <platform>Mozilla Firefox</platform>
         </affected>
-        <description>Locked settings prevents users from accessing about:config and
-      changing the security settings set by the system administrator.</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-lock_settings_obscure" source="ssg"/></metadata>
+        <description>Firefox automatically updates installed
+      add-ons and plugins.</description>
+      <reference ref_id="firefox_preferences-addons_plugin_updates" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="Do not obscure locked file content with ROT-13" test_ref="oval:ssg:tst:107"/>
+        <criterion comment="addons plugin updates configured" test_ref="oval:ssg:tst:107"/>
       </criteria>
     </definition>
     <definition class="compliance" id="oval:ssg:def:108" version="1">
       <metadata>
-        <title>Disable User Prompt For Clearing Cookies And Other Data</title>
+        <title>Disable Automatic Downloads of MIME Types</title>
         <affected family="unix">
           <platform>Mozilla Firefox</platform>
         </affected>
-        <description>Users should not be prompted about data and cookies being
-      cleared when the browser is closed.</description>
+        <description>Firefox automatically executes or downloads MIME types which are
+      not authorized for auto-download.</description>
         <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-cookies_user_notice" source="ssg"/></metadata>
+      <reference ref_id="firefox_preferences-auto-download_actions" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="disable promptOnSanitize" test_ref="oval:ssg:tst:109"/>
+        <criterion comment="Auto download actions of mime type is disabled" test_ref="oval:ssg:tst:109"/>
       </criteria>
     </definition>
     <definition class="compliance" id="oval:ssg:def:110" version="1">
       <metadata>
-        <title>Supported Version of Firefox Installed</title>
+        <title>Disable Firefox Auto-Update Capability</title>
         <affected family="unix">
           <platform>Mozilla Firefox</platform>
         </affected>
-        <description>Use of versions of an application which are not
-      supported by the vendor are not permitted. Vendors respond to
-      security flaws with updates and patches. These updates are not
-      available for unsupported versions which can leave the application
-      vulnerable to attack.</description>
+        <description>Firefox should not be able to automatically
+      update itself.</description>
         <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="installed_firefox_version_supported" source="ssg"/></metadata>
+      <reference ref_id="firefox_preferences-auto-update_of_firefox" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="installed version of firefox supported" test_ref="oval:ssg:tst:111"/>
+        <criterion comment="auto-update is disabled" test_ref="oval:ssg:tst:111"/>
       </criteria>
     </definition>
     <definition class="compliance" id="oval:ssg:def:112" version="1">
       <metadata>
-        <title>Disable Firefox Access to Shell Protocols</title>
+        <title>Disable Autofill Form Assistance</title>
         <affected family="unix">
           <platform>Mozilla Firefox</platform>
         </affected>
-        <description>Firefox can be configured to access systems shells which
-      could potentially allow Firefox and other users to access to the
-      underlying system.</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-shell_protocol" source="ssg"/></metadata>
+        <description>Firefox formfill assistance option is disabled.</description>
+      <reference ref_id="firefox_preferences-autofill_forms" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="Disable Firefox Shell Protocol Access" test_ref="oval:ssg:tst:113"/>
+        <criterion comment="autofill_forms disabled" test_ref="oval:ssg:tst:113"/>
       </criteria>
     </definition>
     <definition class="compliance" id="oval:ssg:def:114" version="1">
+      <metadata>
+        <title>Disable User Ability To Autofill Passwords</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>Firefox should not be configured to autofill passwords.</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-autofill_passwords" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="autofill_passwords disabled" test_ref="oval:ssg:tst:115"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:116" version="1">
       <metadata>
         <title>Clear Cookies And Other Data When Firefox Closes</title>
         <affected family="unix">
@@ -2166,106 +2172,37 @@ The output should return:
         <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
       <reference ref_id="firefox_preferences-cookies_clear" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="enabled sanitizeOnShutdown" test_ref="oval:ssg:tst:115"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg:def:116" version="1">
-      <metadata>
-        <title>Disable Autofill Form Assistance</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>Firefox formfill assistance option is disabled.</description>
-      <reference ref_id="firefox_preferences-autofill_forms" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="autofill_forms disabled" test_ref="oval:ssg:tst:117"/>
+        <criterion comment="enabled sanitizeOnShutdown" test_ref="oval:ssg:tst:117"/>
       </criteria>
     </definition>
     <definition class="compliance" id="oval:ssg:def:118" version="1">
       <metadata>
-        <title>Enable Downloading and Opening File Confirmation</title>
+        <title>Disable User Prompt For Clearing Cookies And Other Data</title>
         <affected family="unix">
           <platform>Mozilla Firefox</platform>
         </affected>
-        <description>Firefox is not configured to prompt user before downloading and
-      opening required file types.</description>
+        <description>Users should not be prompted about data and cookies being
+      cleared when the browser is closed.</description>
         <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-open_confirmation" source="ssg"/></metadata>
+      <reference ref_id="firefox_preferences-cookies_user_notice" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="open_confirmation configured" test_ref="oval:ssg:tst:119"/>
+        <criterion comment="disable promptOnSanitize" test_ref="oval:ssg:tst:119"/>
       </criteria>
     </definition>
     <definition class="compliance" id="oval:ssg:def:120" version="1">
       <metadata>
-        <title>Disable Firefox Auto-Update Capability</title>
+        <title>Default Firefox Home Page Configured</title>
         <affected family="unix">
           <platform>Mozilla Firefox</platform>
         </affected>
-        <description>Firefox should not be able to automatically
-      update itself.</description>
+        <description>The default homepage for Firefox is set and cannot be changed.</description>
         <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-auto-update_of_firefox" source="ssg"/></metadata>
+      <reference ref_id="firefox_preferences-home_page" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="auto-update is disabled" test_ref="oval:ssg:tst:121"/>
+        <criterion comment="home page configured" test_ref="oval:ssg:tst:121"/>
       </criteria>
     </definition>
     <definition class="compliance" id="oval:ssg:def:122" version="1">
-      <metadata>
-        <title>Enable TLS Usage in Firefox</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>DoD implementations of SSL must use TLS 1.0 in accordance with
-      the Network Infrastructure STIG.</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-ssl_protocol_tls" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="TLS is enabled" test_ref="oval:ssg:tst:123"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg:def:124" version="1">
-      <metadata>
-        <title>Disable SSL Version 3 in Firefox</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>Earlier versions of SSL have known security vulnerabilities
-      and are not authorized for use in DOD.</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-ssl_version_3" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="SSL V3 installed" test_ref="oval:ssg:tst:125"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg:def:126" version="1">
-      <metadata>
-        <title>Disable JavaScript's Moving Or Resizing Windows Capability</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>FireFox should not be configured to allow JavaScript to move
-      or resize windows.</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-javascript_window_resizing" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="move or resize windows disabled" test_ref="oval:ssg:tst:127"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg:def:128" version="1">
-      <metadata>
-        <title>Disable JavaScript's Ability To Change The Status Bar</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>Firefox should be configured to not allow JavaScript to
-      hide or change the status bar.</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-javascript_status_bar_changes" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="disable hiding or changing status bar menus" test_ref="oval:ssg:tst:129"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg:def:130" version="1">
       <metadata>
         <title>Disable JavaScript Context Menus</title>
         <affected family="unix">
@@ -2276,24 +2213,24 @@ The output should return:
         <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
       <reference ref_id="firefox_preferences-javascript_context_menus" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="disable javaScript context menus" test_ref="oval:ssg:tst:131"/>
+        <criterion comment="disable javaScript context menus" test_ref="oval:ssg:tst:123"/>
       </criteria>
     </definition>
-    <definition class="compliance" id="oval:ssg:def:132" version="1">
+    <definition class="compliance" id="oval:ssg:def:124" version="1">
       <metadata>
-        <title>Disable Automatic Downloads of MIME Types</title>
+        <title>Disable JavaScript's Ability To Change The Status Bar</title>
         <affected family="unix">
           <platform>Mozilla Firefox</platform>
         </affected>
-        <description>Firefox automatically executes or downloads MIME types which are
-      not authorized for auto-download.</description>
+        <description>Firefox should be configured to not allow JavaScript to
+      hide or change the status bar.</description>
         <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-auto-download_actions" source="ssg"/></metadata>
+      <reference ref_id="firefox_preferences-javascript_status_bar_changes" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="Auto download actions of mime type is disabled" test_ref="oval:ssg:tst:133"/>
+        <criterion comment="disable hiding or changing status bar menus" test_ref="oval:ssg:tst:125"/>
       </criteria>
     </definition>
-    <definition class="compliance" id="oval:ssg:def:134" version="1">
+    <definition class="compliance" id="oval:ssg:def:126" version="1">
       <metadata>
         <title>Disable JavaScript's Ability To Modify The Browser Appearance</title>
         <affected family="unix">
@@ -2304,23 +2241,94 @@ The output should return:
         <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
       <reference ref_id="firefox_preferences-javascript_status_bar_text" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="disable changing the status bar text" test_ref="oval:ssg:tst:135"/>
+        <criterion comment="disable changing the status bar text" test_ref="oval:ssg:tst:127"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:128" version="1">
+      <metadata>
+        <title>Disable JavaScript's Raise Or Lower Windows Capability</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>Firefox should be configured to not allow JavaScript to
+      raise or lower windows.</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-javascript_window_changes" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="raise or lower windows disabled" test_ref="oval:ssg:tst:129"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:130" version="1">
+      <metadata>
+        <title>Disable JavaScript's Moving Or Resizing Windows Capability</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>FireFox should not be configured to allow JavaScript to move
+      or resize windows.</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-javascript_window_resizing" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="move or resize windows disabled" test_ref="oval:ssg:tst:131"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:132" version="1">
+      <metadata>
+        <title>Prevent Users from Changing Firefox Configuration Settings</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>Locked settings prevents users from accessing about:config and
+      changing the security settings set by the system administrator.</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-lock_settings_config_file" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="Configuration file is set" test_ref="oval:ssg:tst:133"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:134" version="1">
+      <metadata>
+        <title>Prevent Users from Changing Firefox Configuration Settings</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>Locked settings prevents users from accessing about:config and
+      changing the security settings set by the system administrator.</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-lock_settings_obscure" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="Do not obscure locked file content with ROT-13" test_ref="oval:ssg:tst:135"/>
       </criteria>
     </definition>
     <definition class="compliance" id="oval:ssg:def:136" version="1">
       <metadata>
-        <title>Default Firefox Home Page Configured</title>
+        <title>Enable Non-Secure Page Warnings</title>
         <affected family="unix">
           <platform>Mozilla Firefox</platform>
         </affected>
-        <description>The default homepage for Firefox is set and cannot be changed.</description>
+        <description>Firefox is not configured to provide warnings when a user switches
+      from a secure (SSL-enabled) to a non-secure page.</description>
         <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-home_page" source="ssg"/></metadata>
+      <reference ref_id="firefox_preferences-non-secure_page_warning" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="home page configured" test_ref="oval:ssg:tst:137"/>
+        <criterion comment="non-secure page warning configured" test_ref="oval:ssg:tst:137"/>
       </criteria>
     </definition>
     <definition class="compliance" id="oval:ssg:def:138" version="1">
+      <metadata>
+        <title>Enable Downloading and Opening File Confirmation</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>Firefox is not configured to prompt user before downloading and
+      opening required file types.</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-open_confirmation" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="open_confirmation configured" test_ref="oval:ssg:tst:139"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:140" version="1">
       <metadata>
         <title>Disable the Firefox Password Store</title>
         <affected family="unix">
@@ -2330,20 +2338,107 @@ The output should return:
         <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
       <reference ref_id="firefox_preferences-password_store" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="password_store disabled" test_ref="oval:ssg:tst:139"/>
+        <criterion comment="password_store disabled" test_ref="oval:ssg:tst:141"/>
       </criteria>
     </definition>
-    <definition class="compliance" id="oval:ssg:def:140" version="1">
+    <definition class="compliance" id="oval:ssg:def:142" version="1">
       <metadata>
-        <title>Disable Addons Plugin Updates</title>
+        <title>Enable Firefox Pop-up Blocker</title>
         <affected family="unix">
           <platform>Mozilla Firefox</platform>
         </affected>
-        <description>Firefox automatically updates installed
-      add-ons and plugins.</description>
-      <reference ref_id="firefox_preferences-addons_plugin_updates" source="ssg"/></metadata>
+        <description>The Firefox Pop-up blocker should be enabled as windows may be
+      used to launch an attack within a new browser window with altered settings.
+      </description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-pop-up_windows" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="addons plugin updates configured" test_ref="oval:ssg:tst:141"/>
+        <criterion comment="pop-up_windows installed" test_ref="oval:ssg:tst:143"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:144" version="1">
+      <metadata>
+        <title>Disable Installed Search Plugins Update Checking</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>Search plugins can be automatically configured to check for
+      updates. Updates need to be controlled and installed from authorized and
+      trusted servers.</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-search_update" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="Disable search plugin update capability" test_ref="oval:ssg:tst:145"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:146" version="1">
+      <metadata>
+        <title>Disable Firefox Access to Shell Protocols</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>Firefox can be configured to access systems shells which
+      could potentially allow Firefox and other users to access to the
+      underlying system.</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-shell_protocol" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="Disable Firefox Shell Protocol Access" test_ref="oval:ssg:tst:147"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:148" version="1">
+      <metadata>
+        <title>Enable TLS Usage in Firefox</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>DoD implementations of SSL must use TLS 1.0 in accordance with
+      the Network Infrastructure STIG.</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-ssl_protocol_tls" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="TLS is enabled" test_ref="oval:ssg:tst:149"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:150" version="1">
+      <metadata>
+        <title>Disable SSL Version 2.0 in Firefox</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>SSL 2.0 and SSL 3.0 contain a number of security flaws.
+      Therefore, SSL 2.0 should be disabled.</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-ssl_version_2" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="SSL 2.0 protocol disabled" test_ref="oval:ssg:tst:151"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:152" version="1">
+      <metadata>
+        <title>Disable SSL Version 3 in Firefox</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>Earlier versions of SSL have known security vulnerabilities
+      and are not authorized for use in DOD.</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-ssl_version_3" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="SSL V3 installed" test_ref="oval:ssg:tst:153"/>
+      </criteria>
+    </definition>
+    <definition class="compliance" id="oval:ssg:def:154" version="1">
+      <metadata>
+        <title>Enable Certificate Verification</title>
+        <affected family="unix">
+          <platform>Mozilla Firefox</platform>
+        </affected>
+        <description>When a web site asks for a certificate for user authentication, Firefox must be configured to have the user choose which certificate to present. Websites within DOD require user authentication for access which increases security for DoD information. Access will be denied to the user if certificate management is not configured</description>
+        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
+      <reference ref_id="firefox_preferences-verification" source="ssg"/></metadata>
+      <criteria>
+        <criterion comment="verification installed" test_ref="oval:ssg:tst:155"/>
       </criteria>
     </definition>
     <definition class="inventory" id="oval:ssg:def:100" version="1">
@@ -2360,176 +2455,101 @@ The output should return:
         <criterion comment="Firefox is installed" test_ref="oval:ssg:tst:102"/>
       </criteria>
     </definition>
-    <definition class="compliance" id="oval:ssg:def:142" version="1">
-      <metadata>
-        <title>Prevent Users from Changing Firefox Configuration Settings</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>Locked settings prevents users from accessing about:config and
-      changing the security settings set by the system administrator.</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-lock_settings_config_file" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Configuration file is set" test_ref="oval:ssg:tst:143"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg:def:144" version="1">
-      <metadata>
-        <title>Disable SSL Version 2.0 in Firefox</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>SSL 2.0 and SSL 3.0 contain a number of security flaws.
-      Therefore, SSL 2.0 should be disabled.</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-ssl_version_2" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="SSL 2.0 protocol disabled" test_ref="oval:ssg:tst:145"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg:def:146" version="1">
-      <metadata>
-        <title>Disable Installed Search Plugins Update Checking</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>Search plugins can be automatically configured to check for
-      updates. Updates need to be controlled and installed from authorized and
-      trusted servers.</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-search_update" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Disable search plugin update capability" test_ref="oval:ssg:tst:147"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg:def:148" version="1">
-      <metadata>
-        <title>Disable JavaScript's Raise Or Lower Windows Capability</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>Firefox should be configured to not allow JavaScript to
-      raise or lower windows.</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-javascript_window_changes" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="raise or lower windows disabled" test_ref="oval:ssg:tst:149"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg:def:150" version="1">
-      <metadata>
-        <title>Enable Firefox Pop-up Blocker</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>The Firefox Pop-up blocker should be enabled as windows may be
-      used to launch an attack within a new browser window with altered settings.
-      </description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-pop-up_windows" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="pop-up_windows installed" test_ref="oval:ssg:tst:151"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg:def:152" version="1">
-      <metadata>
-        <title>Enable Certificate Verification</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>When a web site asks for a certificate for user authentication, Firefox must be configured to have the user choose which certificate to present. Websites within DOD require user authentication for access which increases security for DoD information. Access will be denied to the user if certificate management is not configured</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-verification" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="verification installed" test_ref="oval:ssg:tst:153"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg:def:154" version="1">
-      <metadata>
-        <title>Disable User Ability To Autofill Passwords</title>
-        <affected family="unix">
-          <platform>Mozilla Firefox</platform>
-        </affected>
-        <description>Firefox should not be configured to autofill passwords.</description>
-        <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-autofill_passwords" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="autofill_passwords disabled" test_ref="oval:ssg:tst:155"/>
-      </criteria>
-    </definition>
     <definition class="compliance" id="oval:ssg:def:156" version="1">
       <metadata>
-        <title>Enable Non-Secure Page Warnings</title>
+        <title>Supported Version of Firefox Installed</title>
         <affected family="unix">
           <platform>Mozilla Firefox</platform>
         </affected>
-        <description>Firefox is not configured to provide warnings when a user switches
-      from a secure (SSL-enabled) to a non-secure page.</description>
+        <description>Use of versions of an application which are not
+      supported by the vendor are not permitted. Vendors respond to
+      security flaws with updates and patches. These updates are not
+      available for unsupported versions which can leave the application
+      vulnerable to attack.</description>
         <reference source="galford" ref_id="20150424" ref_url="https://github.com/OpenSCAP/scap-security-guide/wiki/Contributors"/>
-      <reference ref_id="firefox_preferences-non-secure_page_warning" source="ssg"/></metadata>
+      <reference ref_id="installed_firefox_version_supported" source="ssg"/></metadata>
       <criteria>
-        <criterion comment="non-secure page warning configured" test_ref="oval:ssg:tst:157"/>
+        <criterion comment="installed version of firefox supported" test_ref="oval:ssg:tst:157"/>
       </criteria>
     </definition>
   </definitions>
   <tests>
-    <ind:textfilecontent54_test check="all" comment="Check for obscure_value" id="oval:ssg:tst:107" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for addons plugin updates" id="oval:ssg:tst:107" version="1">
       <ind:object object_ref="oval:ssg:obj:158"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for promptOnSanitize disabled" id="oval:ssg:tst:109" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for Auto download Actions installed" id="oval:ssg:tst:109" version="1">
       <ind:object object_ref="oval:ssg:obj:159"/>
     </ind:textfilecontent54_test>
-    <linux:rpminfo_test check="all" check_existence="any_exist" comment="Installed version of firefox is greater than ESR 31.5" id="oval:ssg:tst:111" version="1">
-      <linux:object object_ref="oval:ssg:obj:160"/>
-      <linux:state state_ref="oval:ssg:ste:161"/>
-    </linux:rpminfo_test>
-    <ind:textfilecontent54_test check="all" comment="Check that the hell_protocol is disabled" id="oval:ssg:tst:113" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check that auto-update of firefox is disabled" id="oval:ssg:tst:111" version="1">
+      <ind:object object_ref="oval:ssg:obj:160"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test check="all" comment="Check for autofill_forms disabled" id="oval:ssg:tst:113" version="1">
+      <ind:object object_ref="oval:ssg:obj:161"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test check="all" comment="Check for autofill_passwords disabled" id="oval:ssg:tst:115" version="1">
       <ind:object object_ref="oval:ssg:obj:162"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for sanitizeOnShutdown enabled" id="oval:ssg:tst:115" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for sanitizeOnShutdown enabled" id="oval:ssg:tst:117" version="1">
       <ind:object object_ref="oval:ssg:obj:163"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for autofill_forms disabled" id="oval:ssg:tst:117" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for promptOnSanitize disabled" id="oval:ssg:tst:119" version="1">
       <ind:object object_ref="oval:ssg:obj:164"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for open_confirmation configured" id="oval:ssg:tst:119" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for home page configured" id="oval:ssg:tst:121" version="1">
       <ind:object object_ref="oval:ssg:obj:165"/>
       <ind:state state_ref="oval:ssg:ste:166"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check that auto-update of firefox is disabled" id="oval:ssg:tst:121" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for disable javaScript context menu is disabled" id="oval:ssg:tst:123" version="1">
       <ind:object object_ref="oval:ssg:obj:167"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check if TLS is enabled" id="oval:ssg:tst:123" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check that hiding or changing status bar is disabled" id="oval:ssg:tst:125" version="1">
       <ind:object object_ref="oval:ssg:obj:168"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for SSL Version 3 preferences" id="oval:ssg:tst:125" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check that changing the status bar text is disabled" id="oval:ssg:tst:127" version="1">
       <ind:object object_ref="oval:ssg:obj:169"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for move or resize windows disabled" id="oval:ssg:tst:127" version="1">
+    <ind:textfilecontent54_test check="all" comment="raise or lower windows is disabled" id="oval:ssg:tst:129" version="1">
       <ind:object object_ref="oval:ssg:obj:170"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check that hiding or changing status bar is disabled" id="oval:ssg:tst:129" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for move or resize windows disabled" id="oval:ssg:tst:131" version="1">
       <ind:object object_ref="oval:ssg:obj:171"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for disable javaScript context menu is disabled" id="oval:ssg:tst:131" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for configuration filename" id="oval:ssg:tst:133" version="1">
       <ind:object object_ref="oval:ssg:obj:172"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for Auto download Actions installed" id="oval:ssg:tst:133" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for obscure_value" id="oval:ssg:tst:135" version="1">
       <ind:object object_ref="oval:ssg:obj:173"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check that changing the status bar text is disabled" id="oval:ssg:tst:135" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for non-secure page warning configured" id="oval:ssg:tst:137" version="1">
       <ind:object object_ref="oval:ssg:obj:174"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for home page configured" id="oval:ssg:tst:137" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for open_confirmation configured" id="oval:ssg:tst:139" version="1">
       <ind:object object_ref="oval:ssg:obj:175"/>
       <ind:state state_ref="oval:ssg:ste:176"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check that the password_store is disabled" id="oval:ssg:tst:139" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check that the password_store is disabled" id="oval:ssg:tst:141" version="1">
       <ind:object object_ref="oval:ssg:obj:177"/>
     </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for addons plugin updates" id="oval:ssg:tst:141" version="1">
+    <ind:textfilecontent54_test check="all" comment="Check for pop-up_windows installed" id="oval:ssg:tst:143" version="1">
       <ind:object object_ref="oval:ssg:obj:178"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test check="all" comment="Check search plugin update capability is disabled" id="oval:ssg:tst:145" version="1">
+      <ind:object object_ref="oval:ssg:obj:179"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test check="all" comment="Check that the hell_protocol is disabled" id="oval:ssg:tst:147" version="1">
+      <ind:object object_ref="oval:ssg:obj:180"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test check="all" comment="Check if TLS is enabled" id="oval:ssg:tst:149" version="1">
+      <ind:object object_ref="oval:ssg:obj:181"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test check="all" comment="Check SSL 2.0 protocol disabled" id="oval:ssg:tst:151" version="1">
+      <ind:object object_ref="oval:ssg:obj:182"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test check="all" comment="Check for SSL Version 3 preferences" id="oval:ssg:tst:153" version="1">
+      <ind:object object_ref="oval:ssg:obj:183"/>
+    </ind:textfilecontent54_test>
+    <ind:textfilecontent54_test check="all" comment="Enable Certification verification" id="oval:ssg:tst:155" version="1">
+      <ind:object object_ref="oval:ssg:obj:184"/>
     </ind:textfilecontent54_test>
     <ind:family_test check="all" check_existence="at_least_one_exists" comment="installed OS part of unix family" id="oval:ssg:tst:101" version="1">
       <ind:object object_ref="oval:ssg:obj:103"/>
@@ -2538,51 +2558,40 @@ The output should return:
     <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="Firefox is installed" id="oval:ssg:tst:102" version="1">
       <linux:object object_ref="oval:ssg:obj:105"/>
     </linux:rpminfo_test>
-    <ind:textfilecontent54_test check="all" comment="Check for configuration filename" id="oval:ssg:tst:143" version="1">
-      <ind:object object_ref="oval:ssg:obj:179"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check SSL 2.0 protocol disabled" id="oval:ssg:tst:145" version="1">
-      <ind:object object_ref="oval:ssg:obj:180"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check search plugin update capability is disabled" id="oval:ssg:tst:147" version="1">
-      <ind:object object_ref="oval:ssg:obj:181"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="raise or lower windows is disabled" id="oval:ssg:tst:149" version="1">
-      <ind:object object_ref="oval:ssg:obj:182"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for pop-up_windows installed" id="oval:ssg:tst:151" version="1">
-      <ind:object object_ref="oval:ssg:obj:183"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Enable Certification verification" id="oval:ssg:tst:153" version="1">
-      <ind:object object_ref="oval:ssg:obj:184"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for autofill_passwords disabled" id="oval:ssg:tst:155" version="1">
-      <ind:object object_ref="oval:ssg:obj:185"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check for non-secure page warning configured" id="oval:ssg:tst:157" version="1">
-      <ind:object object_ref="oval:ssg:obj:186"/>
-    </ind:textfilecontent54_test>
+    <linux:rpminfo_test check="all" check_existence="any_exist" comment="Installed version of firefox is greater than ESR 31.5" id="oval:ssg:tst:157" version="1">
+      <linux:object object_ref="oval:ssg:obj:185"/>
+      <linux:state state_ref="oval:ssg:ste:186"/>
+    </linux:rpminfo_test>
   </tests>
   <objects>
     <ind:textfilecontent54_object id="oval:ssg:obj:158" version="1">
-      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox\/defaults\/preferences</ind:path>
-      <ind:filename operation="pattern match">^.*\.js$</ind:filename>
-      <ind:pattern operation="pattern match">^pref\("general.config.obscure_value",[\s]+0\);$</ind:pattern>
+      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
+      <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
+      <ind:pattern operation="pattern match">^lockPref\("extensions.update.enabled",[\s]+false\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:159" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("privacy.sanitize.promptOnSanitize",[\s]+false\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("browser.helperApps.alwaysAsk.force",[\s]+true\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
-    <linux:rpminfo_object id="oval:ssg:obj:160" version="1">
-      <linux:name>firefox</linux:name>
-    </linux:rpminfo_object>
+    <ind:textfilecontent54_object id="oval:ssg:obj:160" version="1">
+      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
+      <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
+      <ind:pattern operation="pattern match">^lockPref\("app.update.enabled",[\s]+false\);$</ind:pattern>
+      <ind:instance datatype="int">1</ind:instance>
+    </ind:textfilecontent54_object>
+    <ind:textfilecontent54_object id="oval:ssg:obj:161" version="1">
+      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
+      <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
+      <ind:pattern operation="pattern match">^lockPref\("browser.formfill.enable",[\s]+false\);$</ind:pattern>
+      <ind:instance datatype="int">1</ind:instance>
+    </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:162" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("network.protocol-handler.external.shell",[\s]+false\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("signon.prefillForms",[\s]+false\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:163" version="1">
@@ -2594,67 +2603,67 @@ The output should return:
     <ind:textfilecontent54_object id="oval:ssg:obj:164" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("browser.formfill.enable",[\s]+false\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("privacy.sanitize.promptOnSanitize",[\s]+false\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:165" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("plugin.disable_full_page_plugin_for_types",[\s]+"(\S+)"\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("browser.startup.homepage",[\s]+"(\S+)"\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:167" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("app.update.enabled",[\s]+false\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("dom.event.contextmenu.enabled",[\s]+false\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:168" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("security.enable_tls",[\s]+true\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("dom.disable_window_status_change",[\s]+true\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:169" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("security.enable_ssl3",[\s]+false\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("dom.disable_window_open_feature.status",[\s]+true\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:170" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("dom.disable_window_move_resize",[\s]+true\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("dom.disable_window_flip",[\s]+true\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:171" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("dom.disable_window_status_change",[\s]+true\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("dom.disable_window_move_resize",[\s]+true\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:172" version="1">
-      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
-      <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("dom.event.contextmenu.enabled",[\s]+false\);$</ind:pattern>
+      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox\/defaults\/preferences</ind:path>
+      <ind:filename operation="pattern match">^.*\.js$</ind:filename>
+      <ind:pattern operation="pattern match">^pref\("general.config.filename",[\s]+"(\S+)\.cfg"\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:173" version="1">
-      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
-      <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("browser.helperApps.alwaysAsk.force",[\s]+true\);$</ind:pattern>
+      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox\/defaults\/preferences</ind:path>
+      <ind:filename operation="pattern match">^.*\.js$</ind:filename>
+      <ind:pattern operation="pattern match">^pref\("general.config.obscure_value",[\s]+0\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:174" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("dom.disable_window_open_feature.status",[\s]+true\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("security.warn_leaving_secure",[\s]+true\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:175" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("browser.startup.homepage",[\s]+"(\S+)"\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("plugin.disable_full_page_plugin_for_types",[\s]+"(\S+)"\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:177" version="1">
@@ -2666,41 +2675,37 @@ The output should return:
     <ind:textfilecontent54_object id="oval:ssg:obj:178" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("extensions.update.enabled",[\s]+false\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("dom.disable_window_open_feature.status",[\s]+true\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
-    <ind:family_object id="oval:ssg:obj:103" version="1"/>
-    <linux:rpminfo_object id="oval:ssg:obj:105" version="1">
-      <linux:name>firefox</linux:name>
-    </linux:rpminfo_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:179" version="1">
-      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox\/defaults\/preferences</ind:path>
-      <ind:filename operation="pattern match">^.*\.js$</ind:filename>
-      <ind:pattern operation="pattern match">^pref\("general.config.filename",[\s]+"(\S+)\.cfg"\);$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
-    <ind:textfilecontent54_object id="oval:ssg:obj:180" version="1">
-      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
-      <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("security.enable_ssl2",[\s]+false\);$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
-    <ind:textfilecontent54_object id="oval:ssg:obj:181" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
       <ind:pattern operation="pattern match">^lockPref\("browser.search.update",[\s]+false\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
+    <ind:textfilecontent54_object id="oval:ssg:obj:180" version="1">
+      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
+      <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
+      <ind:pattern operation="pattern match">^lockPref\("network.protocol-handler.external.shell",[\s]+false\);$</ind:pattern>
+      <ind:instance datatype="int">1</ind:instance>
+    </ind:textfilecontent54_object>
+    <ind:textfilecontent54_object id="oval:ssg:obj:181" version="1">
+      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
+      <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
+      <ind:pattern operation="pattern match">^lockPref\("security.enable_tls",[\s]+true\);$</ind:pattern>
+      <ind:instance datatype="int">1</ind:instance>
+    </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:182" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("dom.disable_window_flip",[\s]+true\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("security.enable_ssl2",[\s]+false\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:183" version="1">
       <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
       <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("dom.disable_window_open_feature.status",[\s]+true\);$</ind:pattern>
+      <ind:pattern operation="pattern match">^lockPref\("security.enable_ssl3",[\s]+false\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
     <ind:textfilecontent54_object id="oval:ssg:obj:184" version="1">
@@ -2709,35 +2714,30 @@ The output should return:
       <ind:pattern operation="pattern match">^lockPref\("security.default_personal_cert",[\s]+"Ask Every Time"\);$</ind:pattern>
       <ind:instance datatype="int">1</ind:instance>
     </ind:textfilecontent54_object>
-    <ind:textfilecontent54_object id="oval:ssg:obj:185" version="1">
-      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
-      <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("signon.prefillForms",[\s]+false\);$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
-    <ind:textfilecontent54_object id="oval:ssg:obj:186" version="1">
-      <ind:path operation="pattern match">^\/usr\/(|local\/)lib(|64)\/firefox</ind:path>
-      <ind:filename operation="pattern match">^.*\.cfg$</ind:filename>
-      <ind:pattern operation="pattern match">^lockPref\("security.warn_leaving_secure",[\s]+true\);$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
+    <ind:family_object id="oval:ssg:obj:103" version="1"/>
+    <linux:rpminfo_object id="oval:ssg:obj:105" version="1">
+      <linux:name>firefox</linux:name>
+    </linux:rpminfo_object>
+    <linux:rpminfo_object id="oval:ssg:obj:185" version="1">
+      <linux:name>firefox</linux:name>
+    </linux:rpminfo_object>
   </objects>
   <states>
-    <linux:rpminfo_state id="oval:ssg:ste:161" version="1">
-      <linux:evr operation="greater than" datatype="evr_string">3.0.0</linux:evr>
-    </linux:rpminfo_state>
     <ind:textfilecontent54_state id="oval:ssg:ste:166" version="1">
-      <ind:subexpression operation="equals" var_check="all" var_ref="oval:ssg:var:187"/>
+      <ind:subexpression datatype="string" operation="equals" var_check="all" var_ref="oval:ssg:var:187"/>
     </ind:textfilecontent54_state>
     <ind:textfilecontent54_state id="oval:ssg:ste:176" version="1">
-      <ind:subexpression datatype="string" operation="equals" var_check="all" var_ref="oval:ssg:var:188"/>
+      <ind:subexpression operation="equals" var_check="all" var_ref="oval:ssg:var:188"/>
     </ind:textfilecontent54_state>
     <ind:family_state id="oval:ssg:ste:104" version="1">
       <ind:family>unix</ind:family>
     </ind:family_state>
+    <linux:rpminfo_state id="oval:ssg:ste:186" version="1">
+      <linux:evr operation="greater than" datatype="evr_string">3.0.0</linux:evr>
+    </linux:rpminfo_state>
   </states>
   <variables>
-    <external_variable id="oval:ssg:var:187" datatype="string" version="1" comment="Expected file types"/>
-    <external_variable id="oval:ssg:var:188" datatype="string" version="1" comment="Expected default home page"/>
+    <external_variable id="oval:ssg:var:187" datatype="string" version="1" comment="Expected default home page"/>
+    <external_variable id="oval:ssg:var:188" datatype="string" version="1" comment="Expected file types"/>
   </variables>
 </oval_definitions></ds:component></ds:data-stream-collection>
