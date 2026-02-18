@@ -825,11 +825,13 @@ If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> progr
 to read audit rules during daemon startup (the default), add the following lines to a file
 with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
 loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
-If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
+    If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
 rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
 in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
 b64 as appropriate for your system:
+
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
   </td>
   <td xml:lang="en-US">
@@ -846,7 +848,9 @@ to have an audit trail of modules that have been introduced into the kernel.
   <td xml:lang="en-US">
 To capture kernel module loading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
+
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F key=modules</pre>
+
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
 to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
@@ -888,7 +892,7 @@ of what was executed on the system, as well as, for accountability purposes.
 </tr>
 <tr>
   <td>IA-5(f)<br/>IA-5(1)(a)<br/>CM-6(a)</td>
-  <td>N/A</td>
+  <td>CCE-91168-5</td>
   <td>Set Password Minimum Length in login.defs</td>
   <td xml:lang="en-US">
 To specify password length requirements for new accounts, edit the file
@@ -954,7 +958,7 @@ Use of a complex password helps to increase the time and resources required
 to compromise the password. Password complexity, or strength, is a measure of
 the effectiveness of a password in resisting attempts at guessing and brute-force
 attacks.
-<br /><br />
+<br />
 Password complexity is one factor of several that determines how long it takes
 to crack a password. The more complex the password, the greater the number of
 possble combinations that need to be tested before the password is compromised.
@@ -987,7 +991,7 @@ compromose the password.
 </tr>
 <tr>
   <td>IA-5(c)<br/>IA-5(1)(a)<br/>CM-6(a)<br/>IA-5(4)</td>
-  <td>N/A</td>
+  <td>CCE-91157-8</td>
   <td>Ensure PAM Enforces Password Requirements - Minimum Special Characters</td>
   <td xml:lang="en-US">
 The pam_pwquality module's <tt>ocredit=</tt> parameter controls requirements for
@@ -1006,7 +1010,7 @@ attacks.
 <br /><br />
 Password complexity is one factor of several that determines how long it takes
 to crack a password. The more complex the password, the greater the number of
-possble combinations that need to be tested before the password is compromised.
+possible combinations that need to be tested before the password is compromised.
 Requiring a minimum number of special characters makes password guessing attacks
 more difficult by ensuring a larger search space.
   </td>
@@ -1024,7 +1028,7 @@ length credit for each uppercase character. Modify the <tt>ucredit</tt> setting 
 <tt>/etc/security/pwquality.conf</tt> to require the use of an uppercase character in passwords.
   </td>
   <td xml:lang="en-US">
-Use of a complex password helps to increase the time and resources reuiqred to compromise the password.
+Use of a complex password helps to increase the time and resources required to compromise the password.
 Password complexity, or strength, is a measure of the effectiveness of a password in resisting attempts
 at guessing and brute-force attacks.
 <br /><br />
@@ -1091,6 +1095,82 @@ is different from account lockout, which is provided by the pam_faillock module.
   <td>var_password_pam_retry=3</td>
 </tr>
 <tr>
+  <td>CM-6(a)<br/>AC-7(a)</td>
+  <td>CCE-85842-3</td>
+  <td>Lock Accounts After Failed Password Attempts</td>
+  <td xml:lang="en-US">
+This rule configures the system to lock out accounts after a number of incorrect login attempts
+using <tt>pam_faillock.so</tt>.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.
+  </td>
+  <td xml:lang="en-US">
+Locking out user accounts after a number of incorrect attempts prevents direct password
+guessing attacks. In combination with the <tt>silent</tt> option, user enumeration attacks
+are also mitigated.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>CM-6(a)<br/>AC-7(b)<br/>IA-5(c)</td>
+  <td>CCE-91171-9</td>
+  <td>Configure the root Account for Failed Password Attempts</td>
+  <td xml:lang="en-US">
+This rule configures the system to lock out the <tt>root</tt> account after a number of
+incorrect login attempts using <tt>pam_faillock.so</tt>.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.
+  </td>
+  <td xml:lang="en-US">
+By limiting the number of failed logon attempts, the risk of unauthorized system access via
+user password guessing, also known as brute-forcing, is reduced. Limits are imposed by locking
+the account.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>CM-6(a)<br/>AC-7(a)</td>
+  <td>CCE-91169-3</td>
+  <td>Set Interval For Counting Failed Password Attempts</td>
+  <td xml:lang="en-US">
+Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
+to lock out an account after a number of incorrect login attempts within a specified time
+period.
+  </td>
+  <td xml:lang="en-US">
+By limiting the number of failed logon attempts the risk of unauthorized system
+access via user password guessing, otherwise known as brute-forcing, is reduced.
+Limits are imposed by locking the account.
+  </td>
+  <td></td>
+</tr>
+<tr>
+  <td>CM-6(a)<br/>AC-7(b)</td>
+  <td>CCE-85841-5</td>
+  <td>Set Lockout Time for Failed Password Attempts</td>
+  <td xml:lang="en-US">
+This rule configures the system to lock out accounts during a specified time period after a
+number of incorrect login attempts using <tt>pam_faillock.so</tt>.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid any errors when manually editing these files,
+it is recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+depending on the OS version.
+  </td>
+  <td xml:lang="en-US">
+Locking out user accounts after a number of incorrect attempts prevents direct password
+guessing attacks. Ensuring that an administrator is involved in unlocking locked accounts
+draws appropriate attention to such situations.
+  </td>
+  <td></td>
+</tr>
+<tr>
   <td>CM-6(a)</td>
   <td>CCE-85850-6</td>
   <td>Ensure Logrotate Runs Periodically</td>
@@ -1153,7 +1233,7 @@ the system. Protection of this file is critical for system security.
   <td>CCE-85808-4</td>
   <td>Verify Group Who Owns shadow File</td>
   <td xml:lang="en-US">
- To properly set the group owner of <code>/etc/shadow</code>, run the command: <pre>$ sudo chgrp root /etc/shadow</pre>
+ To properly set the group owner of <code>/etc/shadow</code>, run the command: <pre>$ sudo chgrp shadow /etc/shadow</pre>
   </td>
   <td xml:lang="en-US">
 The <tt>/etc/shadow</tt> file stores password hashes. Protection of this file is
@@ -1342,7 +1422,7 @@ intercepted and either read or altered.
 </tr>
 <tr>
   <td>CM-6(a)</td>
-  <td>N/A</td>
+  <td>CCE-91161-0</td>
   <td>Ensure rsyslog is Installed</td>
   <td xml:lang="en-US">
 Rsyslog is installed by default. The <code>rsyslog</code> package can be installed with the following command: <pre> $ sudo zypper install rsyslog</pre>
@@ -1555,7 +1635,7 @@ deprecated.
 </tr>
 <tr>
   <td>CM-6(a)<br/>AU-4(1)</td>
-  <td>N/A</td>
+  <td>CCE-91162-8</td>
   <td>Enable rsyslog Service</td>
   <td xml:lang="en-US">
 The <tt>rsyslog</tt> service provides syslog-style logging by default on SUSE Linux Enterprise 15.
@@ -1796,7 +1876,14 @@ The <code>firewalld</code> package can be installed with the following command:
 $ sudo zypper install firewalld</pre>
   </td>
   <td xml:lang="en-US">
-The firewalld package should be installed to provide access control methods.
+"Firewalld" provides an easy and effective way to block/limit remote access to the system via ports, services, and protocols.
+
+Remote access services, such as those providing remote access to network devices and information systems, which lack automated control capabilities, increase risk and make remote user access management difficult at best.
+
+Remote access is access to DoD nonpublic information systems by an authorized user (or an information system) communicating through an external, non-organization-controlled network. Remote access methods include, for example, dial-up, broadband, and wireless.
+
+SUSE Linux Enterprise 15 functionality (e.g., SSH) must be capable of taking enforcement action if the audit reveals unauthorized activity.
+Automated control of remote access sessions allows organizations to ensure ongoing compliance with remote access policies by enforcing connection rules of remote access applications on a variety of information system components (e.g., servers, workstations, notebook computers, smartphones, and tablets)."
   </td>
   <td></td>
 </tr>
@@ -2113,7 +2200,7 @@ log size, although some activity would not be logged.
 <tr>
   <td>CM-7(a)<br/>CM-7(b)<br/>SC-5(1)<br/>SC-5(2)<br/>SC-5(3)(a)<br/>CM-6(a)</td>
   <td>CCE-83283-2</td>
-  <td>Enable Kernel Parameter to Use TCP Syncookies on IPv4 Interfaces</td>
+  <td>Enable Kernel Parameter to Use TCP Syncookies on Network Interfaces</td>
   <td xml:lang="en-US">
 To set the runtime status of the <code>net.ipv4.tcp_syncookies</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.tcp_syncookies=1</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>net.ipv4.tcp_syncookies = 1</pre>
@@ -2352,7 +2439,7 @@ To make sure that the setting is persistent, add the following line to a file in
   <td xml:lang="en-US">
 Address space layout randomization (ASLR) makes it more difficult for an
 attacker to predict the location of attack code they have introduced into a
-process's address space during an attempt at exploitation.  Additionally,
+process's address space during an attempt at exploitation. Additionally,
 ASLR makes it more difficult for an attacker to know the location of
 existing code in order to re-purpose it using return oriented programming
 (ROP) techniques.

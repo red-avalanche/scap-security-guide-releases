@@ -669,7 +669,9 @@ malicious processes that attempt to delete log files to conceal their presence.
   <td xml:lang="en-US">
 To capture kernel module unloading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
+
 <pre>-a always,exit -F arch=<i>ARCH</i> -S delete_module -F key=modules</pre>
+
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
 to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
@@ -694,11 +696,13 @@ If the <tt>auditd</tt> daemon is configured to use the <tt>augenrules</tt> progr
 to read audit rules during daemon startup (the default), add the following lines to a file
 with suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt> to capture kernel module
 loading and unloading events, setting ARCH to either b32 or b64 as appropriate for your system:
+
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
-If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
+    If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt> utility to read audit
 rules during daemon startup, add the following lines to <tt>/etc/audit/audit.rules</tt> file
 in order to capture kernel module loading and unloading events, setting ARCH to either b32 or
 b64 as appropriate for your system:
+
 <pre>-a always,exit -F arch=<i>ARCH</i> -S finit_module -F key=modules</pre>
   </td>
   <td xml:lang="en-US">
@@ -715,7 +719,9 @@ to have an audit trail of modules that have been introduced into the kernel.
   <td xml:lang="en-US">
 To capture kernel module loading events, use following line, setting ARCH to
 either b32 for 32-bit system, or having two lines for both b32 and b64 in case your system is 64-bit:
+
 <pre>-a always,exit -F arch=<i>ARCH</i> -S init_module -F key=modules</pre>
+
 
 Place to add the line depends on a way <tt>auditd</tt> daemon is configured. If it is configured
 to use the <tt>augenrules</tt> program (the default), add the line to a file with suffix
@@ -1453,9 +1459,9 @@ Install McAfee Endpoint Security for Linux antivirus software
 which is provided for DoD systems and uses signatures to search for the
 presence of viruses on the filesystem.
 
-The <code>mcafeetp</code> package can be installed with the following command:
+The <code>McAfeeTP</code> package can be installed with the following command:
 <pre>
-$ sudo yum install mcafeetp</pre>
+$ sudo yum install McAfeeTP</pre>
   </td>
   <td xml:lang="en-US">
 Virus scanning software can be used to detect if a system has been compromised by
@@ -2092,9 +2098,9 @@ elapse until the account would be automatically disabled. See the
 <tt>useradd</tt> man page for more information.
   </td>
   <td xml:lang="en-US">
-Disabling inactive accounts ensures that accounts which may not
-have been responsibly removed are not available to attackers
-who may have compromised their credentials.
+Inactive identifiers pose a risk to systems and applications because attackers may exploit an inactive identifier and potentially obtain undetected access to the system.
+Disabling inactive accounts ensures that accounts which may not have been responsibly removed are not available to attackers who may have compromised their credentials.
+Owners of inactive accounts will not notice if unauthorized access to their user account has been obtained.
   </td>
   <td>var_account_disable_post_pw_expiration=35</td>
 </tr>
@@ -2103,37 +2109,30 @@ who may have compromised their credentials.
   <td>N/A</td>
   <td>Configure the Firewalld Ports</td>
   <td xml:lang="en-US">
-Configure the <tt>firewalld</tt> ports to allow approved
-services to have access to the system. To configure <tt>firewalld</tt>
-to open ports, run the following command:
-<pre>$ sudo firewall-cmd --permanent --add-port=<i>port_number</i>/tcp</pre>
-or
-<pre>$ sudo firewall-cmd --permanent --add-port=<i>service_name</i></pre>
-Run the command list above for each of the ports listed below:
-
-To configure <code>firewalld</code> to allow access, run the following command(s):
-
-
-<code>firewall-cmd --permanent --add-service=ssh</code>
+Configure the <tt>firewalld</tt> ports to allow approved services to have access to the system.
+To configure <tt>firewalld</tt> to open ports, run the following command:
+<pre>firewall-cmd --permanent --add-port=<i>port_number/tcp</i></pre>
+To configure <tt>firewalld</tt> to allow access for pre-defined services, run the following
+command:
+<pre>firewall-cmd --permanent --add-service=<i>service_name</i></pre>
   </td>
   <td xml:lang="en-US">
-In order to prevent unauthorized connection of devices, unauthorized
-transfer of information, or unauthorized tunneling (i.e., embedding of data
-types within data types), organizations must disable or restrict unused or
-unnecessary physical and logical ports/protocols on information systems.
+In order to prevent unauthorized connection of devices, unauthorized transfer of information,
+or unauthorized tunneling (i.e., embedding of data types within data types), organizations must
+disable or restrict unused or unnecessary physical and logical ports/protocols on information
+systems.
 <br /><br />
-Operating systems are capable of providing a wide variety of functions and
-services. Some of the functions and services provided by default may not be
-necessary to support essential organizational operations.
-Additionally, it is sometimes convenient to provide multiple services from
-a single component (e.g., VPN and IPS); however, doing so increases risk
-over limiting the services provided by any one component.
+Operating systems are capable of providing a wide variety of functions and services.
+Some of the functions and services provided by default may not be necessary to support
+essential organizational operations.
+Additionally, it is sometimes convenient to provide multiple services from a single component
+(e.g., VPN and IPS); however, doing so increases risk over limiting the services provided by
+one component.
 <br /><br />
-To support the requirements and principles of least functionality, the
-operating system must support the organizational requirements, providing
-only essential capabilities and limiting the use of ports, protocols,
-and/or services to only those required, authorized, and approved to conduct
-official business or to address authorized quality of life issues.
+To support the requirements and principles of least functionality, the operating system must
+support the organizational requirements, providing only essential capabilities and limiting the
+use of ports, protocols, and/or services to only those required, authorized, and approved to
+conduct official business.
   </td>
   <td></td>
 </tr>
@@ -2289,7 +2288,7 @@ Use of a complex password helps to increase the time and resources required
 to compromise the password. Password complexity, or strength, is a measure of
 the effectiveness of a password in resisting attempts at guessing and brute-force
 attacks.
-<br /><br />
+<br />
 Password complexity is one factor of several that determines how long it takes
 to crack a password. The more complex the password, the greater the number of
 possble combinations that need to be tested before the password is compromised.
@@ -2310,7 +2309,7 @@ which contain more than that number of consecutive characters from the same char
 to prevent a run of (<tt>4</tt> + 1) or more identical characters.
   </td>
   <td xml:lang="en-US">
-Use of a complex password helps to increase the time and resources required to comrpomise the password.
+Use of a complex password helps to increase the time and resources required to compromise the password.
 Password complexity, or strength, is a measure of the effectiveness of a password in resisting
 attempts at guessing and brute-force attacks.
 <br />
@@ -2423,7 +2422,7 @@ attacks.
 <br /><br />
 Password complexity is one factor of several that determines how long it takes
 to crack a password. The more complex the password, the greater the number of
-possble combinations that need to be tested before the password is compromised.
+possible combinations that need to be tested before the password is compromised.
 Requiring a minimum number of special characters makes password guessing attacks
 more difficult by ensuring a larger search space.
   </td>
@@ -2434,40 +2433,26 @@ more difficult by ensuring a larger search space.
   <td>N/A</td>
   <td>Limit Password Reuse: password-auth</td>
   <td xml:lang="en-US">
-Do not allow users to reuse recent passwords. This can be
-accomplished by using the <tt>remember</tt> option for the
-<tt>pam_pwhistory</tt> PAM modules.
-<br /><br />
-In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter
-<tt>remember</tt> is present, and that the value
-for the <tt>remember</tt> parameter is <tt>5</tt> or greater. For example:
-<pre>password <tt>required</tt> pam_pwhistory.so <i>...existing_options...</i> remember=<tt>5</tt> use_authtok</pre>
-The DoD STIG requirement is 5 passwords.
+Do not allow users to reuse recent passwords. This can be accomplished by using the
+<tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
   </td>
   <td xml:lang="en-US">
 Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
   </td>
-  <td>var_password_pam_remember_control_flag=required<br/>var_password_pam_remember=5</td>
+  <td></td>
 </tr>
 <tr>
   <td>IA-5(f)<br/>IA-5(1)(e)</td>
   <td>N/A</td>
   <td>Limit Password Reuse: system-auth</td>
   <td xml:lang="en-US">
-Do not allow users to reuse recent passwords. This can be
-accomplished by using the <tt>remember</tt> option for the
-<tt>pam_pwhistory</tt> PAM modules.
-<br /><br />
-In the file <tt>/etc/pam.d/system-auth</tt>, make sure the parameter
-<tt>remember</tt> is present, and that the value
-for the <tt>remember</tt> parameter is <tt>5</tt> or greater. For example:
-<pre>password <tt>required</tt> pam_pwhistory.so <i>...existing_options...</i> remember=<tt>5</tt> use_authtok</pre>
-The DoD STIG requirement is 5 passwords.
+Do not allow users to reuse recent passwords. This can be accomplished by using the
+<tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
   </td>
   <td xml:lang="en-US">
 Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
   </td>
-  <td>var_password_pam_remember_control_flag=required<br/>var_password_pam_remember=5</td>
+  <td></td>
 </tr>
 <tr>
   <td>IA-5(c)<br/>IA-5(1)(a)<br/>CM-6(a)<br/>IA-5(4)</td>
@@ -2481,7 +2466,7 @@ length credit for each uppercase character. Modify the <tt>ucredit</tt> setting 
 <tt>/etc/security/pwquality.conf</tt> to require the use of an uppercase character in passwords.
   </td>
   <td xml:lang="en-US">
-Use of a complex password helps to increase the time and resources reuiqred to compromise the password.
+Use of a complex password helps to increase the time and resources required to compromise the password.
 Password complexity, or strength, is a measure of the effectiveness of a password in resisting attempts
 at guessing and brute-force attacks.
 <br /><br />
@@ -2496,9 +2481,9 @@ the password is compromised.
   <td>N/A</td>
   <td>Set Existing Passwords Maximum Age</td>
   <td xml:lang="en-US">
-Configure non-compliant accounts to enforce a 60-day maximum password lifetime
+Configure non-compliant accounts to enforce a <tt>60</tt>-day maximum password lifetime
 restriction by running the following command:
-<pre>$ sudo chage -M 60 <i>USER</i></pre>
+<pre>$ sudo chage -M <tt>60</tt> <i>USER</i></pre>
   </td>
   <td xml:lang="en-US">
 Any password, no matter how complex, can eventually be cracked. Therefore,
@@ -2507,7 +2492,7 @@ not limit the lifetime of passwords and force users to change their
 passwords, there is the risk that the operating system passwords could be
 compromised.
   </td>
-  <td></td>
+  <td>var_accounts_maximum_age_login_defs=60</td>
 </tr>
 <tr>
   <td>IA-5(f)<br/>IA-5(1)(d)<br/>CM-6(a)</td>
@@ -2534,12 +2519,12 @@ organization's policy regarding password reuse.
   <td xml:lang="en-US">
 If the <tt>auditd</tt> daemon is configured to use the
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
-default), add the following line to a file with suffix <tt>.rules</tt> in the
-directory <tt>/etc/audit/rules.d</tt>:
+default), add the following line to to the bottom of a file with suffix
+<tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
 <pre>-f 2</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to the
-top of the <tt>/etc/audit/audit.rules</tt> file:
+bottom of the <tt>/etc/audit/audit.rules</tt> file:
 <pre>-f 2</pre>
   </td>
   <td xml:lang="en-US">
@@ -2720,11 +2705,7 @@ Using a stronger hashing algorithm makes password cracking attacks more difficul
   <td>Set PAM's Password Hashing Algorithm</td>
   <td xml:lang="en-US">
 The PAM system service can be configured to only store encrypted
-representations of passwords. In
-
-<tt>/etc/pam.d/system-auth</tt>,
-
-the
+representations of passwords. In "/etc/pam.d/password-auth", the
 <tt>password</tt> section of the file controls which PAM modules execute
 during a password change. Set the <tt>pam_unix.so</tt> module in the
 <tt>password</tt> section to include the argument <tt>sha512</tt>, as shown
@@ -2781,10 +2762,12 @@ network(s).
 Verify the system generates an audit record when privileged functions are executed.
 <pre># grep -iw execve <tt>/etc/audit/audit.rules</tt></pre>
 
+
 <pre>-a always,exit -F arch=b32 -S execve -C uid!=euid -F euid=0 -k setuid</pre>
 <pre>-a always,exit -F arch=b64 -S execve -C uid!=euid -F euid=0 -k setuid</pre>
 <pre>-a always,exit -F arch=b32 -S execve -C gid!=egid -F egid=0 -k setgid</pre>
 <pre>-a always,exit -F arch=b64 -S execve -C gid!=egid -F egid=0 -k setgid</pre>
+
 
 If both the "b32" and "b64" audit rules for "SUID" files are not defined, this is a finding.
 If both the "b32" and "b64" audit rules for "SGID" files are not defined, this is a finding.
@@ -2900,8 +2883,8 @@ This rule configures the system to lock out accounts after a number of incorrect
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid any errors when manually editing these files,
-it is recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.
   </td>
   <td xml:lang="en-US">
@@ -2920,8 +2903,8 @@ This rule configures the system to lock out the <tt>root</tt> account after a nu
 incorrect login attempts using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid any errors when manually editing these files,
-it is recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.
   </td>
   <td xml:lang="en-US">
@@ -2938,28 +2921,14 @@ the account.
   <td xml:lang="en-US">
 Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
-period. First make sure the feature is enabled using the following command:
-<br /><br />
-
-<ul>
-<li><pre>authselect enable-feature with-faillock</pre></li>
-</ul>
-<br />
-Then edit the <tt>/etc/security/faillock.conf</tt> file as follows:
-<br /><br />
-<ul>
-<li> add, uncomment or edit the following line:
-<pre>fail_interval = <tt>900</tt></pre></li>
-<li> add or uncomment the following line:
-<pre>silent</pre></li>
-</ul>
+period.
   </td>
   <td xml:lang="en-US">
 By limiting the number of failed logon attempts the risk of unauthorized system
 access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.
   </td>
-  <td>var_accounts_passwords_pam_faillock_fail_interval=900</td>
+  <td></td>
 </tr>
 <tr>
   <td>CM-6(a)<br/>AC-7(b)</td>
@@ -3026,7 +2995,7 @@ to distinguish.
   <td></td>
 </tr>
 <tr>
-  <td>CM-6(a)<br/>AU-8(1)(b)</td>
+  <td>CM-6(a)<br/>AU-8(1)(b)<br/>AU-12(1)</td>
   <td>N/A</td>
   <td>Configure Time Service Maxpoll Interval</td>
   <td xml:lang="en-US">
@@ -4299,6 +4268,7 @@ For example:
 After the settings have been set, run <tt>dconf update</tt>.
   </td>
   <td xml:lang="en-US">
+Automatically mounting file systems permits easy introduction of unknown devices, thereby facilitating malicious activity.
 Disabling automatic mounting in GNOME3 can prevent
 the introduction of malware via removable media.
 It will, however, also prevent desktop users from legitimate use
@@ -4325,6 +4295,7 @@ For example:
 After the settings have been set, run <tt>dconf update</tt>.
   </td>
   <td xml:lang="en-US">
+Automatically mounting file systems permits easy introduction of unknown devices, thereby facilitating malicious activity.
 Disabling automatic mount running in GNOME3 can prevent
 the introduction of malware via removable media.
 It will, however, also prevent desktop users from legitimate use
@@ -4361,7 +4332,7 @@ relatively new transport layer protocol, designed to support
 streaming media and telephony.
 
 To configure the system to prevent the <code>dccp</code>
-kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/dccp.conf</code>:
 <pre>install dccp /bin/true</pre>
   </td>
   <td xml:lang="en-US">
@@ -4379,7 +4350,7 @@ To prevent USB storage devices from being used, configure the kernel module load
 to prevent automatic loading of the USB storage driver.
 
 To configure the system to prevent the <code>usb-storage</code>
-kernel module from being loaded, add the following line to a file in the directory <code>/etc/modprobe.d</code>:
+kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/usb-storage.conf</code>:
 <pre>install usb-storage /bin/true</pre>
 This will prevent the <tt>modprobe</tt> program from loading the <tt>usb-storage</tt>
 module, but will not prevent an administrator (or another program) from using the
@@ -5188,11 +5159,6 @@ For example, to configure the system for a 15 minute delay, add the following to
 <tt>/etc/dconf/db/local.d/00-security-settings</tt>:
 <pre>[org/gnome/desktop/session]
 idle-delay=uint32 900</pre>
-Once the setting has been added, add a lock to
-<tt>/etc/dconf/db/local.d/locks/00-security-settings-lock</tt> to prevent user modification.
-For example:
-<pre>/org/gnome/desktop/session/idle-delay</pre>
-After the settings have been set, run <tt>dconf update</tt>.
   </td>
   <td xml:lang="en-US">
 A session time-out lock is a temporary action taken when a user stops work and moves away from
@@ -5214,10 +5180,6 @@ the screensaver is activated, add or set <tt>lock-delay</tt> to <tt>uint32 <tt>5
 <pre>[org/gnome/desktop/screensaver]
 lock-delay=uint32 <tt>5_seconds</tt>
 </pre>
-Once the setting has been added, add a lock to
-<tt>/etc/dconf/db/local.d/locks/00-security-settings-lock</tt> to prevent user modification.
-For example:
-<pre>/org/gnome/desktop/screensaver/lock-delay</pre>
 After the settings have been set, run <tt>dconf update</tt>.
   </td>
   <td xml:lang="en-US">
@@ -5363,7 +5325,7 @@ Finally, rebuild the <tt>grub.cfg</tt> file by using the
 <li>On BIOS-based machines, issue the following command as <tt>root</tt>:
 <pre>~]# grub2-mkconfig -o /boot/grub2/grub.cfg</pre></li>
 <li>On UEFI-based machines, issue the following command as <tt>root</tt>:
-<pre>~]# grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre></li>
+<pre>~]# grub2-mkconfig -o /boot/grub2/grub.cfg</pre></li>
 </ul>
   </td>
   <td xml:lang="en-US">
@@ -5648,13 +5610,12 @@ access restriction in some configurations.
   <td>N/A</td>
   <td>Deactivate Wireless Network Interfaces</td>
   <td xml:lang="en-US">
-Deactivating wireless network interfaces should prevent
-normal usage of the wireless capability.
+Deactivating wireless network interfaces should prevent normal usage of the wireless
+capability.
 <br /><br />
 
-Configure the system to disable all wireless network interfaces with the
-following command:
-<pre>$ sudo nmcli radio wifi off</pre>
+Configure the system to disable all wireless network interfaces with the following command:
+<pre>$ sudo nmcli radio all off</pre>
   </td>
   <td xml:lang="en-US">
 The use of wireless networking can introduce many different attack vectors into
@@ -5672,6 +5633,19 @@ service to valid network resources.
   <td>N/A</td>
   <td>Configure Multiple DNS Servers in /etc/resolv.conf</td>
   <td xml:lang="en-US">
+
+Determine whether the system is using local or DNS name resolution with the
+following command:
+<pre>$ sudo grep hosts /etc/nsswitch.conf
+hosts: files dns</pre>
+If the DNS entry is missing from the host's line in the "/etc/nsswitch.conf"
+file, the "/etc/resolv.conf" file must be empty.
+Verify the "/etc/resolv.conf" file is empty with the following command:
+<pre>$ sudo ls -al /etc/resolv.conf
+-rw-r--r-- 1 root root 0 Aug 19 08:31 resolv.conf</pre>
+If the DNS entry is found on the host's line of the "/etc/nsswitch.conf" file,
+then verify the following:<br/>
+
 Multiple Domain Name System (DNS) Servers should be configured
 in <tt>/etc/resolv.conf</tt>. This provides redundant name resolution services
 in the event that a domain server crashes. To configure the system to contain
@@ -5702,7 +5676,7 @@ To make sure that the setting is persistent, add the following line to a file in
   <td xml:lang="en-US">
 Address space layout randomization (ASLR) makes it more difficult for an
 attacker to predict the location of attack code they have introduced into a
-process's address space during an attempt at exploitation.  Additionally,
+process's address space during an attempt at exploitation. Additionally,
 ASLR makes it more difficult for an attacker to know the location of
 existing code in order to re-purpose it using return oriented programming
 (ROP) techniques.

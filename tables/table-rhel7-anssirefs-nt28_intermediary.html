@@ -479,9 +479,7 @@ PAE kernel is required to enable either Execute Disable (XD) or No Execute (NX) 
   <td xml:lang="en-US">
 By default on Red Hat Enterprise Linux 7 64-bit systems, ExecShield is
 enabled and can only be disabled if the hardware does not support
-ExecShield or is disabled in <tt>/etc/default/grub</tt>. For Red Hat
-Enterprise Linux 7 32-bit systems, <tt>sysctl</tt> can be used to enable
-ExecShield.
+ExecShield or is disabled in <tt>/etc/default/grub</tt>.
   </td>
   <td xml:lang="en-US">
 ExecShield uses the segmentation feature on all x86 systems to prevent
@@ -1128,7 +1126,7 @@ Use of a complex password helps to increase the time and resources required
 to compromise the password. Password complexity, or strength, is a measure of
 the effectiveness of a password in resisting attempts at guessing and brute-force
 attacks.
-<br /><br />
+<br />
 Password complexity is one factor of several that determines how long it takes
 to crack a password. The more complex the password, the greater the number of
 possble combinations that need to be tested before the password is compromised.
@@ -1180,7 +1178,7 @@ attacks.
 <br /><br />
 Password complexity is one factor of several that determines how long it takes
 to crack a password. The more complex the password, the greater the number of
-possble combinations that need to be tested before the password is compromised.
+possible combinations that need to be tested before the password is compromised.
 Requiring a minimum number of special characters makes password guessing attacks
 more difficult by ensuring a larger search space.
   </td>
@@ -1198,7 +1196,7 @@ length credit for each uppercase character. Modify the <tt>ucredit</tt> setting 
 <tt>/etc/security/pwquality.conf</tt> to require the use of an uppercase character in passwords.
   </td>
   <td xml:lang="en-US">
-Use of a complex password helps to increase the time and resources reuiqred to compromise the password.
+Use of a complex password helps to increase the time and resources required to compromise the password.
 Password complexity, or strength, is a measure of the effectiveness of a password in resisting attempts
 at guessing and brute-force attacks.
 <br /><br />
@@ -1213,26 +1211,13 @@ the password is compromised.
   <td>CCE-82030-8</td>
   <td>Limit Password Reuse</td>
   <td xml:lang="en-US">
-Do not allow users to reuse recent passwords. This can be
-accomplished by using the <tt>remember</tt> option for the <tt>pam_unix</tt>
-or <tt>pam_pwhistory</tt> PAM modules.
-<br /><br />
-In the file <tt>/etc/pam.d/system-auth</tt>, append <tt>remember=<tt>2</tt></tt>
-to the line which refers to the <tt>pam_unix.so</tt> or <tt>pam_pwhistory.so</tt>module, as shown below:
-<ul>
-<li>for the <tt>pam_unix.so</tt> case:
-<pre>password sufficient pam_unix.so <i>...existing_options...</i> remember=<tt>2</tt></pre>
-</li>
-<li>for the <tt>pam_pwhistory.so</tt> case:
-<pre>password requisite pam_pwhistory.so <i>...existing_options...</i> remember=<tt>2</tt></pre>
-</li>
-</ul>
-The DoD STIG requirement is 5 passwords.
+Do not allow users to reuse recent passwords. This can be accomplished by using the
+<tt>remember</tt> option for the <tt>pam_unix</tt> or <tt>pam_pwhistory</tt> PAM modules.
   </td>
   <td xml:lang="en-US">
 Preventing re-use of previous passwords helps ensure that a compromised password is not re-used by a user.
   </td>
-  <td>var_password_pam_unix_remember=2</td>
+  <td></td>
 </tr>
 <tr>
   <td>BP28(R18)</td>
@@ -1243,8 +1228,8 @@ This rule configures the system to lock out accounts after a number of incorrect
 using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid any errors when manually editing these files,
-it is recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.
   </td>
   <td xml:lang="en-US">
@@ -1263,8 +1248,8 @@ This rule configures the system to lock out the <tt>root</tt> account after a nu
 incorrect login attempts using <tt>pam_faillock.so</tt>.
 
 pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
-defined to work as expected. In order to avoid any errors when manually editing these files,
-it is recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as <tt>authselect</tt> or <tt>authconfig</tt>,
 depending on the OS version.
   </td>
   <td xml:lang="en-US">
@@ -1281,31 +1266,14 @@ the account.
   <td xml:lang="en-US">
 Utilizing <tt>pam_faillock.so</tt>, the <tt>fail_interval</tt> directive configures the system
 to lock out an account after a number of incorrect login attempts within a specified time
-period. First make sure the feature is enabled using the following command:
-<br /><br />
-
-<ul>
-<li><pre>authconfig --enablefaillock --update</pre></li>
-</ul>
-<br />
-Then modify the content of both <tt>/etc/pam.d/system-auth</tt> and
-<tt>/etc/pam.d/password-auth</tt> as follows:
-<br /><br />
-<ul>
-<li> edit the fail_interval parameter in the following line <tt>before</tt> the <tt>pam_unix.so</tt>
-statement in the <tt>auth</tt> section, like this:
-<pre>auth required pam_faillock.so preauth silent deny=<tt>3</tt> unlock_time=<tt>900</tt> <tt>fail_interval=<tt>900</tt></tt></pre></li>
-<li> edit the deny parameter in the following line <tt>after</tt> the <tt>pam_unix.so</tt>
-statement in the <tt>auth</tt> section, like this:
-<pre>auth required pam_faillock.so authfail deny=<tt>3</tt> unlock_time=<tt>900</tt> <tt>fail_interval=<tt>900</tt></tt></pre></li>
-</ul>
+period.
   </td>
   <td xml:lang="en-US">
 By limiting the number of failed logon attempts the risk of unauthorized system
 access via user password guessing, otherwise known as brute-forcing, is reduced.
 Limits are imposed by locking the account.
   </td>
-  <td>var_accounts_passwords_pam_faillock_fail_interval=900<br/>var_accounts_passwords_pam_faillock_deny=3<br/>var_accounts_passwords_pam_faillock_unlock_time=900</td>
+  <td></td>
 </tr>
 <tr>
   <td>BP28(R18)</td>
@@ -1679,7 +1647,7 @@ for the end of the TIME_WAIT period.
 <tr>
   <td>BP28(R22)</td>
   <td>CCE-27495-1</td>
-  <td>Enable Kernel Parameter to Use TCP Syncookies on IPv4 Interfaces</td>
+  <td>Enable Kernel Parameter to Use TCP Syncookies on Network Interfaces</td>
   <td xml:lang="en-US">
 To set the runtime status of the <code>net.ipv4.tcp_syncookies</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.tcp_syncookies=1</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>net.ipv4.tcp_syncookies = 1</pre>
@@ -1990,11 +1958,11 @@ To set the runtime status of the <code>kernel.kptr_restrict</code> kernel parame
 To make sure that the setting is persistent, add the following line to a file in the directory <tt>/etc/sysctl.d</tt>: <pre>kernel.kptr_restrict = <tt>1</tt></pre>
   </td>
   <td xml:lang="en-US">
-Exposing kernel pointers (through procfs or <tt>seq_printf()</tt>) exposes
-kernel writeable structures that can contain functions pointers. If a write vulnereability occurs
-in the kernel allowing a write access to any of this structure, the kernel can be compromise. This
-option disallow any program withtout the CAP_SYSLOG capability from getting the kernel pointers addresses,
-replacing them with 0.
+Exposing kernel pointers (through procfs or <tt>seq_printf()</tt>) exposes kernel
+writeable structures which may contain functions pointers. If a write vulnerability
+occurs in the kernel, allowing write access to any of this structure, the kernel can
+be compromised. This option disallow any program without the CAP_SYSLOG capability
+to get the addresses of kernel pointers by replacing them with 0.
   </td>
   <td>sysctl_kernel_kptr_restrict_value=1</td>
 </tr>
@@ -2069,7 +2037,7 @@ To make sure that the setting is persistent, add the following line to a file in
   <td xml:lang="en-US">
 Address space layout randomization (ASLR) makes it more difficult for an
 attacker to predict the location of attack code they have introduced into a
-process's address space during an attempt at exploitation.  Additionally,
+process's address space during an attempt at exploitation. Additionally,
 ASLR makes it more difficult for an attacker to know the location of
 existing code in order to re-purpose it using return oriented programming
 (ROP) techniques.
@@ -2117,7 +2085,7 @@ Configure the number or rounds for the password hashing algorithm. This can be
 accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
 <br /><br />
 In file <tt>/etc/pam.d/password-auth</tt> append <tt>rounds=<tt>65536</tt></tt>
-to the <tt>pam_unix.so</tt> file, as shown below:
+to the <tt>pam_unix.so</tt> entry, as shown below:
 <pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<tt>65536</tt></pre>
 The system's default number of rounds is 5000.
   </td>
@@ -2135,7 +2103,7 @@ Configure the number or rounds for the password hashing algorithm. This can be
 accomplished by using the <tt>rounds</tt> option for the <tt>pam_unix</tt> PAM module.
 <br /><br />
 In file <tt>/etc/pam.d/system-auth</tt> append <tt>rounds=<tt>65536</tt></tt>
-to the <tt>pam_unix.so</tt> file, as shown below:
+to the <tt>pam_unix.so</tt> entry, as shown below:
 <pre>password sufficient pam_unix.so <i>...existing_options...</i> rounds=<tt>65536</tt></pre>
 The system's default number of rounds is 5000.
   </td>
@@ -2150,11 +2118,7 @@ Using a higher number of rounds makes password cracking attacks more difficult.
   <td>Set PAM's Password Hashing Algorithm</td>
   <td xml:lang="en-US">
 The PAM system service can be configured to only store encrypted
-representations of passwords. In
-
-<tt>/etc/pam.d/system-auth</tt>,
-
-the
+representations of passwords. In "/etc/pam.d/password-auth", the
 <tt>password</tt> section of the file controls which PAM modules execute
 during a password change. Set the <tt>pam_unix.so</tt> module in the
 <tt>password</tt> section to include the argument <tt>sha512</tt>, as shown
