@@ -7,7 +7,7 @@
 # This profile is for SUSE Enterprise Linux 11 acting as a server.
 #
 # Benchmark ID:  SUSE-11
-# Benchmark Version:  0.1.40
+# Benchmark Version:  0.1.41
 #
 # XCCDF Version:  1.1
 #
@@ -34,12 +34,16 @@
           
    vars:
    tasks:
+    - name: Test for existence /etc/passwd
+      stat:
+        path: /etc/passwd
+      register: file_exists
+    
     - name: Ensure group owner 0 on /etc/passwd
       file:
-        path: "{{ item }}"
+        path: /etc/passwd
         group: 0
-      with_items:
-        - /etc/passwd
+      when: file_exists.stat.exists
       tags:
         - file_groupowner_etc_passwd
         - medium_severity
@@ -50,12 +54,16 @@
         - PCI-DSS-Req-8.7.c
         - CJIS-5.5.2.2
     
+    - name: Test for existence /etc/passwd
+      stat:
+        path: /etc/passwd
+      register: file_exists
+    
     - name: Ensure owner 0 on /etc/passwd
       file:
-        path: "{{ item }}"
+        path: /etc/passwd
         owner: 0
-      with_items:
-        - /etc/passwd
+      when: file_exists.stat.exists
       tags:
         - file_owner_etc_passwd
         - medium_severity

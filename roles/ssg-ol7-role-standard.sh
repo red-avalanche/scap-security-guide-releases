@@ -8,7 +8,7 @@
 # all of these checks should pass.
 #
 # Benchmark ID:  OL-7
-# Benchmark Version:  0.1.40
+# Benchmark Version:  0.1.41
 #
 # XCCDF Version:  1.1
 #
@@ -24,16 +24,244 @@
 ###############################################################################
 
 ###############################################################################
-# BEGIN fix (1 / 15) for 'rpm_verify_permissions'
+# BEGIN fix (1 / 15) for 'accounts_password_all_shadowed'
 ###############################################################################
-(>&2 echo "Remediating rule 1/15: 'rpm_verify_permissions'")
+(>&2 echo "Remediating rule 1/15: 'accounts_password_all_shadowed'")
+(>&2 echo "FIX FOR THIS RULE 'accounts_password_all_shadowed' IS MISSING!")
+# END fix for 'accounts_password_all_shadowed'
+
+###############################################################################
+# BEGIN fix (2 / 15) for 'no_empty_passwords'
+###############################################################################
+(>&2 echo "Remediating rule 2/15: 'no_empty_passwords'")
+sed --follow-symlinks -i 's/\<nullok\>//g' /etc/pam.d/system-auth
+sed --follow-symlinks -i 's/\<nullok\>//g' /etc/pam.d/password-auth
+# END fix for 'no_empty_passwords'
+
+###############################################################################
+# BEGIN fix (3 / 15) for 'accounts_root_path_dirs_no_write'
+###############################################################################
+(>&2 echo "Remediating rule 3/15: 'accounts_root_path_dirs_no_write'")
+(>&2 echo "FIX FOR THIS RULE 'accounts_root_path_dirs_no_write' IS MISSING!")
+# END fix for 'accounts_root_path_dirs_no_write'
+
+###############################################################################
+# BEGIN fix (4 / 15) for 'root_path_no_dot'
+###############################################################################
+(>&2 echo "Remediating rule 4/15: 'root_path_no_dot'")
+(>&2 echo "FIX FOR THIS RULE 'root_path_no_dot' IS MISSING!")
+# END fix for 'root_path_no_dot'
+
+###############################################################################
+# BEGIN fix (5 / 15) for 'dir_perms_world_writable_sticky_bits'
+###############################################################################
+(>&2 echo "Remediating rule 5/15: 'dir_perms_world_writable_sticky_bits'")
+(>&2 echo "FIX FOR THIS RULE 'dir_perms_world_writable_sticky_bits' IS MISSING!")
+# END fix for 'dir_perms_world_writable_sticky_bits'
+
+###############################################################################
+# BEGIN fix (6 / 15) for 'file_permissions_unauthorized_sgid'
+###############################################################################
+(>&2 echo "Remediating rule 6/15: 'file_permissions_unauthorized_sgid'")
+(>&2 echo "FIX FOR THIS RULE 'file_permissions_unauthorized_sgid' IS MISSING!")
+# END fix for 'file_permissions_unauthorized_sgid'
+
+###############################################################################
+# BEGIN fix (7 / 15) for 'file_permissions_unauthorized_suid'
+###############################################################################
+(>&2 echo "Remediating rule 7/15: 'file_permissions_unauthorized_suid'")
+(>&2 echo "FIX FOR THIS RULE 'file_permissions_unauthorized_suid' IS MISSING!")
+# END fix for 'file_permissions_unauthorized_suid'
+
+###############################################################################
+# BEGIN fix (8 / 15) for 'file_permissions_unauthorized_world_writable'
+###############################################################################
+(>&2 echo "Remediating rule 8/15: 'file_permissions_unauthorized_world_writable'")
+(>&2 echo "FIX FOR THIS RULE 'file_permissions_unauthorized_world_writable' IS MISSING!")
+# END fix for 'file_permissions_unauthorized_world_writable'
+
+###############################################################################
+# BEGIN fix (9 / 15) for 'mount_option_dev_shm_nodev'
+###############################################################################
+(>&2 echo "Remediating rule 9/15: 'mount_option_dev_shm_nodev'")
+function include_mount_options_functions {
+	:
+}
+
+# $1: type of filesystem
+# $2: new mount point option
+function ensure_mount_option_for_vfstype {
+        local _vfstype="$1" _new_opt="$2" _vfstype_points=()
+        _vfstype_points=($(grep -E "[[:space:]]$_vfstype[[:space:]]" /etc/fstab | awk '{print $2}'))
+
+        for _vfstype_point in "${_vfstype_points[@]}"
+        do
+                ensure_mount_option_in_fstab "$_vfstype_point" "$_new_opt"
+        done
+}
+
+# $1: mount point
+# $2: new mount point option
+function ensure_mount_option_in_fstab {
+	local _mount_point="$1" _new_opt="$2" _mount_point_match_regexp="" _previous_mount_opts=""
+	_mount_point_match_regexp="$(get_mount_point_regexp "$_mount_point")"
+
+	if [ $(grep "$_mount_point_match_regexp" /etc/fstab | grep -c "$_new_opt" ) -eq 0 ]; then
+		_previous_mount_opts=$(grep "$_mount_point_match_regexp" /etc/fstab | awk '{print $4}')
+		sed -i "s|\(${_mount_point_match_regexp}.*${_previous_mount_opts}\)|\1,${_new_opt}|" /etc/fstab
+	fi
+}
+
+# $1: mount point
+function get_mount_point_regexp {
+		printf "[[:space:]]%s[[:space:]]" "$1"
+}
+
+# $1: mount point
+function assert_mount_point_in_fstab {
+	local _mount_point_match_regexp
+	_mount_point_match_regexp="$(get_mount_point_regexp "$1")"
+	grep "$_mount_point_match_regexp" -q /etc/fstab \
+		|| { echo "The mount point '$1' is not even in /etc/fstab, so we can't set up mount options" >&2; return 1; }
+}
+
+# $1: mount point
+function remove_defaults_from_fstab_if_overriden {
+	local _mount_point_match_regexp
+	_mount_point_match_regexp="$(get_mount_point_regexp "$1")"
+	if $(grep "$_mount_point_match_regexp" /etc/fstab | grep -q "defaults,")
+	then
+		sed -i "s|\(${_mount_point_match_regexp}.*\)defaults,|\1|" /etc/fstab
+	fi
+}
+
+# $1: mount point
+function ensure_partition_is_mounted {
+	local _mount_point="$1"
+	mkdir -p "$_mount_point" || return 1
+	if mountpoint -q "$_mount_point"; then
+		mount -o remount --target "$_mount_point"
+	else
+		mount --target "$_mount_point"
+	fi
+}
+
+include_mount_options_functions
+
+function perform_remediation {
+	# test "$mount_has_to_exist" = 'yes'
+	if test "yes" = 'yes'; then
+		assert_mount_point_in_fstab /dev/shm || { echo "Not remediating, because there is no record of /dev/shm in /etc/fstab" >&2; return 1; }
+	fi
+
+	ensure_mount_option_in_fstab "/dev/shm" "nodev"
+
+	ensure_partition_is_mounted "/dev/shm"
+}
+
+perform_remediation
+# END fix for 'mount_option_dev_shm_nodev'
+
+###############################################################################
+# BEGIN fix (10 / 15) for 'mount_option_dev_shm_nosuid'
+###############################################################################
+(>&2 echo "Remediating rule 10/15: 'mount_option_dev_shm_nosuid'")
+function include_mount_options_functions {
+	:
+}
+
+# $1: type of filesystem
+# $2: new mount point option
+function ensure_mount_option_for_vfstype {
+        local _vfstype="$1" _new_opt="$2" _vfstype_points=()
+        _vfstype_points=($(grep -E "[[:space:]]$_vfstype[[:space:]]" /etc/fstab | awk '{print $2}'))
+
+        for _vfstype_point in "${_vfstype_points[@]}"
+        do
+                ensure_mount_option_in_fstab "$_vfstype_point" "$_new_opt"
+        done
+}
+
+# $1: mount point
+# $2: new mount point option
+function ensure_mount_option_in_fstab {
+	local _mount_point="$1" _new_opt="$2" _mount_point_match_regexp="" _previous_mount_opts=""
+	_mount_point_match_regexp="$(get_mount_point_regexp "$_mount_point")"
+
+	if [ $(grep "$_mount_point_match_regexp" /etc/fstab | grep -c "$_new_opt" ) -eq 0 ]; then
+		_previous_mount_opts=$(grep "$_mount_point_match_regexp" /etc/fstab | awk '{print $4}')
+		sed -i "s|\(${_mount_point_match_regexp}.*${_previous_mount_opts}\)|\1,${_new_opt}|" /etc/fstab
+	fi
+}
+
+# $1: mount point
+function get_mount_point_regexp {
+		printf "[[:space:]]%s[[:space:]]" "$1"
+}
+
+# $1: mount point
+function assert_mount_point_in_fstab {
+	local _mount_point_match_regexp
+	_mount_point_match_regexp="$(get_mount_point_regexp "$1")"
+	grep "$_mount_point_match_regexp" -q /etc/fstab \
+		|| { echo "The mount point '$1' is not even in /etc/fstab, so we can't set up mount options" >&2; return 1; }
+}
+
+# $1: mount point
+function remove_defaults_from_fstab_if_overriden {
+	local _mount_point_match_regexp
+	_mount_point_match_regexp="$(get_mount_point_regexp "$1")"
+	if $(grep "$_mount_point_match_regexp" /etc/fstab | grep -q "defaults,")
+	then
+		sed -i "s|\(${_mount_point_match_regexp}.*\)defaults,|\1|" /etc/fstab
+	fi
+}
+
+# $1: mount point
+function ensure_partition_is_mounted {
+	local _mount_point="$1"
+	mkdir -p "$_mount_point" || return 1
+	if mountpoint -q "$_mount_point"; then
+		mount -o remount --target "$_mount_point"
+	else
+		mount --target "$_mount_point"
+	fi
+}
+
+include_mount_options_functions
+
+function perform_remediation {
+	# test "$mount_has_to_exist" = 'yes'
+	if test "yes" = 'yes'; then
+		assert_mount_point_in_fstab /dev/shm || { echo "Not remediating, because there is no record of /dev/shm in /etc/fstab" >&2; return 1; }
+	fi
+
+	ensure_mount_option_in_fstab "/dev/shm" "nosuid"
+
+	ensure_partition_is_mounted "/dev/shm"
+}
+
+perform_remediation
+# END fix for 'mount_option_dev_shm_nosuid'
+
+###############################################################################
+# BEGIN fix (11 / 15) for 'rpm_verify_hashes'
+###############################################################################
+(>&2 echo "Remediating rule 11/15: 'rpm_verify_hashes'")
+(>&2 echo "FIX FOR THIS RULE 'rpm_verify_hashes' IS MISSING!")
+# END fix for 'rpm_verify_hashes'
+
+###############################################################################
+# BEGIN fix (12 / 15) for 'rpm_verify_permissions'
+###############################################################################
+(>&2 echo "Remediating rule 12/15: 'rpm_verify_permissions'")
 
 # Declare array to hold list of RPM packages we need to correct permissions for
 declare -a SETPERMS_RPM_LIST
 
 # Create a list of files on the system having permissions different from what
 # is expected by the RPM database
-FILES_WITH_INCORRECT_PERMS=($(rpm -Va --nofiledigest | grep '^.M' | cut -d ' ' -f4-))
+FILES_WITH_INCORRECT_PERMS=($(rpm -Va --nofiledigest | grep '^.M' | awk '{print $NF}'))
 
 # For each file path from that list:
 # * Determine the RPM package the file path is shipped by,
@@ -57,53 +285,9 @@ done
 # END fix for 'rpm_verify_permissions'
 
 ###############################################################################
-# BEGIN fix (2 / 15) for 'rpm_verify_hashes'
+# BEGIN fix (13 / 15) for 'ensure_gpgcheck_globally_activated'
 ###############################################################################
-(>&2 echo "Remediating rule 2/15: 'rpm_verify_hashes'")
-(>&2 echo "FIX FOR THIS RULE 'rpm_verify_hashes' IS MISSING!")
-# END fix for 'rpm_verify_hashes'
-
-###############################################################################
-# BEGIN fix (3 / 15) for 'ensure_oracle_gpgkey_installed'
-###############################################################################
-(>&2 echo "Remediating rule 3/15: 'ensure_oracle_gpgkey_installed'")
-# OL fingerprints below retrieved from "Oracle Linux Unbreakable Linux Network User's Guide"
-# https://docs.oracle.com/cd/E37670_01/E39381/html/ol_import_gpg.html
-readonly OL_FINGERPRINT="4214 4123 FECF C55B 9086 313D 72F9 7B74 EC55 1F03"
-# Location of the key we would like to import (once it's integrity verified)
-readonly OL_RELEASE_KEY="/etc/pki/rpm-gpg/RPM-GPG-KEY-oracle"
-
-RPM_GPG_DIR_PERMS=$(stat -c %a "$(dirname "$OL_RELEASE_KEY")")
-
-# Verify /etc/pki/rpm-gpg directory permissions are safe
-if [ "${RPM_GPG_DIR_PERMS}" -le "755" ]
-then
-  # If they are safe, try to obtain fingerprints from the key file
-  # (to ensure there won't be e.g. CRC error)
-  IFS=$'\n' GPG_OUT=($(gpg --with-fingerprint "${OL_RELEASE_KEY}"))
-  GPG_RESULT=$?
-  # No CRC error, safe to proceed
-  if [ "${GPG_RESULT}" -eq "0" ]
-  then
-    for ITEM in "${GPG_OUT[@]}"
-    do
-      # Filter just hexadecimal fingerprints from gpg's output from
-      # processing of a key file
-      RESULT=$(echo ${ITEM} | sed -n "s/[[:space:]]*Key fingerprint = \(.*\)/\1/p" | tr -s '[:space:]')
-      # If fingerprint matches Oracle Linux 6 and 7 key import the key
-      if [[ ${RESULT} ]] && [[ ${RESULT} = "${OL_FINGERPRINT}" ]] 
-      then
-        rpm --import "${OL_RELEASE_KEY}"
-      fi
-    done
-  fi
-fi
-# END fix for 'ensure_oracle_gpgkey_installed'
-
-###############################################################################
-# BEGIN fix (4 / 15) for 'ensure_gpgcheck_globally_activated'
-###############################################################################
-(>&2 echo "Remediating rule 4/15: 'ensure_gpgcheck_globally_activated'")
+(>&2 echo "Remediating rule 13/15: 'ensure_gpgcheck_globally_activated'")
 # Function to replace configuration setting in config file or add the configuration setting if
 # it does not exist.
 #
@@ -182,210 +366,50 @@ function replace_or_append {
   fi
 }
 
-replace_or_append '/etc/yum.conf' '^gpgcheck' '1' ''
+replace_or_append "/etc/yum.conf" '^gpgcheck' '1' ''
 # END fix for 'ensure_gpgcheck_globally_activated'
 
 ###############################################################################
-# BEGIN fix (5 / 15) for 'security_patches_up_to_date'
+# BEGIN fix (14 / 15) for 'ensure_oracle_gpgkey_installed'
 ###############################################################################
-(>&2 echo "Remediating rule 5/15: 'security_patches_up_to_date'")
+(>&2 echo "Remediating rule 14/15: 'ensure_oracle_gpgkey_installed'")
+# OL fingerprints below retrieved from "Oracle Linux Unbreakable Linux Network User's Guide"
+# https://docs.oracle.com/cd/E37670_01/E39381/html/ol_import_gpg.html
+readonly OL_FINGERPRINT="4214 4123 FECF C55B 9086 313D 72F9 7B74 EC55 1F03"
+# Location of the key we would like to import (once it's integrity verified)
+readonly OL_RELEASE_KEY="/etc/pki/rpm-gpg/RPM-GPG-KEY-oracle"
+
+RPM_GPG_DIR_PERMS=$(stat -c %a "$(dirname "$OL_RELEASE_KEY")")
+
+# Verify /etc/pki/rpm-gpg directory permissions are safe
+if [ "${RPM_GPG_DIR_PERMS}" -le "755" ]
+then
+  # If they are safe, try to obtain fingerprints from the key file
+  # (to ensure there won't be e.g. CRC error)
+  IFS=$'\n' GPG_OUT=($(gpg --with-fingerprint "${OL_RELEASE_KEY}"))
+  GPG_RESULT=$?
+  # No CRC error, safe to proceed
+  if [ "${GPG_RESULT}" -eq "0" ]
+  then
+    for ITEM in "${GPG_OUT[@]}"
+    do
+      # Filter just hexadecimal fingerprints from gpg's output from
+      # processing of a key file
+      RESULT=$(echo ${ITEM} | sed -n "s/[[:space:]]*Key fingerprint = \(.*\)/\1/p" | tr -s '[:space:]')
+      # If fingerprint matches Oracle Linux 6 and 7 key import the key
+      if [[ ${RESULT} ]] && [[ ${RESULT} = "${OL_FINGERPRINT}" ]] 
+      then
+        rpm --import "${OL_RELEASE_KEY}"
+      fi
+    done
+  fi
+fi
+# END fix for 'ensure_oracle_gpgkey_installed'
+
+###############################################################################
+# BEGIN fix (15 / 15) for 'security_patches_up_to_date'
+###############################################################################
+(>&2 echo "Remediating rule 15/15: 'security_patches_up_to_date'")
 yum -y update
 # END fix for 'security_patches_up_to_date'
-
-###############################################################################
-# BEGIN fix (6 / 15) for 'file_permissions_unauthorized_sgid'
-###############################################################################
-(>&2 echo "Remediating rule 6/15: 'file_permissions_unauthorized_sgid'")
-(>&2 echo "FIX FOR THIS RULE 'file_permissions_unauthorized_sgid' IS MISSING!")
-# END fix for 'file_permissions_unauthorized_sgid'
-
-###############################################################################
-# BEGIN fix (7 / 15) for 'dir_perms_world_writable_sticky_bits'
-###############################################################################
-(>&2 echo "Remediating rule 7/15: 'dir_perms_world_writable_sticky_bits'")
-(>&2 echo "FIX FOR THIS RULE 'dir_perms_world_writable_sticky_bits' IS MISSING!")
-# END fix for 'dir_perms_world_writable_sticky_bits'
-
-###############################################################################
-# BEGIN fix (8 / 15) for 'file_permissions_unauthorized_suid'
-###############################################################################
-(>&2 echo "Remediating rule 8/15: 'file_permissions_unauthorized_suid'")
-(>&2 echo "FIX FOR THIS RULE 'file_permissions_unauthorized_suid' IS MISSING!")
-# END fix for 'file_permissions_unauthorized_suid'
-
-###############################################################################
-# BEGIN fix (9 / 15) for 'file_permissions_unauthorized_world_writable'
-###############################################################################
-(>&2 echo "Remediating rule 9/15: 'file_permissions_unauthorized_world_writable'")
-(>&2 echo "FIX FOR THIS RULE 'file_permissions_unauthorized_world_writable' IS MISSING!")
-# END fix for 'file_permissions_unauthorized_world_writable'
-
-###############################################################################
-# BEGIN fix (10 / 15) for 'mount_option_dev_shm_nosuid'
-###############################################################################
-(>&2 echo "Remediating rule 10/15: 'mount_option_dev_shm_nosuid'")
-function include_mount_options_functions {
-	:
-}
-
-# $1: mount point
-# $2: new mount point option
-function ensure_mount_option_in_fstab {
-	local _mount_point="$1" _new_opt="$2" _mount_point_match_regexp="" _previous_mount_opts=""
-	_mount_point_match_regexp="$(get_mount_point_regexp "$_mount_point")"
-
-	if [ $(grep "$_mount_point_match_regexp" /etc/fstab | grep -c "$_new_opt" ) -eq 0 ]; then
-		_previous_mount_opts=$(grep "$_mount_point_match_regexp" /etc/fstab | awk '{print $4}')
-		sed -i "s|\(${_mount_point_match_regexp}.*${_previous_mount_opts}\)|\1,${_new_opt}|" /etc/fstab
-	fi
-}
-
-# $1: mount point
-function get_mount_point_regexp {
-		printf "[[:space:]]%s[[:space:]]" "$1"
-}
-
-# $1: mount point
-function assert_mount_point_in_fstab {
-	local _mount_point_match_regexp
-	_mount_point_match_regexp="$(get_mount_point_regexp "$1")"
-	grep "$_mount_point_match_regexp" -q /etc/fstab \
-		|| { echo "The mount point '$1' is not even in /etc/fstab, so we can't set up mount options" >&2; return 1; }
-}
-
-# $1: mount point
-function remove_defaults_from_fstab_if_overriden {
-	local _mount_point_match_regexp
-	_mount_point_match_regexp="$(get_mount_point_regexp "$1")"
-	if $(grep "$_mount_point_match_regexp" /etc/fstab | grep -q "defaults,")
-	then
-		sed -i "s|\(${_mount_point_match_regexp}.*\)defaults,|\1|" /etc/fstab
-	fi
-}
-
-# $1: mount point
-function ensure_partition_is_mounted {
-	local _mount_point="$1"
-	mkdir -p "$_mount_point" || return 1
-	if mountpoint -q "$_mount_point"; then
-		mount -o remount --target "$_mount_point"
-	else
-		mount --target "$_mount_point"
-	fi
-}
-
-include_mount_options_functions
-
-function perform_remediation {
-	# test "$mount_has_to_exist" = 'yes'
-	if test "yes" = 'yes'; then
-		assert_mount_point_in_fstab /dev/shm || { echo "Not remediating, because there is no record of /dev/shm in /etc/fstab" >&2; return 1; }
-	fi
-
-	ensure_mount_option_in_fstab "/dev/shm" "nosuid"
-
-	ensure_partition_is_mounted "/dev/shm"
-}
-
-perform_remediation
-# END fix for 'mount_option_dev_shm_nosuid'
-
-###############################################################################
-# BEGIN fix (11 / 15) for 'mount_option_dev_shm_nodev'
-###############################################################################
-(>&2 echo "Remediating rule 11/15: 'mount_option_dev_shm_nodev'")
-function include_mount_options_functions {
-	:
-}
-
-# $1: mount point
-# $2: new mount point option
-function ensure_mount_option_in_fstab {
-	local _mount_point="$1" _new_opt="$2" _mount_point_match_regexp="" _previous_mount_opts=""
-	_mount_point_match_regexp="$(get_mount_point_regexp "$_mount_point")"
-
-	if [ $(grep "$_mount_point_match_regexp" /etc/fstab | grep -c "$_new_opt" ) -eq 0 ]; then
-		_previous_mount_opts=$(grep "$_mount_point_match_regexp" /etc/fstab | awk '{print $4}')
-		sed -i "s|\(${_mount_point_match_regexp}.*${_previous_mount_opts}\)|\1,${_new_opt}|" /etc/fstab
-	fi
-}
-
-# $1: mount point
-function get_mount_point_regexp {
-		printf "[[:space:]]%s[[:space:]]" "$1"
-}
-
-# $1: mount point
-function assert_mount_point_in_fstab {
-	local _mount_point_match_regexp
-	_mount_point_match_regexp="$(get_mount_point_regexp "$1")"
-	grep "$_mount_point_match_regexp" -q /etc/fstab \
-		|| { echo "The mount point '$1' is not even in /etc/fstab, so we can't set up mount options" >&2; return 1; }
-}
-
-# $1: mount point
-function remove_defaults_from_fstab_if_overriden {
-	local _mount_point_match_regexp
-	_mount_point_match_regexp="$(get_mount_point_regexp "$1")"
-	if $(grep "$_mount_point_match_regexp" /etc/fstab | grep -q "defaults,")
-	then
-		sed -i "s|\(${_mount_point_match_regexp}.*\)defaults,|\1|" /etc/fstab
-	fi
-}
-
-# $1: mount point
-function ensure_partition_is_mounted {
-	local _mount_point="$1"
-	mkdir -p "$_mount_point" || return 1
-	if mountpoint -q "$_mount_point"; then
-		mount -o remount --target "$_mount_point"
-	else
-		mount --target "$_mount_point"
-	fi
-}
-
-include_mount_options_functions
-
-function perform_remediation {
-	# test "$mount_has_to_exist" = 'yes'
-	if test "yes" = 'yes'; then
-		assert_mount_point_in_fstab /dev/shm || { echo "Not remediating, because there is no record of /dev/shm in /etc/fstab" >&2; return 1; }
-	fi
-
-	ensure_mount_option_in_fstab "/dev/shm" "nodev"
-
-	ensure_partition_is_mounted "/dev/shm"
-}
-
-perform_remediation
-# END fix for 'mount_option_dev_shm_nodev'
-
-###############################################################################
-# BEGIN fix (12 / 15) for 'root_path_no_dot'
-###############################################################################
-(>&2 echo "Remediating rule 12/15: 'root_path_no_dot'")
-(>&2 echo "FIX FOR THIS RULE 'root_path_no_dot' IS MISSING!")
-# END fix for 'root_path_no_dot'
-
-###############################################################################
-# BEGIN fix (13 / 15) for 'accounts_root_path_dirs_no_write'
-###############################################################################
-(>&2 echo "Remediating rule 13/15: 'accounts_root_path_dirs_no_write'")
-(>&2 echo "FIX FOR THIS RULE 'accounts_root_path_dirs_no_write' IS MISSING!")
-# END fix for 'accounts_root_path_dirs_no_write'
-
-###############################################################################
-# BEGIN fix (14 / 15) for 'accounts_password_all_shadowed'
-###############################################################################
-(>&2 echo "Remediating rule 14/15: 'accounts_password_all_shadowed'")
-(>&2 echo "FIX FOR THIS RULE 'accounts_password_all_shadowed' IS MISSING!")
-# END fix for 'accounts_password_all_shadowed'
-
-###############################################################################
-# BEGIN fix (15 / 15) for 'no_empty_passwords'
-###############################################################################
-(>&2 echo "Remediating rule 15/15: 'no_empty_passwords'")
-sed --follow-symlinks -i 's/\<nullok\>//g' /etc/pam.d/system-auth
-sed --follow-symlinks -i 's/\<nullok\>//g' /etc/pam.d/password-auth
-# END fix for 'no_empty_passwords'
 

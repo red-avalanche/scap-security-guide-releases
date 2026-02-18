@@ -17,7 +17,7 @@
 # upstream project homepage is https://www.open-scap.org/security-policies/scap-security-guide/.
 #
 # Benchmark ID:  FIREFOX
-# Benchmark Version:  0.1.40
+# Benchmark Version:  0.1.41
 #
 # XCCDF Version:  1.1
 #
@@ -33,29 +33,9 @@
 ###############################################################################
 
 ###############################################################################
-# BEGIN fix (1 / 28) for 'firefox_preferences-enable_ca_trust'
+# BEGIN fix (1 / 28) for 'firefox_preferences-cookies_clear'
 ###############################################################################
-(>&2 echo "Remediating rule 1/28: 'firefox_preferences-enable_ca_trust'")
-P11=$(readlink /etc/alternatives/libnssckbi.so*)
-P11LIB="/usr/lib/pkcs11/p11-kit-trust.so"
-P11LIB64="/usr/lib64/pkcs11/p11-kit-trust.so"
-
-if ! [[ ${P11} == "${P11LIB64}" ]] || ! [[ ${P11} == "${P11LIB}" ]] ; then
-   /usr/bin/update-ca-trust enable
-fi
-# END fix for 'firefox_preferences-enable_ca_trust'
-
-###############################################################################
-# BEGIN fix (2 / 28) for 'firefox_preferences-dod_root_certificate_installed'
-###############################################################################
-(>&2 echo "Remediating rule 2/28: 'firefox_preferences-dod_root_certificate_installed'")
-(>&2 echo "FIX FOR THIS RULE 'firefox_preferences-dod_root_certificate_installed' IS MISSING!")
-# END fix for 'firefox_preferences-dod_root_certificate_installed'
-
-###############################################################################
-# BEGIN fix (3 / 28) for 'firefox_preferences-cookies_user_notice'
-###############################################################################
-(>&2 echo "Remediating rule 3/28: 'firefox_preferences-cookies_user_notice'")
+(>&2 echo "Remediating rule 1/28: 'firefox_preferences-cookies_clear'")
 # Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
 # preference if it does not exist.
 #
@@ -103,70 +83,7 @@ function firefox_cfg_setting {
       fi
 
       # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"` ; then
-        sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
-      else
-        echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
-      fi
-    fi
-  done
-}
-
-firefox_cfg_setting "stig.cfg" "privacy.sanitize.promptOnSanitize" "false"
-# END fix for 'firefox_preferences-cookies_user_notice'
-
-###############################################################################
-# BEGIN fix (4 / 28) for 'firefox_preferences-cookies_clear'
-###############################################################################
-(>&2 echo "Remediating rule 4/28: 'firefox_preferences-cookies_clear'")
-# Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
-# preference if it does not exist.
-#
-# Expects three arguments:
-#
-# config_file:          Configuration file that will be modified
-# key:                  Configuration option to change
-# value:                Value of the configuration option to change
-#
-#
-# Example Call(s):
-#
-#     Without string or variable:
-#     firefox_cfg_setting "stig.cfg" "extensions.update.enabled" "false"
-#
-#     With string:
-#     firefox_cfg_setting "stig.cfg" "security.default_personal_cert" "\"Ask Every Time\""
-#
-#     With a string variable:
-#     firefox_cfg_setting "stig.cfg" "browser.startup.homepage\" "\"${var_default_home_page}\""
-#
-function firefox_cfg_setting {
-  local firefox_cfg=$1
-  local key=$2
-  local value=$3
-  local firefox_dirs="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
-
-  # Check sanity of input
-  if [ $# -lt "3" ]
-  then
-        echo "Usage: firefox_cfg_setting 'config_cfg_file' 'key_to_search' 'new_value'"
-        echo
-        echo "Aborting."
-        exit 1
-  fi
-
-  # Check the possible Firefox install directories
-  for firefox_dir in ${firefox_dirs}; do
-    # If the Firefox directory exists, then Firefox is installed
-    if [ -d "${firefox_dir}" ]; then
-      # Make sure the Firefox .cfg file exists and has the appropriate permissions
-      if ! [ -f "${firefox_dir}/${firefox_cfg}" ] ; then
-        touch "${firefox_dir}/${firefox_cfg}"
-        chmod 644 "${firefox_dir}/${firefox_cfg}"
-      fi
-
-      # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"` ; then
+      if LC_ALL=C grep -m 1 -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"; then
         sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
       else
         echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
@@ -179,10 +96,10 @@ firefox_cfg_setting "stig.cfg" "privacy.sanitize.sanitizeOnShutdown" "true"
 # END fix for 'firefox_preferences-cookies_clear'
 
 ###############################################################################
-# BEGIN fix (5 / 28) for 'firefox_preferences-lock_settings_obscure'
+# BEGIN fix (2 / 28) for 'firefox_preferences-cookies_user_notice'
 ###############################################################################
-(>&2 echo "Remediating rule 5/28: 'firefox_preferences-lock_settings_obscure'")
-# Function to replace configuration setting(s) in the Firefox preferences JavaScript file or add the
+(>&2 echo "Remediating rule 2/28: 'firefox_preferences-cookies_user_notice'")
+# Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
 # preference if it does not exist.
 #
 # Expects three arguments:
@@ -195,26 +112,24 @@ firefox_cfg_setting "stig.cfg" "privacy.sanitize.sanitizeOnShutdown" "true"
 # Example Call(s):
 #
 #     Without string or variable:
-#     firefox_js_setting "stig_settings.js" "general.config.obscure_value" "0"
+#     firefox_cfg_setting "stig.cfg" "extensions.update.enabled" "false"
 #
 #     With string:
-#     firefox_js_setting "stig_settings.js" "general.config.filename" "\"stig.cfg\""
+#     firefox_cfg_setting "stig.cfg" "security.default_personal_cert" "\"Ask Every Time\""
 #
 #     With a string variable:
-#     firefox_js_setting "stig_settings.js" "general.config.filename" "\"$var_config_file_name\""
+#     firefox_cfg_setting "stig.cfg" "browser.startup.homepage\" "\"${var_default_home_page}\""
 #
-function firefox_js_setting {
-  local firefox_js=$1
+function firefox_cfg_setting {
+  local firefox_cfg=$1
   local key=$2
   local value=$3
   local firefox_dirs="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
-  local firefox_pref="/defaults/pref"
-  local firefox_preferences="/defaults/preferences"
 
   # Check sanity of input
   if [ $# -lt "3" ]
   then
-        echo "Usage: firefox_js_setting 'config_javascript_file' 'key_to_search' 'new_value'"
+        echo "Usage: firefox_cfg_setting 'config_cfg_file' 'key_to_search' 'new_value'"
         echo
         echo "Aborting."
         exit 1
@@ -224,40 +139,49 @@ function firefox_js_setting {
   for firefox_dir in ${firefox_dirs}; do
     # If the Firefox directory exists, then Firefox is installed
     if [ -d "${firefox_dir}" ]; then
-      # Different versions of Firefox have different preferences directories, check for them and set the right one
-      if [ -d "${firefox_dir}/${firefox_pref}" ] ; then
-        local firefox_pref_dir="${firefox_dir}/${firefox_pref}"
-      elif [ -d "${firefox_dir}/${firefox_preferences}" ] ; then
-        local firefox_pref_dir="${firefox_dir}/${firefox_preferences}"
-      else
-        mkdir -m 755 -p "${firefox_dir}/${firefox_preferences}"
-        local firefox_pref_dir="${firefox_dir}/${firefox_preferences}"
-      fi
-
-      # Make sure the Firefox .js file exists and has the appropriate permissions
-      if ! [ -f "${firefox_pref_dir}/${firefox_js}" ] ; then
-        touch "${firefox_pref_dir}/${firefox_js}"
-        chmod 644 "${firefox_pref_dir}/${firefox_js}"
+      # Make sure the Firefox .cfg file exists and has the appropriate permissions
+      if ! [ -f "${firefox_dir}/${firefox_cfg}" ] ; then
+        touch "${firefox_dir}/${firefox_cfg}"
+        chmod 644 "${firefox_dir}/${firefox_cfg}"
       fi
 
       # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^pref(\"${key}\", " "${firefox_pref_dir}/${firefox_js}"` ; then
-        sed -i "s/pref(\"${key}\".*/pref(\"${key}\", ${value});/g" "${firefox_pref_dir}/${firefox_js}"
+      if LC_ALL=C grep -m 1 -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"; then
+        sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
       else
-        echo "pref(\"${key}\", ${value});" >> "${firefox_pref_dir}/${firefox_js}"
+        echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
       fi
     fi
   done
-
 }
 
-firefox_js_setting "stig_settings.js" "general.config.obscure_value" "0"
-# END fix for 'firefox_preferences-lock_settings_obscure'
+firefox_cfg_setting "stig.cfg" "privacy.sanitize.promptOnSanitize" "false"
+# END fix for 'firefox_preferences-cookies_user_notice'
 
 ###############################################################################
-# BEGIN fix (6 / 28) for 'firefox_preferences-lock_settings_config_file'
+# BEGIN fix (3 / 28) for 'firefox_preferences-dod_root_certificate_installed'
 ###############################################################################
-(>&2 echo "Remediating rule 6/28: 'firefox_preferences-lock_settings_config_file'")
+(>&2 echo "Remediating rule 3/28: 'firefox_preferences-dod_root_certificate_installed'")
+(>&2 echo "FIX FOR THIS RULE 'firefox_preferences-dod_root_certificate_installed' IS MISSING!")
+# END fix for 'firefox_preferences-dod_root_certificate_installed'
+
+###############################################################################
+# BEGIN fix (4 / 28) for 'firefox_preferences-enable_ca_trust'
+###############################################################################
+(>&2 echo "Remediating rule 4/28: 'firefox_preferences-enable_ca_trust'")
+P11=$(readlink /etc/alternatives/libnssckbi.so*)
+P11LIB="/usr/lib/pkcs11/p11-kit-trust.so"
+P11LIB64="/usr/lib64/pkcs11/p11-kit-trust.so"
+
+if ! [[ ${P11} == "${P11LIB64}" ]] || ! [[ ${P11} == "${P11LIB}" ]] ; then
+   /usr/bin/update-ca-trust enable
+fi
+# END fix for 'firefox_preferences-enable_ca_trust'
+
+###############################################################################
+# BEGIN fix (5 / 28) for 'firefox_preferences-lock_settings_config_file'
+###############################################################################
+(>&2 echo "Remediating rule 5/28: 'firefox_preferences-lock_settings_config_file'")
 # Function to replace configuration setting(s) in the Firefox preferences JavaScript file or add the
 # preference if it does not exist.
 #
@@ -317,7 +241,7 @@ function firefox_js_setting {
       fi
 
       # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^pref(\"${key}\", " "${firefox_pref_dir}/${firefox_js}"` ; then
+      if LC_ALL=C grep -m 1 -q "^pref(\"${key}\", " "${firefox_pref_dir}/${firefox_js}"; then
         sed -i "s/pref(\"${key}\".*/pref(\"${key}\", ${value});/g" "${firefox_pref_dir}/${firefox_js}"
       else
         echo "pref(\"${key}\", ${value});" >> "${firefox_pref_dir}/${firefox_js}"
@@ -331,9 +255,85 @@ firefox_js_setting "stig_settings.js" "general.config.filename" "\"stig.cfg\""
 # END fix for 'firefox_preferences-lock_settings_config_file'
 
 ###############################################################################
-# BEGIN fix (7 / 28) for 'firefox_preferences-shell_protocol'
+# BEGIN fix (6 / 28) for 'firefox_preferences-lock_settings_obscure'
 ###############################################################################
-(>&2 echo "Remediating rule 7/28: 'firefox_preferences-shell_protocol'")
+(>&2 echo "Remediating rule 6/28: 'firefox_preferences-lock_settings_obscure'")
+# Function to replace configuration setting(s) in the Firefox preferences JavaScript file or add the
+# preference if it does not exist.
+#
+# Expects three arguments:
+#
+# config_file:          Configuration file that will be modified
+# key:                  Configuration option to change
+# value:                Value of the configuration option to change
+#
+#
+# Example Call(s):
+#
+#     Without string or variable:
+#     firefox_js_setting "stig_settings.js" "general.config.obscure_value" "0"
+#
+#     With string:
+#     firefox_js_setting "stig_settings.js" "general.config.filename" "\"stig.cfg\""
+#
+#     With a string variable:
+#     firefox_js_setting "stig_settings.js" "general.config.filename" "\"$var_config_file_name\""
+#
+function firefox_js_setting {
+  local firefox_js=$1
+  local key=$2
+  local value=$3
+  local firefox_dirs="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+  local firefox_pref="/defaults/pref"
+  local firefox_preferences="/defaults/preferences"
+
+  # Check sanity of input
+  if [ $# -lt "3" ]
+  then
+        echo "Usage: firefox_js_setting 'config_javascript_file' 'key_to_search' 'new_value'"
+        echo
+        echo "Aborting."
+        exit 1
+  fi
+
+  # Check the possible Firefox install directories
+  for firefox_dir in ${firefox_dirs}; do
+    # If the Firefox directory exists, then Firefox is installed
+    if [ -d "${firefox_dir}" ]; then
+      # Different versions of Firefox have different preferences directories, check for them and set the right one
+      if [ -d "${firefox_dir}/${firefox_pref}" ] ; then
+        local firefox_pref_dir="${firefox_dir}/${firefox_pref}"
+      elif [ -d "${firefox_dir}/${firefox_preferences}" ] ; then
+        local firefox_pref_dir="${firefox_dir}/${firefox_preferences}"
+      else
+        mkdir -m 755 -p "${firefox_dir}/${firefox_preferences}"
+        local firefox_pref_dir="${firefox_dir}/${firefox_preferences}"
+      fi
+
+      # Make sure the Firefox .js file exists and has the appropriate permissions
+      if ! [ -f "${firefox_pref_dir}/${firefox_js}" ] ; then
+        touch "${firefox_pref_dir}/${firefox_js}"
+        chmod 644 "${firefox_pref_dir}/${firefox_js}"
+      fi
+
+      # If the key exists, change it. Otherwise, add it to the config_file.
+      if LC_ALL=C grep -m 1 -q "^pref(\"${key}\", " "${firefox_pref_dir}/${firefox_js}"; then
+        sed -i "s/pref(\"${key}\".*/pref(\"${key}\", ${value});/g" "${firefox_pref_dir}/${firefox_js}"
+      else
+        echo "pref(\"${key}\", ${value});" >> "${firefox_pref_dir}/${firefox_js}"
+      fi
+    fi
+  done
+
+}
+
+firefox_js_setting "stig_settings.js" "general.config.obscure_value" "0"
+# END fix for 'firefox_preferences-lock_settings_obscure'
+
+###############################################################################
+# BEGIN fix (7 / 28) for 'firefox_preferences-addons_plugin_updates'
+###############################################################################
+(>&2 echo "Remediating rule 7/28: 'firefox_preferences-addons_plugin_updates'")
 # Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
 # preference if it does not exist.
 #
@@ -381,7 +381,7 @@ function firefox_cfg_setting {
       fi
 
       # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"` ; then
+      if LC_ALL=C grep -m 1 -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"; then
         sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
       else
         echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
@@ -390,13 +390,265 @@ function firefox_cfg_setting {
   done
 }
 
-firefox_cfg_setting "stig.cfg" "network.protocol-handler.external.shell" "false"
-# END fix for 'firefox_preferences-shell_protocol'
+firefox_cfg_setting "stig.cfg" "extensions.update.enabled" "false"
+# END fix for 'firefox_preferences-addons_plugin_updates'
 
 ###############################################################################
-# BEGIN fix (8 / 28) for 'firefox_preferences-home_page'
+# BEGIN fix (8 / 28) for 'firefox_preferences-auto-download_actions'
 ###############################################################################
-(>&2 echo "Remediating rule 8/28: 'firefox_preferences-home_page'")
+(>&2 echo "Remediating rule 8/28: 'firefox_preferences-auto-download_actions'")
+# Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
+# preference if it does not exist.
+#
+# Expects three arguments:
+#
+# config_file:          Configuration file that will be modified
+# key:                  Configuration option to change
+# value:                Value of the configuration option to change
+#
+#
+# Example Call(s):
+#
+#     Without string or variable:
+#     firefox_cfg_setting "stig.cfg" "extensions.update.enabled" "false"
+#
+#     With string:
+#     firefox_cfg_setting "stig.cfg" "security.default_personal_cert" "\"Ask Every Time\""
+#
+#     With a string variable:
+#     firefox_cfg_setting "stig.cfg" "browser.startup.homepage\" "\"${var_default_home_page}\""
+#
+function firefox_cfg_setting {
+  local firefox_cfg=$1
+  local key=$2
+  local value=$3
+  local firefox_dirs="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+
+  # Check sanity of input
+  if [ $# -lt "3" ]
+  then
+        echo "Usage: firefox_cfg_setting 'config_cfg_file' 'key_to_search' 'new_value'"
+        echo
+        echo "Aborting."
+        exit 1
+  fi
+
+  # Check the possible Firefox install directories
+  for firefox_dir in ${firefox_dirs}; do
+    # If the Firefox directory exists, then Firefox is installed
+    if [ -d "${firefox_dir}" ]; then
+      # Make sure the Firefox .cfg file exists and has the appropriate permissions
+      if ! [ -f "${firefox_dir}/${firefox_cfg}" ] ; then
+        touch "${firefox_dir}/${firefox_cfg}"
+        chmod 644 "${firefox_dir}/${firefox_cfg}"
+      fi
+
+      # If the key exists, change it. Otherwise, add it to the config_file.
+      if LC_ALL=C grep -m 1 -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"; then
+        sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
+      else
+        echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
+      fi
+    fi
+  done
+}
+
+firefox_cfg_setting "stig.cfg" "browser.helperApps.alwaysAsk.force" "true"
+# END fix for 'firefox_preferences-auto-download_actions'
+
+###############################################################################
+# BEGIN fix (9 / 28) for 'firefox_preferences-auto-update_of_firefox'
+###############################################################################
+(>&2 echo "Remediating rule 9/28: 'firefox_preferences-auto-update_of_firefox'")
+# Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
+# preference if it does not exist.
+#
+# Expects three arguments:
+#
+# config_file:          Configuration file that will be modified
+# key:                  Configuration option to change
+# value:                Value of the configuration option to change
+#
+#
+# Example Call(s):
+#
+#     Without string or variable:
+#     firefox_cfg_setting "stig.cfg" "extensions.update.enabled" "false"
+#
+#     With string:
+#     firefox_cfg_setting "stig.cfg" "security.default_personal_cert" "\"Ask Every Time\""
+#
+#     With a string variable:
+#     firefox_cfg_setting "stig.cfg" "browser.startup.homepage\" "\"${var_default_home_page}\""
+#
+function firefox_cfg_setting {
+  local firefox_cfg=$1
+  local key=$2
+  local value=$3
+  local firefox_dirs="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+
+  # Check sanity of input
+  if [ $# -lt "3" ]
+  then
+        echo "Usage: firefox_cfg_setting 'config_cfg_file' 'key_to_search' 'new_value'"
+        echo
+        echo "Aborting."
+        exit 1
+  fi
+
+  # Check the possible Firefox install directories
+  for firefox_dir in ${firefox_dirs}; do
+    # If the Firefox directory exists, then Firefox is installed
+    if [ -d "${firefox_dir}" ]; then
+      # Make sure the Firefox .cfg file exists and has the appropriate permissions
+      if ! [ -f "${firefox_dir}/${firefox_cfg}" ] ; then
+        touch "${firefox_dir}/${firefox_cfg}"
+        chmod 644 "${firefox_dir}/${firefox_cfg}"
+      fi
+
+      # If the key exists, change it. Otherwise, add it to the config_file.
+      if LC_ALL=C grep -m 1 -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"; then
+        sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
+      else
+        echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
+      fi
+    fi
+  done
+}
+
+firefox_cfg_setting "stig.cfg" "app.update.enabled" "false"
+# END fix for 'firefox_preferences-auto-update_of_firefox'
+
+###############################################################################
+# BEGIN fix (10 / 28) for 'firefox_preferences-autofill_forms'
+###############################################################################
+(>&2 echo "Remediating rule 10/28: 'firefox_preferences-autofill_forms'")
+# Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
+# preference if it does not exist.
+#
+# Expects three arguments:
+#
+# config_file:          Configuration file that will be modified
+# key:                  Configuration option to change
+# value:                Value of the configuration option to change
+#
+#
+# Example Call(s):
+#
+#     Without string or variable:
+#     firefox_cfg_setting "stig.cfg" "extensions.update.enabled" "false"
+#
+#     With string:
+#     firefox_cfg_setting "stig.cfg" "security.default_personal_cert" "\"Ask Every Time\""
+#
+#     With a string variable:
+#     firefox_cfg_setting "stig.cfg" "browser.startup.homepage\" "\"${var_default_home_page}\""
+#
+function firefox_cfg_setting {
+  local firefox_cfg=$1
+  local key=$2
+  local value=$3
+  local firefox_dirs="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+
+  # Check sanity of input
+  if [ $# -lt "3" ]
+  then
+        echo "Usage: firefox_cfg_setting 'config_cfg_file' 'key_to_search' 'new_value'"
+        echo
+        echo "Aborting."
+        exit 1
+  fi
+
+  # Check the possible Firefox install directories
+  for firefox_dir in ${firefox_dirs}; do
+    # If the Firefox directory exists, then Firefox is installed
+    if [ -d "${firefox_dir}" ]; then
+      # Make sure the Firefox .cfg file exists and has the appropriate permissions
+      if ! [ -f "${firefox_dir}/${firefox_cfg}" ] ; then
+        touch "${firefox_dir}/${firefox_cfg}"
+        chmod 644 "${firefox_dir}/${firefox_cfg}"
+      fi
+
+      # If the key exists, change it. Otherwise, add it to the config_file.
+      if LC_ALL=C grep -m 1 -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"; then
+        sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
+      else
+        echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
+      fi
+    fi
+  done
+}
+
+firefox_cfg_setting "stig.cfg" "browser.formfill.enable" "false"
+# END fix for 'firefox_preferences-autofill_forms'
+
+###############################################################################
+# BEGIN fix (11 / 28) for 'firefox_preferences-autofill_passwords'
+###############################################################################
+(>&2 echo "Remediating rule 11/28: 'firefox_preferences-autofill_passwords'")
+# Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
+# preference if it does not exist.
+#
+# Expects three arguments:
+#
+# config_file:          Configuration file that will be modified
+# key:                  Configuration option to change
+# value:                Value of the configuration option to change
+#
+#
+# Example Call(s):
+#
+#     Without string or variable:
+#     firefox_cfg_setting "stig.cfg" "extensions.update.enabled" "false"
+#
+#     With string:
+#     firefox_cfg_setting "stig.cfg" "security.default_personal_cert" "\"Ask Every Time\""
+#
+#     With a string variable:
+#     firefox_cfg_setting "stig.cfg" "browser.startup.homepage\" "\"${var_default_home_page}\""
+#
+function firefox_cfg_setting {
+  local firefox_cfg=$1
+  local key=$2
+  local value=$3
+  local firefox_dirs="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+
+  # Check sanity of input
+  if [ $# -lt "3" ]
+  then
+        echo "Usage: firefox_cfg_setting 'config_cfg_file' 'key_to_search' 'new_value'"
+        echo
+        echo "Aborting."
+        exit 1
+  fi
+
+  # Check the possible Firefox install directories
+  for firefox_dir in ${firefox_dirs}; do
+    # If the Firefox directory exists, then Firefox is installed
+    if [ -d "${firefox_dir}" ]; then
+      # Make sure the Firefox .cfg file exists and has the appropriate permissions
+      if ! [ -f "${firefox_dir}/${firefox_cfg}" ] ; then
+        touch "${firefox_dir}/${firefox_cfg}"
+        chmod 644 "${firefox_dir}/${firefox_cfg}"
+      fi
+
+      # If the key exists, change it. Otherwise, add it to the config_file.
+      if LC_ALL=C grep -m 1 -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"; then
+        sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
+      else
+        echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
+      fi
+    fi
+  done
+}
+
+firefox_cfg_setting "stig.cfg" "signon.prefillForms" "false"
+# END fix for 'firefox_preferences-autofill_passwords'
+
+###############################################################################
+# BEGIN fix (12 / 28) for 'firefox_preferences-home_page'
+###############################################################################
+(>&2 echo "Remediating rule 12/28: 'firefox_preferences-home_page'")
 
 var_default_home_page="about:blank"
 # Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
@@ -446,7 +698,7 @@ function firefox_cfg_setting {
       fi
 
       # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"` ; then
+      if LC_ALL=C grep -m 1 -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"; then
         sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
       else
         echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
@@ -459,9 +711,9 @@ firefox_cfg_setting "stig.cfg" "browser.startup.homepage" "\"${var_default_home_
 # END fix for 'firefox_preferences-home_page'
 
 ###############################################################################
-# BEGIN fix (9 / 28) for 'firefox_preferences-javascript_window_resizing'
+# BEGIN fix (13 / 28) for 'firefox_preferences-javascript_context_menus'
 ###############################################################################
-(>&2 echo "Remediating rule 9/28: 'firefox_preferences-javascript_window_resizing'")
+(>&2 echo "Remediating rule 13/28: 'firefox_preferences-javascript_context_menus'")
 # Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
 # preference if it does not exist.
 #
@@ -509,7 +761,7 @@ function firefox_cfg_setting {
       fi
 
       # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"` ; then
+      if LC_ALL=C grep -m 1 -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"; then
         sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
       else
         echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
@@ -518,15 +770,13 @@ function firefox_cfg_setting {
   done
 }
 
-firefox_cfg_setting "stig.cfg" "dom.disable_window_move_resize" "true"
-# END fix for 'firefox_preferences-javascript_window_resizing'
+firefox_cfg_setting "stig.cfg" "dom.event.contextmenu.enabled" "false"
+# END fix for 'firefox_preferences-javascript_context_menus'
 
 ###############################################################################
-# BEGIN fix (10 / 28) for 'firefox_preferences-open_confirmation'
+# BEGIN fix (14 / 28) for 'firefox_preferences-javascript_status_bar_changes'
 ###############################################################################
-(>&2 echo "Remediating rule 10/28: 'firefox_preferences-open_confirmation'")
-
-var_required_file_types="application/pdf,application/doc,application/xls,application/bat,application/ppt,application/mdb,application/mde,application/fdf,application/xfdf,application/lsl,application/lso,appliation/lss,application/iqy,application/rqy,application/xlk,application/pot,application/pps,application/dot,application/wbk,application/ps,application/eps,application/wch,application/wcm,application/wbi,application/wb1,application/wb3,application/rtf,application/wch,application/wcm,application/ad,application/adp,application/xlt,application/dos,application/wks"
+(>&2 echo "Remediating rule 14/28: 'firefox_preferences-javascript_status_bar_changes'")
 # Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
 # preference if it does not exist.
 #
@@ -574,7 +824,7 @@ function firefox_cfg_setting {
       fi
 
       # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"` ; then
+      if LC_ALL=C grep -m 1 -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"; then
         sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
       else
         echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
@@ -583,13 +833,13 @@ function firefox_cfg_setting {
   done
 }
 
-firefox_cfg_setting "stig.cfg" "plugin.disable_full_page_plugin_for_types" "\"${var_required_file_types}\""
-# END fix for 'firefox_preferences-open_confirmation'
+firefox_cfg_setting "stig.cfg" "dom.disable_window_status_change" "true"
+# END fix for 'firefox_preferences-javascript_status_bar_changes'
 
 ###############################################################################
-# BEGIN fix (11 / 28) for 'firefox_preferences-addons_plugin_updates'
+# BEGIN fix (15 / 28) for 'firefox_preferences-javascript_status_bar_text'
 ###############################################################################
-(>&2 echo "Remediating rule 11/28: 'firefox_preferences-addons_plugin_updates'")
+(>&2 echo "Remediating rule 15/28: 'firefox_preferences-javascript_status_bar_text'")
 # Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
 # preference if it does not exist.
 #
@@ -637,7 +887,7 @@ function firefox_cfg_setting {
       fi
 
       # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"` ; then
+      if LC_ALL=C grep -m 1 -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"; then
         sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
       else
         echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
@@ -646,260 +896,8 @@ function firefox_cfg_setting {
   done
 }
 
-firefox_cfg_setting "stig.cfg" "extensions.update.enabled" "false"
-# END fix for 'firefox_preferences-addons_plugin_updates'
-
-###############################################################################
-# BEGIN fix (12 / 28) for 'firefox_preferences-ssl_protocol_tls'
-###############################################################################
-(>&2 echo "Remediating rule 12/28: 'firefox_preferences-ssl_protocol_tls'")
-# Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
-# preference if it does not exist.
-#
-# Expects three arguments:
-#
-# config_file:          Configuration file that will be modified
-# key:                  Configuration option to change
-# value:                Value of the configuration option to change
-#
-#
-# Example Call(s):
-#
-#     Without string or variable:
-#     firefox_cfg_setting "stig.cfg" "extensions.update.enabled" "false"
-#
-#     With string:
-#     firefox_cfg_setting "stig.cfg" "security.default_personal_cert" "\"Ask Every Time\""
-#
-#     With a string variable:
-#     firefox_cfg_setting "stig.cfg" "browser.startup.homepage\" "\"${var_default_home_page}\""
-#
-function firefox_cfg_setting {
-  local firefox_cfg=$1
-  local key=$2
-  local value=$3
-  local firefox_dirs="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
-
-  # Check sanity of input
-  if [ $# -lt "3" ]
-  then
-        echo "Usage: firefox_cfg_setting 'config_cfg_file' 'key_to_search' 'new_value'"
-        echo
-        echo "Aborting."
-        exit 1
-  fi
-
-  # Check the possible Firefox install directories
-  for firefox_dir in ${firefox_dirs}; do
-    # If the Firefox directory exists, then Firefox is installed
-    if [ -d "${firefox_dir}" ]; then
-      # Make sure the Firefox .cfg file exists and has the appropriate permissions
-      if ! [ -f "${firefox_dir}/${firefox_cfg}" ] ; then
-        touch "${firefox_dir}/${firefox_cfg}"
-        chmod 644 "${firefox_dir}/${firefox_cfg}"
-      fi
-
-      # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"` ; then
-        sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
-      else
-        echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
-      fi
-    fi
-  done
-}
-
-firefox_cfg_setting "stig.cfg" "security.enable_tls" "true"
-# END fix for 'firefox_preferences-ssl_protocol_tls'
-
-###############################################################################
-# BEGIN fix (13 / 28) for 'firefox_preferences-ssl_version_3'
-###############################################################################
-(>&2 echo "Remediating rule 13/28: 'firefox_preferences-ssl_version_3'")
-# Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
-# preference if it does not exist.
-#
-# Expects three arguments:
-#
-# config_file:          Configuration file that will be modified
-# key:                  Configuration option to change
-# value:                Value of the configuration option to change
-#
-#
-# Example Call(s):
-#
-#     Without string or variable:
-#     firefox_cfg_setting "stig.cfg" "extensions.update.enabled" "false"
-#
-#     With string:
-#     firefox_cfg_setting "stig.cfg" "security.default_personal_cert" "\"Ask Every Time\""
-#
-#     With a string variable:
-#     firefox_cfg_setting "stig.cfg" "browser.startup.homepage\" "\"${var_default_home_page}\""
-#
-function firefox_cfg_setting {
-  local firefox_cfg=$1
-  local key=$2
-  local value=$3
-  local firefox_dirs="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
-
-  # Check sanity of input
-  if [ $# -lt "3" ]
-  then
-        echo "Usage: firefox_cfg_setting 'config_cfg_file' 'key_to_search' 'new_value'"
-        echo
-        echo "Aborting."
-        exit 1
-  fi
-
-  # Check the possible Firefox install directories
-  for firefox_dir in ${firefox_dirs}; do
-    # If the Firefox directory exists, then Firefox is installed
-    if [ -d "${firefox_dir}" ]; then
-      # Make sure the Firefox .cfg file exists and has the appropriate permissions
-      if ! [ -f "${firefox_dir}/${firefox_cfg}" ] ; then
-        touch "${firefox_dir}/${firefox_cfg}"
-        chmod 644 "${firefox_dir}/${firefox_cfg}"
-      fi
-
-      # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"` ; then
-        sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
-      else
-        echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
-      fi
-    fi
-  done
-}
-
-firefox_cfg_setting "stig.cfg" "security.enable_ssl3" "false"
-# END fix for 'firefox_preferences-ssl_version_3'
-
-###############################################################################
-# BEGIN fix (14 / 28) for 'firefox_preferences-password_store'
-###############################################################################
-(>&2 echo "Remediating rule 14/28: 'firefox_preferences-password_store'")
-# Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
-# preference if it does not exist.
-#
-# Expects three arguments:
-#
-# config_file:          Configuration file that will be modified
-# key:                  Configuration option to change
-# value:                Value of the configuration option to change
-#
-#
-# Example Call(s):
-#
-#     Without string or variable:
-#     firefox_cfg_setting "stig.cfg" "extensions.update.enabled" "false"
-#
-#     With string:
-#     firefox_cfg_setting "stig.cfg" "security.default_personal_cert" "\"Ask Every Time\""
-#
-#     With a string variable:
-#     firefox_cfg_setting "stig.cfg" "browser.startup.homepage\" "\"${var_default_home_page}\""
-#
-function firefox_cfg_setting {
-  local firefox_cfg=$1
-  local key=$2
-  local value=$3
-  local firefox_dirs="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
-
-  # Check sanity of input
-  if [ $# -lt "3" ]
-  then
-        echo "Usage: firefox_cfg_setting 'config_cfg_file' 'key_to_search' 'new_value'"
-        echo
-        echo "Aborting."
-        exit 1
-  fi
-
-  # Check the possible Firefox install directories
-  for firefox_dir in ${firefox_dirs}; do
-    # If the Firefox directory exists, then Firefox is installed
-    if [ -d "${firefox_dir}" ]; then
-      # Make sure the Firefox .cfg file exists and has the appropriate permissions
-      if ! [ -f "${firefox_dir}/${firefox_cfg}" ] ; then
-        touch "${firefox_dir}/${firefox_cfg}"
-        chmod 644 "${firefox_dir}/${firefox_cfg}"
-      fi
-
-      # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"` ; then
-        sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
-      else
-        echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
-      fi
-    fi
-  done
-}
-
-firefox_cfg_setting "stig.cfg" "signon.rememberSignons" "false"
-# END fix for 'firefox_preferences-password_store'
-
-###############################################################################
-# BEGIN fix (15 / 28) for 'firefox_preferences-search_update'
-###############################################################################
-(>&2 echo "Remediating rule 15/28: 'firefox_preferences-search_update'")
-# Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
-# preference if it does not exist.
-#
-# Expects three arguments:
-#
-# config_file:          Configuration file that will be modified
-# key:                  Configuration option to change
-# value:                Value of the configuration option to change
-#
-#
-# Example Call(s):
-#
-#     Without string or variable:
-#     firefox_cfg_setting "stig.cfg" "extensions.update.enabled" "false"
-#
-#     With string:
-#     firefox_cfg_setting "stig.cfg" "security.default_personal_cert" "\"Ask Every Time\""
-#
-#     With a string variable:
-#     firefox_cfg_setting "stig.cfg" "browser.startup.homepage\" "\"${var_default_home_page}\""
-#
-function firefox_cfg_setting {
-  local firefox_cfg=$1
-  local key=$2
-  local value=$3
-  local firefox_dirs="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
-
-  # Check sanity of input
-  if [ $# -lt "3" ]
-  then
-        echo "Usage: firefox_cfg_setting 'config_cfg_file' 'key_to_search' 'new_value'"
-        echo
-        echo "Aborting."
-        exit 1
-  fi
-
-  # Check the possible Firefox install directories
-  for firefox_dir in ${firefox_dirs}; do
-    # If the Firefox directory exists, then Firefox is installed
-    if [ -d "${firefox_dir}" ]; then
-      # Make sure the Firefox .cfg file exists and has the appropriate permissions
-      if ! [ -f "${firefox_dir}/${firefox_cfg}" ] ; then
-        touch "${firefox_dir}/${firefox_cfg}"
-        chmod 644 "${firefox_dir}/${firefox_cfg}"
-      fi
-
-      # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"` ; then
-        sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
-      else
-        echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
-      fi
-    fi
-  done
-}
-
-firefox_cfg_setting "stig.cfg" "browser.search.update" "false"
-# END fix for 'firefox_preferences-search_update'
+firefox_cfg_setting "stig.cfg" "dom.disable_window_open_feature.status" "true"
+# END fix for 'firefox_preferences-javascript_status_bar_text'
 
 ###############################################################################
 # BEGIN fix (16 / 28) for 'firefox_preferences-javascript_window_changes'
@@ -952,7 +950,7 @@ function firefox_cfg_setting {
       fi
 
       # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"` ; then
+      if LC_ALL=C grep -m 1 -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"; then
         sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
       else
         echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
@@ -965,9 +963,9 @@ firefox_cfg_setting "stig.cfg" "dom.disable_window_flip" "true"
 # END fix for 'firefox_preferences-javascript_window_changes'
 
 ###############################################################################
-# BEGIN fix (17 / 28) for 'firefox_preferences-verification'
+# BEGIN fix (17 / 28) for 'firefox_preferences-javascript_window_resizing'
 ###############################################################################
-(>&2 echo "Remediating rule 17/28: 'firefox_preferences-verification'")
+(>&2 echo "Remediating rule 17/28: 'firefox_preferences-javascript_window_resizing'")
 # Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
 # preference if it does not exist.
 #
@@ -1015,7 +1013,7 @@ function firefox_cfg_setting {
       fi
 
       # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"` ; then
+      if LC_ALL=C grep -m 1 -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"; then
         sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
       else
         echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
@@ -1024,13 +1022,13 @@ function firefox_cfg_setting {
   done
 }
 
-firefox_cfg_setting "stig.cfg" "security.default_personal_cert" "\"Ask Every Time\""
-# END fix for 'firefox_preferences-verification'
+firefox_cfg_setting "stig.cfg" "dom.disable_window_move_resize" "true"
+# END fix for 'firefox_preferences-javascript_window_resizing'
 
 ###############################################################################
-# BEGIN fix (18 / 28) for 'firefox_preferences-ssl_version_2'
+# BEGIN fix (18 / 28) for 'firefox_preferences-non-secure_page_warning'
 ###############################################################################
-(>&2 echo "Remediating rule 18/28: 'firefox_preferences-ssl_version_2'")
+(>&2 echo "Remediating rule 18/28: 'firefox_preferences-non-secure_page_warning'")
 # Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
 # preference if it does not exist.
 #
@@ -1078,7 +1076,7 @@ function firefox_cfg_setting {
       fi
 
       # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"` ; then
+      if LC_ALL=C grep -m 1 -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"; then
         sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
       else
         echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
@@ -1087,13 +1085,15 @@ function firefox_cfg_setting {
   done
 }
 
-firefox_cfg_setting "stig.cfg" "security.enable_ssl2" "false"
-# END fix for 'firefox_preferences-ssl_version_2'
+firefox_cfg_setting "stig.cfg" "security.warn_leaving_secure" "true"
+# END fix for 'firefox_preferences-non-secure_page_warning'
 
 ###############################################################################
-# BEGIN fix (19 / 28) for 'firefox_preferences-auto-update_of_firefox'
+# BEGIN fix (19 / 28) for 'firefox_preferences-open_confirmation'
 ###############################################################################
-(>&2 echo "Remediating rule 19/28: 'firefox_preferences-auto-update_of_firefox'")
+(>&2 echo "Remediating rule 19/28: 'firefox_preferences-open_confirmation'")
+
+var_required_file_types="application/pdf,application/doc,application/xls,application/bat,application/ppt,application/mdb,application/mde,application/fdf,application/xfdf,application/lsl,application/lso,appliation/lss,application/iqy,application/rqy,application/xlk,application/pot,application/pps,application/dot,application/wbk,application/ps,application/eps,application/wch,application/wcm,application/wbi,application/wb1,application/wb3,application/rtf,application/wch,application/wcm,application/ad,application/adp,application/xlt,application/dos,application/wks"
 # Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
 # preference if it does not exist.
 #
@@ -1141,7 +1141,7 @@ function firefox_cfg_setting {
       fi
 
       # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"` ; then
+      if LC_ALL=C grep -m 1 -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"; then
         sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
       else
         echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
@@ -1150,13 +1150,13 @@ function firefox_cfg_setting {
   done
 }
 
-firefox_cfg_setting "stig.cfg" "app.update.enabled" "false"
-# END fix for 'firefox_preferences-auto-update_of_firefox'
+firefox_cfg_setting "stig.cfg" "plugin.disable_full_page_plugin_for_types" "\"${var_required_file_types}\""
+# END fix for 'firefox_preferences-open_confirmation'
 
 ###############################################################################
-# BEGIN fix (20 / 28) for 'firefox_preferences-autofill_passwords'
+# BEGIN fix (20 / 28) for 'firefox_preferences-password_store'
 ###############################################################################
-(>&2 echo "Remediating rule 20/28: 'firefox_preferences-autofill_passwords'")
+(>&2 echo "Remediating rule 20/28: 'firefox_preferences-password_store'")
 # Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
 # preference if it does not exist.
 #
@@ -1204,7 +1204,7 @@ function firefox_cfg_setting {
       fi
 
       # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"` ; then
+      if LC_ALL=C grep -m 1 -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"; then
         sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
       else
         echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
@@ -1213,8 +1213,8 @@ function firefox_cfg_setting {
   done
 }
 
-firefox_cfg_setting "stig.cfg" "signon.prefillForms" "false"
-# END fix for 'firefox_preferences-autofill_passwords'
+firefox_cfg_setting "stig.cfg" "signon.rememberSignons" "false"
+# END fix for 'firefox_preferences-password_store'
 
 ###############################################################################
 # BEGIN fix (21 / 28) for 'firefox_preferences-pop-up_windows'
@@ -1267,7 +1267,7 @@ function firefox_cfg_setting {
       fi
 
       # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"` ; then
+      if LC_ALL=C grep -m 1 -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"; then
         sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
       else
         echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
@@ -1280,9 +1280,9 @@ firefox_cfg_setting "stig.cfg" "dom.disable_window_open_feature.status" "true"
 # END fix for 'firefox_preferences-pop-up_windows'
 
 ###############################################################################
-# BEGIN fix (22 / 28) for 'firefox_preferences-javascript_context_menus'
+# BEGIN fix (22 / 28) for 'firefox_preferences-search_update'
 ###############################################################################
-(>&2 echo "Remediating rule 22/28: 'firefox_preferences-javascript_context_menus'")
+(>&2 echo "Remediating rule 22/28: 'firefox_preferences-search_update'")
 # Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
 # preference if it does not exist.
 #
@@ -1330,7 +1330,7 @@ function firefox_cfg_setting {
       fi
 
       # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"` ; then
+      if LC_ALL=C grep -m 1 -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"; then
         sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
       else
         echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
@@ -1339,328 +1339,328 @@ function firefox_cfg_setting {
   done
 }
 
-firefox_cfg_setting "stig.cfg" "dom.event.contextmenu.enabled" "false"
-# END fix for 'firefox_preferences-javascript_context_menus'
+firefox_cfg_setting "stig.cfg" "browser.search.update" "false"
+# END fix for 'firefox_preferences-search_update'
 
 ###############################################################################
-# BEGIN fix (23 / 28) for 'installed_firefox_version_supported'
+# BEGIN fix (23 / 28) for 'firefox_preferences-shell_protocol'
 ###############################################################################
-(>&2 echo "Remediating rule 23/28: 'installed_firefox_version_supported'")
+(>&2 echo "Remediating rule 23/28: 'firefox_preferences-shell_protocol'")
+# Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
+# preference if it does not exist.
+#
+# Expects three arguments:
+#
+# config_file:          Configuration file that will be modified
+# key:                  Configuration option to change
+# value:                Value of the configuration option to change
+#
+#
+# Example Call(s):
+#
+#     Without string or variable:
+#     firefox_cfg_setting "stig.cfg" "extensions.update.enabled" "false"
+#
+#     With string:
+#     firefox_cfg_setting "stig.cfg" "security.default_personal_cert" "\"Ask Every Time\""
+#
+#     With a string variable:
+#     firefox_cfg_setting "stig.cfg" "browser.startup.homepage\" "\"${var_default_home_page}\""
+#
+function firefox_cfg_setting {
+  local firefox_cfg=$1
+  local key=$2
+  local value=$3
+  local firefox_dirs="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+
+  # Check sanity of input
+  if [ $# -lt "3" ]
+  then
+        echo "Usage: firefox_cfg_setting 'config_cfg_file' 'key_to_search' 'new_value'"
+        echo
+        echo "Aborting."
+        exit 1
+  fi
+
+  # Check the possible Firefox install directories
+  for firefox_dir in ${firefox_dirs}; do
+    # If the Firefox directory exists, then Firefox is installed
+    if [ -d "${firefox_dir}" ]; then
+      # Make sure the Firefox .cfg file exists and has the appropriate permissions
+      if ! [ -f "${firefox_dir}/${firefox_cfg}" ] ; then
+        touch "${firefox_dir}/${firefox_cfg}"
+        chmod 644 "${firefox_dir}/${firefox_cfg}"
+      fi
+
+      # If the key exists, change it. Otherwise, add it to the config_file.
+      if LC_ALL=C grep -m 1 -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"; then
+        sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
+      else
+        echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
+      fi
+    fi
+  done
+}
+
+firefox_cfg_setting "stig.cfg" "network.protocol-handler.external.shell" "false"
+# END fix for 'firefox_preferences-shell_protocol'
+
+###############################################################################
+# BEGIN fix (24 / 28) for 'firefox_preferences-ssl_protocol_tls'
+###############################################################################
+(>&2 echo "Remediating rule 24/28: 'firefox_preferences-ssl_protocol_tls'")
+# Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
+# preference if it does not exist.
+#
+# Expects three arguments:
+#
+# config_file:          Configuration file that will be modified
+# key:                  Configuration option to change
+# value:                Value of the configuration option to change
+#
+#
+# Example Call(s):
+#
+#     Without string or variable:
+#     firefox_cfg_setting "stig.cfg" "extensions.update.enabled" "false"
+#
+#     With string:
+#     firefox_cfg_setting "stig.cfg" "security.default_personal_cert" "\"Ask Every Time\""
+#
+#     With a string variable:
+#     firefox_cfg_setting "stig.cfg" "browser.startup.homepage\" "\"${var_default_home_page}\""
+#
+function firefox_cfg_setting {
+  local firefox_cfg=$1
+  local key=$2
+  local value=$3
+  local firefox_dirs="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+
+  # Check sanity of input
+  if [ $# -lt "3" ]
+  then
+        echo "Usage: firefox_cfg_setting 'config_cfg_file' 'key_to_search' 'new_value'"
+        echo
+        echo "Aborting."
+        exit 1
+  fi
+
+  # Check the possible Firefox install directories
+  for firefox_dir in ${firefox_dirs}; do
+    # If the Firefox directory exists, then Firefox is installed
+    if [ -d "${firefox_dir}" ]; then
+      # Make sure the Firefox .cfg file exists and has the appropriate permissions
+      if ! [ -f "${firefox_dir}/${firefox_cfg}" ] ; then
+        touch "${firefox_dir}/${firefox_cfg}"
+        chmod 644 "${firefox_dir}/${firefox_cfg}"
+      fi
+
+      # If the key exists, change it. Otherwise, add it to the config_file.
+      if LC_ALL=C grep -m 1 -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"; then
+        sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
+      else
+        echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
+      fi
+    fi
+  done
+}
+
+firefox_cfg_setting "stig.cfg" "security.enable_tls" "true"
+# END fix for 'firefox_preferences-ssl_protocol_tls'
+
+###############################################################################
+# BEGIN fix (25 / 28) for 'firefox_preferences-ssl_version_2'
+###############################################################################
+(>&2 echo "Remediating rule 25/28: 'firefox_preferences-ssl_version_2'")
+# Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
+# preference if it does not exist.
+#
+# Expects three arguments:
+#
+# config_file:          Configuration file that will be modified
+# key:                  Configuration option to change
+# value:                Value of the configuration option to change
+#
+#
+# Example Call(s):
+#
+#     Without string or variable:
+#     firefox_cfg_setting "stig.cfg" "extensions.update.enabled" "false"
+#
+#     With string:
+#     firefox_cfg_setting "stig.cfg" "security.default_personal_cert" "\"Ask Every Time\""
+#
+#     With a string variable:
+#     firefox_cfg_setting "stig.cfg" "browser.startup.homepage\" "\"${var_default_home_page}\""
+#
+function firefox_cfg_setting {
+  local firefox_cfg=$1
+  local key=$2
+  local value=$3
+  local firefox_dirs="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+
+  # Check sanity of input
+  if [ $# -lt "3" ]
+  then
+        echo "Usage: firefox_cfg_setting 'config_cfg_file' 'key_to_search' 'new_value'"
+        echo
+        echo "Aborting."
+        exit 1
+  fi
+
+  # Check the possible Firefox install directories
+  for firefox_dir in ${firefox_dirs}; do
+    # If the Firefox directory exists, then Firefox is installed
+    if [ -d "${firefox_dir}" ]; then
+      # Make sure the Firefox .cfg file exists and has the appropriate permissions
+      if ! [ -f "${firefox_dir}/${firefox_cfg}" ] ; then
+        touch "${firefox_dir}/${firefox_cfg}"
+        chmod 644 "${firefox_dir}/${firefox_cfg}"
+      fi
+
+      # If the key exists, change it. Otherwise, add it to the config_file.
+      if LC_ALL=C grep -m 1 -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"; then
+        sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
+      else
+        echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
+      fi
+    fi
+  done
+}
+
+firefox_cfg_setting "stig.cfg" "security.enable_ssl2" "false"
+# END fix for 'firefox_preferences-ssl_version_2'
+
+###############################################################################
+# BEGIN fix (26 / 28) for 'firefox_preferences-ssl_version_3'
+###############################################################################
+(>&2 echo "Remediating rule 26/28: 'firefox_preferences-ssl_version_3'")
+# Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
+# preference if it does not exist.
+#
+# Expects three arguments:
+#
+# config_file:          Configuration file that will be modified
+# key:                  Configuration option to change
+# value:                Value of the configuration option to change
+#
+#
+# Example Call(s):
+#
+#     Without string or variable:
+#     firefox_cfg_setting "stig.cfg" "extensions.update.enabled" "false"
+#
+#     With string:
+#     firefox_cfg_setting "stig.cfg" "security.default_personal_cert" "\"Ask Every Time\""
+#
+#     With a string variable:
+#     firefox_cfg_setting "stig.cfg" "browser.startup.homepage\" "\"${var_default_home_page}\""
+#
+function firefox_cfg_setting {
+  local firefox_cfg=$1
+  local key=$2
+  local value=$3
+  local firefox_dirs="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+
+  # Check sanity of input
+  if [ $# -lt "3" ]
+  then
+        echo "Usage: firefox_cfg_setting 'config_cfg_file' 'key_to_search' 'new_value'"
+        echo
+        echo "Aborting."
+        exit 1
+  fi
+
+  # Check the possible Firefox install directories
+  for firefox_dir in ${firefox_dirs}; do
+    # If the Firefox directory exists, then Firefox is installed
+    if [ -d "${firefox_dir}" ]; then
+      # Make sure the Firefox .cfg file exists and has the appropriate permissions
+      if ! [ -f "${firefox_dir}/${firefox_cfg}" ] ; then
+        touch "${firefox_dir}/${firefox_cfg}"
+        chmod 644 "${firefox_dir}/${firefox_cfg}"
+      fi
+
+      # If the key exists, change it. Otherwise, add it to the config_file.
+      if LC_ALL=C grep -m 1 -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"; then
+        sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
+      else
+        echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
+      fi
+    fi
+  done
+}
+
+firefox_cfg_setting "stig.cfg" "security.enable_ssl3" "false"
+# END fix for 'firefox_preferences-ssl_version_3'
+
+###############################################################################
+# BEGIN fix (27 / 28) for 'firefox_preferences-verification'
+###############################################################################
+(>&2 echo "Remediating rule 27/28: 'firefox_preferences-verification'")
+# Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
+# preference if it does not exist.
+#
+# Expects three arguments:
+#
+# config_file:          Configuration file that will be modified
+# key:                  Configuration option to change
+# value:                Value of the configuration option to change
+#
+#
+# Example Call(s):
+#
+#     Without string or variable:
+#     firefox_cfg_setting "stig.cfg" "extensions.update.enabled" "false"
+#
+#     With string:
+#     firefox_cfg_setting "stig.cfg" "security.default_personal_cert" "\"Ask Every Time\""
+#
+#     With a string variable:
+#     firefox_cfg_setting "stig.cfg" "browser.startup.homepage\" "\"${var_default_home_page}\""
+#
+function firefox_cfg_setting {
+  local firefox_cfg=$1
+  local key=$2
+  local value=$3
+  local firefox_dirs="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
+
+  # Check sanity of input
+  if [ $# -lt "3" ]
+  then
+        echo "Usage: firefox_cfg_setting 'config_cfg_file' 'key_to_search' 'new_value'"
+        echo
+        echo "Aborting."
+        exit 1
+  fi
+
+  # Check the possible Firefox install directories
+  for firefox_dir in ${firefox_dirs}; do
+    # If the Firefox directory exists, then Firefox is installed
+    if [ -d "${firefox_dir}" ]; then
+      # Make sure the Firefox .cfg file exists and has the appropriate permissions
+      if ! [ -f "${firefox_dir}/${firefox_cfg}" ] ; then
+        touch "${firefox_dir}/${firefox_cfg}"
+        chmod 644 "${firefox_dir}/${firefox_cfg}"
+      fi
+
+      # If the key exists, change it. Otherwise, add it to the config_file.
+      if LC_ALL=C grep -m 1 -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"; then
+        sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
+      else
+        echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
+      fi
+    fi
+  done
+}
+
+firefox_cfg_setting "stig.cfg" "security.default_personal_cert" "\"Ask Every Time\""
+# END fix for 'firefox_preferences-verification'
+
+###############################################################################
+# BEGIN fix (28 / 28) for 'installed_firefox_version_supported'
+###############################################################################
+(>&2 echo "Remediating rule 28/28: 'installed_firefox_version_supported'")
 (>&2 echo "FIX FOR THIS RULE 'installed_firefox_version_supported' IS MISSING!")
 # END fix for 'installed_firefox_version_supported'
-
-###############################################################################
-# BEGIN fix (24 / 28) for 'firefox_preferences-javascript_status_bar_changes'
-###############################################################################
-(>&2 echo "Remediating rule 24/28: 'firefox_preferences-javascript_status_bar_changes'")
-# Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
-# preference if it does not exist.
-#
-# Expects three arguments:
-#
-# config_file:          Configuration file that will be modified
-# key:                  Configuration option to change
-# value:                Value of the configuration option to change
-#
-#
-# Example Call(s):
-#
-#     Without string or variable:
-#     firefox_cfg_setting "stig.cfg" "extensions.update.enabled" "false"
-#
-#     With string:
-#     firefox_cfg_setting "stig.cfg" "security.default_personal_cert" "\"Ask Every Time\""
-#
-#     With a string variable:
-#     firefox_cfg_setting "stig.cfg" "browser.startup.homepage\" "\"${var_default_home_page}\""
-#
-function firefox_cfg_setting {
-  local firefox_cfg=$1
-  local key=$2
-  local value=$3
-  local firefox_dirs="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
-
-  # Check sanity of input
-  if [ $# -lt "3" ]
-  then
-        echo "Usage: firefox_cfg_setting 'config_cfg_file' 'key_to_search' 'new_value'"
-        echo
-        echo "Aborting."
-        exit 1
-  fi
-
-  # Check the possible Firefox install directories
-  for firefox_dir in ${firefox_dirs}; do
-    # If the Firefox directory exists, then Firefox is installed
-    if [ -d "${firefox_dir}" ]; then
-      # Make sure the Firefox .cfg file exists and has the appropriate permissions
-      if ! [ -f "${firefox_dir}/${firefox_cfg}" ] ; then
-        touch "${firefox_dir}/${firefox_cfg}"
-        chmod 644 "${firefox_dir}/${firefox_cfg}"
-      fi
-
-      # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"` ; then
-        sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
-      else
-        echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
-      fi
-    fi
-  done
-}
-
-firefox_cfg_setting "stig.cfg" "dom.disable_window_status_change" "true"
-# END fix for 'firefox_preferences-javascript_status_bar_changes'
-
-###############################################################################
-# BEGIN fix (25 / 28) for 'firefox_preferences-non-secure_page_warning'
-###############################################################################
-(>&2 echo "Remediating rule 25/28: 'firefox_preferences-non-secure_page_warning'")
-# Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
-# preference if it does not exist.
-#
-# Expects three arguments:
-#
-# config_file:          Configuration file that will be modified
-# key:                  Configuration option to change
-# value:                Value of the configuration option to change
-#
-#
-# Example Call(s):
-#
-#     Without string or variable:
-#     firefox_cfg_setting "stig.cfg" "extensions.update.enabled" "false"
-#
-#     With string:
-#     firefox_cfg_setting "stig.cfg" "security.default_personal_cert" "\"Ask Every Time\""
-#
-#     With a string variable:
-#     firefox_cfg_setting "stig.cfg" "browser.startup.homepage\" "\"${var_default_home_page}\""
-#
-function firefox_cfg_setting {
-  local firefox_cfg=$1
-  local key=$2
-  local value=$3
-  local firefox_dirs="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
-
-  # Check sanity of input
-  if [ $# -lt "3" ]
-  then
-        echo "Usage: firefox_cfg_setting 'config_cfg_file' 'key_to_search' 'new_value'"
-        echo
-        echo "Aborting."
-        exit 1
-  fi
-
-  # Check the possible Firefox install directories
-  for firefox_dir in ${firefox_dirs}; do
-    # If the Firefox directory exists, then Firefox is installed
-    if [ -d "${firefox_dir}" ]; then
-      # Make sure the Firefox .cfg file exists and has the appropriate permissions
-      if ! [ -f "${firefox_dir}/${firefox_cfg}" ] ; then
-        touch "${firefox_dir}/${firefox_cfg}"
-        chmod 644 "${firefox_dir}/${firefox_cfg}"
-      fi
-
-      # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"` ; then
-        sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
-      else
-        echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
-      fi
-    fi
-  done
-}
-
-firefox_cfg_setting "stig.cfg" "security.warn_leaving_secure" "true"
-# END fix for 'firefox_preferences-non-secure_page_warning'
-
-###############################################################################
-# BEGIN fix (26 / 28) for 'firefox_preferences-auto-download_actions'
-###############################################################################
-(>&2 echo "Remediating rule 26/28: 'firefox_preferences-auto-download_actions'")
-# Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
-# preference if it does not exist.
-#
-# Expects three arguments:
-#
-# config_file:          Configuration file that will be modified
-# key:                  Configuration option to change
-# value:                Value of the configuration option to change
-#
-#
-# Example Call(s):
-#
-#     Without string or variable:
-#     firefox_cfg_setting "stig.cfg" "extensions.update.enabled" "false"
-#
-#     With string:
-#     firefox_cfg_setting "stig.cfg" "security.default_personal_cert" "\"Ask Every Time\""
-#
-#     With a string variable:
-#     firefox_cfg_setting "stig.cfg" "browser.startup.homepage\" "\"${var_default_home_page}\""
-#
-function firefox_cfg_setting {
-  local firefox_cfg=$1
-  local key=$2
-  local value=$3
-  local firefox_dirs="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
-
-  # Check sanity of input
-  if [ $# -lt "3" ]
-  then
-        echo "Usage: firefox_cfg_setting 'config_cfg_file' 'key_to_search' 'new_value'"
-        echo
-        echo "Aborting."
-        exit 1
-  fi
-
-  # Check the possible Firefox install directories
-  for firefox_dir in ${firefox_dirs}; do
-    # If the Firefox directory exists, then Firefox is installed
-    if [ -d "${firefox_dir}" ]; then
-      # Make sure the Firefox .cfg file exists and has the appropriate permissions
-      if ! [ -f "${firefox_dir}/${firefox_cfg}" ] ; then
-        touch "${firefox_dir}/${firefox_cfg}"
-        chmod 644 "${firefox_dir}/${firefox_cfg}"
-      fi
-
-      # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"` ; then
-        sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
-      else
-        echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
-      fi
-    fi
-  done
-}
-
-firefox_cfg_setting "stig.cfg" "browser.helperApps.alwaysAsk.force" "true"
-# END fix for 'firefox_preferences-auto-download_actions'
-
-###############################################################################
-# BEGIN fix (27 / 28) for 'firefox_preferences-autofill_forms'
-###############################################################################
-(>&2 echo "Remediating rule 27/28: 'firefox_preferences-autofill_forms'")
-# Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
-# preference if it does not exist.
-#
-# Expects three arguments:
-#
-# config_file:          Configuration file that will be modified
-# key:                  Configuration option to change
-# value:                Value of the configuration option to change
-#
-#
-# Example Call(s):
-#
-#     Without string or variable:
-#     firefox_cfg_setting "stig.cfg" "extensions.update.enabled" "false"
-#
-#     With string:
-#     firefox_cfg_setting "stig.cfg" "security.default_personal_cert" "\"Ask Every Time\""
-#
-#     With a string variable:
-#     firefox_cfg_setting "stig.cfg" "browser.startup.homepage\" "\"${var_default_home_page}\""
-#
-function firefox_cfg_setting {
-  local firefox_cfg=$1
-  local key=$2
-  local value=$3
-  local firefox_dirs="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
-
-  # Check sanity of input
-  if [ $# -lt "3" ]
-  then
-        echo "Usage: firefox_cfg_setting 'config_cfg_file' 'key_to_search' 'new_value'"
-        echo
-        echo "Aborting."
-        exit 1
-  fi
-
-  # Check the possible Firefox install directories
-  for firefox_dir in ${firefox_dirs}; do
-    # If the Firefox directory exists, then Firefox is installed
-    if [ -d "${firefox_dir}" ]; then
-      # Make sure the Firefox .cfg file exists and has the appropriate permissions
-      if ! [ -f "${firefox_dir}/${firefox_cfg}" ] ; then
-        touch "${firefox_dir}/${firefox_cfg}"
-        chmod 644 "${firefox_dir}/${firefox_cfg}"
-      fi
-
-      # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"` ; then
-        sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
-      else
-        echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
-      fi
-    fi
-  done
-}
-
-firefox_cfg_setting "stig.cfg" "browser.formfill.enable" "false"
-# END fix for 'firefox_preferences-autofill_forms'
-
-###############################################################################
-# BEGIN fix (28 / 28) for 'firefox_preferences-javascript_status_bar_text'
-###############################################################################
-(>&2 echo "Remediating rule 28/28: 'firefox_preferences-javascript_status_bar_text'")
-# Function to replace configuration setting(s) in the Firefox preferences configuration (.cfg) file or add the
-# preference if it does not exist.
-#
-# Expects three arguments:
-#
-# config_file:          Configuration file that will be modified
-# key:                  Configuration option to change
-# value:                Value of the configuration option to change
-#
-#
-# Example Call(s):
-#
-#     Without string or variable:
-#     firefox_cfg_setting "stig.cfg" "extensions.update.enabled" "false"
-#
-#     With string:
-#     firefox_cfg_setting "stig.cfg" "security.default_personal_cert" "\"Ask Every Time\""
-#
-#     With a string variable:
-#     firefox_cfg_setting "stig.cfg" "browser.startup.homepage\" "\"${var_default_home_page}\""
-#
-function firefox_cfg_setting {
-  local firefox_cfg=$1
-  local key=$2
-  local value=$3
-  local firefox_dirs="/usr/lib/firefox /usr/lib64/firefox /usr/local/lib/firefox /usr/local/lib64/firefox"
-
-  # Check sanity of input
-  if [ $# -lt "3" ]
-  then
-        echo "Usage: firefox_cfg_setting 'config_cfg_file' 'key_to_search' 'new_value'"
-        echo
-        echo "Aborting."
-        exit 1
-  fi
-
-  # Check the possible Firefox install directories
-  for firefox_dir in ${firefox_dirs}; do
-    # If the Firefox directory exists, then Firefox is installed
-    if [ -d "${firefox_dir}" ]; then
-      # Make sure the Firefox .cfg file exists and has the appropriate permissions
-      if ! [ -f "${firefox_dir}/${firefox_cfg}" ] ; then
-        touch "${firefox_dir}/${firefox_cfg}"
-        chmod 644 "${firefox_dir}/${firefox_cfg}"
-      fi
-
-      # If the key exists, change it. Otherwise, add it to the config_file.
-      if `grep -q "^lockPref(\"${key}\", " "${firefox_dir}/${firefox_cfg}"` ; then
-        sed -i "s/lockPref(\"${key}\".*/lockPref(\"${key}\", ${value});/g" "${firefox_dir}/${firefox_cfg}"
-      else
-        echo "lockPref(\"${key}\", ${value});" >> "${firefox_dir}/${firefox_cfg}"
-      fi
-    fi
-  done
-}
-
-firefox_cfg_setting "stig.cfg" "dom.disable_window_open_feature.status" "true"
-# END fix for 'firefox_preferences-javascript_status_bar_text'
 

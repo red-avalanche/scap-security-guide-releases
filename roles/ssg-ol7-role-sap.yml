@@ -8,7 +8,7 @@
 # Regardless of your system's workload all of these checks should pass.
 #
 # Benchmark ID:  OL-7
-# Benchmark Version:  0.1.40
+# Benchmark Version:  0.1.41
 #
 # XCCDF Version:  1.1
 #
@@ -35,15 +35,37 @@
           
    vars:
    tasks:
+    - name: Ensure ypbind is removed
+      package:
+        name: ypbind
+        state: absent
+      tags:
+        - package_ypbind_removed
+        - unknown_severity
+        - disable_strategy
+        - low_complexity
+        - low_disruption
+    
+    - name: Ensure ypserv is removed
+      package:
+        name: ypserv
+        state: absent
+      tags:
+        - package_ypserv_removed
+        - high_severity
+        - disable_strategy
+        - low_complexity
+        - low_disruption
+        - NIST-800-53-AC-17(8)
+        - NIST-800-53-CM-7(a)
+    
     - name: Disable service rlogin
       service:
-        name: "{{item}}"
+        name: rlogin
         enabled: "no"
         state: "stopped"
       register: service_result
       failed_when: "service_result is failed and ('Could not find the requested service' not in service_result.msg)"
-      with_items:
-        - rlogin
       tags:
         - service_rlogin_disabled
         - high_severity
@@ -59,13 +81,11 @@
     
     - name: Disable socket of service rlogin if applicable
       service:
-        name: "{{item}}"
+        name: rlogin.socket
         enabled: "no"
         state: "stopped"
       register: socket_result
       failed_when: "socket_result is failed and ('Could not find the requested service' not in socket_result.msg)"
-      with_items:
-        - rlogin.socket
       tags:
         - service_rlogin_disabled
         - high_severity
@@ -80,13 +100,11 @@
     
     - name: Disable service rsh
       service:
-        name: "{{item}}"
+        name: rsh
         enabled: "no"
         state: "stopped"
       register: service_result
       failed_when: "service_result is failed and ('Could not find the requested service' not in service_result.msg)"
-      with_items:
-        - rsh
       tags:
         - service_rsh_disabled
         - high_severity
@@ -102,13 +120,11 @@
     
     - name: Disable socket of service rsh if applicable
       service:
-        name: "{{item}}"
+        name: rsh.socket
         enabled: "no"
         state: "stopped"
       register: socket_result
       failed_when: "socket_result is failed and ('Could not find the requested service' not in socket_result.msg)"
-      with_items:
-        - rsh.socket
       tags:
         - service_rsh_disabled
         - high_severity
@@ -121,66 +137,10 @@
         - NIST-800-171-3.1.13
         - NIST-800-171-3.4.7
     
-    - name: Ensure ypbind is removed
-      package:
-        name: "{{item}}"
-        state: absent
-      with_items:
-        - ypbind
-      tags:
-        - package_ypbind_removed
-        - unknown_severity
-        - disable_strategy
-        - low_complexity
-        - low_disruption
-    
-    - name: Ensure ypserv is removed
-      package:
-        name: "{{item}}"
-        state: absent
-      with_items:
-        - ypserv
-      tags:
-        - package_ypserv_removed
-        - high_severity
-        - disable_strategy
-        - low_complexity
-        - low_disruption
-        - NIST-800-53-AC-17(8)
-        - NIST-800-53-CM-7(a)
-    
-    - name: Ensure uuidd is installed
-      package:
-        name: "{{item}}"
-        state: present
-      with_items:
-        - uuidd
-      tags:
-        - package_uuidd_installed
-        - medium_severity
-        - enable_strategy
-        - low_complexity
-        - low_disruption
-    
-    - name: Ensure glibc is installed
-      package:
-        name: "{{item}}"
-        state: present
-      with_items:
-        - glibc
-      tags:
-        - package_glibc_installed
-        - medium_severity
-        - enable_strategy
-        - low_complexity
-        - low_disruption
-    
     - name: Ensure permission 0000 on /etc/shadow
       file:
-        path: "{{ item }}"
+        path: /etc/shadow
         mode: 0000
-      with_items:
-        - /etc/shadow
       tags:
         - file_permissions_etc_shadow
         - medium_severity
@@ -190,4 +150,26 @@
         - NIST-800-53-AC-6
         - PCI-DSS-Req-8.7.c
         - CJIS-5.5.2.2
+    
+    - name: Ensure glibc is installed
+      package:
+        name: glibc
+        state: present
+      tags:
+        - package_glibc_installed
+        - medium_severity
+        - enable_strategy
+        - low_complexity
+        - low_disruption
+    
+    - name: Ensure uuidd is installed
+      package:
+        name: uuidd
+        state: present
+      tags:
+        - package_uuidd_installed
+        - medium_severity
+        - enable_strategy
+        - low_complexity
+        - low_disruption
     

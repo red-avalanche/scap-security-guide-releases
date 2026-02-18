@@ -7,7 +7,7 @@
 # This profile contains items for GNU/Linux installations exposed to unauthenticated flows or multiple sources.
 #
 # Benchmark ID:  UBUNTU-XENIAL
-# Benchmark Version:  0.1.40
+# Benchmark Version:  0.1.41
 #
 # XCCDF Version:  1.1
 #
@@ -34,77 +34,10 @@
           
    vars:
    tasks:
-    - name: Ensure ntp is installed
-      package:
-        name: "{{item}}"
-        state: present
-      with_items:
-        - ntp
-      tags:
-        - package_ntp_installed
-        - high_severity
-        - enable_strategy
-        - low_complexity
-        - low_disruption
-        - NIST-800-53-AU-8(1)
-        - PCI-DSS-Req-10.4
-    
-    - name: Enable service ntp
-      service:
-        name: "{{item}}"
-        enabled: "yes"
-        state: "started"
-      with_items:
-        - ntp
-      tags:
-        - service_ntp_enabled
-        - high_severity
-        - enable_strategy
-        - low_complexity
-        - low_disruption
-        - NIST-800-53-AU-8(1)
-        - PCI-DSS-Req-10.4
-    
-    - name: Enable service auditd
-      service:
-        name: "{{item}}"
-        enabled: "yes"
-        state: "started"
-      with_items:
-        - auditd
-      tags:
-        - service_auditd_enabled
-        - medium_severity
-        - enable_strategy
-        - low_complexity
-        - low_disruption
-        - NIST-800-53-AC-17(1)
-        - NIST-800-53-AU-1(b)
-        - NIST-800-53-AU-10
-        - NIST-800-53-AU-12(a)
-        - NIST-800-53-AU-12(c)
-        - NIST-800-53-IR-5
-        - PCI-DSS-Req-10
-    
-    - name: Ensure auditd is installed
-      package:
-        name: "{{item}}"
-        state: present
-      with_items:
-        - auditd
-      tags:
-        - package_auditd_installed
-        - medium_severity
-        - enable_strategy
-        - low_complexity
-        - low_disruption
-    
     - name: Ensure cron is installed
       package:
-        name: "{{item}}"
+        name: cron
         state: present
-      with_items:
-        - cron
       tags:
         - package_cron_installed
         - medium_severity
@@ -113,25 +46,10 @@
         - low_disruption
         - NIST-800-53-CM-7
     
-    - name: Ensure nis is removed
-      package:
-        name: "{{item}}"
-        state: absent
-      with_items:
-        - nis
-      tags:
-        - package_nis_removed
-        - low_severity
-        - disable_strategy
-        - low_complexity
-        - low_disruption
-    
     - name: Ensure inetutils-telnetd is removed
       package:
-        name: "{{item}}"
+        name: inetutils-telnetd
         state: absent
-      with_items:
-        - inetutils-telnetd
       tags:
         - package_inetutils-telnetd_removed
         - high_severity
@@ -141,12 +59,21 @@
         - NIST-800-53-AC-17(8)
         - NIST-800-53-CM-7
     
+    - name: Ensure nis is removed
+      package:
+        name: nis
+        state: absent
+      tags:
+        - package_nis_removed
+        - low_severity
+        - disable_strategy
+        - low_complexity
+        - low_disruption
+    
     - name: Ensure ntpdate is removed
       package:
-        name: "{{item}}"
+        name: ntpdate
         state: absent
-      with_items:
-        - ntpdate
       tags:
         - package_ntpdate_removed
         - low_severity
@@ -156,10 +83,8 @@
     
     - name: Ensure telnetd-ssl is removed
       package:
-        name: "{{item}}"
+        name: telnetd-ssl
         state: absent
-      with_items:
-        - telnetd-ssl
       tags:
         - package_telnetd-ssl_removed
         - high_severity
@@ -171,10 +96,8 @@
     
     - name: Ensure telnetd is removed
       package:
-        name: "{{item}}"
+        name: telnetd
         state: absent
-      with_items:
-        - telnetd
       tags:
         - package_telnetd_removed
         - high_severity
@@ -184,41 +107,229 @@
         - NIST-800-53-AC-17(8)
         - NIST-800-53-CM-7
     
-    - name: Ensure permission 0640 on /etc/shadow
-      file:
-        path: "{{ item }}"
-        mode: 0640
-      with_items:
-        - /etc/shadow
+    - name: Ensure ntp is installed
+      package:
+        name: ntp
+        state: present
       tags:
-        - file_permissions_etc_shadow
+        - package_ntp_installed
+        - high_severity
+        - enable_strategy
+        - low_complexity
+        - low_disruption
+        - NIST-800-53-AU-8(1)
+        - PCI-DSS-Req-10.4
+    
+    - name: Enable service ntp
+      service:
+        name: ntp
+        enabled: "yes"
+        state: "started"
+      tags:
+        - service_ntp_enabled
+        - high_severity
+        - enable_strategy
+        - low_complexity
+        - low_disruption
+        - NIST-800-53-AU-8(1)
+        - PCI-DSS-Req-10.4
+    
+    - name: Ensure auditd is installed
+      package:
+        name: auditd
+        state: present
+      tags:
+        - package_auditd_installed
+        - medium_severity
+        - enable_strategy
+        - low_complexity
+        - low_disruption
+    
+    - name: Enable service auditd
+      service:
+        name: auditd
+        enabled: "yes"
+        state: "started"
+      tags:
+        - service_auditd_enabled
+        - high_severity
+        - enable_strategy
+        - low_complexity
+        - low_disruption
+        - NIST-800-53-AU-3
+        - NIST-800-53-AC-17(1)
+        - NIST-800-53-AU-1(b)
+        - NIST-800-53-AU-10
+        - NIST-800-53-AU-12(a)
+        - NIST-800-53-AU-12(c)
+        - NIST-800-53-AU-14(1)
+        - NIST-800-53-IR-5
+        - NIST-800-171-3.3.1
+        - NIST-800-171-3.3.2
+        - NIST-800-171-3.3.6
+        - PCI-DSS-Req-10.1
+        - CJIS-5.4.1.1
+    
+    - name: Test for existence /etc/group
+      stat:
+        path: /etc/group
+      register: file_exists
+    
+    - name: Ensure group owner 0 on /etc/group
+      file:
+        path: /etc/group
+        group: 0
+      when: file_exists.stat.exists
+      tags:
+        - file_groupowner_etc_group
         - medium_severity
         - configure_strategy
         - low_complexity
         - low_disruption
         - NIST-800-53-AC-6
         - PCI-DSS-Req-8.7.c
+        - CJIS-5.5.2.2
     
-    - name: Ensure permission 0644 on /etc/passwd
+    - name: Test for existence /etc/gshadow
+      stat:
+        path: /etc/gshadow
+      register: file_exists
+    
+    - name: Ensure group owner 42 on /etc/gshadow
       file:
-        path: "{{ item }}"
-        mode: 0644
-      with_items:
-        - /etc/passwd
+        path: /etc/gshadow
+        group: 42
+      when: file_exists.stat.exists
       tags:
-        - file_permissions_etc_passwd
+        - file_groupowner_etc_gshadow
         - medium_severity
         - configure_strategy
         - low_complexity
         - low_disruption
         - NIST-800-53-AC-6
     
+    - name: Test for existence /etc/passwd
+      stat:
+        path: /etc/passwd
+      register: file_exists
+    
+    - name: Ensure group owner 0 on /etc/passwd
+      file:
+        path: /etc/passwd
+        group: 0
+      when: file_exists.stat.exists
+      tags:
+        - file_groupowner_etc_passwd
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - NIST-800-53-AC-6
+        - PCI-DSS-Req-8.7.c
+        - CJIS-5.5.2.2
+    
+    - name: Test for existence /etc/shadow
+      stat:
+        path: /etc/shadow
+      register: file_exists
+    
+    - name: Ensure group owner 42 on /etc/shadow
+      file:
+        path: /etc/shadow
+        group: 42
+      when: file_exists.stat.exists
+      tags:
+        - file_groupowner_etc_shadow
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - NIST-800-53-AC-6
+        - PCI-DSS-Req-8.7.c
+        - CJIS-5.5.2.2
+    
+    - name: Test for existence /etc/group
+      stat:
+        path: /etc/group
+      register: file_exists
+    
+    - name: Ensure owner 0 on /etc/group
+      file:
+        path: /etc/group
+        owner: 0
+      when: file_exists.stat.exists
+      tags:
+        - file_owner_etc_group
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - NIST-800-53-AC-6
+        - PCI-DSS-Req-8.7.c
+        - CJIS-5.5.2.2
+    
+    - name: Test for existence /etc/gshadow
+      stat:
+        path: /etc/gshadow
+      register: file_exists
+    
+    - name: Ensure owner 0 on /etc/gshadow
+      file:
+        path: /etc/gshadow
+        owner: 0
+      when: file_exists.stat.exists
+      tags:
+        - file_owner_etc_gshadow
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - NIST-800-53-AC-6
+    
+    - name: Test for existence /etc/passwd
+      stat:
+        path: /etc/passwd
+      register: file_exists
+    
+    - name: Ensure owner 0 on /etc/passwd
+      file:
+        path: /etc/passwd
+        owner: 0
+      when: file_exists.stat.exists
+      tags:
+        - file_owner_etc_passwd
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - NIST-800-53-AC-6
+        - PCI-DSS-Req-8.7.c
+        - CJIS-5.5.2.2
+    
+    - name: Test for existence /etc/shadow
+      stat:
+        path: /etc/shadow
+      register: file_exists
+    
+    - name: Ensure owner 0 on /etc/shadow
+      file:
+        path: /etc/shadow
+        owner: 0
+      when: file_exists.stat.exists
+      tags:
+        - file_owner_etc_shadow
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - NIST-800-53-AC-6
+        - PCI-DSS-Req-8.7.c
+        - CJIS-5.5.2.2
+    
     - name: Ensure permission 0644 on /etc/group
       file:
-        path: "{{ item }}"
+        path: /etc/group
         mode: 0644
-      with_items:
-        - /etc/group
       tags:
         - file_permissions_etc_group
         - medium_severity
@@ -226,13 +337,13 @@
         - low_complexity
         - low_disruption
         - NIST-800-53-AC-6
+        - PCI-DSS-Req-8.7.c
+        - CJIS-5.5.2.2
     
     - name: Ensure permission 0640 on /etc/gshadow
       file:
-        path: "{{ item }}"
+        path: /etc/gshadow
         mode: 0640
-      with_items:
-        - /etc/gshadow
       tags:
         - file_permissions_etc_gshadow
         - medium_severity
@@ -241,28 +352,42 @@
         - low_disruption
         - NIST-800-53-AC-6
     
-    - name: Ensure sysctl kernel.randomize_va_space is set to 2
-      sysctl:
-        name: kernel.randomize_va_space
-        value: 2
-        state: present
-        reload: yes
+    - name: Ensure permission 0644 on /etc/passwd
+      file:
+        path: /etc/passwd
+        mode: 0644
       tags:
-        - sysctl_kernel_randomize_va_space
+        - file_permissions_etc_passwd
         - medium_severity
-        - disable_strategy
+        - configure_strategy
         - low_complexity
-        - medium_disruption
-        - NIST-800-53-SC-30(2)
+        - low_disruption
+        - NIST-800-53-AC-6
+        - PCI-DSS-Req-8.7.c
+        - CJIS-5.5.2.2
     
-    - name: Ensure sysctl fs.suid_dumpable is set to 0
+    - name: Ensure permission 0640 on /etc/shadow
+      file:
+        path: /etc/shadow
+        mode: 0640
+      tags:
+        - file_permissions_etc_shadow
+        - medium_severity
+        - configure_strategy
+        - low_complexity
+        - low_disruption
+        - NIST-800-53-AC-6
+        - PCI-DSS-Req-8.7.c
+        - CJIS-5.5.2.2
+    
+    - name: Ensure sysctl fs.protected_hardlinks is set to 1
       sysctl:
-        name: fs.suid_dumpable
-        value: 0
+        name: fs.protected_hardlinks
+        value: 1
         state: present
         reload: yes
       tags:
-        - sysctl_fs_suid_dumpable
+        - sysctl_fs_protected_hardlinks
         - unknown_severity
         - disable_strategy
         - low_complexity
@@ -283,17 +408,33 @@
         - medium_disruption
         - NIST-800-53-SI-11
     
-    - name: Ensure sysctl fs.protected_hardlinks is set to 1
+    - name: Ensure sysctl fs.suid_dumpable is set to 0
       sysctl:
-        name: fs.protected_hardlinks
-        value: 1
+        name: fs.suid_dumpable
+        value: 0
         state: present
         reload: yes
       tags:
-        - sysctl_fs_protected_hardlinks
+        - sysctl_fs_suid_dumpable
         - unknown_severity
         - disable_strategy
         - low_complexity
         - medium_disruption
         - NIST-800-53-SI-11
+    
+    - name: Ensure sysctl kernel.randomize_va_space is set to 2
+      sysctl:
+        name: kernel.randomize_va_space
+        value: 2
+        state: present
+        reload: yes
+      tags:
+        - sysctl_kernel_randomize_va_space
+        - medium_severity
+        - disable_strategy
+        - low_complexity
+        - medium_disruption
+        - NIST-800-53-SC-30(2)
+        - NIST-800-171-3.1.7
+        - DISA-STIG-040201
     

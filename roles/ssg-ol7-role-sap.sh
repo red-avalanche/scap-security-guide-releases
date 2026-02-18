@@ -7,7 +7,7 @@
 # Regardless of your system's workload all of these checks should pass.
 #
 # Benchmark ID:  OL-7
-# Benchmark Version:  0.1.40
+# Benchmark Version:  0.1.41
 #
 # XCCDF Version:  1.1
 #
@@ -23,48 +23,9 @@
 ###############################################################################
 
 ###############################################################################
-# BEGIN fix (1 / 9) for 'no_rsh_trust_files'
+# BEGIN fix (1 / 9) for 'package_ypbind_removed'
 ###############################################################################
-(>&2 echo "Remediating rule 1/9: 'no_rsh_trust_files'")
-(>&2 echo "FIX FOR THIS RULE 'no_rsh_trust_files' IS MISSING!")
-# END fix for 'no_rsh_trust_files'
-
-###############################################################################
-# BEGIN fix (2 / 9) for 'service_rlogin_disabled'
-###############################################################################
-(>&2 echo "Remediating rule 2/9: 'service_rlogin_disabled'")
-
-SYSTEMCTL_EXEC='/usr/bin/systemctl'
-"$SYSTEMCTL_EXEC" stop 'rlogin.service'
-"$SYSTEMCTL_EXEC" disable 'rlogin.service'
-# Disable socket activation if we have a unit file for it
-"$SYSTEMCTL_EXEC" list-unit-files | grep -q '^rlogin.socket\>' && "$SYSTEMCTL_EXEC" disable 'rlogin.socket'
-# The service may not be running because it has been started and failed,
-# so let's reset the state so OVAL checks pass.
-# Service should be 'inactive', not 'failed' after reboot though.
-"$SYSTEMCTL_EXEC" reset-failed 'rlogin.service'
-# END fix for 'service_rlogin_disabled'
-
-###############################################################################
-# BEGIN fix (3 / 9) for 'service_rsh_disabled'
-###############################################################################
-(>&2 echo "Remediating rule 3/9: 'service_rsh_disabled'")
-
-SYSTEMCTL_EXEC='/usr/bin/systemctl'
-"$SYSTEMCTL_EXEC" stop 'rsh.service'
-"$SYSTEMCTL_EXEC" disable 'rsh.service'
-# Disable socket activation if we have a unit file for it
-"$SYSTEMCTL_EXEC" list-unit-files | grep -q '^rsh.socket\>' && "$SYSTEMCTL_EXEC" disable 'rsh.socket'
-# The service may not be running because it has been started and failed,
-# so let's reset the state so OVAL checks pass.
-# Service should be 'inactive', not 'failed' after reboot though.
-"$SYSTEMCTL_EXEC" reset-failed 'rsh.service'
-# END fix for 'service_rsh_disabled'
-
-###############################################################################
-# BEGIN fix (4 / 9) for 'package_ypbind_removed'
-###############################################################################
-(>&2 echo "Remediating rule 4/9: 'package_ypbind_removed'")
+(>&2 echo "Remediating rule 1/9: 'package_ypbind_removed'")
 # Function to remove packages on RHEL, Fedora, Debian, and possibly other systems.
 #
 # Example Call(s):
@@ -106,9 +67,9 @@ package_remove ypbind
 # END fix for 'package_ypbind_removed'
 
 ###############################################################################
-# BEGIN fix (5 / 9) for 'package_ypserv_removed'
+# BEGIN fix (2 / 9) for 'package_ypserv_removed'
 ###############################################################################
-(>&2 echo "Remediating rule 5/9: 'package_ypserv_removed'")
+(>&2 echo "Remediating rule 2/9: 'package_ypserv_removed'")
 # Function to remove packages on RHEL, Fedora, Debian, and possibly other systems.
 #
 # Example Call(s):
@@ -150,97 +111,56 @@ package_remove ypserv
 # END fix for 'package_ypserv_removed'
 
 ###############################################################################
-# BEGIN fix (6 / 9) for 'package_uuidd_installed'
+# BEGIN fix (3 / 9) for 'no_rsh_trust_files'
 ###############################################################################
-(>&2 echo "Remediating rule 6/9: 'package_uuidd_installed'")
-# Function to install packages on RHEL, Fedora, Debian, and possibly other systems.
-#
-# Example Call(s):
-#
-#     package_install aide
-#
-function package_install {
-
-# Load function arguments into local variables
-local package="$1"
-
-# Check sanity of the input
-if [ $# -ne "1" ]
-then
-  echo "Usage: package_install 'package_name'"
-  echo "Aborting."
-  exit 1
-fi
-
-if which dnf ; then
-  if ! rpm -q --quiet "$package"; then
-    dnf install -y "$package"
-  fi
-elif which yum ; then
-  if ! rpm -q --quiet "$package"; then
-    yum install -y "$package"
-  fi
-elif which apt-get ; then
-  apt-get install -y "$package"
-else
-  echo "Failed to detect available packaging system, tried dnf, yum and apt-get!"
-  echo "Aborting."
-  exit 1
-fi
-
-}
-
-package_install uuidd
-# END fix for 'package_uuidd_installed'
+(>&2 echo "Remediating rule 3/9: 'no_rsh_trust_files'")
+(>&2 echo "FIX FOR THIS RULE 'no_rsh_trust_files' IS MISSING!")
+# END fix for 'no_rsh_trust_files'
 
 ###############################################################################
-# BEGIN fix (7 / 9) for 'package_glibc_installed'
+# BEGIN fix (4 / 9) for 'service_rlogin_disabled'
 ###############################################################################
-(>&2 echo "Remediating rule 7/9: 'package_glibc_installed'")
-# Function to install packages on RHEL, Fedora, Debian, and possibly other systems.
-#
-# Example Call(s):
-#
-#     package_install aide
-#
-function package_install {
+(>&2 echo "Remediating rule 4/9: 'service_rlogin_disabled'")
 
-# Load function arguments into local variables
-local package="$1"
-
-# Check sanity of the input
-if [ $# -ne "1" ]
-then
-  echo "Usage: package_install 'package_name'"
-  echo "Aborting."
-  exit 1
-fi
-
-if which dnf ; then
-  if ! rpm -q --quiet "$package"; then
-    dnf install -y "$package"
-  fi
-elif which yum ; then
-  if ! rpm -q --quiet "$package"; then
-    yum install -y "$package"
-  fi
-elif which apt-get ; then
-  apt-get install -y "$package"
-else
-  echo "Failed to detect available packaging system, tried dnf, yum and apt-get!"
-  echo "Aborting."
-  exit 1
-fi
-
-}
-
-package_install glibc
-# END fix for 'package_glibc_installed'
+SYSTEMCTL_EXEC='/usr/bin/systemctl'
+"$SYSTEMCTL_EXEC" stop 'rlogin.service'
+"$SYSTEMCTL_EXEC" disable 'rlogin.service'
+# Disable socket activation if we have a unit file for it
+"$SYSTEMCTL_EXEC" list-unit-files | grep -q '^rlogin.socket\>' && "$SYSTEMCTL_EXEC" disable 'rlogin.socket'
+# The service may not be running because it has been started and failed,
+# so let's reset the state so OVAL checks pass.
+# Service should be 'inactive', not 'failed' after reboot though.
+"$SYSTEMCTL_EXEC" reset-failed 'rlogin.service'
+# END fix for 'service_rlogin_disabled'
 
 ###############################################################################
-# BEGIN fix (8 / 9) for 'accounts_authorized_local_users_sidadm_orasid'
+# BEGIN fix (5 / 9) for 'service_rsh_disabled'
 ###############################################################################
-(>&2 echo "Remediating rule 8/9: 'accounts_authorized_local_users_sidadm_orasid'")
+(>&2 echo "Remediating rule 5/9: 'service_rsh_disabled'")
+
+SYSTEMCTL_EXEC='/usr/bin/systemctl'
+"$SYSTEMCTL_EXEC" stop 'rsh.service'
+"$SYSTEMCTL_EXEC" disable 'rsh.service'
+# Disable socket activation if we have a unit file for it
+"$SYSTEMCTL_EXEC" list-unit-files | grep -q '^rsh.socket\>' && "$SYSTEMCTL_EXEC" disable 'rsh.socket'
+# The service may not be running because it has been started and failed,
+# so let's reset the state so OVAL checks pass.
+# Service should be 'inactive', not 'failed' after reboot though.
+"$SYSTEMCTL_EXEC" reset-failed 'rsh.service'
+# END fix for 'service_rsh_disabled'
+
+###############################################################################
+# BEGIN fix (6 / 9) for 'file_permissions_etc_shadow'
+###############################################################################
+(>&2 echo "Remediating rule 6/9: 'file_permissions_etc_shadow'")
+
+chmod 0000 /etc/shadow
+# END fix for 'file_permissions_etc_shadow'
+
+###############################################################################
+# BEGIN fix (7 / 9) for 'accounts_authorized_local_users_sidadm_orasid'
+###############################################################################
+(>&2 echo "Remediating rule 7/9: 'accounts_authorized_local_users_sidadm_orasid'")
 
 var_accounts_authorized_local_users_regex="^(root|bin|daemon|adm|lp|sync|shutdown|halt|mail|operator|games|ftp|nobody|pegasus|systemd-bus-proxy|systemd-network|dbus|polkitd|abrt|unbound|tss|libstoragemgmt|rpc|colord|usbmuxd$|pcp|saslauth|geoclue|setroubleshoot|rtkit|chrony|qemu|radvd|rpcuser|nfsnobody|pulse|gdm|gnome-initial-setup|postfix|avahi|ntp|sshd|tcpdump|oprofile|uuidd)$"
 
@@ -317,10 +237,90 @@ done
 # END fix for 'accounts_authorized_local_users_sidadm_orasid'
 
 ###############################################################################
-# BEGIN fix (9 / 9) for 'file_permissions_etc_shadow'
+# BEGIN fix (8 / 9) for 'package_glibc_installed'
 ###############################################################################
-(>&2 echo "Remediating rule 9/9: 'file_permissions_etc_shadow'")
+(>&2 echo "Remediating rule 8/9: 'package_glibc_installed'")
+# Function to install packages on RHEL, Fedora, Debian, and possibly other systems.
+#
+# Example Call(s):
+#
+#     package_install aide
+#
+function package_install {
 
-chmod 0000 /etc/shadow
-# END fix for 'file_permissions_etc_shadow'
+# Load function arguments into local variables
+local package="$1"
+
+# Check sanity of the input
+if [ $# -ne "1" ]
+then
+  echo "Usage: package_install 'package_name'"
+  echo "Aborting."
+  exit 1
+fi
+
+if which dnf ; then
+  if ! rpm -q --quiet "$package"; then
+    dnf install -y "$package"
+  fi
+elif which yum ; then
+  if ! rpm -q --quiet "$package"; then
+    yum install -y "$package"
+  fi
+elif which apt-get ; then
+  apt-get install -y "$package"
+else
+  echo "Failed to detect available packaging system, tried dnf, yum and apt-get!"
+  echo "Aborting."
+  exit 1
+fi
+
+}
+
+package_install glibc
+# END fix for 'package_glibc_installed'
+
+###############################################################################
+# BEGIN fix (9 / 9) for 'package_uuidd_installed'
+###############################################################################
+(>&2 echo "Remediating rule 9/9: 'package_uuidd_installed'")
+# Function to install packages on RHEL, Fedora, Debian, and possibly other systems.
+#
+# Example Call(s):
+#
+#     package_install aide
+#
+function package_install {
+
+# Load function arguments into local variables
+local package="$1"
+
+# Check sanity of the input
+if [ $# -ne "1" ]
+then
+  echo "Usage: package_install 'package_name'"
+  echo "Aborting."
+  exit 1
+fi
+
+if which dnf ; then
+  if ! rpm -q --quiet "$package"; then
+    dnf install -y "$package"
+  fi
+elif which yum ; then
+  if ! rpm -q --quiet "$package"; then
+    yum install -y "$package"
+  fi
+elif which apt-get ; then
+  apt-get install -y "$package"
+else
+  echo "Failed to detect available packaging system, tried dnf, yum and apt-get!"
+  echo "Aborting."
+  exit 1
+fi
+
+}
+
+package_install uuidd
+# END fix for 'package_uuidd_installed'
 
