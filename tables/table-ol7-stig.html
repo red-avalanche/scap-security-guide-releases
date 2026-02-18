@@ -236,6 +236,7 @@ OR:
 <td>A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity
 of the information system but does not want to logout because of the temporary nature of the absense.</td>
 <td>To check the status of the idle screen lock activation, run the following command:
+
 $ gsettings get org.gnome.desktop.screensaver lock-enabled
 If properly configured, the output should be true.
 To ensure that users cannot change how long until the the screensaver locks, run the following:
@@ -243,7 +244,8 @@ $ grep lock-enabled /etc/dconf/db/local.d/locks/*
 If properly configured, the output for lock-enabled should be /org/gnome/desktop/screensaver/lock-enabled
       Is it the case that screensaver locking is not enabled and/or has not been set or configured correctly?
       </td>
-<td>To activate locking of the screensaver in the GNOME3 desktop when it is activated,
+<td>
+To activate locking of the screensaver in the GNOME3 desktop when it is activated,
 add or set <code>lock-enabled</code> to <code>true</code> in
 <code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
 <pre>[org/gnome/desktop/screensaver]
@@ -1481,7 +1483,7 @@ documented in the IATT.
       Is it the case that non-exempt accounts are not using CAC authentication?
       </td>
 <td>To enable smart card authentication, consult the documentation at:
-<ul><li><b><a href="https://docs.oracle.com/cd/E52668_01/E54669/html/ol7-s4-auth.html">https://docs.oracle.com/cd/E52668_01/E54669/html/ol7-s4-auth.html</a></b></li></ul>
+<ul><li><b><a href="https://docs.oracle.com/en/operating-systems/oracle-linux/7/userauth/ol7-auth.html#ol7-s4-auth">https://docs.oracle.com/en/operating-systems/oracle-linux/7/userauth/ol7-auth.html#ol7-s4-auth</a></b></li></ul>
 </td>
 <td>OL07-00-010500</td>
 </tr>
@@ -1775,12 +1777,27 @@ statically control filesystem mounting through <code>/etc/fstab</code>.
 <br><br>
 Additionally, automatically mounting filesystems permits easy introduction of
 unknown devices, thereby facilitating malicious activity.</td>
-<td> To check that the autofs service is disabled in system boot configuration, run the following command: $ systemctl is-enabled autofs Output should indicate the autofs service has either not been installed, or has been disabled at all runlevels, as shown in the example below: $ systemctl is-enabled autofs disabled
-Run the following command to verify autofs is not active (i.e. not running) through current runtime configuration: $ systemctl is-active autofs
-If the service is not running the command will return the following output: inactive
-The service will also be masked, to check that the autofs is masked, run the following command: $ systemctl show autofs | grep "LoadState\|UnitFileState"
+<td>
+To check that the autofs service is disabled in system boot configuration,
+run the following command:
+$ systemctl is-enabled autofs
+Output should indicate the autofs service has either not been installed,
+or has been disabled at all runlevels, as shown in the example below:
+$ systemctl is-enabled autofs disabled
+
+Run the following command to verify autofs is not active (i.e. not running) through current runtime configuration:
+$ systemctl is-active autofs
+
+If the service is not running the command will return the following output:
+inactive
+
+The service will also be masked, to check that the autofs is masked, run the following command:
+$ systemctl show autofs | grep "LoadState\|UnitFileState"
+
 If the service is masked the command will return the following outputs:
+
 LoadState=masked
+
 UnitFileState=masked
       Is it the case that ?
       </td>
@@ -1921,6 +1938,7 @@ Active: inactive (dead)
 key sequence is pressed.
 <br><br>
 To configure the system to ignore the <code>Ctrl-Alt-Del</code> key sequence from the
+
 command line instead of rebooting the system, do either of the following:
 <pre>ln -sf /dev/null /etc/systemd/system/ctrl-alt-del.target</pre>
 or
@@ -2122,7 +2140,7 @@ will not cause problems when accounts are created in the future,
 and the cause should be discovered and addressed.</td>
 <td>The following command will discover and print any
 files on local partitions which do not belong to a valid user.
-$ sudo find / -xdev -fstype local -nouser
+$ df --local -P | awk {'if (NR!=1) print $6'} | sudo xargs -I '{}' find '{}' -xdev -nouser
 
 Either remove all files and directories from the system that do not have a
 valid user, or assign a valid user to all unowned files and directories on
@@ -2133,7 +2151,13 @@ $ sudo chown user file
 <td>If any files are not owned by a user, then the
 cause of their lack of ownership should be investigated.
 Following this, the files should be deleted or assigned to an
-appropriate user.</td>
+appropriate user. The following command will discover and print
+any files on local partitions which do not belong to a valid user:
+<pre>$ df --local -P | awk {'if (NR!=1) print $6'} | sudo xargs -I '{}' find '{}' -xdev -nouser</pre>
+To search all filesystems on a system including network mounted
+filesystems the following command can be run manually for each partition:
+<pre>$ sudo find PARTITION -xdev -nouser</pre>
+</td>
 <td>OL07-00-020320</td>
 </tr>
 <tr>
@@ -2150,7 +2174,7 @@ will not cause problems when accounts are created in the future,
 and the cause should be discovered and addressed.</td>
 <td>The following command will discover and print any
 files on local partitions which do not belong to a valid group.
-$ sudo find / -xdev -fstype local -nogroup
+$ df --local -P | awk '{if (NR!=1) print $6}' | sudo xargs -I '{}' find '{}' -xdev -nogroup
 
 Either remove all files and directories from the system that do not have a valid group,
 or assign a valid group with the chgrp command:
@@ -2160,7 +2184,13 @@ $ sudo chgrp group file
 <td>If any files are not owned by a group, then the
 cause of their lack of group-ownership should be investigated.
 Following this, the files should be deleted or assigned to an
-appropriate group.</td>
+appropriate group. The following command will discover and print
+any files on local partitions which do not belong to a valid group:
+<pre>$ df --local -P | awk '{if (NR!=1) print $6}' | sudo xargs -I '{}' find '{}' -xdev -nogroup</pre>
+To search all filesystems on a system including network mounted
+filesystems the following command can be run manually for each partition:
+<pre>$ sudo find PARTITION -xdev -nogroup</pre>
+</td>
 <td>OL07-00-020330</td>
 </tr>
 <tr>
@@ -2659,7 +2689,11 @@ can be implemented by adding the following to the <i>RULES</i> section of
 <td>The Oracle Linux operating system must be configured so that the cron.allow file, if it exists, is owned by root.</td>
 <td>If the owner of the cron.allow file is not set to root, the possibility exists for an
 unauthorized user to view or edit sensitive information.</td>
-<td>To check the ownership of /etc/cron.allow, run the command: $ ls -lL /etc/cron.allow If properly configured, the output should indicate the following owner: root
+<td>To check the ownership of /etc/cron.allow,
+run the command:
+$ ls -lL /etc/cron.allow
+If properly configured, the output should indicate the following owner:
+root
       Is it the case that /etc/cron.allow has owner root?
       </td>
 <td>If <code>/etc/cron.allow</code> exists, it must be owned by <code>root</code>.
@@ -2676,7 +2710,11 @@ To properly set the owner of <code>/etc/cron.allow</code>, run the command:
 <td>The Oracle Linux operating system must be configured so that the cron.allow file, if it exists, is group-owned by root.</td>
 <td>If the owner of the cron.allow file is not set to root, the possibility exists for an
 unauthorized user to view or edit sensitive information.</td>
-<td>To check the group ownership of /etc/cron.allow, run the command: $ ls -lL /etc/cron.allow If properly configured, the output should indicate the following group-owner: root
+<td>To check the group ownership of /etc/cron.allow,
+run the command:
+$ ls -lL /etc/cron.allow
+If properly configured, the output should indicate the following group-owner:
+root
       Is it the case that /etc/cron.allow has group owner root?
       </td>
 <td>If <code>/etc/cron.allow</code> exists, it must be group-owned by <code>root</code>.
@@ -2696,12 +2734,27 @@ time of the crash. Kernel core dumps consume a considerable amount of disk
 space and may result in denial of service by exhausting the available space
 on the target file system partition. Unless the system is used for kernel
 development or testing, there is little need to run the kdump service.</td>
-<td> To check that the kdump service is disabled in system boot configuration, run the following command: $ systemctl is-enabled kdump Output should indicate the kdump service has either not been installed, or has been disabled at all runlevels, as shown in the example below: $ systemctl is-enabled kdump disabled
-Run the following command to verify kdump is not active (i.e. not running) through current runtime configuration: $ systemctl is-active kdump
-If the service is not running the command will return the following output: inactive
-The service will also be masked, to check that the kdump is masked, run the following command: $ systemctl show kdump | grep "LoadState\|UnitFileState"
+<td>
+To check that the kdump service is disabled in system boot configuration,
+run the following command:
+$ systemctl is-enabled kdump
+Output should indicate the kdump service has either not been installed,
+or has been disabled at all runlevels, as shown in the example below:
+$ systemctl is-enabled kdump disabled
+
+Run the following command to verify kdump is not active (i.e. not running) through current runtime configuration:
+$ systemctl is-active kdump
+
+If the service is not running the command will return the following output:
+inactive
+
+The service will also be masked, to check that the kdump is masked, run the following command:
+$ systemctl show kdump | grep "LoadState\|UnitFileState"
+
 If the service is masked the command will return the following outputs:
+
 LoadState=masked
+
 UnitFileState=masked
       Is it the case that ?
       </td>
@@ -2854,7 +2907,11 @@ to the appropriate ruleset.
 For example, add <code>acl</code> to the following line in <code>/etc/aide.conf</code>:
 <pre>FIPSR = p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha256</pre>
 AIDE rules can be configured in multiple ways; this is merely one example that is already
-configured by default.</td>
+configured by default.
+
+The remediation provided with this rule adds <code>acl</code> to all rule sets available in
+<code>/etc/aide.conf</code>
+</td>
 <td>OL07-00-021600</td>
 </tr>
 <tr>
@@ -2875,7 +2932,11 @@ to the appropriate ruleset.
 For example, add <code>xattrs</code> to the following line in <code>/etc/aide.conf</code>:
 <pre>FIPSR = p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha256</pre>
 AIDE rules can be configured in multiple ways; this is merely one example that is already
-configured by default.</td>
+configured by default.
+
+The remediation provided with this rule adds <code>xattrs</code> to all rule sets available in
+<code>/etc/aide.conf</code>
+</td>
 <td>OL07-00-021610</td>
 </tr>
 <tr>
@@ -2965,7 +3026,12 @@ generated by the kernel are appropriately recorded.
 Additionally, a properly configured audit subsystem ensures that actions of
 individual system users can be uniquely traced to those users so they
 can be held accountable for their actions.</td>
-<td> Run the following command to determine the current status of the auditd service: $ systemctl is-active auditd If the service is running, it should return the following: active
+<td>
+
+Run the following command to determine the current status of the
+auditd service:
+$ systemctl is-active auditd
+If the service is running, it should return the following: active
       Is it the case that ?
       </td>
 <td>The <code>auditd</code> service is an essential userspace component of
@@ -5404,7 +5470,7 @@ left unattended.</td>
 <td>Run the following command to ensure the TMOUT value is configured for all users
 on the system:
 
-$ sudo grep TMOUT /etc/profile
+$ sudo grep TMOUT /etc/profile /etc/profile.d/*.sh
 
 The output should return the following:
 TMOUT=
@@ -5413,7 +5479,8 @@ TMOUT=
 <td>Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
 all user sessions will terminate based on inactivity. The <code>TMOUT</code>
 
-setting in <code>/etc/profile</code> should read as follows:
+setting in a file loaded by <code>/etc/profile</code>, e.g.
+<code>/etc/profile.d/tmout.sh</code> should read as follows:
 <pre>TMOUT=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></xccdf-1.1:sub></pre>
 </td>
 <td>OL07-00-040160</td>
@@ -5584,7 +5651,12 @@ of information system components from which information can be transmitted (e.g.
 mobile devices, notebook computers, printers, copiers, scanners, etc). Communication paths
 outside the physical protection of a controlled boundary are exposed to the possibility
 of interception and modification.</td>
-<td> Run the following command to determine the current status of the sshd service: $ systemctl is-active sshd If the service is running, it should return the following: active
+<td>
+
+Run the following command to determine the current status of the
+sshd service:
+$ systemctl is-active sshd
+If the service is running, it should return the following: active
       Is it the case that ?
       </td>
 <td>The SSH server service, sshd, is commonly needed.
@@ -5661,10 +5733,12 @@ is reached.</td>
 <td>To ensure ClientAliveInterval is set correctly, run the following command:
 $ sudo grep ClientAliveCountMax /etc/ssh/sshd_config
 If properly configured, the output should be:
-ClientAliveCountMax 0
-
-In this case, the SSH idle timeout occurs precisely when
-the ClientAliveInterval is set.
+ClientAliveCountMax 
+For SSH earlier than v8.2, a ClientAliveCountMax value of 0 causes an idle timeout precisely when
+the ClientAliveInterval is set.  Starting with v8.2, a value of 0 disables the timeout
+functionality completely.
+If the option is set to a number greater than 0, then the idle session will be disconnected after
+ClientAliveInterval * ClientAliveCountMax seconds.
       Is it the case that it is commented out or not configured properly?
       </td>
 <td>The SSH server sends at most <code>ClientAliveCountMax</code> messages
@@ -5673,10 +5747,12 @@ The option <code>ClientAliveInterval</code> configures timeout after
 each <code>ClientAliveCountMax</code> message. If the SSH server does not
 receive a response from the client, then the connection is considered idle
 and terminated.
-
-To ensure the SSH idle timeout occurs precisely when the
-<code>ClientAliveInterval</code> is set, set the <code>ClientAliveCountMax</code> to
-value of <code>0</code>.</td>
+For SSH earlier than v8.2, a <code>ClientAliveCountMax</code> value of <code>0</code>
+causes an idle timeout precisely when the <code>ClientAliveInterval</code> is set.
+Starting with v8.2, a value of <code>0</code> disables the timeout functionality
+completely. If the option is set to a number greater than <code>0</code>, then
+the idle session will be disconnected after
+<code>ClientAliveInterval * ClientAliveCountMax</code> seconds.</td>
 <td>OL07-00-040340</td>
 </tr>
 <tr>
@@ -5827,7 +5903,11 @@ above (or their subset), keeping the given order of algorithms.</td>
 <td>The Oracle Linux operating system must be configured so that the SSH public host key files have mode 0644 or less permissive.</td>
 <td>If a public host key file is modified by an unauthorized user, the SSH service
 may be compromised.</td>
-<td>To check the permissions of /etc/ssh/*.pub, run the command: $ ls -l /etc/ssh/*.pub If properly configured, the output should indicate the following permissions: -rw-r--r--
+<td>To check the permissions of /etc/ssh/*.pub,
+run the command:
+$ ls -l /etc/ssh/*.pub
+If properly configured, the output should indicate the following permissions:
+-rw-r--r--
       Is it the case that /etc/ssh/*.pub has unix mode -rw-r--r--?
       </td>
 <td> To properly set the permissions of <code>/etc/ssh/*.pub</code>, run the command: <pre>$ sudo chmod 0644 /etc/ssh/*.pub</pre>
@@ -5841,7 +5921,11 @@ may be compromised.</td>
 <td>The Oracle Linux operating system must be configured so that the SSH private host key files have mode 0640 or less permissive.</td>
 <td>If an unauthorized user obtains the private SSH host key file, the host could be
 impersonated.</td>
-<td>To check the permissions of /etc/ssh/*_key, run the command: $ ls -l /etc/ssh/*_key If properly configured, the output should indicate the following permissions: -rw-r-----
+<td>To check the permissions of /etc/ssh/*_key,
+run the command:
+$ ls -l /etc/ssh/*_key
+If properly configured, the output should indicate the following permissions:
+-rw-r-----
       Is it the case that /etc/ssh/*_key has unix mode -rw-r-----?
       </td>
 <td>
@@ -6033,10 +6117,17 @@ Issue the following command to make the changes take effect:
 <td>Access control methods provide the ability to enhance system security posture
 by restricting services and known good IP addresses and address ranges. This
 prevents connections from unknown hosts and protocols.</td>
-<td> Run the following command to determine the current status of the firewalld service: $ systemctl is-active firewalld If the service is running, it should return the following: active
+<td>
+
+Run the following command to determine the current status of the
+firewalld service:
+$ systemctl is-active firewalld
+If the service is running, it should return the following: active
       Is it the case that ?
       </td>
-<td> The <code>firewalld</code> service can be enabled with the following command: <pre>$ sudo systemctl enable firewalld.service</pre>
+<td>
+The <code>firewalld</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable firewalld.service</pre>
 </td>
 <td>OL07-00-040520</td>
 </tr>

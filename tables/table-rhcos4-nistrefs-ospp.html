@@ -754,8 +754,46 @@ provides a mechanism to lock sessions after period of inactivity.</td>
 <td>CCE-82541-4</td>
 <td>Configure System Cryptography Policy</td>
 <td xml:lang="en-US">To configure the system cryptography policy to use ciphers only from the <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_system_crypto_policy"></xccdf-1.1:sub></code>
-policy, run the following command:
-<pre>$ sudo update-crypto-policies --set <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_system_crypto_policy"></xccdf-1.1:sub></pre>
+policy, create a <code>MachineConfig</code> as follows:
+<pre>
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: 50-master-configure-crypto-policy
+spec:
+  config:
+    ignition:
+      version: 3.1.0
+    systemd:
+      units:
+        - name: configure-crypto-policy.service
+          enabled: true
+          contents: |
+            [Unit]
+            Before=kubelet.service
+            [Service]
+            Type=oneshot
+            ExecStart=update-crypto-policies --set <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_system_crypto_policy"></xccdf-1.1:sub>
+            RemainAfterExit=yes
+            [Install]
+            WantedBy=multi-user.target
+</pre>
+<p>
+This will configure the crypto policy appropriately in all the
+nodes labeled with the "master" role.
+</p>
+<p>
+Note that this needs to be done for each <code>MachineConfigPool</code>
+</p>
+<p>
+For more information on how to configure nodes with the Machine Config
+Operator see
+<a href="https://docs.openshift.com/container-platform/4.6/post_installation_configuration/machine-configuration-tasks.html">the relevant documentation</a>.
+</p>
+
 The rule checks if settings for selected crypto policy are configured as expected. Configuration files in the <code>/etc/crypto-policies/back-ends</code> are either symlinks to correct files provided by Crypto-policies package or they are regular files in case crypto policy customizations are applied.
 Crypto policies may be customized by crypto policy modules, in which case it is delimited from the base policy using a colon.</td>
 <td xml:lang="en-US">Centralized cryptographic policies simplify applying secure ciphers across an operating system and
@@ -905,7 +943,7 @@ and is generally useful only for developers or system operators trying to
 debug problems. Enabling core dumps on production systems is not recommended,
 however there may be overriding operational requirements to enable advanced
 debuging. Permitting temporary enablement of core dumps during such situations
-should be reviewed through local needs and policy. </td>
+should be reviewed through local needs and policy.</td>
 <td></td>
 <td></td>
 </tr>
@@ -1002,8 +1040,40 @@ of the return instruction pointer.</td>
 key sequence is pressed Ctrl-Alt-Delete more than 7 times in 2 seconds.
 <br><br>
 To configure the system to ignore the <code>CtrlAltDelBurstAction</code>
-setting, add or modify the following to <code>/etc/systemd/system.conf</code>:
-<pre>CtrlAltDelBurstAction=none</pre>
+
+setting, create a <code>MachineConfig</code> similar to the following:
+<pre>
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: 75-master-disable-ctrlaltdel-burstaction
+spec:
+  config:
+    ignition:
+      version: 3.1.0
+    storage:
+      files:
+      - contents:
+          source: data:,CtrlAltDelBurstAction%3Dnone
+        mode: 0644
+        path: /etc/systemd/system.conf.d/disable_ctrlaltdelete_burstaction.conf
+        overwrite: true
+EOF
+</pre>
+<p>
+This will add the relevant configuration to <code>/etc/systemd/system.conf.d/</code>,
+thus configuring Systemd apropriately.
+</p>
+<p>
+Note that this needs to be done for each <code>MachineConfigPool</code>
+</p>
+<p>
+For more information on how to configure nodes with the Machine Config
+Operator see
+<a href="https://docs.openshift.com/container-platform/4.6/post_installation_configuration/machine-configuration-tasks.html">the relevant documentation</a>.
+</p>
 </td>
 <td xml:lang="en-US">A locally logged-in user who presses Ctrl-Alt-Del, when at the console,
 can reboot the system. If accidentally pressed, as could happen in
@@ -1020,13 +1090,39 @@ loss of availability of systems due to unintentional reboot.</td>
 key sequence is pressed.
 <br><br>
 To configure the system to ignore the <code>Ctrl-Alt-Del</code> key sequence from the
-command line instead of rebooting the system, do either of the following:
-<pre>ln -sf /dev/null /etc/systemd/system/ctrl-alt-del.target</pre>
-or
-<pre>systemctl mask ctrl-alt-del.target</pre>
-<br><br>
-Do not simply delete the <code>/usr/lib/systemd/system/ctrl-alt-del.service</code> file,
-as this file may be restored during future system updates.</td>
+
+command line instead of rebooting the system, create a <code>MachineConfig</code>
+similar to the following:
+<pre>
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: 75-master-disable-ctrlaltdel-reboot
+spec:
+  config:
+    ignition:
+      version: 3.1.0
+    systemd:
+      units:
+      - name: ctrl-alt-del.target
+        mask: true
+EOF
+</pre>
+<p>
+This will mask the <code>ctrl-alt-del.target</code> systemd target for all the
+nodes labeled with the "master" role.
+</p>
+<p>
+Note that this needs to be done for each <code>MachineConfigPool</code>
+</p>
+<p>
+For more information on how to configure nodes with the Machine Config
+Operator see
+<a href="https://docs.openshift.com/container-platform/4.6/post_installation_configuration/machine-configuration-tasks.html">the relevant documentation</a>.
+</p>
+</td>
 <td xml:lang="en-US">A locally logged-in user who presses Ctrl-Alt-Del, when at the console,
 can reboot the system. If accidentally pressed, as could happen in
 the case of mixed OS environment, this can create the risk of short-term
@@ -1718,8 +1814,35 @@ The <code>tmux</code> package allows for a session lock to be implemented and co
 <tr>
 <td>CCE-82524-0</td>
 <td>Install usbguard Package</td>
-<td xml:lang="en-US">The <code>usbguard</code> package can be installed with the following command:
-<pre></pre>
+<td xml:lang="en-US">
+The <code>usbguard</code> package can be installed with the following manifest:
+<pre>
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: 75-master-usbguard-install
+spec:
+  config:
+    ignition:
+      version: 3.1.0
+  extensions:
+    - usbguard
+</pre>
+<p>
+This will install the <code>usbguard</code> package in all the
+nodes labeled with the "master" role.
+</p>
+<p>
+Note that this needs to be done for each <code>MachineConfigPool</code>
+</p>
+<p>
+For more information on how to configure nodes with the Machine Config
+Operator see
+<a href="https://docs.openshift.com/container-platform/4.6/post_installation_configuration/machine-configuration-tasks.html">the relevant documentation</a>.
+</p>
 </td>
 <td xml:lang="en-US">
 <code>usbguard</code> is a software framework that helps to protect
@@ -1851,8 +1974,36 @@ privileges.</td>
 the Linux Auditing System, as it is responsible for writing audit records to
 disk.
 
-The <code>auditd</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable auditd.service</pre>
+The <code>auditd</code> service can be enabled with the following manifest:
+<pre>
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: 75-master-auditd-enable
+spec:
+  config:
+    ignition:
+      version: 3.1.0
+    systemd:
+      units:
+      - name: auditd.service
+        enabled: true
+</pre>
+<p>
+This will enable the <code>auditd</code> service in all the
+nodes labeled with the "master" role.
+</p>
+<p>
+Note that this needs to be done for each <code>MachineConfigPool</code>
+</p>
+<p>
+For more information on how to configure nodes with the Machine Config
+Operator see
+<a href="https://docs.openshift.com/container-platform/4.6/post_installation_configuration/machine-configuration-tasks.html">the relevant documentation</a>.
+</p>
 </td>
 <td xml:lang="en-US">Without establishing what type of events occurred, it would be difficult
 to establish, correlate, and investigate the events leading up to an outage or attack.
@@ -1878,8 +2029,36 @@ for SystemD related issues and should otherwise be disabled.
 <br><br>
 By default, the <code>debug-shell</code> SystemD service is already disabled.
 
-The <code>debug-shell</code> service can be disabled with the following command:
-<pre>$ sudo systemctl mask --now debug-shell.service</pre>
+The <code>debug-shell</code> service can be disabled with the following manifest:
+<pre>
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: 75-master-debug-shell-disable
+spec:
+  config:
+    ignition:
+      version: 3.1.0
+    systemd:
+      units:
+      - enabled: false
+        name: debug-shell.service
+</pre>
+<p>
+This will disable the <code>debug-shell</code> service in all the
+nodes labeled with the "master" role.
+</p>
+<p>
+Note that this needs to be done for each <code>MachineConfigPool</code>
+</p>
+<p>
+For more information on how to configure nodes with the Machine Config
+Operator see
+<a href="https://docs.openshift.com/container-platform/4.6/post_installation_configuration/machine-configuration-tasks.html">the relevant documentation</a>.
+</p>
 </td>
 <td xml:lang="en-US">This prevents attackers with physical access from trivially bypassing security
 on the machine through valid troubleshooting configurations and gaining root
@@ -1892,8 +2071,36 @@ access when the system is rebooted.</td>
 <td>Enable the File Access Policy Service</td>
 <td xml:lang="en-US">The File Access Policy service should be enabled.
 
-The <code>fapolicyd</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable fapolicyd.service</pre>
+The <code>fapolicyd</code> service can be enabled with the following manifest:
+<pre>
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: 75-master-fapolicyd-enable
+spec:
+  config:
+    ignition:
+      version: 3.1.0
+    systemd:
+      units:
+      - name: fapolicyd.service
+        enabled: true
+</pre>
+<p>
+This will enable the <code>fapolicyd</code> service in all the
+nodes labeled with the "master" role.
+</p>
+<p>
+Note that this needs to be done for each <code>MachineConfigPool</code>
+</p>
+<p>
+For more information on how to configure nodes with the Machine Config
+Operator see
+<a href="https://docs.openshift.com/container-platform/4.6/post_installation_configuration/machine-configuration-tasks.html">the relevant documentation</a>.
+</p>
 </td>
 <td xml:lang="en-US">The <code>fapolicyd</code> service (File Access Policy Daemon)
 implements application whitelisting to decide file access rights.</td>
@@ -1904,7 +2111,37 @@ implements application whitelisting to decide file access rights.</td>
 <tr>
 <td></td>
 <td>Verify iptables Enabled</td>
-<td xml:lang="en-US"> The <code>iptables</code> service can be enabled with the following command: <pre>$ sudo systemctl enable iptables.service</pre>
+<td xml:lang="en-US">
+The <code>iptables</code> service can be enabled with the following manifest:
+<pre>
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: 75-master-iptables-enable
+spec:
+  config:
+    ignition:
+      version: 3.1.0
+    systemd:
+      units:
+      - name: iptables.service
+        enabled: true
+</pre>
+<p>
+This will enable the <code>iptables</code> service in all the
+nodes labeled with the "master" role.
+</p>
+<p>
+Note that this needs to be done for each <code>MachineConfigPool</code>
+</p>
+<p>
+For more information on how to configure nodes with the Machine Config
+Operator see
+<a href="https://docs.openshift.com/container-platform/4.6/post_installation_configuration/machine-configuration-tasks.html">the relevant documentation</a>.
+</p>
 </td>
 <td xml:lang="en-US">The <code>iptables</code> service provides the system's host-based firewalling
 capability for IPv4 and ICMP.</td>
@@ -1929,13 +2166,42 @@ and is generally useful only for developers trying to debug problems.</td>
 <td>Enable the USBGuard Service</td>
 <td xml:lang="en-US">The USBGuard service should be enabled.
 
-The <code>usbguard</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable usbguard.service</pre>
+The <code>usbguard</code> service can be enabled with the following manifest:
+<pre>
+---
+apiVersion: machineconfiguration.openshift.io/v1
+kind: MachineConfig
+metadata:
+  labels:
+    machineconfiguration.openshift.io/role: master
+  name: 75-master-usbguard-enable
+spec:
+  config:
+    ignition:
+      version: 3.1.0
+    systemd:
+      units:
+      - name: usbguard.service
+        enabled: true
+</pre>
+<p>
+This will enable the <code>usbguard</code> service in all the
+nodes labeled with the "master" role.
+</p>
+<p>
+Note that this needs to be done for each <code>MachineConfigPool</code>
+</p>
+<p>
+For more information on how to configure nodes with the Machine Config
+Operator see
+<a href="https://docs.openshift.com/container-platform/4.6/post_installation_configuration/machine-configuration-tasks.html">the relevant documentation</a>.
+</p>
 </td>
 <td xml:lang="en-US">The <code>usbguard</code> service must be running in order to
 enforce the USB device authorization policy for all USB devices.</td>
 <td></td>
-<td></td>
+<td>CM-8(3)(a)<br>IA-3<br>
+</td>
 </tr>
 <tr>
 <td></td>
@@ -2093,8 +2359,8 @@ enabled on the console or console port that has been let unattended.</td>
 </td>
 </tr>
 <tr>
-<td>CCE-82464-9</td>
-<td>Set SSH Client Alive Count Max</td>
+<td>CCE-83406-9</td>
+<td>Set SSH Client Alive Count Max to zero</td>
 <td xml:lang="en-US">The SSH server sends at most <code>ClientAliveCountMax</code> messages
 during a SSH session and waits for a response from the SSH client.
 The option <code>ClientAliveInterval</code> configures timeout after
@@ -2569,7 +2835,7 @@ disallows the use of user namespaces.</td>
 <td xml:lang="en-US">To allow authorization of USB devices combining human interface device and hub capabilities
 by USBGuard daemon,
 add the line
-<code>allow with-interface match_all { 03:*:* 09:00:* }</code>
+<code>allow with-interface match-all { 03:*:* 09:00:* }</code>
 to <code>/etc/usbguard/rules.conf</code>.</td>
 <td xml:lang="en-US">Without allowing Human Interface Devices, it might not be possible
 to interact with the system. Without allowing hubs, it might not be possible to use any
