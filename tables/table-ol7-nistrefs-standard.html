@@ -546,6 +546,42 @@ audited.</td>
 </tr>
 <tr>
 <td></td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands</td>
+<td xml:lang="en-US">The audit system should collect information about usage of privileged
+commands for all users and root. To find the relevant setuid /
+setgid programs, run the following command for each local partition
+<i>PART</i>:
+<pre>$ sudo find <i>PART</i> -xdev -type f -perm -4000 -o -type f -perm -2000 2&gt;/dev/null</pre>
+If the <code>auditd</code> daemon is configured to use the <code>augenrules</code>
+program to read audit rules during daemon startup (the default), add a line of
+the following form to a file with suffix <code>.rules</code> in the directory
+<code>/etc/audit/rules.d</code> for each setuid / setgid program on the system,
+replacing the <i>SETUID_PROG_PATH</i> part with the full path of that setuid /
+setgid program in the list:
+<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
+utility to read audit rules during daemon startup, add a line of the following
+form to <code>/etc/audit/audit.rules</code> for each setuid / setgid program on the
+system, replacing the <i>SETUID_PROG_PATH</i> part with the full path of that
+setuid / setgid program in the list:
+<pre>-a always,exit -F path=<i>SETUID_PROG_PATH</i> -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+</td>
+<td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
+authorized users, or by unauthorized external entities that have compromised system accounts,
+is a serious and ongoing concern and can have significant adverse impacts on organizations.
+Auditing the use of privileged functions is one way to detect such misuse and identify
+the risk from insider and advanced persistent threats.
+<br><br>
+Privileged programs are subject to escalation-of-privilege attacks,
+which attempt to subvert their normal role of providing some necessary but
+limited capability. As such, motivation exists to monitor these programs for
+unusual activity.</td>
+<td></td>
+<td>AC-2(4)<br>AU-2(d)<br>AU-12(c)<br>AC-6(9)<br>CM-6(a)<br>
+</td>
+</tr>
+<tr>
+<td></td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - at</td>
 <td xml:lang="en-US">At a minimum, the audit system should collect the execution of
 privileged commands for all users and root. If the <code>auditd</code> daemon is
@@ -748,11 +784,13 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
+-F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
+-F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -860,11 +898,13 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 
+-F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign
+-F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -1733,6 +1773,26 @@ The <code>oddjobd</code> service can be disabled with the following command:
 some environments, and can be disabled if it is not needed. Execution of
 tasks by privileged programs, on behalf of unprivileged ones, has traditionally
 been a source of privilege escalation security issues.</td>
+<td></td>
+<td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
+</td>
+</tr>
+<tr>
+<td></td>
+<td>Disable Apache Qpid (qpidd)</td>
+<td xml:lang="en-US">The <code>qpidd</code> service provides high speed, secure,
+guaranteed delivery services.  It is an implementation of the Advanced Message
+Queuing Protocol.  By default the qpidd service will bind to port 5672 and
+listen for connection attempts.
+
+The <code>qpidd</code> service can be disabled with the following command:
+<pre>$ sudo systemctl mask --now qpidd.service</pre>
+</td>
+<td xml:lang="en-US">The qpidd service is automatically installed when the <code>base</code> package
+selection is selected during installation. The qpidd service listens for
+network connections, which increases the attack surface of the system. If
+the system is not intended to receive AMQP traffic, then the <code>qpidd</code>
+service is not needed and should be disabled or removed.</td>
 <td></td>
 <td>CM-7(a)<br>CM-7(b)<br>CM-6(a)<br>
 </td>

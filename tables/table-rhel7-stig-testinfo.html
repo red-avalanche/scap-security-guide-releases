@@ -6,7 +6,7 @@
 <body>
 <br><br><div style="text-align: center; font-size: x-large; font-weight:bold">DISA STIG for Red Hat Enterprise Linux 7</div>
 <div style="text-align: center; font-size: normal ">This profile contains configuration checks that align to the
-DISA STIG for Red Hat Enterprise Linux V3R1.
+DISA STIG for Red Hat Enterprise Linux V3R2.
 
 In addition to being applicable to Red Hat Enterprise Linux 7, DISA recognizes this
 configuration baseline as applicable to the operating system tier of
@@ -570,7 +570,7 @@ attempts using <code>pam_faillock.so</code>, modify the content of both
 <td></td>
 <td>SRG-OS-000021-GPOS-00005<br>SRG-OS-000329-GPOS-00128<br>
 </td>
-<td>CCI-000044<br>CCI-002238<br>
+<td>CCI-000044<br>CCI-002236<br>CCI-002237<br>CCI-002238<br>
 </td>
 <td></td>
 </tr>
@@ -635,7 +635,7 @@ as follows:
 <td></td>
 <td>SRG-OS-000021-GPOS-00005<br>SRG-OS-000329-GPOS-00128<br>
 </td>
-<td>CCI-000044<br>CCI-002238<br>
+<td>CCI-000044<br>CCI-002236<br>CCI-002237<br>CCI-002238<br>
 </td>
 <td></td>
 </tr>
@@ -666,7 +666,7 @@ If <code>unlock_time</code> is set to <code>0</code>, manual intervention by an 
 <td></td>
 <td>SRG-OS-000021-GPOS-00005<br>SRG-OS-000329-GPOS-00128<br>
 </td>
-<td>CCI-000044<br>CCI-002238<br>
+<td>CCI-000044<br>CCI-002236<br>CCI-002237<br>CCI-002238<br>
 </td>
 <td></td>
 </tr>
@@ -680,6 +680,7 @@ management session enabled on the console or console port that has been
 left unattended.</td>
 <td xml:lang="en-US">Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
 all user sessions will terminate based on inactivity. The <code>TMOUT</code>
+
 setting in <code>/etc/profile</code> should read as follows:
 <pre>TMOUT=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></xccdf-1.1:sub></pre>
 </td>
@@ -1427,10 +1428,13 @@ of the <code>chcon</code> command for all users and root. If the <code>auditd</c
 daemon is configured to use the <code>augenrules</code> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+
 <pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file:
+
 <pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td></td>
@@ -2044,9 +2048,9 @@ form to <code>/etc/audit/audit.rules</code>:
 <pre>-a always,exit -F path=/usr/bin/mount -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td></td>
-<td>SRG-OS-000477-GPOS-00222<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000392-GPOS-00172<br>
+<td>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000392-GPOS-00172<br>
 </td>
-<td>CCI-000172<br>CCI-002884<br>
+<td>CCI-000135<br>CCI-000172<br>CCI-002884<br>
 </td>
 <td></td>
 </tr>
@@ -2101,11 +2105,13 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
+-F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
+-F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td></td>
 <td>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000392-GPOS-00172<br>
@@ -2229,11 +2235,13 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 
+-F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign
+-F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td></td>
 <td>SRG-OS-000042-GPOS-00020<br>SRG-OS-000042-GPOS-00021<br>SRG-OS-000477-GPOS-00222<br>SRG-OS-000476-GPOS-00221<br>SRG-OS-000475-GPOS-00220<br>SRG-OS-000474-GPOS-00219<br>SRG-OS-000473-GPOS-00218<br>SRG-OS-000472-GPOS-00217<br>SRG-OS-000471-GPOS-00216<br>SRG-OS-000471-GPOS-00215<br>SRG-OS-000470-GPOS-00214<br>SRG-OS-000468-GPOS-00212<br>SRG-OS-000467-GPOS-00211<br>SRG-OS-000466-GPOS-00210<br>SRG-OS-000465-GPOS-00209<br>SRG-OS-000463-GPOS-00207<br>SRG-OS-000462-GPOS-00206<br>SRG-OS-000064-GPOS-00033<br>SRG-OS-000461-GPOS-00205<br>SRG-OS-000458-GPOS-00203<br>SRG-OS-000392-GPOS-00172<br>
@@ -3089,7 +3097,9 @@ system after updates have been installed may be exploited by some adversaries.</
 <td xml:lang="en-US">
 <code>yum</code> should be configured to remove previous software components after
 new versions have been installed. To configure <code>yum</code> to remove the
+
 previous software components after updating, set the <code>clean_requirements_on_remove</code>
+
 to <code>1</code> in <code>/etc/yum.conf</code>.</td>
 <td></td>
 <td>SRG-OS-000437-GPOS-00194<br>
@@ -3667,7 +3677,9 @@ of unsuccessful attempts that were made to login to their account
 allows the user to determine if any unauthorized activity has occurred
 and gives them an opportunity to notify administrators.</td>
 <td xml:lang="en-US">To configure the system to notify users of last logon/access
-using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code> settings in
+using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code>
+settings in
+
 <code>/etc/pam.d/postlogin</code> to read as follows:
 <pre>session     [success=1 default=ignore] pam_succeed_if.so service !~ gdm* service !~ su* quiet
 session     [default=1]   pam_lastlog.so nowtmp showfailed
@@ -4152,6 +4164,7 @@ as the U.S. Government Personal Identity Verification card and the DoD Common
 Access Card.</td>
 <td xml:lang="en-US">Configure the operating system to implement multifactor authentication by
 installing the required package with the following command:
+
 The <code>pam_pkcs11</code> package can be installed with the following command:
 <pre>
 $ sudo yum install pam_pkcs11</pre>
@@ -4542,9 +4555,9 @@ intrusion attempts.</td>
 <td xml:lang="en-US">Install the McAfee Host Intrusion Prevention System (HIPS) Module if it is absolutely
 necessary. If SELinux is enabled, do not install or enable this module.</td>
 <td></td>
-<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
+<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>SRG-OS-000191-GPOS-00080<br>
 </td>
-<td>CCI-000366<br>CCI-001263<br>
+<td>CCI-000366<br>CCI-001233<br>CCI-001263<br>
 </td>
 <td></td>
 </tr>
@@ -5067,9 +5080,9 @@ Other policies, such as <code>mls</code>, provide additional security labeling
 and greater confinement but are not compatible with many general-purpose
 use cases.</td>
 <td></td>
-<td>SRG-OS-000445-GPOS-00199<br>
+<td>SRG-OS-000312-GPOS-00122<br>SRG-OS-000312-GPOS-00123<br>SRG-OS-000312-GPOS-00124<br>SRG-OS-000445-GPOS-00199<br>
 </td>
-<td>CCI-002696<br>
+<td>CCI-002165<br>CCI-002696<br>
 </td>
 <td></td>
 </tr>
@@ -5121,9 +5134,9 @@ users must be mapped to the <code>user_u</code> role or the appropriate domain
 <pre>$ sudo semanage login -m -s user_u <i>USER</i></pre>
 </td>
 <td></td>
-<td>SRG-OS-000324-GPOS-00125<br>
+<td>SRG-OS-000312-GPOS-00122<br>SRG-OS-000312-GPOS-00123<br>SRG-OS-000312-GPOS-00124<br>SRG-OS-000324-GPOS-00125<br>
 </td>
-<td>CCI-002235<br>
+<td>CCI-002165<br>CCI-002235<br>
 </td>
 <td></td>
 </tr>
@@ -5330,13 +5343,19 @@ Additionally, the <code>crypt_style</code> configuration option ensures the use
 of a strong hashing algorithm that makes password cracking attacks more
 difficult.</td>
 <td xml:lang="en-US">The PAM system service can be configured to only store encrypted
-representations of passwords. In <code>/etc/pam.d/system-auth</code>, the
+representations of passwords. In
+
+<code>/etc/pam.d/system-auth</code>,
+
+the
 <code>password</code> section of the file controls which PAM modules execute
 during a password change. Set the <code>pam_unix.so</code> module in the
 <code>password</code> section to include the argument <code>sha512</code>, as shown
 below:
 <br>
+
 <pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i></pre>
+
 <br>
 This will help ensure when local users change their passwords, hashes for
 the new passwords will be generated using the SHA-512 algorithm. This is
@@ -5606,6 +5625,31 @@ following line in <code>/etc/ssh/sshd_config</code>:
 <td></td>
 </tr>
 <tr>
+<td>sshd_disable_x11_forwarding</td>
+<td>medium</td>
+<td>Disable X11 Forwarding</td>
+<td xml:lang="en-US">Disable X11 forwarding unless there is an operational requirement to use X11
+applications directly. There is a small risk that the remote X11 servers of
+users who are logged in via SSH with X11 forwarding could be compromised by
+other users on the X11 server. Note that even if X11 forwarding is disabled,
+users can always install their own forwarders.</td>
+<td xml:lang="en-US">The X11Forwarding parameter provides the ability to tunnel X11 traffic
+through the connection to enable remote graphic connections.
+SSH has the capability to encrypt remote X11 connections when SSH's
+<code>X11Forwarding</code> option is enabled.
+<br><br>
+To disable X11 Forwarding, add or correct the
+following line in <code>/etc/ssh/sshd_config</code>:
+<pre>X11Forwarding no</pre>
+</td>
+<td></td>
+<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td></td>
+</tr>
+<tr>
 <td>sshd_do_not_permit_user_env</td>
 <td>medium</td>
 <td>Do Not Allow SSH Environment Options</td>
@@ -5659,27 +5703,6 @@ appropriate system-wide warning banner.</td>
 <td>SRG-OS-000023-GPOS-00006<br>SRG-OS-000024-GPOS-00007<br>SRG-OS-000228-GPOS-00088<br>SRG-OS-000228-GPOS-00088<br>SRG-OS-000228-GPOS-00088<br>SRG-OS-000228-GPOS-00088<br>SRG-OS-000228-GPOS-00088<br>
 </td>
 <td>CCI-000048<br>CCI-000050<br>CCI-001384<br>CCI-001385<br>CCI-001386<br>CCI-001387<br>CCI-001388<br>
-</td>
-<td></td>
-</tr>
-<tr>
-<td>sshd_enable_x11_forwarding</td>
-<td>high</td>
-<td>Enable Encrypted X11 Forwarding</td>
-<td xml:lang="en-US">Non-encrypted X displays allow an attacker to capture keystrokes and to execute commands
-remotely.</td>
-<td xml:lang="en-US">By default, remote X11 connections are not encrypted when initiated
-by users. SSH has the capability to encrypt remote X11 connections when SSH's
-<code>X11Forwarding</code> option is enabled.
-<br><br>
-To enable X11 Forwarding, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
-<pre>X11Forwarding yes</pre>
-</td>
-<td></td>
-<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
-</td>
-<td>CCI-000366<br>
 </td>
 <td></td>
 </tr>
@@ -5752,7 +5775,7 @@ value of <code>0</code>.</td>
 <td></td>
 </tr>
 <tr>
-<td>sshd_use_approved_ciphers</td>
+<td>sshd_use_approved_ciphers_ordered_stig</td>
 <td>medium</td>
 <td>Use Only FIPS 140-2 Validated Ciphers</td>
 <td xml:lang="en-US">Unapproved mechanisms that are used for authentication to the cryptographic module are not verified and therefore
@@ -5765,31 +5788,11 @@ FIPS 140-2 is the current standard for validating that mechanisms used to access
 utilize authentication that meets industry and government requirements. For government systems, this allows
 Security Levels 1, 2, 3, or 4 for use on Red Hat Enterprise Linux 7.</td>
 <td xml:lang="en-US">Limit the ciphers to those algorithms which are FIPS-approved.
-Counter (CTR) mode is also preferred over cipher-block chaining (CBC) mode.
 The following line in <code>/etc/ssh/sshd_config</code>
 demonstrates use of FIPS-approved ciphers:
-<pre>Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc</pre>
-The man page <code>sshd_config(5)</code> contains a list of supported ciphers.
-
-<br><br>
-Only the following ciphers are FIPS 140-2 certified on Red Hat Enterprise Linux 7:
-<br>- aes128-ctr
-<br>- aes192-ctr
-<br>- aes256-ctr
-<br>- aes128-cbc
-<br>- aes192-cbc
-<br>- aes256-cbc
-<br>- 3des-cbc
-<br>- rijndael-cbc@lysator.liu.se
-<br><br>
-Any combination of the above ciphers will pass this check.
-Official FIPS 140-2 paperwork for Red Hat Enterprise Linux 7 can be found at
-
-
-    <a href="http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf">http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf</a>
-
-
-The rule is parametrized to use the following ciphers: <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sshd_approved_ciphers"></xccdf-1.1:sub></code>.</td>
+<pre>Ciphers aes256-ctr,aes192-ctr,aes128-ctr</pre>
+This rule ensures that there are configured ciphers mentioned
+above (or their subset), keeping the given order of algorithms.</td>
 <td></td>
 <td>SRG-OS-000033-GPOS-00014<br>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>SRG-OS-000120-GPOS-00061<br>SRG-OS-000125-GPOS-00065<br>SRG-OS-000393-GPOS-00173<br>SRG-OS-000394-GPOS-00174<br>
 </td>
@@ -5798,7 +5801,7 @@ The rule is parametrized to use the following ciphers: <code><xccdf-1.1:sub xmln
 <td></td>
 </tr>
 <tr>
-<td>sshd_use_approved_macs</td>
+<td>sshd_use_approved_macs_ordered_stig</td>
 <td>medium</td>
 <td>Use Only FIPS 140-2 Validated MACs</td>
 <td xml:lang="en-US">DoD Information Systems are required to use FIPS-approved cryptographic hash
@@ -5806,28 +5809,9 @@ functions. The only SSHv2 hash algorithms meeting this requirement is SHA2.</td>
 <td xml:lang="en-US">Limit the MACs to those hash algorithms which are FIPS-approved.
 The following line in <code>/etc/ssh/sshd_config</code>
 demonstrates use of FIPS-approved MACs:
-
-<pre>MACs hmac-sha2-512,hmac-sha2-256,hmac-sha1</pre>
-
-The man page <code>sshd_config(5)</code> contains a list of supported MACs.
-
-<br><br>
-Only the following message authentication codes are FIPS 140-2 certified on Red Hat Enterprise Linux 7:
-<br>- hmac-sha1
-<br>- hmac-sha2-256
-<br>- hmac-sha2-512
-<br>- hmac-sha1-etm@openssh.com
-<br>- hmac-sha2-256-etm@openssh.com
-<br>- hmac-sha2-512-etm@openssh.com
-<br><br>
-Any combination of the above MACs will pass this check. Official FIPS 140-2 paperwork for
-Red Hat Enterprise Linux 7 can be found at
-
-
-    <a href="http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf">http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf</a>
-
-
-The rule is parametrized to use the following MACs: <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sshd_approved_macs"></xccdf-1.1:sub></code>.</td>
+<pre>MACs hmac-sha2-512,hmac-sha2-256</pre>
+This rule ensures that there are configured MACs mentioned
+above (or their subset), keeping the given order of algorithms.</td>
 <td></td>
 <td>SRG-OS-000033-GPOS-00014<br>SRG-OS-000120-GPOS-00061<br>SRG-OS-000125-GPOS-00065<br>SRG-OS-000250-GPOS-00093<br>SRG-OS-000394-GPOS-00174<br>
 </td>
@@ -5847,6 +5831,26 @@ has the privilege of the authenticated user. To enable privilege separation in
 SSH, add or correct the following line in the <code>/etc/ssh/sshd_config</code> file:
 <pre>UsePrivilegeSeparation <xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_sshd_priv_separation"></xccdf-1.1:sub></pre>
 </td>
+<td></td>
+<td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>sshd_x11_use_localhost</td>
+<td>medium</td>
+<td>Prevent remote hosts from connecting to the proxy display</td>
+<td xml:lang="en-US">When X11 forwarding is enabled, there may be additional exposure to the
+server and client displays if the sshd proxy display is configured to listen
+on the wildcard address. By default, sshd binds the forwarding server to the
+loopback address and sets the hostname part of the <code>DISPLAY</code>
+environment variable to localhost. This prevents remote hosts from
+connecting to the proxy display.  </td>
+<td xml:lang="en-US">The SSH daemon should prevent remote hosts from connecting to the proxy
+display. Make sure that the option <code>X11UseLocalhost</code> is set to
+<code>yes</code> within the SSH server configuration file.</td>
 <td></td>
 <td>SRG-OS-000480-GPOS-00232<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000360-GPOS-00147<br>
 </td>
@@ -6245,9 +6249,9 @@ media which should not exist in the line:
 <pre>set root='hd0,msdos1'</pre>
 </td>
 <td></td>
-<td>SRG-OS-000365-GPOS-00152<br>
+<td>SRG-OS-000364-GPOS-00151<br>SRG-OS-000365-GPOS-00152<br>
 </td>
-<td>CCI-001814<br>
+<td>CCI-001813<br>CCI-001814<br>
 </td>
 <td></td>
 </tr>
@@ -6265,6 +6269,7 @@ service to valid network resources.</td>
 <td xml:lang="en-US">Deactivating wireless network interfaces should prevent
 normal usage of the wireless capability.
 <br><br>
+
 Configure the system to disable all wireless network interfaces with the
 following command:
 <pre>$ sudo nmcli radio wifi off</pre>

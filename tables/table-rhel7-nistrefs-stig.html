@@ -563,6 +563,7 @@ situations.</td>
 <td>Set Interactive Session Timeout</td>
 <td xml:lang="en-US">Setting the <code>TMOUT</code> option in <code>/etc/profile</code> ensures that
 all user sessions will terminate based on inactivity. The <code>TMOUT</code>
+
 setting in <code>/etc/profile</code> should read as follows:
 <pre>TMOUT=<xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="var_accounts_tmout"></xccdf-1.1:sub></pre>
 </td>
@@ -1179,10 +1180,13 @@ of the <code>chcon</code> command for all users and root. If the <code>auditd</c
 daemon is configured to use the <code>augenrules</code> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+
 <pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file:
+
 <pre>-a always,exit -F path=/usr/bin/chcon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
@@ -1761,11 +1765,13 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
+-F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/pam_timestamp_check
+-F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -1873,11 +1879,13 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 
+-F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/openssh/ssh-keysign
+-F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 </td>
 <td xml:lang="en-US">Misuse of privileged functions, either intentionally or unintentionally by
 authorized users, or by unauthorized external entities that have compromised system accounts,
@@ -2624,7 +2632,9 @@ configured acceptable allowance (drift) may be inaccurate.</td>
 <td xml:lang="en-US">
 <code>yum</code> should be configured to remove previous software components after
 new versions have been installed. To configure <code>yum</code> to remove the
+
 previous software components after updating, set the <code>clean_requirements_on_remove</code>
+
 to <code>1</code> in <code>/etc/yum.conf</code>.</td>
 <td xml:lang="en-US">Previous versions of software components that are not removed from the information
 system after updates have been installed may be exploited by some adversaries.</td>
@@ -3110,7 +3120,9 @@ can allow an attacker to move trivially to other hosts.</td>
 <td>CCE-27275-7</td>
 <td>Ensure PAM Displays Last Logon/Access Notification</td>
 <td xml:lang="en-US">To configure the system to notify users of last logon/access
-using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code> settings in
+using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code>
+settings in
+
 <code>/etc/pam.d/postlogin</code> to read as follows:
 <pre>session     [success=1 default=ignore] pam_succeed_if.so service !~ gdm* service !~ su* quiet
 session     [default=1]   pam_lastlog.so nowtmp showfailed
@@ -3497,6 +3509,7 @@ computer viruses, as well as to limit their spread to other systems.</td>
 <td>Install Smart Card Packages For Multifactor Authentication</td>
 <td xml:lang="en-US">Configure the operating system to implement multifactor authentication by
 installing the required package with the following command:
+
 The <code>pam_pkcs11</code> package can be installed with the following command:
 <pre>
 $ sudo yum install pam_pkcs11</pre>
@@ -4461,13 +4474,19 @@ Using a stronger hashing algorithm makes password cracking attacks more difficul
 <td>CCE-82043-1</td>
 <td>Set PAM's Password Hashing Algorithm</td>
 <td xml:lang="en-US">The PAM system service can be configured to only store encrypted
-representations of passwords. In <code>/etc/pam.d/system-auth</code>, the
+representations of passwords. In
+
+<code>/etc/pam.d/system-auth</code>,
+
+the
 <code>password</code> section of the file controls which PAM modules execute
 during a password change. Set the <code>pam_unix.so</code> module in the
 <code>password</code> section to include the argument <code>sha512</code>, as shown
 below:
 <br>
+
 <pre>password    sufficient    pam_unix.so sha512 <i>other arguments...</i></pre>
+
 <br>
 This will help ensure when local users change their passwords, hashes for
 the new passwords will be generated using the SHA-512 algorithm. This is
@@ -4696,6 +4715,27 @@ in the event of misconfiguration elsewhere.</td>
 </td>
 </tr>
 <tr>
+<td>CCE-83359-0</td>
+<td>Disable X11 Forwarding</td>
+<td xml:lang="en-US">The X11Forwarding parameter provides the ability to tunnel X11 traffic
+through the connection to enable remote graphic connections.
+SSH has the capability to encrypt remote X11 connections when SSH's
+<code>X11Forwarding</code> option is enabled.
+<br><br>
+To disable X11 Forwarding, add or correct the
+following line in <code>/etc/ssh/sshd_config</code>:
+<pre>X11Forwarding no</pre>
+</td>
+<td xml:lang="en-US">Disable X11 forwarding unless there is an operational requirement to use X11
+applications directly. There is a small risk that the remote X11 servers of
+users who are logged in via SSH with X11 forwarding could be compromised by
+other users on the X11 server. Note that even if X11 forwarding is disabled,
+users can always install their own forwarders.</td>
+<td></td>
+<td>CM-6(b)<br>
+</td>
+</tr>
+<tr>
 <td>CCE-27363-1</td>
 <td>Do Not Allow SSH Environment Options</td>
 <td xml:lang="en-US">To ensure users are not able to override environment
@@ -4738,23 +4778,6 @@ whose ownership should not be obvious should ensure usage of a banner that does
 not provide easy attribution.</td>
 <td></td>
 <td>AC-8(a)<br>AC-8(c)<br>AC-17(a)<br>CM-6(a)<br>
-</td>
-</tr>
-<tr>
-<td>CCE-80226-4</td>
-<td>Enable Encrypted X11 Forwarding</td>
-<td xml:lang="en-US">By default, remote X11 connections are not encrypted when initiated
-by users. SSH has the capability to encrypt remote X11 connections when SSH's
-<code>X11Forwarding</code> option is enabled.
-<br><br>
-To enable X11 Forwarding, add or correct the
-following line in <code>/etc/ssh/sshd_config</code>:
-<pre>X11Forwarding yes</pre>
-</td>
-<td xml:lang="en-US">Non-encrypted X displays allow an attacker to capture keystrokes and to execute commands
-remotely.</td>
-<td></td>
-<td>CM-6(a)<br>AC-17(a)<br>AC-17(2)<br>
 </td>
 </tr>
 <tr>
@@ -4814,34 +4837,14 @@ is reached.</td>
 </td>
 </tr>
 <tr>
-<td>CCE-27295-5</td>
+<td>CCE-83398-8</td>
 <td>Use Only FIPS 140-2 Validated Ciphers</td>
 <td xml:lang="en-US">Limit the ciphers to those algorithms which are FIPS-approved.
-Counter (CTR) mode is also preferred over cipher-block chaining (CBC) mode.
 The following line in <code>/etc/ssh/sshd_config</code>
 demonstrates use of FIPS-approved ciphers:
-<pre>Ciphers aes128-ctr,aes192-ctr,aes256-ctr,aes128-cbc,3des-cbc,aes192-cbc,aes256-cbc</pre>
-The man page <code>sshd_config(5)</code> contains a list of supported ciphers.
-
-<br><br>
-Only the following ciphers are FIPS 140-2 certified on Red Hat Enterprise Linux 7:
-<br>- aes128-ctr
-<br>- aes192-ctr
-<br>- aes256-ctr
-<br>- aes128-cbc
-<br>- aes192-cbc
-<br>- aes256-cbc
-<br>- 3des-cbc
-<br>- rijndael-cbc@lysator.liu.se
-<br><br>
-Any combination of the above ciphers will pass this check.
-Official FIPS 140-2 paperwork for Red Hat Enterprise Linux 7 can be found at
-
-
-    <a href="http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf">http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf</a>
-
-
-The rule is parametrized to use the following ciphers: <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sshd_approved_ciphers"></xccdf-1.1:sub></code>.</td>
+<pre>Ciphers aes256-ctr,aes192-ctr,aes128-ctr</pre>
+This rule ensures that there are configured ciphers mentioned
+above (or their subset), keeping the given order of algorithms.</td>
 <td xml:lang="en-US">Unapproved mechanisms that are used for authentication to the cryptographic module are not verified and therefore
 cannot be relied upon to provide confidentiality or integrity, and system data may be compromised.
 <br>
@@ -4852,42 +4855,21 @@ FIPS 140-2 is the current standard for validating that mechanisms used to access
 utilize authentication that meets industry and government requirements. For government systems, this allows
 Security Levels 1, 2, 3, or 4 for use on Red Hat Enterprise Linux 7.</td>
 <td></td>
-<td>CM-6(a)<br>AC-17(a)<br>AC-17(2)<br>SC-13<br>MA-4(6)<br>IA-5(1)(c)<br>SC-12(2)<br>SC-12(3)<br>
-</td>
+<td></td>
 </tr>
 <tr>
-<td>CCE-27455-5</td>
+<td>CCE-83636-1</td>
 <td>Use Only FIPS 140-2 Validated MACs</td>
 <td xml:lang="en-US">Limit the MACs to those hash algorithms which are FIPS-approved.
 The following line in <code>/etc/ssh/sshd_config</code>
 demonstrates use of FIPS-approved MACs:
-
-<pre>MACs hmac-sha2-512,hmac-sha2-256,hmac-sha1</pre>
-
-The man page <code>sshd_config(5)</code> contains a list of supported MACs.
-
-<br><br>
-Only the following message authentication codes are FIPS 140-2 certified on Red Hat Enterprise Linux 7:
-<br>- hmac-sha1
-<br>- hmac-sha2-256
-<br>- hmac-sha2-512
-<br>- hmac-sha1-etm@openssh.com
-<br>- hmac-sha2-256-etm@openssh.com
-<br>- hmac-sha2-512-etm@openssh.com
-<br><br>
-Any combination of the above MACs will pass this check. Official FIPS 140-2 paperwork for
-Red Hat Enterprise Linux 7 can be found at
-
-
-    <a href="http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf">http://csrc.nist.gov/groups/STM/cmvp/documents/140-1/140sp/140sp2630.pdf</a>
-
-
-The rule is parametrized to use the following MACs: <code><xccdf-1.1:sub xmlns:xccdf-1.1="http://checklists.nist.gov/xccdf/1.1" idref="sshd_approved_macs"></xccdf-1.1:sub></code>.</td>
+<pre>MACs hmac-sha2-512,hmac-sha2-256</pre>
+This rule ensures that there are configured MACs mentioned
+above (or their subset), keeping the given order of algorithms.</td>
 <td xml:lang="en-US">DoD Information Systems are required to use FIPS-approved cryptographic hash
 functions. The only SSHv2 hash algorithms meeting this requirement is SHA2.</td>
 <td></td>
-<td>CM-6(a)<br>AC-17(a)<br>AC-17(2)<br>SC-13<br>MA-4(6)<br>SC-12(2)<br>SC-12(3)<br>
-</td>
+<td></td>
 </tr>
 <tr>
 <td>CCE-80223-1</td>
@@ -4902,6 +4884,22 @@ when not needed which would decrease the impact of software vulnerabilities in
 the unprivileged section.</td>
 <td></td>
 <td>CM-6(a)<br>AC-17(a)<br>AC-6<br>
+</td>
+</tr>
+<tr>
+<td>CCE-83404-4</td>
+<td>Prevent remote hosts from connecting to the proxy display</td>
+<td xml:lang="en-US">The SSH daemon should prevent remote hosts from connecting to the proxy
+display. Make sure that the option <code>X11UseLocalhost</code> is set to
+<code>yes</code> within the SSH server configuration file.</td>
+<td xml:lang="en-US">When X11 forwarding is enabled, there may be additional exposure to the
+server and client displays if the sshd proxy display is configured to listen
+on the wildcard address. By default, sshd binds the forwarding server to the
+loopback address and sets the hostname part of the <code>DISPLAY</code>
+environment variable to localhost. This prevents remote hosts from
+connecting to the proxy display.  </td>
+<td></td>
+<td>CM-6(b)<br>
 </td>
 </tr>
 <tr>
@@ -5230,6 +5228,7 @@ configured to use removable media as the boot loader.</td>
 <td xml:lang="en-US">Deactivating wireless network interfaces should prevent
 normal usage of the wireless capability.
 <br><br>
+
 Configure the system to disable all wireless network interfaces with the
 following command:
 <pre>$ sudo nmcli radio wifi off</pre>
