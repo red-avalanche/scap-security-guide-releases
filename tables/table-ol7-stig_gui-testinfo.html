@@ -979,10 +979,10 @@ Check all local interactive user initialization files for interactive users with
 
 Note: The example is for a system that is configured to create users home directories in the "/home" directory.
 
-# grep -ri umask /home/
+$ sudo find /home -maxdepth 2 -type f -name ".[^.]*" -exec grep -iH -d skip --exclude=.bash_history umask {} \;
 
-/home/smithj/.bash_history:grep -i umask /etc/bashrc /etc/csh.cshrc /etc/profile
-/home/smithj/.bash_history:grep -i umask /etc/login.defs
+/home/wadea/.bash_history:grep -i umask /etc/bashrc /etc/csh.cshrc /etc/profile
+/home/wadea/.bash_history:grep -i umask /etc/login.defs
       Is it the case that any local interactive user initialization files are found to have a umask statement that sets a value less restrictive than "077"?
       </pre></td>
 <td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
@@ -1656,20 +1656,24 @@ to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b32 -S fremovexattr -F auid=0 -F key=perm_mod</pre>
             <br>
             <br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b64 -S fremovexattr -F auid=0 -F key=perm_mod</pre>
             <br>
             <br>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b32 -S fremovexattr -F auid=0 -F key=perm_mod</pre>
             <br>
             <br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b64 -S fremovexattr -F auid=0 -F key=perm_mod</pre>
           </td>
 <td><pre>To determine if the system is configured to audit calls to the
 fremovexattr system call, run the following command:
@@ -1699,14 +1703,18 @@ to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b32 -S fsetxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b64 -S fsetxattr -F auid=0 -F key=perm_mod</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b32 -S fsetxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b64 -S fsetxattr -F auid=0 -F key=perm_mod</pre>
           </td>
 <td><pre>To determine if the system is configured to audit calls to the
 fsetxattr system call, run the following command:
@@ -1776,20 +1784,24 @@ to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b32 -S lremovexattr -F auid=0 -F key=perm_mod</pre>
             <br>
             <br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b64 -S lremovexattr -F auid=0 -F key=perm_mod</pre>
             <br>
             <br>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b32 -S lremovexattr -F auid=0 -F key=perm_mod</pre>
             <br>
             <br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b64 -S lremovexattr -F auid=0 -F key=perm_mod</pre>
           </td>
 <td><pre>To determine if the system is configured to audit calls to the
 lremovexattr system call, run the following command:
@@ -1819,14 +1831,18 @@ to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b32 -S lsetxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b64 -S lsetxattr -F auid=0 -F key=perm_mod</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b32 -S lsetxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b64 -S lsetxattr -F auid=0 -F key=perm_mod</pre>
           </td>
 <td><pre>To determine if the system is configured to audit calls to the
 lsetxattr system call, run the following command:
@@ -1858,20 +1874,24 @@ If the <code>auditd</code> daemon is configured to use the <code>augenrules</cod
 program to read audit rules during daemon startup (the default), add the
 following line to a file with suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b32 -S removexattr -F auid=0 -F key=perm_mod</pre>
             <br>
             <br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b64 -S removexattr -F auid=0 -F key=perm_mod</pre>
             <br>
             <br>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b32 -S removexattr -F auid=0 -F key=perm_mod</pre>
             <br>
             <br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b64 -S removexattr -F auid=0 -F key=perm_mod</pre>
           </td>
 <td><pre>To determine if the system is configured to audit calls to the
 removexattr system call, run the following command:
@@ -1901,14 +1921,18 @@ to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b32 -S setxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b64 -S setxattr -F auid=0 -F key=perm_mod</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b32 -S setxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+            <pre>-a always,exit -F arch=b64 -S setxattr -F auid=0 -F key=perm_mod</pre>
           </td>
 <td><pre>To determine if the system is configured to audit calls to the
 setxattr system call, run the following command:
@@ -3104,11 +3128,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
           </td>
 <td><pre>Verify that Oracle Linux 7 is configured to audit the execution of the "unix_chkpwd" command with the following command:
 
@@ -3274,7 +3298,7 @@ The output should contain:
 -f 
       Is it the case that the system is not configured to shutdown on auditd failures?
       </pre></td>
-<td>SRG-OS-000047-GPOS-00023<br>SRG-OS-000046-GPOS-00022<br>
+<td>SRG-OS-000046-GPOS-00022<br>
 </td>
 <td>CCI-000140<br>CCI-000139<br>
 </td>
@@ -5463,9 +5487,11 @@ something is amiss. They may be caused by an intruder, by incorrect software ins
 draft software removal, or by failure to remove all files belonging to a deleted account, or
 other similar cases. The files should be repaired so they will not cause problems when
 accounts are created in the future, and the cause should be discovered and addressed.</td>
-<td>If any file is not group-owned by a group present in /etc/group, the cause of the lack of
+<td>If any file is not group-owned by a valid defined group, the cause of the lack of
 group-ownership must be investigated. Following this, those files should be deleted or
-assigned to an appropriate group.
+assigned to an appropriate group. The groups need to be defined in <code>/etc/group</code>
+or in <code>/usr/lib/group</code> if <code>nss-altfiles</code> are configured to be used
+in <code>/etc/nsswitch.conf</code>.
 
 Locate the mount points related to local devices by the following command:
 <pre>$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)</pre>
@@ -5649,7 +5675,8 @@ admin, or administrator and different from any other existing user name.
 protect data. The operating system must implement cryptographic modules adhering to the higher
 standards approved by the federal government since this provides assurance they have been tested
 and validated.</td>
-<td>To ensure FIPS mode is enabled, install package <code>dracut-fips</code>, and rebuild <code>initramfs</code> by running the following commands:
+<td>
+To ensure FIPS mode is enabled, install package <code>dracut-fips</code>, and rebuild <code>initramfs</code> by running the following commands:
 <pre>
 $ sudo yum install dracut-fips
 dracut -f</pre>
@@ -5667,6 +5694,12 @@ Finally, rebuild the <code>grub.cfg</code> file by using the
 <pre>~]# grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg</pre>
                 </li>
               </ul>
+
+To ensure FIPS mode is enabled, run the following commands:
+<pre>
+
+$ sudo yum install dracut-fips
+</pre>
             </td>
 <td><pre>To verify that FIPS is enabled properly in grub, run the following command:
 $ grep fips /etc/default/grub
@@ -6980,8 +7013,15 @@ in <code>/usr/lib/systemd/system/rescue.service</code>.</td>
 <td><pre>To check if authentication is required for single-user mode, run the following command:
 $ grep sulogin /usr/lib/systemd/system/rescue.service
 The output should be similar to the following, and the line must begin with
-ExecStart and /sbin/sulogin.
-    ExecStart=-/bin/sh -c "/sbin/sulogin; /usr/bin/systemctl --fail --no-block default"
+ExecStart and /usr/lib/systemd/systemd-sulogin-shell.
+    ExecStart=-/usr/lib/systemd/systemd-sulogin-shell rescue
+
+In case the output does not match, check if the ExecStart directive is not overridden:
+grep ExecStart /etc/systemd/system/rescue.service.d/*.conf
+The output should contain two lines:
+ExecStart=
+ExecStart=-/usr/lib/systemd/systemd-sulogin-shell rescue
+
 
 
 Then, verify that the rescue service is in the runlevel1.target.

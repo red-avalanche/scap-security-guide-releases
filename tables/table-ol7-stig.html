@@ -1913,8 +1913,15 @@ by configuring the bootloader password.</pre></td>
 	<td><pre>To check if authentication is required for single-user mode, run the following command:
 $ grep sulogin /usr/lib/systemd/system/rescue.service
 The output should be similar to the following, and the line must begin with
-ExecStart and /sbin/sulogin.
-    ExecStart=-/bin/sh -c "/sbin/sulogin; /usr/bin/systemctl --fail --no-block default"
+ExecStart and /usr/lib/systemd/systemd-sulogin-shell.
+    ExecStart=-/usr/lib/systemd/systemd-sulogin-shell rescue
+
+In case the output does not match, check if the ExecStart directive is not overridden:
+grep ExecStart /etc/systemd/system/rescue.service.d/*.conf
+The output should contain two lines:
+ExecStart=
+ExecStart=-/usr/lib/systemd/systemd-sulogin-shell rescue
+
 
 
 Then, verify that the rescue service is in the runlevel1.target.
@@ -3115,9 +3122,11 @@ Replace MOUNTPOINT by the mount points listed by the fist command.
 No files without a valid group should be located.
       Is it the case that there is output?
       </pre></td>
-	<td><pre>If any file is not group-owned by a group present in /etc/group, the cause of the lack of
+	<td><pre>If any file is not group-owned by a valid defined group, the cause of the lack of
 group-ownership must be investigated. Following this, those files should be deleted or
-assigned to an appropriate group.
+assigned to an appropriate group. The groups need to be defined in /etc/group
+or in /usr/lib/group if nss-altfiles are configured to be used
+in /etc/nsswitch.conf.
 
 Locate the mount points related to local devices by the following command:
 $ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)
@@ -3695,10 +3704,10 @@ Check all local interactive user initialization files for interactive users with
 
 Note: The example is for a system that is configured to create users home directories in the "/home" directory.
 
-# grep -ri umask /home/
+$ sudo find /home -maxdepth 2 -type f -name ".[^.]*" -exec grep -iH -d skip --exclude=.bash_history umask {} \;
 
-/home/smithj/.bash_history:grep -i umask /etc/bashrc /etc/csh.cshrc /etc/profile
-/home/smithj/.bash_history:grep -i umask /etc/login.defs
+/home/wadea/.bash_history:grep -i umask /etc/bashrc /etc/csh.cshrc /etc/profile
+/home/wadea/.bash_history:grep -i umask /etc/login.defs
       Is it the case that any local interactive user initialization files are found to have a umask statement that sets a value less restrictive than "077"?
       </pre></td>
 	<td><pre>Remove the UMASK environment variable from all interactive users initialization files.</pre></td>
@@ -3941,7 +3950,8 @@ $ grep fips /etc/default/grub
 The output should contain fips=1
       Is it the case that FIPS is not configured or enabled in grub?
       </pre></td>
-	<td><pre>To ensure FIPS mode is enabled, install package dracut-fips, and rebuild initramfs by running the following commands:
+	<td><pre>
+To ensure FIPS mode is enabled, install package dracut-fips, and rebuild initramfs by running the following commands:
 
 $ sudo yum install dracut-fips
 dracut -f
@@ -3959,6 +3969,12 @@ grub2-mkconfig -o command as follows:
 ~]# grub2-mkconfig -o /boot/efi/EFI/redhat/grub.cfg
                 
               
+
+To ensure FIPS mode is enabled, run the following commands:
+
+
+$ sudo yum install dracut-fips
+
             </pre></td>
 	<td>OL07-00-021350</td>
 	<td>grub2_enable_fips_mode</td>
@@ -4628,14 +4644,18 @@ to use the augenrules program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 .rules in the directory /etc/audit/rules.d:
 -a always,exit -F arch=b32 -S setxattr -F auid>=1000 -F auid!=unset -F key=perm_mod
+            -a always,exit -F arch=b32 -S setxattr -F auid=0 -F key=perm_mod
 If the system is 64 bit then also add the following line:
 -a always,exit -F arch=b64 -S setxattr -F auid>=1000 -F auid!=unset -F key=perm_mod
+            -a always,exit -F arch=b64 -S setxattr -F auid=0 -F key=perm_mod
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following line to
 /etc/audit/audit.rules file:
 -a always,exit -F arch=b32 -S setxattr -F auid>=1000 -F auid!=unset -F key=perm_mod
+            -a always,exit -F arch=b32 -S setxattr -F auid=0 -F key=perm_mod
 If the system is 64 bit then also add the following line:
 -a always,exit -F arch=b64 -S setxattr -F auid>=1000 -F auid!=unset -F key=perm_mod
+            -a always,exit -F arch=b64 -S setxattr -F auid=0 -F key=perm_mod
           </pre></td>
 	<td>OL07-00-030440</td>
 	<td>audit_rules_dac_modification_setxattr</td>
@@ -4983,11 +5003,11 @@ privileged commands for all users and root. If the auditd daemon is
 configured to use the augenrules program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix .rules in the directory /etc/audit/rules.d:
--a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
--a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>OL07-00-030640</td>
 	<td>audit_rules_privileged_commands_unix_chkpwd</td>

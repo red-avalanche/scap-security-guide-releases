@@ -41,11 +41,6 @@
 <td>Description</td>
 </thead>
 <tr>
-<td>CCE-90578-6</td>
-<td>Prefer to use a 64-bit Operating System when supported</td>
-<td>Prefer installation of 64-bit operating systems when the CPU supports it.</td>
-</tr>
-<tr>
 <td>CCE-89944-3</td>
 <td>Verify File Hashes with RPM</td>
 <td>Without cryptographic integrity protections, system executables and files can be altered by
@@ -239,20 +234,20 @@ Audit tools must have a mode of 0755 or less permissive.</td>
 <td>CCE-86982-6</td>
 <td>Enable FIPS Mode</td>
 <td>
-To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
-         <br>
-The <code>fips-mode-setup</code> command will configure the system in
-FIPS mode by automatically configuring the following:
-<ul>
-<li>Setting the kernel FIPS mode flag (<code>/proc/sys/crypto/fips_enabled</code>) to <code>1</code>
-          </li>
-<li>Creating <code>/etc/system-fips</code>
-          </li>
-<li>Setting the system crypto policy in <code>/etc/crypto-policies/config</code> to <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_system_crypto_policy" use="legacy"></xccdf-1.2:sub></code>
-          </li>
-<li>Loading the Dracut <code>fips</code> module</li>
-</ul>
+Red Hat Enterprise Linux 10 has an installation-time kernel flag that can enable FIPS mode.
+The installer must be booted with <code>fips=1</code> for the system to have FIPS mode
+enabled. Enabling FIPS mode on a preexisting system is not supported. If
+this rule fails on an installed system, then this is a permanent
+finding and cannot be fixed.
+
+
+<br>
+To enable FIPS mode at bootable container build time configure <code>fips=1</code> kernel argument
+in <code>/usr/lib/bootc/kargs.d/01-fips.toml</code>:
+<pre>kargs = ["fips=1"]</pre>
+Then set the cryptographic policy to <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_system_crypto_policy" use="legacy"></xccdf-1.2:sub></code>:
+<pre>update-crypto-policies --no-reload --set <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_system_crypto_policy" use="legacy"></xccdf-1.2:sub>
+         </pre>
         </td>
 </tr>
 <tr>
@@ -260,12 +255,31 @@ FIPS mode by automatically configuring the following:
 <td>Set kernel parameter 'crypto.fips_enabled' to 1</td>
 <td>System running in FIPS mode is indicated by kernel parameter
 <code>'crypto.fips_enabled'</code>. This parameter should be set to <code>1</code> in FIPS mode.
-To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
+
+Red Hat Enterprise Linux 10 has an installation-time kernel flag that can enable FIPS mode.
+The installer must be booted with <code>fips=1</code> for the system to have FIPS mode
+enabled. Enabling FIPS mode on a preexisting system is not supported. If
+this rule fails on an installed system, then this is a permanent
+finding and cannot be fixed.
+
+
 
 To enable strict FIPS compliance, the fips=1 kernel option needs to be added to the kernel boot
 parameters during system installation so key generation is done with FIPS-approved algorithms
 and continuous monitoring tests in place.</td>
+</tr>
+<tr>
+<td>CCE-86247-4</td>
+<td>Verify that the system was booted with fips=1</td>
+<td>On a system where FIPS 140 mode is enabled, the system must be booted with the
+The file <code>/proc/sys/crypto/fips_enabled</code> must have the contents of <code>1</code>
+
+To verify the system has been booted in FIPS mode, run the following command:
+<pre>
+# cat /proc/sys/crypto/fips_enabled
+1
+</pre>
+        </td>
 </tr>
 <tr>
 <td>CCE-89668-8</td>
@@ -1022,6 +1036,22 @@ $ sudo dnf install nss-tools</pre>
        </td>
 </tr>
 <tr>
+<td>CCE-89429-5</td>
+<td>Install openscap-scanner Package</td>
+<td>The <code>openscap-scanner</code> package can be installed with the following command:
+<pre>
+$ sudo dnf install openscap-scanner</pre>
+       </td>
+</tr>
+<tr>
+<td>CCE-89689-4</td>
+<td>Install scap-security-guide Package</td>
+<td>The <code>scap-security-guide</code> package can be installed with the following command:
+<pre>
+$ sudo dnf install scap-security-guide</pre>
+       </td>
+</tr>
+<tr>
 <td>CCE-88542-6</td>
 <td>Install subscription-manager Package</td>
 <td>The <code>subscription-manager</code> package can be installed with the following command:
@@ -1643,27 +1673,22 @@ Edit the <code>password</code> section in
 <code>password    requisite                                    pam_pwquality.so</code>.</td>
 </tr>
 <tr>
+<td>CCE-90663-6</td>
+<td>Ensure PAM Enforces Password Requirements - Authentication Retry Prompts Permitted Per-Session in /etc/security/pwquality.conf</td>
+<td>To configure the number of retry prompts that are permitted per-session:
+Edit the <code>/etc/security/pwquality.conf</code> to include
+<code>retry=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_retry" use="legacy"></xccdf-1.2:sub>
+          </code>, or a lower value if site
+policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+per session.</td>
+</tr>
+<tr>
 <td>CCE-89362-8</td>
 <td>Ensure PAM password complexity module is enabled in system-auth</td>
 <td>To enable PAM password complexity in system-auth file:
 Edit the <code>password</code> section in
 <code>/etc/pam.d/system-auth</code> to show
 <code>password    requisite                                    pam_pwquality.so</code>.</td>
-</tr>
-<tr>
-<td>CCE-90554-7</td>
-<td>Ensure PAM Enforces Password Requirements - Authentication Retry Prompts Permitted Per-Session</td>
-<td>To configure the number of retry prompts that are permitted per-session:
-
-Edit the <code>pam_pwquality.so</code> statement in
-
-<code>/etc/pam.d/system-auth</code> to show
-
-
-<code>retry=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_retry" use="legacy"></xccdf-1.2:sub>
-          </code>, or a lower value if site
-policy is more restrictive. The DoD requirement is a maximum of 3 prompts
-per session.</td>
 </tr>
 <tr>
 <td>CCE-89959-1</td>
@@ -1733,12 +1758,13 @@ This will help ensure that new passwords for local users will be stored using th
 <td>CCE-90508-3</td>
 <td>Set Password Hashing Rounds in /etc/login.defs</td>
 <td>In <code>/etc/login.defs</code>, ensure <code>SHA_CRYPT_MIN_ROUNDS</code> and
-<code>SHA_CRYPT_MAX_ROUNDS</code> has the minimum value of <code>5000</code>.
+<code>SHA_CRYPT_MAX_ROUNDS</code> has the minimum value of <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_min_rounds_login_defs" use="legacy"></xccdf-1.2:sub></code>.
 For example:
-<pre>SHA_CRYPT_MIN_ROUNDS 5000
-SHA_CRYPT_MAX_ROUNDS 5000</pre>
+<pre>SHA_CRYPT_MIN_ROUNDS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_min_rounds_login_defs" use="legacy"></xccdf-1.2:sub>
+SHA_CRYPT_MAX_ROUNDS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_min_rounds_login_defs" use="legacy"></xccdf-1.2:sub>
+         </pre>
 Notice that if neither are set, they already have the default value of 5000.
-If either is set, they must have the minimum value of 5000.</td>
+If either is set, they must have the minimum value of <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_min_rounds_login_defs" use="legacy"></xccdf-1.2:sub>.</td>
 </tr>
 <tr>
 <td>CCE-90212-2</td>
@@ -1902,6 +1928,14 @@ $ sudo dnf install opensc</pre>
          </td>
 </tr>
 <tr>
+<td>CCE-86250-8</td>
+<td>Install the pcsc-lite-ccid package</td>
+<td>The <code>pcsc-lite-ccid</code> package can be installed with the following command:
+<pre>
+$ sudo dnf install pcsc-lite-ccid</pre>
+         </td>
+</tr>
+<tr>
 <td>CCE-88682-0</td>
 <td>Install the pcsc-lite package</td>
 <td>The <code>pcsc-lite</code> package can be installed with the following command:
@@ -1913,7 +1947,12 @@ $ sudo dnf install pcsc-lite</pre>
 <td>CCE-86642-6</td>
 <td>Install Smart Card Packages For Multifactor Authentication</td>
 <td>Configure the operating system to implement multifactor authentication by
-installing the required package with the following command:</td>
+installing the required package with the following command:
+
+The <code>pkcs11-provider</code> package can be installed with the following command:
+<pre>
+$ sudo dnf install pkcs11-provider</pre>
+         </td>
 </tr>
 <tr>
 <td>CCE-87363-8</td>
@@ -1940,21 +1979,6 @@ app default {
    card_drivers = <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_smartcard_drivers" use="legacy"></xccdf-1.2:sub>;
 }
 </pre>
-         </td>
-</tr>
-<tr>
-<td>CCE-89474-1</td>
-<td>Force opensc To Use Defined Smart Card Driver</td>
-<td>The OpenSC smart card middleware can auto-detect smart card drivers; however by
-forcing the smart card driver in use by your organization, opensc will no longer
-autodetect or use other drivers unless specified. This helps to prevent
-users from using unauthorized smart cards. The default smart card driver for this
-profile is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_smartcard_drivers" use="legacy"></xccdf-1.2:sub></code>.
-To force the OpenSC driver, edit the <code>/etc/opensc.conf</code>.
-Look for a line similar to:
-<pre># force_card_driver = customcos;</pre>
-and change it to:
-<pre>force_card_driver = <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_smartcard_drivers" use="legacy"></xccdf-1.2:sub>;</pre>
          </td>
 </tr>
 <tr>
@@ -2137,21 +2161,6 @@ to be automatically disabled by running the following command:
 instead of an <code>x</code> or <code>*</code>), the cause of this misconfiguration should be
 investigated. The account should have its password reset and the hash should be
 properly stored, or the account should be deleted entirely.</td>
-</tr>
-<tr>
-<td>CCE-90070-4</td>
-<td>Verify All Account Password Hashes are Shadowed with SHA512</td>
-<td>Verify the operating system requires the shadow password suite
-configuration be set to encrypt interactive user passwords using a strong
-cryptographic hash.
-Check that the interactive user account passwords are using a strong
-password hash with the following command:
-<pre>$ sudo cut -d: -f2 /etc/shadow
-$6$kcOnRq/5$NUEYPuyL.wghQwWssXRcLRFiiru7f5JPV6GaJhNC2aK5F3PZpE/BCCtwrxRc/AInKMNX3CdMw11m9STiql12f/</pre>
-Password hashes <code>!</code> or <code>*</code> indicate inactive accounts not
-available for logon and are not evaluated.
-If any interactive user password hash does not begin with <code>$6</code>,
-this is a finding.</td>
 </tr>
 <tr>
 <td>CCE-90359-1</td>
@@ -2643,6 +2652,17 @@ considered during the check and properly remediated, if necessary.</td>
 <td>Remove the <code>UMASK</code> environment variable from all interactive users initialization files.</td>
 </tr>
 <tr>
+<td>CCE-87007-1</td>
+<td>Disable Recovery Booting</td>
+<td>Red Hat Enterprise Linux 10 systems support an "recovery boot" option that can be used
+to prevent services from being started. The <code>GRUB_DISABLE_RECOVERY</code>
+configuration option in <code>/etc/default/grub</code> should be set to
+<code>true</code> to disable the generation of recovery mode menu entries. It is
+also required to change the runtime configuration, run:
+<pre>$ sudo grubby --update-kernel=ALL</pre>
+      </td>
+</tr>
+<tr>
 <td>CCE-87932-0</td>
 <td>IOMMU configuration directive</td>
 <td>On x86 architecture supporting VT-d, the IOMMU manages the access control policy between the hardware devices and some
@@ -2653,7 +2673,32 @@ default Grub2 command line for Linux operating systems. Modify the line within
 <code>/etc/default/grub</code> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... iommu=force ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="iommu=force"</pre>
-      </td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["iommu=force"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.</td>
+</tr>
+<tr>
+<td>CCE-86953-7</td>
+<td>Configure kernel to zero out memory before allocation</td>
+<td>To configure the kernel to zero out memory before allocating it, add the
+<code>init_on_alloc=1</code> argument to the default GRUB 2 command line.
+To ensure that <code>init_on_alloc=1</code> is added as a kernel command line
+argument to newly installed kernels, add <code>init_on_alloc=1</code> to the
+default Grub2 command line for Linux operating systems. Modify the line within
+<code>/etc/default/grub</code> as shown below:
+<pre>GRUB_CMDLINE_LINUX="... init_on_alloc=1 ..."</pre>
+Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="init_on_alloc=1"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["init_on_alloc=1"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.</td>
 </tr>
 <tr>
 <td>CCE-86521-2</td>
@@ -2674,6 +2719,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 <code>/etc/default/grub</code> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... l1tf=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_l1tf_options" use="legacy"></xccdf-1.2:sub> ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="l1tf=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_l1tf_options" use="legacy"></xccdf-1.2:sub>"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["l1tf=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_l1tf_options" use="legacy"></xccdf-1.2:sub>"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.
 
 Since Linux Kernel 4.19 you can check the L1TF vulnerability state with the
 following command:
@@ -2697,7 +2749,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 <code>/etc/default/grub</code> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... mce=0 ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="mce=0"</pre>
-      </td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["mce=0"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.</td>
 </tr>
 <tr>
 <td>CCE-88327-2</td>
@@ -2725,6 +2783,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 <code>/etc/default/grub</code> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... mds=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_mds_options" use="legacy"></xccdf-1.2:sub> ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="mds=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_mds_options" use="legacy"></xccdf-1.2:sub>"</pre>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["mds=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_mds_options" use="legacy"></xccdf-1.2:sub>"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.
 
 Not all processors are affected by all variants of MDS, but the mitigation mechanism is
 identical for all of them.
@@ -2748,7 +2813,10 @@ Check that the line <pre>GRUB_CMDLINE_LINUX="..."</pre> within <code>/etc/defaul
 doesn't contain the argument <code>nosmap</code>.
 Run the following command to update command line for already installed kernels:
 <pre># grubby --update-kernel=ALL --remove-args="nosmap"</pre>
-      </td>
+
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the kernel arguments should be configured using TOML files located in the <code>/usr/lib/bootc/kargs.d</code> directory.
+Remove all occurences of <code>nosmap</code> from all files in <code>/usr/lib/bootc/kargs.d</code>.
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.</td>
 </tr>
 <tr>
 <td>CCE-89827-0</td>
@@ -2764,7 +2832,10 @@ Check that the line <pre>GRUB_CMDLINE_LINUX="..."</pre> within <code>/etc/defaul
 doesn't contain the argument <code>nosmep</code>.
 Run the following command to update command line for already installed kernels:
 <pre># grubby --update-kernel=ALL --remove-args="nosmep"</pre>
-      </td>
+
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the kernel arguments should be configured using TOML files located in the <code>/usr/lib/bootc/kargs.d</code> directory.
+Remove all occurences of <code>nosmep</code> from all files in <code>/usr/lib/bootc/kargs.d</code>.
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.</td>
 </tr>
 <tr>
 <td>CCE-90506-7</td>
@@ -2777,7 +2848,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 <code>/etc/default/grub</code> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... page_alloc.shuffle=1 ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="page_alloc.shuffle=1"</pre>
-      </td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["page_alloc.shuffle=1"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.</td>
 </tr>
 <tr>
 <td>CCE-88971-7</td>
@@ -2791,7 +2868,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 <code>/etc/default/grub</code> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... pti=on ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="pti=on"</pre>
-      </td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["pti=on"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.</td>
 </tr>
 <tr>
 <td>CCE-90519-0</td>
@@ -2821,7 +2904,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 <code>/etc/default/grub</code> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... rng_core.default_quality=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_rng_core_default_quality" use="legacy"></xccdf-1.2:sub> ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="rng_core.default_quality=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_rng_core_default_quality" use="legacy"></xccdf-1.2:sub>"</pre>
-      </td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["rng_core.default_quality=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_rng_core_default_quality" use="legacy"></xccdf-1.2:sub>"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.</td>
 </tr>
 <tr>
 <td>CCE-89884-1</td>
@@ -2839,7 +2928,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 <code>/etc/default/grub</code> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... slab_nomerge=yes ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="slab_nomerge=yes"</pre>
-      </td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["slab_nomerge=yes"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.</td>
 </tr>
 <tr>
 <td>CCE-89300-8</td>
@@ -2867,7 +2962,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 <code>/etc/default/grub</code> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... spec_store_bypass_disable=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_spec_store_bypass_disable_options" use="legacy"></xccdf-1.2:sub> ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="spec_store_bypass_disable=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_spec_store_bypass_disable_options" use="legacy"></xccdf-1.2:sub>"</pre>
-      </td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["spec_store_bypass_disable=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_spec_store_bypass_disable_options" use="legacy"></xccdf-1.2:sub>"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.</td>
 </tr>
 <tr>
 <td>CCE-90401-1</td>
@@ -2889,7 +2990,38 @@ default Grub2 command line for Linux operating systems. Modify the line within
 <code>/etc/default/grub</code> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... spectre_v2=on ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="spectre_v2=on"</pre>
-      </td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["spectre_v2=on"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.</td>
+</tr>
+<tr>
+<td>CCE-89168-9</td>
+<td>Ensure debug-shell service is not enabled during boot</td>
+<td>systemd's <code>debug-shell</code> service is intended to
+diagnose systemd related boot issues with various <code>systemctl</code>
+commands. Once enabled and following a system reboot, the root shell
+will be available on <code>tty9</code> which is access by pressing
+<code>CTRL-ALT-F9</code>. The <code>debug-shell</code> service should only be used
+for systemd related issues and should otherwise be disabled.
+<br>
+       <br>
+By default, the <code>debug-shell</code> systemd service is already disabled.
+
+Ensure the debug-shell is not enabled by the <code>systemd.debug-shel=1</code>
+boot parameter option.
+
+Check that the line <pre>GRUB_CMDLINE_LINUX="..."</pre> within <code>/etc/default/grub</code>
+doesn't contain the argument <code>systemd.debug-shell</code>.
+Run the following command to update command line for already installed kernels:
+<pre># grubby --update-kernel=ALL --remove-args="systemd.debug-shell"</pre>
+
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the kernel arguments should be configured using TOML files located in the <code>/usr/lib/bootc/kargs.d</code> directory.
+Remove all occurences of <code>systemd.debug-shell</code> from all files in <code>/usr/lib/bootc/kargs.d</code>.
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.</td>
 </tr>
 <tr>
 <td>CCE-87153-3</td>
@@ -2903,7 +3035,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 <code>/etc/default/grub</code> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... vsyscall=none ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="vsyscall=none"</pre>
-      </td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["vsyscall=none"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.</td>
 </tr>
 <tr>
 <td>CCE-88691-1</td>
@@ -3048,6 +3186,81 @@ When prompted, enter the password that was selected.
 <br>
         <br>
        </td>
+</tr>
+<tr>
+<td>CCE-88929-5</td>
+<td>Enable Auditing to Start Prior to the Audit Daemon in zIPL</td>
+<td>To ensure all processes can be audited, even those which start prior to the audit daemon,
+check that all boot entries in <code>/boot/loader/entries/*.conf</code> have <code>audit=1</code>
+included in its options.<br>
+
+To ensure that new kernels and boot entries continue to enable audit,
+add <code>audit=1</code> to <code>/etc/kernel/cmdline</code>.</td>
+</tr>
+<tr>
+<td>CCE-89871-8</td>
+<td>Extend Audit Backlog Limit for the Audit Daemon in zIPL</td>
+<td>To improve the kernel capacity to queue all log events, even those which start prior to the audit daemon,
+check that all boot entries in <code>/boot/loader/entries/*.conf</code> have <code>audit_backlog_limit=8192</code>
+included in its options.<br>
+To ensure that new kernels and boot entries continue to extend the audit log events queue,
+add <code>audit_backlog_limit=8192</code> to <code>/etc/kernel/cmdline</code>.</td>
+</tr>
+<tr>
+<td>CCE-88443-7</td>
+<td>Configure kernel to zero out memory before allocation in zIPL</td>
+<td>To ensure that the kernel is configured to zero out memory before
+allocation, check that all boot entries in
+<code>/boot/loader/entries/*.conf</code> have <code>init_on_alloc=1</code>
+included in its options.<br>
+
+To ensure that new kernels and boot entries continue to zero out memory
+before allocation, add <code>init_on_alloc=1</code> to <code>/etc/kernel/cmdline</code>.</td>
+</tr>
+<tr>
+<td>CCE-89057-4</td>
+<td>Enable randomization of the page allocator in zIPL</td>
+<td>To enable the randomization of the page allocator in the kernel, check that
+all boot entries in <code>/boot/loader/entries/*.conf</code> have
+<code>page_alloc.shuffle=1</code> included in its options.<br>
+
+To enable randomization of the page allocator also for  newly installed
+kernels, add <code>page_alloc.shuffle=1</code> to <code>/etc/kernel/cmdline</code>.</td>
+</tr>
+<tr>
+<td>CCE-87936-1</td>
+<td>Ensure debug-shell service is not enabled in zIPL</td>
+<td>systemd's <code>debug-shell</code> service is intended to
+diagnose systemd related boot issues with various <code>systemctl</code>
+commands. Once enabled and following a system reboot, the root shell
+will be available on <code>tty9</code> which is access by pressing
+<code>CTRL-ALT-F9</code>. The <code>debug-shell</code> service should only be used
+for systemd related issues and should otherwise be disabled.
+<br>
+       <br>
+By default, the <code>debug-shell</code> systemd service is already disabled.
+
+Ensure the debug-shell is not enabled by the <code>systemd.debug-shel=1</code>
+boot paramenter option.
+
+Check that not boot entries in <code>/boot/loader/entries/*.conf</code> have
+<code>systemd.debug-shell=1</code> included in its options.<br>
+To ensure that new kernels and boot entries don't enable the debug-shell, check
+that <code>systemd.debug-shell=1</code> is not present in <code>/etc/kernel/cmdline</code>.</td>
+</tr>
+<tr>
+<td>CCE-87335-6</td>
+<td>Ensure all zIPL boot entries are BLS compliant</td>
+<td>Ensure that zIPL boot entries fully adheres to Boot Loader Specification (BLS)
+by checking that <code>/etc/zipl.conf</code> doesn't contain <code>image = </code>.</td>
+</tr>
+<tr>
+<td>CCE-87515-3</td>
+<td>Ensure zIPL bootmap is up to date</td>
+<td>Make sure that <code>/boot/bootmap</code> is up to date.<br>
+Every time a boot entry or zIPL configuration is changed <code>/boot/bootmap</code> needs to
+be updated to reflect the changes.<br>
+Run <code>zipl</code> command to generate an updated <code>/boot/bootmap</code>.</td>
 </tr>
 <tr>
 <td>CCE-89223-2</td>
@@ -3255,19 +3468,6 @@ If the system architecture is x86_64, the value should be 65536.
 If the system architecture is aarch64, the value should be 32768.</td>
 </tr>
 <tr>
-<td>CCE-87428-9</td>
-<td>Disable /dev/kmem virtual device support</td>
-<td>Disable support for the /dev/kmem device.
-
-The configuration that was used to build kernel is available at <code>/boot/config-*</code>.
-    To check the configuration value for <code>CONFIG_DEVKMEM</code>, run the following command:
-    <code>grep CONFIG_DEVKMEM /boot/config-*</code>
-    
-    Configs with value 'n' are not explicitly set in the file, so either commented lines or no
-    lines should be returned.
-    </td>
-</tr>
-<tr>
 <td>CCE-88438-7</td>
 <td>Harden common str/mem functions against buffer overflows</td>
 <td>Detect overflows of buffers in common string and memory functions where the compiler can
@@ -3295,22 +3495,6 @@ The configuration that was used to build kernel is available at <code>/boot/conf
     <code>grep CONFIG_HARDENED_USERCOPY /boot/config-*</code>
     
     For each kernel installed, a line with value "y" should be returned.
-    </td>
-</tr>
-<tr>
-<td>CCE-87652-4</td>
-<td>Do not allow usercopy whitelist violations to fallback to object size</td>
-<td>This is a temporary option that allows missing usercopy whitelists to be discovered via a WARN()
-to the kernel log, instead of rejecting the copy, falling back to non-whitelisted hardened
-usercopy that checks the slab allocation size instead of the whitelist size.
-This configuration is available from kernel 4.16.
-
-The configuration that was used to build kernel is available at <code>/boot/config-*</code>.
-    To check the configuration value for <code>CONFIG_HARDENED_USERCOPY_FALLBACK</code>, run the following command:
-    <code>grep CONFIG_HARDENED_USERCOPY_FALLBACK /boot/config-*</code>
-    
-    Configs with value 'n' are not explicitly set in the file, so either commented lines or no
-    lines should be returned.
     </td>
 </tr>
 <tr>
@@ -3532,50 +3716,6 @@ The configuration that was used to build kernel is available at <code>/boot/conf
     </td>
 </tr>
 <tr>
-<td>CCE-87844-7</td>
-<td>Enable poison without sanity check</td>
-<td>Skip the sanity checking on alloc, only fill the pages with poison on free. This reduces some
-of the overhead of the poisoning feature.
-This configuration is available from kernel 4.6.
-
-The configuration that was used to build kernel is available at <code>/boot/config-*</code>.
-    To check the configuration value for <code>CONFIG_PAGE_POISONING_NO_SANITY</code>, run the following command:
-    <code>grep CONFIG_PAGE_POISONING_NO_SANITY /boot/config-*</code>
-    
-    For each kernel installed, a line with value "y" should be returned.
-    </td>
-</tr>
-<tr>
-<td>CCE-90278-3</td>
-<td>Use zero for poisoning instead of debugging value</td>
-<td>Instead of using the existing poison value, fill the pages with zeros. This makes it harder to
-detect when errors are occurring due to sanitization but the zeroing at free means that it is
-no longer necessary to write zeros when GFP_ZERO is used on allocation.
-This configuration is available from kernel 4.19.
-
-The configuration that was used to build kernel is available at <code>/boot/config-*</code>.
-    To check the configuration value for <code>CONFIG_PAGE_POISONING_ZERO</code>, run the following command:
-    <code>grep CONFIG_PAGE_POISONING_ZERO /boot/config-*</code>
-    
-    For each kernel installed, a line with value "y" should be returned.
-    </td>
-</tr>
-<tr>
-<td>CCE-88464-3</td>
-<td>Remove the kernel mapping in user mode</td>
-<td>This feature reduces the number of hardware side channels by ensuring that the majority of
-kernel addresses are not mapped into userspace.
-This configuration is available from kernel 4.15, but may be available if backported
-by distros.
-
-The configuration that was used to build kernel is available at <code>/boot/config-*</code>.
-    To check the configuration value for <code>CONFIG_PAGE_TABLE_ISOLATION</code>, run the following command:
-    <code>grep CONFIG_PAGE_TABLE_ISOLATION /boot/config-*</code>
-    
-    For each kernel installed, a line with value "y" should be returned.
-    </td>
-</tr>
-<tr>
 <td>CCE-89985-6</td>
 <td>Kernel panic oops</td>
 <td>Enable the kernel to panic when it oopses.
@@ -3646,37 +3786,6 @@ The configuration that was used to build kernel is available at <code>/boot/conf
     </td>
 </tr>
 <tr>
-<td>CCE-88998-0</td>
-<td>Perform full reference count validation</td>
-<td>Enabling this switches the refcounting infrastructure from a fast unchecked atomic_t
-implementation to a fully state checked implementation, which can have a slight
-impact in performance.
-This configuration is available from kernel 4.13, but may be available if backported
-by distros.
-
-The configuration that was used to build kernel is available at <code>/boot/config-*</code>.
-    To check the configuration value for <code>CONFIG_REFCOUNT_FULL</code>, run the following command:
-    <code>grep CONFIG_REFCOUNT_FULL /boot/config-*</code>
-    
-    For each kernel installed, a line with value "y" should be returned.
-    </td>
-</tr>
-<tr>
-<td>CCE-89562-3</td>
-<td>Avoid speculative indirect branches in kernel</td>
-<td>Compile kernel with the retpoline compiler options to guard against kernel-to-user data leaks
-by avoiding speculative indirect branches.
-Requires a compiler with -mindirect-branch=thunk-extern support for full protection.
-The kernel may run slower.
-
-The configuration that was used to build kernel is available at <code>/boot/config-*</code>.
-    To check the configuration value for <code>CONFIG_RETPOLINE</code>, run the following command:
-    <code>grep CONFIG_RETPOLINE /boot/config-*</code>
-    
-    For each kernel installed, a line with value "y" should be returned.
-    </td>
-</tr>
-<tr>
 <td>CCE-86229-2</td>
 <td>Detect stack corruption on calls to schedule()</td>
 <td>This option checks for a stack overrun on calls to schedule(). If the stack end location is
@@ -3741,19 +3850,6 @@ The configuration that was used to build kernel is available at <code>/boot/conf
     <code>grep CONFIG_SECURITY_DMESG_RESTRICT /boot/config-*</code>
     
     For each kernel installed, a line with value "y" should be returned.
-    </td>
-</tr>
-<tr>
-<td>CCE-89825-4</td>
-<td>Disable mutable hooks</td>
-<td>Ensure kernel structures associated with LSMs are always mapped as read-only after system boot.
-
-The configuration that was used to build kernel is available at <code>/boot/config-*</code>.
-    To check the configuration value for <code>CONFIG_SECURITY_WRITABLE_HOOKS</code>, run the following command:
-    <code>grep CONFIG_SECURITY_WRITABLE_HOOKS /boot/config-*</code>
-    
-    Configs with value 'n' are not explicitly set in the file, so either commented lines or no
-    lines should be returned.
     </td>
 </tr>
 <tr>
@@ -4972,30 +5068,6 @@ kernel module from being loaded, add the following line to the file <code>/etc/m
        </td>
 </tr>
 <tr>
-<td>CCE-89435-2</td>
-<td>Disable DCCP Support</td>
-<td>The Datagram Congestion Control Protocol (DCCP) is a
-relatively new transport layer protocol, designed to support
-streaming media and telephony.
-
-To configure the system to prevent the <code>dccp</code>
-kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/dccp.conf</code>:
-<pre>install dccp /bin/false</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-89280-2</td>
-<td>Disable RDS Support</td>
-<td>The Reliable Datagram Sockets (RDS) protocol is a transport
-layer protocol designed to provide reliable high-bandwidth,
-low-latency communications between nodes in a cluster.
-
-To configure the system to prevent the <code>rds</code>
-kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/rds.conf</code>:
-<pre>install rds /bin/false</pre>
-       </td>
-</tr>
-<tr>
 <td>CCE-90489-6</td>
 <td>Disable SCTP Support</td>
 <td>The Stream Control Transmission Protocol (SCTP) is a
@@ -5153,22 +5225,6 @@ To properly set the owner of <code>/boot/System.map*</code>, run the command:
        </td>
 </tr>
 <tr>
-<td>CCE-89306-5</td>
-<td>Verify Permissions on /etc/audit/auditd.conf</td>
-<td>
-To properly set the permissions of <code>/etc/audit/auditd.conf</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/audit/auditd.conf</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-89313-1</td>
-<td>Verify Permissions on /etc/audit/rules.d/*.rules</td>
-<td>
-To properly set the permissions of <code>/etc/audit/rules.d/*.rules</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/audit/rules.d/*.rules</pre>
-       </td>
-</tr>
-<tr>
 <td>CCE-88726-5</td>
 <td>Verify Permissions On /etc/crypttab File</td>
 <td> To properly set the permissions of <code>/etc/crypttab</code>, run the command: <pre>$ sudo chmod 0600 /etc/crypttab</pre>
@@ -5222,9 +5278,11 @@ are a part of pseudo file systems such as <code>sysfs</code> or <code>procfs</co
 <tr>
 <td>CCE-88305-8</td>
 <td>Ensure All Files Are Owned by a Group</td>
-<td>If any file is not group-owned by a group present in /etc/group, the cause of the lack of
+<td>If any file is not group-owned by a valid defined group, the cause of the lack of
 group-ownership must be investigated. Following this, those files should be deleted or
-assigned to an appropriate group.
+assigned to an appropriate group. The groups need to be defined in <code>/etc/group</code>
+or in <code>/usr/lib/group</code> if <code>nss-altfiles</code> are configured to be used
+in <code>/etc/nsswitch.conf</code>.
 
 Locate the mount points related to local devices by the following command:
 <pre>$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)</pre>
@@ -5505,7 +5563,7 @@ To properly set the permissions of <code>/var/log</code>, run the command:
 <td>Verify Permissions on /var/log/messages File</td>
 <td>
 To properly set the permissions of <code>/var/log/messages</code>, run the command:
-<pre>$ sudo chmod 0640 /var/log/messages</pre>
+<pre>$ sudo chmod 0600 /var/log/messages</pre>
         </td>
 </tr>
 <tr>
@@ -5587,28 +5645,6 @@ its permission with the following command:
         </td>
 </tr>
 <tr>
-<td>CCE-87965-0</td>
-<td>Verify that audit tools are owned by group root</td>
-<td>The Red Hat Enterprise Linux 10 operating system audit tools must have the proper
-ownership configured to protected against unauthorized access.
-
-Verify it by running the following command:
-<pre>$ stat -c "%n %G" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
-
-/sbin/auditctl root
-/sbin/aureport root
-/sbin/ausearch root
-/sbin/autrace root
-/sbin/auditd root
-/sbin/audispd root
-/sbin/augenrules root
-</pre>
-
-Audit tools needed to successfully view and manipulate audit information
-system activity and records. Audit tools include custom queries and report
-generators</td>
-</tr>
-<tr>
 <td>CCE-89800-7</td>
 <td>Verify that system commands files are group owned by root or a system account</td>
 <td>System commands files are stored in the following directories by default:
@@ -5627,28 +5663,6 @@ with the following command:
 <pre>$ sudo chgrp root <i>FILE</i>
          </pre>
         </td>
-</tr>
-<tr>
-<td>CCE-89400-6</td>
-<td>Verify that audit tools are owned by root</td>
-<td>The Red Hat Enterprise Linux 10 operating system audit tools must have the proper
-ownership configured to protected against unauthorized access.
-
-Verify it by running the following command:
-<pre>$ stat -c "%n %U" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
-
-/sbin/auditctl root
-/sbin/aureport root
-/sbin/ausearch root
-/sbin/autrace root
-/sbin/auditd root
-/sbin/audispd root
-/sbin/augenrules root
-</pre>
-
-Audit tools needed to successfully view and manipulate audit information
-system activity and records. Audit tools include custom queries and report
-generators</td>
 </tr>
 <tr>
 <td>CCE-89620-9</td>
@@ -5688,28 +5702,6 @@ ownership with the following command:
 <pre>$ sudo chown root <i>FILE</i>
          </pre>
         </td>
-</tr>
-<tr>
-<td>CCE-86166-6</td>
-<td>Verify that audit tools Have Mode 0755 or less</td>
-<td>The Red Hat Enterprise Linux 10 operating system audit tools must have the proper
-permissions configured to protected against unauthorized access.
-
-Verify it by running the following command:
-<pre>$ stat -c "%n %a" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
-
-/sbin/auditctl 755
-/sbin/aureport 755
-/sbin/ausearch 755
-/sbin/autrace 755
-/sbin/auditd 755
-/sbin/audispd 755
-/sbin/augenrules 755
-</pre>
-
-Audit tools needed to successfully view and manipulate audit information
-system activity and records. Audit tools include custom queries and report
-generators</td>
 </tr>
 <tr>
 <td>CCE-86978-4</td>
@@ -5793,61 +5785,6 @@ argument to the kernel's boot loader configuration. To do so,
 append "nousb" to the kernel line in <code>/etc/default/grub</code> as shown:
 <pre>kernel /vmlinuz-<i>VERSION</i> ro vga=ext root=/dev/VolGroup00/LogVol00 rhgb quiet nousb</pre>
        </td>
-</tr>
-<tr>
-<td>CCE-90005-0</td>
-<td>Disable Mounting of cramfs</td>
-<td>
-To configure the system to prevent the <code>cramfs</code>
-kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/cramfs.conf</code>:
-<pre>install cramfs /bin/false</pre>
-
-This effectively prevents usage of this uncommon filesystem.
-
-The <code>cramfs</code> filesystem type is a compressed read-only
-Linux filesystem embedded in small footprint systems. A
-<code>cramfs</code> image can be used without having to first
-decompress the image.</td>
-</tr>
-<tr>
-<td>CCE-87969-2</td>
-<td>Disable Mounting of freevxfs</td>
-<td>
-To configure the system to prevent the <code>freevxfs</code>
-kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/freevxfs.conf</code>:
-<pre>install freevxfs /bin/false</pre>
-
-This effectively prevents usage of this uncommon filesystem.</td>
-</tr>
-<tr>
-<td>CCE-87336-4</td>
-<td>Disable Mounting of hfs</td>
-<td>
-To configure the system to prevent the <code>hfs</code>
-kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/hfs.conf</code>:
-<pre>install hfs /bin/false</pre>
-
-This effectively prevents usage of this uncommon filesystem.</td>
-</tr>
-<tr>
-<td>CCE-89918-7</td>
-<td>Disable Mounting of hfsplus</td>
-<td>
-To configure the system to prevent the <code>hfsplus</code>
-kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/hfsplus.conf</code>:
-<pre>install hfsplus /bin/false</pre>
-
-This effectively prevents usage of this uncommon filesystem.</td>
-</tr>
-<tr>
-<td>CCE-88027-8</td>
-<td>Disable Mounting of jffs2</td>
-<td>
-To configure the system to prevent the <code>jffs2</code>
-kernel module from being loaded, add the following line to the file <code>/etc/modprobe.d/jffs2.conf</code>:
-<pre>install jffs2 /bin/false</pre>
-
-This effectively prevents usage of this uncommon filesystem.</td>
 </tr>
 <tr>
 <td>CCE-88216-7</td>
@@ -6216,6 +6153,32 @@ To make sure that the setting is persistent, add the following line to a file in
        </td>
 </tr>
 <tr>
+<td>CCE-86218-5</td>
+<td>Disable storing core dumps</td>
+<td>The <code>kernel.core_pattern</code> option specifies the core dumpfile pattern
+name. It can be set to an empty string. In this case, the kernel
+behaves differently based on another related option. If
+<code>kernel.core_uses_pid</code> is set to <code>1</code>, then a file named as
+<code>.PID</code> (where <code>PID</code> is process ID of the crashed process) is
+created in the working directory. If <code>kernel.core_uses_pid</code> is set to
+<code>0</code>, no coredump is saved.
+To set the runtime status of the <code>kernel.core_pattern</code> kernel parameter,
+run the following command:
+<pre>$ sudo sysctl -w kernel.core_pattern=</pre>
+
+To make sure that the setting is persistent,
+add the following line to a file in the directory <code>/etc/sysctl.d</code>:
+<pre>kernel.core_pattern = </pre>
+       </td>
+</tr>
+<tr>
+<td>CCE-88782-8</td>
+<td>Configure file name of core dumps</td>
+<td>To set the runtime status of the <code>kernel.core_uses_pid</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.core_uses_pid=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.core_uses_pid = 0</pre>
+       </td>
+</tr>
+<tr>
 <td>CCE-89000-4</td>
 <td>Restrict Access to Kernel Message Buffer</td>
 <td>To set the runtime status of the <code>kernel.dmesg_restrict</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.dmesg_restrict=1</pre>
@@ -6283,6 +6246,38 @@ To make sure that the setting is persistent, add the following line to a file in
 <td>Disable Access to Network bpf() Syscall From Unprivileged Processes</td>
 <td>To set the runtime status of the <code>kernel.unprivileged_bpf_disabled</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.unprivileged_bpf_disabled=1</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.unprivileged_bpf_disabled = 1</pre>
+       </td>
+</tr>
+<tr>
+<td>CCE-88627-5</td>
+<td>Disable Access to Network bpf() Syscall From Unprivileged Processes</td>
+<td>To prevent unprivileged processes from using the <code>bpf()</code> syscall
+the <code>kernel.unprivileged_bpf_disabled</code> kernel parameter must
+be set to <code>1</code> or <code>2</code>.
+
+Writing <code>1</code> to this entry will disable unprivileged calls to <code>bpf()</code>; once
+disabled, calling <code>bpf()</code> without <code>CAP_SYS_ADMIN</code> or <code>CAP_BPF</code> will return <code>-EPERM</code>.
+Once set to <code>1</code>, this can't be cleared from the running kernel anymore.
+
+To set the runtime status of the <code>kernel.unprivileged_bpf_disabled</code> kernel parameter,
+run the following command:
+<pre>$ sudo sysctl -w kernel.unprivileged_bpf_disabled=1</pre>
+
+To make sure that the setting is persistent,
+add the following line to a file in the directory <code>/etc/sysctl.d</code>:
+<pre>kernel.unprivileged_bpf_disabled = 1</pre>
+
+Writing <code>2</code> to this entry will also disable unprivileged calls to <code>bpf()</code>,
+however, an admin can still change this setting later on, if needed, by
+writing <code>0</code> or <code>1</code> to this entry.
+
+To set the runtime status of the <code>kernel.unprivileged_bpf_disabled</code> kernel parameter,
+run the following command:
+<pre>$ sudo sysctl -w kernel.unprivileged_bpf_disabled=2</pre>
+
+To make sure that the setting is persistent,
+add the following line to a file in the directory <code>/etc/sysctl.d</code>:
+<pre>kernel.unprivileged_bpf_disabled = 2</pre>
        </td>
 </tr>
 <tr>
@@ -6400,7 +6395,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 <code>/etc/default/grub</code> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... page_poison=1 ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="page_poison=1"</pre>
-        </td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["page_poison=1"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.</td>
 </tr>
 <tr>
 <td>CCE-86675-6</td>
@@ -6417,7 +6418,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 <code>/etc/default/grub</code> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... slub_debug=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_slub_debug_options" use="legacy"></xccdf-1.2:sub> ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="slub_debug=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_slub_debug_options" use="legacy"></xccdf-1.2:sub>"</pre>
-        </td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["slub_debug=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_slub_debug_options" use="legacy"></xccdf-1.2:sub>"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.</td>
 </tr>
 <tr>
 <td>CCE-90410-2</td>
@@ -6996,6 +7003,15 @@ $ sudo dnf remove dnsmasq</pre>
       </td>
 </tr>
 <tr>
+<td>CCE-86181-5</td>
+<td>Uninstall unbound Package</td>
+<td>The <code>named</code> service is provided by the <code>unbound</code> package.
+The <code>unbound</code> package can be removed with the following command:
+<pre>
+$ sudo dnf remove unbound</pre>
+      </td>
+</tr>
+<tr>
 <td>CCE-87806-6</td>
 <td>Uninstall bind Package</td>
 <td>The <code>named</code> service is provided by the <code>bind</code> package.
@@ -7042,8 +7058,7 @@ $ sudo dnf remove ftp</pre>
 <tr>
 <td>CCE-89436-0</td>
 <td>Uninstall httpd Package</td>
-<td>
-The <code>httpd</code> package can be removed with the following command:
+<td>The <code>httpd</code> package can be removed with the following command:
 <pre>
 $ sudo dnf remove httpd</pre>
        </td>
@@ -7076,9 +7091,8 @@ $ sudo dnf remove dovecot</pre>
 <tr>
 <td>CCE-90440-9</td>
 <td>Disable Kerberos by removing host keytab</td>
-<td>Kerberos is not an approved key distribution method for
-Common Criteria. To prevent using Kerberos by system daemons,
-remove the Kerberos keytab files, especially
+<td>Kerberos may rely on key distribution functions unapproved by Common Criteria.
+To prevent using Kerberos by system daemons, remove the Kerberos keytab files, especially
 <code>/etc/krb5.keytab</code>.</td>
 </tr>
 <tr>
@@ -7247,35 +7261,6 @@ To enable Chronyd service, you can run:
 This recommendation only applies if chrony is in use on the system.</td>
 </tr>
 <tr>
-<td>CCE-89185-3</td>
-<td>Enable the NTP Daemon</td>
-<td>
-
-
-Run the following command to determine the current status of the
-<code>chronyd</code> service:
-<pre>$ sudo systemctl is-active chronyd</pre>
-If the service is running, it should return the following: <pre>active</pre>
-
-Note: The <code>chronyd</code> daemon is enabled by default.
-<br>
-       <br>
-
-
-Run the following command to determine the current status of the
-<code>ntpd</code> service:
-<pre>$ sudo systemctl is-active ntpd</pre>
-If the service is running, it should return the following: <pre>active</pre>
-Note: The <code>ntpd</code> daemon is not enabled by default. Though as mentioned
-in the previous sections in certain environments the <code>ntpd</code> daemon might
-be preferred to be used rather than the <code>chronyd</code> one. Refer to:
-
-    
-    <a href="https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-configuring_ntp_using_the_chrony_suite">https://access.redhat.com/documentation/en-us/red_hat_enterprise_linux/7/html/system_administrators_guide/ch-configuring_ntp_using_the_chrony_suite</a>
-
-for guidance which NTP daemon to choose depending on the environment used.</td>
-</tr>
-<tr>
 <td>CCE-86811-7</td>
 <td>A remote time server for Chrony is configured</td>
 <td>
@@ -7420,14 +7405,6 @@ The <code>rsyncd</code> service can be disabled with the following command:
       </td>
 </tr>
 <tr>
-<td>CCE-88760-4</td>
-<td>Uninstall xinetd Package</td>
-<td>The <code>xinetd</code> package can be removed with the following command:
-<pre>
-$ sudo dnf remove xinetd</pre>
-       </td>
-</tr>
-<tr>
 <td>CCE-90241-1</td>
 <td>Disable rexec Service</td>
 <td>The <code>rexec</code> service, which is available with the <code>rsh-server</code> package
@@ -7468,18 +7445,6 @@ The <code>rsh</code> socket can be disabled with the following command:
 <td>The <code>shosts.equiv</code> file lists remote hosts and users that are trusted by the local
 system. To remove these files, run the following command to delete them from any location:
 <pre>$ sudo rm /[path]/[to]/[file]/shosts.equiv</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-88529-3</td>
-<td>Remove Rsh Trust Files</td>
-<td>The files <code>/etc/hosts.equiv</code> and <code>~/.rhosts</code> (in
-each user's home directory) list remote hosts and users that are trusted by the
-local system when using the rshd daemon.
-To remove these files, run the following command to delete them from any
-location:
-<pre>$ sudo rm /etc/hosts.equiv</pre>
-        <pre>$ rm ~/.rhosts</pre>
        </td>
 </tr>
 <tr>
@@ -7564,12 +7529,6 @@ The <code>cups</code> service can be disabled with the following command:
 <td>
 The <code>squid</code> service can be disabled with the following command:
 <pre>$ sudo systemctl mask --now squid.service</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-89804-9</td>
-<td>Uninstall quagga Package</td>
-<td>The <code>quagga</code> package can be removed with the following command: <pre> $ sudo dnf remove quagga</pre>
        </td>
 </tr>
 <tr>
@@ -8285,6 +8244,15 @@ To enable smart cards in SSSD, set <code>pam_cert_auth</code> to <code>True</cod
 <pre>[pam]
 pam_cert_auth = True
 </pre>
+
+Add or update "pam_sss.so" line in auth section of "/etc/pam.d/system-auth" file to include
+"try_cert_auth" or "require_cert_auth" option, like in the following example:
+<pre>
+/etc/pam.d/system-auth:auth [success=done authinfo_unavail=ignore ignore=ignore default=die] pam_sss.so try_cert_auth
+</pre>
+Also add or update "pam_sss.so" line in auth section of "/etc/pam.d/smartcard-auth" file to
+include the "allow_missing_name" option, like in the following example:
+<pre>/etc/pam.d/smartcard-auth:auth sufficient pam_sss.so allow_missing_name</pre>
       </td>
 </tr>
 <tr>
@@ -8332,6 +8300,15 @@ The <code>usbguard</code> service can be enabled with the following command:
 needs to be set to <code>LinuxAudit</code>.</td>
 </tr>
 <tr>
+<td>CCE-88761-2</td>
+<td>Authorize Human Interface Devices and USB hubs in USBGuard daemon</td>
+<td>To allow authorization of USB devices combining human interface device and hub capabilities
+by USBGuard daemon,
+add the line
+<code>allow with-interface match-all { 03:*:* 09:00:* }</code>
+to <code>/etc/usbguard/rules.conf</code>.</td>
+</tr>
+<tr>
 <td>CCE-88632-5</td>
 <td>Generate USBGuard Policy</td>
 <td>By default USBGuard when enabled prevents access to all USB devices and this lead
@@ -8340,37 +8317,13 @@ the initial policy configuration must be generated based on current connected US
 devices.</td>
 </tr>
 <tr>
-<td>CCE-89061-6</td>
-<td>Remove the X Windows Package Group</td>
-<td>By removing the xorg-x11-server-common package, the system no longer has X Windows
-installed. If X Windows is not installed then the system cannot boot into graphical user mode.
-This prevents the system from being accidentally or maliciously booted into a <code>graphical.target</code>
-mode. To do so, run the following command:
-<pre>$ sudo dnf groupremove "X Window System"</pre>
-        <pre>$ sudo dnf remove xorg-x11-server-common</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-88391-8</td>
-<td>Disable graphical user interface</td>
-<td>By removing the following packages,  the system no longer has X Windows installed.
-
-<code>xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</code>
-
-If X Windows is not installed then the system cannot boot into graphical user mode.
-This prevents the system from being accidentally or maliciously booted into a <code>graphical.target</code>
-mode. To do so, run the following command:
-
-<pre>sudo dnf remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</pre>
-       </td>
-</tr>
-<tr>
 <td>CCE-89266-1</td>
-<td>Disable X Windows Startup By Setting Default Target</td>
+<td>Disable Graphical Environment Startup By Setting Default Target</td>
 <td>Systems that do not require a graphical user interface should only boot by
 default into <code>multi-user.target</code> mode. This prevents accidental booting of the system
 into a <code>graphical.target</code> mode. Setting the system's default target to
-<code>multi-user.target</code> will prevent automatic startup of the X server. To do so, run:
+<code>multi-user.target</code> will prevent automatic startup of the graphical environment.
+To do so, run:
 <pre>$ systemctl set-default multi-user.target</pre>
 You should see the following output:
 <pre>Removed symlink /etc/systemd/system/default.target.
@@ -8418,7 +8371,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 <code>/etc/default/grub</code> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit=1 ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit=1"</pre>
-     </td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["audit=1"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.</td>
 </tr>
 <tr>
 <td>CCE-88192-0</td>
@@ -8432,7 +8391,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 <code>/etc/default/grub</code> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
-     </td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["audit_backlog_limit=8192"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.</td>
 </tr>
 <tr>
 <td>CCE-89816-3</td>
@@ -8451,8 +8416,8 @@ immutable:
 With this setting, a reboot will be required to change any audit rules.</td>
 </tr>
 <tr>
-<td>CCE-87320-8</td>
-<td>Record Events that Modify the System's Mandatory Access Controls</td>
+<td>CCE-90737-8</td>
+<td>Record Events that Modify the System's Mandatory Access Controls (/etc/selinux)</td>
 <td>If the <code>auditd</code> daemon is configured to use the
 <code>augenrules</code> program to read audit rules during daemon startup (the
 default), add the following line to a file with suffix <code>.rules</code> in the
@@ -8507,6 +8472,7 @@ appropriate for your system:
 -w /etc/issue -p wa -k audit_rules_networkconfig_modification
 -w /etc/issue.net -p wa -k audit_rules_networkconfig_modification
 -w /etc/hosts -p wa -k audit_rules_networkconfig_modification
+
 -w /etc/sysconfig/network -p wa -k audit_rules_networkconfig_modification</pre>
 
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
@@ -10583,11 +10549,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/sbin/unix2_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/unix2_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/sbin/unix2_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/unix2_chkpwd -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
@@ -10598,11 +10564,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
@@ -10811,24 +10777,11 @@ substituting <i>ACTION</i> appropriately:
 <pre>disk_error_action = <i>ACTION</i>
        </pre>
 Set this value to <code>single</code> to cause the system to switch to single-user
-mode for corrective action. Acceptable values also include <code>syslog</code>,
-<code>exec</code>, <code>single</code>, and <code>halt</code>. For certain systems, the need for availability
-outweighs the need to log all actions, and a different setting should be
-determined. Details regarding all possible values for <i>ACTION</i> are described in the
-<code>auditd.conf</code> man page.</td>
-</tr>
-<tr>
-<td>CCE-89462-6</td>
-<td>Configure auditd Disk Error Action on Disk Error</td>
-<td>The <code>auditd</code> service can be configured to take an action
-when there is a disk error.
-Edit the file <code>/etc/audit/auditd.conf</code>. Add or modify the following line,
-substituting <i>ACTION</i> appropriately:
-<pre>disk_error_action = <i>ACTION</i>
-       </pre>
-Set this value to <code>single</code> to cause the system to switch to single-user
-mode for corrective action. Acceptable values also include <code>syslog</code>,
-<code>exec</code>, <code>single</code>, and <code>halt</code>. For certain systems, the need for availability
+mode for corrective action. Acceptable values also include
+
+<code>syslog</code>, <code>exec</code>, <code>single</code>, and <code>halt</code>
+
+For certain systems, the need for availability
 outweighs the need to log all actions, and a different setting should be
 determined. Details regarding all possible values for <i>ACTION</i> are described in the
 <code>auditd.conf</code> man page.</td>
@@ -10843,27 +10796,11 @@ substituting <i>ACTION</i> appropriately:
 <pre>disk_full_action = <i>ACTION</i>
        </pre>
 Set this value to <code>single</code> to cause the system to switch to single-user
-mode for corrective action. Acceptable values also include <code>syslog</code>,
+mode for corrective action. Acceptable values also include
 
-<code>exec</code>,
+<code>syslog</code>, <code>exec</code>, <code>single</code>, and <code>halt</code>
 
-<code>single</code>, and <code>halt</code>. For certain systems, the need for availability
-outweighs the need to log all actions, and a different setting should be
-determined. Details regarding all possible values for <i>ACTION</i> are described in the
-<code>auditd.conf</code> man page.</td>
-</tr>
-<tr>
-<td>CCE-88821-4</td>
-<td>Configure auditd Disk Full Action when Disk Space Is Full</td>
-<td>The <code>auditd</code> service can be configured to take an action
-when disk space is running low but prior to running out of space completely.
-Edit the file <code>/etc/audit/auditd.conf</code>. Add or modify the following line,
-substituting <i>ACTION</i> appropriately:
-<pre>disk_full_action = <i>ACTION</i>
-       </pre>
-Set this value to <code>single</code> to cause the system to switch to single-user
-mode for corrective action. Acceptable values also include <code>syslog</code>,
-<code>single</code>, and <code>halt</code>. For certain systems, the need for availability
+For certain systems, the need for availability
 outweighs the need to log all actions, and a different setting should be
 determined. Details regarding all possible values for <i>ACTION</i> are described in the
 <code>auditd.conf</code> man page.</td>
@@ -11061,6 +10998,86 @@ to one of the following values: <code>syslog</code>, <code>single</code>, <code>
 This is the default setting.</td>
 </tr>
 <tr>
+<td>CCE-87965-0</td>
+<td>Verify that audit tools are owned by group root</td>
+<td>The Red Hat Enterprise Linux 10 operating system audit tools must have the proper
+ownership configured to protected against unauthorized access.
+
+Verify it by running the following command:
+<pre>$ stat -c "%n %G" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
+
+/sbin/auditctl root
+/sbin/aureport root
+/sbin/ausearch root
+
+/sbin/auditd root
+
+/sbin/augenrules root
+</pre>
+
+Audit tools needed to successfully view and manipulate audit information
+system activity and records. Audit tools include custom queries and report
+generators</td>
+</tr>
+<tr>
+<td>CCE-89400-6</td>
+<td>Verify that audit tools are owned by root</td>
+<td>The Red Hat Enterprise Linux 10 operating system audit tools must have the proper
+ownership configured to protected against unauthorized access.
+
+Verify it by running the following command:
+<pre>$ stat -c "%n %U" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
+
+/sbin/auditctl root
+/sbin/aureport root
+/sbin/ausearch root
+
+/sbin/auditd root
+
+/sbin/augenrules root
+</pre>
+
+Audit tools needed to successfully view and manipulate audit information
+system activity and records. Audit tools include custom queries and report
+generators</td>
+</tr>
+<tr>
+<td>CCE-86166-6</td>
+<td>Verify that audit tools Have Mode 0755 or less</td>
+<td>The Red Hat Enterprise Linux 10 operating system audit tools must have the proper
+permissions configured to protected against unauthorized access.
+
+Verify it by running the following command:
+<pre>$ stat -c "%n %a" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
+
+/sbin/auditctl 755
+/sbin/aureport 755
+/sbin/ausearch 755
+/sbin/auditd 755
+/sbin/augenrules 755
+</pre>
+
+Audit tools needed to successfully view and manipulate audit information
+system activity and records. Audit tools include custom queries and report
+generators</td>
+</tr>
+<tr>
+<td>CCE-89306-5</td>
+<td>Verify Permissions on /etc/audit/auditd.conf</td>
+<td>
+To properly set the permissions of <code>/etc/audit/auditd.conf</code>, run the command:
+<pre>$ sudo chmod 0640 /etc/audit/auditd.conf</pre>
+      </td>
+</tr>
+<tr>
+<td>CCE-89313-1</td>
+<td>Verify Permissions on /etc/audit/rules.d/*.rules</td>
+<td>
+To properly set the permissions of <code>/etc/audit/rules.d/*.rules</code>, run the command:
+<pre>$ sudo chmod 0600 /etc/audit/rules.d/*.rules</pre>
+      </td>
+</tr>
+<tr>
 <td>CCE-89008-7</td>
 <td>Configure auditing of unsuccessful file accesses</td>
 <td>Ensure that unsuccessful attempts to access a file are audited.
@@ -11157,6 +11174,240 @@ Load new Audit rules into kernel by running:
 Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
 </tr>
 <tr>
+<td>CCE-88425-4</td>
+<td>Configure basic parameters of Audit system</td>
+<td>Perform basic configuration of Audit system.
+Make sure that any previously defined rules are cleared, the auditing system is configured to handle sudden bursts of events, and in cases of failure, messages are configured to be directed to system log.
+
+The following rules configure audit as described above:
+<pre>## First rule - delete all
+-D
+
+## Increase the buffers to survive stress events.
+## Make this bigger for busy systems
+-b 8192
+
+## This determine how long to wait in burst of events
+--backlog_wait_time 60000
+
+## Set failure mode to syslog
+-f 1    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+      </td>
+</tr>
+<tr>
+<td>CCE-89881-7</td>
+<td>Configure auditing of unsuccessful file creations</td>
+<td>Ensure that unsuccessful attempts to create a file are audited.
+
+The following rules configure audit as described above:
+<pre>## Unsuccessful file creation (open with O_CREAT)
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
+-a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
+-a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
+-a always,exit -F arch=b32 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
+-a always,exit -F arch=b64 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
+-a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
+-a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
+-a always,exit -F arch=b32 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
+-a always,exit -F arch=b64 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-88000-5</td>
+<td>Configure auditing of unsuccessful file creations (AArch64)</td>
+<td>Ensure that unsuccessful attempts to create a file are audited.
+
+The following rules configure audit as described above:
+<pre>## Unsuccessful file creation (open with O_CREAT)
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
+-a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
+-a always,exit -F arch=b32 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
+-a always,exit -F arch=b32 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
+-a always,exit -F arch=b32 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-89170-5</td>
+<td>Configure auditing of unsuccessful file creations (ppc64le)</td>
+<td>Ensure that unsuccessful attempts to create a file are audited.
+
+The following rules configure audit as described above:
+<pre>## Unsuccessful file creation (open with O_CREAT)
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
+-a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
+-a always,exit -F arch=b64 -S creat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
+-a always,exit -F arch=b64 -S open -F a1&amp;0100 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create
+-a always,exit -F arch=b64 -S creat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-create    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-88927-9</td>
+<td>Configure auditing of successful file creations</td>
+<td>Ensure that successful attempts to create a file are audited.
+
+The following rules configure audit as described above:
+<pre>## Successful file creation (open with O_CREAT)
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;0100 -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-create
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;0100 -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-create
+-a always,exit -F arch=b32 -S open -F a1&amp;0100 -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-create
+-a always,exit -F arch=b64 -S open -F a1&amp;0100 -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-create
+-a always,exit -F arch=b32 -S creat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-create
+-a always,exit -F arch=b64 -S creat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-create    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-90675-0</td>
+<td>Configure auditing of successful file creations (AArch64)</td>
+<td>Ensure that successful attempts to create a file are audited.
+
+The following rules configure audit as described above:
+<pre>## Successful file creation (open with O_CREAT)
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;0100 -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-create
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;0100 -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-create
+-a always,exit -F arch=b32 -S open -F a1&amp;0100 -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-create
+-a always,exit -F arch=b32 -S creat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-create    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-89990-6</td>
+<td>Configure auditing of successful file creations (ppc64le)</td>
+<td>Ensure that successful attempts to create a file are audited.
+
+The following rules configure audit as described above:
+<pre>## Successful file creation (open with O_CREAT)
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;0100 -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-create
+-a always,exit -F arch=b64 -S open -F a1&amp;0100 -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-create
+-a always,exit -F arch=b64 -S creat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-create    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-89807-2</td>
+<td>Configure auditing of unsuccessful file deletions</td>
+<td>Ensure that unsuccessful attempts to delete a file are audited.
+
+The following rules configure audit as described above:
+<pre>## Unsuccessful file delete
+-a always,exit -F arch=b32 -S unlink,unlinkat,rename,renameat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b64 -S unlink,unlinkat,rename,renameat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b32 -S unlink,unlinkat,rename,renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b64 -S unlink,unlinkat,rename,renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-88262-1</td>
+<td>Configure auditing of unsuccessful file deletions (AArch64)</td>
+<td>Ensure that unsuccessful attempts to delete a file are audited.
+
+The following rules configure audit as described above:
+<pre>## Unsuccessful file delete
+-a always,exit -F arch=b32 -S unlink,unlinkat,rename,renameat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b64 -S unlinkat,renameat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b32 -S unlink,unlinkat,rename,renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b64 -S unlinkat,renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-88931-1</td>
+<td>Configure auditing of unsuccessful file deletions (ppc64le)</td>
+<td>Ensure that unsuccessful attempts to delete a file are audited.
+
+The following rules configure audit as described above:
+<pre>## Unsuccessful file delete
+-a always,exit -F arch=b64 -S unlink,unlinkat,rename,renameat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete
+-a always,exit -F arch=b64 -S unlink,unlinkat,rename,renameat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-delete    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-87693-8</td>
+<td>Configure auditing of successful file deletions</td>
+<td>Ensure that successful attempts to delete a file are audited.
+
+The following rules configure audit as described above:
+<pre>## Successful file delete
+-a always,exit -F arch=b32 -S unlink,unlinkat,rename,renameat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-delete
+-a always,exit -F arch=b64 -S unlink,unlinkat,rename,renameat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-delete    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-88866-9</td>
+<td>Configure auditing of successful file deletions (AArch64)</td>
+<td>Ensure that successful attempts to delete a file are audited.
+
+The following rules configure audit as described above:
+<pre>## Successful file delete
+-a always,exit -F arch=b32 -S unlink,unlinkat,rename,renameat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-delete
+-a always,exit -F arch=b64 -S unlinkat,renameat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-delete    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-88269-6</td>
+<td>Configure auditing of successful file deletions (ppc64le)</td>
+<td>Ensure that successful attempts to delete a file are audited.
+
+The following rules configure audit as described above:
+<pre>## Successful file delete
+-a always,exit -F arch=b64 -S unlink,unlinkat,rename,renameat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-delete    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
 <td>CCE-86649-1</td>
 <td>Configure immutable Audit login UIDs</td>
 <td>Configure kernel to prevent modification of login UIDs once they are set.
@@ -11170,6 +11421,719 @@ The following rules configure audit as described above:
 Load new Audit rules into kernel by running:
 <pre>augenrules --load</pre>
       </td>
+</tr>
+<tr>
+<td>CCE-89667-0</td>
+<td>Configure auditing of unsuccessful file modifications</td>
+<td>Ensure that unsuccessful attempts to modify a file are audited.
+
+The following rules configure audit as described above:
+<pre>## Unsuccessful file modifications (open for write or truncate)
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b32 -S truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b64 -S truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b32 -S truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b64 -S truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-87053-5</td>
+<td>Configure auditing of unsuccessful file modifications (AARch64)</td>
+<td>Ensure that unsuccessful attempts to modify a file are audited.
+
+The following rules configure audit as described above:
+<pre>## Unsuccessful file modifications (open for write or truncate)
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b32 -S truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b64 -S truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b32 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b32 -S truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b64 -S truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-88663-0</td>
+<td>Configure auditing of unsuccessful file modifications (ppc64le)</td>
+<td>Ensure that unsuccessful attempts to modify a file are audited.
+
+The following rules configure audit as described above:
+<pre>## Unsuccessful file modifications (open for write or truncate)
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b64 -S truncate,ftruncate -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b64 -S open -F a1&amp;01003 -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification
+-a always,exit -F arch=b64 -S truncate,ftruncate -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-modification    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-90534-9</td>
+<td>Configure auditing of successful file modifications</td>
+<td>Ensure that successful attempts to modify a file are audited.
+
+The following rules configure audit as described above:
+<pre>## Successful file modifications (open for write or truncate)
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;01003 -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-modification
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;01003 -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-modification
+-a always,exit -F arch=b32 -S open -F a1&amp;01003 -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-modification
+-a always,exit -F arch=b64 -S open -F a1&amp;01003 -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-modification
+-a always,exit -F arch=b32 -S truncate,ftruncate -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-modification
+-a always,exit -F arch=b64 -S truncate,ftruncate -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-modification    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-89581-3</td>
+<td>Configure auditing of successful file modifications (AArch64)</td>
+<td>Ensure that successful attempts to modify a file are audited.
+
+The following rules configure audit as described above:
+<pre>## Successful file modifications (open for write or truncate)
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;01003 -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-modification
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;01003 -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-modification
+-a always,exit -F arch=b32 -S open -F a1&amp;01003 -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-modification
+-a always,exit -F arch=b32 -S truncate,ftruncate -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-modification
+-a always,exit -F arch=b64 -S truncate,ftruncate -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-modification    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-86563-4</td>
+<td>Configure auditing of successful file modifications (ppc64le)</td>
+<td>Ensure that successful attempts to modify a file are audited.
+
+The following rules configure audit as described above:
+<pre>## Successful file modifications (open for write or truncate)
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;01003 -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-modification
+-a always,exit -F arch=b64 -S open -F a1&amp;01003 -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-modification
+-a always,exit -F arch=b64 -S truncate,ftruncate -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-modification    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-90674-3</td>
+<td>Configure auditing of loading and unloading of kernel modules</td>
+<td>Ensure that loading and unloading of kernel modules is audited.
+
+The following rules configure audit as described above:
+<pre>## These rules watch for kernel module insertion. By monitoring
+## the syscall, we do not need any watches on programs.
+-a always,exit -F arch=b32 -S init_module,finit_module -F key=module-load
+-a always,exit -F arch=b64 -S init_module,finit_module -F key=module-load
+-a always,exit -F arch=b32 -S delete_module -F key=module-unload
+-a always,exit -F arch=b64 -S delete_module -F key=module-unload    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+      </td>
+</tr>
+<tr>
+<td>CCE-90415-1</td>
+<td>Configure auditing of loading and unloading of kernel modules (ppc64le)</td>
+<td>Ensure that loading and unloading of kernel modules is audited.
+
+The following rules configure audit as described above:
+<pre>## These rules watch for kernel module insertion. By monitoring
+## the syscall, we do not need any watches on programs.
+-a always,exit -F arch=b64 -S init_module,finit_module -F key=module-load
+-a always,exit -F arch=b64 -S delete_module -F key=module-unload    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+      </td>
+</tr>
+<tr>
+<td>CCE-89288-5</td>
+<td>Perform general configuration of Audit for OSPP</td>
+<td>Configure some basic <code>Audit</code> parameters specific for OSPP profile.
+In particular, configure <code>Audit</code> to watch for direct modification of files storing system user and group information, and usage of applications with special rights which can change system configuration.
+Further audited events include access to audit log it self, attempts to Alter Process and Session Initiation Information, and attempts to modify MAC controls.
+
+The following rules configure audit as described above:
+<pre>## The purpose of these rules is to meet the requirements for Operating
+## System Protection Profile (OSPP)v4.2. These rules depends on having
+## the following rule files copied to /etc/audit/rules.d:
+##
+## 10-base-config.rules, 11-loginuid.rules,
+## 30-ospp-v42-1-create-failed.rules, 30-ospp-v42-1-create-success.rules,
+## 30-ospp-v42-2-modify-failed.rules, 30-ospp-v42-2-modify-success.rules,
+## 30-ospp-v42-3-access-failed.rules, 30-ospp-v42-3-access-success.rules,
+## 30-ospp-v42-4-delete-failed.rules, 30-ospp-v42-4-delete-success.rules,
+## 30-ospp-v42-5-perm-change-failed.rules,
+## 30-ospp-v42-5-perm-change-success.rules,
+## 30-ospp-v42-6-owner-change-failed.rules,
+## 30-ospp-v42-6-owner-change-success.rules
+
+## User add delete modify. This is covered by pam. However, someone could
+## open a file and directly create or modify a user, so we'll watch passwd and
+## shadow for writes
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;03 -F path=/etc/passwd -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;03 -F path=/etc/passwd -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b32 -S open -F a1&amp;03 -F path=/etc/passwd -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b64 -S open -F a1&amp;03 -F path=/etc/passwd -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;03 -F path=/etc/shadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;03 -F path=/etc/shadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b32 -S open -F a1&amp;03 -F path=/etc/shadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b64 -S open -F a1&amp;03 -F path=/etc/shadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+
+## User enable and disable. This is entirely handled by pam.
+
+## Group add delete modify. This is covered by pam. However, someone could
+## open a file and directly create or modify a user, so we'll watch group and
+## gshadow for writes
+-a always,exit -F arch=b32 -F path=/etc/passwd -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b64 -F path=/etc/passwd -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b32 -F path=/etc/shadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b64 -F path=/etc/shadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b32 -F path=/etc/group -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+-a always,exit -F arch=b64 -F path=/etc/group -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+-a always,exit -F arch=b32 -F path=/etc/gshadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+-a always,exit -F arch=b64 -F path=/etc/gshadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+
+
+## Use of special rights for config changes. This would be use of setuid
+## programs that relate to user accts. This is not all setuid apps because
+## requirements are only for ones that affect system configuration.
+-a always,exit -F arch=b32 -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/usernetctl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/usernetctl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/seunshare -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/seunshare -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/newuidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/newuidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/newgidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/newgidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/at -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/at -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/grub2-set-bootflag -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/grub2-set-bootflag -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+
+## Privilege escalation via su or sudo. This is entirely handled by pam.
+## Special case for systemd-run. It is not audit aware, specifically watch it
+-a always,exit -F arch=b32 -F path=/usr/bin/systemd-run -F perm=x -F auid!=unset -F key=maybe-escalation
+-a always,exit -F arch=b64 -F path=/usr/bin/systemd-run -F perm=x -F auid!=unset -F key=maybe-escalation
+## Special case for pkexec. It is not audit aware, specifically watch it
+-a always,exit -F arch=b32 -F path=/usr/bin/pkexec -F perm=x -F key=maybe-escalation
+-a always,exit -F arch=b64 -F path=/usr/bin/pkexec -F perm=x -F key=maybe-escalation
+
+
+## Watch for configuration changes to privilege escalation.
+-a always,exit -F arch=b32 -F path=/etc/sudoers -F perm=wa -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/etc/sudoers -F perm=wa -F key=special-config-changes
+-a always,exit -F arch=b32 -F dir=/etc/sudoers.d/ -F perm=wa -F key=special-config-changes
+-a always,exit -F arch=b64 -F dir=/etc/sudoers.d/ -F perm=wa -F key=special-config-changes
+
+## Audit log access
+-a always,exit -F arch=b32 -F dir=/var/log/audit/ -F perm=r -F auid&gt;=1000 -F auid!=unset -F key=access-audit-trail
+-a always,exit -F arch=b64 -F dir=/var/log/audit/ -F perm=r -F auid&gt;=1000 -F auid!=unset -F key=access-audit-trail
+## Attempts to Alter Process and Session Initiation Information
+-a always,exit -F arch=b32 -F path=/var/run/utmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b64 -F path=/var/run/utmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b32 -F path=/var/log/btmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b64 -F path=/var/log/btmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b32 -F path=/var/log/wtmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b64 -F path=/var/log/wtmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+
+## Attempts to modify MAC controls
+-a always,exit -F arch=b32 -F dir=/etc/selinux/ -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=MAC-policy
+-a always,exit -F arch=b64 -F dir=/etc/selinux/ -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=MAC-policy
+
+## Software updates. This is entirely handled by rpm.
+
+## System start and shutdown. This is entirely handled by systemd
+
+## Kernel Module loading. This is handled in 43-module-load.rules
+
+## Application invocation. The requirements list an optional requirement
+## FPT_SRP_EXT.1 Software Restriction Policies. This event is intended to
+## state results from that policy. This would be handled entirely by
+## that daemon.    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-89566-4</td>
+<td>Perform general configuration of Audit for OSPP (AArch64)</td>
+<td>Configure some basic <code>Audit</code> parameters specific for OSPP profile.
+In particular, configure <code>Audit</code> to watch for direct modification of files storing system user and group information, and usage of applications with special rights which can change system configuration.
+Further audited events include access to audit log it self, attempts to Alter Process and Session Initiation Information, and attempts to modify MAC controls.
+
+The following rules configure audit as described above:
+<pre>## The purpose of these rules is to meet the requirements for Operating
+## System Protection Profile (OSPP)v4.2. These rules depends on having
+## the following rule files copied to /etc/audit/rules.d:
+##
+## 10-base-config.rules, 11-loginuid.rules,
+## 30-ospp-v42-1-create-failed.rules, 30-ospp-v42-1-create-success.rules,
+## 30-ospp-v42-2-modify-failed.rules, 30-ospp-v42-2-modify-success.rules,
+## 30-ospp-v42-3-access-failed.rules, 30-ospp-v42-3-access-success.rules,
+## 30-ospp-v42-4-delete-failed.rules, 30-ospp-v42-4-delete-success.rules,
+## 30-ospp-v42-5-perm-change-failed.rules,
+## 30-ospp-v42-5-perm-change-success.rules,
+## 30-ospp-v42-6-owner-change-failed.rules,
+## 30-ospp-v42-6-owner-change-success.rules
+
+## User add delete modify. This is covered by pam. However, someone could
+## open a file and directly create or modify a user, so we'll watch passwd and
+## shadow for writes
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;03 -F path=/etc/passwd -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;03 -F path=/etc/passwd -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b32 -S open -F a1&amp;03 -F path=/etc/passwd -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b32 -S openat,open_by_handle_at -F a2&amp;03 -F path=/etc/shadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;03 -F path=/etc/shadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b32 -S open -F a1&amp;03 -F path=/etc/shadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+
+## User enable and disable. This is entirely handled by pam.
+
+## Group add delete modify. This is covered by pam. However, someone could
+## open a file and directly create or modify a user, so we'll watch group and
+## gshadow for writes
+-a always,exit -F arch=b32 -F path=/etc/passwd -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b64 -F path=/etc/passwd -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b32 -F path=/etc/shadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b64 -F path=/etc/shadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b32 -F path=/etc/group -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+-a always,exit -F arch=b64 -F path=/etc/group -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+-a always,exit -F arch=b32 -F path=/etc/gshadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+-a always,exit -F arch=b64 -F path=/etc/gshadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+
+
+## Use of special rights for config changes. This would be use of setuid
+## programs that relate to user accts. This is not all setuid apps because
+## requirements are only for ones that affect system configuration.
+-a always,exit -F arch=b32 -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/usernetctl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/usernetctl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/seunshare -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/seunshare -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/newuidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/newuidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/newgidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/newgidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/at -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/at -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/grub2-set-bootflag -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/grub2-set-bootflag -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+
+## Privilege escalation via su or sudo. This is entirely handled by pam.
+## Special case for systemd-run. It is not audit aware, specifically watch it
+-a always,exit -F arch=b32 -F path=/usr/bin/systemd-run -F perm=x -F auid!=unset -F key=maybe-escalation
+-a always,exit -F arch=b64 -F path=/usr/bin/systemd-run -F perm=x -F auid!=unset -F key=maybe-escalation
+## Special case for pkexec. It is not audit aware, specifically watch it
+-a always,exit -F arch=b32 -F path=/usr/bin/pkexec -F perm=x -F key=maybe-escalation
+-a always,exit -F arch=b64 -F path=/usr/bin/pkexec -F perm=x -F key=maybe-escalation
+
+
+## Watch for configuration changes to privilege escalation.
+-a always,exit -F arch=b32 -F path=/etc/sudoers -F perm=wa -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/etc/sudoers -F perm=wa -F key=special-config-changes
+-a always,exit -F arch=b32 -F dir=/etc/sudoers.d/ -F perm=wa -F key=special-config-changes
+-a always,exit -F arch=b64 -F dir=/etc/sudoers.d/ -F perm=wa -F key=special-config-changes
+
+## Audit log access
+-a always,exit -F arch=b32 -F dir=/var/log/audit/ -F perm=r -F auid&gt;=1000 -F auid!=unset -F key=access-audit-trail
+-a always,exit -F arch=b64 -F dir=/var/log/audit/ -F perm=r -F auid&gt;=1000 -F auid!=unset -F key=access-audit-trail
+## Attempts to Alter Process and Session Initiation Information
+-a always,exit -F arch=b32 -F path=/var/run/utmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b64 -F path=/var/run/utmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b32 -F path=/var/log/btmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b64 -F path=/var/log/btmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b32 -F path=/var/log/wtmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b64 -F path=/var/log/wtmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+
+## Attempts to modify MAC controls
+-a always,exit -F arch=b32 -F dir=/etc/selinux/ -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=MAC-policy
+-a always,exit -F arch=b64 -F dir=/etc/selinux/ -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=MAC-policy
+
+## Software updates. This is entirely handled by rpm.
+
+## System start and shutdown. This is entirely handled by systemd
+
+## Kernel Module loading. This is handled in 43-module-load.rules
+
+## Application invocation. The requirements list an optional requirement
+## FPT_SRP_EXT.1 Software Restriction Policies. This event is intended to
+## state results from that policy. This would be handled entirely by
+## that daemon.    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-90399-7</td>
+<td>Perform general configuration of Audit for OSPP (ppc64le)</td>
+<td>Configure some basic <code>Audit</code> parameters specific for OSPP profile.
+In particular, configure <code>Audit</code> to watch for direct modification of files storing system user and group information, and usage of applications with special rights which can change system configuration.
+Further audited events include access to audit log it self, attempts to Alter Process and Session Initiation Information, and attempts to modify MAC controls.
+
+The following rules configure audit as described above:
+<pre>## The purpose of these rules is to meet the requirements for Operating
+## System Protection Profile (OSPP)v4.2. These rules depends on having
+## the following rule files copied to /etc/audit/rules.d:
+##
+## 10-base-config.rules, 11-loginuid.rules,
+## 30-ospp-v42-1-create-failed.rules, 30-ospp-v42-1-create-success.rules,
+## 30-ospp-v42-2-modify-failed.rules, 30-ospp-v42-2-modify-success.rules,
+## 30-ospp-v42-3-access-failed.rules, 30-ospp-v42-3-access-success.rules,
+## 30-ospp-v42-4-delete-failed.rules, 30-ospp-v42-4-delete-success.rules,
+## 30-ospp-v42-5-perm-change-failed.rules,
+## 30-ospp-v42-5-perm-change-success.rules,
+## 30-ospp-v42-6-owner-change-failed.rules,
+## 30-ospp-v42-6-owner-change-success.rules
+
+## User add delete modify. This is covered by pam. However, someone could
+## open a file and directly create or modify a user, so we'll watch passwd and
+## shadow for writes
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;03 -F path=/etc/passwd -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b64 -S open -F a1&amp;03 -F path=/etc/passwd -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b64 -S openat,open_by_handle_at -F a2&amp;03 -F path=/etc/shadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b64 -S open -F a1&amp;03 -F path=/etc/shadow -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+
+## User enable and disable. This is entirely handled by pam.
+
+## Group add delete modify. This is covered by pam. However, someone could
+## open a file and directly create or modify a user, so we'll watch group and
+## gshadow for writes
+-a always,exit -F arch=b32 -F path=/etc/passwd -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b64 -F path=/etc/passwd -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b32 -F path=/etc/shadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b64 -F path=/etc/shadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b32 -F path=/etc/group -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+-a always,exit -F arch=b64 -F path=/etc/group -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+-a always,exit -F arch=b32 -F path=/etc/gshadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+-a always,exit -F arch=b64 -F path=/etc/gshadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+
+
+## Use of special rights for config changes. This would be use of setuid
+## programs that relate to user accts. This is not all setuid apps because
+## requirements are only for ones that affect system configuration.
+-a always,exit -F arch=b32 -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/usernetctl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/usernetctl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/seunshare -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/seunshare -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/newuidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/newuidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/newgidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/newgidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/at -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/at -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/grub2-set-bootflag -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/grub2-set-bootflag -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+
+## Privilege escalation via su or sudo. This is entirely handled by pam.
+## Special case for systemd-run. It is not audit aware, specifically watch it
+-a always,exit -F arch=b32 -F path=/usr/bin/systemd-run -F perm=x -F auid!=unset -F key=maybe-escalation
+-a always,exit -F arch=b64 -F path=/usr/bin/systemd-run -F perm=x -F auid!=unset -F key=maybe-escalation
+## Special case for pkexec. It is not audit aware, specifically watch it
+-a always,exit -F arch=b32 -F path=/usr/bin/pkexec -F perm=x -F key=maybe-escalation
+-a always,exit -F arch=b64 -F path=/usr/bin/pkexec -F perm=x -F key=maybe-escalation
+
+
+## Watch for configuration changes to privilege escalation.
+-a always,exit -F arch=b32 -F path=/etc/sudoers -F perm=wa -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/etc/sudoers -F perm=wa -F key=special-config-changes
+-a always,exit -F arch=b32 -F dir=/etc/sudoers.d/ -F perm=wa -F key=special-config-changes
+-a always,exit -F arch=b64 -F dir=/etc/sudoers.d/ -F perm=wa -F key=special-config-changes
+
+## Audit log access
+-a always,exit -F arch=b32 -F dir=/var/log/audit/ -F perm=r -F auid&gt;=1000 -F auid!=unset -F key=access-audit-trail
+-a always,exit -F arch=b64 -F dir=/var/log/audit/ -F perm=r -F auid&gt;=1000 -F auid!=unset -F key=access-audit-trail
+## Attempts to Alter Process and Session Initiation Information
+-a always,exit -F arch=b32 -F path=/var/run/utmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b64 -F path=/var/run/utmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b32 -F path=/var/log/btmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b64 -F path=/var/log/btmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b32 -F path=/var/log/wtmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b64 -F path=/var/log/wtmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+
+## Attempts to modify MAC controls
+-a always,exit -F arch=b32 -F dir=/etc/selinux/ -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=MAC-policy
+-a always,exit -F arch=b64 -F dir=/etc/selinux/ -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=MAC-policy
+
+## Software updates. This is entirely handled by rpm.
+
+## System start and shutdown. This is entirely handled by systemd
+
+## Kernel Module loading. This is handled in 43-module-load.rules
+
+## Application invocation. The requirements list an optional requirement
+## FPT_SRP_EXT.1 Software Restriction Policies. This event is intended to
+## state results from that policy. This would be handled entirely by
+## that daemon.    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-88845-3</td>
+<td>Configure auditing of unsuccessful ownership changes</td>
+<td>Ensure that unsuccessful attempts to change an ownership of files or directories are audited.
+
+The following rules configure audit as described above:
+<pre>## Unsuccessful ownership change
+-a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-owner-change
+-a always,exit -F arch=b64 -S lchown,fchown,chown,fchownat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-owner-change
+-a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-owner-change
+-a always,exit -F arch=b64 -S lchown,fchown,chown,fchownat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-owner-change    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-87653-2</td>
+<td>Configure auditing of unsuccessful ownership changes (AArch64)</td>
+<td>Ensure that unsuccessful attempts to change an ownership of files or directories are audited.
+
+The following rules configure audit as described above:
+<pre>## Unsuccessful ownership change
+-a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-owner-change
+-a always,exit -F arch=b64 -S fchown,fchownat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-owner-change
+-a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-owner-change
+-a always,exit -F arch=b64 -S fchown,fchownat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-owner-change    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-86853-9</td>
+<td>Configure auditing of unsuccessful ownership changes (ppc64le)</td>
+<td>Ensure that unsuccessful attempts to change an ownership of files or directories are audited.
+
+The following rules configure audit as described above:
+<pre>## Unsuccessful ownership change
+-a always,exit -F arch=b64 -S lchown,fchown,chown,fchownat -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-owner-change
+-a always,exit -F arch=b64 -S lchown,fchown,chown,fchownat -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-owner-change    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-89472-5</td>
+<td>Configure auditing of successful ownership changes</td>
+<td>Ensure that successful attempts to change an ownership of files or directories are audited.
+
+The following rules configure audit as described above:
+<pre>## Successful ownership change
+-a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-owner-change
+-a always,exit -F arch=b64 -S lchown,fchown,chown,fchownat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-owner-change    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-86485-0</td>
+<td>Configure auditing of successful ownership changes (AArch64)</td>
+<td>Ensure that successful attempts to change an ownership of files or directories are audited.
+
+The following rules configure audit as described above:
+<pre>## Successful ownership change
+-a always,exit -F arch=b32 -S lchown,fchown,chown,fchownat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-owner-change
+-a always,exit -F arch=b64 -S fchown,fchownat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-owner-change    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-88115-1</td>
+<td>Configure auditing of successful ownership changes (ppc64le)</td>
+<td>Ensure that successful attempts to change an ownership of files or directories are audited.
+
+The following rules configure audit as described above:
+<pre>## Successful ownership change
+-a always,exit -F arch=b64 -S lchown,fchown,chown,fchownat -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-owner-change    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-86610-3</td>
+<td>Configure auditing of unsuccessful permission changes</td>
+<td>Ensure that unsuccessful attempts to change file or directory permissions are audited.
+
+The following rules configure audit as described above:
+<pre>## Unsuccessful permission change
+-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-perm-change
+-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-perm-change
+-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-perm-change
+-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-perm-change    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-90207-2</td>
+<td>Configure auditing of unsuccessful permission changes (AArch64)</td>
+<td>Ensure that unsuccessful attempts to change file or directory permissions are audited.
+
+The following rules configure audit as described above:
+<pre>## Unsuccessful permission change
+-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-perm-change
+-a always,exit -F arch=b64 -S fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-perm-change
+-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-perm-change
+-a always,exit -F arch=b64 -S fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-perm-change    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-86921-4</td>
+<td>Configure auditing of unsuccessful permission changes (ppc64le)</td>
+<td>Ensure that unsuccessful attempts to change file or directory permissions are audited.
+
+The following rules configure audit as described above:
+<pre>## Unsuccessful permission change
+-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F exit=-EACCES -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-perm-change
+-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F exit=-EPERM -F auid&gt;=1000 -F auid!=unset -F key=unsuccessful-perm-change    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-89344-6</td>
+<td>Configure auditing of successful permission changes</td>
+<td>Ensure that successful attempts to modify permissions of files or directories are audited.
+
+The following rules configure audit as described above:
+<pre>## Successful permission change
+-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-perm-change
+-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-perm-change    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-87247-3</td>
+<td>Configure auditing of successful permission changes (AArch64)</td>
+<td>Ensure that successful attempts to modify permissions of files or directories are audited.
+
+The following rules configure audit as described above:
+<pre>## Successful permission change
+-a always,exit -F arch=b32 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-perm-change
+-a always,exit -F arch=b64 -S fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-perm-change    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
+</tr>
+<tr>
+<td>CCE-90680-0</td>
+<td>Configure auditing of successful permission changes (ppc64le)</td>
+<td>Ensure that successful attempts to modify permissions of files or directories are audited.
+
+The following rules configure audit as described above:
+<pre>## Successful permission change
+-a always,exit -F arch=b64 -S chmod,fchmod,fchmodat,setxattr,lsetxattr,fsetxattr,removexattr,lremovexattr,fremovexattr -F success=1 -F auid&gt;=1000 -F auid!=unset -F key=successful-perm-change    </pre>
+
+Load new Audit rules into kernel by running:
+<pre>augenrules --load</pre>
+
+Note: This rule uses a special set of Audit rules to comply with OSPP 4.2.1. You may reuse this rule in different profiles. If you decide to do so, it is recommended that you inspect contents of the file closely and make sure that they are alligned with your needs.</td>
 </tr>
 </table>
 </body>

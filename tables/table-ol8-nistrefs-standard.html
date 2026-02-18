@@ -508,14 +508,17 @@ If the <tt>auditd</tt> daemon is configured to use the
 <tt>augenrules</tt> program to read audit rules during daemon startup (the
 default), add the following line to a file with suffix <tt>.rules</tt> in the
 directory <tt>/etc/audit/rules.d</tt>:
+
 <pre>-w /etc/selinux/ -p wa -k MAC-policy</pre>
+
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add the following line to
 <tt>/etc/audit/audit.rules</tt> file:
+
 <pre>-w /etc/selinux/ -p wa -k MAC-policy</pre>
   </td>
   <td xml:lang="en-US">
-The system's mandatory access policy (SELinux) should not be
+The system's mandatory access policy (SELinux or Apparmor) should not be
 arbitrarily changed by anything other than administrator action. All changes to
 MAC policy should be audited.
   </td>
@@ -561,6 +564,7 @@ appropriate for your system:
 -w /etc/issue -p wa -k audit_rules_networkconfig_modification
 -w /etc/issue.net -p wa -k audit_rules_networkconfig_modification
 -w /etc/hosts -p wa -k audit_rules_networkconfig_modification
+
 -w /etc/sysconfig/network -p wa -k audit_rules_networkconfig_modification</pre>
 
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
@@ -1333,11 +1337,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Misuse of privileged functions, either intentionally or unintentionally by
@@ -1965,28 +1969,6 @@ unknown devices, thereby facilitating malicious activity.
 <tr>
   <td>CM-7(a)<br/>CM-7(b)<br/>CM-6(a)</td>
   <td>N/A</td>
-  <td>Disable ntpdate Service (ntpdate)</td>
-  <td xml:lang="en-US">
-The <tt>ntpdate</tt> service sets the local hardware clock by polling NTP servers
-when the system boots. It synchronizes to the NTP servers listed in
-<tt>/etc/ntp/step-tickers</tt> or <tt>/etc/ntp.conf</tt>
-and then sets the local hardware clock to the newly synchronized
-system time.
-
-The <code>ntpdate</code> service can be disabled with the following command:
-<pre>$ sudo systemctl mask --now ntpdate.service</pre>
-  </td>
-  <td xml:lang="en-US">
-The <tt>ntpdate</tt> service may only be suitable for systems which
-are rebooted frequently enough that clock drift does not cause problems between
-reboots. In any event, the functionality of the ntpdate service is now
-available in the ntpd program and should be considered deprecated.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>CM-7(a)<br/>CM-7(b)<br/>CM-6(a)</td>
-  <td>N/A</td>
   <td>Disable Odd Job Daemon (oddjobd)</td>
   <td xml:lang="en-US">
 The <tt>oddjobd</tt> service exists to provide an interface and
@@ -2002,28 +1984,6 @@ The <tt>oddjobd</tt> service may provide necessary functionality in
 some environments, and can be disabled if it is not needed. Execution of
 tasks by privileged programs, on behalf of unprivileged ones, has traditionally
 been a source of privilege escalation security issues.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>CM-7(a)<br/>CM-7(b)<br/>CM-6(a)</td>
-  <td>N/A</td>
-  <td>Disable Apache Qpid (qpidd)</td>
-  <td xml:lang="en-US">
-The <tt>qpidd</tt> service provides high speed, secure,
-guaranteed delivery services.  It is an implementation of the Advanced Message
-Queuing Protocol.  By default the qpidd service will bind to port 5672 and
-listen for connection attempts.
-
-The <code>qpidd</code> service can be disabled with the following command:
-<pre>$ sudo systemctl mask --now qpidd.service</pre>
-  </td>
-  <td xml:lang="en-US">
-The qpidd service is automatically installed when the <tt>base</tt> package
-selection is selected during installation. The qpidd service listens for
-network connections, which increases the attack surface of the system. If
-the system is not intended to receive AMQP traffic, then the <tt>qpidd</tt>
-service is not needed and should be disabled or removed.
   </td>
   <td></td>
 </tr>

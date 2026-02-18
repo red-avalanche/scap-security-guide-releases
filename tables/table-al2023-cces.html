@@ -1508,9 +1508,11 @@ are a part of pseudo file systems such as <code>sysfs</code> or <code>procfs</co
 <tr>
 <td></td>
 <td>Ensure All Files Are Owned by a Group</td>
-<td>If any file is not group-owned by a group present in /etc/group, the cause of the lack of
+<td>If any file is not group-owned by a valid defined group, the cause of the lack of
 group-ownership must be investigated. Following this, those files should be deleted or
-assigned to an appropriate group.
+assigned to an appropriate group. The groups need to be defined in <code>/etc/group</code>
+or in <code>/usr/lib/group</code> if <code>nss-altfiles</code> are configured to be used
+in <code>/etc/nsswitch.conf</code>.
 
 Locate the mount points related to local devices by the following command:
 <pre>$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)</pre>
@@ -1693,72 +1695,6 @@ To properly set the permissions of <code>/etc/passwd</code>, run the command:
 To properly set the permissions of <code>/etc/shadow</code>, run the command:
 <pre>$ sudo chmod 0000 /etc/shadow</pre>
         </td>
-</tr>
-<tr>
-<td></td>
-<td>Verify that audit tools are owned by group root</td>
-<td>The Amazon Linux 2023 operating system audit tools must have the proper
-ownership configured to protected against unauthorized access.
-
-Verify it by running the following command:
-<pre>$ stat -c "%n %G" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
-
-/sbin/auditctl root
-/sbin/aureport root
-/sbin/ausearch root
-/sbin/autrace root
-/sbin/auditd root
-/sbin/audispd root
-/sbin/augenrules root
-</pre>
-
-Audit tools needed to successfully view and manipulate audit information
-system activity and records. Audit tools include custom queries and report
-generators</td>
-</tr>
-<tr>
-<td></td>
-<td>Verify that audit tools are owned by root</td>
-<td>The Amazon Linux 2023 operating system audit tools must have the proper
-ownership configured to protected against unauthorized access.
-
-Verify it by running the following command:
-<pre>$ stat -c "%n %U" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
-
-/sbin/auditctl root
-/sbin/aureport root
-/sbin/ausearch root
-/sbin/autrace root
-/sbin/auditd root
-/sbin/audispd root
-/sbin/augenrules root
-</pre>
-
-Audit tools needed to successfully view and manipulate audit information
-system activity and records. Audit tools include custom queries and report
-generators</td>
-</tr>
-<tr>
-<td></td>
-<td>Verify that audit tools Have Mode 0755 or less</td>
-<td>The Amazon Linux 2023 operating system audit tools must have the proper
-permissions configured to protected against unauthorized access.
-
-Verify it by running the following command:
-<pre>$ stat -c "%n %a" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
-
-/sbin/auditctl 755
-/sbin/aureport 755
-/sbin/ausearch 755
-/sbin/autrace 755
-/sbin/auditd 755
-/sbin/audispd 755
-/sbin/augenrules 755
-</pre>
-
-Audit tools needed to successfully view and manipulate audit information
-system activity and records. Audit tools include custom queries and report
-generators</td>
 </tr>
 <tr>
 <td></td>
@@ -2458,8 +2394,7 @@ $ sudo dnf remove ftp</pre>
 <tr>
 <td></td>
 <td>Uninstall httpd Package</td>
-<td>
-The <code>httpd</code> package can be removed with the following command:
+<td>The <code>httpd</code> package can be removed with the following command:
 <pre>
 $ sudo dnf remove httpd</pre>
        </td>
@@ -3042,10 +2977,13 @@ With this setting, a reboot will be required to change any audit rules.</td>
 <code>augenrules</code> program to read audit rules during daemon startup (the
 default), add the following line to a file with suffix <code>.rules</code> in the
 directory <code>/etc/audit/rules.d</code>:
+
 <pre>-w /etc/selinux/ -p wa -k MAC-policy</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
+
 <pre>-w /etc/selinux/ -p wa -k MAC-policy</pre>
       </td>
 </tr>
@@ -3092,6 +3030,7 @@ appropriate for your system:
 -w /etc/issue -p wa -k audit_rules_networkconfig_modification
 -w /etc/issue.net -p wa -k audit_rules_networkconfig_modification
 -w /etc/hosts -p wa -k audit_rules_networkconfig_modification
+
 -w /etc/sysconfig/network -p wa -k audit_rules_networkconfig_modification</pre>
 
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
@@ -4264,6 +4203,72 @@ These include:
 Set this to <code>email</code> (instead of the default,
 which is <code>suspend</code>) as it is more likely to get prompt attention. Acceptable values
 also include <code>suspend</code>, <code>single</code>, and <code>halt</code>.</td>
+</tr>
+<tr>
+<td></td>
+<td>Verify that audit tools are owned by group root</td>
+<td>The Amazon Linux 2023 operating system audit tools must have the proper
+ownership configured to protected against unauthorized access.
+
+Verify it by running the following command:
+<pre>$ stat -c "%n %G" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
+
+/sbin/auditctl root
+/sbin/aureport root
+/sbin/ausearch root
+/sbin/autrace root
+/sbin/auditd root
+/sbin/audispd root
+/sbin/augenrules root
+</pre>
+
+Audit tools needed to successfully view and manipulate audit information
+system activity and records. Audit tools include custom queries and report
+generators</td>
+</tr>
+<tr>
+<td></td>
+<td>Verify that audit tools are owned by root</td>
+<td>The Amazon Linux 2023 operating system audit tools must have the proper
+ownership configured to protected against unauthorized access.
+
+Verify it by running the following command:
+<pre>$ stat -c "%n %U" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
+
+/sbin/auditctl root
+/sbin/aureport root
+/sbin/ausearch root
+/sbin/autrace root
+/sbin/auditd root
+/sbin/audispd root
+/sbin/augenrules root
+</pre>
+
+Audit tools needed to successfully view and manipulate audit information
+system activity and records. Audit tools include custom queries and report
+generators</td>
+</tr>
+<tr>
+<td></td>
+<td>Verify that audit tools Have Mode 0755 or less</td>
+<td>The Amazon Linux 2023 operating system audit tools must have the proper
+permissions configured to protected against unauthorized access.
+
+Verify it by running the following command:
+<pre>$ stat -c "%n %a" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
+
+/sbin/auditctl 755
+/sbin/aureport 755
+/sbin/ausearch 755
+/sbin/autrace 755
+/sbin/auditd 755
+/sbin/audispd 755
+/sbin/augenrules 755
+</pre>
+
+Audit tools needed to successfully view and manipulate audit information
+system activity and records. Audit tools include custom queries and report
+generators</td>
 </tr>
 </table>
 </body>

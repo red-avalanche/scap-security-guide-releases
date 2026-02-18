@@ -238,8 +238,13 @@ Audit tools must have a mode of 0755 or less permissive.</td>
 <tr>
 <td>CCE-82155-3</td>
 <td>Enable Dracut FIPS Module</td>
-<td>To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
+<td>
+Red Hat Enterprise Linux 8 has an installation-time kernel flag that can enable FIPS mode.
+The installer must be booted with <code>fips=1</code> for the system to have FIPS mode
+enabled. Enabling FIPS mode on a preexisting system is not supported. If
+this rule fails on an installed system, then this is a permanent
+finding and cannot be fixed.
+
 To enable FIPS, the system requires that the <code>fips</code> module is added in <code>dracut</code> configuration.
 Check if <code>/etc/dracut.conf.d/40-fips.conf</code> contain <code>add_dracutmodules+=" fips "</code>
         </td>
@@ -248,37 +253,36 @@ Check if <code>/etc/dracut.conf.d/40-fips.conf</code> contain <code>add_dracutmo
 <td>CCE-80942-6</td>
 <td>Enable FIPS Mode</td>
 <td>
-To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
-         <br>
-The <code>fips-mode-setup</code> command will configure the system in
-FIPS mode by automatically configuring the following:
-<ul>
-<li>Setting the kernel FIPS mode flag (<code>/proc/sys/crypto/fips_enabled</code>) to <code>1</code>
-          </li>
-<li>Creating <code>/etc/system-fips</code>
-          </li>
-<li>Setting the system crypto policy in <code>/etc/crypto-policies/config</code> to <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_system_crypto_policy" use="legacy"></xccdf-1.2:sub></code>
-          </li>
-<li>Loading the Dracut <code>fips</code> module</li>
-</ul>
-        </td>
+Red Hat Enterprise Linux 8 has an installation-time kernel flag that can enable FIPS mode.
+The installer must be booted with <code>fips=1</code> for the system to have FIPS mode
+enabled. Enabling FIPS mode on a preexisting system is not supported. If
+this rule fails on an installed system, then this is a permanent
+finding and cannot be fixed.</td>
 </tr>
 <tr>
 <td></td>
 <td>Ensure '/etc/system-fips' exists</td>
 <td>On a system where FIPS mode is enabled, <code>/etc/system-fips</code> must exist.
-To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
-        </td>
+
+Red Hat Enterprise Linux 8 has an installation-time kernel flag that can enable FIPS mode.
+The installer must be booted with <code>fips=1</code> for the system to have FIPS mode
+enabled. Enabling FIPS mode on a preexisting system is not supported. If
+this rule fails on an installed system, then this is a permanent
+finding and cannot be fixed.</td>
 </tr>
 <tr>
 <td>CCE-84027-2</td>
 <td>Set kernel parameter 'crypto.fips_enabled' to 1</td>
 <td>System running in FIPS mode is indicated by kernel parameter
 <code>'crypto.fips_enabled'</code>. This parameter should be set to <code>1</code> in FIPS mode.
-To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
+
+Red Hat Enterprise Linux 8 has an installation-time kernel flag that can enable FIPS mode.
+The installer must be booted with <code>fips=1</code> for the system to have FIPS mode
+enabled. Enabling FIPS mode on a preexisting system is not supported. If
+this rule fails on an installed system, then this is a permanent
+finding and cannot be fixed.
+
+
 
 To enable strict FIPS compliance, the fips=1 kernel option needs to be added to the kernel boot
 parameters during system installation so key generation is done with FIPS-approved algorithms
@@ -429,7 +433,7 @@ During the parsing process, as soon as Openssh client parses some configuration 
 </tr>
 <tr>
 <td>CCE-85902-5</td>
-<td>Configure SSH Client to Use FIPS 140-2 Validated Ciphers: openssh.config</td>
+<td>Configure SSH Client to Use FIPS 140 Validated Ciphers: openssh.config</td>
 <td>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
 OpenSSH is supported by system crypto policy, but the OpenSSH configuration may be
 set up incorrectly.
@@ -2569,12 +2573,13 @@ This will help ensure that new passwords for local users will be stored using th
 <td>CCE-89707-4</td>
 <td>Set Password Hashing Rounds in /etc/login.defs</td>
 <td>In <code>/etc/login.defs</code>, ensure <code>SHA_CRYPT_MIN_ROUNDS</code> and
-<code>SHA_CRYPT_MAX_ROUNDS</code> has the minimum value of <code>5000</code>.
+<code>SHA_CRYPT_MAX_ROUNDS</code> has the minimum value of <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_min_rounds_login_defs" use="legacy"></xccdf-1.2:sub></code>.
 For example:
-<pre>SHA_CRYPT_MIN_ROUNDS 5000
-SHA_CRYPT_MAX_ROUNDS 5000</pre>
+<pre>SHA_CRYPT_MIN_ROUNDS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_min_rounds_login_defs" use="legacy"></xccdf-1.2:sub>
+SHA_CRYPT_MAX_ROUNDS <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_min_rounds_login_defs" use="legacy"></xccdf-1.2:sub>
+         </pre>
 Notice that if neither are set, they already have the default value of 5000.
-If either is set, they must have the minimum value of 5000.</td>
+If either is set, they must have the minimum value of <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_hashing_min_rounds_login_defs" use="legacy"></xccdf-1.2:sub>.</td>
 </tr>
 <tr>
 <td>CCE-80876-6</td>
@@ -3823,10 +3828,10 @@ for systemd related issues and should otherwise be disabled.
 By default, the <code>debug-shell</code> systemd service is already disabled.
 
 Ensure the debug-shell is not enabled by the <code>systemd.debug-shel=1</code>
-boot paramenter option.
+boot parameter option.
 
 Check that the line <pre>GRUB_CMDLINE_LINUX="..."</pre> within <code>/etc/default/grub</code>
-doesn't contain the argument <code>systemd.debug-shell=1</code>.
+doesn't contain the argument <code>systemd.debug-shell</code>.
 Run the following command to update command line for already installed kernels:
 <pre># grubby --update-kernel=ALL --remove-args="systemd.debug-shell"</pre>
       </td>
@@ -5805,7 +5810,9 @@ The <code>iptables</code> service can be enabled with the following command:
 <td>To set the default policy to DROP (instead of ACCEPT) for
 the built-in INPUT chain which processes incoming packets,
 add or correct the following line in
+
 <code>/etc/sysconfig/ip6tables</code>:
+
 <pre>:INPUT DROP [0:0]</pre>
 If changes were required, reload the ip6tables rules:
 <pre>$ sudo service ip6tables reload</pre>
@@ -6693,22 +6700,6 @@ To properly set the owner of <code>/boot/System.map*</code>, run the command:
        </td>
 </tr>
 <tr>
-<td>CCE-85871-2</td>
-<td>Verify Permissions on /etc/audit/auditd.conf</td>
-<td>
-To properly set the permissions of <code>/etc/audit/auditd.conf</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/audit/auditd.conf</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-85875-3</td>
-<td>Verify Permissions on /etc/audit/rules.d/*.rules</td>
-<td>
-To properly set the permissions of <code>/etc/audit/rules.d/*.rules</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/audit/rules.d/*.rules</pre>
-       </td>
-</tr>
-<tr>
 <td>CCE-86369-6</td>
 <td>Verify Permissions On /etc/crypttab File</td>
 <td> To properly set the permissions of <code>/etc/crypttab</code>, run the command: <pre>$ sudo chmod 0600 /etc/crypttab</pre>
@@ -6762,9 +6753,11 @@ are a part of pseudo file systems such as <code>sysfs</code> or <code>procfs</co
 <tr>
 <td>CCE-83497-8</td>
 <td>Ensure All Files Are Owned by a Group</td>
-<td>If any file is not group-owned by a group present in /etc/group, the cause of the lack of
+<td>If any file is not group-owned by a valid defined group, the cause of the lack of
 group-ownership must be investigated. Following this, those files should be deleted or
-assigned to an appropriate group.
+assigned to an appropriate group. The groups need to be defined in <code>/etc/group</code>
+or in <code>/usr/lib/group</code> if <code>nss-altfiles</code> are configured to be used
+in <code>/etc/nsswitch.conf</code>.
 
 Locate the mount points related to local devices by the following command:
 <pre>$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)</pre>
@@ -7043,7 +7036,7 @@ To properly set the permissions of <code>/var/log</code>, run the command:
 <td>Verify Permissions on /var/log/messages File</td>
 <td>
 To properly set the permissions of <code>/var/log/messages</code>, run the command:
-<pre>$ sudo chmod 0640 /var/log/messages</pre>
+<pre>$ sudo chmod 0600 /var/log/messages</pre>
         </td>
 </tr>
 <tr>
@@ -7169,28 +7162,6 @@ its permission with the following command:
         </td>
 </tr>
 <tr>
-<td>CCE-86455-3</td>
-<td>Verify that audit tools are owned by group root</td>
-<td>The Red Hat Enterprise Linux 8 operating system audit tools must have the proper
-ownership configured to protected against unauthorized access.
-
-Verify it by running the following command:
-<pre>$ stat -c "%n %G" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
-
-/sbin/auditctl root
-/sbin/aureport root
-/sbin/ausearch root
-/sbin/autrace root
-/sbin/auditd root
-/sbin/audispd root
-/sbin/augenrules root
-</pre>
-
-Audit tools needed to successfully view and manipulate audit information
-system activity and records. Audit tools include custom queries and report
-generators</td>
-</tr>
-<tr>
 <td>CCE-86519-6</td>
 <td>Verify that system commands files are group owned by root or a system account</td>
 <td>System commands files are stored in the following directories by default:
@@ -7209,28 +7180,6 @@ with the following command:
 <pre>$ sudo chgrp root <i>FILE</i>
          </pre>
         </td>
-</tr>
-<tr>
-<td>CCE-86453-8</td>
-<td>Verify that audit tools are owned by root</td>
-<td>The Red Hat Enterprise Linux 8 operating system audit tools must have the proper
-ownership configured to protected against unauthorized access.
-
-Verify it by running the following command:
-<pre>$ stat -c "%n %U" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
-
-/sbin/auditctl root
-/sbin/aureport root
-/sbin/ausearch root
-/sbin/autrace root
-/sbin/auditd root
-/sbin/audispd root
-/sbin/augenrules root
-</pre>
-
-Audit tools needed to successfully view and manipulate audit information
-system activity and records. Audit tools include custom queries and report
-generators</td>
 </tr>
 <tr>
 <td>CCE-80806-3</td>
@@ -7270,28 +7219,6 @@ ownership with the following command:
 <pre>$ sudo chown root <i>FILE</i>
          </pre>
         </td>
-</tr>
-<tr>
-<td>CCE-86447-0</td>
-<td>Verify that audit tools Have Mode 0755 or less</td>
-<td>The Red Hat Enterprise Linux 8 operating system audit tools must have the proper
-permissions configured to protected against unauthorized access.
-
-Verify it by running the following command:
-<pre>$ stat -c "%n %a" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
-
-/sbin/auditctl 755
-/sbin/aureport 755
-/sbin/ausearch 755
-/sbin/autrace 755
-/sbin/auditd 755
-/sbin/audispd 755
-/sbin/augenrules 755
-</pre>
-
-Audit tools needed to successfully view and manipulate audit information
-system activity and records. Audit tools include custom queries and report
-generators</td>
 </tr>
 <tr>
 <td>CCE-80809-7</td>
@@ -11683,7 +11610,7 @@ The <code>sysstat</code> service can be disabled with the following command:
       </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86178-1</td>
 <td>Install the cron service</td>
 <td>The Cron service should be installed.</td>
 </tr>
@@ -12079,6 +12006,7 @@ $ sudo yum erase dhcp-server</pre>
 <td>The <code>dhcpd</code> service should be disabled on
 any system that does not need to act as a DHCP server.
 
+
 The <code>dhcpd</code> service can be disabled with the following command:
 <pre>$ sudo systemctl mask --now dhcpd.service</pre>
        </td>
@@ -12308,8 +12236,7 @@ $ sudo yum install vsftpd</pre>
 <tr>
 <td>CCE-85970-2</td>
 <td>Uninstall httpd Package</td>
-<td>
-The <code>httpd</code> package can be removed with the following command:
+<td>The <code>httpd</code> package can be removed with the following command:
 <pre>
 $ sudo yum erase httpd</pre>
        </td>
@@ -12950,9 +12877,8 @@ intended for use as a Kerberos Server it should be removed.</td>
 <tr>
 <td>CCE-82175-1</td>
 <td>Disable Kerberos by removing host keytab</td>
-<td>Kerberos is not an approved key distribution method for
-Common Criteria. To prevent using Kerberos by system daemons,
-remove the Kerberos keytab files, especially
+<td>Kerberos may rely on key distribution functions unapproved by Common Criteria.
+To prevent using Kerberos by system daemons, remove the Kerberos keytab files, especially
 <code>/etc/krb5.keytab</code>.</td>
 </tr>
 <tr>
@@ -13023,7 +12949,8 @@ intended for use as an LDAP Server it should be removed.</td>
 <tr>
 <td>CCE-87262-2</td>
 <td>Disable LDAP Server (slapd)</td>
-<td>The Lightweight Directory Access Protocol (LDAP) is a service that provides a method for looking up information from a central database.</td>
+<td>The Lightweight Directory Access Protocol (LDAP) is a service that
+provides a method for looking up information from a central database.</td>
 </tr>
 <tr>
 <td>CCE-87036-0</td>
@@ -15088,11 +15015,12 @@ mode. To do so, run the following command:
 </tr>
 <tr>
 <td>CCE-83380-6</td>
-<td>Disable X Windows Startup By Setting Default Target</td>
+<td>Disable Graphical Environment Startup By Setting Default Target</td>
 <td>Systems that do not require a graphical user interface should only boot by
 default into <code>multi-user.target</code> mode. This prevents accidental booting of the system
 into a <code>graphical.target</code> mode. Setting the system's default target to
-<code>multi-user.target</code> will prevent automatic startup of the X server. To do so, run:
+<code>multi-user.target</code> will prevent automatic startup of the graphical environment.
+To do so, run:
 <pre>$ systemctl set-default multi-user.target</pre>
 You should see the following output:
 <pre>Removed symlink /etc/systemd/system/default.target.
@@ -15402,10 +15330,13 @@ immutable:
 <code>augenrules</code> program to read audit rules during daemon startup (the
 default), add the following line to a file with suffix <code>.rules</code> in the
 directory <code>/etc/audit/rules.d</code>:
+
 <pre>-w /etc/selinux/ -p wa -k MAC-policy</pre>
+
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
+
 <pre>-w /etc/selinux/ -p wa -k MAC-policy</pre>
       </td>
 </tr>
@@ -15452,6 +15383,7 @@ appropriate for your system:
 -w /etc/issue -p wa -k audit_rules_networkconfig_modification
 -w /etc/issue.net -p wa -k audit_rules_networkconfig_modification
 -w /etc/hosts -p wa -k audit_rules_networkconfig_modification
+
 -w /etc/sysconfig/network -p wa -k audit_rules_networkconfig_modification</pre>
 
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
@@ -18517,11 +18449,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
@@ -18796,8 +18728,11 @@ substituting <i>ACTION</i> appropriately:
 <pre>disk_error_action = <i>ACTION</i>
        </pre>
 Set this value to <code>single</code> to cause the system to switch to single-user
-mode for corrective action. Acceptable values also include <code>syslog</code>,
-<code>exec</code>, <code>single</code>, and <code>halt</code>. For certain systems, the need for availability
+mode for corrective action. Acceptable values also include
+
+<code>syslog</code>, <code>exec</code>, <code>single</code>, and <code>halt</code>
+
+For certain systems, the need for availability
 outweighs the need to log all actions, and a different setting should be
 determined. Details regarding all possible values for <i>ACTION</i> are described in the
 <code>auditd.conf</code> man page.</td>
@@ -18828,11 +18763,11 @@ substituting <i>ACTION</i> appropriately:
 <pre>disk_full_action = <i>ACTION</i>
        </pre>
 Set this value to <code>single</code> to cause the system to switch to single-user
-mode for corrective action. Acceptable values also include <code>syslog</code>,
+mode for corrective action. Acceptable values also include
 
-<code>exec</code>,
+<code>syslog</code>, <code>exec</code>, <code>single</code>, and <code>halt</code>
 
-<code>single</code>, and <code>halt</code>. For certain systems, the need for availability
+For certain systems, the need for availability
 outweighs the need to log all actions, and a different setting should be
 determined. Details regarding all possible values for <i>ACTION</i> are described in the
 <code>auditd.conf</code> man page.</td>
@@ -19056,6 +18991,87 @@ to one of the following values: <code>syslog</code>, <code>single</code>, <code>
 <td>To configure Audit daemon to write Audit logs to the disk, set
 <code>write_logs</code> to <code>yes</code> in <code>/etc/audit/auditd.conf</code>.
 This is the default setting.</td>
+</tr>
+<tr>
+<td>CCE-86455-3</td>
+<td>Verify that audit tools are owned by group root</td>
+<td>The Red Hat Enterprise Linux 8 operating system audit tools must have the proper
+ownership configured to protected against unauthorized access.
+
+Verify it by running the following command:
+<pre>$ stat -c "%n %G" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
+
+/sbin/auditctl root
+/sbin/aureport root
+/sbin/ausearch root
+/sbin/autrace root
+/sbin/auditd root
+
+/sbin/augenrules root
+</pre>
+
+Audit tools needed to successfully view and manipulate audit information
+system activity and records. Audit tools include custom queries and report
+generators</td>
+</tr>
+<tr>
+<td>CCE-86453-8</td>
+<td>Verify that audit tools are owned by root</td>
+<td>The Red Hat Enterprise Linux 8 operating system audit tools must have the proper
+ownership configured to protected against unauthorized access.
+
+Verify it by running the following command:
+<pre>$ stat -c "%n %U" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
+
+/sbin/auditctl root
+/sbin/aureport root
+/sbin/ausearch root
+/sbin/autrace root
+/sbin/auditd root
+
+/sbin/augenrules root
+</pre>
+
+Audit tools needed to successfully view and manipulate audit information
+system activity and records. Audit tools include custom queries and report
+generators</td>
+</tr>
+<tr>
+<td>CCE-86447-0</td>
+<td>Verify that audit tools Have Mode 0755 or less</td>
+<td>The Red Hat Enterprise Linux 8 operating system audit tools must have the proper
+permissions configured to protected against unauthorized access.
+
+Verify it by running the following command:
+<pre>$ stat -c "%n %a" /sbin/auditctl /sbin/aureport /sbin/ausearch /sbin/autrace /sbin/auditd /sbin/audispd /sbin/augenrules
+
+/sbin/auditctl 755
+/sbin/aureport 755
+/sbin/ausearch 755
+/sbin/autrace 755
+/sbin/auditd 755
+/sbin/augenrules 755
+</pre>
+
+Audit tools needed to successfully view and manipulate audit information
+system activity and records. Audit tools include custom queries and report
+generators</td>
+</tr>
+<tr>
+<td>CCE-85871-2</td>
+<td>Verify Permissions on /etc/audit/auditd.conf</td>
+<td>
+To properly set the permissions of <code>/etc/audit/auditd.conf</code>, run the command:
+<pre>$ sudo chmod 0640 /etc/audit/auditd.conf</pre>
+      </td>
+</tr>
+<tr>
+<td>CCE-85875-3</td>
+<td>Verify Permissions on /etc/audit/rules.d/*.rules</td>
+<td>
+To properly set the permissions of <code>/etc/audit/rules.d/*.rules</code>, run the command:
+<pre>$ sudo chmod 0600 /etc/audit/rules.d/*.rules</pre>
+      </td>
 </tr>
 <tr>
 <td>CCE-82833-5</td>
@@ -19287,9 +19303,6 @@ The following rules configure audit as described above:
 ## 30-ospp-v42-5-perm-change-success.rules,
 ## 30-ospp-v42-6-owner-change-failed.rules,
 ## 30-ospp-v42-6-owner-change-success.rules
-##
-## original copies may be found in /usr/share/audit/sample-rules/
-
 
 ## User add delete modify. This is covered by pam. However, someone could
 ## open a file and directly create or modify a user, so we'll watch passwd and

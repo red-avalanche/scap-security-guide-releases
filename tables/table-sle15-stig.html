@@ -3463,18 +3463,21 @@ they are kept in plain text.
 
               
 Using more hashing rounds makes password cracking attacks more difficult.</pre></td>
-	<td><pre>Inspect /etc/login.defs and ensure that if eihter
+	<td><pre>Inspect /etc/login.defs and ensure that if either
 SHA_CRYPT_MIN_ROUNDS or SHA_CRYPT_MAX_ROUNDS
-are set, they must have the minimum value of 5000.
+are set, they must have the minimum value of .
       Is it the case that it does not?
       </pre></td>
 	<td><pre>In /etc/login.defs, ensure SHA_CRYPT_MIN_ROUNDS and
-SHA_CRYPT_MAX_ROUNDS has the minimum value of 5000.
+SHA_CRYPT_MAX_ROUNDS has the minimum value of 
+                
+              .
 For example:
-SHA_CRYPT_MIN_ROUNDS 5000
-SHA_CRYPT_MAX_ROUNDS 5000
+SHA_CRYPT_MIN_ROUNDS 
+SHA_CRYPT_MAX_ROUNDS 
+              
 Notice that if neither are set, they already have the default value of 5000.
-If either is set, they must have the minimum value of 5000.</pre></td>
+If either is set, they must have the minimum value of .</pre></td>
 	<td>SLES-15-020190</td>
 	<td>set_password_hashing_min_rounds_logindefs</td>
 </tr>
@@ -4169,11 +4172,11 @@ privileged commands for all users and root. If the auditd daemon is
 configured to use the augenrules program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix .rules in the directory /etc/audit/rules.d:
--a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add a line of the following
 form to /etc/audit/audit.rules:
--a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
+-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged
           </pre></td>
 	<td>SLES-15-030110</td>
 	<td>audit_rules_privileged_commands_unix_chkpwd</td>
@@ -5349,9 +5352,11 @@ substituting ACTION appropriately:
 disk_full_action = ACTION
           
 Set this value to single to cause the system to switch to single-user
-mode for corrective action. Acceptable values also include syslog,
+mode for corrective action. Acceptable values also include
 
-single, and halt. For certain systems, the need for availability
+syslog, single, and halt
+
+For certain systems, the need for availability
 outweighs the need to log all actions, and a different setting should be
 determined. Details regarding all possible values for ACTION are described in the
 auditd.conf man page.</pre></td>
@@ -7229,9 +7234,11 @@ Replace MOUNTPOINT by the mount points listed by the fist command.
 No files without a valid group should be located.
       Is it the case that there is output?
       </pre></td>
-	<td><pre>If any file is not group-owned by a group present in /etc/group, the cause of the lack of
+	<td><pre>If any file is not group-owned by a valid defined group, the cause of the lack of
 group-ownership must be investigated. Following this, those files should be deleted or
-assigned to an appropriate group.
+assigned to an appropriate group. The groups need to be defined in /etc/group
+or in /usr/lib/group if nss-altfiles are configured to be used
+in /etc/nsswitch.conf.
 
 Locate the mount points related to local devices by the following command:
 $ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)

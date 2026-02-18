@@ -6,11 +6,11 @@
 <body>
 <br><br><div style="text-align: center; font-size: x-large; font-weight:bold">DISA STIG with GUI for Red Hat Enterprise Linux 9</div>
 <div style="text-align: center; font-size: normal ">This profile contains configuration checks that align to the
-DISA STIG for Red Hat Enterprise Linux 9 V2R2.
+DISA STIG for Red Hat Enterprise Linux 9 V2R3.
 
 
-In addition to being applicable to Red Hat Enterprise Linux 9, DISA recognizes this
-configuration baseline as applicable to the operating system tier of
+In addition to being applicable to Red Hat Enterprise Linux 9, this
+configuration baseline is applicable to the operating system tier of
 Red Hat technologies that are based on Red Hat Enterprise Linux 9, such as:
 
 - Red Hat Enterprise Linux Server
@@ -870,6 +870,33 @@ password requisite pam_pwquality.so
 <td></td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_accounts_password_pam_pwquality_retry</td>
+<td>medium</td>
+<td>Ensure PAM Enforces Password Requirements - Authentication Retry Prompts Permitted Per-Session in /etc/security/pwquality.conf</td>
+<td>Setting the password retry prompts that are permitted on a per-session basis to a low value
+requires some software, such as SSH, to re-connect. This can slow down and
+draw additional attention to some types of password-guessing attacks. Note that this
+is different from account lockout, which is provided by the pam_faillock module.</td>
+<td>To configure the number of retry prompts that are permitted per-session:
+Edit the <code>/etc/security/pwquality.conf</code> to include
+<code>retry=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_retry" use="legacy"></xccdf-1.2:sub>
+                </code>, or a lower value if site
+policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+per session.</td>
+<td><pre>Verify Red Hat Enterprise Linux 9 is configured to limit the "pwquality" retry option to .
+
+Check for the use of the "pwquality" retry option in the pwquality.conf file with the following command:
+$ grep retry /etc/security/pwquality.conf
+      Is it the case that the value of "retry" is set to "0" or greater than "&lt;sub idref="var_password_pam_retry" /&gt;", or is missing?
+      </pre></td>
+<td>SRG-OS-000069-GPOS-00037<br>SRG-OS-000070-GPOS-00038<br>SRG-OS-000071-GPOS-00039<br>SRG-OS-000072-GPOS-00040<br>SRG-OS-000075-GPOS-00043<br>SRG-OS-000076-GPOS-00044<br>SRG-OS-000078-GPOS-00046<br>SRG-OS-000266-GPOS-00101<br>
+</td>
+<td>CCI-004066<br>CCI-000192<br>
+</td>
+<td>IA-5 (1) (a)<br>
+</td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_accounts_password_pam_pwquality_system_auth</td>
 <td>medium</td>
 <td>Ensure PAM password complexity module is enabled in system-auth</td>
@@ -891,35 +918,6 @@ password requisite pam_pwquality.so
 </td>
 <td>CM-6 b<br>
 </td>
-</tr>
-<tr>
-<td>xccdf_org.ssgproject.content_rule_accounts_password_pam_retry</td>
-<td>medium</td>
-<td>Ensure PAM Enforces Password Requirements - Authentication Retry Prompts Permitted Per-Session</td>
-<td>Setting the password retry prompts that are permitted on a per-session basis to a low value
-requires some software, such as SSH, to re-connect. This can slow down and
-draw additional attention to some types of password-guessing attacks. Note that this
-is different from account lockout, which is provided by the pam_faillock module.</td>
-<td>To configure the number of retry prompts that are permitted per-session:
-
-Edit the <code>/etc/security/pwquality.conf</code> to include
-
-<code>retry=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_password_pam_retry" use="legacy"></xccdf-1.2:sub>
-                </code>, or a lower value if site
-policy is more restrictive. The DoD requirement is a maximum of 3 prompts
-per session.</td>
-<td><pre>Verify Red Hat Enterprise Linux 9 is configured to limit the "pwquality" retry option to .
-
-
-Check for the use of the "pwquality" retry option in the pwquality.conf file with the following command:
-$ grep retry /etc/security/pwquality.conf
-      Is it the case that the value of "retry" is set to "0" or greater than "&lt;sub idref="var_password_pam_retry" /&gt;", or is missing?
-      </pre></td>
-<td>SRG-OS-000069-GPOS-00037<br>SRG-OS-000070-GPOS-00038<br>SRG-OS-000071-GPOS-00039<br>SRG-OS-000072-GPOS-00040<br>SRG-OS-000075-GPOS-00043<br>SRG-OS-000076-GPOS-00044<br>SRG-OS-000078-GPOS-00046<br>SRG-OS-000266-GPOS-00101<br>
-</td>
-<td>CCI-004066<br>
-</td>
-<td></td>
 </tr>
 <tr>
 <td>xccdf_org.ssgproject.content_rule_accounts_password_pam_ucredit</td>
@@ -1418,10 +1416,10 @@ Check all local interactive user initialization files for interactive users with
 
 Note: The example is for a system that is configured to create users home directories in the "/home" directory.
 
-# grep -ri umask /home/
+$ sudo find /home -maxdepth 2 -type f -name ".[^.]*" -exec grep -iH -d skip --exclude=.bash_history umask {} \;
 
-/home/smithj/.bash_history:grep -i umask /etc/bashrc /etc/csh.cshrc /etc/profile
-/home/smithj/.bash_history:grep -i umask /etc/login.defs
+/home/wadea/.bash_history:grep -i umask /etc/bashrc /etc/csh.cshrc /etc/profile
+/home/wadea/.bash_history:grep -i umask /etc/login.defs
       Is it the case that any local interactive user initialization files are found to have a umask statement that sets a value less restrictive than "077"?
       </pre></td>
 <td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
@@ -3850,11 +3848,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
           </td>
 <td><pre>Verify that Red Hat Enterprise Linux 9 is configured to audit the execution of the "unix_chkpwd" command with the following command:
 
@@ -4138,7 +4136,7 @@ The output should contain:
 -f 
       Is it the case that the system is not configured to shutdown on auditd failures?
       </pre></td>
-<td>SRG-OS-000047-GPOS-00023<br>SRG-OS-000046-GPOS-00022<br>
+<td>SRG-OS-000046-GPOS-00022<br>
 </td>
 <td>CCI-000140<br>CCI-000139<br>
 </td>
@@ -4727,31 +4725,6 @@ $ sudo df -h /var/log/audit/
 <td></td>
 </tr>
 <tr>
-<td>xccdf_org.ssgproject.content_rule_auditd_audispd_syslog_plugin_activated</td>
-<td>medium</td>
-<td>Configure auditd to use audispd's syslog plugin</td>
-<td>The auditd service does not include the ability to send audit
-records to a centralized server for management directly. It does, however,
-include a plug-in for audit event multiplexor (audispd) to pass audit records
-to the local syslog server.</td>
-<td>To configure the <code>auditd</code> service to use the
-<code>syslog</code> plug-in of the <code>audispd</code> audit event multiplexor, set
-the <code>active</code> line in <code>/etc/audit/plugins.d/syslog.conf</code> to <code>yes</code>.
-Restart the <code>auditd</code> service:
-<pre>$ sudo service auditd restart</pre>
-        </td>
-<td><pre>To verify the audispd's syslog plugin is active, run the following command:
-$ sudo grep active /etc/audit/plugins.d/syslog.conf
-If the plugin is active, the output will show yes.
-      Is it the case that it is not activated?
-      </pre></td>
-<td>SRG-OS-000342-GPOS-00133<br>SRG-OS-000479-GPOS-00224<br>
-</td>
-<td>CCI-001851<br>
-</td>
-<td></td>
-</tr>
-<tr>
 <td>xccdf_org.ssgproject.content_rule_auditd_data_disk_error_action_stig</td>
 <td>medium</td>
 <td>Configure auditd Disk Error Action on Disk Error</td>
@@ -4780,8 +4753,7 @@ disk_error_action = HALT
 If the value of the "disk_error_action" option is not "SYSLOG", "SINGLE", or "HALT", or the line is commented out, ask the system administrator to indicate how the system takes appropriate action when an audit process failure occurs.
       Is it the case that there is no evidence of appropriate action?
       </pre></td>
-<td>SRG-OS-000047-GPOS-00023<br>
-</td>
+<td></td>
 <td>CCI-000140<br>
 </td>
 <td>AU-5 b<br>
@@ -4816,8 +4788,7 @@ disk_full_action =
 If the value of the "disk_full_action" option is not "SYSLOG", "SINGLE", or "HALT", or the line is commented out, ask the system administrator to indicate how the system takes appropriate action when an audit storage volume is full.
       Is it the case that there is no evidence of appropriate action?
       </pre></td>
-<td>SRG-OS-000047-GPOS-00023<br>
-</td>
+<td></td>
 <td>CCI-000140<br>
 </td>
 <td>AU-5 b<br>
@@ -4958,8 +4929,7 @@ $ sudo grep max_log_file_action /etc/audit/auditd.conf
 max_log_file_action = 
       Is it the case that the value of the "max_log_file_action" option is not "ROTATE", "SINGLE", or the line is commented out, ask the system administrator to indicate how the system takes appropriate action when an audit storage volume is full. If there is no evidence of appropriate action?
       </pre></td>
-<td>SRG-OS-000047-GPOS-00023<br>
-</td>
+<td></td>
 <td>CCI-000140<br>
 </td>
 <td>AU-5 b<br>
@@ -5645,6 +5615,35 @@ TLSv1.2
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_configure_ssh_crypto_policy</td>
+<td>medium</td>
+<td>Configure SSH to use System Crypto Policy</td>
+<td>Overriding the system crypto policy makes the behavior of the SSH service violate expectations,
+and makes system configuration more fragmented.</td>
+<td>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
+SSH is supported by crypto policy, but the SSH configuration may be
+set up to ignore it.
+To check that Crypto Policies settings are configured correctly, ensure that
+the <code>CRYPTO_POLICY</code> variable is either commented or not set at all
+in the <code>/etc/sysconfig/sshd</code>.</td>
+<td><pre>Verify that sshd isn't configured to ignore the system wide cryptographic policy.
+
+Check that the CRYPTO_POLICY variable is not set or is commented out in the
+/etc/sysconfig/sshd.
+
+Run the following command:
+
+$ sudo grep CRYPTO_POLICY /etc/sysconfig/sshd
+      Is it the case that the CRYPTO_POLICY variable is set or is not commented out in the /etc/sysconfig/sshd?
+      </pre></td>
+<td>SRG-OS-000250-GPOS-00093<br>
+</td>
+<td>CCI-001453<br>
+</td>
+<td>AC-17 (2)<br>
+</td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_configure_usbguard_auditbackend</td>
 <td>low</td>
 <td>Log USBGuard daemon audit events using Linux Audit</td>
@@ -6045,6 +6044,47 @@ If properly configured, the output should be /org/gnome/settings-daemon/peripher
 <td>CCI-000057<br>CCI-000056<br>
 </td>
 <td>AC-11 a<br>AC-11 b<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_dconf_gnome_login_banner_text</td>
+<td>medium</td>
+<td>Set the GNOME3 Login Warning Banner Text</td>
+<td>An appropriate warning message reinforces policy awareness during the logon
+process and facilitates possible legal action against attackers.</td>
+<td>In the default graphical environment, configuring the login warning banner text
+in the GNOME Display Manager's login screen can be configured on the login
+screen by setting <code>banner-message-text</code> to <code>'<i>APPROVED_BANNER</i>'</code>
+where <i>APPROVED_BANNER</i> is the approved banner for your environment.
+<br>
+              <br>
+To enable, add or edit <code>banner-message-text</code> to
+
+<code>/etc/dconf/db/distro.d/00-security-settings</code>. For example:
+<pre>[org/gnome/login-screen]
+banner-message-text='<i>APPROVED_BANNER</i>'</pre>
+Once the setting has been added, add a lock to
+<code>/etc/dconf/db/distro.d/locks/00-security-settings-lock</code> to prevent user modification.
+For example:
+<pre>/org/gnome/login-screen/banner-message-text</pre>
+
+After the settings have been set, run <code>dconf update</code>.
+When entering a warning banner that spans several lines, remember
+to begin and end the string with <code>'</code> and use <code>\n</code> for new lines.</td>
+<td><pre>
+To ensure the login warning banner text is properly set, run the following:
+$ grep banner-message-text /etc/dconf/db/distro.d/*
+If properly configured, the proper banner text will appear.
+To ensure the login warning banner text is locked and cannot be changed by a user, run the following:
+$ grep banner-message-text /etc/dconf/db/distro.d/locks/*
+If properly configured, the output should be /org/gnome/login-screen/banner-message-text.
+      Is it the case that it does not?
+      </pre></td>
+<td>SRG-OS-000023-GPOS-00006<br>SRG-OS-000228-GPOS-00088<br>SRG-OS-000228-GPOS-00088<br>SRG-OS-000228-GPOS-00088<br>SRG-OS-000228-GPOS-00088<br>SRG-OS-000228-GPOS-00088<br>
+</td>
+<td>CCI-000048<br>CCI-001384<br>CCI-001385<br>CCI-001386<br>CCI-001387<br>CCI-001388<br>
+</td>
+<td>AC-8 a<br>AC-8 c<br>AC-8 c<br>AC-8 c<br>AC-8 c<br>AC-8 c<br>
 </td>
 </tr>
 <tr>
@@ -6453,6 +6493,58 @@ All listed directories must be owned by the log_group or by root if the log_grou
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_directory_groupowner_sshd_config_d</td>
+<td>medium</td>
+<td>Verify Group Who Owns SSH Server Configuration Files</td>
+<td>Service configuration files enable or disable features of their respective
+services that if configured incorrectly can lead to insecure and vulnerable
+configurations. Therefore, service configuration files should be owned by the
+correct group to prevent unauthorized changes.</td>
+<td>
+To properly set the group owner of <code>/etc/ssh/sshd_config.d</code>, run the command:
+<pre>$ sudo chgrp root /etc/ssh/sshd_config.d</pre>
+        </td>
+<td><pre>To check the group ownership of /etc/ssh/sshd_config.d directory,
+run the command:
+$ ls -ldL /etc/ssh/sshd_config.d
+If properly configured, the output should indicate the following group-owner:
+root
+      Is it the case that /etc/ssh/sshd_config.d directory does not have a group owner of root?
+      </pre></td>
+<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td>CM-6 b<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_directory_owner_sshd_config_d</td>
+<td>medium</td>
+<td>Verify Owner on SSH Server Configuration Files</td>
+<td>Service configuration files enable or disable features of their respective
+services that if configured incorrectly can lead to insecure and vulnerable
+configurations. Therefore, service configuration files should be owned by the
+correct group to prevent unauthorized changes.</td>
+<td>
+To properly set the owner of <code>/etc/ssh/sshd_config.d</code>, run the command:
+<pre>$ sudo chown root /etc/ssh/sshd_config.d</pre>
+        </td>
+<td><pre>To check the ownership of /etc/ssh/sshd_config.d directory,
+run the command:
+$ ls -ldL /etc/ssh/sshd_config.d
+If properly configured, the output should indicate the following owner:
+root
+      Is it the case that /etc/ssh/sshd_config.d directory does not have a owner owner of root?
+      </pre></td>
+<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td>CM-6 b<br>
+</td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_directory_ownership_var_log_audit</td>
 <td>medium</td>
 <td>System Audit Directories Must Be Owned By Root</td>
@@ -6485,6 +6577,32 @@ The audit log directory must be owned by "root"
 <td>CCI-000163<br>CCI-000164<br>CCI-001314<br>CCI-000162<br>
 </td>
 <td>AU-9<br>AU-9<br>SI-11 c<br>AU-9<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_directory_permissions_sshd_config_d</td>
+<td>medium</td>
+<td>Verify Permissions on SSH Server Config File</td>
+<td>Service configuration files enable or disable features of their respective
+services that if configured incorrectly can lead to insecure and vulnerable
+configurations. Therefore, service configuration files should be owned by the
+correct group to prevent unauthorized changes.</td>
+<td>
+To properly set the permissions of <code>/etc/ssh/sshd_config.d</code>, run the command:
+<pre>$ sudo chmod 0700 /etc/ssh/sshd_config.d</pre>
+        </td>
+<td><pre>To check the permissionsship of /etc/ssh/sshd_config.d directory,
+run the command:
+$ ls -ldL /etc/ssh/sshd_config.d
+If properly configured, the output should indicate the following permissions:
+-rwx------
+      Is it the case that /etc/ssh/sshd_config.d directory does not have unix mode ?
+      </pre></td>
+<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td>CM-6 b<br>
 </td>
 </tr>
 <tr>
@@ -6700,8 +6818,13 @@ If authselect is enabled on the system, the output should show the ID of the pro
 protect data. The operating system must implement cryptographic modules adhering to the higher
 standards approved by the federal government since this provides assurance they have been tested
 and validated.</td>
-<td>To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
+<td>
+Red Hat Enterprise Linux 9 has an installation-time kernel flag that can enable FIPS mode.
+The installer must be booted with <code>fips=1</code> for the system to have FIPS mode
+enabled. Enabling FIPS mode on a preexisting system is not supported. If
+this rule fails on an installed system, then this is a permanent
+finding and cannot be fixed.
+
 To enable FIPS, the system requires that the <code>fips</code> module is added in <code>dracut</code> configuration.
 Check if <code>/etc/dracut.conf.d/40-fips.conf</code> contain <code>add_dracutmodules+=" fips "</code>
             </td>
@@ -6727,31 +6850,27 @@ protect data. The operating system must implement cryptographic modules adhering
 standards approved by the federal government since this provides assurance they have been tested
 and validated.</td>
 <td>
-To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
-              <br>
-The <code>fips-mode-setup</code> command will configure the system in
-FIPS mode by automatically configuring the following:
-<ul>
-                <li>Setting the kernel FIPS mode flag (<code>/proc/sys/crypto/fips_enabled</code>) to <code>1</code>
-                </li>
-                <li>Creating <code>/etc/system-fips</code>
-                </li>
-                <li>Setting the system crypto policy in <code>/etc/crypto-policies/config</code> to <code>
-                    <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_system_crypto_policy" use="legacy"></xccdf-1.2:sub>
-                  </code>
-                </li>
-                <li>Loading the Dracut <code>fips</code> module</li>
-              </ul>
+Red Hat Enterprise Linux 9 has an installation-time kernel flag that can enable FIPS mode.
+The installer must be booted with <code>fips=1</code> for the system to have FIPS mode
+enabled. Enabling FIPS mode on a preexisting system is not supported. If
+this rule fails on an installed system, then this is a permanent
+finding and cannot be fixed.
+
+
+<br>
+To enable FIPS mode at bootable container build time configure <code>fips=1</code> kernel argument
+in <code>/usr/lib/bootc/kargs.d/01-fips.toml</code>:
+<pre>kargs = ["fips=1"]</pre>
+Then set the cryptographic policy to <code>
+                <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_system_crypto_policy" use="legacy"></xccdf-1.2:sub>
+              </code>:
+<pre>update-crypto-policies --no-reload --set <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_system_crypto_policy" use="legacy"></xccdf-1.2:sub>
+              </pre>
             </td>
 <td><pre>To verify that FIPS mode is enabled properly, run the following command:
-fips-mode-setup --check
-The output should contain the following:
-FIPS mode is enabled.
-To verify that the cryptographic policy has been configured correctly, run the
-following command:
-$ update-crypto-policies --show
-The output should return .
+cat /proc/sys/crypto/fips_enabled
+The output be must:
+1
       Is it the case that FIPS mode is not enabled?
       </pre></td>
 <td>SRG-OS-000396-GPOS-00176<br>SRG-OS-000478-GPOS-00223<br>SRG-OS-000033-GPOS-00014<br>SRG-OS-000423-GPOS-00187<br>SRG-OS-000481-GPOS-00481<br>SRG-OS-000125-GPOS-00065<br>
@@ -6954,6 +7073,39 @@ gpg(Red Hat, Inc. (release key 2)  &lt;security@redhat.com&gt;
 <td>SRG-OS-000366-GPOS-00153<br>
 </td>
 <td>CCI-003992<br>
+</td>
+<td></td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_fapolicy_default_deny</td>
+<td>medium</td>
+<td>Configure Fapolicy Module to Employ a Deny-all, Permit-by-exception Policy to Allow the Execution of Authorized Software Programs.</td>
+<td>Utilizing a whitelist provides a configuration management method for allowing the execution of only authorized software.
+Using only authorized software decreases risk by limiting the number of potential vulnerabilities. Verification of whitelisted software occurs prior to execution or at system startup.
+
+Proceed with caution with enforcing the use of this daemon.
+Improper configuration may render the system non-functional.
+The "fapolicyd" API is not namespace aware and can cause issues when launching or running containers.</td>
+<td>The Fapolicy module must be configured to employ a deny-all, permit-by-exception policy to allow the execution of authorized software programs and to prevent unauthorized software from running.</td>
+<td><pre>Verify the Red Hat Enterprise Linux 9 "fapolicyd" employs a deny-all, permit-by-exception policy.
+
+Check that "fapolicyd" is in enforcement mode with the following command:
+
+$ sudo grep permissive /etc/fapolicyd/fapolicyd.conf
+
+permissive = 0
+
+Check that fapolicyd employs a deny-all policy on system mounts with the following commands:
+$ sudo tail /etc/fapolicyd/compiled.rules
+
+allow exe=/usr/bin/python3.7 : ftype=text/x-python
+deny_audit perm=any pattern=ld_so : all
+deny perm=any all : all
+      Is it the case that fapolicyd is not running in enforcement mode with a deny-all, permit-by-exception policy?
+      </pre></td>
+<td>SRG-OS-000368-GPOS-00154<br>
+</td>
+<td>CCI-001764<br>
 </td>
 <td></td>
 </tr>
@@ -7456,6 +7608,32 @@ root
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_file_groupowner_sshd_drop_in_config</td>
+<td>medium</td>
+<td>Verify Group Who Owns SSH Server Configuration Files</td>
+<td>Service configuration files enable or disable features of their respective
+services that if configured incorrectly can lead to insecure and vulnerable
+configurations. Therefore, service configuration files should be owned by the
+correct group to prevent unauthorized changes.</td>
+<td>
+To properly set the group owner of files in <code>/etc/ssh/sshd_config.d</code>, run the command:
+<pre>find -H /etc/ssh/sshd_config.d -type d -exec chgrp -L root {} \;</pre>
+        </td>
+<td><pre>To check the group ownership of files in the /etc/ssh/sshd_config.d directory,
+run the command:
+$ ls -lL /etc/ssh/sshd_config.d
+If properly configured, the output should indicate the following group-owner:
+root
+      Is it the case that files in the /etc/ssh/sshd_config.d directory do not have a group owner of root?
+      </pre></td>
+<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td>CM-6 b<br>
+</td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_file_groupowner_var_log</td>
 <td>medium</td>
 <td>Verify Group Who Owns /var/log Directory</td>
@@ -7498,6 +7676,35 @@ root
 <td>CCI-001314<br>
 </td>
 <td>SI-11 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_file_groupownership_audit_configuration</td>
+<td>medium</td>
+<td>Audit Configuration Files Must Be Owned By Group root</td>
+<td>Without the capability to restrict which roles and individuals can
+select which events are audited, unauthorized personnel may be able
+to prevent the auditing of critical events.
+Misconfigured audits may degrade the system's performance by
+overwhelming the audit log. Misconfigured audits may also make it more
+difficult to establish, correlate, and investigate the events relating
+to an incident or identify those responsible for one.</td>
+<td>All audit configuration files must be owned by group root.
+<pre>chown :root /etc/audit/audit*.{rules,conf} /etc/audit/rules.d/*</pre>
+        </td>
+<td><pre>
+To properly set the group owner of /etc/audit/, run the command:
+$ sudo chgrp root /etc/audit/
+
+To properly set the group owner of /etc/audit/rules.d/, run the command:
+$ sudo chgrp root /etc/audit/rules.d/
+      Is it the case that ?
+      </pre></td>
+<td>SRG-OS-000063-GPOS-00032<br>
+</td>
+<td>CCI-000171<br>
+</td>
+<td>AU-12 b<br>
 </td>
 </tr>
 <tr>
@@ -7981,6 +8188,32 @@ root
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_file_owner_sshd_drop_in_config</td>
+<td>medium</td>
+<td>Verify Owner on SSH Server Configuration Files</td>
+<td>Service configuration files enable or disable features of their respective
+services that if configured incorrectly can lead to insecure and vulnerable
+configurations. Therefore, service configuration files should be owned by the
+correct group to prevent unauthorized changes.</td>
+<td>
+To properly set the owner of files in <code>/etc/ssh/sshd_config.d</code>, run the command:
+<pre>find -H /etc/ssh/sshd_config.d -type d -exec chown -L root {} \;</pre>
+        </td>
+<td><pre>To check the ownership of files in the /etc/ssh/sshd_config.d directory,
+run the command:
+$ ls -lL /etc/ssh/sshd_config.d
+If properly configured, the output should indicate the following owner:
+root
+      Is it the case that files in the /etc/ssh/sshd_config.d directory do not have a owner of root?
+      </pre></td>
+<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td>CM-6 b<br>
+</td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_file_owner_var_log</td>
 <td>medium</td>
 <td>Verify User Who Owns /var/log Directory</td>
@@ -8023,6 +8256,40 @@ root
 <td>CCI-001314<br>
 </td>
 <td>SI-11 c<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_file_ownership_audit_configuration</td>
+<td>medium</td>
+<td>Audit Configuration Files Must Be Owned By Root</td>
+<td>Without the capability to restrict which roles and individuals can
+select which events are audited, unauthorized personnel may be able
+to prevent the auditing of critical events.
+Misconfigured audits may degrade the system's performance by
+overwhelming the audit log. Misconfigured audits may also make it more
+difficult to establish, correlate, and investigate the events relating
+to an incident or identify those responsible for one.</td>
+<td>All audit configuration files must be owned by root user.
+
+To properly set the owner of <code>/etc/audit/</code>, run the command:
+<pre>$ sudo chown root /etc/audit/ </pre>
+
+To properly set the owner of <code>/etc/audit/rules.d/</code>, run the command:
+<pre>$ sudo chown root /etc/audit/rules.d/ </pre>
+        </td>
+<td><pre>
+To properly set the owner of /etc/audit/, run the command:
+$ sudo chown root /etc/audit/ 
+
+To properly set the owner of /etc/audit/rules.d/, run the command:
+$ sudo chown root /etc/audit/rules.d/ 
+      Is it the case that ?
+      </pre></td>
+<td>SRG-OS-000063-GPOS-00032<br>
+</td>
+<td>CCI-000171<br>
+</td>
+<td>AU-12 b<br>
 </td>
 </tr>
 <tr>
@@ -8119,6 +8386,35 @@ There should be no output.
 <td>CCI-000366<br>
 </td>
 <td>CM-6 b<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_file_permissions_audit_configuration</td>
+<td>medium</td>
+<td>Audit Configuration Files Permissions are 640 or More Restrictive</td>
+<td>Without the capability to restrict which roles and individuals can
+select which events are audited, unauthorized personnel may be able
+to prevent the auditing of critical events.
+Misconfigured audits may degrade the system's performance by
+overwhelming the audit log. Misconfigured audits may also make it more
+difficult to establish, correlate, and investigate the events relating
+to an incident or identify those responsible for one.</td>
+<td>All audit configuration files permissions must be 640 or more restrictive.
+<pre>chmod 0640 /etc/audit/audit*.{rules,conf} /etc/audit/rules.d/*</pre>
+        </td>
+<td><pre>
+To properly set the permissions of /etc/audit/, run the command:
+$ sudo chmod 0640 /etc/audit/
+
+To properly set the permissions of /etc/audit/rules.d/, run the command:
+$ sudo chmod 0640 /etc/audit/rules.d/
+      Is it the case that ?
+      </pre></td>
+<td>SRG-OS-000063-GPOS-00032<br>
+</td>
+<td>CCI-000171<br>
+</td>
+<td>AU-12 b<br>
 </td>
 </tr>
 <tr>
@@ -8417,41 +8713,13 @@ those responsible for one.</td>
 <td>
 To properly set the permissions of <code>/etc/audit/auditd.conf</code>, run the command:
 <pre>$ sudo chmod 0640 /etc/audit/auditd.conf</pre>
-          </td>
+        </td>
 <td><pre>To check the permissions of /etc/audit/auditd.conf,
 run the command:
 $ ls -l /etc/audit/auditd.conf
 If properly configured, the output should indicate the following permissions:
 -rw-r-----
       Is it the case that /etc/audit/auditd.conf does not have unix mode -rw-r-----?
-      </pre></td>
-<td>SRG-OS-000063-GPOS-00032<br>
-</td>
-<td>CCI-000171<br>
-</td>
-<td>AU-12 b<br>
-</td>
-</tr>
-<tr>
-<td>xccdf_org.ssgproject.content_rule_file_permissions_etc_audit_rulesd</td>
-<td>medium</td>
-<td>Verify Permissions on /etc/audit/rules.d/*.rules</td>
-<td>Without the capability to restrict the roles and individuals that can select which events
-are audited, unauthorized personnel may be able to prevent the auditing of critical
-events. Misconfigured audits may degrade the system's performance by overwhelming
-the audit log. Misconfigured audits may also make it more difficult to establish,
-correlate, and investigate the events relating to an incident or identify
-those responsible for one.</td>
-<td>
-To properly set the permissions of <code>/etc/audit/rules.d/*.rules</code>, run the command:
-<pre>$ sudo chmod 0640 /etc/audit/rules.d/*.rules</pre>
-          </td>
-<td><pre>To check the permissions of /etc/audit/rules.d/*.rules,
-run the command:
-$ ls -l /etc/audit/rules.d/*.rules
-If properly configured, the output should indicate the following permissions:
--rw-r-----
-      Is it the case that /etc/audit/rules.d/*.rules does not have unix mode -rw-r-----?
       </pre></td>
 <td>SRG-OS-000063-GPOS-00032<br>
 </td>
@@ -8648,6 +8916,32 @@ If properly configured, the output should indicate the following permissions:
 </td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_file_permissions_sshd_drop_in_config</td>
+<td>medium</td>
+<td>Verify Permissions on SSH Server Config File</td>
+<td>Service configuration files enable or disable features of their respective
+services that if configured incorrectly can lead to insecure and vulnerable
+configurations. Therefore, service configuration files should be owned by the
+correct group to prevent unauthorized changes.</td>
+<td>
+To properly set the permissions of files in <code>/etc/ssh/sshd_config.d</code>, run the command:
+<pre>find -H /etc/ssh/sshd_config.d -type d -exec chown 0600 {} \;</pre>
+        </td>
+<td><pre>To check the permissions of files in the /etc/ssh/sshd_config.d directory,
+run the command:
+$ ls -lL /etc/ssh/sshd_config.d
+If properly configured, the output should indicate the following permissions:
+-rw-------
+      Is it the case that files in the /etc/ssh/sshd_config.d directory do not have unix mode -rw-------?
+      </pre></td>
+<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td>CM-6 b<br>
+</td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_file_permissions_sshd_private_key</td>
 <td>medium</td>
 <td>Verify Permissions on SSH Server Private *_key Key Files</td>
@@ -8701,9 +8995,11 @@ something is amiss. They may be caused by an intruder, by incorrect software ins
 draft software removal, or by failure to remove all files belonging to a deleted account, or
 other similar cases. The files should be repaired so they will not cause problems when
 accounts are created in the future, and the cause should be discovered and addressed.</td>
-<td>If any file is not group-owned by a group present in /etc/group, the cause of the lack of
+<td>If any file is not group-owned by a valid defined group, the cause of the lack of
 group-ownership must be investigated. Following this, those files should be deleted or
-assigned to an appropriate group.
+assigned to an appropriate group. The groups need to be defined in <code>/etc/group</code>
+or in <code>/usr/lib/group</code> if <code>nss-altfiles</code> are configured to be used
+in <code>/etc/nsswitch.conf</code>.
 
 Locate the mount points related to local devices by the following command:
 <pre>$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)</pre>
@@ -8792,14 +9088,14 @@ Audit logs must be mode 0640 or less permissive.
 the system and should only be accessed by authorized personnel.</td>
 <td>
 To properly set the permissions of <code>/var/log/messages</code>, run the command:
-<pre>$ sudo chmod 0640 /var/log/messages</pre>
+<pre>$ sudo chmod 0600 /var/log/messages</pre>
             </td>
 <td><pre>To check the permissions of /var/log/messages,
 run the command:
 $ ls -l /var/log/messages
 If properly configured, the output should indicate the following permissions:
--rw-r-----
-      Is it the case that /var/log/messages does not have unix mode -rw-r-----?
+-rw-------
+      Is it the case that /var/log/messages does not have unix mode -rw-------?
       </pre></td>
 <td>SRG-OS-000206-GPOS-00084<br>
 </td>
@@ -9025,7 +9321,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 <code>/etc/default/grub</code> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit=1 ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit=1"</pre>
-      </td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["audit=1"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.</td>
 <td><pre>Inspect the form of default GRUB 2 command line for the Linux operating system
 in /etc/default/grub. If it includes audit=1,
 then the parameter will be configured for newly installed kernels.
@@ -9064,7 +9366,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 <code>/etc/default/grub</code> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... audit_backlog_limit=8192 ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="audit_backlog_limit=8192"</pre>
-      </td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["audit_backlog_limit=8192"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.</td>
 <td><pre>Inspect the form of default GRUB 2 command line for the Linux operating system
 in /etc/default/grub. If it includes audit_backlog_limit=8192,
 then the parameter will be configured for newly installed kernels.
@@ -9138,7 +9446,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 <code>/etc/default/grub</code> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... page_poison=1 ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="page_poison=1"</pre>
-            </td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["page_poison=1"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.</td>
 <td><pre>Inspect the form of default GRUB 2 command line for the Linux operating system
 in /etc/default/grub. If it includes page_poison=1,
 then the parameter will be configured for newly installed kernels.
@@ -9216,7 +9530,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 <code>/etc/default/grub</code> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... pti=on ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="pti=on"</pre>
-        </td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["pti=on"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.</td>
 <td><pre>Inspect the form of default GRUB 2 command line for the Linux operating system
 in /etc/default/grub. If it includes pti=on,
 then the parameter will be configured for newly installed kernels.
@@ -9259,7 +9579,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 <code>/etc/default/grub</code> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... slub_debug=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_slub_debug_options" use="legacy"></xccdf-1.2:sub> ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="slub_debug=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_slub_debug_options" use="legacy"></xccdf-1.2:sub>"</pre>
-            </td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["slub_debug=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_slub_debug_options" use="legacy"></xccdf-1.2:sub>"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.</td>
 <td><pre>Inspect the form of default GRUB 2 command line for the Linux operating system
 in /etc/default/grub. If it includes slub_debug=,
 then the parameter will be configured for newly installed kernels.
@@ -9296,7 +9622,13 @@ default Grub2 command line for Linux operating systems. Modify the line within
 <code>/etc/default/grub</code> as shown below:
 <pre>GRUB_CMDLINE_LINUX="... vsyscall=none ..."</pre>
 Run the following command to update command line for already installed kernels:<pre># grubby --update-kernel=ALL --args="vsyscall=none"</pre>
-        </td>
+If the system is distributed as a bootable container image, GRUB2 can't be configured using the method described above, but the following method needs to be used instead.
+The kernel arguments should be set in <code>/usr/lib/bootc/kargs.d</code> in a TOML file that has the following form:
+<pre>
+# /usr/lib/bootc/kargs.d/10-example.toml
+kargs = ["vsyscall=none"]
+</pre>
+For more details on configuring kernel arguments in bootable container images, please refer to <a href="https://containers.github.io/bootc/building/kernel-arguments.html">Bootc documentation</a>.</td>
 <td><pre>Inspect the form of default GRUB 2 command line for the Linux operating system
 in /etc/default/grub. If it includes vsyscall=none,
 then the parameter will be configured for newly installed kernels.
@@ -9321,7 +9653,7 @@ The command should not return any output.
 <tr>
 <td>xccdf_org.ssgproject.content_rule_harden_sshd_ciphers_openssh_conf_crypto_policy</td>
 <td>high</td>
-<td>Configure SSH Client to Use FIPS 140-2 Validated Ciphers: openssh.config</td>
+<td>Configure SSH Client to Use FIPS 140 Validated Ciphers: openssh.config</td>
 <td>Overriding the system crypto policy makes the behavior of the OpenSSH client
 violate expectations, and makes system configuration more fragmented. By
 specifying a cipher list with the order of ciphers being in a “strongest to
@@ -9448,10 +9780,9 @@ Red Hat Enterprise Linux 9
 <td>xccdf_org.ssgproject.content_rule_kerberos_disable_no_keytab</td>
 <td>medium</td>
 <td>Disable Kerberos by removing host keytab</td>
-<td>The key derivation function (KDF) in Kerberos is not FIPS compatible.</td>
-<td>Kerberos is not an approved key distribution method for
-Common Criteria. To prevent using Kerberos by system daemons,
-remove the Kerberos keytab files, especially
+<td>Some key derivation functions (KDF) in Kerberos are not FIPS-compatible</td>
+<td>Kerberos may rely on key distribution functions unapproved by Common Criteria.
+To prevent using Kerberos by system daemons, remove the Kerberos keytab files, especially
 <code>/etc/krb5.keytab</code>.</td>
 <td><pre>Run the following command to see if there are some keytabs
 that would potentially allow the use of Kerberos by system daemons.
@@ -10856,6 +11187,23 @@ $ sudo dnf install chrony</pre>
 <td></td>
 </tr>
 <tr>
+<td>xccdf_org.ssgproject.content_rule_package_cron_installed</td>
+<td>medium</td>
+<td>Install the cron service</td>
+<td>The cron service allow periodic job execution, needed for almost all administrative tasks and services (software update, log rotating, etc.). Access to cron service should be restricted to administrative accounts only.</td>
+<td>The Cron service should be installed.</td>
+<td><pre>Run the following command to determine if the cronie package is installed:
+$ rpm -q cronie
+      Is it the case that the package is installed?
+      </pre></td>
+<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td>CM-6 b<br>
+</td>
+</tr>
+<tr>
 <td>xccdf_org.ssgproject.content_rule_package_crypto-policies_installed</td>
 <td>medium</td>
 <td>Install crypto-policies package</td>
@@ -10951,7 +11299,9 @@ $ sudo dnf install gnutls-utils</pre>
 <td>medium</td>
 <td>Uninstall gssproxy Package</td>
 <td>
-            <code>gssproxy</code> is a proxy for GSS API credential handling.</td>
+            <code>gssproxy</code> is a proxy for GSS API credential handling.
+Kerberos relies on some key derivation functions that may not
+be compatible with some site policies such as FIPS 140.</td>
 <td>The <code>gssproxy</code> package can be removed with the following command:
 <pre>
 $ sudo dnf remove gssproxy</pre>
@@ -11819,6 +12169,13 @@ $ grep sulogin /usr/lib/systemd/system/rescue.service
 The output should be similar to the following, and the line must begin with
 ExecStart and /usr/lib/systemd/systemd-sulogin-shell.
     ExecStart=-/usr/lib/systemd/systemd-sulogin-shell rescue
+
+In case the output does not match, check if the ExecStart directive is not overridden:
+grep ExecStart /etc/systemd/system/rescue.service.d/*.conf
+The output should contain two lines:
+ExecStart=
+ExecStart=-/usr/lib/systemd/systemd-sulogin-shell rescue
+
 
 
 Then, verify that the rescue service is in the runlevel1.target.
@@ -13340,7 +13697,10 @@ If a line indicating /etc/issue is returned, then the required value is set.
 <td>SSHD Must Include System Crypto Policy Config File</td>
 <td>Without cryptographic integrity protections, information can be altered by unauthorized users without detection.</td>
 <td>SSHD should follow the system cryptographic policy.
-In order to accomplish this the SSHD configuration should include the system</td>
+In order to accomplish this the SSHD configuration should include the configuration file provided by the system crypto policy.
+The following line should be present in <code>/etc/ssh/sshd_config</code> or in a file included by this file (a file within the <code>/etc/ssh/sshd_config.d</code> directory):
+<pre>Include /etc/crypto-policies/back-ends/opensshserver.config</pre>
+          </td>
 <td><pre></pre></td>
 <td>SRG-OS-000250-GPOS-00093<br>
 </td>
@@ -13529,6 +13889,35 @@ If a line indicating VERBOSE is returned, then the required value is set.
 <td>CCI-000067<br>
 </td>
 <td>AC-17 (1)<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_sshd_use_strong_macs</td>
+<td>medium</td>
+<td>Use Only Strong MACs</td>
+<td>MD5 and 96-bit MAC algorithms are considered weak and have been shown to increase
+exploitability in SSH downgrade attacks. Weak algorithms continue to have a great deal of
+attention as a weak spot that can be exploited with expanded computing power. An
+attacker that breaks the algorithm could take advantage of a MiTM position to decrypt the
+SSH tunnel and capture credentials and information</td>
+<td>Limit the MACs to strong hash algorithms.
+The following line in <code>/etc/ssh/sshd_config</code> demonstrates use
+of those MACs:
+<pre>MACs <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sshd_strong_macs" use="legacy"></xccdf-1.2:sub>
+            </pre>
+          </td>
+<td><pre>Only strong MACs should be used. To verify that only strong
+MACs are in use, run the following command:
+$ sudo grep -i macs /etc/ssh/sshd_config
+The output should contain only those MACs which are strong, namely,
+ hash functions.
+      Is it the case that MACs option is commented out or not using strong hash algorithms?
+      </pre></td>
+<td>SRG-OS-000250-GPOS-00093<br>
+</td>
+<td>CCI-001453<br>
+</td>
+<td>AC-17 (2)<br>
 </td>
 </tr>
 <tr>
@@ -13929,8 +14318,14 @@ standards approved by the federal government since this provides assurance they 
 and validated.</td>
 <td>System running in FIPS mode is indicated by kernel parameter
 <code>'crypto.fips_enabled'</code>. This parameter should be set to <code>1</code> in FIPS mode.
-To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
+
+Red Hat Enterprise Linux 9 has an installation-time kernel flag that can enable FIPS mode.
+The installer must be booted with <code>fips=1</code> for the system to have FIPS mode
+enabled. Enabling FIPS mode on a preexisting system is not supported. If
+this rule fails on an installed system, then this is a permanent
+finding and cannot be fixed.
+
+
 
 To enable strict FIPS compliance, the fips=1 kernel option needs to be added to the kernel boot
 parameters during system installation so key generation is done with FIPS-approved algorithms
@@ -14823,6 +15218,42 @@ To make sure that the setting is persistent, add the following line to a file in
 <td><pre>The runtime status of the net.ipv6.conf.default.accept_source_route kernel parameter can be queried
 by running the following command:
 $ sysctl net.ipv6.conf.default.accept_source_route
+0.
+
+      Is it the case that the correct value is not returned?
+      </pre></td>
+<td>SRG-OS-000360-GPOS-00147<br>SRG-OS-000480-GPOS-00225<br>SRG-OS-000480-GPOS-00226<br>SRG-OS-000480-GPOS-00227<br>SRG-OS-000480-GPOS-00228<br>SRG-OS-000480-GPOS-00229<br>SRG-OS-000480-GPOS-00230<br>SRG-OS-000480-GPOS-00232<br>
+</td>
+<td>CCI-000366<br>
+</td>
+<td>CM-6 b<br>
+</td>
+</tr>
+<tr>
+<td>xccdf_org.ssgproject.content_rule_sysctl_user_max_user_namespaces</td>
+<td>medium</td>
+<td>Disable the use of user namespaces</td>
+<td>It is detrimental for operating systems to provide, or install by default, functionality exceeding requirements or system objectives.
+These unnecessary capabilities or services are often overlooked and therefore may remain unsecured.
+They increase the risk to the platform by providing additional attack vectors.
+User namespaces are used primarily for Linux containers. The value 0
+disallows the use of user namespaces.</td>
+<td>To set the runtime status of the <code>user.max_user_namespaces</code> kernel parameter,
+run the following command:
+<pre>$ sudo sysctl -w user.max_user_namespaces=0</pre>
+
+To make sure that the setting is persistent,
+add the following line to a file in the directory <code>/etc/sysctl.d</code>:
+<pre>user.max_user_namespaces = 0</pre>
+When containers are deployed on the machine, the value should be set
+to large non-zero value.</td>
+<td><pre>Verify that Red Hat Enterprise Linux 9 disables the use of user namespaces with the following commands:
+
+Note: User namespaces are used primarily for Linux containers. If containers are in use, this requirement is not applicable.
+
+The runtime status of the user.max_user_namespaces kernel parameter can be queried
+by running the following command:
+$ sysctl user.max_user_namespaces
 0.
 
       Is it the case that the correct value is not returned?
