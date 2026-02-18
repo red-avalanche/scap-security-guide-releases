@@ -1886,11 +1886,11 @@ privileged commands for all users and root. If the <tt>auditd</tt> daemon is
 configured to use the <tt>augenrules</tt> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <tt>.rules</tt> in the directory <tt>/etc/audit/rules.d</tt>:
-<pre>-w /usr/bin/kmod -p x -k modules</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
 If the <tt>auditd</tt> daemon is configured to use the <tt>auditctl</tt>
 utility to read audit rules during daemon startup, add a line of the following
 form to <tt>/etc/audit/audit.rules</tt>:
-<pre>-w /usr/bin/kmod -p x -k modules</pre>
+<pre>-a always,exit -F path=/usr/bin/kmod -F perm=x -F auid>=1000 -F auid!=unset -F key=privileged</pre>
   </td>
   <td xml:lang="en-US">
 Without generating audit records that are specific to the security and
@@ -4545,6 +4545,9 @@ system logging services.
   <td>Install the tmux Package</td>
   <td xml:lang="en-US">
 To enable console screen locking, install the <tt>tmux</tt> package.
+The <code>tmux</code> package can be installed with the following command:
+<pre>
+$ sudo yum install tmux</pre>
 A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not want to log out because of the temporary nature of the absence.
 The session lock is implemented at the point where session activity can be determined.
 Rather than be forced to wait for a period of time to expire before the user session can be locked, Oracle Linux 8 needs to provide users with the ability to manually invoke a session lock so users can secure their session if it is necessary to temporarily vacate the immediate physical vicinity.
@@ -5338,6 +5341,7 @@ For example, add <tt>acl</tt> to the following line in <tt>/etc/aide.conf</tt>:
 AIDE rules can be configured in multiple ways; this is merely one example that is already
 configured by default.
 
+
 The remediation provided with this rule adds <tt>acl</tt> to all rule sets available in
 <tt>/etc/aide.conf</tt>
   </td>
@@ -5359,6 +5363,7 @@ For example, add <tt>xattrs</tt> to the following line in <tt>/etc/aide.conf</tt
 <pre>FIPSR = p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha256</pre>
 AIDE rules can be configured in multiple ways; this is merely one example that is already
 configured by default.
+
 
 The remediation provided with this rule adds <tt>xattrs</tt> to all rule sets available in
 <tt>/etc/aide.conf</tt>
@@ -7359,7 +7364,10 @@ network. The <tt>/etc/rsyslog.conf</tt> or
 <tt>/etc/rsyslog.d/*.conf</tt> file should contain a match for the following
 selectors: <tt>auth.*</tt>, <tt>authpriv.*</tt>, and <tt>daemon.*</tt>. If
 not, use the following as an example configuration:
-<pre>auth.*;authpriv.*;daemon.*                              /var/log/secure</pre>
+<code>
+    auth.*;authpriv.*                              /var/log/secure
+    daemon.*                                       /var/log/messages
+</code>
   </td>
   <td xml:lang="en-US">
 Logging remote access methods can be used to trace the decrease the risks
@@ -8255,6 +8263,7 @@ Check that Chrony only has time sources configured with the <tt>server</tt> dire
   </td>
   <td xml:lang="en-US">
 Depending on the infrastructure being used the <tt>pool</tt> directive may not be supported.
+Using the <tt>server</tt> directive allows for better control of where the system gets time data from.
   </td>
   <td></td>
 </tr>

@@ -83,7 +83,7 @@ run the following command to determine which package owns it:
 <pre>$ rpm -qf <i>FILENAME</i>
           </pre>
 Next, run the following command to reset its permissions to the correct values:
-<pre>$ sudo rpm --setugids <i>PACKAGENAME</i>
+<pre>$ sudo rpm --restore <i>PACKAGENAME</i>
           </pre>
          </td>
 </tr>
@@ -103,7 +103,7 @@ package owns it:
           </pre>
           <br>
 Next, run the following command to reset its permissions to the correct values:
-<pre>$ sudo rpm --setperms <i>PACKAGENAME</i>
+<pre>$ sudo rpm --restore <i>PACKAGENAME</i>
           </pre>
          </td>
 </tr>
@@ -166,6 +166,17 @@ Otherwise, add the following line to <code>/etc/crontab</code>:
 AIDE can be executed periodically through other means; this is merely one example.</td>
 </tr>
 <tr>
+<td>CCE-90260-1</td>
+<td>Configure AIDE to Use FIPS 140-2 for Validating Hashes</td>
+<td>By default, the <code>sha512</code> option is added to the <code>NORMAL</code> ruleset in AIDE.
+If using a custom ruleset or the <code>sha512</code> option is missing, add <code>sha512</code>
+to the appropriate ruleset.
+For example, add <code>sha512</code> to the following line in <code>/etc/aide.conf</code>:
+<pre>NORMAL = FIPSR+sha512</pre>
+AIDE rules can be configured in multiple ways; this is merely one example that is already
+configured by default.</td>
+</tr>
+<tr>
 <td>CCE-89640-7</td>
 <td>Configure AIDE to Verify Access Control Lists (ACLs)</td>
 <td>By default, the <code>acl</code> option is added to the <code>FIPSR</code> ruleset in AIDE.
@@ -175,6 +186,7 @@ For example, add <code>acl</code> to the following line in <code>/etc/aide.conf<
 <pre>FIPSR = p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha256</pre>
 AIDE rules can be configured in multiple ways; this is merely one example that is already
 configured by default.
+
 
 The remediation provided with this rule adds <code>acl</code> to all rule sets available in
 <code>/etc/aide.conf</code>
@@ -190,6 +202,7 @@ For example, add <code>xattrs</code> to the following line in <code>/etc/aide.co
 <pre>FIPSR = p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha256</pre>
 AIDE rules can be configured in multiple ways; this is merely one example that is already
 configured by default.
+
 
 The remediation provided with this rule adds <code>xattrs</code> to all rule sets available in
 <code>/etc/aide.conf</code>
@@ -221,15 +234,6 @@ Audit tools must have the correct owner.</td>
 Audit tools include, but are not limited to, vendor-provided and open source audit tools needed to successfully view and manipulate audit information system activity and records. Audit tools include custom queries and report generators.
 
 Audit tools must have a mode of 0755 or less permissive.</td>
-</tr>
-<tr>
-<td>CCE-88066-6</td>
-<td>Enable Dracut FIPS Module</td>
-<td>To enable FIPS mode, run the following command:
-<pre>fips-mode-setup --enable</pre>
-To enable FIPS, the system requires that the <code>fips</code> module is added in <code>dracut</code> configuration.
-Check if <code>/etc/dracut.conf.d/40-fips.conf</code> contain <code>add_dracutmodules+=" fips "</code>
-        </td>
 </tr>
 <tr>
 <td>CCE-86982-6</td>
@@ -370,71 +374,12 @@ the <code>CRYPTO_POLICY</code> variable is either commented or not set at all
 in the <code>/etc/sysconfig/sshd</code>.</td>
 </tr>
 <tr>
-<td>CCE-89143-2</td>
-<td>OpenSSL uses strong entropy source</td>
-<td>By default, OpenSSL doesn't always use a SP800-90A compliant random number generator.
-A way to configure OpenSSL to always use a strong source is to setup a wrapper that
-defines a shell function that shadows the actual <code>openssl</code> binary,
-and that ensures that the <code>-rand /dev/random</code> option is added to every <code>openssl</code> invocation.
-
-To do so, place the following shell snippet exactly as-is to <code>/etc/profile.d/openssl-rand.sh</code>:
-<pre>
-# provide a default -rand /dev/random option to openssl commands that
-# support it
-
-# written inefficiently for maximum shell compatibility
-openssl()
-(
-  openssl_bin=/usr/bin/openssl
-
-  case "$*" in
-    # if user specified -rand, honor it
-    *\ -rand\ *|*\ -help*) exec $openssl_bin "$@" ;;
-  esac
-
-  cmds=`$openssl_bin list -digest-commands -cipher-commands | tr '\n' ' '`
-  for i in `$openssl_bin list -commands`; do
-    if $openssl_bin list -options "$i" | grep -q '^rand '; then
-      cmds=" $i $cmds"
-    fi
-  done
-
-  case "$cmds" in
-    *\ "$1"\ *)
-      cmd="$1"; shift
-      exec $openssl_bin "$cmd" -rand /dev/random "$@" ;;
-  esac
-
-  exec $openssl_bin "$@"
-)
-</pre>
-        </td>
-</tr>
-<tr>
 <td>CCE-89725-6</td>
 <td>The Installed Operating System Is Vendor Supported</td>
 <td>The installed operating system must be maintained by a vendor.
 
 Red Hat Enterprise Linux is supported by Red Hat, Inc. As the Red Hat Enterprise
 Linux vendor, Red Hat, Inc. is responsible for providing security patches.</td>
-</tr>
-<tr>
-<td>CCE-90709-7</td>
-<td>Install McAfee Endpoint Security for Linux (ENSL)</td>
-<td>Install McAfee Endpoint Security for Linux antivirus software
-which is provided for DoD systems and uses signatures to search for the
-presence of viruses on the filesystem.
-
-The <code>McAfeeTP</code> package can be installed with the following command:
-<pre>
-$ sudo dnf install McAfeeTP</pre>
-          </td>
-</tr>
-<tr>
-<td>CCE-88193-8</td>
-<td>Install the Host Intrusion Prevention System (HIPS) Module</td>
-<td>Install the McAfee Host Intrusion Prevention System (HIPS) Module if it is absolutely
-necessary. If SELinux is enabled, do not install or enable this module.</td>
 </tr>
 <tr>
 <td>CCE-89165-5</td>
@@ -474,6 +419,15 @@ the Red Hat Enterprise Linux 10 Documentation web site:<br>
 .</td>
 </tr>
 <tr>
+<td>CCE-90755-0</td>
+<td>Ensure /boot Located On Separate Partition</td>
+<td>It is recommended that the <code>/boot</code> directory resides on a separate
+partition. This makes it easier to apply restrictions e.g. through the
+<code>noexec</code> mount option. Eventually, the <code>/boot</code> partition can
+be configured not to be mounted automatically with the <code>noauto</code> mount
+option.</td>
+</tr>
+<tr>
 <td>CCE-89532-6</td>
 <td>Ensure /dev/shm is configured</td>
 <td>The <code>/dev/shm</code> is a traditional shared memory concept.
@@ -491,6 +445,12 @@ creating a separate partition is not necessary at installation time, and the
 mountpoint can instead be configured later.</td>
 </tr>
 <tr>
+<td>CCE-90750-1</td>
+<td>Ensure /opt Located On Separate Partition</td>
+<td>It is recommended that the <code>/opt</code> directory resides on a separate
+partition.</td>
+</tr>
+<tr>
 <td>CCE-88936-0</td>
 <td>Ensure /srv Located On Separate Partition</td>
 <td>If a file server (FTP, TFTP...) is hosted locally, create a separate partition
@@ -505,6 +465,12 @@ mountpoint can instead be configured later.</td>
 <td>The <code>/tmp</code> directory is a world-writable directory used
 for temporary file storage. Ensure it has its own partition or
 logical volume at installation time, or migrate it using LVM.</td>
+</tr>
+<tr>
+<td>CCE-90748-5</td>
+<td>Ensure /usr Located On Separate Partition</td>
+<td>It is recommended that the <code>/usr</code> directory resides on a separate
+partition.</td>
 </tr>
 <tr>
 <td>CCE-89166-3</td>
@@ -540,7 +506,7 @@ logical volume at installation time, or migrate it using LVM.</td>
 </tr>
 <tr>
 <td>CCE-89797-5</td>
-<td>Ensure tmp.mount Unit Us Enabled</td>
+<td>Ensure tmp.mount Unit Is Enabled</td>
 <td>The <code>/tmp</code> directory is a world-writable directory used
 for temporary file storage. This directory is managed by <code>systemd-tmpfiles</code>.
 Ensure that the <code>tmp.mount</code> systemd unit is enabled.</td>
@@ -639,16 +605,15 @@ AutomaticLoginEnable=false</pre>
         </td>
 </tr>
 <tr>
-<td>CCE-87752-2</td>
-<td>Disable XDMCP in GDM</td>
-<td>XDMCP is an unencrypted protocol, and therefore, presents a security risk, see e.g.
-<a href="https://help.gnome.org/admin/gdm/stable/security.html.en_GB#xdmcpsecurity">XDMCP Gnome docs</a>.
-
-To disable XDMCP support in Gnome, set <code>Enable</code> to <code>false</code> under the <code>[xdmcp]</code> configuration section in <code>/etc/gdm/custom.conf</code>. For example:
-<pre>
-[xdmcp]
-Enable=false
-</pre>
+<td>CCE-88976-6</td>
+<td>Disable GDM Guest Login</td>
+<td>The GNOME Display Manager (GDM) can allow users to login without credentials
+which can be useful for public kiosk scenarios. Allowing users to login without credentials
+or "guest" account access has inherent security risks and should be disabled. To do disable
+timed logins or guest account access, set the <code>TimedLoginEnable</code> to <code>false</code> in
+the <code>[daemon]</code> section in <code>/etc/gdm/custom.conf</code>. For example:
+<pre>[daemon]
+TimedLoginEnable=false</pre>
         </td>
 </tr>
 <tr>
@@ -697,38 +662,6 @@ Once the settings have been added, add a lock to
 <code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
 For example:
 <pre>/org/gnome/desktop/media-handling/autorun-never</pre>
-After the settings have been set, run <code>dconf update</code>.</td>
-</tr>
-<tr>
-<td>CCE-90211-4</td>
-<td>Require Credential Prompting for Remote Access in GNOME3</td>
-<td>By default, <code>GNOME</code> does not require credentials when using <code>Vino</code> for
-remote access. To configure the system to require remote credentials, add or set
-<code>authentication-methods</code> to <code>['vnc']</code> in
-<code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
-<pre>[org/gnome/Vino]
-authentication-methods=['vnc']
-</pre>
-Once the settings have been added, add a lock to
-<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
-For example:
-<pre>/org/gnome/Vino/authentication-methods</pre>
-After the settings have been set, run <code>dconf update</code>.</td>
-</tr>
-<tr>
-<td>CCE-88817-2</td>
-<td>Require Encryption for Remote Access in GNOME3</td>
-<td>By default, <code>GNOME</code> requires encryption when using <code>Vino</code> for remote access.
-To prevent remote access encryption from being disabled, add or set
-<code>require-encryption</code> to <code>true</code> in
-<code>/etc/dconf/db/local.d/00-security-settings</code>. For example:
-<pre>[org/gnome/Vino]
-require-encryption=true
-</pre>
-Once the settings have been added, add a lock to
-<code>/etc/dconf/db/local.d/locks/00-security-settings-lock</code> to prevent user modification.
-For example:
-<pre>/org/gnome/Vino/require-encryption</pre>
 After the settings have been set, run <code>dconf update</code>.</td>
 </tr>
 <tr>
@@ -907,6 +840,26 @@ To properly set the permissions of <code>/usr/bin/sudo</code>, run the command:
        </td>
 </tr>
 <tr>
+<td>CCE-90747-7</td>
+<td>Ensure sudo Runs In A Minimal Environment - sudo env_reset</td>
+<td>The sudo <code>env_reset</code> tag, when specified, will run the command in a minimal environment,
+containing the TERM, PATH, HOME, MAIL, SHELL, LOGNAME, USER and SUDO_* variables.
+On Red Hat Enterprise Linux 10, <code>env_reset</code> is enabled by default
+This should be enabled by making sure that the <code>env_reset</code> tag exists in
+<code>/etc/sudoers</code> configuration file or any sudo configuration snippets
+in <code>/etc/sudoers.d/</code>.</td>
+</tr>
+<tr>
+<td>CCE-90743-6</td>
+<td>Ensure sudo Ignores Commands In Current Dir - sudo ignore_dot</td>
+<td>The sudo <code>ignore_dot</code> tag, when specified, will ignore the current directory
+in the PATH environment variable.
+On Red Hat Enterprise Linux 10, <code>ignore_dot</code> is enabled by default
+This should be enabled by making sure that the <code>ignore_dot</code> tag exists in
+<code>/etc/sudoers</code> configuration file or any sudo configuration snippets
+in <code>/etc/sudoers.d/</code>.</td>
+</tr>
+<tr>
 <td>CCE-89119-2</td>
 <td>Ensure Privileged Escalated Commands Cannot Execute Other Commands - sudo NOEXEC</td>
 <td>The sudo <code>NOEXEC</code> tag, when specified, prevents user executed
@@ -1069,22 +1022,6 @@ $ sudo dnf install nss-tools</pre>
        </td>
 </tr>
 <tr>
-<td>CCE-90643-8</td>
-<td>Install rear Package</td>
-<td>The <code>rear</code> package can be installed with the following command:
-<pre>
-$ sudo dnf install rear</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-88468-4</td>
-<td>Install rng-tools Package</td>
-<td>The <code>rng-tools</code> package can be installed with the following command:
-<pre>
-$ sudo dnf install rng-tools</pre>
-       </td>
-</tr>
-<tr>
 <td>CCE-88542-6</td>
 <td>Install subscription-manager Package</td>
 <td>The <code>subscription-manager</code> package can be installed with the following command:
@@ -1097,7 +1034,7 @@ $ sudo dnf install subscription-manager</pre>
 <td>Uninstall gssproxy Package</td>
 <td>The <code>gssproxy</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase gssproxy</pre>
+$ sudo dnf remove gssproxy</pre>
        </td>
 </tr>
 <tr>
@@ -1105,7 +1042,7 @@ $ sudo dnf erase gssproxy</pre>
 <td>Uninstall iprutils Package</td>
 <td>The <code>iprutils</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase iprutils</pre>
+$ sudo dnf remove iprutils</pre>
        </td>
 </tr>
 <tr>
@@ -1113,7 +1050,7 @@ $ sudo dnf erase iprutils</pre>
 <td>Uninstall tuned Package</td>
 <td>The <code>tuned</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase tuned</pre>
+$ sudo dnf remove tuned</pre>
        </td>
 </tr>
 <tr>
@@ -1262,79 +1199,41 @@ OR:
        </td>
 </tr>
 <tr>
-<td>CCE-87619-3</td>
-<td>Modify the System Login Banner for Remote Connections</td>
-<td>To configure the system login banner edit <code>/etc/issue.net</code>. Replace the
-default text with a message compliant with the local site policy or a legal
-disclaimer.
+<td>CCE-86165-8</td>
+<td>Ensure Local Login Warning Banner Is Configured Properly</td>
+<td>To configure the system local login warning banner edit the <code>/etc/issue</code> file.
+The contents of this file is displayed to users prior to login to local terminals.
+Replace the default text with a message compliant with the local site policy.
+The message should not contain information about operating system version,
+release, kernel version or patch level.
 
-The DoD required text is either:
-<br>
-        <br>
-        <code>You are accessing a U.S. Government (USG) Information System (IS) that
-is provided for USG-authorized use only. By using this IS (which includes
-any device attached to this IS), you consent to the following conditions:
-<br>-The USG routinely intercepts and monitors communications on this IS
-for purposes including, but not limited to, penetration testing, COMSEC
-monitoring, network operations and defense, personnel misconduct (PM), law
-enforcement (LE), and counterintelligence (CI) investigations.
-<br>-At any time, the USG may inspect and seize data stored on this IS.
-<br>-Communications using, or data stored on, this IS are not private,
-are subject to routine monitoring, interception, and search, and may be
-disclosed or used for any USG-authorized purpose.
-<br>-This IS includes security measures (e.g., authentication and access
-controls) to protect USG interests -- not for your personal benefit or
-privacy.
-<br>-Notwithstanding the above, using this IS does not constitute consent
-to PM, LE or CI investigative searching or monitoring of the content of
-privileged communications, or work product, related to personal
-representation or services by attorneys, psychotherapists, or clergy, and
-their assistants. Such communications and work product are private and
-confidential. See User Agreement for details.</code>
-        <br>
-        <br>
-OR:
-<br>
-        <br>
-        <code>I've read &amp; consent to terms in IS user agreem't.</code>
+The recommended banner text can be tailored in the XCCDF Value <code>xccdf_org.ssgproject.content_value_cis_banner_text</code>:
+<pre><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_cis_banner_text" use="legacy"></xccdf-1.2:sub></pre>
        </td>
 </tr>
 <tr>
-<td>CCE-88409-8</td>
-<td>Modify the System Message of the Day Banner</td>
-<td>To configure the system message banner edit <code>/etc/motd</code>. Replace the
-default text with a message compliant with the local site policy or a legal
-disclaimer.
+<td>CCE-86169-0</td>
+<td>Ensure Remote Login Warning Banner Is Configured Properly</td>
+<td>To configure the system remote login warning banner edit the <code>/etc/issue.net</code> file.
+The contents of this file is displayed to users prior to login from remote connections.
+Replace the default text with a message compliant with the local site policy.
+The message should not contain information about operating system version,
+release, kernel version or patch level.
 
-The DoD required text is either:
-<br>
-        <br>
-        <code>You are accessing a U.S. Government (USG) Information System (IS) that
-is provided for USG-authorized use only. By using this IS (which includes
-any device attached to this IS), you consent to the following conditions:
-<br>-The USG routinely intercepts and monitors communications on this IS
-for purposes including, but not limited to, penetration testing, COMSEC
-monitoring, network operations and defense, personnel misconduct (PM), law
-enforcement (LE), and counterintelligence (CI) investigations.
-<br>-At any time, the USG may inspect and seize data stored on this IS.
-<br>-Communications using, or data stored on, this IS are not private,
-are subject to routine monitoring, interception, and search, and may be
-disclosed or used for any USG-authorized purpose.
-<br>-This IS includes security measures (e.g., authentication and access
-controls) to protect USG interests -- not for your personal benefit or
-privacy.
-<br>-Notwithstanding the above, using this IS does not constitute consent
-to PM, LE or CI investigative searching or monitoring of the content of
-privileged communications, or work product, related to personal
-representation or services by attorneys, psychotherapists, or clergy, and
-their assistants. Such communications and work product are private and
-confidential. See User Agreement for details.</code>
-        <br>
-        <br>
-OR:
-<br>
-        <br>
-        <code>I've read &amp; consent to terms in IS user agreem't.</code>
+The recommended banner text can be tailored in the XCCDF Value <code>xccdf_org.ssgproject.content_value_cis_banner_text</code>:
+<pre><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_cis_banner_text" use="legacy"></xccdf-1.2:sub></pre>
+       </td>
+</tr>
+<tr>
+<td>CCE-86150-0</td>
+<td>Ensure Message Of The Day Is Configured Properly</td>
+<td>To configure the system message of the day banner edit the <code>/etc/motd</code> file.
+Replace the default text with a message compliant with the local site policy.
+The message should not contain information about operating system version,
+release, kernel version or patch level.
+
+The recommended banner text can be tailored in the XCCDF Value <code>xccdf_org.ssgproject.content_value_cis_banner_text</code>:
+<pre><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_cis_banner_text" use="legacy"></xccdf-1.2:sub></pre>
        </td>
 </tr>
 <tr>
@@ -1476,6 +1375,13 @@ add or correct the <code>pam_lastlog</code> settings in <code>/etc/pam.d/postlog
 to include <code>showfailed</code> option, such as:
 <pre>session     [default=1]    pam_lastlog.so showfailed</pre>
 And make sure that the <code>silent</code> option is not set for this specific line.</td>
+</tr>
+<tr>
+<td>CCE-90739-4</td>
+<td>Set Up a Private Namespace in PAM Configuration</td>
+<td>To setup a private namespace add the following line to <code>/etc/pam.d/login</code>:
+<pre>session    required     pam_namespace.so</pre>
+       </td>
 </tr>
 <tr>
 <td>CCE-87657-3</td>
@@ -1627,18 +1533,6 @@ depending on the OS version.
 
 If <code>unlock_time</code> is set to <code>0</code>, manual intervention by an administrator is required
 to unlock a user. This should be done using the <code>faillock</code> tool.</td>
-</tr>
-<tr>
-<td>CCE-90683-4</td>
-<td>Configure the root Account lock for Failed Password Attempts via pam_tally2</td>
-<td>This rule configures the system to lock out the <code>root</code> account after a number of
-incorrect login attempts using <code>pam_tally2.so</code>.</td>
-</tr>
-<tr>
-<td>CCE-88162-3</td>
-<td>Set Lockout Time for Failed Password Attempts using pam_tally2</td>
-<td>This rule configures the system to lock out accounts during a specified time period after a
-number of incorrect login attempts using <code>pam_tally2.so</code>.</td>
 </tr>
 <tr>
 <td>CCE-89089-7</td>
@@ -1948,6 +1842,9 @@ in <code>/usr/lib/systemd/system/rescue.service</code>.</td>
 <td>CCE-87577-3</td>
 <td>Install the tmux Package</td>
 <td>To enable console screen locking, install the <code>tmux</code> package.
+The <code>tmux</code> package can be installed with the following command:
+<pre>
+$ sudo dnf install tmux</pre>
 A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not want to log out because of the temporary nature of the absence.
 The session lock is implemented at the point where session activity can be determined.
 Rather than be forced to wait for a period of time to expire before the user session can be locked, Red Hat Enterprise Linux 10 needs to provide users with the ability to manually invoke a session lock so users can secure their session if it is necessary to temporarily vacate the immediate physical vicinity.
@@ -1956,13 +1853,6 @@ Instruct users to begin new terminal sessions with the following command:
 The console can now be locked with the following key combination:
 <pre>ctrl+b :lock-session</pre>
          </td>
-</tr>
-<tr>
-<td>CCE-88313-2</td>
-<td>Support session locking with tmux</td>
-<td>The <code>tmux</code> terminal multiplexer is used to implement
-automatic session locking. It should be started from
-<code>/etc/bashrc</code> or drop-in files within <code>/etc/profile.d/</code>.</td>
 </tr>
 <tr>
 <td>CCE-88723-2</td>
@@ -2023,12 +1913,7 @@ $ sudo dnf install pcsc-lite</pre>
 <td>CCE-86642-6</td>
 <td>Install Smart Card Packages For Multifactor Authentication</td>
 <td>Configure the operating system to implement multifactor authentication by
-installing the required package with the following command:
-
-The <code>openssl-pkcs11</code> package can be installed with the following command:
-<pre>
-$ sudo dnf install openssl-pkcs11</pre>
-         </td>
+installing the required package with the following command:</td>
 </tr>
 <tr>
 <td>CCE-87363-8</td>
@@ -2670,6 +2555,17 @@ following command:
        </td>
 </tr>
 <tr>
+<td>CCE-89585-4</td>
+<td>Ensure All User Initialization Files Have Mode 0740 Or Less Permissive</td>
+<td>Set the mode of the user initialization files, including the <code>root</code> user,
+to <code>0740</code> with the following commands:
+<pre>
+$ sudo chmod 0740 /root/.<i>INIT_FILE</i>
+$ sudo chmod 0740 /home/<i>USER</i>/.<i>INIT_FILE</i>
+        </pre>
+       </td>
+</tr>
+<tr>
 <td>CCE-86605-3</td>
 <td>All Interactive User Home Directories Must Have mode 0750 Or Less Permissive</td>
 <td>Change the mode of interactive users home directories to <code>0750</code>. To
@@ -3109,66 +3005,6 @@ by running the following command:
 When prompted, enter the password that was selected.
 <br>
         <br>
-       </td>
-</tr>
-<tr>
-<td>CCE-88090-6</td>
-<td>Verify the UEFI Boot Loader grub.cfg Group Ownership</td>
-<td>The file <code>/boot/grub2/grub.cfg</code> should
-be group-owned by the <code>root</code> group to prevent
-destruction or modification of the file.
-
-To properly set the group owner of <code>/boot/grub2/grub.cfg</code>, run the command:
-<pre>$ sudo chgrp root /boot/grub2/grub.cfg</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-87222-6</td>
-<td>Verify /boot/grub2/user.cfg Group Ownership</td>
-<td>The file <code>/boot/grub2/user.cfg</code> should be group-owned by the
-<code>root</code> group to prevent reading or modification of the file.
-
-To properly set the group owner of <code>/boot/grub2/user.cfg</code>, run the command:
-<pre>$ sudo chgrp root /boot/grub2/user.cfg</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-89243-0</td>
-<td>Verify the UEFI Boot Loader grub.cfg User Ownership</td>
-<td>The file <code>/boot/grub2/grub.cfg</code> should
-be owned by the <code>root</code> user to prevent destruction
-or modification of the file.
-
-To properly set the owner of <code>/boot/grub2/grub.cfg</code>, run the command:
-<pre>$ sudo chown root /boot/grub2/grub.cfg </pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-89217-4</td>
-<td>Verify /boot/grub2/user.cfg User Ownership</td>
-<td>The file <code>/boot/grub2/user.cfg</code> should be owned by the <code>root</code>
-user to prevent reading or modification of the file.
-
-To properly set the owner of <code>/boot/grub2/user.cfg</code>, run the command:
-<pre>$ sudo chown root /boot/grub2/user.cfg </pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-88815-6</td>
-<td>Verify the UEFI Boot Loader grub.cfg Permissions</td>
-<td>File permissions for <code>/boot/grub2/grub.cfg</code> should be set to 700.
-
-To properly set the permissions of <code>/boot/grub2/grub.cfg</code>, run the command:
-<pre>$ sudo chmod 700 /boot/grub2/grub.cfg</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-90297-3</td>
-<td>Verify /boot/grub2/user.cfg Permissions</td>
-<td>File permissions for <code>/boot/grub2/user.cfg</code> should be set to 600.
-
-To properly set the permissions of <code>/boot/grub2/user.cfg</code>, run the command:
-<pre>$ sudo chmod 600 /boot/grub2/user.cfg</pre>
        </td>
 </tr>
 <tr>
@@ -4353,7 +4189,10 @@ network. The <code>/etc/rsyslog.conf</code> or
 <code>/etc/rsyslog.d/*.conf</code> file should contain a match for the following
 selectors: <code>auth.*</code>, <code>authpriv.*</code>, and <code>daemon.*</code>. If
 not, use the following as an example configuration:
-<pre>auth.*;authpriv.*;daemon.*                              /var/log/secure</pre>
+<code>
+    auth.*;authpriv.*                              /var/log/secure
+    daemon.*                                       /var/log/messages
+</code>
        </td>
 </tr>
 <tr>
@@ -4724,20 +4563,8 @@ exists is an approved organizational connection.</td>
 <tr>
 <td>CCE-86577-4</td>
 <td>Verify Permissions On /etc/iptables Directory</td>
-<td> To properly set the permissions of <code>/etc/iptables</code>, run the command: <pre>$ sudo chmod 0600 /etc/iptables</pre>
+<td> To properly set the permissions of <code>/etc/iptables</code>, run the command: <pre>$ sudo chmod 0700 /etc/iptables</pre>
        </td>
-</tr>
-<tr>
-<td>CCE-86740-8</td>
-<td>Set Default ip6tables Policy for Incoming Packets</td>
-<td>To set the default policy to DROP (instead of ACCEPT) for
-the built-in INPUT chain which processes incoming packets,
-add or correct the following line in
-<code>/etc/sysconfig/ip6tables</code>:
-<pre>:INPUT DROP [0:0]</pre>
-If changes were required, reload the ip6tables rules:
-<pre>$ sudo service ip6tables reload</pre>
-        </td>
 </tr>
 <tr>
 <td>CCE-87216-8</td>
@@ -4928,6 +4755,13 @@ To make sure that the setting is persistent, add the following line to a file in
 <td>Drop Gratuitious ARP frames on All IPv4 Interfaces</td>
 <td>To set the runtime status of the <code>net.ipv4.conf.all.drop_gratuitous_arp</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.drop_gratuitous_arp=1</pre>
 To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.drop_gratuitous_arp = 1</pre>
+        </td>
+</tr>
+<tr>
+<td>CCE-87420-6</td>
+<td>Disable Kernel Parameter for IPv4 Forwarding on all IPv4 Interfaces</td>
+<td>To set the runtime status of the <code>net.ipv4.conf.all.forwarding</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w net.ipv4.conf.all.forwarding=0</pre>
+To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>net.ipv4.conf.all.forwarding = 0</pre>
         </td>
 </tr>
 <tr>
@@ -6617,7 +6451,7 @@ to client processes requesting information. The label translations are defined
 in <code>/etc/selinux/targeted/setrans.conf</code>.
 The <code>mcstrans</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase mcstrans</pre>
+$ sudo dnf remove mcstrans</pre>
       </td>
 </tr>
 <tr>
@@ -6627,7 +6461,7 @@ $ sudo dnf erase mcstrans</pre>
 unauthorized intrusions, and other potential errors.
 The <code>setroubleshoot-plugins</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase setroubleshoot-plugins</pre>
+$ sudo dnf remove setroubleshoot-plugins</pre>
       </td>
 </tr>
 <tr>
@@ -6638,7 +6472,7 @@ denials. The service provides information around configuration errors,
 unauthorized intrusions, and other potential errors.
 The <code>setroubleshoot-server</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase setroubleshoot-server</pre>
+$ sudo dnf remove setroubleshoot-server</pre>
       </td>
 </tr>
 <tr>
@@ -6649,7 +6483,7 @@ denials. The service provides information around configuration errors,
 unauthorized intrusions, and other potential errors.
 The <code>setroubleshoot</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase setroubleshoot</pre>
+$ sudo dnf remove setroubleshoot</pre>
       </td>
 </tr>
 <tr>
@@ -6695,6 +6529,21 @@ $ sudo dnf erase setroubleshoot</pre>
 <code>/etc/default/grub</code>.
 Remove any instances of <code>selinux=0</code> from the kernel arguments in that
 file to prevent SELinux from being disabled at boot.</td>
+</tr>
+<tr>
+<td>CCE-90192-6</td>
+<td>Ensure No Device Files are Unlabeled by SELinux</td>
+<td>Device files, which are used for communication with important system
+resources, should be labeled with proper SELinux types. If any device files
+carry the SELinux type <code>device_t</code> or <code>unlabeled_t</code>, report the
+bug so that policy can be corrected. Supply information about what the
+device is and what programs use it.
+<br>
+       <br>
+To check for incorrectly labeled device files, run following commands:
+<pre>$ sudo find /dev -context *:device_t:* \( -type c -o -type b \) -printf "%p %Z\n"</pre>
+       <pre>$ sudo find /dev -context *:unlabeled_t:* \( -type c -o -type b \) -printf "%p %Z\n"</pre>
+It should produce no output in a well-configured system.</td>
 </tr>
 <tr>
 <td>CCE-88979-0</td>
@@ -6878,8 +6727,8 @@ The <code>kdump</code> service can be disabled with the following command:
 preconfigured times. It is required by almost all systems to perform necessary
 maintenance tasks, such as notifying root of system activity.
 
-The <code>cron</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable cron.service</pre>
+The <code>crond</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable crond.service</pre>
       </td>
 </tr>
 <tr>
@@ -7130,15 +6979,10 @@ To properly set the permissions of <code>/etc/cron.allow</code>, run the command
        </td>
 </tr>
 <tr>
-<td>CCE-87013-9</td>
-<td>Uninstall DHCP Server Package</td>
+<td>CCE-86596-4</td>
+<td>Uninstall kea Package</td>
 <td>If the system does not need to act as a DHCP server,
-the dhcp package can be uninstalled.
-
-The <code>dhcp</code> package can be removed with the following command:
-<pre>
-$ sudo dnf erase dhcp</pre>
-       </td>
+the kea package can be uninstalled.</td>
 </tr>
 <tr>
 <td>CCE-86558-4</td>
@@ -7148,7 +6992,7 @@ DHCP (Dynamic Host Configuration Protocol) services.
 <br>
 The <code>dnsmasq</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase dnsmasq</pre>
+$ sudo dnf remove dnsmasq</pre>
       </td>
 </tr>
 <tr>
@@ -7157,7 +7001,7 @@ $ sudo dnf erase dnsmasq</pre>
 <td>The <code>named</code> service is provided by the <code>bind</code> package.
 The <code>bind</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase bind</pre>
+$ sudo dnf remove bind</pre>
        </td>
 </tr>
 <tr>
@@ -7186,13 +7030,13 @@ authentication is necessary (permits anonymous users to connect to a server).
 <br>
 The <code>ftp</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase ftp</pre>
+$ sudo dnf remove ftp</pre>
       </td>
 </tr>
 <tr>
 <td>CCE-88674-7</td>
 <td>Uninstall vsftpd Package</td>
-<td>The <code>vsftpd</code> package can be removed with the following command: <pre> $ sudo dnf erase vsftpd</pre>
+<td>The <code>vsftpd</code> package can be removed with the following command: <pre> $ sudo dnf remove vsftpd</pre>
        </td>
 </tr>
 <tr>
@@ -7201,7 +7045,7 @@ $ sudo dnf erase ftp</pre>
 <td>
 The <code>httpd</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase httpd</pre>
+$ sudo dnf remove httpd</pre>
        </td>
 </tr>
 <tr>
@@ -7209,7 +7053,7 @@ $ sudo dnf erase httpd</pre>
 <td>Uninstall nginx Package</td>
 <td>The <code>nginx</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase nginx</pre>
+$ sudo dnf remove nginx</pre>
        </td>
 </tr>
 <tr>
@@ -7217,7 +7061,7 @@ $ sudo dnf erase nginx</pre>
 <td>Uninstall cyrus-imapd Package</td>
 <td>The <code>cyrus-imapd</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase cyrus-imapd</pre>
+$ sudo dnf remove cyrus-imapd</pre>
        </td>
 </tr>
 <tr>
@@ -7226,7 +7070,7 @@ $ sudo dnf erase cyrus-imapd</pre>
 <td>
 The <code>dovecot</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase dovecot</pre>
+$ sudo dnf remove dovecot</pre>
        </td>
 </tr>
 <tr>
@@ -7244,7 +7088,7 @@ remove the Kerberos keytab files, especially
 a method for looking up information from a central database.
 The <code>openldap-clients</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase openldap-clients</pre>
+$ sudo dnf remove openldap-clients</pre>
        </td>
 </tr>
 <tr>
@@ -7265,16 +7109,6 @@ to <code>yes</code>.</td>
 The <code>s-nail</code> package can be installed with the following command:
 <pre>
 $ sudo dnf install s-nail</pre>
-      </td>
-</tr>
-<tr>
-<td>CCE-88826-3</td>
-<td>Uninstall Sendmail Package</td>
-<td>Sendmail is not the default mail transfer agent and is
-not installed by default.
-The <code>sendmail</code> package can be removed with the following command:
-<pre>
-$ sudo dnf erase sendmail</pre>
       </td>
 </tr>
 <tr>
@@ -7329,7 +7163,7 @@ to the local network with the following command:
 <td>Uninstall nfs-utils Package</td>
 <td>The <code>nfs-utils</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase nfs-utils</pre>
+$ sudo dnf remove nfs-utils</pre>
       </td>
 </tr>
 <tr>
@@ -7417,10 +7251,12 @@ This recommendation only applies if chrony is in use on the system.</td>
 <td>Enable the NTP Daemon</td>
 <td>
 
+
 Run the following command to determine the current status of the
 <code>chronyd</code> service:
 <pre>$ sudo systemctl is-active chronyd</pre>
 If the service is running, it should return the following: <pre>active</pre>
+
 Note: The <code>chronyd</code> daemon is enabled by default.
 <br>
        <br>
@@ -7452,6 +7288,13 @@ accurate. More information on <code>chrony</code> can be found at
 Add or edit server or pool lines to <code>/etc/chrony.conf</code> as appropriate:
 <pre>server &lt;remote-server&gt;</pre>
 Multiple servers may be configured.</td>
+</tr>
+<tr>
+<td>CCE-86471-0</td>
+<td>Configure Time Service to use NTS</td>
+<td>The system should be configured to use time servers that support Network Time Security (NTS).
+The specified time server must support NTS and must be configured to use NTS.
+To configure NTS for given time server add <code>nts</code> to each <code>server</code> or <code>pool</code> line in <code>/etc/chrony.conf</code>.</td>
 </tr>
 <tr>
 <td>CCE-89002-0</td>
@@ -7544,7 +7387,7 @@ This recommendation only applies if chrony is in use on the system.</td>
 <tr>
 <td>CCE-87112-9</td>
 <td>Verify Group Who Owns /etc/chrony.keys File</td>
-<td> To properly set the group owner of <code>/etc/chrony.keys</code>, run the command: <pre>$ sudo chgrp root /etc/chrony.keys</pre>
+<td> To properly set the group owner of <code>/etc/chrony.keys</code>, run the command: <pre>$ sudo chgrp chrony /etc/chrony.keys</pre>
       </td>
 </tr>
 <tr>
@@ -7556,16 +7399,16 @@ This recommendation only applies if chrony is in use on the system.</td>
 <tr>
 <td>CCE-88155-7</td>
 <td>Verify Permissions On /etc/chrony.keys File</td>
-<td> To properly set the permissions of <code>/etc/chrony.keys</code>, run the command: <pre>$ sudo chmod 0600 /etc/chrony.keys</pre>
+<td> To properly set the permissions of <code>/etc/chrony.keys</code>, run the command: <pre>$ sudo chmod 0640 /etc/chrony.keys</pre>
       </td>
 </tr>
 <tr>
 <td>CCE-88025-2</td>
 <td>Uninstall rsync Package</td>
 <td>The rsyncd service can be used to synchronize files between systems over network links.
-The <code>rsync</code> package can be removed with the following command:
+The <code>rsync-daemon</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase rsync</pre>
+$ sudo dnf remove rsync-daemon</pre>
       </td>
 </tr>
 <tr>
@@ -7577,70 +7420,12 @@ The <code>rsyncd</code> service can be disabled with the following command:
       </td>
 </tr>
 <tr>
-<td>CCE-90110-8</td>
-<td>Uninstall tcpd Package</td>
-<td>The <code>tcpd</code> package can be removed with the following command:
-<pre>
-$ sudo dnf erase tcpd</pre>
-       </td>
-</tr>
-<tr>
 <td>CCE-88760-4</td>
 <td>Uninstall xinetd Package</td>
 <td>The <code>xinetd</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase xinetd</pre>
+$ sudo dnf remove xinetd</pre>
        </td>
-</tr>
-<tr>
-<td>CCE-87207-7</td>
-<td>Disable xinetd Service</td>
-<td>
-The <code>xinetd</code> service can be disabled with the following command:
-<pre>$ sudo systemctl mask --now xinetd.service</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-87211-9</td>
-<td>Remove NIS Client</td>
-<td>The Network Information Service (NIS), formerly known as Yellow Pages,
-is a client-server directory service protocol used to distribute system configuration
-files. The NIS client (<code>ypbind</code>) was used to bind a system to an NIS server
-and receive the distributed configuration files.</td>
-</tr>
-<tr>
-<td>CCE-88114-4</td>
-<td>Uninstall ypserv Package</td>
-<td>The <code>ypserv</code> package can be removed with the following command:
-<pre>
-$ sudo dnf erase ypserv</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-86575-8</td>
-<td>Disable ypbind Service</td>
-<td>The <code>ypbind</code> service, which allows the system to act as a client in
-a NIS or NIS+ domain, should be disabled.
-
-The <code>ypbind</code> service can be disabled with the following command:
-<pre>$ sudo systemctl mask --now ypbind.service</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-86540-2</td>
-<td>Uninstall rsh-server Package</td>
-<td>The <code>rsh-server</code> package can be removed with the following command:
-<pre>
-$ sudo dnf erase rsh-server</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-90124-9</td>
-<td>Uninstall rsh Package</td>
-<td>
-The <code>rsh</code> package contains the client commands
-
-for the rsh services</td>
 </tr>
 <tr>
 <td>CCE-90241-1</td>
@@ -7708,29 +7493,11 @@ to delete them from any location:
        </td>
 </tr>
 <tr>
-<td>CCE-86747-3</td>
-<td>Uninstall talk-server Package</td>
-<td>The <code>talk-server</code> package can be removed with the following command: <pre> $ sudo dnf erase talk-server</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-90657-8</td>
-<td>Uninstall talk Package</td>
-<td>The <code>talk</code> package contains the client program for the
-Internet talk protocol, which allows the user to chat with other users on
-different systems. Talk is a communication program which copies lines from one
-terminal to the terminal of another user.
-The <code>talk</code> package can be removed with the following command:
-<pre>
-$ sudo dnf erase talk</pre>
-       </td>
-</tr>
-<tr>
 <td>CCE-88105-2</td>
 <td>Uninstall telnet-server Package</td>
 <td>The <code>telnet-server</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase telnet-server</pre>
+$ sudo dnf remove telnet-server</pre>
        </td>
 </tr>
 <tr>
@@ -7751,7 +7518,7 @@ The <code>telnet</code> socket can be disabled with the following command:
 <tr>
 <td>CCE-89287-7</td>
 <td>Uninstall tftp-server Package</td>
-<td>The <code>tftp-server</code> package can be removed with the following command: <pre> $ sudo dnf erase tftp-server</pre>
+<td>The <code>tftp-server</code> package can be removed with the following command: <pre> $ sudo dnf remove tftp-server</pre>
        </td>
 </tr>
 <tr>
@@ -7763,13 +7530,14 @@ TFTP does not support authentication and can be easily hacked. The package
 <code>tftp</code> is a client program that allows for connections to a <code>tftp</code> server.</td>
 </tr>
 <tr>
-<td>CCE-88137-5</td>
-<td>Ensure tftp Daemon Uses Secure Mode</td>
+<td>CCE-86495-9</td>
+<td>Ensure tftp systemd Service Uses Secure Mode</td>
 <td>If running the Trivial File Transfer Protocol (TFTP) service is necessary,
 it should be configured to change its root directory at startup. To do so,
 find the path for the <code>tftp</code> systemd service:
-<pre>$ sudo systemctl show tftp | grep FragmentPath=
-FragmentPath=/etc/systemd/system/tftp.service</pre>
+<pre>$ sudo systemctl show tftp | grep ExecStart=
+ExecStart={ path=/usr/sbin/in.tftpd ; argv[]=/usr/sbin/in.tftpd -s /var/lib/tftpboot ; ignore_errors=no ; start_time=[n/a] ; stop_time=[n/a] ; pid=0 ; code=(null) ; status=0/0 }e
+</pre>
 
 and ensure the <code>ExecStart</code> line on that file includes the <code>-s</code> option with a subdirectory:
 <pre>ExecStart=/usr/sbin/in.tftpd -s <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_tftpd_secure_directory" use="legacy"></xccdf-1.2:sub>
@@ -7787,7 +7555,7 @@ The <code>cups</code> service can be disabled with the following command:
 <tr>
 <td>CCE-87396-8</td>
 <td>Uninstall squid Package</td>
-<td>The <code>squid</code> package can be removed with the following command: <pre> $ sudo dnf erase squid</pre>
+<td>The <code>squid</code> package can be removed with the following command: <pre> $ sudo dnf remove squid</pre>
        </td>
 </tr>
 <tr>
@@ -7801,13 +7569,13 @@ The <code>squid</code> service can be disabled with the following command:
 <tr>
 <td>CCE-89804-9</td>
 <td>Uninstall quagga Package</td>
-<td>The <code>quagga</code> package can be removed with the following command: <pre> $ sudo dnf erase quagga</pre>
+<td>The <code>quagga</code> package can be removed with the following command: <pre> $ sudo dnf remove quagga</pre>
        </td>
 </tr>
 <tr>
 <td>CCE-89779-3</td>
 <td>Uninstall Samba Package</td>
-<td>The <code>samba</code> package can be removed with the following command: <pre> $ sudo dnf erase samba</pre>
+<td>The <code>samba</code> package can be removed with the following command: <pre> $ sudo dnf remove samba</pre>
        </td>
 </tr>
 <tr>
@@ -7817,7 +7585,7 @@ The <code>squid</code> service can be disabled with the following command:
 The <code>net-snmp</code> package provides the snmpd service.
 The <code>net-snmp</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase net-snmp</pre>
+$ sudo dnf remove net-snmp</pre>
        </td>
 </tr>
 <tr>
@@ -7833,7 +7601,7 @@ The <code>snmpd</code> service can be disabled with the following command:
 <td>Configure SNMP Service to Use Only SNMPv3 or Newer</td>
 <td>Edit <code>/etc/snmp/snmpd.conf</code>, removing any references to <code>rocommunity</code>, <code>rwcommunity</code>, or <code>com2sec</code>.
 Upon doing that, restart the SNMP service:
-<pre>$ sudo service snmpd restart</pre>
+<pre>$ sudo systemctl restart snmpd</pre>
        </td>
 </tr>
 <tr>
@@ -7874,7 +7642,7 @@ To properly set the group owner of <code>/etc/ssh/sshd_config</code>, run the co
 <td>CCE-90288-2</td>
 <td>Verify Group Ownership on SSH Server Private *_key Key Files</td>
 <td>SSH server private keys, files that match the <code>/etc/ssh/*_key</code> glob, must be
-group-owned by <code>ssh_keys</code> group.</td>
+group-owned by <code>root</code> group.</td>
 </tr>
 <tr>
 <td>CCE-90469-8</td>
@@ -7914,8 +7682,7 @@ To properly set the permissions of <code>/etc/ssh/sshd_config</code>, run the co
 <td>CCE-88018-7</td>
 <td>Verify Permissions on SSH Server Private *_key Key Files</td>
 <td>SSH server private keys - files that match the <code>/etc/ssh/*_key</code> glob, have to have restricted permissions.
-If those files are owned by the <code>root</code> user and the <code>root</code> group, they have to have the <code>0600</code> permission or stricter.
-If they are owned by the <code>root</code> user, but by a dedicated group <code>ssh_keys</code>, they can have the <code>0640</code> permission or stricter.</td>
+If those files are owned by the <code>root</code> user and the <code>root</code> group, they have to have the <code>0600</code> permission or stricter.</td>
 </tr>
 <tr>
 <td>CCE-87454-5</td>
@@ -8038,17 +7805,6 @@ To configure <code>firewalld</code> to allow <code>ssh</code> access, run the fo
 <pre>firewall-cmd --permanent --add-service=ssh</pre>
 Then run the following command to load the newly created rule(s):
 <pre>firewall-cmd --reload</pre>
-       </td>
-</tr>
-<tr>
-<td>CCE-90571-1</td>
-<td>Allow Only SSH Protocol 2</td>
-<td>Only SSH protocol version 2 connections should be
-permitted. The default setting in
-<code>/etc/ssh/sshd_config</code> is correct, and can be
-verified by ensuring that the following
-line appears:
-<pre>Protocol 2</pre>
        </td>
 </tr>
 <tr>
@@ -8416,16 +8172,13 @@ from a given connection. To set MaxSessions edit
 <tr>
 <td>CCE-89624-1</td>
 <td>Ensure SSH MaxStartups is configured</td>
-<td>The MaxStartups parameter specifies the maximum number of concurrent
-unauthenticated connections to the SSH daemon. Additional connections will be
-dropped until authentication succeeds or the LoginGraceTime expires for a
-connection. To confgure MaxStartups, you should add or correct the following
-line in the
-<code>/etc/ssh/sshd_config</code> file:
+<td>The MaxStartups parameter specifies the maximum number of concurrent unauthenticated
+connections to the SSH daemon. Additional connections will be dropped until authentication
+succeeds or the LoginGraceTime expires for a connection. To configure MaxStartups, you should
+add or edit the following line in the <code>/etc/ssh/sshd_config</code> file:
 <pre>MaxStartups <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_sshd_set_maxstartups" use="legacy"></xccdf-1.2:sub>
         </pre>
-CIS recommends a MaxStartups value of '10:30:60', or more restrictive where
-dictated by site policy.</td>
+       </td>
 </tr>
 <tr>
 <td>CCE-87449-5</td>
@@ -8524,18 +8277,6 @@ domains = testing.test
       </td>
 </tr>
 <tr>
-<td>CCE-90093-6</td>
-<td>Configure PAM in SSSD Services</td>
-<td>SSSD should be configured to run SSSD <code>pam</code> services.
-To configure SSSD to known SSH hosts, add <code>pam</code>
-to <code>services</code> under the <code>[sssd]</code> section in
-<code>/etc/sssd/sssd.conf</code>. For example:
-<pre>[sssd]
-services = sudo, autofs, pam
-</pre>
-      </td>
-</tr>
-<tr>
 <td>CCE-90275-9</td>
 <td>Enable Smartcards in SSSD</td>
 <td>SSSD should be configured to authenticate access to the system using smart cards.
@@ -8563,29 +8304,6 @@ section in <code>/etc/sssd/sssd.conf</code>. For example:
 offline_credentials_expiration = 1
 </pre>
       </td>
-</tr>
-<tr>
-<td>CCE-87985-8</td>
-<td>Configure SSSD LDAP Backend Client to Demand a Valid Certificate from the Server</td>
-<td>Configure SSSD to demand a valid certificate from the server to
-protect the integrity of LDAP remote access sessions by setting
-the <pre>ldap_tls_reqcert</pre> option in <pre>/etc/sssd/sssd.conf</pre>
-to <code>demand</code>.</td>
-</tr>
-<tr>
-<td>CCE-87817-3</td>
-<td>Configure SSSD LDAP Backend to Use TLS For All Transactions</td>
-<td>The LDAP client should be configured to implement TLS for the integrity
-of all remote LDAP authentication sessions. If the <code>id_provider</code> is
-set to <code>ldap</code> or <code>ipa</code> in <code>/etc/sssd/sssd.conf</code> or any of the
-<code>/etc/sssd/sssd.conf.d</code> configuration files, <code>ldap_id_use_start_tls</code>
-must be set to <code>true</code>.
-<br>
-        <br>
-To check if LDAP is configured to use TLS when <code>id_provider</code> is
-set to <code>ldap</code> or <code>ipa</code>, use the following command:
-<pre>$ sudo grep -i ldap_id_use_start_tls /etc/sssd/sssd.conf /etc/sssd/conf.d/*.conf</pre>
-       </td>
 </tr>
 <tr>
 <td>CCE-87756-3</td>
@@ -8630,6 +8348,20 @@ This prevents the system from being accidentally or maliciously booted into a <c
 mode. To do so, run the following command:
 <pre>$ sudo dnf groupremove "X Window System"</pre>
         <pre>$ sudo dnf remove xorg-x11-server-common</pre>
+       </td>
+</tr>
+<tr>
+<td>CCE-88391-8</td>
+<td>Disable graphical user interface</td>
+<td>By removing the following packages,  the system no longer has X Windows installed.
+
+<code>xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</code>
+
+If X Windows is not installed then the system cannot boot into graphical user mode.
+This prevents the system from being accidentally or maliciously booted into a <code>graphical.target</code>
+mode. To do so, run the following command:
+
+<pre>sudo dnf remove xorg-x11-server-Xorg xorg-x11-server-common xorg-x11-server-utils xorg-x11-server-Xwayland</pre>
        </td>
 </tr>
 <tr>
@@ -8923,31 +8655,6 @@ utility to read audit rules during daemon startup, add the following line to the
 bottom of the <code>/etc/audit/audit.rules</code> file:
 <pre>-f <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_audit_failure_mode" use="legacy"></xccdf-1.2:sub>
        </pre>
-      </td>
-</tr>
-<tr>
-<td>CCE-88718-2</td>
-<td>Record Events that Modify User/Group Information</td>
-<td>If the <code>auditd</code> daemon is configured to use the
-<code>augenrules</code> program to read audit rules during daemon startup (the
-default), add the following lines to a file with suffix <code>.rules</code> in the
-directory <code>/etc/audit/rules.d</code>, in order to capture events that modify
-account changes:
-<pre>-w /etc/group -p wa -k audit_rules_usergroup_modification
--w /etc/passwd -p wa -k audit_rules_usergroup_modification
--w /etc/gshadow -p wa -k audit_rules_usergroup_modification
--w /etc/shadow -p wa -k audit_rules_usergroup_modification
--w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
-       <br>
-If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
-utility to read audit rules during daemon startup, add the following lines to
-<code>/etc/audit/audit.rules</code> file, in order to capture events that modify
-account changes:
-<pre>-w /etc/group -p wa -k audit_rules_usergroup_modification
--w /etc/passwd -p wa -k audit_rules_usergroup_modification
--w /etc/gshadow -p wa -k audit_rules_usergroup_modification
--w /etc/shadow -p wa -k audit_rules_usergroup_modification
--w /etc/security/opasswd -p wa -k audit_rules_usergroup_modification</pre>
       </td>
 </tr>
 <tr>
@@ -9325,20 +9032,24 @@ to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b32 -S fremovexattr -F auid=0 -F key=perm_mod</pre>
         <br>
         <br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b64 -S fremovexattr -F auid=0 -F key=perm_mod</pre>
         <br>
         <br>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b32 -S fremovexattr -F auid=0 -F key=perm_mod</pre>
         <br>
         <br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b64 -S fremovexattr -F auid=0 -F key=perm_mod</pre>
        </td>
 </tr>
 <tr>
@@ -9350,14 +9061,18 @@ to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b32 -S fsetxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b64 -S fsetxattr -F auid=0 -F key=perm_mod</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b32 -S fsetxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S fsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b64 -S fsetxattr -F auid=0 -F key=perm_mod</pre>
        </td>
 </tr>
 <tr>
@@ -9391,20 +9106,24 @@ to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b32 -S lremovexattr -F auid=0 -F key=perm_mod</pre>
         <br>
         <br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b64 -S lremovexattr -F auid=0 -F key=perm_mod</pre>
         <br>
         <br>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b32 -S lremovexattr -F auid=0 -F key=perm_mod</pre>
         <br>
         <br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lremovexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b64 -S lremovexattr -F auid=0 -F key=perm_mod</pre>
        </td>
 </tr>
 <tr>
@@ -9416,14 +9135,18 @@ to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b32 -S lsetxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b64 -S lsetxattr -F auid=0 -F key=perm_mod</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b32 -S lsetxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S lsetxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b64 -S lsetxattr -F auid=0 -F key=perm_mod</pre>
        </td>
 </tr>
 <tr>
@@ -9437,20 +9160,24 @@ If the <code>auditd</code> daemon is configured to use the <code>augenrules</cod
 program to read audit rules during daemon startup (the default), add the
 following line to a file with suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b32 -S removexattr -F auid=0 -F key=perm_mod</pre>
         <br>
         <br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b64 -S removexattr -F auid=0 -F key=perm_mod</pre>
         <br>
         <br>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b32 -S removexattr -F auid=0 -F key=perm_mod</pre>
         <br>
         <br>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S removexattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b64 -S removexattr -F auid=0 -F key=perm_mod</pre>
        </td>
 </tr>
 <tr>
@@ -9462,14 +9189,18 @@ to use the <code>augenrules</code> program to read audit rules during daemon
 startup (the default), add the following line to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
 <pre>-a always,exit -F arch=b32 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b32 -S setxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b64 -S setxattr -F auid=0 -F key=perm_mod</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following line to
 <code>/etc/audit/audit.rules</code> file:
 <pre>-a always,exit -F arch=b32 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b32 -S setxattr -F auid=0 -F key=perm_mod</pre>
 If the system is 64 bit then also add the following line:
 <pre>-a always,exit -F arch=b64 -S setxattr -F auid&gt;=1000 -F auid!=unset -F key=perm_mod</pre>
+        <pre>-a always,exit -F arch=b64 -S setxattr -F auid=0 -F key=perm_mod</pre>
        </td>
 </tr>
 <tr>
@@ -9559,11 +9290,11 @@ of the <code>restorecon</code> command for all users and root. If the <code>audi
 daemon is configured to use the <code>augenrules</code> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F path=/usr/sbin/restorecon -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/restorecon -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
@@ -9619,11 +9350,11 @@ of the <code>seunshare</code> command for all users and root. If the <code>audit
 daemon is configured to use the <code>augenrules</code> program to read audit rules
 during daemon startup (the default), add the following lines to a file with suffix
 <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/sbin/seunshare -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/seunshare -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file:
-<pre>-a always,exit -F path=/usr/sbin/seunshare -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/sbin/seunshare -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
@@ -10581,6 +10312,17 @@ form to <code>/etc/audit/audit.rules</code>:
        </td>
 </tr>
 <tr>
+<td>CCE-90738-6</td>
+<td>Ensure auditd Collects Information on the Use of Privileged Commands - insmod</td>
+<td>At a minimum, the audit system should collect the execution of
+privileged commands for all users and root. If the <code>auditd</code> daemon is
+configured to use the <code>augenrules</code> program to read audit rules during
+daemon startup (the default), add a line of the following form to a file with
+suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
+<pre>-w /sbin/insmod -p x -k modules</pre>
+       </td>
+</tr>
+<tr>
 <td>CCE-86727-5</td>
 <td>Ensure auditd Collects Information on the Use of Privileged Commands - kmod</td>
 <td>At a minimum, the audit system should collect the execution of
@@ -10725,11 +10467,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/libexec/pt_chown -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/pt_chown -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/libexec/pt_chown -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/libexec/pt_chown -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
@@ -10811,11 +10553,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/sudoedit -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/sudoedit -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/sudoedit -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>

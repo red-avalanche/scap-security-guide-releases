@@ -1705,7 +1705,7 @@ restrictive mount options, which can help protect programs which use it.
 <tr>
   <td>R28</td>
   <td>CCE-86890-1</td>
-  <td>Ensure tmp.mount Unit Us Enabled</td>
+  <td>Ensure tmp.mount Unit Is Enabled</td>
   <td xml:lang="en-US">
 The <tt>/tmp</tt> directory is a world-writable directory used
 for temporary file storage. This directory is managed by <tt>systemd-tmpfiles</tt>.
@@ -2579,7 +2579,7 @@ command accidentaly, preventing leak of potentially sensitive information.
   <td xml:lang="en-US">
 The sudo <tt>ignore_dot</tt> tag, when specified, will ignore the current directory
 in the PATH environment variable.
-On Red Hat Enterprise Linux 8, <tt>env_reset</tt> is enabled by default
+On Red Hat Enterprise Linux 8, <tt>ignore_dot</tt> is enabled by default
 This should be enabled by making sure that the <tt>ignore_dot</tt> tag exists in
 <tt>/etc/sudoers</tt> configuration file or any sudo configuration snippets
 in <tt>/etc/sudoers.d/</tt>.
@@ -3111,7 +3111,7 @@ ensures exclusive control of the Libreswan configuration.
   <td>CCE-86435-5</td>
   <td>Verify Permissions On /etc/iptables Directory</td>
   <td xml:lang="en-US">
- To properly set the permissions of <code>/etc/iptables</code>, run the command: <pre>$ sudo chmod 0600 /etc/iptables</pre>
+ To properly set the permissions of <code>/etc/iptables</code>, run the command: <pre>$ sudo chmod 0700 /etc/iptables</pre>
   </td>
   <td xml:lang="en-US">
 Setting correct permissions on the /etc/iptables directory is important
@@ -3186,13 +3186,13 @@ ensures exclusive control of the kernel configuration.
   <td>CCE-86373-8</td>
   <td>Verify Group Who Owns /etc/chrony.keys File</td>
   <td xml:lang="en-US">
- To properly set the group owner of <code>/etc/chrony.keys</code>, run the command: <pre>$ sudo chgrp root /etc/chrony.keys</pre>
+ To properly set the group owner of <code>/etc/chrony.keys</code>, run the command: <pre>$ sudo chgrp chrony /etc/chrony.keys</pre>
   </td>
   <td xml:lang="en-US">
-The ownership of the /etc/chrony.keys file by the root group is important
+The ownership of the /etc/chrony.keys file by the chrony group is important
 because this file hosts chrony cryptographic keys. Protection
 of this file is critical for system security. Assigning the ownership to
-root ensures exclusive control of the chrony cryptography keys.
+chrony ensures exclusive control of the chrony cryptography keys.
   </td>
   <td></td>
 </tr>
@@ -3425,10 +3425,10 @@ of initiating changes, including upgrades and modifications.
  To properly set the owner of <code>/etc/chrony.keys</code>, run the command: <pre>$ sudo chown root /etc/chrony.keys </pre>
   </td>
   <td xml:lang="en-US">
-The ownership of the /etc/chrony.keys file by the root user is important
+The ownership of the /etc/chrony.keys file by the chrony user is important
 because this file hosts chrony cryptographic keys. Protection
 of this file is critical for system security. Assigning the ownership to
-root ensures exclusive control of the chrony cryptographic keys.
+chrony ensures exclusive control of the chrony cryptographic keys.
   </td>
   <td></td>
 </tr>
@@ -3695,7 +3695,7 @@ cannot be co-opted.
   <td>CCE-86383-7</td>
   <td>Verify Permissions On /etc/chrony.keys File</td>
   <td xml:lang="en-US">
- To properly set the permissions of <code>/etc/chrony.keys</code>, run the command: <pre>$ sudo chmod 0600 /etc/chrony.keys</pre>
+ To properly set the permissions of <code>/etc/chrony.keys</code>, run the command: <pre>$ sudo chmod 0640 /etc/chrony.keys</pre>
   </td>
   <td xml:lang="en-US">
 Setting correct permissions on the /etc/chrony.keys file is important
@@ -5106,10 +5106,12 @@ fails to start with
   <td xml:lang="en-US">
 
 
+
 Run the following command to determine the current status of the
 <code>chronyd</code> service:
 <pre>$ sudo systemctl is-active chronyd</pre>
 If the service is running, it should return the following: <pre>active</pre>
+
 Note: The <tt>chronyd</tt> daemon is enabled by default.
 <br /><br />
 

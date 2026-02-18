@@ -1462,40 +1462,6 @@ must be set upon account creation.
   <td></td>
 </tr>
 <tr>
-  <td>SI-2(2)</td>
-  <td>N/A</td>
-  <td>Ensure McAfee Endpoint Security for Linux (ENSL) is running</td>
-  <td xml:lang="en-US">
-Install McAfee Endpoint Security for Linux antivirus software
-which is provided for DoD systems and uses signatures to search for the
-presence of viruses on the filesystem.
-  </td>
-  <td xml:lang="en-US">
-Virus scanning software can be used to detect if a system has been compromised by
-computer viruses, as well as to limit their spread to other systems.
-  </td>
-  <td></td>
-</tr>
-<tr>
-  <td>SI-2(2)</td>
-  <td>N/A</td>
-  <td>Install McAfee Endpoint Security for Linux (ENSL)</td>
-  <td xml:lang="en-US">
-Install McAfee Endpoint Security for Linux antivirus software
-which is provided for DoD systems and uses signatures to search for the
-presence of viruses on the filesystem.
-
-The <code>McAfeeTP</code> package can be installed with the following command:
-<pre>
-$ sudo yum install McAfeeTP</pre>
-  </td>
-  <td xml:lang="en-US">
-Virus scanning software can be used to detect if a system has been compromised by
-computer viruses, as well as to limit their spread to other systems.
-  </td>
-  <td></td>
-</tr>
-<tr>
   <td>IA-2(3)<br/>IA-2(4)<br/>IA-2(8)<br/>IA-2(9)<br/>IA-2(11)</td>
   <td>N/A</td>
   <td>Enable the GNOME3 Login Smartcard Authentication</td>
@@ -2478,50 +2444,6 @@ more difficult by ensuring a larger search space.
   <td>var_password_pam_ocredit=1</td>
 </tr>
 <tr>
-  <td>IA-5(f)<br/>IA-5(1)(e)</td>
-  <td>N/A</td>
-  <td>Limit Password Reuse: password-auth</td>
-  <td xml:lang="en-US">
-Do not allow users to reuse recent passwords. This can be accomplished by using the
-<tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
-<br/><br/>
-
-In the file <tt>/etc/pam.d/password-auth</tt>, make sure the parameter <tt>remember</tt> is
-present and it has a value equal to or greater than
-<tt>5</tt>
-<br/><br/>
-For example:
-<pre>password <tt>required</tt> pam_pwhistory.so use_authtok remember=<tt>5</tt></pre>
-  </td>
-  <td xml:lang="en-US">
-Preventing re-use of previous passwords helps ensure that a compromised password is not
-re-used by a user.
-  </td>
-  <td>var_password_pam_remember=5<br/>var_password_pam_remember_control_flag=required</td>
-</tr>
-<tr>
-  <td>IA-5(f)<br/>IA-5(1)(e)</td>
-  <td>N/A</td>
-  <td>Limit Password Reuse: system-auth</td>
-  <td xml:lang="en-US">
-Do not allow users to reuse recent passwords. This can be accomplished by using the
-<tt>remember</tt> option for the <tt>pam_pwhistory</tt> PAM module.
-<br/><br/>
-
-In the file <tt>/etc/pam.d/system-auth</tt>, make sure the parameter <tt>remember</tt> is
-present and it has a value equal to or greater than
-<tt>5</tt>
-<br/><br/>
-For example:
-<pre>password <tt>required</tt> pam_pwhistory.so use_authtok remember=<tt>5</tt></pre>
-  </td>
-  <td xml:lang="en-US">
-Preventing re-use of previous passwords helps ensure that a compromised password is not
-re-used by a user.
-  </td>
-  <td>var_password_pam_remember=5<br/>var_password_pam_remember_control_flag=required</td>
-</tr>
-<tr>
   <td>IA-5(c)<br/>IA-5(1)(a)<br/>CM-6(a)<br/>IA-5(4)</td>
   <td>N/A</td>
   <td>Ensure PAM Enforces Password Requirements - Minimum Uppercase Characters</td>
@@ -2813,7 +2735,7 @@ Edit <tt>/etc/snmp/snmpd.conf</tt>, remove or change the default community strin
 <tt>public</tt> and <tt>private</tt>.
 This profile configures new read-only community string to <tt><tt>changemero</tt></tt> and read-write community string to <tt><tt>changemerw</tt></tt>.
 Once the default community strings have been changed, restart the SNMP service:
-<pre>$ sudo service snmpd restart</pre>
+<pre>$ sudo systemctl restart snmpd</pre>
   </td>
   <td xml:lang="en-US">
 Whether active or not, default simple network management protocol (SNMP) community
@@ -4085,7 +4007,7 @@ incorrect permissions, which can be found with:
 run the following command to determine which package owns it:
 <pre>$ rpm -qf <i>FILENAME</i></pre>
 Next, run the following command to reset its permissions to the correct values:
-<pre>$ sudo rpm --setugids <i>PACKAGENAME</i></pre>
+<pre>$ sudo rpm --restore <i>PACKAGENAME</i></pre>
   </td>
   <td xml:lang="en-US">
 Ownership of binaries and configuration files that is incorrect could allow an unauthorized
@@ -4111,7 +4033,7 @@ package owns it:
 <pre>$ rpm -qf <i>FILENAME</i></pre>
 <br />
 Next, run the following command to reset its permissions to the correct values:
-<pre>$ sudo rpm --setperms <i>PACKAGENAME</i></pre>
+<pre>$ sudo rpm --restore <i>PACKAGENAME</i></pre>
   </td>
   <td xml:lang="en-US">
 Permissions on system binaries and configuration files that are too generous could allow an
@@ -4545,6 +4467,7 @@ For example, add <tt>acl</tt> to the following line in <tt>/etc/aide.conf</tt>:
 AIDE rules can be configured in multiple ways; this is merely one example that is already
 configured by default.
 
+
 The remediation provided with this rule adds <tt>acl</tt> to all rule sets available in
 <tt>/etc/aide.conf</tt>
   </td>
@@ -4566,6 +4489,7 @@ For example, add <tt>xattrs</tt> to the following line in <tt>/etc/aide.conf</tt
 <pre>FIPSR = p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha256</pre>
 AIDE rules can be configured in multiple ways; this is merely one example that is already
 configured by default.
+
 
 The remediation provided with this rule adds <tt>xattrs</tt> to all rule sets available in
 <tt>/etc/aide.conf</tt>
@@ -5680,9 +5604,9 @@ The <tt>TMOUT</tt>
 
 setting in a file loaded by <tt>/etc/profile</tt>or <tt>/etc/bashrc</tt>, e.g.
 <tt>/etc/profile.d/tmout.sh</tt> should read as follows:
-<pre>typeset -xr TMOUT=<tt>15_min</tt></pre>
+<pre>typeset -xr TMOUT=<tt>10_min</tt></pre>
 or
-<pre>declare -xr TMOUT=<tt>15_min</tt></pre>
+<pre>declare -xr TMOUT=<tt>10_min</tt></pre>
 Using the <code>typeset</code> keyword is preferred for wider compatibility with ksh and other shells.
   </td>
   <td xml:lang="en-US">
@@ -5691,7 +5615,7 @@ the window of opportunity for unauthorized personnel to take control of a
 management session enabled on the console or console port that has been
 left unattended.
   </td>
-  <td>var_accounts_tmout=15_min</td>
+  <td>var_accounts_tmout=10_min</td>
 </tr>
 <tr>
   <td>SC-12(2)<br/>SC-12(3)<br/>IA-7<br/>SC-13<br/>CM-6(a)<br/>SC-12</td>

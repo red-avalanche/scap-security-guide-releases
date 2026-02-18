@@ -83,7 +83,7 @@ run the following command to determine which package owns it:
 <pre>$ rpm -qf <i>FILENAME</i>
           </pre>
 Next, run the following command to reset its permissions to the correct values:
-<pre>$ sudo rpm --setugids <i>PACKAGENAME</i>
+<pre>$ sudo rpm --restore <i>PACKAGENAME</i>
           </pre>
          </td>
 </tr>
@@ -103,7 +103,7 @@ package owns it:
           </pre>
           <br>
 Next, run the following command to reset its permissions to the correct values:
-<pre>$ sudo rpm --setperms <i>PACKAGENAME</i>
+<pre>$ sudo rpm --restore <i>PACKAGENAME</i>
           </pre>
          </td>
 </tr>
@@ -187,6 +187,7 @@ For example, add <code>acl</code> to the following line in <code>/etc/aide.conf<
 AIDE rules can be configured in multiple ways; this is merely one example that is already
 configured by default.
 
+
 The remediation provided with this rule adds <code>acl</code> to all rule sets available in
 <code>/etc/aide.conf</code>
          </td>
@@ -201,6 +202,7 @@ For example, add <code>xattrs</code> to the following line in <code>/etc/aide.co
 <pre>FIPSR = p+i+n+u+g+s+m+c+acl+selinux+xattrs+sha256</pre>
 AIDE rules can be configured in multiple ways; this is merely one example that is already
 configured by default.
+
 
 The remediation provided with this rule adds <code>xattrs</code> to all rule sets available in
 <code>/etc/aide.conf</code>
@@ -625,7 +627,7 @@ logical volume at installation time, or migrate it using LVM.</td>
 </tr>
 <tr>
 <td>CCE-86891-9</td>
-<td>Ensure tmp.mount Unit Us Enabled</td>
+<td>Ensure tmp.mount Unit Is Enabled</td>
 <td>The <code>/tmp</code> directory is a world-writable directory used
 for temporary file storage. This directory is managed by <code>systemd-tmpfiles</code>.
 Ensure that the <code>tmp.mount</code> systemd unit is enabled.</td>
@@ -1404,7 +1406,7 @@ $ sudo dnf install subscription-manager</pre>
 <td>Uninstall geolite2-city Package</td>
 <td>The <code>geolite2-city</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase geolite2-city</pre>
+$ sudo dnf remove geolite2-city</pre>
        </td>
 </tr>
 <tr>
@@ -1412,7 +1414,7 @@ $ sudo dnf erase geolite2-city</pre>
 <td>Uninstall geolite2-country Package</td>
 <td>The <code>geolite2-country</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase geolite2-country</pre>
+$ sudo dnf remove geolite2-country</pre>
        </td>
 </tr>
 <tr>
@@ -1420,7 +1422,7 @@ $ sudo dnf erase geolite2-country</pre>
 <td>Uninstall gssproxy Package</td>
 <td>The <code>gssproxy</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase gssproxy</pre>
+$ sudo dnf remove gssproxy</pre>
        </td>
 </tr>
 <tr>
@@ -1428,7 +1430,7 @@ $ sudo dnf erase gssproxy</pre>
 <td>Uninstall iprutils Package</td>
 <td>The <code>iprutils</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase iprutils</pre>
+$ sudo dnf remove iprutils</pre>
        </td>
 </tr>
 <tr>
@@ -1436,7 +1438,7 @@ $ sudo dnf erase iprutils</pre>
 <td>Uninstall krb5-workstation Package</td>
 <td>The <code>krb5-workstation</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase krb5-workstation</pre>
+$ sudo dnf remove krb5-workstation</pre>
        </td>
 </tr>
 <tr>
@@ -1444,7 +1446,7 @@ $ sudo dnf erase krb5-workstation</pre>
 <td>Uninstall tuned Package</td>
 <td>The <code>tuned</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase tuned</pre>
+$ sudo dnf remove tuned</pre>
        </td>
 </tr>
 <tr>
@@ -1597,6 +1599,19 @@ OR:
        </td>
 </tr>
 <tr>
+<td>CCE-86142-7</td>
+<td>Ensure Local Login Warning Banner Is Configured Properly</td>
+<td>To configure the system local login warning banner edit the <code>/etc/issue</code> file.
+The contents of this file is displayed to users prior to login to local terminals.
+Replace the default text with a message compliant with the local site policy.
+The message should not contain information about operating system version,
+release, kernel version or patch level.
+
+The recommended banner text can be tailored in the XCCDF Value <code>xccdf_org.ssgproject.content_value_cis_banner_text</code>:
+<pre><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_cis_banner_text" use="legacy"></xccdf-1.2:sub></pre>
+       </td>
+</tr>
+<tr>
 <td>CCE-86148-4</td>
 <td>Modify the System Login Banner for Remote Connections</td>
 <td>To configure the system login banner edit <code>/etc/issue.net</code>. Replace the
@@ -1635,6 +1650,19 @@ OR:
        </td>
 </tr>
 <tr>
+<td>CCE-86143-5</td>
+<td>Ensure Remote Login Warning Banner Is Configured Properly</td>
+<td>To configure the system remote login warning banner edit the <code>/etc/issue.net</code> file.
+The contents of this file is displayed to users prior to login from remote connections.
+Replace the default text with a message compliant with the local site policy.
+The message should not contain information about operating system version,
+release, kernel version or patch level.
+
+The recommended banner text can be tailored in the XCCDF Value <code>xccdf_org.ssgproject.content_value_cis_banner_text</code>:
+<pre><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_cis_banner_text" use="legacy"></xccdf-1.2:sub></pre>
+       </td>
+</tr>
+<tr>
 <td>CCE-83559-5</td>
 <td>Modify the System Message of the Day Banner</td>
 <td>To configure the system message banner edit <code>/etc/motd</code>. Replace the
@@ -1670,6 +1698,18 @@ OR:
 <br>
         <br>
         <code>I've read &amp; consent to terms in IS user agreem't.</code>
+       </td>
+</tr>
+<tr>
+<td>CCE-86141-9</td>
+<td>Ensure Message Of The Day Is Configured Properly</td>
+<td>To configure the system message of the day banner edit the <code>/etc/motd</code> file.
+Replace the default text with a message compliant with the local site policy.
+The message should not contain information about operating system version,
+release, kernel version or patch level.
+
+The recommended banner text can be tailored in the XCCDF Value <code>xccdf_org.ssgproject.content_value_cis_banner_text</code>:
+<pre><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_cis_banner_text" use="legacy"></xccdf-1.2:sub></pre>
        </td>
 </tr>
 <tr>
@@ -2306,6 +2346,9 @@ in <code>/usr/lib/systemd/system/rescue.service</code>.</td>
 <td>CCE-83599-1</td>
 <td>Install the tmux Package</td>
 <td>To enable console screen locking, install the <code>tmux</code> package.
+The <code>tmux</code> package can be installed with the following command:
+<pre>
+$ sudo dnf install tmux</pre>
 A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity of the information system but does not want to log out because of the temporary nature of the absence.
 The session lock is implemented at the point where session activity can be determined.
 Rather than be forced to wait for a period of time to expire before the user session can be locked, Red Hat Enterprise Linux 9 needs to provide users with the ability to manually invoke a session lock so users can secure their session if it is necessary to temporarily vacate the immediate physical vicinity.
@@ -4977,7 +5020,10 @@ network. The <code>/etc/rsyslog.conf</code> or
 <code>/etc/rsyslog.d/*.conf</code> file should contain a match for the following
 selectors: <code>auth.*</code>, <code>authpriv.*</code>, and <code>daemon.*</code>. If
 not, use the following as an example configuration:
-<pre>auth.*;authpriv.*;daemon.*                              /var/log/secure</pre>
+<code>
+    auth.*;authpriv.*                              /var/log/secure
+    daemon.*                                       /var/log/messages
+</code>
        </td>
 </tr>
 <tr>
@@ -5399,7 +5445,7 @@ exists is an approved organizational connection.</td>
 <tr>
 <td>CCE-86436-3</td>
 <td>Verify Permissions On /etc/iptables Directory</td>
-<td> To properly set the permissions of <code>/etc/iptables</code>, run the command: <pre>$ sudo chmod 0600 /etc/iptables</pre>
+<td> To properly set the permissions of <code>/etc/iptables</code>, run the command: <pre>$ sudo chmod 0700 /etc/iptables</pre>
        </td>
 </tr>
 <tr>
@@ -7654,7 +7700,7 @@ to client processes requesting information. The label translations are defined
 in <code>/etc/selinux/targeted/setrans.conf</code>.
 The <code>mcstrans</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase mcstrans</pre>
+$ sudo dnf remove mcstrans</pre>
       </td>
 </tr>
 <tr>
@@ -7664,7 +7710,7 @@ $ sudo dnf erase mcstrans</pre>
 unauthorized intrusions, and other potential errors.
 The <code>setroubleshoot-plugins</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase setroubleshoot-plugins</pre>
+$ sudo dnf remove setroubleshoot-plugins</pre>
       </td>
 </tr>
 <tr>
@@ -7675,7 +7721,7 @@ denials. The service provides information around configuration errors,
 unauthorized intrusions, and other potential errors.
 The <code>setroubleshoot-server</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase setroubleshoot-server</pre>
+$ sudo dnf remove setroubleshoot-server</pre>
       </td>
 </tr>
 <tr>
@@ -7686,7 +7732,7 @@ denials. The service provides information around configuration errors,
 unauthorized intrusions, and other potential errors.
 The <code>setroubleshoot</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase setroubleshoot</pre>
+$ sudo dnf remove setroubleshoot</pre>
       </td>
 </tr>
 <tr>
@@ -10909,8 +10955,8 @@ The <code>rhnsd</code> service can be disabled with the following command:
 preconfigured times. It is required by almost all systems to perform necessary
 maintenance tasks, such as notifying root of system activity.
 
-The <code>cron</code> service can be enabled with the following command:
-<pre>$ sudo systemctl enable cron.service</pre>
+The <code>crond</code> service can be enabled with the following command:
+<pre>$ sudo systemctl enable crond.service</pre>
       </td>
 </tr>
 <tr>
@@ -11238,7 +11284,7 @@ the dhcp package can be uninstalled.
 
 The <code>dhcp-server</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase dhcp-server</pre>
+$ sudo dnf remove dhcp-server</pre>
        </td>
 </tr>
 <tr>
@@ -11259,7 +11305,7 @@ DHCP (Dynamic Host Configuration Protocol) services.
 <br>
 The <code>dnsmasq</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase dnsmasq</pre>
+$ sudo dnf remove dnsmasq</pre>
       </td>
 </tr>
 <tr>
@@ -11268,7 +11314,7 @@ $ sudo dnf erase dnsmasq</pre>
 <td>The <code>named</code> service is provided by the <code>bind</code> package.
 The <code>bind</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase bind</pre>
+$ sudo dnf remove bind</pre>
        </td>
 </tr>
 <tr>
@@ -11315,13 +11361,13 @@ authentication is necessary (permits anonymous users to connect to a server).
 <br>
 The <code>ftp</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase ftp</pre>
+$ sudo dnf remove ftp</pre>
       </td>
 </tr>
 <tr>
 <td>CCE-84159-3</td>
 <td>Uninstall vsftpd Package</td>
-<td>The <code>vsftpd</code> package can be removed with the following command: <pre> $ sudo dnf erase vsftpd</pre>
+<td>The <code>vsftpd</code> package can be removed with the following command: <pre> $ sudo dnf remove vsftpd</pre>
        </td>
 </tr>
 <tr>
@@ -11368,7 +11414,7 @@ ftp</pre>
 <td>
 The <code>httpd</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase httpd</pre>
+$ sudo dnf remove httpd</pre>
        </td>
 </tr>
 <tr>
@@ -11384,7 +11430,7 @@ The <code>httpd</code> service can be disabled with the following command:
 <td>Uninstall nginx Package</td>
 <td>The <code>nginx</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase nginx</pre>
+$ sudo dnf remove nginx</pre>
        </td>
 </tr>
 <tr>
@@ -11410,7 +11456,7 @@ $ sudo dnf erase nginx</pre>
 <td>Uninstall cyrus-imapd Package</td>
 <td>The <code>cyrus-imapd</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase cyrus-imapd</pre>
+$ sudo dnf remove cyrus-imapd</pre>
        </td>
 </tr>
 <tr>
@@ -11419,7 +11465,7 @@ $ sudo dnf erase cyrus-imapd</pre>
 <td>
 The <code>dovecot</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase dovecot</pre>
+$ sudo dnf remove dovecot</pre>
        </td>
 </tr>
 <tr>
@@ -11437,7 +11483,7 @@ The <code>dovecot</code> service can be disabled with the following command:
 Is this system the Kerberos server? If not, remove the package.
 The <code>krb5-server</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase krb5-server</pre>
+$ sudo dnf remove krb5-server</pre>
 The krb5-server RPM is not installed by default on a Red Hat Enterprise Linux 9
 system. It is needed only by the Kerberos servers, not by the
 clients which use Kerberos for authentication. If the system is not
@@ -11466,7 +11512,7 @@ intended for use as an LDAP Server it should be removed.</td>
 a method for looking up information from a central database.
 The <code>openldap-clients</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase openldap-clients</pre>
+$ sudo dnf remove openldap-clients</pre>
        </td>
 </tr>
 <tr>
@@ -11507,7 +11553,7 @@ $ sudo dnf install s-nail</pre>
 not installed by default.
 The <code>sendmail</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase sendmail</pre>
+$ sudo dnf remove sendmail</pre>
       </td>
 </tr>
 <tr>
@@ -11584,7 +11630,7 @@ to the local network with the following command:
 <td>Uninstall nfs-utils Package</td>
 <td>The <code>nfs-utils</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase nfs-utils</pre>
+$ sudo dnf remove nfs-utils</pre>
       </td>
 </tr>
 <tr>
@@ -11611,7 +11657,7 @@ communicate with the requested service. If the system does not require RPC
 (such as for NFS servers) then this service should be disabled.
 The <code>rpcbind</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase rpcbind</pre>
+$ sudo dnf remove rpcbind</pre>
         </td>
 </tr>
 <tr>
@@ -11785,7 +11831,7 @@ This recommendation only applies if chrony is in use on the system.</td>
 <tr>
 <td>CCE-86374-6</td>
 <td>Verify Group Who Owns /etc/chrony.keys File</td>
-<td> To properly set the group owner of <code>/etc/chrony.keys</code>, run the command: <pre>$ sudo chgrp root /etc/chrony.keys</pre>
+<td> To properly set the group owner of <code>/etc/chrony.keys</code>, run the command: <pre>$ sudo chgrp chrony /etc/chrony.keys</pre>
       </td>
 </tr>
 <tr>
@@ -11797,7 +11843,7 @@ This recommendation only applies if chrony is in use on the system.</td>
 <tr>
 <td>CCE-86384-5</td>
 <td>Verify Permissions On /etc/chrony.keys File</td>
-<td> To properly set the permissions of <code>/etc/chrony.keys</code>, run the command: <pre>$ sudo chmod 0600 /etc/chrony.keys</pre>
+<td> To properly set the permissions of <code>/etc/chrony.keys</code>, run the command: <pre>$ sudo chmod 0640 /etc/chrony.keys</pre>
       </td>
 </tr>
 <tr>
@@ -11828,7 +11874,7 @@ data.</td>
 <td>The rsyncd service can be used to synchronize files between systems over network links.
 The <code>rsync-daemon</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase rsync-daemon</pre>
+$ sudo dnf remove rsync-daemon</pre>
       </td>
 </tr>
 <tr>
@@ -11844,7 +11890,7 @@ The <code>rsyncd</code> service can be disabled with the following command:
 <td>Uninstall xinetd Package</td>
 <td>The <code>xinetd</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase xinetd</pre>
+$ sudo dnf remove xinetd</pre>
        </td>
 </tr>
 <tr>
@@ -11868,7 +11914,7 @@ and receive the distributed configuration files.</td>
 <td>Uninstall ypserv Package</td>
 <td>The <code>ypserv</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase ypserv</pre>
+$ sudo dnf remove ypserv</pre>
        </td>
 </tr>
 <tr>
@@ -11886,7 +11932,7 @@ The <code>ypserv</code> service can be disabled with the following command:
 <td>Uninstall rsh-server Package</td>
 <td>The <code>rsh-server</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase rsh-server</pre>
+$ sudo dnf remove rsh-server</pre>
        </td>
 </tr>
 <tr>
@@ -11942,7 +11988,7 @@ to delete them from any location:
 <tr>
 <td>CCE-84158-5</td>
 <td>Uninstall talk-server Package</td>
-<td>The <code>talk-server</code> package can be removed with the following command: <pre> $ sudo dnf erase talk-server</pre>
+<td>The <code>talk-server</code> package can be removed with the following command: <pre> $ sudo dnf remove talk-server</pre>
        </td>
 </tr>
 <tr>
@@ -11954,7 +12000,7 @@ different systems. Talk is a communication program which copies lines from one
 terminal to the terminal of another user.
 The <code>talk</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase talk</pre>
+$ sudo dnf remove talk</pre>
        </td>
 </tr>
 <tr>
@@ -11962,7 +12008,7 @@ $ sudo dnf erase talk</pre>
 <td>Uninstall telnet-server Package</td>
 <td>The <code>telnet-server</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase telnet-server</pre>
+$ sudo dnf remove telnet-server</pre>
        </td>
 </tr>
 <tr>
@@ -11983,7 +12029,7 @@ The <code>telnet</code> socket can be disabled with the following command:
 <tr>
 <td>CCE-84154-4</td>
 <td>Uninstall tftp-server Package</td>
-<td>The <code>tftp-server</code> package can be removed with the following command: <pre> $ sudo dnf erase tftp-server</pre>
+<td>The <code>tftp-server</code> package can be removed with the following command: <pre> $ sudo dnf remove tftp-server</pre>
        </td>
 </tr>
 <tr>
@@ -12013,7 +12059,7 @@ and ensure the <code>ExecStart</code> line on that file includes the <code>-s</c
 <td>Uninstall CUPS Package</td>
 <td>The <code>cups</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase cups</pre>
+$ sudo dnf remove cups</pre>
       </td>
 </tr>
 <tr>
@@ -12027,7 +12073,7 @@ The <code>cups</code> service can be disabled with the following command:
 <tr>
 <td>CCE-84238-5</td>
 <td>Uninstall squid Package</td>
-<td>The <code>squid</code> package can be removed with the following command: <pre> $ sudo dnf erase squid</pre>
+<td>The <code>squid</code> package can be removed with the following command: <pre> $ sudo dnf remove squid</pre>
        </td>
 </tr>
 <tr>
@@ -12045,7 +12091,7 @@ The <code>squid</code> service can be disabled with the following command:
 Is this system a RADIUS server? If not, remove the package.
 The <code>freeradius</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase freeradius</pre>
+$ sudo dnf remove freeradius</pre>
 The freeradius RPM is not installed by default on a Red Hat Enterprise Linux 9
 system. It is needed only by the RADIUS servers, not by the
 clients which use RADIUS for authentication. If the system is not
@@ -12063,7 +12109,7 @@ The <code>rngd</code> service can be enabled with the following command:
 <tr>
 <td>CCE-84191-6</td>
 <td>Uninstall quagga Package</td>
-<td>The <code>quagga</code> package can be removed with the following command: <pre> $ sudo dnf erase quagga</pre>
+<td>The <code>quagga</code> package can be removed with the following command: <pre> $ sudo dnf remove quagga</pre>
        </td>
 </tr>
 <tr>
@@ -12091,7 +12137,7 @@ packet signing.</td>
 <tr>
 <td>CCE-85979-3</td>
 <td>Uninstall Samba Package</td>
-<td>The <code>samba</code> package can be removed with the following command: <pre> $ sudo dnf erase samba</pre>
+<td>The <code>samba</code> package can be removed with the following command: <pre> $ sudo dnf remove samba</pre>
        </td>
 </tr>
 <tr>
@@ -12109,7 +12155,7 @@ The <code>smb</code> service can be disabled with the following command:
 The <code>net-snmp</code> package provides the snmpd service.
 The <code>net-snmp</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase net-snmp</pre>
+$ sudo dnf remove net-snmp</pre>
        </td>
 </tr>
 <tr>
@@ -12125,7 +12171,7 @@ The <code>snmpd</code> service can be disabled with the following command:
 <td>Ensure SNMP Read Write is disabled</td>
 <td>Edit <code>/etc/snmp/snmpd.conf</code>, remove any <code>rwuser</code> entries.
 Once the read write users have been removed, restart the SNMP service:
-<pre>$ sudo service snmpd restart</pre>
+<pre>$ sudo systemctl restart snmpd</pre>
        </td>
 </tr>
 <tr>
@@ -12133,7 +12179,7 @@ Once the read write users have been removed, restart the SNMP service:
 <td>Configure SNMP Service to Use Only SNMPv3 or Newer</td>
 <td>Edit <code>/etc/snmp/snmpd.conf</code>, removing any references to <code>rocommunity</code>, <code>rwcommunity</code>, or <code>com2sec</code>.
 Upon doing that, restart the SNMP service:
-<pre>$ sudo service snmpd restart</pre>
+<pre>$ sudo systemctl restart snmpd</pre>
        </td>
 </tr>
 <tr>
@@ -12159,7 +12205,7 @@ $ sudo dnf install openssh-server</pre>
 <td>The <code>openssh-server</code> package should be removed.
 The <code>openssh-server</code> package can be removed with the following command:
 <pre>
-$ sudo dnf erase openssh-server</pre>
+$ sudo dnf remove openssh-server</pre>
       </td>
 </tr>
 <tr>
@@ -12240,6 +12286,12 @@ If they are owned by the <code>root</code> user, but by a dedicated group <code>
 <td>Verify Permissions on SSH Server Public *.pub Key Files</td>
 <td> To properly set the permissions of <code>/etc/ssh/*.pub</code>, run the command: <pre>$ sudo chmod 0644 /etc/ssh/*.pub</pre>
       </td>
+</tr>
+<tr>
+<td>CCE-88599-6</td>
+<td>The File /etc/ssh/sshd_config.d/50-redhat.conf Must Exist</td>
+<td>The <code>/etc/ssh/sshd_config.d/50-redhat.conf</code> file must exist as it contains important
+settings to secure SSH.</td>
 </tr>
 <tr>
 <td></td>
@@ -12693,6 +12745,12 @@ To enable X11 Forwarding, add or correct the following line in
        </td>
 </tr>
 <tr>
+<td>CCE-90566-1</td>
+<td>SSHD Must Include System Crypto Policy Config File</td>
+<td>SSHD should follow the system cryptographic policy.
+In order to accomplish this the SSHD configuration should include the system</td>
+</tr>
+<tr>
 <td>CCE-86817-4</td>
 <td>Limit Users' SSH Access</td>
 <td>By default, the SSH configuration allows any user with an account
@@ -12812,16 +12870,13 @@ from a given connection. To set MaxSessions edit
 <tr>
 <td>CCE-87872-8</td>
 <td>Ensure SSH MaxStartups is configured</td>
-<td>The MaxStartups parameter specifies the maximum number of concurrent
-unauthenticated connections to the SSH daemon. Additional connections will be
-dropped until authentication succeeds or the LoginGraceTime expires for a
-connection. To confgure MaxStartups, you should add or correct the following
-line in the
-<code>/etc/ssh/sshd_config</code> file:
+<td>The MaxStartups parameter specifies the maximum number of concurrent unauthenticated
+connections to the SSH daemon. Additional connections will be dropped until authentication
+succeeds or the LoginGraceTime expires for a connection. To configure MaxStartups, you should
+add or edit the following line in the <code>/etc/ssh/sshd_config</code> file:
 <pre>MaxStartups <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_sshd_set_maxstartups" use="legacy"></xccdf-1.2:sub>
         </pre>
-CIS recommends a MaxStartups value of '10:30:60', or more restrictive where
-dictated by site policy.</td>
+       </td>
 </tr>
 <tr>
 <td>CCE-86767-1</td>
@@ -16201,11 +16256,11 @@ privileged commands for all users and root. If the <code>auditd</code> daemon is
 configured to use the <code>augenrules</code> program to read audit rules during
 daemon startup (the default), add a line of the following form to a file with
 suffix <code>.rules</code> in the directory <code>/etc/audit/rules.d</code>:
-<pre>-a always,exit -F path=/usr/bin/at -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/at -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add a line of the following
 form to <code>/etc/audit/audit.rules</code>:
-<pre>-a always,exit -F path=/usr/bin/at -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
+<pre>-a always,exit -F path=/usr/bin/at -F auid&gt;=1000 -F auid!=unset -F key=privileged</pre>
        </td>
 </tr>
 <tr>
@@ -17599,50 +17654,77 @@ The following rules configure audit as described above:
 ## Group add delete modify. This is covered by pam. However, someone could
 ## open a file and directly create or modify a user, so we'll watch group and
 ## gshadow for writes
--a always,exit -F path=/etc/passwd -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
--a always,exit -F path=/etc/shadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
--a always,exit -F path=/etc/group -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
--a always,exit -F path=/etc/gshadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+-a always,exit -F arch=b32 -F path=/etc/passwd -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b64 -F path=/etc/passwd -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b32 -F path=/etc/shadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b64 -F path=/etc/shadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b32 -F path=/etc/group -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+-a always,exit -F arch=b64 -F path=/etc/group -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+-a always,exit -F arch=b32 -F path=/etc/gshadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+-a always,exit -F arch=b64 -F path=/etc/gshadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
 
 
 ## Use of special rights for config changes. This would be use of setuid
 ## programs that relate to user accts. This is not all setuid apps because
 ## requirements are only for ones that affect system configuration.
--a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/sbin/usernetctl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/sbin/seunshare -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/newuidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/newgidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/at -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/sbin/grub2-set-bootflag -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/usernetctl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/usernetctl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/seunshare -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/seunshare -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/newuidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/newuidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/newgidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/newgidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/at -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/at -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/grub2-set-bootflag -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/grub2-set-bootflag -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
 
 ## Privilege escalation via su or sudo. This is entirely handled by pam.
 ## Special case for systemd-run. It is not audit aware, specifically watch it
--a always,exit -F path=/usr/bin/systemd-run -F perm=x -F auid!=unset -F key=maybe-escalation
+-a always,exit -F arch=b32 -F path=/usr/bin/systemd-run -F perm=x -F auid!=unset -F key=maybe-escalation
+-a always,exit -F arch=b64 -F path=/usr/bin/systemd-run -F perm=x -F auid!=unset -F key=maybe-escalation
 ## Special case for pkexec. It is not audit aware, specifically watch it
--a always,exit -F path=/usr/bin/pkexec -F perm=x -F key=maybe-escalation
+-a always,exit -F arch=b32 -F path=/usr/bin/pkexec -F perm=x -F key=maybe-escalation
+-a always,exit -F arch=b64 -F path=/usr/bin/pkexec -F perm=x -F key=maybe-escalation
 
 
 ## Watch for configuration changes to privilege escalation.
--a always,exit -F path=/etc/sudoers -F perm=wa -F key=special-config-changes
--a always,exit -F dir=/etc/sudoers.d/ -F perm=wa -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/etc/sudoers -F perm=wa -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/etc/sudoers -F perm=wa -F key=special-config-changes
+-a always,exit -F arch=b32 -F dir=/etc/sudoers.d/ -F perm=wa -F key=special-config-changes
+-a always,exit -F arch=b64 -F dir=/etc/sudoers.d/ -F perm=wa -F key=special-config-changes
 
 ## Audit log access
--a always,exit -F dir=/var/log/audit/ -F perm=r -F auid&gt;=1000 -F auid!=unset -F key=access-audit-trail
+-a always,exit -F arch=b32 -F dir=/var/log/audit/ -F perm=r -F auid&gt;=1000 -F auid!=unset -F key=access-audit-trail
+-a always,exit -F arch=b64 -F dir=/var/log/audit/ -F perm=r -F auid&gt;=1000 -F auid!=unset -F key=access-audit-trail
 ## Attempts to Alter Process and Session Initiation Information
--a always,exit -F path=/var/run/utmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
--a always,exit -F path=/var/log/btmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
--a always,exit -F path=/var/log/wtmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b32 -F path=/var/run/utmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b64 -F path=/var/run/utmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b32 -F path=/var/log/btmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b64 -F path=/var/log/btmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b32 -F path=/var/log/wtmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b64 -F path=/var/log/wtmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
 
 ## Attempts to modify MAC controls
--a always,exit -F dir=/etc/selinux/ -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=MAC-policy
+-a always,exit -F arch=b32 -F dir=/etc/selinux/ -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=MAC-policy
+-a always,exit -F arch=b64 -F dir=/etc/selinux/ -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=MAC-policy
 
 ## Software updates. This is entirely handled by rpm.
 
@@ -17700,50 +17782,77 @@ The following rules configure audit as described above:
 ## Group add delete modify. This is covered by pam. However, someone could
 ## open a file and directly create or modify a user, so we'll watch group and
 ## gshadow for writes
--a always,exit -F path=/etc/passwd -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
--a always,exit -F path=/etc/shadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
--a always,exit -F path=/etc/group -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
--a always,exit -F path=/etc/gshadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+-a always,exit -F arch=b32 -F path=/etc/passwd -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b64 -F path=/etc/passwd -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b32 -F path=/etc/shadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b64 -F path=/etc/shadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b32 -F path=/etc/group -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+-a always,exit -F arch=b64 -F path=/etc/group -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+-a always,exit -F arch=b32 -F path=/etc/gshadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+-a always,exit -F arch=b64 -F path=/etc/gshadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
 
 
 ## Use of special rights for config changes. This would be use of setuid
 ## programs that relate to user accts. This is not all setuid apps because
 ## requirements are only for ones that affect system configuration.
--a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/sbin/usernetctl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/sbin/seunshare -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/newuidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/newgidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/at -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/sbin/grub2-set-bootflag -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/usernetctl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/usernetctl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/seunshare -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/seunshare -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/newuidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/newuidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/newgidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/newgidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/at -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/at -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/grub2-set-bootflag -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/grub2-set-bootflag -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
 
 ## Privilege escalation via su or sudo. This is entirely handled by pam.
 ## Special case for systemd-run. It is not audit aware, specifically watch it
--a always,exit -F path=/usr/bin/systemd-run -F perm=x -F auid!=unset -F key=maybe-escalation
+-a always,exit -F arch=b32 -F path=/usr/bin/systemd-run -F perm=x -F auid!=unset -F key=maybe-escalation
+-a always,exit -F arch=b64 -F path=/usr/bin/systemd-run -F perm=x -F auid!=unset -F key=maybe-escalation
 ## Special case for pkexec. It is not audit aware, specifically watch it
--a always,exit -F path=/usr/bin/pkexec -F perm=x -F key=maybe-escalation
+-a always,exit -F arch=b32 -F path=/usr/bin/pkexec -F perm=x -F key=maybe-escalation
+-a always,exit -F arch=b64 -F path=/usr/bin/pkexec -F perm=x -F key=maybe-escalation
 
 
 ## Watch for configuration changes to privilege escalation.
--a always,exit -F path=/etc/sudoers -F perm=wa -F key=special-config-changes
--a always,exit -F dir=/etc/sudoers.d/ -F perm=wa -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/etc/sudoers -F perm=wa -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/etc/sudoers -F perm=wa -F key=special-config-changes
+-a always,exit -F arch=b32 -F dir=/etc/sudoers.d/ -F perm=wa -F key=special-config-changes
+-a always,exit -F arch=b64 -F dir=/etc/sudoers.d/ -F perm=wa -F key=special-config-changes
 
 ## Audit log access
--a always,exit -F dir=/var/log/audit/ -F perm=r -F auid&gt;=1000 -F auid!=unset -F key=access-audit-trail
+-a always,exit -F arch=b32 -F dir=/var/log/audit/ -F perm=r -F auid&gt;=1000 -F auid!=unset -F key=access-audit-trail
+-a always,exit -F arch=b64 -F dir=/var/log/audit/ -F perm=r -F auid&gt;=1000 -F auid!=unset -F key=access-audit-trail
 ## Attempts to Alter Process and Session Initiation Information
--a always,exit -F path=/var/run/utmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
--a always,exit -F path=/var/log/btmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
--a always,exit -F path=/var/log/wtmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b32 -F path=/var/run/utmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b64 -F path=/var/run/utmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b32 -F path=/var/log/btmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b64 -F path=/var/log/btmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b32 -F path=/var/log/wtmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b64 -F path=/var/log/wtmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
 
 ## Attempts to modify MAC controls
--a always,exit -F dir=/etc/selinux/ -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=MAC-policy
+-a always,exit -F arch=b32 -F dir=/etc/selinux/ -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=MAC-policy
+-a always,exit -F arch=b64 -F dir=/etc/selinux/ -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=MAC-policy
 
 ## Software updates. This is entirely handled by rpm.
 
@@ -17799,50 +17908,77 @@ The following rules configure audit as described above:
 ## Group add delete modify. This is covered by pam. However, someone could
 ## open a file and directly create or modify a user, so we'll watch group and
 ## gshadow for writes
--a always,exit -F path=/etc/passwd -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
--a always,exit -F path=/etc/shadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
--a always,exit -F path=/etc/group -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
--a always,exit -F path=/etc/gshadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+-a always,exit -F arch=b32 -F path=/etc/passwd -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b64 -F path=/etc/passwd -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b32 -F path=/etc/shadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b64 -F path=/etc/shadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=user-modify
+-a always,exit -F arch=b32 -F path=/etc/group -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+-a always,exit -F arch=b64 -F path=/etc/group -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+-a always,exit -F arch=b32 -F path=/etc/gshadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
+-a always,exit -F arch=b64 -F path=/etc/gshadow -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=group-modify
 
 
 ## Use of special rights for config changes. This would be use of setuid
 ## programs that relate to user accts. This is not all setuid apps because
 ## requirements are only for ones that affect system configuration.
--a always,exit -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/sbin/usernetctl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/sbin/seunshare -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/newuidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/newgidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/bin/at -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
--a always,exit -F path=/usr/sbin/grub2-set-bootflag -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/unix_chkpwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/usernetctl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/usernetctl -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/userhelper -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/seunshare -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/seunshare -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/mount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/newgrp -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/newuidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/newuidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/gpasswd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/newgidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/newgidmap -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/umount -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/passwd -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/crontab -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/bin/at -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/bin/at -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/usr/sbin/grub2-set-bootflag -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/usr/sbin/grub2-set-bootflag -F perm=x -F auid&gt;=1000 -F auid!=unset -F key=special-config-changes
 
 ## Privilege escalation via su or sudo. This is entirely handled by pam.
 ## Special case for systemd-run. It is not audit aware, specifically watch it
--a always,exit -F path=/usr/bin/systemd-run -F perm=x -F auid!=unset -F key=maybe-escalation
+-a always,exit -F arch=b32 -F path=/usr/bin/systemd-run -F perm=x -F auid!=unset -F key=maybe-escalation
+-a always,exit -F arch=b64 -F path=/usr/bin/systemd-run -F perm=x -F auid!=unset -F key=maybe-escalation
 ## Special case for pkexec. It is not audit aware, specifically watch it
--a always,exit -F path=/usr/bin/pkexec -F perm=x -F key=maybe-escalation
+-a always,exit -F arch=b32 -F path=/usr/bin/pkexec -F perm=x -F key=maybe-escalation
+-a always,exit -F arch=b64 -F path=/usr/bin/pkexec -F perm=x -F key=maybe-escalation
 
 
 ## Watch for configuration changes to privilege escalation.
--a always,exit -F path=/etc/sudoers -F perm=wa -F key=special-config-changes
--a always,exit -F dir=/etc/sudoers.d/ -F perm=wa -F key=special-config-changes
+-a always,exit -F arch=b32 -F path=/etc/sudoers -F perm=wa -F key=special-config-changes
+-a always,exit -F arch=b64 -F path=/etc/sudoers -F perm=wa -F key=special-config-changes
+-a always,exit -F arch=b32 -F dir=/etc/sudoers.d/ -F perm=wa -F key=special-config-changes
+-a always,exit -F arch=b64 -F dir=/etc/sudoers.d/ -F perm=wa -F key=special-config-changes
 
 ## Audit log access
--a always,exit -F dir=/var/log/audit/ -F perm=r -F auid&gt;=1000 -F auid!=unset -F key=access-audit-trail
+-a always,exit -F arch=b32 -F dir=/var/log/audit/ -F perm=r -F auid&gt;=1000 -F auid!=unset -F key=access-audit-trail
+-a always,exit -F arch=b64 -F dir=/var/log/audit/ -F perm=r -F auid&gt;=1000 -F auid!=unset -F key=access-audit-trail
 ## Attempts to Alter Process and Session Initiation Information
--a always,exit -F path=/var/run/utmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
--a always,exit -F path=/var/log/btmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
--a always,exit -F path=/var/log/wtmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b32 -F path=/var/run/utmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b64 -F path=/var/run/utmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b32 -F path=/var/log/btmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b64 -F path=/var/log/btmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b32 -F path=/var/log/wtmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
+-a always,exit -F arch=b64 -F path=/var/log/wtmp -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=session
 
 ## Attempts to modify MAC controls
--a always,exit -F dir=/etc/selinux/ -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=MAC-policy
+-a always,exit -F arch=b32 -F dir=/etc/selinux/ -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=MAC-policy
+-a always,exit -F arch=b64 -F dir=/etc/selinux/ -F perm=wa -F auid&gt;=1000 -F auid!=unset -F key=MAC-policy
 
 ## Software updates. This is entirely handled by rpm.
 
