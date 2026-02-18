@@ -1,9 +1,10 @@
-<ds:data-stream-collection xmlns:ds="http://scap.nist.gov/schema/scap/source/1.2" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog" id="scap_org.open-scap_collection_from_xccdf_ssg-jre-xccdf-1.2.xml" schematron-version="1.2">
+<?xml version="1.0"?>
+<ds:data-stream-collection xmlns:ds="http://scap.nist.gov/schema/scap/source/1.2" xmlns:cat="urn:oasis:names:tc:entity:xmlns:xml:catalog" xmlns:xlink="http://www.w3.org/1999/xlink" id="scap_org.open-scap_collection_from_xccdf_ssg-jre-xccdf-1.2.xml" schematron-version="1.2">
   <ds:data-stream id="scap_org.open-scap_datastream_from_xccdf_ssg-jre-xccdf-1.2.xml" scap-version="1.2" use-case="OTHER">
     <ds:dictionaries>
-      <ds:component-ref id="scap_org.open-scap_cref_output--ssg-jre-cpe-dictionary.xml" xlink:href="#scap_org.open-scap_comp_output--ssg-jre-cpe-dictionary.xml">
+      <ds:component-ref id="scap_org.open-scap_cref_ssg-jre-cpe-dictionary.xml" xlink:href="#scap_org.open-scap_comp_ssg-jre-cpe-dictionary.xml">
         <cat:catalog>
-          <cat:uri name="ssg-jre-cpe-oval.xml" uri="#scap_org.open-scap_cref_output--ssg-jre-cpe-oval.xml"/>
+          <cat:uri name="ssg-jre-cpe-oval.xml" uri="#scap_org.open-scap_cref_ssg-jre-cpe-oval.xml"/>
         </cat:catalog>
       </ds:component-ref>
     </ds:dictionaries>
@@ -18,461 +19,472 @@
     <ds:checks>
       <ds:component-ref id="scap_org.open-scap_cref_ssg-jre-oval.xml" xlink:href="#scap_org.open-scap_comp_ssg-jre-oval.xml"/>
       <ds:component-ref id="scap_org.open-scap_cref_ssg-jre-ocil.xml" xlink:href="#scap_org.open-scap_comp_ssg-jre-ocil.xml"/>
-      <ds:component-ref id="scap_org.open-scap_cref_output--ssg-jre-cpe-oval.xml" xlink:href="#scap_org.open-scap_comp_output--ssg-jre-cpe-oval.xml"/>
-    <ds:component-ref id="scap_org.open-scap_cref_output--ssg-jre-oval.xml" xlink:href="#scap_org.open-scap_comp_output--ssg-jre-oval.xml"/></ds:checks>
+      <ds:component-ref id="scap_org.open-scap_cref_ssg-jre-cpe-oval.xml" xlink:href="#scap_org.open-scap_comp_ssg-jre-cpe-oval.xml"/>
+    </ds:checks>
   </ds:data-stream>
-  <ds:component id="scap_org.open-scap_comp_ssg-jre-oval.xml" timestamp="2016-11-28T09:42:05">
+  <ds:component id="scap_org.open-scap_comp_ssg-jre-oval.xml" timestamp="2017-03-29T15:52:38">
     <oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:linux="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
-  <generator>
-    <oval:product_name>python</oval:product_name>
-    <oval:product_version>2.7.12</oval:product_version>
-    <oval:schema_version>5.10</oval:schema_version>
-    <oval:timestamp>2016-11-28T08:42:05</oval:timestamp>
-  </generator>
-  <definitions>
-    <definition class="inventory" id="oval:ssg-installed_app_is_java:def:1" version="1">
-      <metadata>
-        <title>Java Runtime Environment</title>
-        <affected family="unix">
-          <product>Java Runtime Environment (JRE)</product>
-        </affected>
-        <reference ref_id="installed_app_is_java" source="CPE"/>
-        <description>The application installed on the system is Java.</description>
-      <reference ref_id="installed_app_is_java" source="ssg"/></metadata>
-      <criteria operator="OR">
-        <criterion comment="Oracle Java is installed" test_ref="oval:ssg-test_oracle_java:tst:1"/>
-        <criterion comment="Oracle Java from Red Hat" test_ref="oval:ssg-test_oracle_java_rhel:tst:1"/>
-        <criterion comment="IBM Java is installed" test_ref="oval:ssg-test_ibm_java:tst:1"/>
-        <criterion comment="IBM Java from Red Hat" test_ref="oval:ssg-test_ibm_java_rhel:tst:1"/>
-        <criterion comment="Sun Java from Red Hat" test_ref="oval:ssg-test_sun_java_rhel:tst:1"/>
-        <criterion comment="OpenJDK is installed" test_ref="oval:ssg-test_openjdk_java:tst:1"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg-java_jre_deployment_config_exists:def:1" version="1">
-      <metadata>
-        <title>The Java Configuration File Exists</title>
-        <affected family="unix">
-          <product>Java Runtime Environment</product>
-        </affected>
-        <description>A configuration file must be present to deploy properties for JRE.</description>
-      <reference ref_id="java_jre_deployment_config_exists" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Check deployment.config file" test_ref="oval:ssg-test_java_jre_deployment_config_exists:tst:1"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg-java_jre_deployment_config_mandatory:def:1" version="1">
-      <metadata>
-        <title>Configure The Java Deployment Mandatory Setting</title>
-        <affected family="unix">
-          <product>Java Runtime Environment</product>
-        </affected>
-        <description>The configuration file must contain proper keys and values to
+      <generator>
+        <oval:product_name>python</oval:product_name>
+        <oval:product_version>2.7.13</oval:product_version>
+        <oval:schema_version>5.11</oval:schema_version>
+        <oval:timestamp>2017-03-29T13:52:06</oval:timestamp>
+      </generator>
+      <definitions>
+        <definition class="inventory" id="oval:ssg-installed_app_is_java:def:1" version="1">
+          <metadata>
+            <title>Java Runtime Environment</title>
+            <affected family="unix">
+              <product>Java Runtime Environment (JRE)</product>
+            </affected>
+            <reference ref_id="installed_app_is_java" source="CPE"/>
+            <description>The application installed on the system is Java.</description>
+            <reference ref_id="installed_app_is_java" source="ssg"/>
+          </metadata>
+          <criteria operator="OR">
+            <criterion comment="Oracle Java is installed" test_ref="oval:ssg-test_oracle_java:tst:1"/>
+            <criterion comment="Oracle Java from Red Hat" test_ref="oval:ssg-test_oracle_java_rhel:tst:1"/>
+            <criterion comment="IBM Java is installed" test_ref="oval:ssg-test_ibm_java:tst:1"/>
+            <criterion comment="IBM Java from Red Hat" test_ref="oval:ssg-test_ibm_java_rhel:tst:1"/>
+            <criterion comment="Sun Java from Red Hat" test_ref="oval:ssg-test_sun_java_rhel:tst:1"/>
+            <criterion comment="OpenJDK is installed" test_ref="oval:ssg-test_openjdk_java:tst:1"/>
+          </criteria>
+        </definition>
+        <definition class="compliance" id="oval:ssg-java_jre_deployment_config_exists:def:1" version="1">
+          <metadata>
+            <title>The Java Configuration File Exists</title>
+            <affected family="unix">
+              <product>Java Runtime Environment</product>
+            </affected>
+            <description>A configuration file must be present to deploy properties for JRE.</description>
+            <reference ref_id="java_jre_deployment_config_exists" source="ssg"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Check deployment.config file" test_ref="oval:ssg-test_java_jre_deployment_config_exists:tst:1"/>
+          </criteria>
+        </definition>
+        <definition class="compliance" id="oval:ssg-java_jre_deployment_config_mandatory:def:1" version="1">
+          <metadata>
+            <title>Configure The Java Deployment Mandatory Setting</title>
+            <affected family="unix">
+              <product>Java Runtime Environment</product>
+            </affected>
+            <description>The configuration file must contain proper keys and values to
       deploy settings correctly.</description>
-      <reference ref_id="java_jre_deployment_config_mandatory" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Check deployment.system.config.mandatory" test_ref="oval:ssg-test_java_jre_deployment_system_config_mandatory:tst:1"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg-java_jre_deployment_config_properties:def:1" version="1">
-      <metadata>
-        <title>Configure the deployment.properties File Path</title>
-        <affected family="unix">
-          <product>Java Runtime Environment</product>
-        </affected>
-        <description>The configuration file must contain proper keys and values to
+            <reference ref_id="java_jre_deployment_config_mandatory" source="ssg"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Check deployment.system.config.mandatory" test_ref="oval:ssg-test_java_jre_deployment_system_config_mandatory:tst:1"/>
+          </criteria>
+        </definition>
+        <definition class="compliance" id="oval:ssg-java_jre_deployment_config_properties:def:1" version="1">
+          <metadata>
+            <title>Configure the deployment.properties File Path</title>
+            <affected family="unix">
+              <product>Java Runtime Environment</product>
+            </affected>
+            <description>The configuration file must contain proper keys and values to
       deploy settings correctly.</description>
-      <reference ref_id="java_jre_deployment_config_properties" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Check deployment.system.config" test_ref="oval:ssg-test_java_jre_deployment_system_config:tst:1"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg-java_jre_deployment_properties_exists:def:1" version="1">
-      <metadata>
-        <title>The Java Properties File Exists</title>
-        <affected family="unix">
-          <product>Java Runtime Environment</product>
-        </affected>
-        <description>A properties file must be present to hold all the keys
+            <reference ref_id="java_jre_deployment_config_properties" source="ssg"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Check deployment.system.config" test_ref="oval:ssg-test_java_jre_deployment_system_config:tst:1"/>
+          </criteria>
+        </definition>
+        <definition class="compliance" id="oval:ssg-java_jre_deployment_properties_exists:def:1" version="1">
+          <metadata>
+            <title>The Java Properties File Exists</title>
+            <affected family="unix">
+              <product>Java Runtime Environment</product>
+            </affected>
+            <description>A properties file must be present to hold all the keys
       that establish properties within the Java control panel.</description>
-      <reference ref_id="java_jre_deployment_properties_exists" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Check deployment.properties file" test_ref="oval:ssg-test_java_jre_deployment_properties:tst:1"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg-java_jre_untrusted_sources:def:1" version="1">
-      <metadata>
-        <title>Disable Java Execution From Untrusted Sources</title>
-        <affected family="unix">
-          <product>Java Runtime Environment</product>
-        </affected>
-        <description>The dialog to enable users to grant permissions to execute
+            <reference ref_id="java_jre_deployment_properties_exists" source="ssg"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Check deployment.properties file" test_ref="oval:ssg-test_java_jre_deployment_properties:tst:1"/>
+          </criteria>
+        </definition>
+        <definition class="compliance" id="oval:ssg-java_jre_untrusted_sources:def:1" version="1">
+          <metadata>
+            <title>Disable Java Execution From Untrusted Sources</title>
+            <affected family="unix">
+              <product>Java Runtime Environment</product>
+            </affected>
+            <description>The dialog to enable users to grant permissions to execute
       signed content from an un-trusted authority must be disabled.</description>
-      <reference ref_id="java_jre_untrusted_sources" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Check deployment.security.askgrantdialog.notinca" test_ref="oval:ssg-test_java_jre_untrusted_sources:tst:1"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg-java_jre_untrusted_sources_locked:def:1" version="1">
-      <metadata>
-        <title>Disable User Access to Untrusted Sources Setting</title>
-        <affected family="unix">
-          <product>Java Runtime Environment</product>
-        </affected>
-        <description>The dialog enabling users to grant permissions to execute signed
+            <reference ref_id="java_jre_untrusted_sources" source="ssg"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Check deployment.security.askgrantdialog.notinca" test_ref="oval:ssg-test_java_jre_untrusted_sources:tst:1"/>
+          </criteria>
+        </definition>
+        <definition class="compliance" id="oval:ssg-java_jre_untrusted_sources_locked:def:1" version="1">
+          <metadata>
+            <title>Disable User Access to Untrusted Sources Setting</title>
+            <affected family="unix">
+              <product>Java Runtime Environment</product>
+            </affected>
+            <description>The dialog enabling users to grant permissions to execute signed
       content from an un-trusted authority must be locked.</description>
-      <reference ref_id="java_jre_untrusted_sources_locked" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Check deployment.security.askgrantdialog.notinca.locked" test_ref="oval:ssg-test_java_jre_untrusted_sources_locked:tst:1"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg-java_jre_validation_crl:def:1" version="1">
-      <metadata>
-        <title>Enable Revocation Checks for Publisher Certificates</title>
-        <affected family="unix">
-          <product>Java Runtime Environment</product>
-        </affected>
-        <description>The setting for users to check publisher certificates
+            <reference ref_id="java_jre_untrusted_sources_locked" source="ssg"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Check deployment.security.askgrantdialog.notinca.locked" test_ref="oval:ssg-test_java_jre_untrusted_sources_locked:tst:1"/>
+          </criteria>
+        </definition>
+        <definition class="compliance" id="oval:ssg-java_jre_validation_crl:def:1" version="1">
+          <metadata>
+            <title>Enable Revocation Checks for Publisher Certificates</title>
+            <affected family="unix">
+              <product>Java Runtime Environment</product>
+            </affected>
+            <description>The setting for users to check publisher certificates
       for revocation must be enabled.</description>
-      <reference ref_id="java_jre_validation_crl" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Check deployment.security.validation.crl" test_ref="oval:ssg-test_java_jre_validation_crl:tst:1"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg-java_jre_validation_crl_locked:def:1" version="1">
-      <metadata>
-        <title>Disable User Access to Revocation Check Settings</title>
-        <affected family="unix">
-          <product>Java Runtime Environment</product>
-        </affected>
-        <description>The setting enabling users to configure the check publisher
+            <reference ref_id="java_jre_validation_crl" source="ssg"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Check deployment.security.validation.crl" test_ref="oval:ssg-test_java_jre_validation_crl:tst:1"/>
+          </criteria>
+        </definition>
+        <definition class="compliance" id="oval:ssg-java_jre_validation_crl_locked:def:1" version="1">
+          <metadata>
+            <title>Disable User Access to Revocation Check Settings</title>
+            <affected family="unix">
+              <product>Java Runtime Environment</product>
+            </affected>
+            <description>The setting enabling users to configure the check publisher
       certificates for revocation must be locked.</description>
-      <reference ref_id="java_jre_validation_crl_locked" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Check deployment.security.validation.crl.locked" test_ref="oval:ssg-test_java_jre_validation_crl_locked:tst:1"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg-java_jre_validation_ocsp:def:1" version="1">
-      <metadata>
-        <title>Enable Online Certificate Validation</title>
-        <affected family="unix">
-          <product>Java Runtime Environment</product>
-        </affected>
-        <description>The option to enable online certificate validation
+            <reference ref_id="java_jre_validation_crl_locked" source="ssg"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Check deployment.security.validation.crl.locked" test_ref="oval:ssg-test_java_jre_validation_crl_locked:tst:1"/>
+          </criteria>
+        </definition>
+        <definition class="compliance" id="oval:ssg-java_jre_validation_ocsp:def:1" version="1">
+          <metadata>
+            <title>Enable Online Certificate Validation</title>
+            <affected family="unix">
+              <product>Java Runtime Environment</product>
+            </affected>
+            <description>The option to enable online certificate validation
       must be enabled.</description>
-      <reference ref_id="java_jre_validation_ocsp" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Check deployment.security.validation.ocsp" test_ref="oval:ssg-test_java_jre_validation_ocsp:tst:1"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg-java_jre_validation_ocsp_locked:def:1" version="1">
-      <metadata>
-        <title>Disable User Access to Online Certificate Validation Settings</title>
-        <affected family="unix">
-          <product>Java Runtime Environment</product>
-        </affected>
-        <description>The option to enable online certificate
+            <reference ref_id="java_jre_validation_ocsp" source="ssg"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Check deployment.security.validation.ocsp" test_ref="oval:ssg-test_java_jre_validation_ocsp:tst:1"/>
+          </criteria>
+        </definition>
+        <definition class="compliance" id="oval:ssg-java_jre_validation_ocsp_locked:def:1" version="1">
+          <metadata>
+            <title>Disable User Access to Online Certificate Validation Settings</title>
+            <affected family="unix">
+              <product>Java Runtime Environment</product>
+            </affected>
+            <description>The option to enable online certificate
       validation must be locked.</description>
-      <reference ref_id="java_jre_validation_ocsp_locked" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Check deployment.security.validation.ocsp.locked" test_ref="oval:ssg-test_java_jre_validation_ocsp_locked:tst:1"/>
-      </criteria>
-    </definition>
-  </definitions>
-  <tests>
-    <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="Oracle JRE is installed" id="oval:ssg-test_oracle_java:tst:1" version="1">
-      <linux:object object_ref="oval:ssg-obj_oracle_java:obj:1"/>
-    </linux:rpminfo_test>
-    <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="Oracle JRE from Red Hat is installed" id="oval:ssg-test_oracle_java_rhel:tst:1" version="1">
-      <linux:object object_ref="oval:ssg-obj_oracle_java_rhel:obj:1"/>
-    </linux:rpminfo_test>
-    <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="IBM JRE is installed" id="oval:ssg-test_ibm_java:tst:1" version="1">
-      <linux:object object_ref="oval:ssg-obj_ibm_java:obj:1"/>
-      <linux:state state_ref="oval:ssg-state_ibm_java:ste:1"/>
-    </linux:rpminfo_test>
-    <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="IBM JRE from Red Hat is installed" id="oval:ssg-test_ibm_java_rhel:tst:1" version="1">
-      <linux:object object_ref="oval:ssg-obj_ibm_java_rhel:obj:1"/>
-      <linux:state state_ref="oval:ssg-state_ibm_java_rhel:ste:1"/>
-    </linux:rpminfo_test>
-    <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="Sun JRE from Red Hat is installed" id="oval:ssg-test_sun_java_rhel:tst:1" version="1">
-      <linux:object object_ref="oval:ssg-obj_sun_java_rhel:obj:1"/>
-    </linux:rpminfo_test>
-    <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="Red Hat OpenJDK is installed" id="oval:ssg-test_openjdk_java:tst:1" version="1">
-      <linux:object object_ref="oval:ssg-obj_openjdk_java:obj:1"/>
-    </linux:rpminfo_test>
-    <unix:file_test check="all" comment="Check deployment.config file" id="oval:ssg-test_java_jre_deployment_config_exists:tst:1" version="1">
-      <unix:object object_ref="oval:ssg-object_java_jre_deployment_config_exists:obj:1"/>
-    </unix:file_test>
-    <ind:textfilecontent54_test check="all" comment="Check deployment.system.config.mandatory" id="oval:ssg-test_java_jre_deployment_system_config_mandatory:tst:1" version="1">
-      <ind:object object_ref="oval:ssg-object_java_jre_deployment_system_config_mandatory:obj:1"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check deployment.system.config" id="oval:ssg-test_java_jre_deployment_system_config:tst:1" version="1">
-      <ind:object object_ref="oval:ssg-object_java_jre_deployment_system_config:obj:1"/>
-    </ind:textfilecontent54_test>
-    <unix:file_test check="all" comment="Check deployment.properties file" id="oval:ssg-test_java_jre_deployment_properties:tst:1" version="1">
-      <unix:object object_ref="oval:ssg-object_java_jre_deployment_properties:obj:1"/>
-    </unix:file_test>
-    <ind:textfilecontent54_test check="all" comment="Check deployment.security.askgrantdialog.notinca" id="oval:ssg-test_java_jre_untrusted_sources:tst:1" version="1">
-      <ind:object object_ref="oval:ssg-object_java_jre_untrusted_sources:obj:1"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check deployment.security.askgrantdialog.notinca.lock" id="oval:ssg-test_java_jre_untrusted_sources_locked:tst:1" version="1">
-      <ind:object object_ref="oval:ssg-object_java_jre_untrusted_sources_locked:obj:1"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check deployment.security.validation.crl" id="oval:ssg-test_java_jre_validation_crl:tst:1" version="1">
-      <ind:object object_ref="oval:ssg-object_java_jre_validation_crl:obj:1"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check deployment.security.validation.crl.locked" id="oval:ssg-test_java_jre_validation_crl_locked:tst:1" version="1">
-      <ind:object object_ref="oval:ssg-object_java_jre_validation_crl_locked:obj:1"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check deployment.security.validation.ocsp" id="oval:ssg-test_java_jre_validation_ocsp:tst:1" version="1">
-      <ind:object object_ref="oval:ssg-object_java_jre_validation_ocsp:obj:1"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check deployment.security.validation.ocsp.locked" id="oval:ssg-test_java_jre_validation_ocsp_locked:tst:1" version="1">
-      <ind:object object_ref="oval:ssg-object_java_jre_validation_ocsp_locked:obj:1"/>
-    </ind:textfilecontent54_test>
-  </tests>
-  <objects>
-    <linux:rpminfo_object id="oval:ssg-obj_oracle_java:obj:1" version="1">
-      <linux:name>jre</linux:name>
-    </linux:rpminfo_object>
-    <linux:rpminfo_object id="oval:ssg-obj_oracle_java_rhel:obj:1" version="1">
-      <linux:name datatype="string" operation="pattern match">^java.*oracle.*$</linux:name>
-    </linux:rpminfo_object>
-    <linux:rpminfo_object id="oval:ssg-obj_ibm_java:obj:1" version="1">
-      <linux:name datatype="string" operation="pattern match">^ibm-java.*$</linux:name>
-    </linux:rpminfo_object>
-    <linux:rpminfo_object id="oval:ssg-obj_ibm_java_rhel:obj:1" version="1">
-      <linux:name datatype="string" operation="pattern match">^java.*ibm.*$</linux:name>
-    </linux:rpminfo_object>
-    <linux:rpminfo_object id="oval:ssg-obj_sun_java_rhel:obj:1" version="1">
-      <linux:name datatype="string" operation="pattern match">^java.*sun.*$</linux:name>
-    </linux:rpminfo_object>
-    <linux:rpminfo_object id="oval:ssg-obj_openjdk_java:obj:1" version="1">
-      <linux:name datatype="string" operation="pattern match">^java.*openjdk.*$</linux:name>
-    </linux:rpminfo_object>
-    <unix:file_object id="oval:ssg-object_java_jre_deployment_config_exists:obj:1" version="1">
-      <unix:filepath>/etc/.java/deployment/deployment.config</unix:filepath>
-    </unix:file_object>
-    <ind:textfilecontent54_object id="oval:ssg-object_java_jre_deployment_system_config_mandatory:obj:1" version="1">
-      <ind:filepath>/etc/.java/deployment/deployment.config</ind:filepath>
-      <ind:pattern operation="pattern match">^deployment.system.config.mandatory=false$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
-    <ind:textfilecontent54_object id="oval:ssg-object_java_jre_deployment_system_config:obj:1" version="1">
-      <ind:filepath>/etc/.java/deployment/deployment.config</ind:filepath>
-      <ind:pattern operation="pattern match">^deployment.system.config=file:///etc/.java/deployment/deployment.properties$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
-    <unix:file_object id="oval:ssg-object_java_jre_deployment_properties:obj:1" version="1">
-      <unix:filepath>/etc/.java/deployment/deployment.properties</unix:filepath>
-    </unix:file_object>
-    <ind:textfilecontent54_object id="oval:ssg-object_java_jre_untrusted_sources:obj:1" version="1">
-      <ind:filepath>/etc/.java/deployment/deployment.properties</ind:filepath>
-      <ind:pattern operation="pattern match">^deployment.security.askgrantdialog.notinca=false$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
-    <ind:textfilecontent54_object id="oval:ssg-object_java_jre_untrusted_sources_locked:obj:1" version="1">
-      <ind:filepath>/etc/.java/deployment/deployment.properties</ind:filepath>
-      <ind:pattern operation="pattern match">^deployment.security.askgrantdialog.notinca.locked$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
-    <ind:textfilecontent54_object id="oval:ssg-object_java_jre_validation_crl:obj:1" version="1">
-      <ind:filepath>/etc/.java/deployment/deployment.properties</ind:filepath>
-      <ind:pattern operation="pattern match">^deployment.security.validation.crl=true$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
-    <ind:textfilecontent54_object id="oval:ssg-object_java_jre_validation_crl_locked:obj:1" version="1">
-      <ind:filepath>/etc/.java/deployment/deployment.properties</ind:filepath>
-      <ind:pattern operation="pattern match">^deployment.security.validation.crl.locked$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
-    <ind:textfilecontent54_object id="oval:ssg-object_java_jre_validation_ocsp:obj:1" version="1">
-      <ind:filepath>/etc/.java/deployment/deployment.properties</ind:filepath>
-      <ind:pattern operation="pattern match">^deployment.security.validation.ocsp=true$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
-    <ind:textfilecontent54_object id="oval:ssg-object_java_jre_validation_ocsp_locked:obj:1" version="1">
-      <ind:filepath>/etc/.java/deployment/deployment.properties</ind:filepath>
-      <ind:pattern operation="pattern match">^deployment.security.validation.ocsp.locked$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
-  </objects>
-  <states>
-    <linux:rpminfo_state id="oval:ssg-state_ibm_java:ste:1" version="1">
-      <linux:evr datatype="evr_string" operation="greater than or equal">.*1.6.0.*</linux:evr>
-    </linux:rpminfo_state>
-    <linux:rpminfo_state id="oval:ssg-state_ibm_java_rhel:ste:1" version="1">
-      <linux:evr datatype="evr_string" operation="greater than or equal">.*1.6.0.*</linux:evr>
-    </linux:rpminfo_state>
-  </states>
-</oval_definitions>
+            <reference ref_id="java_jre_validation_ocsp_locked" source="ssg"/>
+          </metadata>
+          <criteria>
+            <criterion comment="Check deployment.security.validation.ocsp.locked" test_ref="oval:ssg-test_java_jre_validation_ocsp_locked:tst:1"/>
+          </criteria>
+        </definition>
+      </definitions>
+      <tests>
+        <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="Oracle JRE is installed" id="oval:ssg-test_oracle_java:tst:1" version="1">
+          <linux:object object_ref="oval:ssg-obj_oracle_java:obj:1"/>
+        </linux:rpminfo_test>
+        <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="Oracle JRE from Red Hat is installed" id="oval:ssg-test_oracle_java_rhel:tst:1" version="1">
+          <linux:object object_ref="oval:ssg-obj_oracle_java_rhel:obj:1"/>
+        </linux:rpminfo_test>
+        <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="IBM JRE is installed" id="oval:ssg-test_ibm_java:tst:1" version="1">
+          <linux:object object_ref="oval:ssg-obj_ibm_java:obj:1"/>
+          <linux:state state_ref="oval:ssg-state_ibm_java:ste:1"/>
+        </linux:rpminfo_test>
+        <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="IBM JRE from Red Hat is installed" id="oval:ssg-test_ibm_java_rhel:tst:1" version="1">
+          <linux:object object_ref="oval:ssg-obj_ibm_java_rhel:obj:1"/>
+          <linux:state state_ref="oval:ssg-state_ibm_java_rhel:ste:1"/>
+        </linux:rpminfo_test>
+        <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="Sun JRE from Red Hat is installed" id="oval:ssg-test_sun_java_rhel:tst:1" version="1">
+          <linux:object object_ref="oval:ssg-obj_sun_java_rhel:obj:1"/>
+        </linux:rpminfo_test>
+        <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="Red Hat OpenJDK is installed" id="oval:ssg-test_openjdk_java:tst:1" version="1">
+          <linux:object object_ref="oval:ssg-obj_openjdk_java:obj:1"/>
+        </linux:rpminfo_test>
+        <unix:file_test check="all" comment="Check deployment.config file" id="oval:ssg-test_java_jre_deployment_config_exists:tst:1" version="1">
+          <unix:object object_ref="oval:ssg-object_java_jre_deployment_config_exists:obj:1"/>
+        </unix:file_test>
+        <ind:textfilecontent54_test check="all" comment="Check deployment.system.config.mandatory" id="oval:ssg-test_java_jre_deployment_system_config_mandatory:tst:1" version="1">
+          <ind:object object_ref="oval:ssg-object_java_jre_deployment_system_config_mandatory:obj:1"/>
+        </ind:textfilecontent54_test>
+        <ind:textfilecontent54_test check="all" comment="Check deployment.system.config" id="oval:ssg-test_java_jre_deployment_system_config:tst:1" version="1">
+          <ind:object object_ref="oval:ssg-object_java_jre_deployment_system_config:obj:1"/>
+        </ind:textfilecontent54_test>
+        <unix:file_test check="all" comment="Check deployment.properties file" id="oval:ssg-test_java_jre_deployment_properties:tst:1" version="1">
+          <unix:object object_ref="oval:ssg-object_java_jre_deployment_properties:obj:1"/>
+        </unix:file_test>
+        <ind:textfilecontent54_test check="all" comment="Check deployment.security.askgrantdialog.notinca" id="oval:ssg-test_java_jre_untrusted_sources:tst:1" version="1">
+          <ind:object object_ref="oval:ssg-object_java_jre_untrusted_sources:obj:1"/>
+        </ind:textfilecontent54_test>
+        <ind:textfilecontent54_test check="all" comment="Check deployment.security.askgrantdialog.notinca.lock" id="oval:ssg-test_java_jre_untrusted_sources_locked:tst:1" version="1">
+          <ind:object object_ref="oval:ssg-object_java_jre_untrusted_sources_locked:obj:1"/>
+        </ind:textfilecontent54_test>
+        <ind:textfilecontent54_test check="all" comment="Check deployment.security.validation.crl" id="oval:ssg-test_java_jre_validation_crl:tst:1" version="1">
+          <ind:object object_ref="oval:ssg-object_java_jre_validation_crl:obj:1"/>
+        </ind:textfilecontent54_test>
+        <ind:textfilecontent54_test check="all" comment="Check deployment.security.validation.crl.locked" id="oval:ssg-test_java_jre_validation_crl_locked:tst:1" version="1">
+          <ind:object object_ref="oval:ssg-object_java_jre_validation_crl_locked:obj:1"/>
+        </ind:textfilecontent54_test>
+        <ind:textfilecontent54_test check="all" comment="Check deployment.security.validation.ocsp" id="oval:ssg-test_java_jre_validation_ocsp:tst:1" version="1">
+          <ind:object object_ref="oval:ssg-object_java_jre_validation_ocsp:obj:1"/>
+        </ind:textfilecontent54_test>
+        <ind:textfilecontent54_test check="all" comment="Check deployment.security.validation.ocsp.locked" id="oval:ssg-test_java_jre_validation_ocsp_locked:tst:1" version="1">
+          <ind:object object_ref="oval:ssg-object_java_jre_validation_ocsp_locked:obj:1"/>
+        </ind:textfilecontent54_test>
+      </tests>
+      <objects>
+        <linux:rpminfo_object id="oval:ssg-obj_oracle_java:obj:1" version="1">
+          <linux:name>jre</linux:name>
+        </linux:rpminfo_object>
+        <linux:rpminfo_object id="oval:ssg-obj_oracle_java_rhel:obj:1" version="1">
+          <linux:name datatype="string" operation="pattern match">^java.*oracle.*$</linux:name>
+        </linux:rpminfo_object>
+        <linux:rpminfo_object id="oval:ssg-obj_ibm_java:obj:1" version="1">
+          <linux:name datatype="string" operation="pattern match">^ibm-java.*$</linux:name>
+        </linux:rpminfo_object>
+        <linux:rpminfo_object id="oval:ssg-obj_ibm_java_rhel:obj:1" version="1">
+          <linux:name datatype="string" operation="pattern match">^java.*ibm.*$</linux:name>
+        </linux:rpminfo_object>
+        <linux:rpminfo_object id="oval:ssg-obj_sun_java_rhel:obj:1" version="1">
+          <linux:name datatype="string" operation="pattern match">^java.*sun.*$</linux:name>
+        </linux:rpminfo_object>
+        <linux:rpminfo_object id="oval:ssg-obj_openjdk_java:obj:1" version="1">
+          <linux:name datatype="string" operation="pattern match">^java.*openjdk.*$</linux:name>
+        </linux:rpminfo_object>
+        <unix:file_object id="oval:ssg-object_java_jre_deployment_config_exists:obj:1" version="1">
+          <unix:filepath>/etc/.java/deployment/deployment.config</unix:filepath>
+        </unix:file_object>
+        <ind:textfilecontent54_object id="oval:ssg-object_java_jre_deployment_system_config_mandatory:obj:1" version="1">
+          <ind:filepath>/etc/.java/deployment/deployment.config</ind:filepath>
+          <ind:pattern operation="pattern match">^deployment.system.config.mandatory=false$</ind:pattern>
+          <ind:instance datatype="int">1</ind:instance>
+        </ind:textfilecontent54_object>
+        <ind:textfilecontent54_object id="oval:ssg-object_java_jre_deployment_system_config:obj:1" version="1">
+          <ind:filepath>/etc/.java/deployment/deployment.config</ind:filepath>
+          <ind:pattern operation="pattern match">^deployment.system.config=file:///etc/.java/deployment/deployment.properties$</ind:pattern>
+          <ind:instance datatype="int">1</ind:instance>
+        </ind:textfilecontent54_object>
+        <unix:file_object id="oval:ssg-object_java_jre_deployment_properties:obj:1" version="1">
+          <unix:filepath>/etc/.java/deployment/deployment.properties</unix:filepath>
+        </unix:file_object>
+        <ind:textfilecontent54_object id="oval:ssg-object_java_jre_untrusted_sources:obj:1" version="1">
+          <ind:filepath>/etc/.java/deployment/deployment.properties</ind:filepath>
+          <ind:pattern operation="pattern match">^deployment.security.askgrantdialog.notinca=false$</ind:pattern>
+          <ind:instance datatype="int">1</ind:instance>
+        </ind:textfilecontent54_object>
+        <ind:textfilecontent54_object id="oval:ssg-object_java_jre_untrusted_sources_locked:obj:1" version="1">
+          <ind:filepath>/etc/.java/deployment/deployment.properties</ind:filepath>
+          <ind:pattern operation="pattern match">^deployment.security.askgrantdialog.notinca.locked$</ind:pattern>
+          <ind:instance datatype="int">1</ind:instance>
+        </ind:textfilecontent54_object>
+        <ind:textfilecontent54_object id="oval:ssg-object_java_jre_validation_crl:obj:1" version="1">
+          <ind:filepath>/etc/.java/deployment/deployment.properties</ind:filepath>
+          <ind:pattern operation="pattern match">^deployment.security.validation.crl=true$</ind:pattern>
+          <ind:instance datatype="int">1</ind:instance>
+        </ind:textfilecontent54_object>
+        <ind:textfilecontent54_object id="oval:ssg-object_java_jre_validation_crl_locked:obj:1" version="1">
+          <ind:filepath>/etc/.java/deployment/deployment.properties</ind:filepath>
+          <ind:pattern operation="pattern match">^deployment.security.validation.crl.locked$</ind:pattern>
+          <ind:instance datatype="int">1</ind:instance>
+        </ind:textfilecontent54_object>
+        <ind:textfilecontent54_object id="oval:ssg-object_java_jre_validation_ocsp:obj:1" version="1">
+          <ind:filepath>/etc/.java/deployment/deployment.properties</ind:filepath>
+          <ind:pattern operation="pattern match">^deployment.security.validation.ocsp=true$</ind:pattern>
+          <ind:instance datatype="int">1</ind:instance>
+        </ind:textfilecontent54_object>
+        <ind:textfilecontent54_object id="oval:ssg-object_java_jre_validation_ocsp_locked:obj:1" version="1">
+          <ind:filepath>/etc/.java/deployment/deployment.properties</ind:filepath>
+          <ind:pattern operation="pattern match">^deployment.security.validation.ocsp.locked$</ind:pattern>
+          <ind:instance datatype="int">1</ind:instance>
+        </ind:textfilecontent54_object>
+      </objects>
+      <states>
+        <linux:rpminfo_state id="oval:ssg-state_ibm_java:ste:1" version="1">
+          <linux:evr datatype="evr_string" operation="greater than or equal">.*1.6.0.*</linux:evr>
+        </linux:rpminfo_state>
+        <linux:rpminfo_state id="oval:ssg-state_ibm_java_rhel:ste:1" version="1">
+          <linux:evr datatype="evr_string" operation="greater than or equal">.*1.6.0.*</linux:evr>
+        </linux:rpminfo_state>
+      </states>
+    </oval_definitions>
   </ds:component>
-  <ds:component id="scap_org.open-scap_comp_ssg-jre-ocil.xml" timestamp="2016-11-28T09:42:05">
-    <ocil xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://scap.nist.gov/schema/ocil/2.0" xmlns:xhtml="http://www.w3.org/1999/xhtml">
-  <generator>
-    <schema_version>2.0</schema_version>
-    <timestamp>2016-11-28T09:40:04+01:00</timestamp>
-  </generator>
-  <questionnaires>
-    <questionnaire id="ocil:ssg-java_jre_deployment_config_exists_ocil:questionnaire:1">
-      <title>The Java Configuration File Exists</title>
-      <actions>
-        <test_action_ref>ocil:ssg-java_jre_deployment_config_exists_action:testaction:1</test_action_ref>
-      </actions>
-    </questionnaire>
-    <questionnaire id="ocil:ssg-java_jre_deployment_config_properties_ocil:questionnaire:1">
-      <title>Configure the deployment.properties File Path</title>
-      <actions>
-        <test_action_ref>ocil:ssg-java_jre_deployment_config_properties_action:testaction:1</test_action_ref>
-      </actions>
-    </questionnaire>
-    <questionnaire id="ocil:ssg-java_jre_deployment_config_mandatory_ocil:questionnaire:1">
-      <title>Configure The Java Deployment Mandatory Setting</title>
-      <actions>
-        <test_action_ref>ocil:ssg-java_jre_deployment_config_mandatory_action:testaction:1</test_action_ref>
-      </actions>
-    </questionnaire>
-    <questionnaire id="ocil:ssg-java_jre_deployment_properties_exists_ocil:questionnaire:1">
-      <title>The Java Properties File Exists</title>
-      <actions>
-        <test_action_ref>ocil:ssg-java_jre_deployment_properties_exists_action:testaction:1</test_action_ref>
-      </actions>
-    </questionnaire>
-    <questionnaire id="ocil:ssg-java_jre_untrusted_sources_ocil:questionnaire:1">
-      <title>Disable Java Execution From Untrusted Sources</title>
-      <actions>
-        <test_action_ref>ocil:ssg-java_jre_untrusted_sources_action:testaction:1</test_action_ref>
-      </actions>
-    </questionnaire>
-    <questionnaire id="ocil:ssg-java_jre_untrusted_sources_locked_ocil:questionnaire:1">
-      <title>Disable User Access to Untrusted Sources Settings</title>
-      <actions>
-        <test_action_ref>ocil:ssg-java_jre_untrusted_sources_locked_action:testaction:1</test_action_ref>
-      </actions>
-    </questionnaire>
-    <questionnaire id="ocil:ssg-java_jre_validation_crl_ocil:questionnaire:1">
-      <title>Enable Revocation Checks for Publisher Certificates</title>
-      <actions>
-        <test_action_ref>ocil:ssg-java_jre_validation_crl_action:testaction:1</test_action_ref>
-      </actions>
-    </questionnaire>
-    <questionnaire id="ocil:ssg-java_jre_validation_crl_locked_ocil:questionnaire:1">
-      <title>Disable User Access to Revocation Check Settings</title>
-      <actions>
-        <test_action_ref>ocil:ssg-java_jre_validation_crl_locked_action:testaction:1</test_action_ref>
-      </actions>
-    </questionnaire>
-    <questionnaire id="ocil:ssg-java_jre_validation_ocsp_ocil:questionnaire:1">
-      <title>Enable Online Certificate Validation</title>
-      <actions>
-        <test_action_ref>ocil:ssg-java_jre_validation_ocsp_action:testaction:1</test_action_ref>
-      </actions>
-    </questionnaire>
-    <questionnaire id="ocil:ssg-java_jre_validation_ocsp_locked_ocil:questionnaire:1">
-      <title>Disable User Access to Online Certificate Validation Settings</title>
-      <actions>
-        <test_action_ref>ocil:ssg-java_jre_validation_ocsp_locked_action:testaction:1</test_action_ref>
-      </actions>
-    </questionnaire>
-    <questionnaire id="ocil:ssg-java_jre_updated_ocil:questionnaire:1">
-      <title>Ensure Java Patches Installed</title>
-      <actions>
-        <test_action_ref>ocil:ssg-java_jre_updated_action:testaction:1</test_action_ref>
-      </actions>
-    </questionnaire>
-  </questionnaires>
-  <test_actions>
-    <boolean_question_test_action id="ocil:ssg-java_jre_deployment_config_exists_action:testaction:1" question_ref="ocil:ssg-java_jre_deployment_config_exists_question:question:1">
-      <when_true>
-        <result>PASS</result>
-      </when_true>
-      <when_false>
-        <result>FAIL</result>
-      </when_false>
-    </boolean_question_test_action>
-    <boolean_question_test_action id="ocil:ssg-java_jre_deployment_config_properties_action:testaction:1" question_ref="ocil:ssg-java_jre_deployment_config_properties_question:question:1">
-      <when_true>
-        <result>PASS</result>
-      </when_true>
-      <when_false>
-        <result>FAIL</result>
-      </when_false>
-    </boolean_question_test_action>
-    <boolean_question_test_action id="ocil:ssg-java_jre_deployment_config_mandatory_action:testaction:1" question_ref="ocil:ssg-java_jre_deployment_config_mandatory_question:question:1">
-      <when_true>
-        <result>PASS</result>
-      </when_true>
-      <when_false>
-        <result>FAIL</result>
-      </when_false>
-    </boolean_question_test_action>
-    <boolean_question_test_action id="ocil:ssg-java_jre_deployment_properties_exists_action:testaction:1" question_ref="ocil:ssg-java_jre_deployment_properties_exists_question:question:1">
-      <when_true>
-        <result>PASS</result>
-      </when_true>
-      <when_false>
-        <result>FAIL</result>
-      </when_false>
-    </boolean_question_test_action>
-    <boolean_question_test_action id="ocil:ssg-java_jre_untrusted_sources_action:testaction:1" question_ref="ocil:ssg-java_jre_untrusted_sources_question:question:1">
-      <when_true>
-        <result>PASS</result>
-      </when_true>
-      <when_false>
-        <result>FAIL</result>
-      </when_false>
-    </boolean_question_test_action>
-    <boolean_question_test_action id="ocil:ssg-java_jre_untrusted_sources_locked_action:testaction:1" question_ref="ocil:ssg-java_jre_untrusted_sources_locked_question:question:1">
-      <when_true>
-        <result>PASS</result>
-      </when_true>
-      <when_false>
-        <result>FAIL</result>
-      </when_false>
-    </boolean_question_test_action>
-    <boolean_question_test_action id="ocil:ssg-java_jre_validation_crl_action:testaction:1" question_ref="ocil:ssg-java_jre_validation_crl_question:question:1">
-      <when_true>
-        <result>PASS</result>
-      </when_true>
-      <when_false>
-        <result>FAIL</result>
-      </when_false>
-    </boolean_question_test_action>
-    <boolean_question_test_action id="ocil:ssg-java_jre_validation_crl_locked_action:testaction:1" question_ref="ocil:ssg-java_jre_validation_crl_locked_question:question:1">
-      <when_true>
-        <result>PASS</result>
-      </when_true>
-      <when_false>
-        <result>FAIL</result>
-      </when_false>
-    </boolean_question_test_action>
-    <boolean_question_test_action id="ocil:ssg-java_jre_validation_ocsp_action:testaction:1" question_ref="ocil:ssg-java_jre_validation_ocsp_question:question:1">
-      <when_true>
-        <result>PASS</result>
-      </when_true>
-      <when_false>
-        <result>FAIL</result>
-      </when_false>
-    </boolean_question_test_action>
-    <boolean_question_test_action id="ocil:ssg-java_jre_validation_ocsp_locked_action:testaction:1" question_ref="ocil:ssg-java_jre_validation_ocsp_locked_question:question:1">
-      <when_true>
-        <result>PASS</result>
-      </when_true>
-      <when_false>
-        <result>FAIL</result>
-      </when_false>
-    </boolean_question_test_action>
-    <boolean_question_test_action id="ocil:ssg-java_jre_updated_action:testaction:1" question_ref="ocil:ssg-java_jre_updated_question:question:1">
-      <when_true>
-        <result>PASS</result>
-      </when_true>
-      <when_false>
-        <result>FAIL</result>
-      </when_false>
-    </boolean_question_test_action>
-  </test_actions>
-  <questions>
-    <boolean_question id="ocil:ssg-java_jre_deployment_config_exists_question:question:1">
-      <question_text>
+  <ds:component id="scap_org.open-scap_comp_ssg-jre-ocil.xml" timestamp="2017-03-29T15:52:37">
+    <ocil xmlns="http://scap.nist.gov/schema/ocil/2.0">
+      <generator>
+        <schema_version>2.0</schema_version>
+        <timestamp>2017-03-29T15:52:32+02:00</timestamp>
+      </generator>
+      <questionnaires>
+        <questionnaire id="ocil:ssg-java_jre_deployment_config_exists_ocil:questionnaire:1">
+          <title>The Java Configuration File Exists</title>
+          <actions>
+            <test_action_ref>ocil:ssg-java_jre_deployment_config_exists_action:testaction:1</test_action_ref>
+          </actions>
+        </questionnaire>
+        <questionnaire id="ocil:ssg-java_jre_deployment_config_properties_ocil:questionnaire:1">
+          <title>Configure the deployment.properties File Path</title>
+          <actions>
+            <test_action_ref>ocil:ssg-java_jre_deployment_config_properties_action:testaction:1</test_action_ref>
+          </actions>
+        </questionnaire>
+        <questionnaire id="ocil:ssg-java_jre_deployment_config_mandatory_ocil:questionnaire:1">
+          <title>Configure The Java Deployment Mandatory Setting</title>
+          <actions>
+            <test_action_ref>ocil:ssg-java_jre_deployment_config_mandatory_action:testaction:1</test_action_ref>
+          </actions>
+        </questionnaire>
+        <questionnaire id="ocil:ssg-java_jre_deployment_properties_exists_ocil:questionnaire:1">
+          <title>The Java Properties File Exists</title>
+          <actions>
+            <test_action_ref>ocil:ssg-java_jre_deployment_properties_exists_action:testaction:1</test_action_ref>
+          </actions>
+        </questionnaire>
+        <questionnaire id="ocil:ssg-java_jre_untrusted_sources_ocil:questionnaire:1">
+          <title>Disable Java Execution From Untrusted Sources</title>
+          <actions>
+            <test_action_ref>ocil:ssg-java_jre_untrusted_sources_action:testaction:1</test_action_ref>
+          </actions>
+        </questionnaire>
+        <questionnaire id="ocil:ssg-java_jre_untrusted_sources_locked_ocil:questionnaire:1">
+          <title>Disable User Access to Untrusted Sources Settings</title>
+          <actions>
+            <test_action_ref>ocil:ssg-java_jre_untrusted_sources_locked_action:testaction:1</test_action_ref>
+          </actions>
+        </questionnaire>
+        <questionnaire id="ocil:ssg-java_jre_validation_crl_ocil:questionnaire:1">
+          <title>Enable Revocation Checks for Publisher Certificates</title>
+          <actions>
+            <test_action_ref>ocil:ssg-java_jre_validation_crl_action:testaction:1</test_action_ref>
+          </actions>
+        </questionnaire>
+        <questionnaire id="ocil:ssg-java_jre_validation_crl_locked_ocil:questionnaire:1">
+          <title>Disable User Access to Revocation Check Settings</title>
+          <actions>
+            <test_action_ref>ocil:ssg-java_jre_validation_crl_locked_action:testaction:1</test_action_ref>
+          </actions>
+        </questionnaire>
+        <questionnaire id="ocil:ssg-java_jre_validation_ocsp_ocil:questionnaire:1">
+          <title>Enable Online Certificate Validation</title>
+          <actions>
+            <test_action_ref>ocil:ssg-java_jre_validation_ocsp_action:testaction:1</test_action_ref>
+          </actions>
+        </questionnaire>
+        <questionnaire id="ocil:ssg-java_jre_validation_ocsp_locked_ocil:questionnaire:1">
+          <title>Disable User Access to Online Certificate Validation Settings</title>
+          <actions>
+            <test_action_ref>ocil:ssg-java_jre_validation_ocsp_locked_action:testaction:1</test_action_ref>
+          </actions>
+        </questionnaire>
+        <questionnaire id="ocil:ssg-java_jre_updated_ocil:questionnaire:1">
+          <title>Ensure Java Patches Installed</title>
+          <actions>
+            <test_action_ref>ocil:ssg-java_jre_updated_action:testaction:1</test_action_ref>
+          </actions>
+        </questionnaire>
+      </questionnaires>
+      <test_actions>
+        <boolean_question_test_action id="ocil:ssg-java_jre_deployment_config_exists_action:testaction:1" question_ref="ocil:ssg-java_jre_deployment_config_exists_question:question:1">
+          <when_true>
+            <result>PASS</result>
+          </when_true>
+          <when_false>
+            <result>FAIL</result>
+          </when_false>
+        </boolean_question_test_action>
+        <boolean_question_test_action id="ocil:ssg-java_jre_deployment_config_properties_action:testaction:1" question_ref="ocil:ssg-java_jre_deployment_config_properties_question:question:1">
+          <when_true>
+            <result>PASS</result>
+          </when_true>
+          <when_false>
+            <result>FAIL</result>
+          </when_false>
+        </boolean_question_test_action>
+        <boolean_question_test_action id="ocil:ssg-java_jre_deployment_config_mandatory_action:testaction:1" question_ref="ocil:ssg-java_jre_deployment_config_mandatory_question:question:1">
+          <when_true>
+            <result>PASS</result>
+          </when_true>
+          <when_false>
+            <result>FAIL</result>
+          </when_false>
+        </boolean_question_test_action>
+        <boolean_question_test_action id="ocil:ssg-java_jre_deployment_properties_exists_action:testaction:1" question_ref="ocil:ssg-java_jre_deployment_properties_exists_question:question:1">
+          <when_true>
+            <result>PASS</result>
+          </when_true>
+          <when_false>
+            <result>FAIL</result>
+          </when_false>
+        </boolean_question_test_action>
+        <boolean_question_test_action id="ocil:ssg-java_jre_untrusted_sources_action:testaction:1" question_ref="ocil:ssg-java_jre_untrusted_sources_question:question:1">
+          <when_true>
+            <result>PASS</result>
+          </when_true>
+          <when_false>
+            <result>FAIL</result>
+          </when_false>
+        </boolean_question_test_action>
+        <boolean_question_test_action id="ocil:ssg-java_jre_untrusted_sources_locked_action:testaction:1" question_ref="ocil:ssg-java_jre_untrusted_sources_locked_question:question:1">
+          <when_true>
+            <result>PASS</result>
+          </when_true>
+          <when_false>
+            <result>FAIL</result>
+          </when_false>
+        </boolean_question_test_action>
+        <boolean_question_test_action id="ocil:ssg-java_jre_validation_crl_action:testaction:1" question_ref="ocil:ssg-java_jre_validation_crl_question:question:1">
+          <when_true>
+            <result>PASS</result>
+          </when_true>
+          <when_false>
+            <result>FAIL</result>
+          </when_false>
+        </boolean_question_test_action>
+        <boolean_question_test_action id="ocil:ssg-java_jre_validation_crl_locked_action:testaction:1" question_ref="ocil:ssg-java_jre_validation_crl_locked_question:question:1">
+          <when_true>
+            <result>PASS</result>
+          </when_true>
+          <when_false>
+            <result>FAIL</result>
+          </when_false>
+        </boolean_question_test_action>
+        <boolean_question_test_action id="ocil:ssg-java_jre_validation_ocsp_action:testaction:1" question_ref="ocil:ssg-java_jre_validation_ocsp_question:question:1">
+          <when_true>
+            <result>PASS</result>
+          </when_true>
+          <when_false>
+            <result>FAIL</result>
+          </when_false>
+        </boolean_question_test_action>
+        <boolean_question_test_action id="ocil:ssg-java_jre_validation_ocsp_locked_action:testaction:1" question_ref="ocil:ssg-java_jre_validation_ocsp_locked_question:question:1">
+          <when_true>
+            <result>PASS</result>
+          </when_true>
+          <when_false>
+            <result>FAIL</result>
+          </when_false>
+        </boolean_question_test_action>
+        <boolean_question_test_action id="ocil:ssg-java_jre_updated_action:testaction:1" question_ref="ocil:ssg-java_jre_updated_question:question:1">
+          <when_true>
+            <result>PASS</result>
+          </when_true>
+          <when_false>
+            <result>FAIL</result>
+          </when_false>
+        </boolean_question_test_action>
+      </test_actions>
+      <questions>
+        <boolean_question id="ocil:ssg-java_jre_deployment_config_exists_question:question:1">
+          <question_text>
 To verify that the deployment.config file exists,
 run the following command:
 $ ls /etc/.java/deployment
@@ -481,9 +493,9 @@ deployment.config
 
 			Is it the case that it does not exist?
 			</question_text>
-    </boolean_question>
-    <boolean_question id="ocil:ssg-java_jre_deployment_config_properties_question:question:1">
-      <question_text>
+        </boolean_question>
+        <boolean_question id="ocil:ssg-java_jre_deployment_config_properties_question:question:1">
+          <question_text>
 To verify that deployment.config is configured properly,
 run the following command:
 $ grep 'deployment.system.config=file' /etc/.java/deployment/deployment.config
@@ -492,9 +504,9 @@ deployment.system.config=file:///etc/.java/deployment/deployment.properties
 
 			Is it the case that it is not configured?
 			</question_text>
-    </boolean_question>
-    <boolean_question id="ocil:ssg-java_jre_deployment_config_mandatory_question:question:1">
-      <question_text>
+        </boolean_question>
+        <boolean_question id="ocil:ssg-java_jre_deployment_config_mandatory_question:question:1">
+          <question_text>
 To verify that deployment.config is configured properly,
 run the following command:
 $ grep 'deployment.system.config.mandatory' /etc/.java/deployment/deployment.config
@@ -503,9 +515,9 @@ deployment.system.config.mandatory=false
 
 			Is it the case that it is not configured?
 			</question_text>
-    </boolean_question>
-    <boolean_question id="ocil:ssg-java_jre_deployment_properties_exists_question:question:1">
-      <question_text>
+        </boolean_question>
+        <boolean_question id="ocil:ssg-java_jre_deployment_properties_exists_question:question:1">
+          <question_text>
 To verify that the deployment.properties file exists,
 run the following command:
 $ ls /etc/.java/deployment
@@ -514,9 +526,9 @@ deployment.properties
 
 			Is it the case that it does not exist?
 			</question_text>
-    </boolean_question>
-    <boolean_question id="ocil:ssg-java_jre_untrusted_sources_question:question:1">
-      <question_text>
+        </boolean_question>
+        <boolean_question id="ocil:ssg-java_jre_untrusted_sources_question:question:1">
+          <question_text>
 To verify that Java cannot execute from untrusted sources,
 run the following command:
 $ grep 'askgrantdialog.notinca=false' /etc/.java/deployment/deployment.properties
@@ -525,9 +537,9 @@ deployment.security.askgrantdialog.notinca=false
 
 			Is it the case that it does not exist or is not configured properly?
 			</question_text>
-    </boolean_question>
-    <boolean_question id="ocil:ssg-java_jre_untrusted_sources_locked_question:question:1">
-      <question_text>
+        </boolean_question>
+        <boolean_question id="ocil:ssg-java_jre_untrusted_sources_locked_question:question:1">
+          <question_text>
 To verify that users cannot change the untrusted sources settings,
 run the following command:
 $ grep 'askgrantdialog.notinca.locked' /etc/.java/deployment/deployment.properties
@@ -536,9 +548,9 @@ deployment.security.askgrantdialog.notinca.locked
 
 			Is it the case that it does not exist or is not configured properly?
 			</question_text>
-    </boolean_question>
-    <boolean_question id="ocil:ssg-java_jre_validation_crl_question:question:1">
-      <question_text>
+        </boolean_question>
+        <boolean_question id="ocil:ssg-java_jre_validation_crl_question:question:1">
+          <question_text>
 To verify that revocation checks are enabled, run the following command:
 $ grep 'validation.crl=true' /etc/.java/deployment/deployment.properties
 If properly configured, the output should return:
@@ -546,9 +558,9 @@ deployment.security.validation.crl=true
 
 			Is it the case that it does not exist or is not configured properly?
 			</question_text>
-    </boolean_question>
-    <boolean_question id="ocil:ssg-java_jre_validation_crl_locked_question:question:1">
-      <question_text>
+        </boolean_question>
+        <boolean_question id="ocil:ssg-java_jre_validation_crl_locked_question:question:1">
+          <question_text>
 To verify that users cannot change revocation check settings,
 run the following command:
 $ grep 'validation.crl.locked' /etc/.java/deployment/deployment.properties
@@ -557,9 +569,9 @@ deployment.security.validation.crl.locked
 
 			Is it the case that it does not exist or is not configured properly?
 			</question_text>
-    </boolean_question>
-    <boolean_question id="ocil:ssg-java_jre_validation_ocsp_question:question:1">
-      <question_text>
+        </boolean_question>
+        <boolean_question id="ocil:ssg-java_jre_validation_ocsp_question:question:1">
+          <question_text>
 To verify that online certificate verification is enabled,
 run the following command:
 $ grep 'validation.ocsp=true' /etc/.java/deployment/deployment.properties
@@ -568,9 +580,9 @@ deployment.security.validation.ocsp=true
 
 			Is it the case that it does not exist or is not configured properly?
 			</question_text>
-    </boolean_question>
-    <boolean_question id="ocil:ssg-java_jre_validation_ocsp_locked_question:question:1">
-      <question_text>
+        </boolean_question>
+        <boolean_question id="ocil:ssg-java_jre_validation_ocsp_locked_question:question:1">
+          <question_text>
 To verify that users cannot change online certificate verification,
 run the following command:
 $ grep 'validation.ocsp.locked' /etc/.java/deployment/deployment.properties
@@ -579,9 +591,9 @@ deployment.security.validation.ocsp.locked
 
 			Is it the case that it does not exist or is not configured properly?
 			</question_text>
-    </boolean_question>
-    <boolean_question id="ocil:ssg-java_jre_updated_question:question:1">
-      <question_text>
+        </boolean_question>
+        <boolean_question id="ocil:ssg-java_jre_updated_question:question:1">
+          <question_text>
 If the system is joined to the Red Hat Network, a Red Hat Satellite Server, or
 a yum server which provides updates, invoking the following command will
 indicate if updates are available:
@@ -595,15 +607,15 @@ to determine if the system is missing applicable updates.
 
 			Is it the case that it is not updated?
 			</question_text>
-    </boolean_question>
-  </questions>
-</ocil>
+        </boolean_question>
+      </questions>
+    </ocil>
   </ds:component>
-  <ds:component id="scap_org.open-scap_comp_ssg-jre-xccdf-1.2.xml" timestamp="2016-11-28T09:42:05">
+  <ds:component id="scap_org.open-scap_comp_ssg-jre-xccdf-1.2.xml" timestamp="2017-03-29T15:52:43">
     <Benchmark xmlns="http://checklists.nist.gov/xccdf/1.2" id="xccdf_org.ssgproject.content_benchmark_JRE" resolved="1" xml:lang="en-US" style="SCAP_1.2">
-  <status date="2016-11-28">draft</status>
-  <title xml:lang="en-US">Guide to the Secure Configuration of Java Runtime Environment</title>
-  <description xml:lang="en-US">This guide presents a catalog of security-relevant
+      <status date="2017-03-29">draft</status>
+      <title xml:lang="en-US">Guide to the Secure Configuration of Java Runtime Environment</title>
+      <description xml:lang="en-US">This guide presents a catalog of security-relevant
 configuration settings for Java Runtime Environment. It is a rendering of
 content structured in the eXtensible Configuration Checklist Description Format (XCCDF)
 in order to support security automation.  The SCAP content is
@@ -629,14 +641,14 @@ Content Automation Protocol (SCAP). The DISA STIG for Java Runtime Environment,
 which provides required settings for US Department of Defense systems, is
 one example of a baseline created from this guidance.
 </description>
-  <notice xml:lang="en-US" id="terms_of_use">Do not attempt to implement any of the settings in
+      <notice xml:lang="en-US" id="terms_of_use">Do not attempt to implement any of the settings in
 this guide without first testing them in a non-operational environment. The
 creators of this guidance assume no responsibility whatsoever for its use by
 other parties, and makes no guarantees, expressed or implied, about its
 quality, reliability, or any other characteristic.</notice>
-  <front-matter xml:lang="en-US">
-    <html:p xmlns:html="http://www.w3.org/1999/xhtml" xmlns:ns2="http://www.w3.org/2000/svg">
-      <ns2:svg enable-background="new 30 100 330 150" height="140px" id="Layer_1" version="1.1" viewBox="30 100 330 150" width="350px" x="0px" y="0px" xml:space="preserve">
+      <front-matter xml:lang="en-US">
+        <html:p xmlns:html="http://www.w3.org/1999/xhtml" xmlns:ns2="http://www.w3.org/2000/svg">
+          <ns2:svg enable-background="new 30 100 330 150" height="140px" id="Layer_1" version="1.1" viewBox="30 100 330 150" width="350px" x="0px" y="0px" xml:space="preserve">
         <ns2:g fill="#3A3B3B">
           <ns2:path d="m197.1 150.3s-10.1-1.2-14.4-1.2c-7.2 0-11.0 2.6-11.0 8.3 0 6.6 3.5 7.7 12.3 9.6 10.1 2.3 14.5 4.7 14.5 13.6 0 11.2-6.1 15.6-16.1 15.6-6.0 0-16.0-1.6-16.0-1.6l0.6-4.7s9.9 1.3 15.1 1.3c7.2 0 10.8-3.1 10.8-10.2 0-5.7-3.0-7.3-11.2-8.9-10.4-2.3-15.7-4.7-15.7-14.4 0-9.8 6.4-13.6 16.3-13.6 6.0 0 15.3 1.5 15.3 1.5l-0.5 4.8z"/>
           <ns2:path d="m238.7 194.6c-3.6 0.7-9.1 1.5-13.9 1.5-15.1 0-18.5-9.2-18.5-25.9 0-17.1 3.3-26.1 18.5-26.1 5.2 0 10.7 1.0 13.9 1.6l-0.2 4.7c-3.3-0.6-9.2-1.3-13.1-1.3-11.2 0-13.2 6.7-13.2 21.1 0 14.1 1.8 20.8 13.4 20.8 4.1 0 9.5-0.7 13.0-1.3l0.2 4.8z"/>
@@ -665,98 +677,26 @@ quality, reliability, or any other characteristic.</notice>
         </ns2:g>
         <ns2:circle cx="127.26" cy="218.49" fill="#fff" r="3.233"/>
       </ns2:svg>
-    </html:p>
-  </front-matter>
-  <rear-matter xml:lang="en-US">Red Hat and Red Hat Enterprise Linux are either registered
+        </html:p>
+      </front-matter>
+      <rear-matter xml:lang="en-US">Red Hat and Red Hat Enterprise Linux are either registered
 trademarks or trademarks of Red Hat, Inc. in the United States and other
 countries. All other names are registered trademarks or trademarks of their
 respective companies.</rear-matter>
-  <platform idref="cpe:/a:oracle:jre:"/>
-  <platform idref="cpe:/a:sun:jre:"/>
-  <platform idref="cpe:/a:redhat:openjdk:"/>
-  <platform idref="cpe:/a:ibm:jre:"/>
-  <version update="https://github.com/OpenSCAP/scap-security-guide/releases/latest">0.1.31</version>
-  <metadata>
-    <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">SCAP Security Guide Project</dc:publisher>
-    <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">SCAP Security Guide Project</dc:creator>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Gabe Alford &lt;redhatrises@gmail.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Christopher Anderson &lt;cba@fedoraproject.org&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Chuck Atkins &lt;chuck.atkins@kitware.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Molly Jo Bault &lt;Molly.Jo.Bault@ballardtech.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Joseph Bisch &lt;joseph.bisch@gmail.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Jeffrey Blank &lt;blank@eclipse.ncsc.mil&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Blake Burkhart &lt;blake.burkhart@us.af.mil&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Patrick Callahan &lt;pmc@patrickcallahan.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Nick Carboni &lt;ncarboni@redhat.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Frank Caviggia &lt;fcaviggi@ra.iad.redhat.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Eric Christensen &lt;echriste@redhat.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Caleb Cooper &lt;coopercd@ornl.gov&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Maura Dailey &lt;maura@eclipse.ncsc.mil&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Klaas Demter &lt;demter@atix.de&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Jean-Baptiste Donnette &lt;jean-baptiste.donnette@epita.fr&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">drax &lt;applezip@gmail.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Greg Elin &lt;gregelin@gitmachines.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Andrew Gilmore &lt;agilmore2@gmail.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Joshua Glemza &lt;jglemza@nasa.gov&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Steve Grubb &lt;sgrubb@redhat.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Trey Henefield &lt;thenefield@gmail.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Robin Price II &lt;robin@redhat.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Jeremiah Jahn &lt;jeremiah@goodinassociates.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Stephan Joerrens &lt;Stephan.Joerrens@fiduciagad.de&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Yuli Khodorkovskiy &lt;ykhodorkovskiy@tresys.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Luke Kordell &lt;luke.t.kordell@lmco.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">kspargur &lt;kspargur@kspargur.csb&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Fen Labalme &lt;fen@civicactions.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Jan Lieskovsky &lt;jlieskov@redhat.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">&#352;imon Luka&#353;&#237;k &lt;slukasik@redhat.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Jamie Lorwey Martin &lt;jlmartin@redhat.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Michael McConachie &lt;michael@redhat.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Rodney Mercer &lt;rmercer@harris.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Brian Millett &lt;bmillett@gmail.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">mmosel &lt;mmosel@kde.example.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Zbynek Moravec &lt;zmoravec@redhat.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Kazuo Moriwaka &lt;moriwaka@users.noreply.github.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Michael Moseley &lt;michael@eclipse.ncsc.mil&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Joe Nall &lt;joe@nall.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Michele Newman &lt;mnewman@redhat.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Kaustubh Padegaonkar &lt;theTuxRacer@gmail.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Michael Palmiotto &lt;mpalmiotto@tresys.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">pcactr &lt;paul.c.arnold4.ctr@mail.mil&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Kenneth Peeples &lt;kennethwpeeples@gmail.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Frank Lin PIAT &lt;fpiat@klabs.be&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Martin Preisler &lt;mpreisle@redhat.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">T.O. Radzy Radzykewycz &lt;radzy@windriver.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Rick Renshaw &lt;Richard_Renshaw@xtoenergy.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Chris Reynolds &lt;c.reynolds82@gmail.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Pat Riehecky &lt;riehecky@fnal.gov&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Joshua Roys &lt;roysjosh@gmail.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">rrenshaw &lt;bofh69@yahoo.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Ray Shaw (Cont ARL/CISD) rvshaw &lt;rvshaw@esme.arl.army.mil&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Willy Santos &lt;wsantos@redhat.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Gautam Satish &lt;gautams@hpe.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Watson Sato &lt;wsato@redhat.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Satoru SATOH &lt;satoru.satoh@gmail.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Spencer Shimko &lt;sshimko@tresys.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Francisco Slavin &lt;fslavin@tresys.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">David Smith &lt;dsmith@eclipse.ncsc.mil&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Kevin Spargur &lt;kspargur@redhat.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Kenneth Stailey &lt;kstailey.lists@gmail.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Leland Steinke &lt;leland.j.steinke.ctr@mail.mil&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Philippe Thierry &lt;phil@reseau-libre.net&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Paul Tittle &lt;ptittle@cmf.nrl.navy.mil&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Jeb Trayer &lt;jeb.d.trayer@uscg.mil&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Shawn Wells &lt;shawn@redhat.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Rob Wilmoth &lt;rwilmoth@redhat.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Lucas Yamanishi &lt;lucas.yamanishi@onyxpoint.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Kevin Zimmerman &lt;kevin.zimmerman@kitware.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Jan &#268;ern&#253; &lt;jcerny@redhat.com&gt;</dc:contributor>
-    <dc:contributor xmlns:dc="http://purl.org/dc/elements/1.1/">Michal &#352;ruba&#345; &lt;msrubar@redhat.com&gt;</dc:contributor>
-    <dc:source xmlns:dc="http://purl.org/dc/elements/1.1/">https://github.com/OpenSCAP/scap-security-guide/releases/latest</dc:source>
-  </metadata>
-  <model system="urn:xccdf:scoring:default"/>
-  <Profile id="xccdf_org.ssgproject.content_profile_stig-java-upstream">
-    <title xml:lang="en-US">Java Runtime Environment (JRE) STIG</title>
-    <description xml:lang="en-US">The Java Runtime Environment (JRE) is a bundle developed
+      <platform idref="cpe:/a:oracle:jre:"/>
+      <platform idref="cpe:/a:sun:jre:"/>
+      <platform idref="cpe:/a:redhat:openjdk:"/>
+      <platform idref="cpe:/a:ibm:jre:"/>
+      <version update="https://github.com/OpenSCAP/scap-security-guide/releases/latest">0.1.31</version>
+      <metadata>
+        <dc:publisher xmlns:dc="http://purl.org/dc/elements/1.1/">SCAP Security Guide Project</dc:publisher>
+        <dc:creator xmlns:dc="http://purl.org/dc/elements/1.1/">SCAP Security Guide Project</dc:creator>
+        <dc:source xmlns:dc="http://purl.org/dc/elements/1.1/">https://github.com/OpenSCAP/scap-security-guide/releases/latest</dc:source>
+      </metadata>
+      <model system="urn:xccdf:scoring:default"/>
+      <Profile id="xccdf_org.ssgproject.content_profile_stig-java-upstream">
+        <title xml:lang="en-US">Java Runtime Environment (JRE) STIG</title>
+        <description xml:lang="en-US">The Java Runtime Environment (JRE) is a bundle developed
 and offered by Oracle Corporation which includes the Java Virtual Machine
 (JVM), class libraries, and other components necessary to run Java
 applications and applets. Certain default settings within the JRE pose
@@ -765,32 +705,32 @@ ensure a higher degree of security when utilizing the JRE.
 
 The IBM Corporation also develops and bundles the Java Runtime Environment
 (JRE) as well as Red Hat with OpenJDK.</description>
-    <select idref="xccdf_org.ssgproject.content_rule_java_jre_deployment_config_exists" selected="true"/>
-    <select idref="xccdf_org.ssgproject.content_rule_java_jre_deployment_config_properties" selected="true"/>
-    <select idref="xccdf_org.ssgproject.content_rule_java_jre_deployment_config_mandatory" selected="true"/>
-    <select idref="xccdf_org.ssgproject.content_rule_java_jre_deployment_properties_exists" selected="true"/>
-    <select idref="xccdf_org.ssgproject.content_rule_java_jre_untrusted_sources" selected="true"/>
-    <select idref="xccdf_org.ssgproject.content_rule_java_jre_untrusted_sources_locked" selected="true"/>
-    <select idref="xccdf_org.ssgproject.content_rule_java_jre_validation_crl" selected="true"/>
-    <select idref="xccdf_org.ssgproject.content_rule_java_jre_validation_crl_locked" selected="true"/>
-    <select idref="xccdf_org.ssgproject.content_rule_java_jre_validation_ocsp" selected="true"/>
-    <select idref="xccdf_org.ssgproject.content_rule_java_jre_validation_ocsp_locked" selected="true"/>
-    <select idref="xccdf_org.ssgproject.content_rule_java_jre_updated" selected="true"/>
-    <select idref="xccdf_org.ssgproject.content_group_remediation_functions" selected="false"/>
-    <select idref="xccdf_org.ssgproject.content_group_intro" selected="false"/>
-    <select idref="xccdf_org.ssgproject.content_group_how-to-use" selected="false"/>
-    <select idref="xccdf_org.ssgproject.content_group_intro-read-sections-completely" selected="false"/>
-    <select idref="xccdf_org.ssgproject.content_group_intro-test-non-production" selected="false"/>
-    <select idref="xccdf_org.ssgproject.content_group_intro-root-shell-assumed" selected="false"/>
-    <select idref="xccdf_org.ssgproject.content_group_intro-formatting-conventions" selected="false"/>
-  </Profile>
-  <Group id="xccdf_org.ssgproject.content_group_remediation_functions">
-    <title xml:lang="en-US">Remediation functions used by the SCAP Security Guide Project</title>
-    <description xml:lang="en-US">XCCDF form of the various remediation functions as used by
+        <select idref="xccdf_org.ssgproject.content_rule_java_jre_deployment_config_exists" selected="true"/>
+        <select idref="xccdf_org.ssgproject.content_rule_java_jre_deployment_config_properties" selected="true"/>
+        <select idref="xccdf_org.ssgproject.content_rule_java_jre_deployment_config_mandatory" selected="true"/>
+        <select idref="xccdf_org.ssgproject.content_rule_java_jre_deployment_properties_exists" selected="true"/>
+        <select idref="xccdf_org.ssgproject.content_rule_java_jre_untrusted_sources" selected="true"/>
+        <select idref="xccdf_org.ssgproject.content_rule_java_jre_untrusted_sources_locked" selected="true"/>
+        <select idref="xccdf_org.ssgproject.content_rule_java_jre_validation_crl" selected="true"/>
+        <select idref="xccdf_org.ssgproject.content_rule_java_jre_validation_crl_locked" selected="true"/>
+        <select idref="xccdf_org.ssgproject.content_rule_java_jre_validation_ocsp" selected="true"/>
+        <select idref="xccdf_org.ssgproject.content_rule_java_jre_validation_ocsp_locked" selected="true"/>
+        <select idref="xccdf_org.ssgproject.content_rule_java_jre_updated" selected="true"/>
+        <select idref="xccdf_org.ssgproject.content_group_remediation_functions" selected="false"/>
+        <select idref="xccdf_org.ssgproject.content_group_intro" selected="false"/>
+        <select idref="xccdf_org.ssgproject.content_group_how-to-use" selected="false"/>
+        <select idref="xccdf_org.ssgproject.content_group_intro-read-sections-completely" selected="false"/>
+        <select idref="xccdf_org.ssgproject.content_group_intro-test-non-production" selected="false"/>
+        <select idref="xccdf_org.ssgproject.content_group_intro-root-shell-assumed" selected="false"/>
+        <select idref="xccdf_org.ssgproject.content_group_intro-formatting-conventions" selected="false"/>
+      </Profile>
+      <Group id="xccdf_org.ssgproject.content_group_remediation_functions">
+        <title xml:lang="en-US">Remediation functions used by the SCAP Security Guide Project</title>
+        <description xml:lang="en-US">XCCDF form of the various remediation functions as used by
 remediation scripts from the SCAP Security Guide Project</description>
-    <Value id="xccdf_org.ssgproject.content_value_function_fix_audit_syscall_rule" hidden="true" prohibitChanges="true" operator="equals" type="string">
-      <title xml:lang="en-US">Remediation function to fix syscall audit rule for given system call</title>
-      <description xml:lang="en-US">Function to fix syscall audit rule for given system call. It is
+        <Value id="xccdf_org.ssgproject.content_value_function_fix_audit_syscall_rule" hidden="true" prohibitChanges="true" operator="equals" type="string">
+          <title xml:lang="en-US">Remediation function to fix syscall audit rule for given system call</title>
+          <description xml:lang="en-US">Function to fix syscall audit rule for given system call. It is
 based on example audit syscall rule definitions as outlined in
 /usr/share/doc/audit-2.3.7/stig.rules file provided with the audit package. It
 will combine multiple system calls belonging to the same syscall group into one
@@ -827,7 +767,7 @@ Example call:
   FULL_RULE="-a always,exit -F arch=$ARCH -S rmdir -S unlink -S unlinkat -S rename -S renameat -F auid&gt;=500 -F auid!=4294967295 -k delete"
   fix_audit_syscall_rule "auditctl" "$PATTERN" "$GROUP" "$ARCH" "$FULL_RULE"
 </description>
-      <value>
+          <value>
 function fix_audit_syscall_rule {
 
 # Load function arguments into local variables
@@ -996,10 +936,10 @@ done
 
 }
 </value>
-    </Value>
-    <Value id="xccdf_org.ssgproject.content_value_function_fix_audit_watch_rule" hidden="true" prohibitChanges="true" operator="equals" type="string">
-      <title xml:lang="en-US">Remediation function to fix audit file system object watch rule for given path</title>
-      <description xml:lang="en-US">Function to fix audit file system object watch rule for given path:
+        </Value>
+        <Value id="xccdf_org.ssgproject.content_value_function_fix_audit_watch_rule" hidden="true" prohibitChanges="true" operator="equals" type="string">
+          <title xml:lang="en-US">Remediation function to fix audit file system object watch rule for given path</title>
+          <description xml:lang="en-US">Function to fix audit file system object watch rule for given path:
   * if rule exists, also verifies the -w bits match the requirements
   * if rule doesn't exist yet, appends expected rule form to $files_to_inspect
     audit rules file, depending on the tool which was used to load audit rules
@@ -1015,7 +955,7 @@ Example call:
 
   fix_audit_watch_rule "auditctl" "/etc/localtime" "wa" "audit_time_rules"
 </description>
-      <value>
+          <value>
 function fix_audit_watch_rule {
 
 # Load function arguments into local variables
@@ -1130,17 +1070,17 @@ do
 done
 }
 </value>
-    </Value>
-    <Value id="xccdf_org.ssgproject.content_value_function_package_command" hidden="true" prohibitChanges="true" operator="equals" type="string">
-      <title xml:lang="en-US">Remediation function to to install or uninstall packages on RHEL and Fedora systems</title>
-      <description xml:lang="en-US">Function to install or uninstall packages on RHEL and Fedora systems.
+        </Value>
+        <Value id="xccdf_org.ssgproject.content_value_function_package_command" hidden="true" prohibitChanges="true" operator="equals" type="string">
+          <title xml:lang="en-US">Remediation function to to install or uninstall packages on RHEL and Fedora systems</title>
+          <description xml:lang="en-US">Function to install or uninstall packages on RHEL and Fedora systems.
 
 Example Call(s):
 
   package_command install aide
   package_command remove telnet-server
 </description>
-      <value>
+          <value>
 function package_command {
 
 # Load function arguments into local variables
@@ -1176,11 +1116,11 @@ fi
 
 }
 </value>
-    </Value>
-    <Value id="xccdf_org.ssgproject.content_value_function_service_command" hidden="true" prohibitChanges="true" operator="equals" type="string">
-      <title xml:lang="en-US">Remediation function to enable/disable and start/stop services on RHEL
+        </Value>
+        <Value id="xccdf_org.ssgproject.content_value_function_service_command" hidden="true" prohibitChanges="true" operator="equals" type="string">
+          <title xml:lang="en-US">Remediation function to enable/disable and start/stop services on RHEL
 and Fedora systems</title>
-      <description xml:lang="en-US">Function to enable/disable and start/stop services on RHEL and
+          <description xml:lang="en-US">Function to enable/disable and start/stop services on RHEL and
 Fedora systems.
 
 Example Call(s):
@@ -1191,7 +1131,7 @@ Example Call(s):
   Using xinetd:
   service_command disable rsh.socket xinetd=rsh
 </description>
-      <value>
+          <value>
 function service_command {
 
 # Load function arguments into local variables
@@ -1253,10 +1193,10 @@ fi
 
 }
 </value>
-    </Value>
-    <Value id="xccdf_org.ssgproject.content_value_function_perform_audit_rules_privileged_commands_remediation" hidden="true" prohibitChanges="true" operator="equals" type="string">
-      <title xml:lang="en-US">Remediation function to perform remediation for 'audit_rules_privileged_commands' rule</title>
-      <description xml:lang="en-US">Function to perform remediation for 'audit_rules_privileged_commands' rule
+        </Value>
+        <Value id="xccdf_org.ssgproject.content_value_function_perform_audit_rules_privileged_commands_remediation" hidden="true" prohibitChanges="true" operator="equals" type="string">
+          <title xml:lang="en-US">Remediation function to perform remediation for 'audit_rules_privileged_commands' rule</title>
+          <description xml:lang="en-US">Function to perform remediation for 'audit_rules_privileged_commands' rule
 
 Expects two arguments:
 
@@ -1271,7 +1211,7 @@ Example Call(s):
   perform_audit_rules_privileged_commands_remediation "auditctl" "500"
   perform_audit_rules_privileged_commands_remediation "augenrules" "1000"
 </description>
-      <value>
+          <value>
 function perform_audit_rules_privileged_commands_remediation {
 #
 # Load function arguments into local variables
@@ -1424,13 +1364,13 @@ done
 
 }
 </value>
-    </Value>
-    <Value id="xccdf_org.ssgproject.content_value_function_populate" hidden="true" prohibitChanges="true" operator="equals" type="string">
-      <title xml:lang="en-US">Remediation function to populate environment variables needed for unit testing</title>
-      <description xml:lang="en-US">The populate function isn't directly used by SSG at the moment but it can
+        </Value>
+        <Value id="xccdf_org.ssgproject.content_value_function_populate" hidden="true" prohibitChanges="true" operator="equals" type="string">
+          <title xml:lang="en-US">Remediation function to populate environment variables needed for unit testing</title>
+          <description xml:lang="en-US">The populate function isn't directly used by SSG at the moment but it can
 ba used for testing purposes (to verify proper work of the remediation script directly
 from the shell).</description>
-      <value>
+          <value>
 function populate {
 # Code to populate environment variables needed (for unit testing)
 if [ -z "${!1}" ]; then
@@ -1439,13 +1379,13 @@ if [ -z "${!1}" ]; then
 fi
 }
 </value>
-    </Value>
-    <Value id="xccdf_org.ssgproject.content_value_function_rhel6_perform_audit_adjtimex_settimeofday_stime_remediation" hidden="true" prohibitChanges="true" operator="equals" type="string">
-      <title xml:lang="en-US">Remediation function for the 'adjtimex', 'settimeofday', and 'stime'
+        </Value>
+        <Value id="xccdf_org.ssgproject.content_value_function_rhel6_perform_audit_adjtimex_settimeofday_stime_remediation" hidden="true" prohibitChanges="true" operator="equals" type="string">
+          <title xml:lang="en-US">Remediation function for the 'adjtimex', 'settimeofday', and 'stime'
 audit system calls on Red Hat Enterprise Linux 6</title>
-      <description xml:lang="en-US">Perform the remediation for the 'adjtimex', 'settimeofday', and 'stime' audit
+          <description xml:lang="en-US">Perform the remediation for the 'adjtimex', 'settimeofday', and 'stime' audit
 # system calls on Red Hat Enterprise Linux 6 OS</description>
-      <value>
+          <value>
 function fix_audit_syscall_rule {
 
 # Load function arguments into local variables
@@ -1645,13 +1585,13 @@ done
 
 }
 </value>
-    </Value>
-    <Value id="xccdf_org.ssgproject.content_value_function_rhel7_fedora_perform_audit_adjtimex_settimeofday_stime_remediation" hidden="true" prohibitChanges="true" operator="equals" type="string">
-      <title xml:lang="en-US">Remediation function for the 'adjtimex', 'settimeofday', and 'stime'
+        </Value>
+        <Value id="xccdf_org.ssgproject.content_value_function_rhel7_fedora_perform_audit_adjtimex_settimeofday_stime_remediation" hidden="true" prohibitChanges="true" operator="equals" type="string">
+          <title xml:lang="en-US">Remediation function for the 'adjtimex', 'settimeofday', and 'stime'
 audit system calls on Red Hat Enterprise Linux 7 or Fedora</title>
-      <description xml:lang="en-US">Perform the remediation for the 'adjtimex', 'settimeofday', and
+          <description xml:lang="en-US">Perform the remediation for the 'adjtimex', 'settimeofday', and
 'stime' audit system calls on Red Hat Enterprise Linux 7 or Fedora OSes</description>
-      <value>
+          <value>
 function fix_audit_syscall_rule {
 
 # Load function arguments into local variables
@@ -1853,11 +1793,11 @@ done
 
 }
 </value>
-    </Value>
-    <Value id="xccdf_org.ssgproject.content_value_function_replace_or_append" hidden="true" prohibitChanges="true" operator="equals" type="string">
-      <title xml:lang="en-US">Remediation function to replace configuration setting in config file or
+        </Value>
+        <Value id="xccdf_org.ssgproject.content_value_function_replace_or_append" hidden="true" prohibitChanges="true" operator="equals" type="string">
+          <title xml:lang="en-US">Remediation function to replace configuration setting in config file or
 add the configuration setting if it does not exist yet</title>
-      <description xml:lang="en-US">Function to replace configuration setting in config file or add
+          <description xml:lang="en-US">Function to replace configuration setting in config file or add
 the configuration setting if it does not exist.
 
 Expects four arguments:
@@ -1883,7 +1823,7 @@ Example Call(s):
   With a variable:
   replace_or_append '/etc/sysconfig/selinux' '^SELINUX=' $var_selinux_state '$CCENUM' '%s=%s'
 </description>
-      <value>
+          <value>
 function replace_or_append {
   local config_file=$1
   local key=$2
@@ -1933,17 +1873,18 @@ function replace_or_append {
   if `grep -qi $key $config_file` ; then
     $sed_command "s/$key.*/$formatted_output/g" $config_file
   else
-    echo -ne "\n# Per $cce: Set $formatted_output in $config_file" &gt;&gt; $config_file
-    echo -ne "\n$formatted_output" &gt;&gt; $config_file
+    # \n is precaution for case where file ends without trailing newline
+    echo -e "\n# Per $cce: Set $formatted_output in $config_file" &gt;&gt; $config_file
+    echo -e "$formatted_output" &gt;&gt; $config_file
   fi
 
 }
 </value>
-    </Value>
-    <Value id="xccdf_org.ssgproject.content_value_function_firefox_js_setting" hidden="true" prohibitChanges="true" operator="equals" type="string">
-      <title xml:lang="en-US">Remediation function to replace configuration setting(s) in the Firefox
+        </Value>
+        <Value id="xccdf_org.ssgproject.content_value_function_firefox_js_setting" hidden="true" prohibitChanges="true" operator="equals" type="string">
+          <title xml:lang="en-US">Remediation function to replace configuration setting(s) in the Firefox
 preferences JavaScript file or add the preference if it does not exist yet</title>
-      <description xml:lang="en-US">Function to replace configuration setting(s) in the Firefox
+          <description xml:lang="en-US">Function to replace configuration setting(s) in the Firefox
 preferences JavaScript file or add the preference if it does not exist.
 
 Expects three arguments:
@@ -1964,7 +1905,7 @@ Example Call(s):
   With a string variable:
   firefox_js_setting "stig_settings.js" "general.config.filename" "\"$var_config_file_name\""
 </description>
-      <value>
+          <value>
 function firefox_js_setting {
   local firefox_js=$1
   local key=$2
@@ -2013,11 +1954,11 @@ function firefox_js_setting {
 
 }
 </value>
-    </Value>
-    <Value id="xccdf_org.ssgproject.content_value_function_firefox_cfg_setting" hidden="true" prohibitChanges="true" operator="equals" type="string">
-      <title xml:lang="en-US">Remediation function to replace configuration setting(s) in the Firefox
+        </Value>
+        <Value id="xccdf_org.ssgproject.content_value_function_firefox_cfg_setting" hidden="true" prohibitChanges="true" operator="equals" type="string">
+          <title xml:lang="en-US">Remediation function to replace configuration setting(s) in the Firefox
 preferences configuration (.cfg) file or add the preference if it does not exist yet</title>
-      <description xml:lang="en-US">Function to replace configuration setting(s) in the Firefox
+          <description xml:lang="en-US">Function to replace configuration setting(s) in the Firefox
 preferences configuration (.cfg) file or add the preference if it does not exist.
 
 Expects three arguments:
@@ -2038,7 +1979,7 @@ Example Call(s):
   With a string variable:
   firefox_cfg_setting "stig.cfg" "browser.startup.homepage\" "\"${var_default_home_page}\""
 </description>
-      <value>
+          <value>
 function firefox_cfg_setting {
   local firefox_cfg=$1
   local key=$2
@@ -2074,11 +2015,11 @@ function firefox_cfg_setting {
   done
 }
 </value>
-    </Value>
-  </Group>
-  <Group id="xccdf_org.ssgproject.content_group_intro">
-    <title xml:lang="en-US">Introduction</title>
-    <description xml:lang="en-US">
+        </Value>
+      </Group>
+      <Group id="xccdf_org.ssgproject.content_group_intro">
+        <title xml:lang="en-US">Introduction</title>
+        <description xml:lang="en-US">
 The purpose of this guidance is to provide security configuration
 recommendations and baselines for the Java Runtime Environment application.
 Recommended settings for the basic application are provided.
@@ -2090,31 +2031,31 @@ All directions should be followed completely and with understanding of
 their effects in order to avoid serious adverse effects on the system
 and its security.
 </description>
-    <Group id="xccdf_org.ssgproject.content_group_how-to-use">
-      <title xml:lang="en-US">How to Use This Guide</title>
-      <description xml:lang="en-US">
+        <Group id="xccdf_org.ssgproject.content_group_how-to-use">
+          <title xml:lang="en-US">How to Use This Guide</title>
+          <description xml:lang="en-US">
 Readers should heed the following points when using the guide.
 </description>
-      <Group id="xccdf_org.ssgproject.content_group_intro-read-sections-completely">
-        <title xml:lang="en-US">Read Sections Completely and in Order</title>
-        <description xml:lang="en-US">
+          <Group id="xccdf_org.ssgproject.content_group_intro-read-sections-completely">
+            <title xml:lang="en-US">Read Sections Completely and in Order</title>
+            <description xml:lang="en-US">
 Each section may build on information and recommendations discussed in
 prior sections. Each section should be read and understood completely;
 instructions should never be blindly applied. Relevant discussion may
 occur after instructions for an action. 
 </description>
-      </Group>
-      <Group id="xccdf_org.ssgproject.content_group_intro-test-non-production">
-        <title xml:lang="en-US">Test in Non-Production Environment</title>
-        <description xml:lang="en-US">
+          </Group>
+          <Group id="xccdf_org.ssgproject.content_group_intro-test-non-production">
+            <title xml:lang="en-US">Test in Non-Production Environment</title>
+            <description xml:lang="en-US">
 This guidance should always be tested in a non-production environment
 before deployment. This test environment should simulate the setup in
 which the system will be deployed as closely as possible.
 </description>
-      </Group>
-      <Group id="xccdf_org.ssgproject.content_group_intro-root-shell-assumed">
-        <title xml:lang="en-US">Root Shell Environment Assumed</title>
-        <description xml:lang="en-US">
+          </Group>
+          <Group id="xccdf_org.ssgproject.content_group_intro-root-shell-assumed">
+            <title xml:lang="en-US">Root Shell Environment Assumed</title>
+            <description xml:lang="en-US">
 Most of the actions listed in this document are written with the
 assumption that they will be executed by the root user running the
 <html:code xmlns:html="http://www.w3.org/1999/xhtml">/bin/bash</html:code> shell. Commands preceded with a hash mark (#)
@@ -2124,21 +2065,21 @@ apply the command via <html:code xmlns:html="http://www.w3.org/1999/xhtml">sudo<
 used. Commands which can be executed as a non-root user are are preceded
 by a dollar sign ($) prompt.
 </description>
-      </Group>
-      <Group id="xccdf_org.ssgproject.content_group_intro-formatting-conventions">
-        <title xml:lang="en-US">Formatting Conventions</title>
-        <description xml:lang="en-US">
+          </Group>
+          <Group id="xccdf_org.ssgproject.content_group_intro-formatting-conventions">
+            <title xml:lang="en-US">Formatting Conventions</title>
+            <description xml:lang="en-US">
 Commands intended for shell execution, as well as configuration file text,
 are featured in a <html:code xmlns:html="http://www.w3.org/1999/xhtml">monospace font</html:code>. <html:i xmlns:html="http://www.w3.org/1999/xhtml">Italics</html:i> are used
 to indicate instances where the system administrator must substitute
 the appropriate information into a command or configuration file.
 </description>
+          </Group>
+        </Group>
       </Group>
-    </Group>
-  </Group>
-  <Group id="xccdf_org.ssgproject.content_group_java">
-    <title xml:lang="en-US">Java</title>
-    <description xml:lang="en-US">
+      <Group id="xccdf_org.ssgproject.content_group_java">
+        <title xml:lang="en-US">Java</title>
+        <description xml:lang="en-US">
 Java is a general-purpose computer programming language. It is intended to
 let application developers "write once, run anywhere." Java applications are
 typically compiled to bytecode that can run on any Java virtual machine (JVM)
@@ -2154,9 +2095,9 @@ for a list of currently supported Java version 7 settings.</html:ul>
 <html:ul xmlns:html="http://www.w3.org/1999/xhtml">Refer to <html:li><html:a href="https://docs.oracle.com/javase/8/docs/technotes/guides/jweb/jcp/properties.html">https://docs.oracle.com/javase/8/docs/technotes/guides/jweb/jcp/properties.html</html:a></html:li>
 for a list of currently supported Java version 8 settings.</html:ul>
 </description>
-    <Group id="xccdf_org.ssgproject.content_group_java_jre_deployment_config_configured">
-      <title xml:lang="en-US">Configure the deployment.config File</title>
-      <description xml:lang="en-US">
+        <Group id="xccdf_org.ssgproject.content_group_java_jre_deployment_config_configured">
+          <title xml:lang="en-US">Configure the deployment.config File</title>
+          <description xml:lang="en-US">
 The <html:code xmlns:html="http://www.w3.org/1999/xhtml">deployment.config</html:code> file if used for specifying the System-level
 <html:code xmlns:html="http://www.w3.org/1999/xhtml">deployment.properties</html:code> file. The System-level configuration for Java is
 configured in <html:code xmlns:html="http://www.w3.org/1999/xhtml">/etc/.java/deployment</html:code>. By default, no <html:code xmlns:html="http://www.w3.org/1999/xhtml">deployment.config</html:code>
@@ -2164,28 +2105,28 @@ file exists. To ensure that the Java <html:code xmlns:html="http://www.w3.org/19
 is configured correctly, <html:code xmlns:html="http://www.w3.org/1999/xhtml">deployment.system.config</html:code> and
 <html:code xmlns:html="http://www.w3.org/1999/xhtml">deployment.system.config.mandatory</html:code> need to be set correctly.
 </description>
-      <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
-      <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
-      <Rule id="xccdf_org.ssgproject.content_rule_java_jre_deployment_config_exists" selected="false" severity="medium">
-        <title xml:lang="en-US">The Java Configuration File Exists</title>
-        <description xml:lang="en-US">
+          <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
+          <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
+          <Rule id="xccdf_org.ssgproject.content_rule_java_jre_deployment_config_exists" selected="false" severity="medium">
+            <title xml:lang="en-US">The Java Configuration File Exists</title>
+            <description xml:lang="en-US">
 If the Java configuration file does not exist, it can be added by running:
 <html:pre xmlns:html="http://www.w3.org/1999/xhtml">$ sudo mkdir -p -m 755 /etc/.java/deployment
 $ sudo touch /etc/.java/deployment/deployment.config
 $ sudo chmod 644 /etc/.java/deployment/deployment.config</html:pre>
 </description>
-        <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
-        <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
-        <rationale xml:lang="en-US">
+            <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
+            <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
+            <rationale xml:lang="en-US">
 The deployment.config file is used for specifying the location and execution of
 system-level properties for the Java Runtime Environment. By default no
 deployment.config file exists; thus, no system-wide deployment.properties file exists.
 Without the deployment.config file, setting particular options for the Java
 control panel is impossible.
 </rationale>
-        <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-</ident>
-        <ident system="http://iase.disa.mil/stigs/app-security/app-security/Pages/index.aspx">JRE0070-UX</ident>
-        <fix system="urn:xccdf:fix:script:sh" id="java_jre_deployment_config_exists" complexity="low" disruption="low" reboot="false" strategy="enable">JAVA_CONFIG="/etc/.java/deployment/deployment.config"
+            <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-</ident>
+            <ident system="http://iase.disa.mil/stigs/app-security/app-security/Pages/index.aspx">JRE0070-UX</ident>
+            <fix id="java_jre_deployment_config_exists" system="urn:xccdf:fix:script:sh" complexity="high" disruption="medium" strategy="restrict">JAVA_CONFIG="/etc/.java/deployment/deployment.config"
 JAVA_DIR="/etc/.java/deployment"
 
 if [ ! -d ${JAVA_DIR} ] ; then
@@ -2197,33 +2138,33 @@ if [ ! -e ${JAVA_CONFIG} ]; then
 fi
 
 chmod 644 ${JAVA_CONFIG}</fix>
-        <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-          <check-content-ref name="oval:ssg-java_jre_deployment_config_exists:def:1" href="ssg-jre-oval.xml"/>
-        </check>
-        <check system="http://scap.nist.gov/schema/ocil/2">
-          <check-content-ref href="ssg-jre-ocil.xml" name="ocil:ssg-java_jre_deployment_config_exists_ocil:questionnaire:1"/>
-        </check>
-      </Rule>
-      <Rule id="xccdf_org.ssgproject.content_rule_java_jre_deployment_config_properties" selected="false" severity="medium">
-        <title xml:lang="en-US">Configure the deployment.properties File Path</title>
-        <description xml:lang="en-US">
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+              <check-content-ref name="oval:ssg-java_jre_deployment_config_exists:def:1" href="ssg-jre-oval.xml"/>
+            </check>
+            <check system="http://scap.nist.gov/schema/ocil/2">
+              <check-content-ref name="ocil:ssg-java_jre_deployment_config_exists_ocil:questionnaire:1" href="ssg-jre-ocil.xml"/>
+            </check>
+          </Rule>
+          <Rule id="xccdf_org.ssgproject.content_rule_java_jre_deployment_config_properties" selected="false" severity="medium">
+            <title xml:lang="en-US">Configure the deployment.properties File Path</title>
+            <description xml:lang="en-US">
 To ensure that the Java properties file is set in
 <html:code xmlns:html="http://www.w3.org/1999/xhtml">/etc/.java/deployment/deployment.config</html:code>, add or modify
 <html:code xmlns:html="http://www.w3.org/1999/xhtml">deployment.system.config</html:code> to equal
 <html:code xmlns:html="http://www.w3.org/1999/xhtml">file:///etc/.java/deployment/deployment.properties</html:code>.
 </description>
-        <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
-        <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
-        <rationale xml:lang="en-US">
+            <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
+            <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
+            <rationale xml:lang="en-US">
 Without a proper path for the properties file, deployment would not be possible.
 If the path specified does not lead to a properties file, the value of the
 'deployment.system.config.mandatory' key determines how to handle the situation.
 If the value of this key is true, JRE will not run if the path to the properties
 file is invalid.
 </rationale>
-        <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-</ident>
-        <ident system="http://iase.disa.mil/stigs/app-security/app-security/Pages/index.aspx">JRE0060-UX</ident>
-        <fix system="urn:xccdf:fix:script:sh" id="java_jre_deployment_config_properties" complexity="low" disruption="low" reboot="false" strategy="enable">JAVA_CONFIG="/etc/.java/deployment/deployment.config"
+            <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-</ident>
+            <ident system="http://iase.disa.mil/stigs/app-security/app-security/Pages/index.aspx">JRE0060-UX</ident>
+            <fix id="java_jre_deployment_config_properties" system="urn:xccdf:fix:script:sh" complexity="high" disruption="medium" strategy="restrict">JAVA_CONFIG="/etc/.java/deployment/deployment.config"
 JAVA_PROPERTIES="/etc/.java/deployment/deployment.properties"
 
 grep -q "^deployment.system.config=file://${JAVA_CONFIG}$" ${JAVA_CONFIG} &amp;&amp; \
@@ -2232,32 +2173,32 @@ if ! [ $? -eq 0 ] ; then
   echo "deployment.system.config=file://${JAVA_PROPERTIES}" &gt;&gt; ${JAVA_CONFIG}
 fi
 </fix>
-        <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-          <check-content-ref name="oval:ssg-java_jre_deployment_config_properties:def:1" href="ssg-jre-oval.xml"/>
-        </check>
-        <check system="http://scap.nist.gov/schema/ocil/2">
-          <check-content-ref href="ssg-jre-ocil.xml" name="ocil:ssg-java_jre_deployment_config_properties_ocil:questionnaire:1"/>
-        </check>
-      </Rule>
-      <Rule id="xccdf_org.ssgproject.content_rule_java_jre_deployment_config_mandatory" selected="false" severity="medium">
-        <title xml:lang="en-US">Configure The Java Deployment Mandatory Setting</title>
-        <description xml:lang="en-US">
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+              <check-content-ref name="oval:ssg-java_jre_deployment_config_properties:def:1" href="ssg-jre-oval.xml"/>
+            </check>
+            <check system="http://scap.nist.gov/schema/ocil/2">
+              <check-content-ref name="ocil:ssg-java_jre_deployment_config_properties_ocil:questionnaire:1" href="ssg-jre-ocil.xml"/>
+            </check>
+          </Rule>
+          <Rule id="xccdf_org.ssgproject.content_rule_java_jre_deployment_config_mandatory" selected="false" severity="medium">
+            <title xml:lang="en-US">Configure The Java Deployment Mandatory Setting</title>
+            <description xml:lang="en-US">
 To configure the Java mandatory deployment setting, add or modify
 <html:code xmlns:html="http://www.w3.org/1999/xhtml">deployment.system.config.mandatory</html:code> to equal <html:code xmlns:html="http://www.w3.org/1999/xhtml">false</html:code>
 in <html:code xmlns:html="http://www.w3.org/1999/xhtml">/etc/.java/deployment/deployment.config</html:code>.
 </description>
-        <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
-        <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
-        <rationale xml:lang="en-US">
+            <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
+            <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
+            <rationale xml:lang="en-US">
 Without a proper path for the properties file, deployment would not be possible.
 If the path specified does not lead to a properties file, the value of the
 'deployment.system.config.mandatory' key determines how to handle the situation.
 If the value of this key is true, JRE will not run if the path to the properties
 file is invalid.
 </rationale>
-        <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-</ident>
-        <ident system="http://iase.disa.mil/stigs/app-security/app-security/Pages/index.aspx">JRE0060-UX</ident>
-        <fix system="urn:xccdf:fix:script:sh" id="java_jre_deployment_config_mandatory" complexity="low" disruption="low" reboot="false" strategy="enable">JAVA_CONFIG="/etc/.java/deployment/deployment.config"
+            <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-</ident>
+            <ident system="http://iase.disa.mil/stigs/app-security/app-security/Pages/index.aspx">JRE0060-UX</ident>
+            <fix id="java_jre_deployment_config_mandatory" system="urn:xccdf:fix:script:sh" complexity="high" disruption="medium" strategy="restrict">JAVA_CONFIG="/etc/.java/deployment/deployment.config"
 
 grep -q "^deployment.system.config.mandatory=false$" ${JAVA_CONFIG} &amp;&amp; \
 sed -i "s/deployment.system.config.mandatory=.*/deployment.system.config.mandatory=false/g" ${JAVA_CONFIG}
@@ -2265,34 +2206,34 @@ if ! [ $? -eq 0 ] ; then
   echo "deployment.system.config.mandatory=false" &gt;&gt; ${JAVA_CONFIG}
 fi
 </fix>
-        <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-          <check-content-ref name="oval:ssg-java_jre_deployment_config_mandatory:def:1" href="ssg-jre-oval.xml"/>
-        </check>
-        <check system="http://scap.nist.gov/schema/ocil/2">
-          <check-content-ref href="ssg-jre-ocil.xml" name="ocil:ssg-java_jre_deployment_config_mandatory_ocil:questionnaire:1"/>
-        </check>
-      </Rule>
-    </Group>
-    <Rule id="xccdf_org.ssgproject.content_rule_java_jre_deployment_properties_exists" selected="false" severity="medium">
-      <title xml:lang="en-US">The Java Properties File Exists</title>
-      <description xml:lang="en-US">
+            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+              <check-content-ref name="oval:ssg-java_jre_deployment_config_mandatory:def:1" href="ssg-jre-oval.xml"/>
+            </check>
+            <check system="http://scap.nist.gov/schema/ocil/2">
+              <check-content-ref name="ocil:ssg-java_jre_deployment_config_mandatory_ocil:questionnaire:1" href="ssg-jre-ocil.xml"/>
+            </check>
+          </Rule>
+        </Group>
+        <Rule id="xccdf_org.ssgproject.content_rule_java_jre_deployment_properties_exists" selected="false" severity="medium">
+          <title xml:lang="en-US">The Java Properties File Exists</title>
+          <description xml:lang="en-US">
 If the Java properties file does not exist, it can be added by running:
 <html:pre xmlns:html="http://www.w3.org/1999/xhtml">$ sudo mkdir -p -m 755 /etc/.java/deployment
 $ sudo touch /etc/.java/deployment/deployment.properties
 $ sudo chmod 644 /etc/.java/deployment/deployment.properties</html:pre>
 </description>
-      <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
-      <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
-      <rationale xml:lang="en-US">
+          <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
+          <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
+          <rationale xml:lang="en-US">
 Each option in the Java control panel is represented by property keys.
 These keys adjust the options in the Java control panel based on the value
 assigned to that key. By default no deployment.properties file exists; thus,
 no system-wide exists. Without the deployment.properties file, setting particular
 options for the Java control panel is impossible.
 </rationale>
-      <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-</ident>
-      <ident system="http://iase.disa.mil/stigs/app-security/app-security/Pages/index.aspx">JRE0080-UX</ident>
-      <fix system="urn:xccdf:fix:script:sh" id="java_jre_deployment_properties_exists" complexity="low" disruption="low" reboot="false" strategy="enable">JAVA_PROPERTIES="/etc/.java/deployment/deployment.properties"
+          <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-</ident>
+          <ident system="http://iase.disa.mil/stigs/app-security/app-security/Pages/index.aspx">JRE0080-UX</ident>
+          <fix id="java_jre_deployment_properties_exists" system="urn:xccdf:fix:script:sh" complexity="high" disruption="medium" strategy="restrict">JAVA_PROPERTIES="/etc/.java/deployment/deployment.properties"
 JAVA_DIR="/etc/.java/deployment"
 
 if [ ! -d ${JAVA_DIR} ] ; then
@@ -2305,62 +2246,62 @@ fi
 
 chmod 644 ${JAVA_PROPERTIES}
 </fix>
-      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg-java_jre_deployment_properties_exists:def:1" href="ssg-jre-oval.xml"/>
-      </check>
-      <check system="http://scap.nist.gov/schema/ocil/2">
-        <check-content-ref href="ssg-jre-ocil.xml" name="ocil:ssg-java_jre_deployment_properties_exists_ocil:questionnaire:1"/>
-      </check>
-    </Rule>
-    <Rule id="xccdf_org.ssgproject.content_rule_java_jre_untrusted_sources" selected="false" severity="medium">
-      <title xml:lang="en-US">Disable Java Execution From Untrusted Sources</title>
-      <description xml:lang="en-US">
+          <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <check-content-ref name="oval:ssg-java_jre_deployment_properties_exists:def:1" href="ssg-jre-oval.xml"/>
+          </check>
+          <check system="http://scap.nist.gov/schema/ocil/2">
+            <check-content-ref name="ocil:ssg-java_jre_deployment_properties_exists_ocil:questionnaire:1" href="ssg-jre-ocil.xml"/>
+          </check>
+        </Rule>
+        <Rule id="xccdf_org.ssgproject.content_rule_java_jre_untrusted_sources" selected="false" severity="medium">
+          <title xml:lang="en-US">Disable Java Execution From Untrusted Sources</title>
+          <description xml:lang="en-US">
 To ensure that Java cannot execute from untrusted sources, set
 <html:code xmlns:html="http://www.w3.org/1999/xhtml">deployment.security.askgrantdialog.notinca</html:code> to equal <html:code xmlns:html="http://www.w3.org/1999/xhtml">false</html:code>
 in <html:code xmlns:html="http://www.w3.org/1999/xhtml">/etc/.java/deployment/deployment.properties</html:code>.
 </description>
-      <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
-      <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
-      <rationale xml:lang="en-US">
+          <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
+          <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
+          <rationale xml:lang="en-US">
 Permitting execution of signed Java applets from un-trusted sources
 may result in acquiring malware, and risks system modification, invasion of
 privacy, or denial of service.
 </rationale>
-      <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-</ident>
-      <ident system="http://iase.disa.mil/stigs/app-security/app-security/Pages/index.aspx">JRE0001-UX</ident>
-      <fix system="urn:xccdf:fix:script:sh" id="java_jre_untrusted_sources" complexity="low" disruption="low" reboot="false" strategy="enable">JAVA_PROPERTIES="/etc/.java/deployment/deployment.properties"
+          <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-</ident>
+          <ident system="http://iase.disa.mil/stigs/app-security/app-security/Pages/index.aspx">JRE0001-UX</ident>
+          <fix id="java_jre_untrusted_sources" system="urn:xccdf:fix:script:sh" complexity="high" disruption="medium" strategy="restrict">JAVA_PROPERTIES="/etc/.java/deployment/deployment.properties"
 
 grep -q "^deployment.security.askgrantdialog.notinca=false$" ${JAVA_PROPERTIES} &amp;&amp; \
 sed -i "s/deployment.security.askgrantdialog.notinca=.*/deployment.security.askgrantdialog.notinca=false/g" ${JAVA_PROPERTIES}
 if ! [ $? -eq 0 ] ; then
   echo "deployment.security.askgrantdialog.notinca=false" &gt;&gt; ${JAVA_PROPERTIES}
 fi</fix>
-      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg-java_jre_untrusted_sources:def:1" href="ssg-jre-oval.xml"/>
-      </check>
-      <check system="http://scap.nist.gov/schema/ocil/2">
-        <check-content-ref href="ssg-jre-ocil.xml" name="ocil:ssg-java_jre_untrusted_sources_ocil:questionnaire:1"/>
-      </check>
-    </Rule>
-    <Rule id="xccdf_org.ssgproject.content_rule_java_jre_untrusted_sources_locked" selected="false" severity="medium">
-      <title xml:lang="en-US">Disable User Access to Untrusted Sources Settings</title>
-      <description xml:lang="en-US">
+          <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <check-content-ref name="oval:ssg-java_jre_untrusted_sources:def:1" href="ssg-jre-oval.xml"/>
+          </check>
+          <check system="http://scap.nist.gov/schema/ocil/2">
+            <check-content-ref name="ocil:ssg-java_jre_untrusted_sources_ocil:questionnaire:1" href="ssg-jre-ocil.xml"/>
+          </check>
+        </Rule>
+        <Rule id="xccdf_org.ssgproject.content_rule_java_jre_untrusted_sources_locked" selected="false" severity="medium">
+          <title xml:lang="en-US">Disable User Access to Untrusted Sources Settings</title>
+          <description xml:lang="en-US">
 To ensure that users cannot change the untrusted sources settings,
 add <html:code xmlns:html="http://www.w3.org/1999/xhtml">deployment.security.askgrantdialog.notinca.locked</html:code> to
 <html:code xmlns:html="http://www.w3.org/1999/xhtml">/etc/.java/deployment/deployment.properties</html:code>.
 </description>
-      <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
-      <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
-      <rationale xml:lang="en-US">
+          <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
+          <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
+          <rationale xml:lang="en-US">
 Permitting execution of signed Java applets from un-trusted sources may
 result in malware running on the system, and risks system modification,
 invasion of privacy, or denial of service. As such, ensuring users cannot
 change the permission settings which control the execution of signed Java
 applets contributes to a more consistent security profile.
 </rationale>
-      <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-</ident>
-      <ident system="http://iase.disa.mil/stigs/app-security/app-security/Pages/index.aspx">JRE0010-UX</ident>
-      <fix system="urn:xccdf:fix:script:sh" id="java_jre_untrusted_sources_locked" complexity="low" disruption="low" reboot="false" strategy="enable">JAVA_PROPERTIES="/etc/.java/deployment/deployment.properties"
+          <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-</ident>
+          <ident system="http://iase.disa.mil/stigs/app-security/app-security/Pages/index.aspx">JRE0010-UX</ident>
+          <fix id="java_jre_untrusted_sources_locked" system="urn:xccdf:fix:script:sh" complexity="high" disruption="medium" strategy="restrict">JAVA_PROPERTIES="/etc/.java/deployment/deployment.properties"
 
 grep -q "^deployment.security.askgrantdialog.notinca.locked$" ${JAVA_PROPERTIES} &amp;&amp; \
 sed -i "s/deployment.security.askgrantdialog.notinca\..*/deployment.security.askgrantdialog.notinca.locked/g" ${JAVA_PROPERTIES}
@@ -2368,63 +2309,63 @@ if ! [ $? -eq 0 ] ; then
   echo "deployment.security.askgrantdialog.notinca.locked" &gt;&gt; ${JAVA_PROPERTIES}
 fi
 </fix>
-      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg-java_jre_untrusted_sources_locked:def:1" href="ssg-jre-oval.xml"/>
-      </check>
-      <check system="http://scap.nist.gov/schema/ocil/2">
-        <check-content-ref href="ssg-jre-ocil.xml" name="ocil:ssg-java_jre_untrusted_sources_locked_ocil:questionnaire:1"/>
-      </check>
-    </Rule>
-    <Rule id="xccdf_org.ssgproject.content_rule_java_jre_validation_crl" selected="false" severity="medium">
-      <title xml:lang="en-US">Enable Revocation Checks for Publisher Certificates</title>
-      <description xml:lang="en-US">
+          <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <check-content-ref name="oval:ssg-java_jre_untrusted_sources_locked:def:1" href="ssg-jre-oval.xml"/>
+          </check>
+          <check system="http://scap.nist.gov/schema/ocil/2">
+            <check-content-ref name="ocil:ssg-java_jre_untrusted_sources_locked_ocil:questionnaire:1" href="ssg-jre-ocil.xml"/>
+          </check>
+        </Rule>
+        <Rule id="xccdf_org.ssgproject.content_rule_java_jre_validation_crl" selected="false" severity="medium">
+          <title xml:lang="en-US">Enable Revocation Checks for Publisher Certificates</title>
+          <description xml:lang="en-US">
 To ensure that certificate revocation checks are enabled, set
 <html:code xmlns:html="http://www.w3.org/1999/xhtml">deployment.security.validation.crl</html:code> to equal <html:code xmlns:html="http://www.w3.org/1999/xhtml">true</html:code>
 in <html:code xmlns:html="http://www.w3.org/1999/xhtml">/etc/.java/deployment/deployment.properties</html:code>.
 </description>
-      <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
-      <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
-      <rationale xml:lang="en-US">
+          <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
+          <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
+          <rationale xml:lang="en-US">
 Certificates may be revoked due to improper issuance, compromise of the certificate,
 and failure to adhere to policy. Therefore, any certificate found on a CRL
 should not be trusted. Permitting execution of an applet published with a
 revoked certificate may result in spoofing, malware, system modification,
 invasion of privacy, and denial of service.
 </rationale>
-      <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-</ident>
-      <ident system="http://iase.disa.mil/stigs/app-security/app-security/Pages/index.aspx">JRE0020-UX</ident>
-      <fix system="urn:xccdf:fix:script:sh" id="java_jre_validation_crl" complexity="low" disruption="low" reboot="false" strategy="enable">JAVA_PROPERTIES="/etc/.java/deployment/deployment.properties"
+          <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-</ident>
+          <ident system="http://iase.disa.mil/stigs/app-security/app-security/Pages/index.aspx">JRE0020-UX</ident>
+          <fix id="java_jre_validation_crl" system="urn:xccdf:fix:script:sh" complexity="high" disruption="medium" strategy="restrict">JAVA_PROPERTIES="/etc/.java/deployment/deployment.properties"
 
 grep -q "^deployment.security.validation.crl=true$" ${JAVA_PROPERTIES} &amp;&amp; \
 sed -i "s/deployment.security.validation.crl=.*/deployment.security.validation.crl=true/g" ${JAVA_PROPERTIES}
 if ! [ $? -eq 0 ] ; then
   echo "deployment.security.validation.crl=true" &gt;&gt; ${JAVA_PROPERTIES}
 fi</fix>
-      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg-java_jre_validation_crl:def:1" href="ssg-jre-oval.xml"/>
-      </check>
-      <check system="http://scap.nist.gov/schema/ocil/2">
-        <check-content-ref href="ssg-jre-ocil.xml" name="ocil:ssg-java_jre_validation_crl_ocil:questionnaire:1"/>
-      </check>
-    </Rule>
-    <Rule id="xccdf_org.ssgproject.content_rule_java_jre_validation_crl_locked" selected="false" severity="medium">
-      <title xml:lang="en-US">Disable User Access to Revocation Check Settings</title>
-      <description xml:lang="en-US">
+          <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <check-content-ref name="oval:ssg-java_jre_validation_crl:def:1" href="ssg-jre-oval.xml"/>
+          </check>
+          <check system="http://scap.nist.gov/schema/ocil/2">
+            <check-content-ref name="ocil:ssg-java_jre_validation_crl_ocil:questionnaire:1" href="ssg-jre-ocil.xml"/>
+          </check>
+        </Rule>
+        <Rule id="xccdf_org.ssgproject.content_rule_java_jre_validation_crl_locked" selected="false" severity="medium">
+          <title xml:lang="en-US">Disable User Access to Revocation Check Settings</title>
+          <description xml:lang="en-US">
 To ensure that users cannot change certificate revocation check settings,
 add <html:code xmlns:html="http://www.w3.org/1999/xhtml">deployment.security.validation.crl.locked</html:code> to
 <html:code xmlns:html="http://www.w3.org/1999/xhtml">/etc/.java/deployment/deployment.properties</html:code>.
 </description>
-      <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
-      <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
-      <rationale xml:lang="en-US">
+          <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
+          <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
+          <rationale xml:lang="en-US">
 Permitting execution of an applet published with a revoked certificate may
 result in spoofing, malware, system modification, invasion of privacy,
 and denial of service. As such, ensuring users cannot change settings
 contributes to a more consistent security profile.
 </rationale>
-      <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-</ident>
-      <ident system="http://iase.disa.mil/stigs/app-security/app-security/Pages/index.aspx">JRE0030-UX</ident>
-      <fix system="urn:xccdf:fix:script:sh" id="java_jre_validation_crl_locked" complexity="low" disruption="low" reboot="false" strategy="enable">JAVA_PROPERTIES="/etc/.java/deployment/deployment.properties"
+          <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-</ident>
+          <ident system="http://iase.disa.mil/stigs/app-security/app-security/Pages/index.aspx">JRE0030-UX</ident>
+          <fix id="java_jre_validation_crl_locked" system="urn:xccdf:fix:script:sh" complexity="high" disruption="medium" strategy="restrict">JAVA_PROPERTIES="/etc/.java/deployment/deployment.properties"
 
 grep -q "^deployment.security.validation.crl.locked$" ${JAVA_PROPERTIES} &amp;&amp; \
 sed -i "s/deployment.security.validation.crl\..*/deployment.security.validation.crl.locked/g" ${JAVA_PROPERTIES}
@@ -2432,63 +2373,63 @@ if ! [ $? -eq 0 ] ; then
   echo "deployment.security.validation.crl.locked" &gt;&gt; ${JAVA_PROPERTIES}
 fi
 </fix>
-      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg-java_jre_validation_crl_locked:def:1" href="ssg-jre-oval.xml"/>
-      </check>
-      <check system="http://scap.nist.gov/schema/ocil/2">
-        <check-content-ref href="ssg-jre-ocil.xml" name="ocil:ssg-java_jre_validation_crl_locked_ocil:questionnaire:1"/>
-      </check>
-    </Rule>
-    <Rule id="xccdf_org.ssgproject.content_rule_java_jre_validation_ocsp" selected="false" severity="medium">
-      <title xml:lang="en-US">Enable Online Certificate Validation</title>
-      <description xml:lang="en-US">
+          <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <check-content-ref name="oval:ssg-java_jre_validation_crl_locked:def:1" href="ssg-jre-oval.xml"/>
+          </check>
+          <check system="http://scap.nist.gov/schema/ocil/2">
+            <check-content-ref name="ocil:ssg-java_jre_validation_crl_locked_ocil:questionnaire:1" href="ssg-jre-ocil.xml"/>
+          </check>
+        </Rule>
+        <Rule id="xccdf_org.ssgproject.content_rule_java_jre_validation_ocsp" selected="false" severity="medium">
+          <title xml:lang="en-US">Enable Online Certificate Validation</title>
+          <description xml:lang="en-US">
 To ensure that online certificate verification is enabled, set
 <html:code xmlns:html="http://www.w3.org/1999/xhtml">deployment.security.validation.ocsp</html:code> to equal <html:code xmlns:html="http://www.w3.org/1999/xhtml">true</html:code>
 in <html:code xmlns:html="http://www.w3.org/1999/xhtml">/etc/.java/deployment/deployment.properties</html:code>.
 </description>
-      <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
-      <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
-      <rationale xml:lang="en-US">
+          <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
+          <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
+          <rationale xml:lang="en-US">
 Online certificate validation provides a greater degree of validation of certificates
 when running a signed Java applet. Permitting execution of an applet with an invalid
 certificate may result in malware execution , system modification, invasion of privacy,
 and denial of service.
 </rationale>
-      <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-</ident>
-      <ident system="http://iase.disa.mil/stigs/app-security/app-security/Pages/index.aspx">JRE0040-UX</ident>
-      <fix system="urn:xccdf:fix:script:sh" id="java_jre_validation_ocsp" complexity="low" disruption="low" reboot="false" strategy="enable">JAVA_PROPERTIES="/etc/.java/deployment/deployment.properties"
+          <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-</ident>
+          <ident system="http://iase.disa.mil/stigs/app-security/app-security/Pages/index.aspx">JRE0040-UX</ident>
+          <fix id="java_jre_validation_ocsp" system="urn:xccdf:fix:script:sh" complexity="high" disruption="medium" strategy="restrict">JAVA_PROPERTIES="/etc/.java/deployment/deployment.properties"
 
 grep -q "^deployment.security.validation.ocsp=true$" ${JAVA_PROPERTIES} &amp;&amp; \
 sed -i "s/deployment.security.validation.ocsp=.*/deployment.security.validation.ocsp=true/g" ${JAVA_PROPERTIES}
 if ! [ $? -eq 0 ] ; then
   echo "deployment.security.validation.ocsp=true" &gt;&gt; ${JAVA_PROPERTIES}
 fi</fix>
-      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg-java_jre_validation_ocsp:def:1" href="ssg-jre-oval.xml"/>
-      </check>
-      <check system="http://scap.nist.gov/schema/ocil/2">
-        <check-content-ref href="ssg-jre-ocil.xml" name="ocil:ssg-java_jre_validation_ocsp_ocil:questionnaire:1"/>
-      </check>
-    </Rule>
-    <Rule id="xccdf_org.ssgproject.content_rule_java_jre_validation_ocsp_locked" selected="false" severity="medium">
-      <title xml:lang="en-US">Disable User Access to Online Certificate Validation Settings</title>
-      <description xml:lang="en-US">
+          <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <check-content-ref name="oval:ssg-java_jre_validation_ocsp:def:1" href="ssg-jre-oval.xml"/>
+          </check>
+          <check system="http://scap.nist.gov/schema/ocil/2">
+            <check-content-ref name="ocil:ssg-java_jre_validation_ocsp_ocil:questionnaire:1" href="ssg-jre-ocil.xml"/>
+          </check>
+        </Rule>
+        <Rule id="xccdf_org.ssgproject.content_rule_java_jre_validation_ocsp_locked" selected="false" severity="medium">
+          <title xml:lang="en-US">Disable User Access to Online Certificate Validation Settings</title>
+          <description xml:lang="en-US">
 To ensure that users cannot change the online certificate verification settings,
 add <html:code xmlns:html="http://www.w3.org/1999/xhtml">deployment.security.validation.ocsp.locked</html:code> to
 <html:code xmlns:html="http://www.w3.org/1999/xhtml">/etc/.java/deployment/deployment.properties</html:code>.
 </description>
-      <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
-      <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
-      <rationale xml:lang="en-US">
+          <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
+          <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
+          <rationale xml:lang="en-US">
 Online certificate validation provides a greater degree of validation of certificates
 when running a signed Java applet. Permitting execution of an applet with an invalid
 certificate may result in malware execution , system modification, invasion of privacy,
 and denial of service. As such, ensuring users cannot change settings contributes to
 a more consistent security profile.
 </rationale>
-      <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-</ident>
-      <ident system="http://iase.disa.mil/stigs/app-security/app-security/Pages/index.aspx">JRE0050-UX</ident>
-      <fix system="urn:xccdf:fix:script:sh" id="java_jre_validation_ocsp_locked" complexity="low" disruption="low" reboot="false" strategy="enable">JAVA_PROPERTIES="/etc/.java/deployment/deployment.properties"
+          <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-</ident>
+          <ident system="http://iase.disa.mil/stigs/app-security/app-security/Pages/index.aspx">JRE0050-UX</ident>
+          <fix id="java_jre_validation_ocsp_locked" system="urn:xccdf:fix:script:sh" complexity="high" disruption="medium" strategy="restrict">JAVA_PROPERTIES="/etc/.java/deployment/deployment.properties"
 
 grep -q "^deployment.security.validation.ocsp.locked$" ${JAVA_PROPERTIES} &amp;&amp; \
 sed -i "s/deployment.security.validation.ocsp\..*/deployment.security.validation.ocsp.locked/g" ${JAVA_PROPERTIES}
@@ -2496,409 +2437,135 @@ if ! [ $? -eq 0 ] ; then
   echo "deployment.security.validation.ocsp.locked" &gt;&gt; ${JAVA_PROPERTIES}
 fi
 </fix>
-      <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
-        <check-content-ref name="oval:ssg-java_jre_validation_ocsp_locked:def:1" href="ssg-jre-oval.xml"/>
-      </check>
-      <check system="http://scap.nist.gov/schema/ocil/2">
-        <check-content-ref href="ssg-jre-ocil.xml" name="ocil:ssg-java_jre_validation_ocsp_locked_ocil:questionnaire:1"/>
-      </check>
-    </Rule>
-    <Rule id="xccdf_org.ssgproject.content_rule_java_jre_updated" selected="false" severity="medium">
-      <title xml:lang="en-US">Ensure Java Patches Installed</title>
-      <description xml:lang="en-US">
+          <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5">
+            <check-content-ref name="oval:ssg-java_jre_validation_ocsp_locked:def:1" href="ssg-jre-oval.xml"/>
+          </check>
+          <check system="http://scap.nist.gov/schema/ocil/2">
+            <check-content-ref name="ocil:ssg-java_jre_validation_ocsp_locked_ocil:questionnaire:1" href="ssg-jre-ocil.xml"/>
+          </check>
+        </Rule>
+        <Rule id="xccdf_org.ssgproject.content_rule_java_jre_updated" selected="false" severity="medium">
+          <title xml:lang="en-US">Ensure Java Patches Installed</title>
+          <description xml:lang="en-US">
 If the system is joined to the Red Hat Network, a Red Hat Satellite Server,
 or a yum server, run the following command to install updates:
 <html:pre xmlns:html="http://www.w3.org/1999/xhtml">$ sudo yum update</html:pre>
 If the system is not configured to use one of these sources, updates (in the form of RPM packages)
 can be manually downloaded and installed using <html:code xmlns:html="http://www.w3.org/1999/xhtml">rpm</html:code>.
 </description>
-      <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
-      <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
-      <rationale xml:lang="en-US">
+          <reference href="http://nvlpubs.nist.gov/nistpubs/SpecialPublications/NIST.SP.800-53r4.pdf">DCBP-1</reference>
+          <reference href="http://iase.disa.mil/stigs/cci/Pages/index.aspx"/>
+          <rationale xml:lang="en-US">
 Running an older version of the JRE can introduce security
 vulnerabilities to the system.
 </rationale>
-      <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-</ident>
-      <ident system="http://iase.disa.mil/stigs/app-security/app-security/Pages/index.aspx">JRE0090-UX</ident>
-      <check system="http://scap.nist.gov/schema/ocil/2">
-        <check-content-ref href="ssg-jre-ocil.xml" name="ocil:ssg-java_jre_updated_ocil:questionnaire:1"/>
-      </check>
-    </Rule>
-  </Group>
-</Benchmark>
+          <ident system="https://nvd.nist.gov/cce/index.cfm">CCE-</ident>
+          <ident system="http://iase.disa.mil/stigs/app-security/app-security/Pages/index.aspx">JRE0090-UX</ident>
+          <check system="http://scap.nist.gov/schema/ocil/2">
+            <check-content-ref name="ocil:ssg-java_jre_updated_ocil:questionnaire:1" href="ssg-jre-ocil.xml"/>
+          </check>
+        </Rule>
+      </Group>
+    </Benchmark>
   </ds:component>
-  <ds:component id="scap_org.open-scap_comp_output--ssg-jre-cpe-oval.xml" timestamp="2016-11-28T09:42:05">
-    <oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:linux="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
-  <generator>
-    <oval:product_name>python</oval:product_name>
-    <oval:product_version>2.7.12</oval:product_version>
-    <oval:schema_version>5.10</oval:schema_version>
-    <oval:timestamp>2016-11-28T08:42:05</oval:timestamp>
-  </generator>
-  <definitions><definition class="inventory" id="oval:ssg-installed_app_is_java:def:1" version="1">
-      <metadata>
-        <title>Java Runtime Environment</title>
-        <affected family="unix">
-          <product>Java Runtime Environment (JRE)</product>
-        </affected>
-        <reference ref_id="installed_app_is_java" source="CPE"/>
-        <description>The application installed on the system is Java.</description>
-      </metadata>
-      <criteria operator="OR">
-        <criterion comment="Oracle Java is installed" test_ref="oval:ssg-test_oracle_java:tst:1"/>
-        <criterion comment="Oracle Java from Red Hat" test_ref="oval:ssg-test_oracle_java_rhel:tst:1"/>
-        <criterion comment="IBM Java is installed" test_ref="oval:ssg-test_ibm_java:tst:1"/>
-        <criterion comment="IBM Java from Red Hat" test_ref="oval:ssg-test_ibm_java_rhel:tst:1"/>
-        <criterion comment="Sun Java from Red Hat" test_ref="oval:ssg-test_sun_java_rhel:tst:1"/>
-        <criterion comment="OpenJDK is installed" test_ref="oval:ssg-test_openjdk_java:tst:1"/>
-      </criteria>
-    </definition>
-    </definitions><tests><linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="Oracle JRE is installed" id="oval:ssg-test_oracle_java:tst:1" version="1">
-      <linux:object object_ref="oval:ssg-obj_oracle_java:obj:1"/>
-    </linux:rpminfo_test>
-    <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="Oracle JRE from Red Hat is installed" id="oval:ssg-test_oracle_java_rhel:tst:1" version="1">
-      <linux:object object_ref="oval:ssg-obj_oracle_java_rhel:obj:1"/>
-    </linux:rpminfo_test>
-    <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="IBM JRE is installed" id="oval:ssg-test_ibm_java:tst:1" version="1">
-      <linux:object object_ref="oval:ssg-obj_ibm_java:obj:1"/>
-      <linux:state state_ref="oval:ssg-state_ibm_java:ste:1"/>
-    </linux:rpminfo_test>
-    <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="IBM JRE from Red Hat is installed" id="oval:ssg-test_ibm_java_rhel:tst:1" version="1">
-      <linux:object object_ref="oval:ssg-obj_ibm_java_rhel:obj:1"/>
-      <linux:state state_ref="oval:ssg-state_ibm_java_rhel:ste:1"/>
-    </linux:rpminfo_test>
-    <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="Sun JRE from Red Hat is installed" id="oval:ssg-test_sun_java_rhel:tst:1" version="1">
-      <linux:object object_ref="oval:ssg-obj_sun_java_rhel:obj:1"/>
-    </linux:rpminfo_test>
-    <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="Red Hat OpenJDK is installed" id="oval:ssg-test_openjdk_java:tst:1" version="1">
-      <linux:object object_ref="oval:ssg-obj_openjdk_java:obj:1"/>
-    </linux:rpminfo_test>
-    </tests><objects><linux:rpminfo_object id="oval:ssg-obj_oracle_java:obj:1" version="1">
-      <linux:name>jre</linux:name>
-    </linux:rpminfo_object>
-    <linux:rpminfo_object id="oval:ssg-obj_oracle_java_rhel:obj:1" version="1">
-      <linux:name datatype="string" operation="pattern match">^java.*oracle.*$</linux:name>
-    </linux:rpminfo_object>
-    <linux:rpminfo_object id="oval:ssg-obj_ibm_java:obj:1" version="1">
-      <linux:name datatype="string" operation="pattern match">^ibm-java.*$</linux:name>
-    </linux:rpminfo_object>
-    <linux:rpminfo_object id="oval:ssg-obj_ibm_java_rhel:obj:1" version="1">
-      <linux:name datatype="string" operation="pattern match">^java.*ibm.*$</linux:name>
-    </linux:rpminfo_object>
-    <linux:rpminfo_object id="oval:ssg-obj_sun_java_rhel:obj:1" version="1">
-      <linux:name datatype="string" operation="pattern match">^java.*sun.*$</linux:name>
-    </linux:rpminfo_object>
-    <linux:rpminfo_object id="oval:ssg-obj_openjdk_java:obj:1" version="1">
-      <linux:name datatype="string" operation="pattern match">^java.*openjdk.*$</linux:name>
-    </linux:rpminfo_object>
-    </objects><states><linux:rpminfo_state id="oval:ssg-state_ibm_java:ste:1" version="1">
-      <linux:evr datatype="evr_string" operation="greater than or equal">.*1.6.0.*</linux:evr>
-    </linux:rpminfo_state>
-    <linux:rpminfo_state id="oval:ssg-state_ibm_java_rhel:ste:1" version="1">
-      <linux:evr datatype="evr_string" operation="greater than or equal">.*1.6.0.*</linux:evr>
-    </linux:rpminfo_state>
-  </states></oval_definitions>
+  <ds:component id="scap_org.open-scap_comp_ssg-jre-cpe-oval.xml" timestamp="2017-03-29T15:52:30">
+    <oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:linux="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
+      <generator>
+        <oval:product_name>python</oval:product_name>
+        <oval:product_version>2.7.13</oval:product_version>
+        <oval:schema_version>5.11</oval:schema_version>
+        <oval:timestamp>2017-03-29T13:52:06</oval:timestamp>
+      </generator>
+      <definitions>
+        <definition class="inventory" id="oval:ssg-installed_app_is_java:def:1" version="1">
+          <metadata>
+            <title>Java Runtime Environment</title>
+            <affected family="unix">
+              <product>Java Runtime Environment (JRE)</product>
+            </affected>
+            <reference ref_id="installed_app_is_java" source="CPE"/>
+            <description>The application installed on the system is Java.</description>
+          </metadata>
+          <criteria operator="OR">
+            <criterion comment="Oracle Java is installed" test_ref="oval:ssg-test_oracle_java:tst:1"/>
+            <criterion comment="Oracle Java from Red Hat" test_ref="oval:ssg-test_oracle_java_rhel:tst:1"/>
+            <criterion comment="IBM Java is installed" test_ref="oval:ssg-test_ibm_java:tst:1"/>
+            <criterion comment="IBM Java from Red Hat" test_ref="oval:ssg-test_ibm_java_rhel:tst:1"/>
+            <criterion comment="Sun Java from Red Hat" test_ref="oval:ssg-test_sun_java_rhel:tst:1"/>
+            <criterion comment="OpenJDK is installed" test_ref="oval:ssg-test_openjdk_java:tst:1"/>
+          </criteria>
+        </definition>
+      </definitions>
+      <tests>
+        <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="Oracle JRE is installed" id="oval:ssg-test_oracle_java:tst:1" version="1">
+          <linux:object object_ref="oval:ssg-obj_oracle_java:obj:1"/>
+        </linux:rpminfo_test>
+        <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="Oracle JRE from Red Hat is installed" id="oval:ssg-test_oracle_java_rhel:tst:1" version="1">
+          <linux:object object_ref="oval:ssg-obj_oracle_java_rhel:obj:1"/>
+        </linux:rpminfo_test>
+        <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="IBM JRE is installed" id="oval:ssg-test_ibm_java:tst:1" version="1">
+          <linux:object object_ref="oval:ssg-obj_ibm_java:obj:1"/>
+          <linux:state state_ref="oval:ssg-state_ibm_java:ste:1"/>
+        </linux:rpminfo_test>
+        <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="IBM JRE from Red Hat is installed" id="oval:ssg-test_ibm_java_rhel:tst:1" version="1">
+          <linux:object object_ref="oval:ssg-obj_ibm_java_rhel:obj:1"/>
+          <linux:state state_ref="oval:ssg-state_ibm_java_rhel:ste:1"/>
+        </linux:rpminfo_test>
+        <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="Sun JRE from Red Hat is installed" id="oval:ssg-test_sun_java_rhel:tst:1" version="1">
+          <linux:object object_ref="oval:ssg-obj_sun_java_rhel:obj:1"/>
+        </linux:rpminfo_test>
+        <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="Red Hat OpenJDK is installed" id="oval:ssg-test_openjdk_java:tst:1" version="1">
+          <linux:object object_ref="oval:ssg-obj_openjdk_java:obj:1"/>
+        </linux:rpminfo_test>
+      </tests>
+      <objects>
+        <linux:rpminfo_object id="oval:ssg-obj_oracle_java:obj:1" version="1">
+          <linux:name>jre</linux:name>
+        </linux:rpminfo_object>
+        <linux:rpminfo_object id="oval:ssg-obj_oracle_java_rhel:obj:1" version="1">
+          <linux:name datatype="string" operation="pattern match">^java.*oracle.*$</linux:name>
+        </linux:rpminfo_object>
+        <linux:rpminfo_object id="oval:ssg-obj_ibm_java:obj:1" version="1">
+          <linux:name datatype="string" operation="pattern match">^ibm-java.*$</linux:name>
+        </linux:rpminfo_object>
+        <linux:rpminfo_object id="oval:ssg-obj_ibm_java_rhel:obj:1" version="1">
+          <linux:name datatype="string" operation="pattern match">^java.*ibm.*$</linux:name>
+        </linux:rpminfo_object>
+        <linux:rpminfo_object id="oval:ssg-obj_sun_java_rhel:obj:1" version="1">
+          <linux:name datatype="string" operation="pattern match">^java.*sun.*$</linux:name>
+        </linux:rpminfo_object>
+        <linux:rpminfo_object id="oval:ssg-obj_openjdk_java:obj:1" version="1">
+          <linux:name datatype="string" operation="pattern match">^java.*openjdk.*$</linux:name>
+        </linux:rpminfo_object>
+      </objects>
+      <states>
+        <linux:rpminfo_state id="oval:ssg-state_ibm_java:ste:1" version="1">
+          <linux:evr datatype="evr_string" operation="greater than or equal">.*1.6.0.*</linux:evr>
+        </linux:rpminfo_state>
+        <linux:rpminfo_state id="oval:ssg-state_ibm_java_rhel:ste:1" version="1">
+          <linux:evr datatype="evr_string" operation="greater than or equal">.*1.6.0.*</linux:evr>
+        </linux:rpminfo_state>
+      </states>
+    </oval_definitions>
   </ds:component>
-  <ds:component id="scap_org.open-scap_comp_output--ssg-jre-cpe-dictionary.xml" timestamp="2016-11-28T09:42:05">
+  <ds:component id="scap_org.open-scap_comp_ssg-jre-cpe-dictionary.xml" timestamp="2017-03-29T15:52:30">
     <cpe-list xmlns="http://cpe.mitre.org/dictionary/2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://cpe.mitre.org/dictionary/2.0 http://cpe.mitre.org/files/cpe-dictionary_2.1.xsd">
       <cpe-item name="cpe:/a:oracle:jre">
-            <title xml:lang="en-us">Oracle's Java Runtime Environment</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="ssg-jre-cpe-oval.xml">oval:ssg-installed_app_is_java:def:1</check>
+        <title xml:lang="en-us">Oracle's Java Runtime Environment</title>
+        <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="ssg-jre-cpe-oval.xml">oval:ssg-installed_app_is_java:def:1</check>
       </cpe-item>
       <cpe-item name="cpe:/a:ibm:jre">
-            <title xml:lang="en-us">IBM Java Runtime Environment</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="ssg-jre-cpe-oval.xml">oval:ssg-installed_app_is_java:def:1</check>
+        <title xml:lang="en-us">IBM Java Runtime Environment</title>
+        <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="ssg-jre-cpe-oval.xml">oval:ssg-installed_app_is_java:def:1</check>
       </cpe-item>
       <cpe-item name="cpe:/a:redhat:openjdk">
-            <title xml:lang="en-us">OpenJDK Java Runtime Environment</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="ssg-jre-cpe-oval.xml">oval:ssg-installed_app_is_java:def:1</check>
+        <title xml:lang="en-us">OpenJDK Java Runtime Environment</title>
+        <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="ssg-jre-cpe-oval.xml">oval:ssg-installed_app_is_java:def:1</check>
       </cpe-item>
       <cpe-item name="cpe:/a:sun:jre">
-            <title xml:lang="en-us">Sun Java Runtime Environment</title>
-            <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="ssg-jre-cpe-oval.xml">oval:ssg-installed_app_is_java:def:1</check>
+        <title xml:lang="en-us">Sun Java Runtime Environment</title>
+        <check system="http://oval.mitre.org/XMLSchema/oval-definitions-5" href="ssg-jre-cpe-oval.xml">oval:ssg-installed_app_is_java:def:1</check>
       </cpe-item>
-</cpe-list>
+    </cpe-list>
   </ds:component>
-<ds:component id="scap_org.open-scap_comp_output--ssg-jre-oval.xml" timestamp="2016-11-28T09:42:05"><oval_definitions xmlns="http://oval.mitre.org/XMLSchema/oval-definitions-5" xmlns:oval="http://oval.mitre.org/XMLSchema/oval-common-5" xmlns:ind="http://oval.mitre.org/XMLSchema/oval-definitions-5#independent" xmlns:unix="http://oval.mitre.org/XMLSchema/oval-definitions-5#unix" xmlns:linux="http://oval.mitre.org/XMLSchema/oval-definitions-5#linux" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://oval.mitre.org/XMLSchema/oval-common-5 oval-common-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5 oval-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#independent independent-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#unix unix-definitions-schema.xsd         http://oval.mitre.org/XMLSchema/oval-definitions-5#linux linux-definitions-schema.xsd">
-  <generator>
-    <oval:product_name>python</oval:product_name>
-    <oval:product_version>2.7.12</oval:product_version>
-    <oval:schema_version>5.10</oval:schema_version>
-    <oval:timestamp>2016-11-28T08:42:05</oval:timestamp>
-  </generator>
-  <definitions>
-    <definition class="inventory" id="oval:ssg-installed_app_is_java:def:1" version="1">
-      <metadata>
-        <title>Java Runtime Environment</title>
-        <affected family="unix">
-          <product>Java Runtime Environment (JRE)</product>
-        </affected>
-        <reference ref_id="installed_app_is_java" source="CPE"/>
-        <description>The application installed on the system is Java.</description>
-      <reference ref_id="installed_app_is_java" source="ssg"/></metadata>
-      <criteria operator="OR">
-        <criterion comment="Oracle Java is installed" test_ref="oval:ssg-test_oracle_java:tst:1"/>
-        <criterion comment="Oracle Java from Red Hat" test_ref="oval:ssg-test_oracle_java_rhel:tst:1"/>
-        <criterion comment="IBM Java is installed" test_ref="oval:ssg-test_ibm_java:tst:1"/>
-        <criterion comment="IBM Java from Red Hat" test_ref="oval:ssg-test_ibm_java_rhel:tst:1"/>
-        <criterion comment="Sun Java from Red Hat" test_ref="oval:ssg-test_sun_java_rhel:tst:1"/>
-        <criterion comment="OpenJDK is installed" test_ref="oval:ssg-test_openjdk_java:tst:1"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg-java_jre_deployment_config_exists:def:1" version="1">
-      <metadata>
-        <title>The Java Configuration File Exists</title>
-        <affected family="unix">
-          <product>Java Runtime Environment</product>
-        </affected>
-        <description>A configuration file must be present to deploy properties for JRE.</description>
-      <reference ref_id="java_jre_deployment_config_exists" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Check deployment.config file" test_ref="oval:ssg-test_java_jre_deployment_config_exists:tst:1"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg-java_jre_deployment_config_mandatory:def:1" version="1">
-      <metadata>
-        <title>Configure The Java Deployment Mandatory Setting</title>
-        <affected family="unix">
-          <product>Java Runtime Environment</product>
-        </affected>
-        <description>The configuration file must contain proper keys and values to
-      deploy settings correctly.</description>
-      <reference ref_id="java_jre_deployment_config_mandatory" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Check deployment.system.config.mandatory" test_ref="oval:ssg-test_java_jre_deployment_system_config_mandatory:tst:1"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg-java_jre_deployment_config_properties:def:1" version="1">
-      <metadata>
-        <title>Configure the deployment.properties File Path</title>
-        <affected family="unix">
-          <product>Java Runtime Environment</product>
-        </affected>
-        <description>The configuration file must contain proper keys and values to
-      deploy settings correctly.</description>
-      <reference ref_id="java_jre_deployment_config_properties" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Check deployment.system.config" test_ref="oval:ssg-test_java_jre_deployment_system_config:tst:1"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg-java_jre_deployment_properties_exists:def:1" version="1">
-      <metadata>
-        <title>The Java Properties File Exists</title>
-        <affected family="unix">
-          <product>Java Runtime Environment</product>
-        </affected>
-        <description>A properties file must be present to hold all the keys
-      that establish properties within the Java control panel.</description>
-      <reference ref_id="java_jre_deployment_properties_exists" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Check deployment.properties file" test_ref="oval:ssg-test_java_jre_deployment_properties:tst:1"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg-java_jre_untrusted_sources:def:1" version="1">
-      <metadata>
-        <title>Disable Java Execution From Untrusted Sources</title>
-        <affected family="unix">
-          <product>Java Runtime Environment</product>
-        </affected>
-        <description>The dialog to enable users to grant permissions to execute
-      signed content from an un-trusted authority must be disabled.</description>
-      <reference ref_id="java_jre_untrusted_sources" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Check deployment.security.askgrantdialog.notinca" test_ref="oval:ssg-test_java_jre_untrusted_sources:tst:1"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg-java_jre_untrusted_sources_locked:def:1" version="1">
-      <metadata>
-        <title>Disable User Access to Untrusted Sources Setting</title>
-        <affected family="unix">
-          <product>Java Runtime Environment</product>
-        </affected>
-        <description>The dialog enabling users to grant permissions to execute signed
-      content from an un-trusted authority must be locked.</description>
-      <reference ref_id="java_jre_untrusted_sources_locked" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Check deployment.security.askgrantdialog.notinca.locked" test_ref="oval:ssg-test_java_jre_untrusted_sources_locked:tst:1"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg-java_jre_validation_crl:def:1" version="1">
-      <metadata>
-        <title>Enable Revocation Checks for Publisher Certificates</title>
-        <affected family="unix">
-          <product>Java Runtime Environment</product>
-        </affected>
-        <description>The setting for users to check publisher certificates
-      for revocation must be enabled.</description>
-      <reference ref_id="java_jre_validation_crl" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Check deployment.security.validation.crl" test_ref="oval:ssg-test_java_jre_validation_crl:tst:1"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg-java_jre_validation_crl_locked:def:1" version="1">
-      <metadata>
-        <title>Disable User Access to Revocation Check Settings</title>
-        <affected family="unix">
-          <product>Java Runtime Environment</product>
-        </affected>
-        <description>The setting enabling users to configure the check publisher
-      certificates for revocation must be locked.</description>
-      <reference ref_id="java_jre_validation_crl_locked" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Check deployment.security.validation.crl.locked" test_ref="oval:ssg-test_java_jre_validation_crl_locked:tst:1"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg-java_jre_validation_ocsp:def:1" version="1">
-      <metadata>
-        <title>Enable Online Certificate Validation</title>
-        <affected family="unix">
-          <product>Java Runtime Environment</product>
-        </affected>
-        <description>The option to enable online certificate validation
-      must be enabled.</description>
-      <reference ref_id="java_jre_validation_ocsp" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Check deployment.security.validation.ocsp" test_ref="oval:ssg-test_java_jre_validation_ocsp:tst:1"/>
-      </criteria>
-    </definition>
-    <definition class="compliance" id="oval:ssg-java_jre_validation_ocsp_locked:def:1" version="1">
-      <metadata>
-        <title>Disable User Access to Online Certificate Validation Settings</title>
-        <affected family="unix">
-          <product>Java Runtime Environment</product>
-        </affected>
-        <description>The option to enable online certificate
-      validation must be locked.</description>
-      <reference ref_id="java_jre_validation_ocsp_locked" source="ssg"/></metadata>
-      <criteria>
-        <criterion comment="Check deployment.security.validation.ocsp.locked" test_ref="oval:ssg-test_java_jre_validation_ocsp_locked:tst:1"/>
-      </criteria>
-    </definition>
-  </definitions>
-  <tests>
-    <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="Oracle JRE is installed" id="oval:ssg-test_oracle_java:tst:1" version="1">
-      <linux:object object_ref="oval:ssg-obj_oracle_java:obj:1"/>
-    </linux:rpminfo_test>
-    <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="Oracle JRE from Red Hat is installed" id="oval:ssg-test_oracle_java_rhel:tst:1" version="1">
-      <linux:object object_ref="oval:ssg-obj_oracle_java_rhel:obj:1"/>
-    </linux:rpminfo_test>
-    <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="IBM JRE is installed" id="oval:ssg-test_ibm_java:tst:1" version="1">
-      <linux:object object_ref="oval:ssg-obj_ibm_java:obj:1"/>
-      <linux:state state_ref="oval:ssg-state_ibm_java:ste:1"/>
-    </linux:rpminfo_test>
-    <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="IBM JRE from Red Hat is installed" id="oval:ssg-test_ibm_java_rhel:tst:1" version="1">
-      <linux:object object_ref="oval:ssg-obj_ibm_java_rhel:obj:1"/>
-      <linux:state state_ref="oval:ssg-state_ibm_java_rhel:ste:1"/>
-    </linux:rpminfo_test>
-    <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="Sun JRE from Red Hat is installed" id="oval:ssg-test_sun_java_rhel:tst:1" version="1">
-      <linux:object object_ref="oval:ssg-obj_sun_java_rhel:obj:1"/>
-    </linux:rpminfo_test>
-    <linux:rpminfo_test check="all" check_existence="at_least_one_exists" comment="Red Hat OpenJDK is installed" id="oval:ssg-test_openjdk_java:tst:1" version="1">
-      <linux:object object_ref="oval:ssg-obj_openjdk_java:obj:1"/>
-    </linux:rpminfo_test>
-    <unix:file_test check="all" comment="Check deployment.config file" id="oval:ssg-test_java_jre_deployment_config_exists:tst:1" version="1">
-      <unix:object object_ref="oval:ssg-object_java_jre_deployment_config_exists:obj:1"/>
-    </unix:file_test>
-    <ind:textfilecontent54_test check="all" comment="Check deployment.system.config.mandatory" id="oval:ssg-test_java_jre_deployment_system_config_mandatory:tst:1" version="1">
-      <ind:object object_ref="oval:ssg-object_java_jre_deployment_system_config_mandatory:obj:1"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check deployment.system.config" id="oval:ssg-test_java_jre_deployment_system_config:tst:1" version="1">
-      <ind:object object_ref="oval:ssg-object_java_jre_deployment_system_config:obj:1"/>
-    </ind:textfilecontent54_test>
-    <unix:file_test check="all" comment="Check deployment.properties file" id="oval:ssg-test_java_jre_deployment_properties:tst:1" version="1">
-      <unix:object object_ref="oval:ssg-object_java_jre_deployment_properties:obj:1"/>
-    </unix:file_test>
-    <ind:textfilecontent54_test check="all" comment="Check deployment.security.askgrantdialog.notinca" id="oval:ssg-test_java_jre_untrusted_sources:tst:1" version="1">
-      <ind:object object_ref="oval:ssg-object_java_jre_untrusted_sources:obj:1"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check deployment.security.askgrantdialog.notinca.lock" id="oval:ssg-test_java_jre_untrusted_sources_locked:tst:1" version="1">
-      <ind:object object_ref="oval:ssg-object_java_jre_untrusted_sources_locked:obj:1"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check deployment.security.validation.crl" id="oval:ssg-test_java_jre_validation_crl:tst:1" version="1">
-      <ind:object object_ref="oval:ssg-object_java_jre_validation_crl:obj:1"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check deployment.security.validation.crl.locked" id="oval:ssg-test_java_jre_validation_crl_locked:tst:1" version="1">
-      <ind:object object_ref="oval:ssg-object_java_jre_validation_crl_locked:obj:1"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check deployment.security.validation.ocsp" id="oval:ssg-test_java_jre_validation_ocsp:tst:1" version="1">
-      <ind:object object_ref="oval:ssg-object_java_jre_validation_ocsp:obj:1"/>
-    </ind:textfilecontent54_test>
-    <ind:textfilecontent54_test check="all" comment="Check deployment.security.validation.ocsp.locked" id="oval:ssg-test_java_jre_validation_ocsp_locked:tst:1" version="1">
-      <ind:object object_ref="oval:ssg-object_java_jre_validation_ocsp_locked:obj:1"/>
-    </ind:textfilecontent54_test>
-  </tests>
-  <objects>
-    <linux:rpminfo_object id="oval:ssg-obj_oracle_java:obj:1" version="1">
-      <linux:name>jre</linux:name>
-    </linux:rpminfo_object>
-    <linux:rpminfo_object id="oval:ssg-obj_oracle_java_rhel:obj:1" version="1">
-      <linux:name datatype="string" operation="pattern match">^java.*oracle.*$</linux:name>
-    </linux:rpminfo_object>
-    <linux:rpminfo_object id="oval:ssg-obj_ibm_java:obj:1" version="1">
-      <linux:name datatype="string" operation="pattern match">^ibm-java.*$</linux:name>
-    </linux:rpminfo_object>
-    <linux:rpminfo_object id="oval:ssg-obj_ibm_java_rhel:obj:1" version="1">
-      <linux:name datatype="string" operation="pattern match">^java.*ibm.*$</linux:name>
-    </linux:rpminfo_object>
-    <linux:rpminfo_object id="oval:ssg-obj_sun_java_rhel:obj:1" version="1">
-      <linux:name datatype="string" operation="pattern match">^java.*sun.*$</linux:name>
-    </linux:rpminfo_object>
-    <linux:rpminfo_object id="oval:ssg-obj_openjdk_java:obj:1" version="1">
-      <linux:name datatype="string" operation="pattern match">^java.*openjdk.*$</linux:name>
-    </linux:rpminfo_object>
-    <unix:file_object id="oval:ssg-object_java_jre_deployment_config_exists:obj:1" version="1">
-      <unix:filepath>/etc/.java/deployment/deployment.config</unix:filepath>
-    </unix:file_object>
-    <ind:textfilecontent54_object id="oval:ssg-object_java_jre_deployment_system_config_mandatory:obj:1" version="1">
-      <ind:filepath>/etc/.java/deployment/deployment.config</ind:filepath>
-      <ind:pattern operation="pattern match">^deployment.system.config.mandatory=false$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
-    <ind:textfilecontent54_object id="oval:ssg-object_java_jre_deployment_system_config:obj:1" version="1">
-      <ind:filepath>/etc/.java/deployment/deployment.config</ind:filepath>
-      <ind:pattern operation="pattern match">^deployment.system.config=file:///etc/.java/deployment/deployment.properties$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
-    <unix:file_object id="oval:ssg-object_java_jre_deployment_properties:obj:1" version="1">
-      <unix:filepath>/etc/.java/deployment/deployment.properties</unix:filepath>
-    </unix:file_object>
-    <ind:textfilecontent54_object id="oval:ssg-object_java_jre_untrusted_sources:obj:1" version="1">
-      <ind:filepath>/etc/.java/deployment/deployment.properties</ind:filepath>
-      <ind:pattern operation="pattern match">^deployment.security.askgrantdialog.notinca=false$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
-    <ind:textfilecontent54_object id="oval:ssg-object_java_jre_untrusted_sources_locked:obj:1" version="1">
-      <ind:filepath>/etc/.java/deployment/deployment.properties</ind:filepath>
-      <ind:pattern operation="pattern match">^deployment.security.askgrantdialog.notinca.locked$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
-    <ind:textfilecontent54_object id="oval:ssg-object_java_jre_validation_crl:obj:1" version="1">
-      <ind:filepath>/etc/.java/deployment/deployment.properties</ind:filepath>
-      <ind:pattern operation="pattern match">^deployment.security.validation.crl=true$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
-    <ind:textfilecontent54_object id="oval:ssg-object_java_jre_validation_crl_locked:obj:1" version="1">
-      <ind:filepath>/etc/.java/deployment/deployment.properties</ind:filepath>
-      <ind:pattern operation="pattern match">^deployment.security.validation.crl.locked$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
-    <ind:textfilecontent54_object id="oval:ssg-object_java_jre_validation_ocsp:obj:1" version="1">
-      <ind:filepath>/etc/.java/deployment/deployment.properties</ind:filepath>
-      <ind:pattern operation="pattern match">^deployment.security.validation.ocsp=true$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
-    <ind:textfilecontent54_object id="oval:ssg-object_java_jre_validation_ocsp_locked:obj:1" version="1">
-      <ind:filepath>/etc/.java/deployment/deployment.properties</ind:filepath>
-      <ind:pattern operation="pattern match">^deployment.security.validation.ocsp.locked$</ind:pattern>
-      <ind:instance datatype="int">1</ind:instance>
-    </ind:textfilecontent54_object>
-  </objects>
-  <states>
-    <linux:rpminfo_state id="oval:ssg-state_ibm_java:ste:1" version="1">
-      <linux:evr datatype="evr_string" operation="greater than or equal">.*1.6.0.*</linux:evr>
-    </linux:rpminfo_state>
-    <linux:rpminfo_state id="oval:ssg-state_ibm_java_rhel:ste:1" version="1">
-      <linux:evr datatype="evr_string" operation="greater than or equal">.*1.6.0.*</linux:evr>
-    </linux:rpminfo_state>
-  </states>
-</oval_definitions></ds:component></ds:data-stream-collection>
+</ds:data-stream-collection>
