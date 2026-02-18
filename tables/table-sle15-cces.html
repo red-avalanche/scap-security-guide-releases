@@ -152,6 +152,15 @@ If this check produces any unexpected output, investigate.</td>
 <td>The operating system file integrity tool must be configured to protect the integrity of the audit tools.</td>
 </tr>
 <tr>
+<td>CCE-92516-4</td>
+<td>Configure Systemd Timer Execution of AIDE</td>
+<td>At a minimum, AIDE should be configured to run a weekly scan.
+To implement a systemd service and a timer unit to run the service periodically:
+For example, if a systemd timer is expected to be started every day at 5AM
+<pre>OnCalendar=*-*-* 05:00:0</pre> <pre>[Timer]</pre> section in the timer unit and
+a Unit section starting the AIDE check service unit should be referred.</td>
+</tr>
+<tr>
 <td>CCE-85671-6</td>
 <td>Configure Periodic Execution of AIDE</td>
 <td>At a minimum, AIDE should be configured to run a weekly scan.
@@ -1271,13 +1280,11 @@ If any occurrences of "pam_succeed_if" is returned from the command, this is a f
 <tr>
 <td>CCE-85560-1</td>
 <td>Ensure PAM Displays Last Logon/Access Notification</td>
-<td>To configure the system to notify users of last logon/access
-using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code>
-settings in
-<code>/etc/pam.d/login</code> to read as follows:
-<pre>session     required pam_lastlog.so showfailed</pre>
-And make sure that the <code>silent</code> option is not set for
-<code>pam_lastlog</code> module.</td>
+<td>To configure the system to notify users of last logon/access using <code>pam_lastlog</code>,
+add or correct the <code>pam_lastlog</code> settings in <code>/etc/pam.d/login</code>
+to include <code>showfailed</code> option, such as:
+<pre>session     optional    pam_lastlog.so showfailed</pre>
+And make sure that the <code>silent</code> option is not set for this specific line.</td>
 </tr>
 <tr>
 <td>CCE-91196-6</td>
@@ -1335,21 +1342,6 @@ is at least <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2
 <td></td>
 <td>Account Lockouts Must Be Logged</td>
 <td>PAM faillock locks an account due to excessive password failures, this event must be logged.</td>
-</tr>
-<tr>
-<td>CCE-91169-3</td>
-<td>Set Interval For Counting Failed Password Attempts</td>
-<td>Utilizing <code>pam_faillock.so</code>, the <code>fail_interval</code> directive configures the system
-to lock out an account after a number of incorrect login attempts within a specified time
-period.
-
-Ensure that the file <code>/etc/security/faillock.conf</code> contains the following entry:
-<code>fail_interval = &lt;interval-in-seconds&gt;</code> where <code>interval-in-seconds</code> is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_fail_interval" use="legacy"></xccdf-1.2:sub></code> or greater.
-
-
-In order to avoid errors when manually editing these files, it is
-recommended to use the appropriate tools, such as <code>authselect</code> or <code>authconfig</code>,
-depending on the OS version.</td>
 </tr>
 <tr>
 <td>CCE-85554-4</td>
@@ -1719,7 +1711,9 @@ Check that the <code>pam_pkcs11.so</code> option is configured in the
 
 <pre># grep pam_pkcs11.so /etc/pam.d/common-auth
 
+
 auth sufficient pam_pkcs11.so</pre>
+
 
 For general information about enabling smart card authentication, consult
 the documentation at:
@@ -1907,7 +1901,7 @@ The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklis
 <tr>
 <td>CCE-92480-3</td>
 <td>Set existing passwords a period of inactivity before they been locked</td>
-<td>Configure user accounts that have been inactive for over a given period of time 
+<td>Configure user accounts that have been inactive for over a given period of time
 to be automatically disabled by running the following command:
 <pre>$ sudo chage --inactive 30<i>USER</i></pre>
 </td>
@@ -2424,8 +2418,8 @@ considered during the check and properly remediated, if necessary.</td>
 </tr>
 <tr>
 <td>CCE-92478-7</td>
-<td>Ensure the libaudit package as a part of audit Subsystem is Installed</td>
-<td>The libaudit package should be installed.</td>
+<td>Ensure the libaudit1 package as a part of audit Subsystem is Installed</td>
+<td>The libaudit1 package should be installed.</td>
 </tr>
 <tr>
 <td>CCE-85612-0</td>
@@ -2804,6 +2798,19 @@ utility to read audit rules during daemon startup, add the following lines to
 account changes:
 <br><br>
 <pre>-w /etc/shadow -p wa -k audit_rules_usergroup_modification</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-92551-1</td>
+<td>Record Attempts to perform maintenance activities</td>
+<td>The SUSE Linux Enterprise 15 operating system must generate audit records for
+privileged activities, nonlocal maintenance, diagnostic sessions and
+other system-level access.
+
+Verify the operating system audits activities performed during nonlocal
+maintenance and diagnostic sessions. Run the following command:
+<pre>$ sudo auditctl -l | grep sudo.log
+-w /var/log/sudo.log -p wa -k maintenance</pre>
 </td>
 </tr>
 <tr>
@@ -3768,14 +3775,14 @@ default), add the following lines to a file with suffix <code>.rules</code> in t
 directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
 edits of files involved in storing logon events:
 <pre>-w /var/log/tallylog -p wa -k logins
--w /var/run/faillock -p wa -k logins
+-w <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_dir" use="legacy"></xccdf-1.2:sub> -p wa -k logins
 -w /var/log/lastlog -p wa -k logins</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file in order to watch for unattempted manual
 edits of files involved in storing logon events:
 <pre>-w /var/log/tallylog -p wa -k logins
--w /var/run/faillock -p wa -k logins
+-w <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_dir" use="legacy"></xccdf-1.2:sub> -p wa -k logins
 -w /var/log/lastlog -p wa -k logins</pre>
 </td>
 </tr>
@@ -3788,12 +3795,12 @@ and root. If the <code>auditd</code> daemon is configured to use the
 default), add the following lines to a file with suffix <code>.rules</code> in the
 directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
 edits of files involved in storing logon events:
-<pre>-w /var/run/faillock -p wa -k logins</pre>
+<pre>-w <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_dir" use="legacy"></xccdf-1.2:sub> -p wa -k logins</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file in order to watch for unattempted manual
 edits of files involved in storing logon events:
-<pre>-w /var/run/faillock -p wa -k logins</pre>
+<pre>-w <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_dir" use="legacy"></xccdf-1.2:sub> -p wa -k logins</pre>
 </td>
 </tr>
 <tr>
@@ -4729,10 +4736,10 @@ in <code>/etc/audit/auditd.conf</code>.</td>
 </tr>
 <tr>
 <td></td>
-<td>Set hostname as computer node name in audit logs</td>
-<td>To configure Audit daemon to use value returned by gethostname
-syscall as computer node name in the audit events,
-set <code>name_format</code> to <code>hostname</code>
+<td>Set type of computer node name logging in audit logs</td>
+<td>To configure Audit daemon to use a unique identifier
+as computer node name in the audit events,
+set <code>name_format</code> to <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_auditd_name_format" use="legacy"></xccdf-1.2:sub></code>
 in <code>/etc/audit/auditd.conf</code>.</td>
 </tr>
 <tr>
@@ -5828,7 +5835,7 @@ Utilities exist to accept remote export of journald logs.</td>
 If the logs are only stored in volatile memory they will we lost upon reboot.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92561-0</td>
 <td>Ensure logrotate is Installed</td>
 <td>logrotate is installed by default. The <code>logrotate</code> package can be installed with the following command: <pre> $ sudo zypper install logrotate</pre>
 </td>
@@ -5845,7 +5852,7 @@ daily</pre>
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92585-9</td>
 <td>Enable logrotate Timer</td>
 <td>
 The <code>logrotate</code> timer can be enabled with the following command:
@@ -7779,13 +7786,6 @@ To make sure that the setting is persistent, add the following line to a file in
 </td>
 </tr>
 <tr>
-<td>CCE-91262-6</td>
-<td>Restrict usage of ptrace to descendant processes</td>
-<td>To set the runtime status of the <code>kernel.yama.ptrace_scope</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w kernel.yama.ptrace_scope=1</pre>
-To make sure that the setting is persistent, add the following line to a file in the directory <code>/etc/sysctl.d</code>: <pre>kernel.yama.ptrace_scope = 1</pre>
-</td>
-</tr>
-<tr>
 <td>CCE-91263-4</td>
 <td>Prevent applications from mapping low portion of virtual memory</td>
 <td>To set the runtime status of the <code>vm.mmap_min_addr</code> kernel parameter, run the following command: <pre>$ sudo sysctl -w vm.mmap_min_addr=65536</pre>
@@ -8909,6 +8909,28 @@ This instructs the NTP software to contact that remote server to obtain time
 data.</td>
 </tr>
 <tr>
+<td>CCE-92538-8</td>
+<td>Configure Systemd Timesyncd Servers</td>
+<td>
+<code>systemd-timesyncd</code> is a daemon that has been added for synchronizing the system clock
+across the network. The <code>systemd-timesyncd</code> daemon implements:
+  - Implements an SNTP client
+  - Runs with minimal privileges
+  - Saves the current clock to disk every time a new NTP sync has been acquired
+  - Is hooked up with networkd to only operate when network connectivity is available
+Add or edit server or pool lines to <code>/etc/systemd/timesyncd.conf</code> as appropriate:
+<pre>server &lt;remote-server&gt;</pre>
+Multiple servers may be configured.</td>
+</tr>
+<tr>
+<td>CCE-92514-9</td>
+<td>Configure Systemd Timesyncd Root Distance Servers</td>
+<td>
+<code>systemd-timesyncd</code> server configuration should have RootDistanceMaxSec is
+listed in accordance with local policy. This setting describes the maximum estimated
+time required for a packet to travel to the server connected.</td>
+</tr>
+<tr>
 <td>CCE-92468-8</td>
 <td>Uninstall rsync Package</td>
 <td>The rsyncd service can be used to synchronize files between systems over network links.
@@ -9918,7 +9940,7 @@ of those:
 <td>Limit the MACs to strong hash algorithms.
 The following line in <code>/etc/ssh/sshd_config</code> demonstrates use
 of those MACs:
-<pre>MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,hmac-ripemd160</pre>
+<pre>MACs <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sshd_strong_macs" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>

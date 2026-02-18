@@ -442,7 +442,7 @@ set up incorrectly.
 To check that Crypto Policies settings are configured correctly, ensure that
 <code>/etc/crypto-policies/back-ends/openssh.config</code> contains the following
 line and is not commented out:
-<code>MACs hmac-sha2-512,hmac-sha2-256</code>
+<code>MACs <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sshd_approved_macs" use="legacy"></xccdf-1.2:sub></code>
 </td>
 </tr>
 <tr>
@@ -455,7 +455,7 @@ set up incorrectly.
 To check that Crypto Policies settings are configured correctly, ensure that
 <code>/etc/crypto-policies/back-ends/opensshserver.config</code> contains the following
 text and is not commented out:
-<code>-oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</code>
+<code>-oMACS=<xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sshd_approved_macs" use="legacy"></xccdf-1.2:sub></code>
 </td>
 </tr>
 <tr>
@@ -1260,6 +1260,14 @@ or if cvtsudoers not supported:
 </td>
 </tr>
 <tr>
+<td>CCE-86612-9</td>
+<td>Install cryptsetup Package</td>
+<td>The <code>cryptsetup</code> package can be installed with the following command:
+<pre>
+$ sudo dnf install cryptsetup</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-83494-5</td>
 <td>Ensure gnutls-utils is installed</td>
 <td>The <code>gnutls-utils</code> package can be installed with the following command:
@@ -1704,13 +1712,11 @@ If any occurrences of "pam_succeed_if" is returned from the command, this is a f
 <tr>
 <td>CCE-83560-3</td>
 <td>Ensure PAM Displays Last Logon/Access Notification</td>
-<td>To configure the system to notify users of last logon/access
-using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code>
-settings in
-<code>/etc/pam.d/postlogin</code> to read as follows:
-<pre>session     required pam_lastlog.so showfailed</pre>
-And make sure that the <code>silent</code> option is not set for
-<code>pam_lastlog</code> module.</td>
+<td>To configure the system to notify users of last logon/access using <code>pam_lastlog</code>,
+add or correct the <code>pam_lastlog</code> settings in <code>/etc/pam.d/postlogin</code>
+to include <code>showfailed</code> option, such as:
+<pre>session     [default=1]    pam_lastlog.so showfailed</pre>
+And make sure that the <code>silent</code> option is not set for this specific line.</td>
 </tr>
 <tr>
 <td>CCE-86932-1</td>
@@ -2473,7 +2479,7 @@ The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklis
 <tr>
 <td>CCE-86759-8</td>
 <td>Set existing passwords a period of inactivity before they been locked</td>
-<td>Configure user accounts that have been inactive for over a given period of time 
+<td>Configure user accounts that have been inactive for over a given period of time
 to be automatically disabled by running the following command:
 <pre>$ sudo chage --inactive 30<i>USER</i></pre>
 </td>
@@ -5789,14 +5795,14 @@ default), add the following lines to a file with suffix <code>.rules</code> in t
 directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
 edits of files involved in storing logon events:
 <pre>-w /var/log/tallylog -p wa -k logins
--w /var/log/faillock -p wa -k logins
+-w <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_dir" use="legacy"></xccdf-1.2:sub> -p wa -k logins
 -w /var/log/lastlog -p wa -k logins</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file in order to watch for unattempted manual
 edits of files involved in storing logon events:
 <pre>-w /var/log/tallylog -p wa -k logins
--w /var/log/faillock -p wa -k logins
+-w <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_dir" use="legacy"></xccdf-1.2:sub> -p wa -k logins
 -w /var/log/lastlog -p wa -k logins</pre>
 </td>
 </tr>
@@ -5809,12 +5815,12 @@ and root. If the <code>auditd</code> daemon is configured to use the
 default), add the following lines to a file with suffix <code>.rules</code> in the
 directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
 edits of files involved in storing logon events:
-<pre>-w /var/log/faillock -p wa -k logins</pre>
+<pre>-w <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_dir" use="legacy"></xccdf-1.2:sub> -p wa -k logins</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file in order to watch for unattempted manual
 edits of files involved in storing logon events:
-<pre>-w /var/log/faillock -p wa -k logins</pre>
+<pre>-w <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_dir" use="legacy"></xccdf-1.2:sub> -p wa -k logins</pre>
 </td>
 </tr>
 <tr>
@@ -6765,10 +6771,10 @@ in <code>/etc/audit/auditd.conf</code>.</td>
 </tr>
 <tr>
 <td>CCE-83686-6</td>
-<td>Set hostname as computer node name in audit logs</td>
-<td>To configure Audit daemon to use value returned by gethostname
-syscall as computer node name in the audit events,
-set <code>name_format</code> to <code>hostname</code>
+<td>Set type of computer node name logging in audit logs</td>
+<td>To configure Audit daemon to use a unique identifier
+as computer node name in the audit events,
+set <code>name_format</code> to <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_auditd_name_format" use="legacy"></xccdf-1.2:sub></code>
 in <code>/etc/audit/auditd.conf</code>.</td>
 </tr>
 <tr>
@@ -9150,8 +9156,8 @@ The configuration that was used to build kernel is available at <code>/boot/conf
 This configuration is available from kernel 5.9, but may be available if backported by distros.
 
 The configuration that was used to build kernel is available at <code>/boot/config-*</code>.
-    To check the configuration value for <code>CONFIG_SLAB_FRELIST_RANDOM</code>, run the following command:
-    <code>grep CONFIG_SLAB_FRELIST_RANDOM /boot/config-*</code>
+    To check the configuration value for <code>CONFIG_SLAB_FREELIST_RANDOM</code>, run the following command:
+    <code>grep CONFIG_SLAB_FREELIST_RANDOM /boot/config-*</code>
     
     For each kernel installed, a line with value "y" should be returned.
     </td>
@@ -9584,7 +9590,7 @@ NOTE:
     systemd-journal-remote.socket and systemd-journal-remote.service.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86155-9</td>
 <td>Ensure logrotate is Installed</td>
 <td>logrotate is installed by default. The <code>logrotate</code> package can be installed with the following command: <pre> $ sudo dnf install logrotate</pre>
 </td>
@@ -9601,7 +9607,7 @@ daily</pre>
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86158-3</td>
 <td>Enable logrotate Timer</td>
 <td>
 The <code>logrotate</code> timer can be enabled with the following command:
@@ -15696,6 +15702,15 @@ intended for use as an LDAP Server it should be removed.</td>
 The <code>postfix</code> package can be installed with the following command:
 <pre>
 $ sudo dnf install postfix</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-86608-7</td>
+<td>The s-nail Package Is Installed</td>
+<td>A mail server is required for sending emails.
+The <code>s-nail</code> package can be installed with the following command:
+<pre>
+$ sudo dnf install s-nail</pre>
 </td>
 </tr>
 <tr>

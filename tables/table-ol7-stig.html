@@ -4104,16 +4104,16 @@ to one of the following values: syslog, single, halt.</pre></td>
 	<td><pre>If option name_format is left at its default value of
 none, audit events from different computers may be hard
 to distinguish.</pre></td>
-	<td><pre>To verify that Audit Daemon is configured to record the hostname
-in audit events, run the following command:
+	<td><pre>To verify that Audit Daemon is configured to record the computer node
+name in the audit events, run the following command:
 $ sudo grep name_format /etc/audit/auditd.conf
 The output should return the following:
-name_format = hostname
-      Is it the case that name_format isn't set to hostname?
+name_format = 
+      Is it the case that name_format isn't set to <sub idref="var_auditd_name_format" />?
       </pre></td>
-	<td><pre>To configure Audit daemon to use value returned by gethostname
-syscall as computer node name in the audit events,
-set name_format to hostname
+	<td><pre>To configure Audit daemon to use a unique identifier
+as computer node name in the audit events,
+set name_format to 
 in /etc/audit/auditd.conf.</pre></td>
 	<td>OL07-00-030211</td>
 	<td>auditd_name_format</td>
@@ -4680,9 +4680,9 @@ utility to read audit rules during daemon startup, add the following lines to
 as an attacker attempting to remove evidence of an intrusion.</pre></td>
 	<td><pre>Verify Oracle Linux 7 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | grep /var/run/faillock
+$ sudo auditctl -l | grep 
 
--w /var/run/faillock -p wa -k logins
+-w  -p wa -k logins
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
 	<td><pre>The audit system already collects login information for all users
@@ -4691,12 +4691,12 @@ augenrules program to read audit rules during daemon startup (the
 default), add the following lines to a file with suffix .rules in the
 directory /etc/audit/rules.d in order to watch for attempted manual
 edits of files involved in storing logon events:
--w /var/run/faillock -p wa -k logins
+-w  -p wa -k logins
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following lines to
 /etc/audit/audit.rules file in order to watch for unattempted manual
 edits of files involved in storing logon events:
--w /var/run/faillock -p wa -k logins</pre></td>
+-w  -p wa -k logins</pre></td>
 	<td>OL07-00-030610</td>
 	<td>audit_rules_login_events_faillock</td>
 </tr>
@@ -6139,7 +6139,7 @@ $ sudo systemctl enable sshd.service</pre></td>
 	<td>V-221849</td>
 	<td>2361</td>
 	<td>medium</td>
-	<td>The Oracle Linux operating system must be configured so that all network connections associated with SSH traffic are terminated at the end of the session or after 10 minutes of inactivity, except to fulfill documented and validated mission requirements.</td>
+	<td>The Oracle Linux operating system must be configured so that all network connections associated with SSH traffic are terminated after 10 minutes of becoming unresponsive.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>Terminating an idle ssh session within a short time period reduces the window of
 opportunity for unauthorized personnel to take control of a management session
@@ -6203,7 +6203,7 @@ RhostsRSAAuthentication no</pre></td>
 	<td>V-221851</td>
 	<td>1133</td>
 	<td>medium</td>
-	<td>The Oracle Linux operating system must be configured so that all network connections associated with SSH traffic terminate after a period of inactivity.</td>
+	<td>The Oracle Linux operating system must be configured so that all network connections associated with SSH traffic terminate after becoming unresponsive.</td>
 	<td>SRG-OS-ID</td>
 	<td><pre>This ensures a user login will be terminated as soon as the ClientAliveInterval
 is reached.</pre></td>
@@ -6705,25 +6705,22 @@ $ sudo systemctl enable firewalld.service</pre></td>
 	<td>low</td>
 	<td>The Oracle Linux operating system must display the date and time of the last successful account logon upon logon.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Users need to be aware of activity that occurs regarding
-their account. Providing users with information regarding the number
-of unsuccessful attempts that were made to login to their account
-allows the user to determine if any unauthorized activity has occurred
-and gives them an opportunity to notify administrators.</pre></td>
+	<td><pre>Users need to be aware of activity that occurs regarding their account. Providing users with
+information regarding the number of unsuccessful attempts that were made to login to their
+account allows the user to determine if any unauthorized activity has occurred and gives them
+an opportunity to notify administrators.</pre></td>
 	<td><pre>Verify users are provided with feedback on when account accesses last occurred with the following command:
 
 $ sudo grep pam_lastlog /etc/pam.d/postlogin
 
 session required pam_lastlog.so showfailed
-      Is it the case that "pam_lastlog" is missing from "/etc/pam.d/postlogin" file, or the silent option is present?
+      Is it the case that "pam_lastlog.so" is not properly configured in "/etc/pam.d/postlogin" file?
       </pre></td>
-	<td><pre>To configure the system to notify users of last logon/access
-using pam_lastlog, add or correct the pam_lastlog
-settings in
-/etc/pam.d/postlogin to read as follows:
-session     required pam_lastlog.so showfailed
-And make sure that the silent option is not set for
-pam_lastlog module.</pre></td>
+	<td><pre>To configure the system to notify users of last logon/access using pam_lastlog,
+add or correct the pam_lastlog settings in /etc/pam.d/postlogin
+to include showfailed option, such as:
+session     required    pam_lastlog.so showfailed
+And make sure that the silent option is not set for this specific line.</pre></td>
 	<td>OL07-00-040530</td>
 	<td>display_login_attempts</td>
 </tr>

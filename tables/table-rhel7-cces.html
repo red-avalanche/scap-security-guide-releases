@@ -1224,10 +1224,10 @@ $ sudo yum install binutils</pre>
 </tr>
 <tr>
 <td>CCE-82996-0</td>
-<td>Install cryptsetup-luks Package</td>
-<td>The <code>cryptsetup-luks</code> package can be installed with the following command:
+<td>Install cryptsetup Package</td>
+<td>The <code>cryptsetup</code> package can be installed with the following command:
 <pre>
-$ sudo yum install cryptsetup-luks</pre>
+$ sudo yum install cryptsetup</pre>
 </td>
 </tr>
 <tr>
@@ -1765,13 +1765,11 @@ If any occurrences of "pam_succeed_if" is returned from the command, this is a f
 <tr>
 <td>CCE-27275-7</td>
 <td>Ensure PAM Displays Last Logon/Access Notification</td>
-<td>To configure the system to notify users of last logon/access
-using <code>pam_lastlog</code>, add or correct the <code>pam_lastlog</code>
-settings in
-<code>/etc/pam.d/postlogin</code> to read as follows:
-<pre>session     required pam_lastlog.so showfailed</pre>
-And make sure that the <code>silent</code> option is not set for
-<code>pam_lastlog</code> module.</td>
+<td>To configure the system to notify users of last logon/access using <code>pam_lastlog</code>,
+add or correct the <code>pam_lastlog</code> settings in <code>/etc/pam.d/postlogin</code>
+to include <code>showfailed</code> option, such as:
+<pre>session     [default=1]    pam_lastlog.so showfailed</pre>
+And make sure that the <code>silent</code> option is not set for this specific line.</td>
 </tr>
 <tr>
 <td>CCE-83743-5</td>
@@ -2458,7 +2456,7 @@ The profile requirement is <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklis
 <tr>
 <td>CCE-86757-2</td>
 <td>Set existing passwords a period of inactivity before they been locked</td>
-<td>Configure user accounts that have been inactive for over a given period of time 
+<td>Configure user accounts that have been inactive for over a given period of time
 to be automatically disabled by running the following command:
 <pre>$ sudo chage --inactive 30<i>USER</i></pre>
 </td>
@@ -5644,14 +5642,14 @@ default), add the following lines to a file with suffix <code>.rules</code> in t
 directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
 edits of files involved in storing logon events:
 <pre>-w /var/log/tallylog -p wa -k logins
--w /var/run/faillock -p wa -k logins
+-w <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_dir" use="legacy"></xccdf-1.2:sub> -p wa -k logins
 -w /var/log/lastlog -p wa -k logins</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file in order to watch for unattempted manual
 edits of files involved in storing logon events:
 <pre>-w /var/log/tallylog -p wa -k logins
--w /var/run/faillock -p wa -k logins
+-w <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_dir" use="legacy"></xccdf-1.2:sub> -p wa -k logins
 -w /var/log/lastlog -p wa -k logins</pre>
 </td>
 </tr>
@@ -5664,12 +5662,12 @@ and root. If the <code>auditd</code> daemon is configured to use the
 default), add the following lines to a file with suffix <code>.rules</code> in the
 directory <code>/etc/audit/rules.d</code> in order to watch for attempted manual
 edits of files involved in storing logon events:
-<pre>-w /var/run/faillock -p wa -k logins</pre>
+<pre>-w <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_dir" use="legacy"></xccdf-1.2:sub> -p wa -k logins</pre>
 If the <code>auditd</code> daemon is configured to use the <code>auditctl</code>
 utility to read audit rules during daemon startup, add the following lines to
 <code>/etc/audit/audit.rules</code> file in order to watch for unattempted manual
 edits of files involved in storing logon events:
-<pre>-w /var/run/faillock -p wa -k logins</pre>
+<pre>-w <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_accounts_passwords_pam_faillock_dir" use="legacy"></xccdf-1.2:sub> -p wa -k logins</pre>
 </td>
 </tr>
 <tr>
@@ -6630,10 +6628,10 @@ in <code>/etc/audit/auditd.conf</code>.</td>
 </tr>
 <tr>
 <td>CCE-82359-1</td>
-<td>Set hostname as computer node name in audit logs</td>
-<td>To configure Audit daemon to use value returned by gethostname
-syscall as computer node name in the audit events,
-set <code>name_format</code> to <code>hostname</code>
+<td>Set type of computer node name logging in audit logs</td>
+<td>To configure Audit daemon to use a unique identifier
+as computer node name in the audit events,
+set <code>name_format</code> to <code><xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_var_auditd_name_format" use="legacy"></xccdf-1.2:sub></code>
 in <code>/etc/audit/auditd.conf</code>.</td>
 </tr>
 <tr>
@@ -7946,7 +7944,7 @@ Utilities exist to accept remote export of journald logs.</td>
 If the logs are only stored in volatile memory they will we lost upon reboot.</td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86153-4</td>
 <td>Ensure logrotate is Installed</td>
 <td>logrotate is installed by default. The <code>logrotate</code> package can be installed with the following command: <pre> $ sudo yum install logrotate</pre>
 </td>
@@ -7963,7 +7961,7 @@ daily</pre>
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-86156-7</td>
 <td>Enable logrotate Timer</td>
 <td>
 The <code>logrotate</code> timer can be enabled with the following command:
@@ -16821,7 +16819,7 @@ of those:
 <td>Limit the MACs to strong hash algorithms.
 The following line in <code>/etc/ssh/sshd_config</code> demonstrates use
 of those MACs:
-<pre>MACs hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com,umac-128-etm@openssh.com,hmac-sha2-512,hmac-sha2-256,hmac-ripemd160</pre>
+<pre>MACs <xccdf-1.2:sub xmlns:xccdf-1.2="http://checklists.nist.gov/xccdf/1.2" idref="xccdf_org.ssgproject.content_value_sshd_strong_macs" use="legacy"></xccdf-1.2:sub></pre>
 </td>
 </tr>
 <tr>

@@ -49,34 +49,20 @@
 		<tbody>
 		<tr>
 			<td>375</td>
-			<td>12</td>
-			<td>363</td>
-			<td>96.80%</td>
+			<td>5</td>
+			<td>370</td>
+			<td>98.67%</td>
 			<td>
 				
-					RHEL-08-010471
-				
 					RHEL-08-020010
-				
-					RHEL-08-020013
-				
-					RHEL-08-020014
-				
-					RHEL-08-020016
-				
-					RHEL-08-020018
 				
 					RHEL-08-020020
 				
 					RHEL-08-020022
 				
-					RHEL-08-020028
-				
 					RHEL-08-020102
 				
 					RHEL-08-020103
-				
-					RHEL-08-020332
 				
 			</td>
 		</tr>
@@ -219,7 +205,7 @@ fragmented.</pre></td>
 	<td><pre>To verify if the OpenSSH client uses defined MACs in the Crypto Policy, run:
 $ grep -i macs /etc/crypto-policies/back-ends/openssh.config
 and verify that the line matches:
-MACs hmac-sha2-512,hmac-sha2-256
+MACs 
       Is it the case that Crypto Policy for OpenSSH client is not configured correctly?
       </pre></td>
 	<td><pre>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
@@ -229,7 +215,7 @@ set up incorrectly.
 To check that Crypto Policies settings are configured correctly, ensure that
 /etc/crypto-policies/back-ends/openssh.config contains the following
 line and is not commented out:
-MACs hmac-sha2-512,hmac-sha2-256</pre></td>
+MACs </pre></td>
 	<td>RHEL-08-010020</td>
 	<td>harden_sshd_macs_openssh_conf_crypto_policy</td>
 </tr>
@@ -1370,7 +1356,7 @@ fragmented.</pre></td>
 	<td><pre>To verify if the OpenSSH server uses defined MACs in the Crypto Policy, run:
 $ grep -Po '(-oMACs=\S+)' /etc/crypto-policies/back-ends/opensshserver.config
 and verify that the line matches:
--oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com
+-oMACS=
       Is it the case that Crypto Policy for OpenSSH Server is not configured correctly?
       </pre></td>
 	<td><pre>Crypto Policies provide a centralized control over crypto algorithms usage of many packages.
@@ -1380,7 +1366,7 @@ set up incorrectly.
 To check that Crypto Policies settings are configured correctly, ensure that
 /etc/crypto-policies/back-ends/opensshserver.config contains the following
 text and is not commented out:
--oMACS=hmac-sha2-512,hmac-sha2-256,hmac-sha2-512-etm@openssh.com,hmac-sha2-256-etm@openssh.com</pre></td>
+-oMACS=</pre></td>
 	<td>RHEL-08-010290</td>
 	<td>harden_sshd_macs_opensshserver_conf_crypto_policy</td>
 </tr>
@@ -2652,15 +2638,26 @@ $ sudo find / -name '.shosts' -type f -delete</pre></td>
 
 <tr>
 	<td>V-230285</td>
-	<td></td>
+	<td>366</td>
 	<td>low</td>
 	<td>RHEL 8 must enable the hardware random number generator entropy gatherer service.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>The rngd service
+feeds random data from hardware device to kernel random device.</pre></td>
+	<td><pre>
+
+Run the following command to determine the current status of the
+rngd service:
+$ sudo systemctl is-active rngd
+If the service is running, it should return the following: active
+      Is it the case that the "rngd" service is disabled, masked, or not started.?
+      </pre></td>
+	<td><pre>The Hardware RNG Entropy Gatherer service should be enabled.
+
+The rngd service can be enabled with the following command:
+$ sudo systemctl enable rngd.service</pre></td>
 	<td>RHEL-08-010471</td>
-	<td>Missing Rule</td>
+	<td>service_rngd_enabled</td>
 </tr>
 
 <tr>
@@ -4083,28 +4080,72 @@ depending on the OS version.</pre></td>
 
 <tr>
 	<td>V-230335</td>
-	<td></td>
+	<td>44</td>
 	<td>medium</td>
 	<td>RHEL 8 must automatically lock an account when three unsuccessful logon attempts occur during a 15-minute time period.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>By limiting the number of failed logon attempts the risk of unauthorized system
+access via user password guessing, otherwise known as brute-forcing, is reduced.
+Limits are imposed by locking the account.</pre></td>
+	<td><pre>To ensure the failed password attempt policy is configured correctly, run the following command:
+
+$ grep fail_interval /etc/security/faillock.conf
+The output should show fail_interval = <interval-in-seconds> where interval-in-seconds is  or greater.
+      Is it the case that the "fail_interval" option is not set to "<sub idref="var_accounts_passwords_pam_faillock_fail_interval" />"
+or less (but not "0"), the line is commented out, or the line is missing?
+      </pre></td>
+	<td><pre>Utilizing pam_faillock.so, the fail_interval directive configures the system
+to lock out an account after a number of incorrect login attempts within a specified time
+period.
+
+Ensure that the file /etc/security/faillock.conf contains the following entry:
+fail_interval = <interval-in-seconds> where interval-in-seconds is  or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as authselect or authconfig,
+depending on the OS version.</pre></td>
 	<td>RHEL-08-020013</td>
-	<td>Missing Rule</td>
+	<td>accounts_passwords_pam_faillock_interval</td>
 </tr>
 
 <tr>
 	<td>V-230336</td>
-	<td></td>
+	<td>44</td>
 	<td>medium</td>
 	<td>RHEL 8 must automatically lock an account until the locked account is released by an administrator when three unsuccessful logon attempts occur during a 15-minute time period.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>By limiting the number of failed logon attempts the risk of unauthorized system
+access via user password guessing, otherwise known as brute-forcing, is reduced.
+Limits are imposed by locking the account.</pre></td>
+	<td><pre>Verify Red Hat Enterprise Linux 8 is configured to lock an account until released by an administrator
+after  unsuccessful logon
+attempts with the command:
+
+
+$ grep 'unlock_time =' /etc/security/faillock.conf
+unlock_time = 
+      Is it the case that the "unlock_time" option is not set to "<sub idref="var_accounts_passwords_pam_faillock_unlock_time" />",
+the line is missing, or commented out?
+      </pre></td>
+	<td><pre>This rule configures the system to lock out accounts during a specified time period after a
+number of incorrect login attempts using pam_faillock.so.
+
+
+Ensure that the file /etc/security/faillock.conf contains the following entry:
+unlock_time=<interval-in-seconds> where
+interval-in-seconds is  or greater.
+
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid any errors when manually editing these files,
+it is recommended to use the appropriate tools, such as authselect or authconfig,
+depending on the OS version.
+
+If unlock_time is set to 0, manual intervention by an administrator is required
+to unlock a user. This should be done using the faillock tool.</pre></td>
 	<td>RHEL-08-020014</td>
-	<td>Missing Rule</td>
+	<td>accounts_passwords_pam_faillock_unlock_time</td>
 </tr>
 
 <tr>
@@ -4148,15 +4189,32 @@ to unlock a user. This should be done using the faillock tool.</pre></td>
 
 <tr>
 	<td>V-230338</td>
-	<td></td>
+	<td>44</td>
 	<td>medium</td>
 	<td>RHEL 8 must ensure account lockouts persist.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>Locking out user accounts after a number of incorrect attempts prevents direct password
+guessing attacks. In combination with the silent option, user enumeration attacks
+are also mitigated.</pre></td>
+	<td><pre>To ensure the tally directory is configured correctly, run the following command:
+$ sudo grep 'dir =' /etc/security/faillock.conf
+The output should show that dir is set to something other than "/var/run/faillock"
+      Is it the case that the "dir" option is not set to a non-default documented tally log directory, is missing or commented out?
+      </pre></td>
+	<td><pre>This rule ensures that the system lock out accounts using pam_faillock.so persist
+after system reboot. From "pam_faillock" man pages:
+Note that the default directory that "pam_faillock" uses is usually cleared on system
+boot so the access will be reenabled after system reboot. If that is undesirable, a different
+tally directory must be set with the "dir" option.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as authselect or authconfig,
+depending on the OS version.
+
+The chosen profile expects the directory to be .</pre></td>
 	<td>RHEL-08-020016</td>
-	<td>Missing Rule</td>
+	<td>accounts_passwords_pam_faillock_dir</td>
 </tr>
 
 <tr>
@@ -4191,15 +4249,30 @@ The chosen profile expects the directory to be .</pre></td>
 
 <tr>
 	<td>V-230340</td>
-	<td></td>
+	<td>44</td>
 	<td>medium</td>
 	<td>RHEL 8 must prevent system messages from being presented when three unsuccessful logon attempts occur.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>The pam_faillock module without the silent option will leak information about the existence or
+non-existence of a user account in the system because the failures are not recorded for unknown
+users. The message about the user account being locked is never displayed for non-existing user
+accounts allowing the adversary to infer that a particular account exists or not on the system.</pre></td>
+	<td><pre>To ensure that the system prevents messages from being shown when three unsuccessful logon
+attempts occur, run the following command:
+$ grep silent /etc/security/faillock.conf
+The output should show silent.
+      Is it the case that the system shows messages when three unsuccessful logon attempts occur?
+      </pre></td>
+	<td><pre>This rule ensures the system prevents informative messages from being presented to the user
+pertaining to logon information after a number of incorrect login attempts using
+pam_faillock.so.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as authselect or authconfig,
+depending on the OS version.</pre></td>
 	<td>RHEL-08-020018</td>
-	<td>Missing Rule</td>
+	<td>accounts_passwords_pam_faillock_silent</td>
 </tr>
 
 <tr>
@@ -4411,15 +4484,33 @@ records is stored. The configured directory must have the correct SELinux contex
 
 <tr>
 	<td>V-250316</td>
-	<td></td>
+	<td>2238</td>
 	<td>medium</td>
 	<td>RHEL 8 systems below version 8.2 must configure SELinux context type to allow the use of a non-default faillock tally directory.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>Not having the correct SELinux context on the pam_faillock.so records directory may lead to
+unauthorized access to the directory.</pre></td>
+	<td><pre>If the system does not have SELinux enabled and enforcing a targeted policy, or if the
+pam_faillock.so module is not configured for use, this requirement is not applicable.
+
+Verify the location of the non-default tally directory for the pam_faillock.so module with
+the following command:
+
+$ sudo grep -w dir /etc/security/faillock.conf
+
+dir = /var/log/faillock
+
+Check the security context type of the non-default tally directory with the following command:
+
+$ sudo ls -Zd /var/log/faillock
+
+unconfined_u:object_r:faillog_t:s0 /var/log/faillock
+      Is it the case that the security context type of the non-default tally directory is not "faillog_t"?
+      </pre></td>
+	<td><pre>The dir configuration option in PAM pam_faillock.so module defines where the lockout
+records is stored. The configured directory must have the correct SELinux context.</pre></td>
 	<td>RHEL-08-020028</td>
-	<td>Missing Rule</td>
+	<td>account_password_selinux_faillock_dir</td>
 </tr>
 
 <tr>
@@ -5833,15 +5924,33 @@ to prevent logins with empty passwords.</pre></td>
 
 <tr>
 	<td>V-244541</td>
-	<td></td>
+	<td>366</td>
 	<td>high</td>
 	<td>RHEL 8 must not allow blank or null passwords in the password-auth file.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>If an account has an empty password, anyone could log in and
+run commands with the privileges of that account. Accounts with
+empty passwords should never be used in operational environments.</pre></td>
+	<td><pre>To verify that null passwords cannot be used, run the following command:
+
+$ grep nullok /etc/pam.d/system-auth /etc/pam.d/password-auth
+
+If this produces any output, it may be possible to log into accounts
+with empty passwords. Remove any instances of the nullok option to
+prevent logins with empty passwords.
+      Is it the case that NULL passwords can be used?
+      </pre></td>
+	<td><pre>If an account is configured for password authentication
+but does not have an assigned password, it may be possible to log
+into the account without authentication. Remove any instances of the
+nullok in
+
+/etc/pam.d/system-auth and
+/etc/pam.d/password-auth
+
+to prevent logins with empty passwords.</pre></td>
 	<td>RHEL-08-020332</td>
-	<td>Missing Rule</td>
+	<td>no_empty_passwords</td>
 </tr>
 
 <tr>
@@ -5850,25 +5959,22 @@ to prevent logins with empty passwords.</pre></td>
 	<td>low</td>
 	<td>RHEL 8 must display the date and time of the last successful account logon upon logon.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Users need to be aware of activity that occurs regarding
-their account. Providing users with information regarding the number
-of unsuccessful attempts that were made to login to their account
-allows the user to determine if any unauthorized activity has occurred
-and gives them an opportunity to notify administrators.</pre></td>
+	<td><pre>Users need to be aware of activity that occurs regarding their account. Providing users with
+information regarding the number of unsuccessful attempts that were made to login to their
+account allows the user to determine if any unauthorized activity has occurred and gives them
+an opportunity to notify administrators.</pre></td>
 	<td><pre>Verify users are provided with feedback on when account accesses last occurred with the following command:
 
 $ sudo grep pam_lastlog /etc/pam.d/postlogin
 
-session required pam_lastlog.so showfailed
-      Is it the case that "pam_lastlog" is missing from "/etc/pam.d/postlogin" file, or the silent option is present?
+session [default=1] pam_lastlog.so showfailed
+      Is it the case that "pam_lastlog.so" is not properly configured in "/etc/pam.d/postlogin" file?
       </pre></td>
-	<td><pre>To configure the system to notify users of last logon/access
-using pam_lastlog, add or correct the pam_lastlog
-settings in
-/etc/pam.d/postlogin to read as follows:
-session     required pam_lastlog.so showfailed
-And make sure that the silent option is not set for
-pam_lastlog module.</pre></td>
+	<td><pre>To configure the system to notify users of last logon/access using pam_lastlog,
+add or correct the pam_lastlog settings in /etc/pam.d/postlogin
+to include showfailed option, such as:
+session     [default=1]    pam_lastlog.so showfailed
+And make sure that the silent option is not set for this specific line.</pre></td>
 	<td>RHEL-08-020340</td>
 	<td>display_login_attempts</td>
 </tr>
@@ -6214,16 +6320,16 @@ This is the default setting.</pre></td>
 	<td><pre>If option name_format is left at its default value of
 none, audit events from different computers may be hard
 to distinguish.</pre></td>
-	<td><pre>To verify that Audit Daemon is configured to record the hostname
-in audit events, run the following command:
+	<td><pre>To verify that Audit Daemon is configured to record the computer node
+name in the audit events, run the following command:
 $ sudo grep name_format /etc/audit/auditd.conf
 The output should return the following:
-name_format = hostname
-      Is it the case that name_format isn't set to hostname?
+name_format = 
+      Is it the case that name_format isn't set to <sub idref="var_auditd_name_format" />?
       </pre></td>
-	<td><pre>To configure Audit daemon to use value returned by gethostname
-syscall as computer node name in the audit events,
-set name_format to hostname
+	<td><pre>To configure Audit daemon to use a unique identifier
+as computer node name in the audit events,
+set name_format to 
 in /etc/audit/auditd.conf.</pre></td>
 	<td>RHEL-08-030062</td>
 	<td>auditd_name_format</td>
@@ -8053,9 +8159,9 @@ form to /etc/audit/audit.rules:
 as an attacker attempting to remove evidence of an intrusion.</pre></td>
 	<td><pre>Verify Red Hat Enterprise Linux 8 generates audit records for all account creations, modifications, disabling, and termination events that affect "/etc/security/opasswd" with the following command:
 
-$ sudo auditctl -l | grep /var/log/faillock
+$ sudo auditctl -l | grep 
 
--w /var/log/faillock -p wa -k logins
+-w  -p wa -k logins
       Is it the case that the command does not return a line, or the line is commented out?
       </pre></td>
 	<td><pre>The audit system already collects login information for all users
@@ -8064,12 +8170,12 @@ augenrules program to read audit rules during daemon startup (the
 default), add the following lines to a file with suffix .rules in the
 directory /etc/audit/rules.d in order to watch for attempted manual
 edits of files involved in storing logon events:
--w /var/log/faillock -p wa -k logins
+-w  -p wa -k logins
 If the auditd daemon is configured to use the auditctl
 utility to read audit rules during daemon startup, add the following lines to
 /etc/audit/audit.rules file in order to watch for unattempted manual
 edits of files involved in storing logon events:
--w /var/log/faillock -p wa -k logins</pre></td>
+-w  -p wa -k logins</pre></td>
 	<td>RHEL-08-030590</td>
 	<td>audit_rules_login_events_faillock</td>
 </tr>
