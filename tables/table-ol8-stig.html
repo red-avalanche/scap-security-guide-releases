@@ -49,36 +49,14 @@
 		<tbody>
 		<tr>
 			<td>381</td>
-			<td>13</td>
-			<td>368</td>
-			<td>96.59%</td>
+			<td>2</td>
+			<td>379</td>
+			<td>99.48%</td>
 			<td>
-				
-					OL08-00-020011
-				
-					OL08-00-020013
-				
-					OL08-00-020015
-				
-					OL08-00-020018
-				
-					OL08-00-020020
-				
-					OL08-00-020023
 				
 					OL08-00-020025
 				
 					OL08-00-020026
-				
-					OL08-00-020028
-				
-					OL08-00-020082
-				
-					OL08-00-020102
-				
-					OL08-00-020103
-				
-					OL08-00-020332
 				
 			</td>
 		</tr>
@@ -1100,14 +1078,13 @@ $ sudo yum install policycoreutils</pre></td>
 	<td>medium</td>
 	<td>A sticky bit must be set on all OL 8 public directories to prevent unauthorized and unintended information transferred via shared system resources.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Failing to set the sticky bit on public directories allows unauthorized
-users to delete files in the directory structure.
+	<td><pre>Failing to set the sticky bit on public directories allows unauthorized users to delete files
+in the directory structure.
 
-The only authorized public directories are those temporary directories
-supplied with the system, or those designed to be temporary file
-repositories. The setting is normally reserved for directories used by the
-system, by users for temporary file storage (such as /tmp), and
-for directories requiring global read/write access.</pre></td>
+The only authorized public directories are those temporary directories supplied with the
+system, or those designed to be temporary file repositories. The setting is normally reserved
+for directories used by the system, by users for temporary file storage (such as /tmp),
+and for directories requiring global read/write access.</pre></td>
 	<td><pre>To find world-writable directories that lack the sticky bit, run the following command:
 $ sudo find / -type d \( -perm -0002 -a ! -perm -1000 \) -print 2>/dev/null
 fixtext: |-
@@ -1120,19 +1097,15 @@ srg_requirement:
 A sticky bit must be set on all Oracle Linux 8 public directories to prevent unauthorized and unintended information transferred via shared system resources.
       Is it the case that any world-writable directories are missing the sticky bit?
       </pre></td>
-	<td><pre>When the so-called 'sticky bit' is set on a directory,
-only the owner of a given file may remove that file from the
-directory. Without the sticky bit, any user with write access to a
-directory may remove any file in the directory. Setting the sticky
-bit prevents users from removing each other's files. In cases where
-there is no reason for a directory to be world-writable, a better
-solution is to remove that permission rather than to set the sticky
-bit. However, if a directory is used by a particular application,
-consult that application's documentation instead of blindly
-changing modes.
+	<td><pre>When the so-called 'sticky bit' is set on a directory, only the owner of a given file may
+remove that file from the directory. Without the sticky bit, any user with write access to a
+directory may remove any file in the directory. Setting the sticky bit prevents users from
+removing each other's files. In cases where there is no reason for a directory to be
+world-writable, a better solution is to remove that permission rather than to set the sticky
+bit. However, if a directory is used by a particular application, consult that application's
+documentation instead of blindly changing modes.
 
-To set the sticky bit on a world-writable directory DIR, run the
-following command:
+To set the sticky bit on a world-writable directory DIR, run the following command:
 $ sudo chmod +t DIR</pre></td>
 	<td>OL08-00-010190</td>
 	<td>dir_perms_world_writable_sticky_bits</td>
@@ -2534,29 +2507,15 @@ computer. While programs are typically not permitted to read data from other pro
 malicious program can exploit Meltdown and Spectre to obtain secrets stored in the memory of
 other running programs. This might include passwords stored in a password manager or browser;
 personal photos, emails, and instant messages; and business-critical documents.</pre></td>
-	<td><pre>Inspect the form of default GRUB 2 command line for the Linux operating system
-in /etc/default/grub. If it includes mitigation=on,
-then the parameter will be configured for newly installed kernels.
-First check if the GRUB recovery is enabled:
-$ sudo grep 'GRUB_DISABLE_RECOVERY' /etc/default/grub
-If this option is set to true, then check that a line is output by the following command:
-$ sudo grep 'GRUB_CMDLINE_LINUX_DEFAULT.*mitigation=on.*' /etc/default/grub
-If the recovery is disabled, check the line with
-$ sudo grep 'GRUB_CMDLINE_LINUX.*mitigation=on.*' /etc/default/grub.Moreover, command line parameters for currently installed kernels should be checked as well.
-Run the following command:
-$ sudo grubby --info=ALL | grep args | grep -v 'mitigation=on'
-The command should not return any output.
-      Is it the case that mitigation is not set to on?
+	<td><pre>Verify that Meltdown mitigations are not disabled in any kernel:
+
+$ sudo grubby --info=ALL | grep mitigations
+      Is it the case that mitigations is set to off?
       </pre></td>
-	<td><pre>Determine the default kernel:
-$ sudo grubby --default-kernel
+	<td><pre>Verify that Meltdown mitigations are not disabled:
+$ sudo grubby --info=ALL | grep mitigations
 
-/boot/vmlinuz-5.4.17-2011.1.2.el8uek.x86_64
-
-Using the default kernel, verify that Meltdown mitigations are not disabled:
-$ sudo grubby --info=path-to-default-kernel | grep mitigation
-
-The mitigation must be set to "on".</pre></td>
+The mitigations must not be set to "off".</pre></td>
 	<td>OL08-00-010424</td>
 	<td>grub2_mitigation_argument</td>
 </tr>
@@ -2693,6 +2652,24 @@ $ sudo find / -name '.shosts' -type f -delete</pre></td>
 </tr>
 
 <tr>
+	<td>V-248600</td>
+	<td>366</td>
+	<td>low</td>
+	<td>OL 8 must have the packages required to use the hardware random number generator entropy gatherer service.</td>
+	<td>SRG-OS-ID</td>
+	<td><pre>rng-tools provides hardware random number generator tools,
+such as those used in the formation of x509/PKI certificates.</pre></td>
+	<td><pre>Run the following command to determine if the rng-tools package is installed: $ rpm -q rng-tools
+      Is it the case that the package is not installed?
+      </pre></td>
+	<td><pre>The rng-tools package can be installed with the following command:
+
+$ sudo yum install rng-tools</pre></td>
+	<td>OL08-00-010472</td>
+	<td>package_rng-tools_installed</td>
+</tr>
+
+<tr>
 	<td>V-248599</td>
 	<td>366</td>
 	<td>low</td>
@@ -2712,26 +2689,8 @@ If the service is running, it should return the following: active
 
 The rngd service can be enabled with the following command:
 $ sudo systemctl enable rngd.service</pre></td>
-	<td>OL08-00-010471</td>
+	<td>OL08-00-010473</td>
 	<td>service_rngd_enabled</td>
-</tr>
-
-<tr>
-	<td>V-248600</td>
-	<td>366</td>
-	<td>low</td>
-	<td>OL 8 must have the packages required to use the hardware random number generator entropy gatherer service.</td>
-	<td>SRG-OS-ID</td>
-	<td><pre>rng-tools provides hardware random number generator tools,
-such as those used in the formation of x509/PKI certificates.</pre></td>
-	<td><pre>Run the following command to determine if the rng-tools package is installed: $ rpm -q rng-tools
-      Is it the case that the package is not installed?
-      </pre></td>
-	<td><pre>The rng-tools package can be installed with the following command:
-
-$ sudo yum install rng-tools</pre></td>
-	<td>OL08-00-010472</td>
-	<td>package_rng-tools_installed</td>
 </tr>
 
 <tr>
@@ -3631,21 +3590,18 @@ directory other than the users home directory.</pre></td>
 	<td>medium</td>
 	<td>All OL 8 world-writable directories must be owned by root, sys, bin, or an application user.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Allowing a user account to own a world-writable directory is
-undesirable because it allows the owner of that directory to remove
-or replace any files that may be placed in the directory by other
-users.</pre></td>
-	<td><pre>The following command will discover and print world-writable directories that
-are not owned by a system account, given the assumption that only system
-accounts have a uid lower than 500.  Run it once for each local partition PART:
-$ sudo find PART -xdev -type d -perm -0002 -uid +499 -print
+	<td><pre>Allowing a user account to own a world-writable directory is undesirable because it allows the
+owner of that directory to remove or replace any files that may be placed in the directory by
+other users.</pre></td>
+	<td><pre>The following command will discover and print world-writable directories that are not owned by
+a system account, given the assumption that only system accounts have a uid lower than 500.
+Run it once for each local partition PART:
+$ sudo find PART -xdev -type d -perm -0002 -uid +1000 -print
       Is it the case that there is output?
       </pre></td>
-	<td><pre>All directories in local partitions which are
-world-writable should be owned by root or another
-system account. If any world-writable directories are not
-owned by a system account, this should be investigated.
-Following this, the files should be deleted or assigned to an
+	<td><pre>All directories in local partitions which are world-writable should be owned by root or
+another system account. If any world-writable directories are not owned by a system account,
+this should be investigated. Following this, the files should be deleted or assigned to an
 appropriate owner.</pre></td>
 	<td>OL08-00-010700</td>
 	<td>dir_perms_world_writable_system_owned</td>
@@ -3879,32 +3835,31 @@ $ sudo chmod 0740 /home/USER/.INIT_FILE</pre></td>
 	<td>medium</td>
 	<td>All OL 8 files and directories must have a valid owner.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Unowned files do not directly imply a security problem, but they are generally
-a sign that something is amiss. They may
-be caused by an intruder, by incorrect software installation or
-draft software removal, or by failure to remove all files belonging
-to a deleted account. The files should be repaired so they
-will not cause problems when accounts are created in the future,
-and the cause should be discovered and addressed.</pre></td>
-	<td><pre>The following command will discover and print any
-files on local partitions which do not belong to a valid user.
-$ df --local -P | awk {'if (NR!=1) print $6'} | sudo xargs -I '{}' find '{}' -xdev -nouser
+	<td><pre>Unowned files do not directly imply a security problem, but they are generally a sign that
+something is amiss. They may be caused by an intruder, by incorrect software installation or
+draft software removal, or by failure to remove all files belonging to a deleted account, or
+other similar cases. The files should be repaired so they will not cause problems when
+accounts are created in the future, and the cause should be discovered and addressed.</pre></td>
+	<td><pre>The following command will locate the mount points related to local devices:
+$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)
 
-Either remove all files and directories from the system that do not have a
-valid user, or assign a valid user to all unowned files and directories on
-the system with the chown command:
-$ sudo chown user file
+The following command will show files which do not belong to a valid user:
+$ sudo find MOUNTPOINT -xdev -nouser 2>/dev/null
+
+Replace MOUNTPOINT by the mount points listed by the fist command.
+
+No files without a valid user should be located.
       Is it the case that files exist that are not owned by a valid user?
       </pre></td>
-	<td><pre>If any files are not owned by a user, then the
-cause of their lack of ownership should be investigated.
-Following this, the files should be deleted or assigned to an
-appropriate user. The following command will discover and print
-any files on local partitions which do not belong to a valid user:
-$ df --local -P | awk {'if (NR!=1) print $6'} | sudo xargs -I '{}' find '{}' -xdev -nouser
-To search all filesystems on a system including network mounted
-filesystems the following command can be run manually for each partition:
-$ sudo find PARTITION -xdev -nouser</pre></td>
+	<td><pre>If any files are not owned by a user, then the cause of their lack of ownership should be
+investigated. Following this, the files should be deleted or assigned to an appropriate user.
+
+Locate the mount points related to local devices by the following command:
+$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)
+
+For all mount points listed by the previous command, it is necessary to search for files which
+do not belong to a valid user using the following command:
+$ sudo find MOUNTPOINT -xdev -nouser 2>/dev/null</pre></td>
 	<td>OL08-00-010780</td>
 	<td>no_files_unowned_by_user</td>
 </tr>
@@ -3915,31 +3870,32 @@ $ sudo find PARTITION -xdev -nouser</pre></td>
 	<td>medium</td>
 	<td>All OL 8 files and directories must have a valid group owner.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Unowned files do not directly imply a security problem, but they are generally
-a sign that something is amiss. They may
-be caused by an intruder, by incorrect software installation or
-draft software removal, or by failure to remove all files belonging
-to a deleted account. The files should be repaired so they
-will not cause problems when accounts are created in the future,
-and the cause should be discovered and addressed.</pre></td>
-	<td><pre>The following command will discover and print any
-files on local partitions which do not belong to a valid group.
-$ df --local -P | awk '{if (NR!=1) print $6}' | sudo xargs -I '{}' find '{}' -xdev -nogroup
+	<td><pre>Unowned files do not directly imply a security problem, but they are generally a sign that
+something is amiss. They may be caused by an intruder, by incorrect software installation or
+draft software removal, or by failure to remove all files belonging to a deleted account, or
+other similar cases. The files should be repaired so they will not cause problems when
+accounts are created in the future, and the cause should be discovered and addressed.</pre></td>
+	<td><pre>The following command will locate the mount points related to local devices:
+$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)
 
-Either remove all files and directories from the system that do not have a valid group,
-or assign a valid group with the chgrp command:
-$ sudo chgrp group file
+The following command will show files which do not belong to a valid group:
+$ sudo find MOUNTPOINT -xdev -nogroup 2>/dev/null
+
+Replace MOUNTPOINT by the mount points listed by the fist command.
+
+No files without a valid group should be located.
       Is it the case that there is output?
       </pre></td>
-	<td><pre>If any files are not owned by a group, then the
-cause of their lack of group-ownership should be investigated.
-Following this, the files should be deleted or assigned to an
-appropriate group. The following command will discover and print
-any files on local partitions which do not belong to a valid group:
-$ df --local -P | awk '{if (NR!=1) print $6}' | sudo xargs -I '{}' find '{}' -xdev -nogroup
-To search all filesystems on a system including network mounted
-filesystems the following command can be run manually for each partition:
-$ sudo find PARTITION -xdev -nogroup</pre></td>
+	<td><pre>If any file is not group-owned by a group present in /etc/group, the cause of the lack of
+group-ownership must be investigated. Following this, those files should be deleted or
+assigned to an appropriate group.
+
+Locate the mount points related to local devices by the following command:
+$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)
+
+For all mount points listed by the previous command, it is necessary to search for files which
+do not belong to a valid group using the following command:
+$ sudo find MOUNTPOINT -xdev -nogroup 2>/dev/null</pre></td>
 	<td>OL08-00-010790</td>
 	<td>file_permissions_ungroupowned</td>
 </tr>
@@ -4084,7 +4040,7 @@ defined to work as expected.
 
 Ensure that the file /etc/security/faillock.conf contains the following entry:
 deny = <count>
-Where count should be less than or equal to 
+Where count should be less than or equal to
  and greater than 0.
 
 
@@ -4097,15 +4053,38 @@ depending on the OS version.</pre></td>
 
 <tr>
 	<td>V-248653</td>
-	<td></td>
+	<td>2238</td>
 	<td>medium</td>
 	<td>OL 8 systems, versions 8.2 and above, must automatically lock an account when three unsuccessful logon attempts occur.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>By limiting the number of failed logon attempts, the risk of unauthorized system access via
+user password guessing, also known as brute-forcing, is reduced. Limits are imposed by locking
+the account.</pre></td>
+	<td><pre>Verify Oracle Linux 8 is configured to lock an account after 
+unsuccessful logon attempts with the command:
+
+
+$ grep 'deny =' /etc/security/faillock.conf
+deny = .
+      Is it the case that the "deny" option is not set to "<sub idref="var_accounts_passwords_pam_faillock_deny" />"
+or less (but not "0"), is missing or commented out?
+      </pre></td>
+	<td><pre>This rule configures the system to lock out accounts after a number of incorrect login attempts
+using pam_faillock.so.
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected.
+
+Ensure that the file /etc/security/faillock.conf contains the following entry:
+deny = <count>
+Where count should be less than or equal to
+ and greater than 0.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as authselect or authconfig,
+depending on the OS version.</pre></td>
 	<td>OL08-00-020011</td>
-	<td>Missing Rule</td>
+	<td>accounts_passwords_pam_faillock_deny</td>
 </tr>
 
 <tr>
@@ -4141,15 +4120,33 @@ depending on the OS version.</pre></td>
 
 <tr>
 	<td>V-248655</td>
-	<td></td>
+	<td>2238</td>
 	<td>medium</td>
 	<td>OL 8 systems, versions 8.2 and above, must automatically lock an account when three unsuccessful logon attempts occur during a 15-minute time period.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>By limiting the number of failed logon attempts the risk of unauthorized system
+access via user password guessing, otherwise known as brute-forcing, is reduced.
+Limits are imposed by locking the account.</pre></td>
+	<td><pre>To ensure the failed password attempt policy is configured correctly, run the following command:
+
+$ grep fail_interval /etc/security/faillock.conf
+The output should show fail_interval = <interval-in-seconds> where interval-in-seconds is  or greater.
+      Is it the case that the "fail_interval" option is not set to "<sub idref="var_accounts_passwords_pam_faillock_fail_interval" />"
+or less (but not "0"), the line is commented out, or the line is missing?
+      </pre></td>
+	<td><pre>Utilizing pam_faillock.so, the fail_interval directive configures the system
+to lock out an account after a number of incorrect login attempts within a specified time
+period.
+
+Ensure that the file /etc/security/faillock.conf contains the following entry:
+fail_interval = <interval-in-seconds> where interval-in-seconds is  or greater.
+
+
+In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as authselect or authconfig,
+depending on the OS version.</pre></td>
 	<td>OL08-00-020013</td>
-	<td>Missing Rule</td>
+	<td>accounts_passwords_pam_faillock_interval</td>
 </tr>
 
 <tr>
@@ -4193,15 +4190,41 @@ to unlock a user. This should be done using the faillock tool.</pre></td>
 
 <tr>
 	<td>V-248657</td>
-	<td></td>
+	<td>2238</td>
 	<td>medium</td>
 	<td>OL 8 systems, versions 8.2 and above, must automatically lock an account until the locked account is released by an administrator when three unsuccessful logon attempts occur during a 15-minute time period.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>By limiting the number of failed logon attempts the risk of unauthorized system
+access via user password guessing, otherwise known as brute-forcing, is reduced.
+Limits are imposed by locking the account.</pre></td>
+	<td><pre>Verify Oracle Linux 8 is configured to lock an account until released by an administrator
+after  unsuccessful logon
+attempts with the command:
+
+
+$ grep 'unlock_time =' /etc/security/faillock.conf
+unlock_time = 
+      Is it the case that the "unlock_time" option is not set to "<sub idref="var_accounts_passwords_pam_faillock_unlock_time" />",
+the line is missing, or commented out?
+      </pre></td>
+	<td><pre>This rule configures the system to lock out accounts during a specified time period after a
+number of incorrect login attempts using pam_faillock.so.
+
+
+Ensure that the file /etc/security/faillock.conf contains the following entry:
+unlock_time=<interval-in-seconds> where
+interval-in-seconds is  or greater.
+
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid any errors when manually editing these files,
+it is recommended to use the appropriate tools, such as authselect or authconfig,
+depending on the OS version.
+
+If unlock_time is set to 0, manual intervention by an administrator is required
+to unlock a user. This should be done using the faillock tool.</pre></td>
 	<td>OL08-00-020015</td>
-	<td>Missing Rule</td>
+	<td>accounts_passwords_pam_faillock_unlock_time</td>
 </tr>
 
 <tr>
@@ -4266,15 +4289,30 @@ The chosen profile expects the directory to be .</pre></td>
 
 <tr>
 	<td>V-248660</td>
-	<td></td>
+	<td>2238</td>
 	<td>medium</td>
 	<td>OL 8 systems below version 8.2 must prevent system messages from being presented when three unsuccessful logon attempts occur.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>The pam_faillock module without the silent option will leak information about the existence or
+non-existence of a user account in the system because the failures are not recorded for unknown
+users. The message about the user account being locked is never displayed for non-existing user
+accounts allowing the adversary to infer that a particular account exists or not on the system.</pre></td>
+	<td><pre>To ensure that the system prevents messages from being shown when three unsuccessful logon
+attempts occur, run the following command:
+$ grep silent /etc/security/faillock.conf
+The output should show silent.
+      Is it the case that the system shows messages when three unsuccessful logon attempts occur?
+      </pre></td>
+	<td><pre>This rule ensures the system prevents informative messages from being presented to the user
+pertaining to logon information after a number of incorrect login attempts using
+pam_faillock.so.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as authselect or authconfig,
+depending on the OS version.</pre></td>
 	<td>OL08-00-020018</td>
-	<td>Missing Rule</td>
+	<td>accounts_passwords_pam_faillock_silent</td>
 </tr>
 
 <tr>
@@ -4307,15 +4345,21 @@ depending on the OS version.</pre></td>
 
 <tr>
 	<td>V-248662</td>
-	<td></td>
+	<td>2238</td>
 	<td>medium</td>
 	<td>OL 8 systems below version 8.2 must log user name information when unsuccessful logon attempts occur.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>Without auditing of these events it may be harder or impossible to identify what an attacker did after an attack.</pre></td>
+	<td><pre>Verify the "/etc/security/faillock.conf" file is configured to log user name information when unsuccessful logon attempts occur:
+
+$ sudo grep audit /etc/security/faillock.conf
+
+audit
+      Is it the case that the "audit" option is not set, is missing or commented out?
+      </pre></td>
+	<td><pre>PAM faillock locks an account due to excessive password failures, this event must be logged.</pre></td>
 	<td>OL08-00-020020</td>
-	<td>Missing Rule</td>
+	<td>accounts_passwords_pam_faillock_audit</td>
 </tr>
 
 <tr>
@@ -4367,15 +4411,30 @@ depending on the OS version.</pre></td>
 
 <tr>
 	<td>V-248665</td>
-	<td></td>
+	<td>2238</td>
 	<td>medium</td>
 	<td>OL 8 systems, versions 8.2 and above, must include root when automatically locking an account until the locked account is released by an administrator when three unsuccessful logon attempts occur during a 15-minute time period.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>By limiting the number of failed logon attempts, the risk of unauthorized system access via
+user password guessing, also known as brute-forcing, is reduced. Limits are imposed by locking
+the account.</pre></td>
+	<td><pre>Verify Oracle Linux 8 is configured to lock the root account after 
+unsuccessful logon attempts with the command:
+
+
+$ grep even_deny_root /etc/security/faillock.conf
+even_deny_root
+      Is it the case that the "even_deny_root" option is not set, is missing or commented out?
+      </pre></td>
+	<td><pre>This rule configures the system to lock out the root account after a number of
+incorrect login attempts using pam_faillock.so.
+
+pam_faillock.so module requires multiple entries in pam files. These entries must be carefully
+defined to work as expected. In order to avoid errors when manually editing these files, it is
+recommended to use the appropriate tools, such as authselect or authconfig,
+depending on the OS version.</pre></td>
 	<td>OL08-00-020023</td>
-	<td>Missing Rule</td>
+	<td>accounts_passwords_pam_faillock_deny_root</td>
 </tr>
 
 <tr>
@@ -4468,15 +4527,33 @@ records is stored. The configured directory must have the correct SELinux contex
 
 <tr>
 	<td>V-248670</td>
-	<td></td>
+	<td>2238</td>
 	<td>medium</td>
 	<td>OL 8 systems below version 8.2 must configure SELinux context type to allow the use of a non-default faillock tally directory.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>Not having the correct SELinux context on the pam_faillock.so records directory may lead to
+unauthorized access to the directory.</pre></td>
+	<td><pre>If the system does not have SELinux enabled and enforcing a targeted policy, or if the
+pam_faillock.so module is not configured for use, this requirement is not applicable.
+
+Verify the location of the non-default tally directory for the pam_faillock.so module with
+the following command:
+
+$ sudo grep -w dir /etc/security/faillock.conf
+
+dir = /var/log/faillock
+
+Check the security context type of the non-default tally directory with the following command:
+
+$ sudo ls -Zd /var/log/faillock
+
+unconfined_u:object_r:faillog_t:s0 /var/log/faillock
+      Is it the case that the security context type of the non-default tally directory is not "faillog_t"?
+      </pre></td>
+	<td><pre>The dir configuration option in PAM pam_faillock.so module defines where the lockout
+records is stored. The configured directory must have the correct SELinux context.</pre></td>
 	<td>OL08-00-020028</td>
-	<td>Missing Rule</td>
+	<td>account_password_selinux_faillock_dir</td>
 </tr>
 
 <tr>
@@ -4900,15 +4977,35 @@ After the settings have been set, run dconf update.</pre></td>
 
 <tr>
 	<td>V-248684</td>
-	<td></td>
+	<td>60</td>
 	<td>medium</td>
 	<td>OL 8 must prevent a user from overriding the session lock-enabled setting for the graphical user interface.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>A session lock is a temporary action taken when a user stops work and moves away from the immediate physical vicinity
+of the information system but does not want to logout because of the temporary nature of the absense.</pre></td>
+	<td><pre>To check the status of the idle screen lock activation, run the following command:
+
+$ gsettings get org.gnome.desktop.screensaver lock-enabled
+If properly configured, the output should be true.
+To ensure that users cannot change how long until the screensaver locks, run the following:
+$ grep lock-enabled /etc/dconf/db/local.d/locks/*
+If properly configured, the output for lock-enabled should be /org/gnome/desktop/screensaver/lock-enabled
+      Is it the case that screensaver locking is not enabled and/or has not been set or configured correctly?
+      </pre></td>
+	<td><pre>
+To activate locking of the screensaver in the GNOME3 desktop when it is activated,
+add or set lock-enabled to true in
+/etc/dconf/db/local.d/00-security-settings. For example:
+[org/gnome/desktop/screensaver]
+lock-enabled=true
+
+Once the settings have been added, add a lock to
+/etc/dconf/db/local.d/locks/00-security-settings-lock to prevent user modification.
+For example:
+/org/gnome/desktop/screensaver/lock-enabled
+After the settings have been set, run dconf update.</pre></td>
 	<td>OL08-00-020082</td>
-	<td>Missing Rule</td>
+	<td>dconf_gnome_screensaver_lock_enabled</td>
 </tr>
 
 <tr>
@@ -4990,28 +5087,58 @@ password    requisite                                    pam_pwquality.so.</pre>
 
 <tr>
 	<td>V-252658</td>
-	<td></td>
+	<td>366</td>
 	<td>medium</td>
 	<td>OL 8 systems below version 8.4 must ensure the password complexity module in the system-auth file is configured for three retries or less.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>Setting the password retry prompts that are permitted on a per-session basis to a low value
+requires some software, such as SSH, to re-connect. This can slow down and
+draw additional attention to some types of password-guessing attacks. Note that this
+is different from account lockout, which is provided by the pam_faillock module.</pre></td>
+	<td><pre>Verify Oracle Linux 8 is configured to limit the "pwquality" retry option to .
+
+
+Check for the use of the "pwquality" retry option in the pwquality.conf file with the following command:
+$ grep retry /etc/security/pwquality.conf
+      Is it the case that the value of "retry" is set to "0" or greater than "<sub idref="var_password_pam_retry" />", or is missing?
+      </pre></td>
+	<td><pre>To configure the number of retry prompts that are permitted per-session:
+
+Edit the /etc/security/pwquality.conf to include
+
+retry=, or a lower value if site
+policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+per session.</pre></td>
 	<td>OL08-00-020102</td>
-	<td>Missing Rule</td>
+	<td>accounts_password_pam_retry</td>
 </tr>
 
 <tr>
 	<td>V-252659</td>
-	<td></td>
+	<td>366</td>
 	<td>medium</td>
 	<td>OL 8 systems below version 8.4 must ensure the password complexity module in the password-auth file is configured for three retries or less.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>Setting the password retry prompts that are permitted on a per-session basis to a low value
+requires some software, such as SSH, to re-connect. This can slow down and
+draw additional attention to some types of password-guessing attacks. Note that this
+is different from account lockout, which is provided by the pam_faillock module.</pre></td>
+	<td><pre>Verify Oracle Linux 8 is configured to limit the "pwquality" retry option to .
+
+
+Check for the use of the "pwquality" retry option in the pwquality.conf file with the following command:
+$ grep retry /etc/security/pwquality.conf
+      Is it the case that the value of "retry" is set to "0" or greater than "<sub idref="var_password_pam_retry" />", or is missing?
+      </pre></td>
+	<td><pre>To configure the number of retry prompts that are permitted per-session:
+
+Edit the /etc/security/pwquality.conf to include
+
+retry=, or a lower value if site
+policy is more restrictive. The DoD requirement is a maximum of 3 prompts
+per session.</pre></td>
 	<td>OL08-00-020103</td>
-	<td>Missing Rule</td>
+	<td>accounts_password_pam_retry</td>
 </tr>
 
 <tr>
@@ -6012,15 +6139,33 @@ to prevent logins with empty passwords.</pre></td>
 
 <tr>
 	<td>V-248716</td>
-	<td></td>
+	<td>366</td>
 	<td>high</td>
 	<td>OL 8 must not allow blank or null passwords in the password-auth file.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
-	<td><pre></pre></td>
+	<td><pre>If an account has an empty password, anyone could log in and
+run commands with the privileges of that account. Accounts with
+empty passwords should never be used in operational environments.</pre></td>
+	<td><pre>To verify that null passwords cannot be used, run the following command:
+
+$ grep nullok /etc/pam.d/system-auth /etc/pam.d/password-auth
+
+If this produces any output, it may be possible to log into accounts
+with empty passwords. Remove any instances of the nullok option to
+prevent logins with empty passwords.
+      Is it the case that NULL passwords can be used?
+      </pre></td>
+	<td><pre>If an account is configured for password authentication
+but does not have an assigned password, it may be possible to log
+into the account without authentication. Remove any instances of the
+nullok in
+
+/etc/pam.d/system-auth and
+/etc/pam.d/password-auth
+
+to prevent logins with empty passwords.</pre></td>
 	<td>OL08-00-020332</td>
-	<td>Missing Rule</td>
+	<td>no_empty_passwords</td>
 </tr>
 
 <tr>
@@ -8523,7 +8668,6 @@ audit tools by running the following command:
 /usr/sbin/autrace p+i+n+u+g+s+b+acl+xattrs+sha512
 
 /usr/sbin/rsyslogd p+i+n+u+g+s+b+acl+xattrs+sha512
-
 /usr/sbin/augenrules p+i+n+u+g+s+b+acl+xattrs+sha512
 
 
@@ -10568,21 +10712,20 @@ To make sure that the setting is persistent, add the following line to a file in
 	<td>medium</td>
 	<td>OL 8 must not enable IPv4 packet forwarding unless the system is a router.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Routing protocol daemons are typically used on routers to exchange
-network topology information with other routers. If this capability is used when
-not required, system network information may be unnecessarily transmitted across
-the network.</pre></td>
-	<td><pre>The runtime status of the net.ipv4.ip_forward kernel parameter can be queried
+	<td><pre>IP forwarding permits the kernel to forward packets from one network
+interface to another. The ability to forward packets between two networks is
+only appropriate for systems acting as routers.</pre></td>
+	<td><pre>The runtime status of the net.ipv4.conf.all.forwarding kernel parameter can be queried
 by running the following command:
-$ sysctl net.ipv4.ip_forward
+$ sysctl net.ipv4.conf.all.forwarding
 0.
 The ability to forward packets is only appropriate for routers.
-      Is it the case that the correct value is not returned?
+      Is it the case that IP forwarding value is "1" and the system is not router?
       </pre></td>
-	<td><pre>To set the runtime status of the net.ipv4.ip_forward kernel parameter, run the following command: $ sudo sysctl -w net.ipv4.ip_forward=0
-To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv4.ip_forward = 0</pre></td>
+	<td><pre>To set the runtime status of the net.ipv4.conf.all.forwarding kernel parameter, run the following command: $ sudo sysctl -w net.ipv4.conf.all.forwarding=0
+To make sure that the setting is persistent, add the following line to a file in the directory /etc/sysctl.d: net.ipv4.conf.all.forwarding = 0</pre></td>
 	<td>OL08-00-040259</td>
-	<td>sysctl_net_ipv4_ip_forward</td>
+	<td>sysctl_net_ipv4_conf_all_forwarding</td>
 </tr>
 
 <tr>

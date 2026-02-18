@@ -59,24 +59,23 @@ Next, run the following command to return binaries to a normal, non-prelinked st
 <tr>
 <td>CCE-85788-8</td>
 <td>Verify File Hashes with RPM</td>
-<td>Without cryptographic integrity protections, system
-executables and files can be altered by unauthorized users without
-detection.
-The RPM package management system can check the hashes of
-installed software packages, including many that are important to system
-security.
-To verify that the cryptographic hash of system files and commands matches vendor
-values, run the following command to list which files on the system
-have hashes that differ from what is expected by the RPM database:
+<td>Without cryptographic integrity protections, system executables and files can be altered by
+unauthorized users without detection. The RPM package management system can check the hashes
+of installed software packages, including many that are important to system security.
+
+To verify that the cryptographic hash of system files and commands matches vendor values, run
+the following command to list which files on the system have hashes that differ from what is
+expected by the RPM database:
 <pre>$ rpm -Va --noconfig | grep '^..5'</pre>
-A "c" in the second column indicates that a file is a configuration file, which
-may appropriately be expected to change. If the file was not expected to
-change, investigate the cause of the change using audit logs or other means.
-The package can then be reinstalled to restore the file.
-Run the following command to determine which package owns the file:
+
+If the file was not expected to change, investigate the cause of the change using audit logs
+or other means. The package can then be reinstalled to restore the file. Run the following
+command to determine which package owns the file:
 <pre>$ rpm -qf <i>FILENAME</i></pre>
+
 The package can be reinstalled from a zypper repository using the command:
 <pre>$ sudo zypper reinstall <i>PACKAGENAME</i></pre>
+
 Alternatively, the package can be reinstalled from trusted media using the command:
 <pre>$ sudo rpm -Uvh <i>PACKAGENAME</i></pre>
 </td>
@@ -84,35 +83,31 @@ Alternatively, the package can be reinstalled from trusted media using the comma
 <tr>
 <td>CCE-91290-7</td>
 <td>Verify and Correct Ownership with RPM</td>
-<td>The RPM package management system can check file ownership
-permissions of installed software packages, including many that are
-important to system security. After locating a file with incorrect
-permissions, which can be found with
+<td>The RPM package management system can check file ownership permissions of installed software
+packages, including many that are important to system security. After locating a file with
+incorrect permissions, which can be found with:
 <pre>rpm -Va | awk '{ if (substr($0,6,1)=="U" || substr($0,7,1)=="G") print $NF }'</pre>
 run the following command to determine which package owns it:
 <pre>$ rpm -qf <i>FILENAME</i></pre>
-Next, run the following command to reset its permissions to
-the correct values:
+Next, run the following command to reset its permissions to the correct values:
 <pre>$ sudo rpm --setugids <i>PACKAGENAME</i></pre>
 </td>
 </tr>
 <tr>
 <td>CCE-85782-1</td>
 <td>Verify and Correct File Permissions with RPM</td>
-<td>The RPM package management system can check file access permissions
-of installed software packages, including many that are important
-to system security.
-Verify that the file permissions of system files
-and commands match vendor values. Check the file permissions
-with the following command:
+<td>The RPM package management system can check file access permissions of installed software
+packages, including many that are important to system security. Verify that the file
+permissions of system files and commands match vendor values. Check the file permissions with
+the following command:
 <pre>$ sudo rpm -Va | awk '{ if (substr($0,2,1)=="M") print $NF }'</pre>
 Output indicates files that do not match vendor defaults.
-After locating a file with incorrect permissions,
-run the following command to determine which package owns it:
+
+After locating a file with incorrect permissions, run the following command to determine which
+package owns it:
 <pre>$ rpm -qf <i>FILENAME</i></pre>
 <br>
-Next, run the following command to reset its permissions to
-the correct values:
+Next, run the following command to reset its permissions to the correct values:
 <pre>$ sudo rpm --setperms <i>PACKAGENAME</i></pre>
 </td>
 </tr>
@@ -343,9 +338,9 @@ option.</td>
 <tr>
 <td>CCE-92477-9</td>
 <td>Ensure /dev/shm is configured</td>
-<td>The <code>/dev/shm</code> is a traditional shared memory concept. 
-One program will create a memory portion, which other processes 
-(if permitted) can access. If <code>/dev/shm</code> is not configured, 
+<td>The <code>/dev/shm</code> is a traditional shared memory concept.
+One program will create a memory portion, which other processes
+(if permitted) can access. If <code>/dev/shm</code> is not configured,
 tmpfs will be mounted to /dev/shm by systemd.</td>
 </tr>
 <tr>
@@ -5985,6 +5980,32 @@ modify the following line in
 </td>
 </tr>
 <tr>
+<td>CCE-92471-2</td>
+<td>Uninstall firewalld Package</td>
+<td>firewalld (Dynamic Firewall Manager) provides a dynamically managed firewall with
+support for network/firewall “zones” to assign a level of trust to a network and its
+associated connections, interfaces or sources. It has support for IPv4, IPv6, Ethernet
+bridges and also for IPSet firewall settings. There is a separation of the runtime and
+permanent configuration options.
+The <code>firewalld</code> package can be removed with the following command:
+<pre>
+$ sudo zypper remove firewalld</pre>
+</td>
+</tr>
+<tr>
+<td>CCE-92472-0</td>
+<td>Verify firewalld service disabled</td>
+<td>Firewalld (Dynamic Firewall Manager) provides a dynamically managed firewall with
+support for network/firewall “zones” to assign a level of trust to a network and its
+associated connections, interfaces or sources. It has support for IPv4, IPv6, Ethernet
+bridges and also for IPSet firewall settings. There is a separation of the runtime and
+permanent configuration options.
+
+The <code>firewalld</code> service can be disabled with the following command:
+<pre>$ sudo systemctl mask --now firewalld.service</pre>
+</td>
+</tr>
+<tr>
 <td>CCE-85799-5</td>
 <td>Install libreswan Package</td>
 <td>The libreswan package provides an implementation of IPsec
@@ -6080,7 +6101,7 @@ add or correct the following line in
 </td>
 </tr>
 <tr>
-<td></td>
+<td>CCE-92483-7</td>
 <td>Set Default iptables Policy for Forwarded Packets</td>
 <td>To set the default policy to DROP (instead of ACCEPT) for
 the built-in FORWARD chain which processes packets that will be forwarded from
@@ -6619,19 +6640,15 @@ Following this, the files should be deleted or assigned to root user.</td>
 <tr>
 <td>CCE-83282-4</td>
 <td>Verify that All World-Writable Directories Have Sticky Bits Set</td>
-<td>When the so-called 'sticky bit' is set on a directory,
-only the owner of a given file may remove that file from the
-directory. Without the sticky bit, any user with write access to a
-directory may remove any file in the directory. Setting the sticky
-bit prevents users from removing each other's files. In cases where
-there is no reason for a directory to be world-writable, a better
-solution is to remove that permission rather than to set the sticky
-bit. However, if a directory is used by a particular application,
-consult that application's documentation instead of blindly
-changing modes.
+<td>When the so-called 'sticky bit' is set on a directory, only the owner of a given file may
+remove that file from the directory. Without the sticky bit, any user with write access to a
+directory may remove any file in the directory. Setting the sticky bit prevents users from
+removing each other's files. In cases where there is no reason for a directory to be
+world-writable, a better solution is to remove that permission rather than to set the sticky
+bit. However, if a directory is used by a particular application, consult that application's
+documentation instead of blindly changing modes.
 <br>
-To set the sticky bit on a world-writable directory <i>DIR</i>, run the
-following command:
+To set the sticky bit on a world-writable directory <i>DIR</i>, run the following command:
 <pre>$ sudo chmod +t <i>DIR</i></pre>
 </td>
 </tr>
@@ -6693,68 +6710,63 @@ To properly set the permissions of <code>/boot/System.map-*</code>, run the comm
 <tr>
 <td>CCE-91175-0</td>
 <td>Ensure All SGID Executables Are Authorized</td>
-<td>The SGID (set group id) bit should be set only on files that were
-installed via authorized means. A straightforward means of identifying
-unauthorized SGID files is determine if any were not installed as part of an
-RPM package, which is cryptographically verified. Investigate the origin
-of any unpackaged SGID files.
-This configuration check considers authorized SGID files which were installed via RPM.
-It is assumed that when an individual has sudo access to install an RPM
-and all packages are signed with an organizationally-recognized GPG key,
-the software should be considered an approved package on the system.
-Any SGID file not deployed through an RPM will be flagged for further review.</td>
+<td>The SGID (set group id) bit should be set only on files that were installed via authorized
+means. A straightforward means of identifying unauthorized SGID files is determine if any were
+not installed as part of an RPM package, which is cryptographically verified. Investigate the
+origin of any unpackaged SGID files. This configuration check considers authorized SGID files
+those which were installed via RPM. It is assumed that when an individual has sudo access to
+install an RPM and all packages are signed with an organizationally-recognized GPG key, the
+software should be considered an approved package on the system. Any SGID file not deployed
+through an RPM will be flagged for further review.</td>
 </tr>
 <tr>
 <td>CCE-91174-3</td>
 <td>Ensure All SUID Executables Are Authorized</td>
-<td>The SUID (set user id) bit should be set only on files that were
-installed via authorized means. A straightforward means of identifying
-unauthorized SUID files is determine if any were not installed as part of an
-RPM package, which is cryptographically verified. Investigate the origin
-of any unpackaged SUID files.
-This configuration check considers authorized SUID files which were installed via RPM.
-It is assumed that when an individual has sudo access to install an RPM
-and all packages are signed with an organizationally-recognized GPG key,
-the software should be considered an approved package on the system.
-Any SUID file not deployed through an RPM will be flagged for further review.</td>
+<td>The SUID (set user id) bit should be set only on files that were installed via authorized
+means. A straightforward means of identifying unauthorized SUID files is determine if any were
+not installed as part of an RPM package, which is cryptographically verified. Investigate the
+origin of any unpackaged SUID files. This configuration check considers authorized SUID files
+those which were installed via RPM. It is assumed that when an individual has sudo access to
+install an RPM and all packages are signed with an organizationally-recognized GPG key, the
+software should be considered an approved package on the system. Any SUID file not deployed
+through an RPM will be flagged for further review.</td>
 </tr>
 <tr>
 <td>CCE-91233-7</td>
 <td>Ensure No World-Writable Files Exist</td>
-<td>It is generally a good idea to remove global (other) write
-access to a file when it is discovered. However, check with
-documentation for specific applications before making changes.
-Also, monitor for recurring world-writable files, as these may be
-symptoms of a misconfigured application or user account. Finally,
-this applies to real files and not virtual files that are a part of
-pseudo file systems such as <code>sysfs</code> or <code>procfs</code>.</td>
+<td>It is generally a good idea to remove global (other) write access to a file when it is
+discovered. However, check with documentation for specific applications before making changes.
+Also, monitor for recurring world-writable files, as these may be symptoms of a misconfigured
+application or user account. Finally, this applies to real files and not virtual files that
+are a part of pseudo file systems such as <code>sysfs</code> or <code>procfs</code>.</td>
 </tr>
 <tr>
 <td>CCE-85658-3</td>
 <td>Ensure All Files Are Owned by a Group</td>
-<td>If any files are not owned by a group, then the
-cause of their lack of group-ownership should be investigated.
-Following this, the files should be deleted or assigned to an
-appropriate group. The following command will discover and print
-any files on local partitions which do not belong to a valid group:
-<pre>$ df --local -P | awk '{if (NR!=1) print $6}' | sudo xargs -I '{}' find '{}' -xdev -nogroup</pre>
-To search all filesystems on a system including network mounted
-filesystems the following command can be run manually for each partition:
-<pre>$ sudo find PARTITION -xdev -nogroup</pre>
+<td>If any file is not group-owned by a group present in /etc/group, the cause of the lack of
+group-ownership must be investigated. Following this, those files should be deleted or
+assigned to an appropriate group.
+
+Locate the mount points related to local devices by the following command:
+<pre>$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)</pre>
+
+For all mount points listed by the previous command, it is necessary to search for files which
+do not belong to a valid group using the following command:
+<pre>$ sudo find <i>MOUNTPOINT</i> -xdev -nogroup 2&gt;/dev/null</pre>
 </td>
 </tr>
 <tr>
 <td>CCE-85657-5</td>
 <td>Ensure All Files Are Owned by a User</td>
-<td>If any files are not owned by a user, then the
-cause of their lack of ownership should be investigated.
-Following this, the files should be deleted or assigned to an
-appropriate user. The following command will discover and print
-any files on local partitions which do not belong to a valid user:
-<pre>$ df --local -P | awk {'if (NR!=1) print $6'} | sudo xargs -I '{}' find '{}' -xdev -nouser</pre>
-To search all filesystems on a system including network mounted
-filesystems the following command can be run manually for each partition:
-<pre>$ sudo find PARTITION -xdev -nouser</pre>
+<td>If any files are not owned by a user, then the cause of their lack of ownership should be
+investigated. Following this, the files should be deleted or assigned to an appropriate user.
+
+Locate the mount points related to local devices by the following command:
+<pre>$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)</pre>
+
+For all mount points listed by the previous command, it is necessary to search for files which
+do not belong to a valid user using the following command:
+<pre>$ sudo find <i>MOUNTPOINT</i> -xdev -nouser 2&gt;/dev/null</pre>
 </td>
 </tr>
 <tr>
@@ -6928,8 +6940,8 @@ To properly set the permissions of <code>/etc/shadow-</code>, run the command:
 <td>CCE-85803-5</td>
 <td>Verify Permissions on group File</td>
 <td>
-To properly set the permissions of <code>/etc/passwd</code>, run the command:
-<pre>$ sudo chmod 0644 /etc/passwd</pre>
+To properly set the permissions of <code>/etc/group</code>, run the command:
+<pre>$ sudo chmod 0644 /etc/group</pre>
 </td>
 </tr>
 <tr>

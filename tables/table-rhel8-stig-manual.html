@@ -4847,11 +4847,10 @@ Check that the "pam_cert_auth" setting is set to "true" in the "/etc/sssd/sssd.c
 
 Check that the "try_cert_auth" or "require_cert_auth" options are configured in both "/etc/pam.d/system-auth" and "/etc/pam.d/smartcard-auth" files with the following command:
 
-$ sudo grep cert_auth /etc/sssd/sssd.conf /etc/pam.d/*
-
-/etc/sssd/sssd.conf:pam_cert_auth = True
-/etc/pam.d/smartcard-auth:auth   sufficient   pam_sss.so try_cert_auth
-/etc/pam.d/system-auth:auth   [success=done authinfo_unavail=ignore ignore=ignore default=die]   pam_sss.so try_cert_auth
+     $ sudo grep -ir cert_auth /etc/sssd/sssd.conf /etc/sssd/conf.d/*.conf /etc/pam.d/*
+     /etc/sssd/sssd.conf:pam_cert_auth = True
+     /etc/pam.d/smartcard-auth:auth   sufficient   pam_sss.so try_cert_auth
+     /etc/pam.d/system-auth:auth   [success=done authinfo_unavail=ignore ignore=ignore default=die]   pam_sss.so try_cert_auth
 
 If "pam_cert_auth" is not set to "true" in "/etc/sssd/sssd.conf", this is a finding.
 
@@ -4860,20 +4859,20 @@ If "pam_sss.so" is not set to "try_cert_auth" or "require_cert_auth" in both the
 
 Add or update the "pam_cert_auth" setting in the "/etc/sssd/sssd.conf" file to match the following line:
 
-[pam]
-pam_cert_auth = True
+     [pam]
+     pam_cert_auth = True
 
 Add or update "pam_sss.so" with "try_cert_auth" or "require_cert_auth" in the "/etc/pam.d/system-auth" and "/etc/pam.d/smartcard-auth" files based on the following examples:
 
-/etc/pam.d/smartcard-auth:auth   sufficient   pam_sss.so try_cert_auth
+     /etc/pam.d/smartcard-auth:auth   sufficient   pam_sss.so try_cert_auth
 
-/etc/pam.d/system-auth:auth   [success=done authinfo_unavail=ignore ignore=ignore default=die]   pam_sss.so try_cert_auth
+     /etc/pam.d/system-auth:auth   [success=done authinfo_unavail=ignore ignore=ignore default=die]   pam_sss.so try_cert_auth
 
 The "sssd" service must be restarted for the changes to take effect. To restart the "sssd" service, run the following command:
 
-$ sudo systemctl restart sssd.service</pre></td>
+     $ sudo systemctl restart sssd.service</pre></td>
 	<td>RHEL-08-020250</td>
-	<td>SV-230372r627750_rule</td>
+	<td>SV-230372r942945_rule</td>
 </tr>
 
 <tr>
@@ -4976,26 +4975,24 @@ Note: If smart card authentication is not being used on the system this item is 
 
 Check that SSSD allows cached authentications with the following command:
 
-$ sudo grep cache_credentials /etc/sssd/sssd.conf
-
-cache_credentials = true
+     $ sudo grep -ir cache_credentials /etc/sssd/sssd.conf /etc/sssd/conf.d/*.conf
+     cache_credentials = true
 
 If "cache_credentials" is set to "false" or missing from the configuration file, this is not a finding and no further checks are required.
 
 If "cache_credentials" is set to "true", check that SSSD prohibits the use of cached authentications after one day with the following command:
 
-$ sudo grep offline_credentials_expiration  /etc/sssd/sssd.conf
-
-offline_credentials_expiration = 1
+     $ sudo grep -ir offline_credentials_expiration  /etc/sssd/sssd.conf /etc/sssd/conf.d/*.conf
+     offline_credentials_expiration = 1
 
 If "offline_credentials_expiration" is not set to a value of "1", this is a finding.</pre></td>
 	<td><pre>Configure the SSSD to prohibit the use of cached authentications after one day.
 
 Add or change the following line in "/etc/sssd/sssd.conf" just below the line "[pam]".
 
-offline_credentials_expiration = 1</pre></td>
+     offline_credentials_expiration = 1</pre></td>
 	<td>RHEL-08-020290</td>
-	<td>SV-230376r854036_rule</td>
+	<td>SV-230376r942948_rule</td>
 </tr>
 
 <tr>
@@ -8028,29 +8025,27 @@ If the camera is not disconnected, covered, or physically disabled, determine if
 
 Verify the operating system disables the ability to load the uvcvideo kernel module.
 
-$ sudo grep -r uvcvideo /etc/modprobe.d/* | grep "/bin/true"
-
-install uvcvideo /bin/true
+     $ sudo grep -r uvcvideo /etc/modprobe.d/* | grep "/bin/false"
+     install uvcvideo /bin/false
 
 If the command does not return any output, or the line is commented out, and the collaborative computing device has not been authorized for use, this is a finding.
 
 Verify the camera is disabled via blacklist with the following command:
 
-$ sudo grep -r uvcvideo /etc/modprobe.d/* | grep "blacklist"
-
-blacklist uvcvideo
+     $ sudo grep -r uvcvideo /etc/modprobe.d/* | grep "blacklist"
+     blacklist uvcvideo
 
 If the command does not return any output or the output is not "blacklist uvcvideo", and the collaborative computing device has not been authorized for use, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to disable the built-in or attached camera when not in use.
 
 Build or modify the "/etc/modprobe.d/blacklist.conf" file by using the following example:
 
-install uvcvideo /bin/true
-blacklist uvcvideo
+     install uvcvideo /bin/false
+     blacklist uvcvideo
 
 Reboot the system for the settings to take effect.</pre></td>
 	<td>RHEL-08-040020</td>
-	<td>SV-230493r809316_rule</td>
+	<td>SV-230493r942915_rule</td>
 </tr>
 
 <tr>
@@ -8066,9 +8061,8 @@ Failing to disconnect unused protocols can result in a system compromise.
 The Asynchronous Transfer Mode (ATM) is a protocol operating on network, data link, and physical layers, based on virtual circuits and virtual paths. Disabling ATM protects the system against exploitation of any laws in its implementation.</pre></td>
 	<td><pre>Verify the operating system disables the ability to load the ATM protocol kernel module.
 
-$ sudo grep -r atm /etc/modprobe.d/* | grep "/bin/true"
-
-install atm /bin/true
+     $ sudo grep -r atm /etc/modprobe.d/* | grep "/bin/false"
+     install atm /bin/false
 
 If the command does not return any output, or the line is commented out, and use of the ATM protocol is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.
 
@@ -8076,21 +8070,20 @@ Verify the operating system disables the ability to use the ATM protocol.
 
 Check to see if the ATM protocol is disabled with the following command:
 
-$ sudo grep -r atm /etc/modprobe.d/* | grep "blacklist"
+     $ sudo grep -r atm /etc/modprobe.d/* | grep "blacklist"
+     blacklist atm
 
-blacklist atm
-
-If the command does not return any output or the output is not "blacklist atm", and use of the ATM protocol is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</pre></td>
+If the command does not return any output or the output is not "blacklist atm", and use of the ATM protocol is not documented with the ISSO as an operational requirement, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to disable the ability to use the ATM protocol kernel module.
 
 Add or update the following lines in the file "/etc/modprobe.d/blacklist.conf":
 
-install atm /bin/true
-blacklist atm
+     install atm /bin/false
+     blacklist atm
 
 Reboot the system for the settings to take effect.</pre></td>
 	<td>RHEL-08-040021</td>
-	<td>SV-230494r792911_rule</td>
+	<td>SV-230494r942918_rule</td>
 </tr>
 
 <tr>
@@ -8106,9 +8099,8 @@ Failing to disconnect unused protocols can result in a system compromise.
 The Controller Area Network (CAN) is a serial communications protocol, which was initially developed for automotive and is now also used in marine, industrial, and medical applications. Disabling CAN protects the system against exploitation of any flaws in its implementation.</pre></td>
 	<td><pre>Verify the operating system disables the ability to load the CAN protocol kernel module.
 
-$ sudo grep -r can /etc/modprobe.d/* | grep "/bin/true"
-
-install can /bin/true
+     $ sudo grep -r can /etc/modprobe.d/* | grep "/bin/false"
+     install can /bin/false
 
 If the command does not return any output, or the line is commented out, and use of the CAN protocol is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.
 
@@ -8116,21 +8108,20 @@ Verify the operating system disables the ability to use the CAN protocol.
 
 Check to see if the CAN protocol is disabled with the following command:
 
-$ sudo grep -r can /etc/modprobe.d/* | grep "blacklist"
+     $ sudo grep -r can /etc/modprobe.d/* | grep "blacklist"
+     blacklist can
 
-blacklist can
-
-If the command does not return any output or the output is not "blacklist can", and use of the CAN protocol is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</pre></td>
+If the command does not return any output or the output is not "blacklist can", and use of the CAN protocol is not documented with the ISSO as an operational requirement, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to disable the ability to use the CAN protocol kernel module.
 
 Add or update the following lines in the file "/etc/modprobe.d/blacklist.conf":
 
-install can /bin/true
-blacklist can
+     install can /bin/false
+     blacklist can
 
 Reboot the system for the settings to take effect.</pre></td>
 	<td>RHEL-08-040022</td>
-	<td>SV-230495r792914_rule</td>
+	<td>SV-230495r942921_rule</td>
 </tr>
 
 <tr>
@@ -8146,9 +8137,8 @@ Failing to disconnect unused protocols can result in a system compromise.
 The Stream Control Transmission Protocol (SCTP) is a transport layer protocol, designed to support the idea of message-oriented communication, with several streams of messages within one connection. Disabling SCTP protects the system against exploitation of any flaws in its implementation.</pre></td>
 	<td><pre>Verify the operating system disables the ability to load the SCTP kernel module.
 
-$ sudo grep -r sctp /etc/modprobe.d/* | grep "/bin/true"
-
-install sctp /bin/true
+     $ sudo grep -r sctp /etc/modprobe.d/* | grep "/bin/false"
+     install sctp /bin/false
 
 If the command does not return any output, or the line is commented out, and use of the SCTP is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.
 
@@ -8156,21 +8146,20 @@ Verify the operating system disables the ability to use the SCTP.
 
 Check to see if the SCTP is disabled with the following command:
 
-$ sudo grep -r sctp /etc/modprobe.d/* | grep "blacklist"
+     $ sudo grep -r sctp /etc/modprobe.d/* | grep "blacklist"
+     blacklist sctp
 
-blacklist sctp
-
-If the command does not return any output or the output is not "blacklist sctp", and use of the SCTP is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</pre></td>
+If the command does not return any output or the output is not "blacklist sctp", and use of the SCTP is not documented with the ISSO as an operational requirement, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to disable the ability to use the SCTP kernel module.
 
 Add or update the following lines in the file "/etc/modprobe.d/blacklist.conf":
 
-install sctp /bin/true
-blacklist sctp
+     install sctp /bin/false
+     blacklist sctp
 
 Reboot the system for the settings to take effect.</pre></td>
 	<td>RHEL-08-040023</td>
-	<td>SV-230496r792917_rule</td>
+	<td>SV-230496r942924_rule</td>
 </tr>
 
 <tr>
@@ -8186,9 +8175,8 @@ Failing to disconnect unused protocols can result in a system compromise.
 The Transparent Inter-Process Communication (TIPC) protocol is designed to provide communications between nodes in a cluster. Disabling TIPC protects the system against exploitation of any flaws in its implementation.</pre></td>
 	<td><pre>Verify the operating system disables the ability to load the TIPC protocol kernel module.
 
-$ sudo grep -r tipc /etc/modprobe.d/* | grep "/bin/true"
-
-install tipc /bin/true
+     $ sudo grep -r tipc /etc/modprobe.d/* | grep "/bin/false"
+     install tipc /bin/false
 
 If the command does not return any output, or the line is commented out, and use of the TIPC protocol is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.
 
@@ -8196,21 +8184,20 @@ Verify the operating system disables the ability to use the TIPC protocol.
 
 Check to see if the TIPC protocol is disabled with the following command:
 
-$ sudo grep -r tipc /etc/modprobe.d/* | grep "blacklist"
+     $ sudo grep -r tipc /etc/modprobe.d/* | grep "blacklist"
+     blacklist tipc
 
-blacklist tipc
-
-If the command does not return any output or the output is not "blacklist tipc", and use of the TIPC protocol is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</pre></td>
+If the command does not return any output or the output is not "blacklist tipc", and use of the TIPC protocol is not documented with the ISSO as an operational requirement, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to disable the ability to use the TIPC protocol kernel module.
 
 Add or update the following lines in the file "/etc/modprobe.d/blacklist.conf":
 
-install tipc /bin/true
-blacklist tipc
+     install tipc /bin/false
+     blacklist tipc
 
 Reboot the system for the settings to take effect.</pre></td>
 	<td>RHEL-08-040024</td>
-	<td>SV-230497r792920_rule</td>
+	<td>SV-230497r942927_rule</td>
 </tr>
 
 <tr>
@@ -8226,9 +8213,8 @@ Removing support for unneeded filesystem types reduces the local attack surface 
 Compressed ROM/RAM file system (or cramfs) is a read-only file system designed for simplicity and space-efficiency.  It is mainly used in embedded and small-footprint systems.</pre></td>
 	<td><pre>Verify the operating system disables the ability to load the cramfs kernel module.
 
-$ sudo grep -r cramfs /etc/modprobe.d/* | grep "/bin/true"
-
-install cramfs /bin/true
+     $ sudo grep -r cramfs /etc/modprobe.d/* | grep "/bin/false"
+     install cramfs /bin/false
 
 If the command does not return any output, or the line is commented out, and use of the cramfs protocol is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.
 
@@ -8236,21 +8222,20 @@ Verify the operating system disables the ability to use the cramfs kernel module
 
 Check to see if the cramfs kernel module is disabled with the following command:
 
-$ sudo grep -r cramfs /etc/modprobe.d/* | grep "blacklist"
+     $ sudo grep -r cramfs /etc/modprobe.d/* | grep "blacklist"
+     blacklist cramfs
 
-blacklist cramfs
-
-If the command does not return any output or the output is not "blacklist cramfs", and use of the cramfs kernel module is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</pre></td>
+If the command does not return any output or the output is not "blacklist cramfs", and use of the cramfs kernel module is not documented with the ISSO as an operational requirement, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to disable the ability to use the cramfs kernel module.
 
 Add or update the following lines in the file "/etc/modprobe.d/blacklist.conf":
 
-install cramfs /bin/true
-blacklist cramfs
+     install cramfs /bin/false
+     blacklist cramfs
 
 Reboot the system for the settings to take effect.</pre></td>
 	<td>RHEL-08-040025</td>
-	<td>SV-230498r792922_rule</td>
+	<td>SV-230498r942930_rule</td>
 </tr>
 
 <tr>
@@ -8264,9 +8249,8 @@ Reboot the system for the settings to take effect.</pre></td>
 The IEEE 1394 (FireWire) is a serial bus standard for high-speed real-time communication. Disabling FireWire protects the system against exploitation of any flaws in its implementation.</pre></td>
 	<td><pre>Verify the operating system disables the ability to load the firewire-core kernel module.
 
-$ sudo grep -r firewire-core /etc/modprobe.d/* | grep "/bin/true"
-
-install firewire-core /bin/true
+     $ sudo grep -r firewire-core /etc/modprobe.d/* | grep "/bin/false"
+     install firewire-core /bin/false
 
 If the command does not return any output, or the line is commented out, and use of the firewire-core protocol is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.
 
@@ -8274,21 +8258,20 @@ Verify the operating system disables the ability to use the firewire-core kernel
 
 Check to see if the firewire-core kernel module is disabled with the following command:
 
-$ sudo grep -r firewire-core /etc/modprobe.d/* | grep "blacklist"
+     $ sudo grep -r firewire-core /etc/modprobe.d/* | grep "blacklist"
+     blacklist firewire-core
 
-blacklist firewire-core
-
-If the command does not return any output or the output is not "blacklist firewire-core", and use of the firewire-core kernel module is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</pre></td>
+If the command does not return any output or the output is not "blacklist firewire-core", and use of the firewire-core kernel module is not documented with the ISSO as an operational requirement, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to disable the ability to use the firewire-core kernel module.
 
 Add or update the following lines in the file "/etc/modprobe.d/blacklist.conf":
 
-install firewire-core /bin/true
-blacklist firewire-core
+     install firewire-core /bin/false
+     blacklist firewire-core
 
 Reboot the system for the settings to take effect.</pre></td>
 	<td>RHEL-08-040026</td>
-	<td>SV-230499r792924_rule</td>
+	<td>SV-230499r942933_rule</td>
 </tr>
 
 <tr>
@@ -8371,9 +8354,8 @@ If "autofs" is required for Network File System (NFS), it must be documented wit
 Satisfies: SRG-OS-000114-GPOS-00059, SRG-OS-000378-GPOS-00163</pre></td>
 	<td><pre>Verify the operating system disables the ability to load the USB Storage kernel module.
 
-$ sudo grep -r usb-storage /etc/modprobe.d/* | grep -i "/bin/true"
-
-install usb-storage /bin/true
+     $ sudo grep -r usb-storage /etc/modprobe.d/* | grep -i "/bin/false"
+     install usb-storage /bin/false
 
 If the command does not return any output, or the line is commented out, and use of USB Storage is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.
 
@@ -8381,21 +8363,20 @@ Verify the operating system disables the ability to use USB mass storage devices
 
 Check to see if USB mass storage is disabled with the following command:
 
-$ sudo grep usb-storage /etc/modprobe.d/* | grep -i "blacklist"
+     $ sudo grep usb-storage /etc/modprobe.d/* | grep -i "blacklist"
+     blacklist usb-storage
 
-blacklist usb-storage
-
-If the command does not return any output or the output is not "blacklist usb-storage" and use of USB storage devices is not documented with the Information System Security Officer (ISSO) as an operational requirement, this is a finding.</pre></td>
+If the command does not return any output or the output is not "blacklist usb-storage" and use of USB storage devices is not documented with the ISSO as an operational requirement, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to disable the ability to use the USB Storage kernel module and the ability to use USB mass storage devices.
 
 Add or update the following lines in the file "/etc/modprobe.d/blacklist.conf":
 
-install usb-storage /bin/true
-blacklist usb-storage
+     install usb-storage /bin/false
+     blacklist usb-storage
 
 Reboot the system for the settings to take effect.</pre></td>
 	<td>RHEL-08-040080</td>
-	<td>SV-230503r809319_rule</td>
+	<td>SV-230503r942936_rule</td>
 </tr>
 
 <tr>
@@ -8409,42 +8390,47 @@ Reboot the system for the settings to take effect.</pre></td>
 RHEL 8 incorporates the "firewalld" daemon, which allows for many different configurations. One of these configurations is zones. Zones can be utilized to a deny-all, allow-by-exception approach. The default "drop" zone will drop all incoming network packets unless it is explicitly allowed by the configuration file or is related to an outgoing network connection.</pre></td>
 	<td><pre>Verify "firewalld" is configured to employ a deny-all, allow-by-exception policy for allowing connections to other systems with the following commands:
 
-$ sudo  firewall-cmd --state
+     $ sudo  firewall-cmd --state
+     running
 
-running
+     $ sudo firewall-cmd --get-active-zones
+     [custom]
+     interfaces: ens33
 
-$ sudo firewall-cmd --get-active-zones
+     $ sudo firewall-cmd --info-zone=[custom] | grep target
+     target: DROP
 
-[custom]
-   interfaces: ens33
+If no zones are active on the RHEL 8 interfaces or if the target is set to a different option other than "DROP", this is a finding.
 
-$ sudo firewall-cmd --info-zone=[custom] | grep target
+If the "firewalld" package is not installed, ask the System Administrator if an alternate firewall (such as iptables) is installed and in use, and how is it configured to employ a deny-all, allow-by-exception policy. 
 
-   target: DROP
+If the alternate firewall is not configured to employ a deny-all, allow-by-exception policy, this is a finding.
 
-If no zones are active on the RHEL 8 interfaces or if the target is set to a different option other than "DROP", this is a finding.</pre></td>
+If no firewall is installed, this is a finding.</pre></td>
 	<td><pre>Configure the "firewalld" daemon to employ a deny-all, allow-by-exception with the following commands:
 
-$ sudo firewall-cmd --permanent --new-zone=[custom]
+     $ sudo firewall-cmd --permanent --new-zone=[custom]
 
-$ sudo cp /usr/lib/firewalld/zones/drop.xml /etc/firewalld/zones/[custom].xml
+     $ sudo cp /usr/lib/firewalld/zones/drop.xml /etc/firewalld/zones/[custom].xml
 
-This will provide a clean configuration file to work with that employs a deny-all approach. Note: Add the exceptions that are required for mission functionality and update the short title in the xml file to match the [custom] zone name.
+This will provide a clean configuration file to work with that employs a deny-all approach. 
+
+Note: Add the exceptions that are required for mission functionality and update the short title in the xml file to match the [custom] zone name.
 
 Reload the firewall rules to make the new [custom] zone available to load:
-$ sudo firewall-cmd --reload 
+     $ sudo firewall-cmd --reload 
 
 Set the default zone to the new [custom] zone:
-$ sudo firewall-cmd --set-default-zone=[custom]
+     $ sudo firewall-cmd --set-default-zone=[custom]
 
 Note: This is a runtime and permanent change.
 Add any interfaces to the new [custom] zone:
-$ sudo firewall-cmd --permanent --zone=[custom] --change-interface=ens33
+     $ sudo firewall-cmd --permanent --zone=[custom] --change-interface=ens33
 
 Reload the firewall rules for changes to take effect:
-$ sudo firewall-cmd --reload</pre></td>
+     $ sudo firewall-cmd --reload</pre></td>
 	<td>RHEL-08-040090</td>
-	<td>SV-230504r854047_rule</td>
+	<td>SV-230504r942942_rule</td>
 </tr>
 
 <tr>
@@ -8526,36 +8512,34 @@ This requirement is not applicable to mobile devices (smartphones and tablets), 
 
 Determine if Bluetooth is disabled with the following command:
 
-$ sudo grep bluetooth /etc/modprobe.d/*
-
-/etc/modprobe.d/bluetooth.conf:install bluetooth /bin/true
+     $ sudo grep bluetooth /etc/modprobe.d/*
+     /etc/modprobe.d/bluetooth.conf:install bluetooth /bin/false
 
 If the Bluetooth driver blacklist entry is missing, a Bluetooth driver is determined to be in use, and the collaborative computing device has not been authorized for use, this is a finding.
 
 Verify the operating system disables the ability to use Bluetooth with the following command:  
  
-$ sudo grep -r bluetooth /etc/modprobe.d | grep -i "blacklist" | grep -v "^#" 
- 
-blacklist bluetooth 
+     $ sudo grep -r bluetooth /etc/modprobe.d | grep -i "blacklist" | grep -v "^#" 
+     blacklist bluetooth 
  
 If the command does not return any output or the output is not "blacklist bluetooth", and use of Bluetooth is not documented with the ISSO as an operational requirement, this is a finding.</pre></td>
 	<td><pre>Configure the operating system to disable the Bluetooth adapter when not in use.
 
 Build or modify the "/etc/modprobe.d/bluetooth.conf" file with the following line:
 
-install bluetooth /bin/true
+     install bluetooth /bin/false
 
 Disable the ability to use the Bluetooth kernel module. 
  
-$ sudo vi /etc/modprobe.d/blacklist.conf 
+     $ sudo vi /etc/modprobe.d/blacklist.conf 
  
 Add or update the line: 
  
-blacklist bluetooth
+     blacklist bluetooth
 
 Reboot the system for the settings to take effect.</pre></td>
 	<td>RHEL-08-040111</td>
-	<td>SV-230507r833336_rule</td>
+	<td>SV-230507r942939_rule</td>
 </tr>
 
 <tr>
@@ -11869,23 +11853,20 @@ $ sudo sysctl --system</pre></td>
 	<td>The RHEL 8 operating system must implement the Endpoint Security for Linux Threat Prevention tool.</td>
 	<td>SRG-OS-000191-GPOS-00080</td>
 	<td><pre>Adding endpoint security tools can provide the capability to automatically take actions in response to malicious behavior, which can provide additional agility in reacting to network threats. These tools also often include a reporting capability to provide network awareness of the system, which may not otherwise exist in an organization's systems management regime.</pre></td>
-	<td><pre>Per OPORD 16-0080, the preferred endpoint security tool is McAfee Endpoint Security for Linux (ENSL) in conjunction with SELinux.
+	<td><pre>Check that the following package has been installed:
 
-Procedure:
-Check that the following package has been installed:
-
-$ sudo rpm -qa | grep -i mcafeetp
+     $ sudo rpm -qa | grep -i mcafeetp
 
 If the "mcafeetp" package is not installed, this is a finding.
 
 Verify that the daemon is running:
 
-$ sudo ps -ef | grep -i mfetpd
+     $ sudo ps -ef | grep -i mfetpd
 
 If the daemon is not running, this is a finding.</pre></td>
-	<td><pre>Install and enable the latest McAfee ENSLTP package.</pre></td>
+	<td><pre>Install and enable the latest Trellix ENSLTP package.</pre></td>
 	<td>RHEL-08-010001</td>
-	<td>SV-245540r754730_rule</td>
+	<td>SV-245540r942951_rule</td>
 </tr>
 
 <tr>
@@ -12635,9 +12616,11 @@ If "StopIdleSessionSec" is not configured to "900" seconds, this is a finding.</
 
 The "logind" service must be restarted for the changes to take effect. To restart the "logind" service, run the following command:
 
-     $ sudo systemctl restart systemd-logind</pre></td>
+     $ sudo systemctl restart systemd-logind
+
+Note: To preserve running user programs such as tmux, uncomment and/or edit "KillUserProccesses=no" in "/etc/systemd/logind.conf".</pre></td>
 	<td>RHEL-08-020035</td>
-	<td>SV-257258r917891_rule</td>
+	<td>SV-257258r942953_rule</td>
 </tr>
 
 </table>

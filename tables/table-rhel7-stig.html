@@ -82,29 +82,26 @@
 	<td>high</td>
 	<td>The Red Hat Enterprise Linux operating system must be configured so that the file permissions, ownership, and group membership of system files and commands match the vendor values.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Permissions on system binaries and configuration files that are too generous
-could allow an unauthorized user to gain privileges that they should not have.
-The permissions set by the vendor should be maintained. Any deviations from
-this baseline should be investigated.</pre></td>
+	<td><pre>Permissions on system binaries and configuration files that are too generous could allow an
+unauthorized user to gain privileges that they should not have. The permissions set by the
+vendor should be maintained. Any deviations from this baseline should be investigated.</pre></td>
 	<td><pre>The following command will list which files on the system have permissions different from what
 is expected by the RPM database:
 $ rpm -Va | awk '{ if (substr($0,2,1)=="M") print $NF }'
       Is it the case that there is output?
       </pre></td>
-	<td><pre>The RPM package management system can check file access permissions
-of installed software packages, including many that are important
-to system security.
-Verify that the file permissions of system files
-and commands match vendor values. Check the file permissions
-with the following command:
+	<td><pre>The RPM package management system can check file access permissions of installed software
+packages, including many that are important to system security. Verify that the file
+permissions of system files and commands match vendor values. Check the file permissions with
+the following command:
 $ sudo rpm -Va | awk '{ if (substr($0,2,1)=="M") print $NF }'
 Output indicates files that do not match vendor defaults.
-After locating a file with incorrect permissions,
-run the following command to determine which package owns it:
+
+After locating a file with incorrect permissions, run the following command to determine which
+package owns it:
 $ rpm -qf FILENAME
 
-Next, run the following command to reset its permissions to
-the correct values:
+Next, run the following command to reset its permissions to the correct values:
 $ sudo rpm --setperms PACKAGENAME</pre></td>
 	<td>RHEL-07-010010</td>
 	<td>rpm_verify_permissions</td>
@@ -156,29 +153,28 @@ sudo rpm --import /etc/pki/rpm-gpg/RPM-GPG-KEY-redhat-release</pre></td>
 	<td><pre>The hashes of important files like system executables should match the
 information given by the RPM database. Executables with erroneous hashes could
 be a sign of nefarious activity on the system.</pre></td>
-	<td><pre>The following command will list which files on the system
-have file hashes different from what is expected by the RPM database.
-$ rpm -Va --noconfig | awk '$1 ~ /..5/ && $2 != "c"'
+	<td><pre>The following command will list which files on the system have file hashes different from what
+is expected by the RPM database.
+$ rpm -Va --noconfig | awk '$1 ~ /..5/'
       Is it the case that there is output?
       </pre></td>
-	<td><pre>Without cryptographic integrity protections, system
-executables and files can be altered by unauthorized users without
-detection.
-The RPM package management system can check the hashes of
-installed software packages, including many that are important to system
-security.
-To verify that the cryptographic hash of system files and commands matches vendor
-values, run the following command to list which files on the system
-have hashes that differ from what is expected by the RPM database:
+	<td><pre>Without cryptographic integrity protections, system executables and files can be altered by
+unauthorized users without detection. The RPM package management system can check the hashes
+of installed software packages, including many that are important to system security.
+
+To verify that the cryptographic hash of system files and commands matches vendor values, run
+the following command to list which files on the system have hashes that differ from what is
+expected by the RPM database:
 $ rpm -Va --noconfig | grep '^..5'
-A "c" in the second column indicates that a file is a configuration file, which
-may appropriately be expected to change. If the file was not expected to
-change, investigate the cause of the change using audit logs or other means.
-The package can then be reinstalled to restore the file.
-Run the following command to determine which package owns the file:
+
+If the file was not expected to change, investigate the cause of the change using audit logs
+or other means. The package can then be reinstalled to restore the file. Run the following
+command to determine which package owns the file:
 $ rpm -qf FILENAME
+
 The package can be reinstalled from a yum repository using the command:
 $ sudo yum reinstall PACKAGENAME
+
 Alternatively, the package can be reinstalled from trusted media using the command:
 $ sudo rpm -Uvh PACKAGENAME</pre></td>
 	<td>RHEL-07-010020</td>
@@ -2976,32 +2972,31 @@ assigned.</pre></td>
 	<td>medium</td>
 	<td>The Red Hat Enterprise Linux operating system must be configured so that all files and directories have a valid owner.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Unowned files do not directly imply a security problem, but they are generally
-a sign that something is amiss. They may
-be caused by an intruder, by incorrect software installation or
-draft software removal, or by failure to remove all files belonging
-to a deleted account. The files should be repaired so they
-will not cause problems when accounts are created in the future,
-and the cause should be discovered and addressed.</pre></td>
-	<td><pre>The following command will discover and print any
-files on local partitions which do not belong to a valid user.
-$ df --local -P | awk {'if (NR!=1) print $6'} | sudo xargs -I '{}' find '{}' -xdev -nouser
+	<td><pre>Unowned files do not directly imply a security problem, but they are generally a sign that
+something is amiss. They may be caused by an intruder, by incorrect software installation or
+draft software removal, or by failure to remove all files belonging to a deleted account, or
+other similar cases. The files should be repaired so they will not cause problems when
+accounts are created in the future, and the cause should be discovered and addressed.</pre></td>
+	<td><pre>The following command will locate the mount points related to local devices:
+$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)
 
-Either remove all files and directories from the system that do not have a
-valid user, or assign a valid user to all unowned files and directories on
-the system with the chown command:
-$ sudo chown user file
+The following command will show files which do not belong to a valid user:
+$ sudo find MOUNTPOINT -xdev -nouser 2>/dev/null
+
+Replace MOUNTPOINT by the mount points listed by the fist command.
+
+No files without a valid user should be located.
       Is it the case that files exist that are not owned by a valid user?
       </pre></td>
-	<td><pre>If any files are not owned by a user, then the
-cause of their lack of ownership should be investigated.
-Following this, the files should be deleted or assigned to an
-appropriate user. The following command will discover and print
-any files on local partitions which do not belong to a valid user:
-$ df --local -P | awk {'if (NR!=1) print $6'} | sudo xargs -I '{}' find '{}' -xdev -nouser
-To search all filesystems on a system including network mounted
-filesystems the following command can be run manually for each partition:
-$ sudo find PARTITION -xdev -nouser</pre></td>
+	<td><pre>If any files are not owned by a user, then the cause of their lack of ownership should be
+investigated. Following this, the files should be deleted or assigned to an appropriate user.
+
+Locate the mount points related to local devices by the following command:
+$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)
+
+For all mount points listed by the previous command, it is necessary to search for files which
+do not belong to a valid user using the following command:
+$ sudo find MOUNTPOINT -xdev -nouser 2>/dev/null</pre></td>
 	<td>RHEL-07-020320</td>
 	<td>no_files_unowned_by_user</td>
 </tr>
@@ -3012,31 +3007,32 @@ $ sudo find PARTITION -xdev -nouser</pre></td>
 	<td>medium</td>
 	<td>The Red Hat Enterprise Linux operating system must be configured so that all files and directories have a valid group owner.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Unowned files do not directly imply a security problem, but they are generally
-a sign that something is amiss. They may
-be caused by an intruder, by incorrect software installation or
-draft software removal, or by failure to remove all files belonging
-to a deleted account. The files should be repaired so they
-will not cause problems when accounts are created in the future,
-and the cause should be discovered and addressed.</pre></td>
-	<td><pre>The following command will discover and print any
-files on local partitions which do not belong to a valid group.
-$ df --local -P | awk '{if (NR!=1) print $6}' | sudo xargs -I '{}' find '{}' -xdev -nogroup
+	<td><pre>Unowned files do not directly imply a security problem, but they are generally a sign that
+something is amiss. They may be caused by an intruder, by incorrect software installation or
+draft software removal, or by failure to remove all files belonging to a deleted account, or
+other similar cases. The files should be repaired so they will not cause problems when
+accounts are created in the future, and the cause should be discovered and addressed.</pre></td>
+	<td><pre>The following command will locate the mount points related to local devices:
+$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)
 
-Either remove all files and directories from the system that do not have a valid group,
-or assign a valid group with the chgrp command:
-$ sudo chgrp group file
+The following command will show files which do not belong to a valid group:
+$ sudo find MOUNTPOINT -xdev -nogroup 2>/dev/null
+
+Replace MOUNTPOINT by the mount points listed by the fist command.
+
+No files without a valid group should be located.
       Is it the case that there is output?
       </pre></td>
-	<td><pre>If any files are not owned by a group, then the
-cause of their lack of group-ownership should be investigated.
-Following this, the files should be deleted or assigned to an
-appropriate group. The following command will discover and print
-any files on local partitions which do not belong to a valid group:
-$ df --local -P | awk '{if (NR!=1) print $6}' | sudo xargs -I '{}' find '{}' -xdev -nogroup
-To search all filesystems on a system including network mounted
-filesystems the following command can be run manually for each partition:
-$ sudo find PARTITION -xdev -nogroup</pre></td>
+	<td><pre>If any file is not group-owned by a group present in /etc/group, the cause of the lack of
+group-ownership must be investigated. Following this, those files should be deleted or
+assigned to an appropriate group.
+
+Locate the mount points related to local devices by the following command:
+$ findmnt -n -l -k -it $(awk '/nodev/ { print $2 }' /proc/filesystems | paste -sd,)
+
+For all mount points listed by the previous command, it is necessary to search for files which
+do not belong to a valid group using the following command:
+$ sudo find MOUNTPOINT -xdev -nogroup 2>/dev/null</pre></td>
 	<td>RHEL-07-020330</td>
 	<td>file_permissions_ungroupowned</td>
 </tr>
@@ -3551,21 +3547,18 @@ appropriate group.</pre></td>
 	<td>medium</td>
 	<td>The Red Hat Enterprise Linux operating system must be configured so that all world-writable directories are owned by root, sys, bin, or an application user.</td>
 	<td>SRG-OS-ID</td>
-	<td><pre>Allowing a user account to own a world-writable directory is
-undesirable because it allows the owner of that directory to remove
-or replace any files that may be placed in the directory by other
-users.</pre></td>
-	<td><pre>The following command will discover and print world-writable directories that
-are not owned by a system account, given the assumption that only system
-accounts have a uid lower than 500.  Run it once for each local partition PART:
-$ sudo find PART -xdev -type d -perm -0002 -uid +499 -print
+	<td><pre>Allowing a user account to own a world-writable directory is undesirable because it allows the
+owner of that directory to remove or replace any files that may be placed in the directory by
+other users.</pre></td>
+	<td><pre>The following command will discover and print world-writable directories that are not owned by
+a system account, given the assumption that only system accounts have a uid lower than 500.
+Run it once for each local partition PART:
+$ sudo find PART -xdev -type d -perm -0002 -uid +1000 -print
       Is it the case that there is output?
       </pre></td>
-	<td><pre>All directories in local partitions which are
-world-writable should be owned by root or another
-system account. If any world-writable directories are not
-owned by a system account, this should be investigated.
-Following this, the files should be deleted or assigned to an
+	<td><pre>All directories in local partitions which are world-writable should be owned by root or
+another system account. If any world-writable directories are not owned by a system account,
+this should be investigated. Following this, the files should be deleted or assigned to an
 appropriate owner.</pre></td>
 	<td>RHEL-07-021031</td>
 	<td>dir_perms_world_writable_system_owned</td>
@@ -5944,7 +5937,10 @@ The TMOUT
 
 setting in a file loaded by /etc/profileor /etc/bashrc, e.g.
 /etc/profile.d/tmout.sh should read as follows:
-declare -xr TMOUT=</pre></td>
+typeset -xr TMOUT=
+or
+declare -xr TMOUT=
+Using the typeset keyword is preferred for wider compatibility with ksh and other shells.</pre></td>
 	<td>RHEL-07-040160</td>
 	<td>accounts_tmout</td>
 </tr>
@@ -6046,18 +6042,18 @@ to verify the hash information while maintaining the confidentiality of the key
 used to generate the hash.</pre></td>
 	<td><pre>To verify the operating system implements cryptography to protect the integrity of
 remote ldap access sessions, run the following command:
-$ sudo grep ldap_tls_cacertdir /etc/sssd/sssd.conf
+$ sudo grep ldap_tls_cacert /etc/sssd/sssd.conf
 The output should return the following with a correctly configured CA cert path:
-ldap_tls_cacertdir /path/to/tls/cacert
+ldap_tls_cacert /path/to/tls/ca.cert
       Is it the case that the TLS CA cert is not configured?
       </pre></td>
 	<td><pre>Configure SSSD to implement cryptography to protect the
 integrity of LDAP remote access sessions. By setting
-the ldap_tls_cacertdir option in /etc/sssd/sssd.conf
+the ldap_tls_cacert option in /etc/sssd/sssd.conf
 to point to the path for the X.509 certificates used for peer authentication.
-ldap_tls_cacertdir /path/to/tls/cacert</pre></td>
+ldap_tls_cacert /path/to/tls/ca.cert</pre></td>
 	<td>RHEL-07-040200</td>
-	<td>sssd_ldap_configure_tls_ca_dir</td>
+	<td>sssd_ldap_configure_tls_ca</td>
 </tr>
 
 <tr>
